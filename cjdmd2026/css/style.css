@@ -7,6 +7,7 @@
     --color-gray-100: #ddd;
     --color-gray-300: #bbb;
     --color-gray-500: #999;
+    --color-accent: #ff6f61;
 
     /* typography */
     --font-main: "pretendard", sans-serif;
@@ -98,7 +99,7 @@ img {
 
 .header .nav ul {
     display: flex;
-    gap: 30px;
+    gap: 5rem;
 }
 
 .header .nav ul li {
@@ -124,10 +125,34 @@ img {
 
 .footer .container {
     width: var(--container-width);
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 }
 
-.footer p {
+.footer .container .footer-info {
+    display: column;
+    text-align: left;
+}
+
+.footer .container .footer-info h3 {
+    color: var(--color-white);
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+}
+
+.footer .container .footer-info p {
     color: var(--color-white);
     font-size: 0.5rem;
 }
 
+.footer .container .footer-info img {
+    margin-bottom: 0.5rem;
+}
+
+.footer .container .footer-icons {
+    display: flex;
+    align-items: end;
+    gap: 20px;
+}
