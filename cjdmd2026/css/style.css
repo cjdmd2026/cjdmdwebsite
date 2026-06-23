@@ -1,0 +1,133 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
+
+:root {
+    /* color */
+    --color-black: #111;
+    --color-white: #f2f2f2;
+    --color-gray-100: #ddd;
+    --color-gray-300: #bbb;
+    --color-gray-500: #999;
+
+    /* typography */
+    --font-main: "pretendard", sans-serif;
+
+    /* size */
+    --header-height: 80px;
+    --container-width: 1340px;
+    --side-padding: 60px;
+
+    /* transition */
+    --transition-basic: 0.3s ease;
+}
+
+/* ============================== Reset ============================== */
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    color: var(--color-white);
+    background-color: var(--color-black);
+    line-height: 1.5;
+}
+
+/* ============================== Common ============================== */
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+ul, ol {
+    list-style: none;
+}
+
+button {
+    border: none;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+.container {
+    margin: 0 auto;
+}
+
+/* ============================== Header ============================== */
+
+.header {
+    width: 100%;
+    height: var(--header-height);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    background-color: var(--color-black);
+}
+
+.header .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    width: var(--container-width);
+    
+}
+
+.header .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.header .nav {
+    display: flex;
+    align-items: center;
+}
+
+.header .nav ul {
+    display: flex;
+    gap: 30px;
+}
+
+.header .nav ul li {
+    font-size: 1rem;
+}
+
+/* ============================== Main ============================== */
+.main {
+    min-height: 100vh;
+}
+
+.main .container {
+    width: var(--container-width);
+    padding: 100px var(--side-padding) 0;
+}
+
+/* ============================== Footer ============================== */
+.footer {
+    background-color: var(--color-black);
+    padding: 20px 0;
+    text-align: center;
+}
+
+.footer .container {
+    width: var(--container-width);
+}
+
+.footer p {
+    color: var(--color-white);
+    font-size: 0.5rem;
+}
+
