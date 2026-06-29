@@ -20,6 +20,8 @@
     /* transition */
     --transition-basic: 0.3s ease;
     --transition-archive: 0.5s ease;
+    --delay-archive: 0.3s;
+    --opacity-archive: 2s ease;
 }
 
 /* ============================== Reset ============================== */
@@ -243,7 +245,7 @@ img {
 }
 
 .archive.active {
-    transition-delay: 1s;
+    transition-delay: var(--delay-archive);
     opacity: 1;
     pointer-events: auto;
 }
@@ -290,19 +292,20 @@ img {
 
 .archive .video-box {
     opacity: 0;
-    transform: translateY(100%);
-    transition: opacity 0.8s ease, transform 0.5s ease;
+    transform: translateX(100%);
+    transition: var(--transition-archive);
 }
 
 .archive .picture-box {
     opacity: 0;
-    transform: translateY(-100%);
-    transition: opacity 0.8s ease, transform 0.5s ease;
+    transform: translateX(-100%);
+    transition: var(--transition-archive);
 }
 
 .archive.active .video-box,
 .archive.active .picture-box {
-    transition-delay: 1s;
+    transition: opacity var(--opacity-archive), transform var(--transition-archive);
+    transition-delay: var(--delay-archive);
     opacity: 1;
     transform: translateY(0);
 }
