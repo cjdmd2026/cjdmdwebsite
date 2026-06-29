@@ -2,6 +2,7 @@ import * as THREE from 'three';
 
 let scene, camera, renderer, particles, geometry, particleMaterial;
 let heroSection;
+let archiveSection;
 
 let mouseX = 0;
 let mouseY = 0;
@@ -28,11 +29,7 @@ if (isReady) {
 
 function init() {
     heroSection = document.getElementById('heroSection');
-
-    if (!heroSection) {
-        console.error('heroSection을 찾을 수 없습니다. HTML에 id="heroSection"이 있는지 확인하세요.');
-        return false;
-    }
+    archiveSection = document.querySelector('.archive');
 
     const viewportSize = getViewportSize();
     viewportWidth = viewportSize.width;
@@ -84,10 +81,14 @@ function init() {
 
         uniforms: {
             uTime: { value: 0 },
-            uSize: { value: 0.5 },
-            uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
 
-            // 1 = 반짝임 켜짐, 0 = 반짝임 꺼짐
+            // 흩어진 상태의 점 크기
+            uSize: { value: 0.7 },
+
+            // 선으로 모였을 때의 점 크기
+            uLineSize: { value: 1.2 },
+
+            uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
             uSparkleStrength: { value: 1 }
         },
 
@@ -96,6 +97,7 @@ function init() {
 
             uniform float uTime;
             uniform float uSize;
+            uniform float uLineSize;
             uniform float uPixelRatio;
             uniform float uSparkleStrength;
 
@@ -110,11 +112,14 @@ function init() {
 
                 vSparkleStrength = uSparkleStrength;
 
-                // 반짝임은 스크롤 내릴수록 꺼지지만,
-                // 기본 점 밝기는 1.0으로 유지
-                vTwinkle = mix(1.0, 0.35 + twinkle * 1.2, uSparkleStrength);
+                // 반짝임 강도
+                vTwinkle = 1.0 + twinkle * 1.2 * uSparkleStrength;
 
-                gl_PointSize = uSize * uPixelRatio * vTwinkle * (1000.0 / -mvPosition.z);
+                // 흩어진 상태에서는 반짝이는 크기,
+                // 선 상태에서는 고정된 흰색 라인 크기 유지
+                float finalSize = mix(uLineSize, uSize * vTwinkle, uSparkleStrength);
+
+                gl_PointSize = finalSize * uPixelRatio * (1000.0 / -mvPosition.z);
                 gl_Position = projectionMatrix * mvPosition;
             }
         `,
@@ -127,8 +132,8 @@ function init() {
                 vec2 uv = gl_PointCoord - vec2(0.5);
                 float dist = length(uv);
 
-                // 기본 원형 점
-                float circle = 1.0 - smoothstep(0.12, 0.5, dist);
+                // 기본 흰색 원형 점
+                float circle = 1.0 - smoothstep(0.2, 0.5, dist);
 
                 // 가로 빛 번짐
                 float horizontal = 1.0 - smoothstep(0.0, 0.035, abs(uv.y));
@@ -138,11 +143,11 @@ function init() {
                 float vertical = 1.0 - smoothstep(0.0, 0.035, abs(uv.x));
                 vertical *= 1.0 - smoothstep(0.05, 0.5, abs(uv.y));
 
-                // 별 모양 점
+                // 별 모양 빛
                 float sparkleShape = max(circle, max(horizontal, vertical) * 0.55);
 
-                // 스크롤 내리면 별빛 번짐만 사라지고,
-                // 기본 원형 점은 흰색으로 유지
+                // 기본 원형 점은 항상 유지하고,
+                // 별빛 번짐만 스크롤에 따라 켜고 끔
                 float alpha = mix(circle, sparkleShape * vTwinkle, vSparkleStrength);
 
                 gl_FragColor = vec4(vec3(1.0), alpha);
@@ -252,7 +257,26 @@ function onWheel(e) {
     if (hint) {
         hint.style.opacity = targetScrollProgress === 1 ? '0.1' : '0.3';
     }
+
+    if (archiveSection) {
+        if (targetScrollProgress === 1) {
+            archiveSection.classList.add('active');
+        } else {
+            archiveSection.classList.remove('active');
+        }
+    }
 }
+
+    const text = document.getElementById('heroText');
+    const hint = document.getElementById('hint');
+
+    if (text) {
+        text.style.opacity = targetScrollProgress === 1 ? '0' : '1';
+    }
+
+    if (hint) {
+        hint.style.opacity = targetScrollProgress === 1 ? '0.1' : '0.3';
+    }
 
 function onWindowResize() {
     syncViewportSize();
