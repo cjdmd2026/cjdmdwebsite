@@ -245,6 +245,7 @@ img {
     transform: scale(0.95);
     opacity: 0.9;
     transition: transform 0.3s ease;
+    
 }
 
 .archive {
