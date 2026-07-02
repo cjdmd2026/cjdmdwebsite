@@ -255,7 +255,6 @@ img {
     height : 100vh;
     z-index: 100;
     gap: 2rem;
-    margin-top: 3rem;
 
     opacity: 0;
     pointer-events: none;
@@ -271,17 +270,18 @@ img {
 
 .archive .video-box {
     width: var(--container-width);
+    height: 100%;
+
     display: flex;
-    gap: 1rem;
     align-items: end;
     justify-content: center;
+    gap: 1rem;
     flex: 1;
 }
 
 .archive .video-box .video {
     position: relative;
     aspect-ratio: 16 / 9;
-    border-radius: 15px;
     width: 30%;
 }
 
@@ -293,11 +293,13 @@ img {
 }
 
 .archive .picture-box {
-    flex: 1;
+    width: var(--container-width);
+    height: 100%;
     display: flex;
-    gap: 1rem;
     align-items: start;
     justify-content: center;
+    flex: 1;
+    gap: 1rem;
 }
 
 .archive .picture-box .picture {
