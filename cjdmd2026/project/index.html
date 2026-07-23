@@ -35,7 +35,7 @@
         <div class="container">
             <!-- 프로젝트 섹션 -->
             <div class="title-section">
-                <div class="left-side">
+                <div class="left-side"> 
                     <h1>프로젝트</h1>
                     <div class="search-bar">
                         <img src="../assets/images/icons/search-icon.svg" alt="">
@@ -43,28 +43,68 @@
                     </div>
                 </div>
                 <div class="view-buttons">
-                    <button type="button" data-view="slide"> <img src="../assets/images/icons/side-scroll-icon.svg">슬라이드 보기</button>
-                    <!--<button type="button" data-view="grid">전체 보기</button>-->
+                    <button class="view-button" type="button" data-view="slide"><img src="../assets/images/icons/side-scroll-icon.svg">슬라이드 보기</button>
+                    <button class="view-button is-active" type="button" data-view="grid" hidden><img src="../assets/images/icons/grid-scroll-icon.svg">그리드 보기</button>
                 </div>
             </div>
 
-            <div id="gridview" class="grid-view">
+            <!-- 그리드 뷰 -->
+            <div id="gridview" class="grid-view" hidden>
                 <div class="filter">
-                    <button type="button" data-filter="all">all</button>
-                    <button type="button" data-filter="UI/UX">UI/UX</button>
-                    <button type="button" data-filter="Brand">Brand</button>
-                    <button type="button" data-filter="graphic">Graphic</button>
-                    <button type="button" data-filter="video">Interactive</button>
-                    <button type="button" data-filter="XR">XR</button>
-                    <button type="button" class="filter-reset">선택 초기화</button>
+                    <button type="button" aria-pressed="false" data-filter="all">all</button>
+                    <button type="button" aria-pressed="false" data-filter="UI/UX">UI/UX</button>
+                    <button type="button" aria-pressed="false" data-filter="Brand">Brand</button>
+                    <button type="button" aria-pressed="false" data-filter="graphic">Graphic</button>
+                    <button type="button" aria-pressed="false" data-filter="video">Interactive</button>
+                    <button type="button" aria-pressed="false" data-filter="XR">XR</button>
+                    <button type="button" class="filter-reset"> <img src="../assets/images/icons/cancel-icon.svg" alt="Reset">선택 초기화</button>
                 </div>
                 <div class="content">
                     <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
                 </div>
             </div>
+
+            <!-- 슬라이드 뷰 -->
+             <div id="slideview" class="slide-view">
+                <div class="content">
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                    <div class="card" style="background-image: url('');"></div>
+                </div>
+             </div>
         </div>
     </main>
     <!-- Main:E -->
+
+    <!-- Scripts:S -->
+    <script src="../js/project.js"></script>
+    <!-- Scripts:E -->
 
     <!-- Footer:S -->
     <footer class="footer">
