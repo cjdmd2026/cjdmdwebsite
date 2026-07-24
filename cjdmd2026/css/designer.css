@@ -1,0 +1,614 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
+
+:root {
+    /* 기본 색상 - Project와 같은 체계를 공유합니다. */
+    --color-black: #111;
+    --color-white: #f2f2f2;
+    --color-gray-100: #ddd;
+    --color-gray-300: #bbb;
+    --color-gray-500: #999;
+    --color-accent: #ff6f61;
+
+    /* typography */
+    --font-main: "pretendard", sans-serif;
+
+    /* size */
+    --header-height: 80px; /* 상단 고정 Header 높이 */
+    --container-width: 1340px; /* Header/Main 공통 container 너비 */
+    --side-padding: 60px; /* container 내부 좌우 콘텐츠 여백 */
+
+    /* Designer Grid*/
+    --designer-grid-card-ratio: 245.36 / 445; /* Grid 카드 이미지 가로/세로 비율 */
+    --designer-grid-column-gap: 48.19px; /* Grid 카드 열 사이 간격 */
+    --designer-grid-row-gap: 52.39px; /* Grid 카드 행 사이 간격 */
+
+    /* Designer Slide */
+    --designer-slide-gap: 30px; /* Hover가 없는 기본 카드 사이 간격 */
+    --designer-slide-default-ratio: 280 / 476; /* 기본 카드 가로/세로 비율 */
+    --designer-slide-hover-ratio: 320 / 557; /* Hover 카드 가로/세로 비율 */
+    --designer-slide-small-ratio: 236 / 399; /* Hover 시 비활성 카드 가로/세로 비율 */
+    --designer-slide-default-width: 280px; /* 기본 Slide 카드 너비 */
+    --designer-slide-hover-width: 320px; /* 마우스 Hover 시 확대되는 카드 너비 */
+    --designer-slide-small-width: 236px; /* 다른 카드 Hover 시 축소되는 카드 너비 */
+    --designer-slide-hover-gap: 50px; /* Hover 카드와 다음 축소 카드 사이 목표 간격 */
+    --designer-slide-small-gap: 24px; /* Hover 상태에서 축소 카드끼리의 간격 */
+
+    /* Designer Slide 좌측 영역 */
+    --designer-slide-side-width: 168px; /* 세로선과 초성 필터를 포함하는 영역 너비 */
+    --designer-slide-side-gap: 131px; /* 초성 필터 영역 오른쪽과 첫 카드 사이 간격 */
+
+    /* transition */
+    --transition-basic: 0.3s ease;
+}
+
+/* ============================== Reset ============================== */
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    color: var(--color-white);
+    background-color: var(--color-black);
+    line-height: 1.5;
+}
+
+/* ============================== Common ============================== */
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+ul,
+ol {
+    list-style: none;
+}
+
+button {
+    border: none;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+}
+
+input,
+button,
+textarea,
+select,
+nav,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-main);
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+.container {
+    margin: 0 auto;
+}
+
+.icon {
+    width: 2rem;
+    height: 2rem;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+/* ============================== Header ==============================*/
+.header {
+    width: 100%;
+    height: var(--header-height);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    background-color: var(--color-black);
+}
+
+.header .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    width: var(--container-width);
+    box-sizing: border-box;
+    padding: 0 var(--side-padding);
+}
+
+.header .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.header .nav {
+    display: flex;
+    align-items: center;
+}
+
+.header .nav ul {
+    display: flex;
+    gap: 5rem;
+}
+
+.header .nav ul li {
+    font-size: 1rem;
+}
+
+/* ============================== Main ==============================
+ * Project의 title-section, search-bar, view-buttons 구조를 공통 기반으로 사용합니다.
+ */
+.main {
+    min-height: 100vh;
+}
+
+.main .container {
+    width: var(--container-width);
+    padding: 100px var(--side-padding) 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    color: var(--color-white);
+    margin-top: 5rem;
+}
+
+.container .title-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.container .title-section .left-side {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem;
+}
+
+.container .title-section h1,
+.container .title-section h2 {
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.container .title-section .search-bar {
+    position: relative;
+    width: 276px;
+    height: 45px;
+}
+
+.container .title-section .search-bar img {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.5rem;
+}
+
+.container .title-section input {
+    width: 100%;
+    height: 100%;
+    border: 1px solid var(--color-gray-500);
+    border-radius: 999px;
+    background-color: var(--color-black);
+    color: var(--color-white);
+    font-size: 1rem;
+    font-family: inherit;
+    padding: 0 3rem;
+}
+
+/* ============================== Designer Common ==============================
+ * Slide/Grid에서 공유하는 필터, 카드 이미지, 이름 overlay의 기본 규칙*/
+.designer-page {
+    padding-bottom: 120px;
+    overflow-x: clip;
+}
+
+.designer-heading {
+    width: 100%;
+}
+
+.designer-heading__title {
+    margin: 0;
+    line-height: normal;
+    letter-spacing: -0.04em;
+}
+
+.designer-heading__title--grid {
+    display: none;
+}
+
+.designer-stage {
+    width: 100%;
+}
+
+.designer-side__line {
+    display: block;
+    width: 1px;
+    background: var(--color-white);
+}
+
+.designer-filter__button {
+    padding: 0;
+    color: var(--color-white);
+    text-align: center;
+    line-height: normal;
+}
+
+.designer-card {
+    position: relative;
+    flex: 0 0 auto;
+    display: block;
+    cursor: default;
+}
+
+.designer-card__image-wrap {
+    position: relative;
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    background: #2a2a2a;
+}
+
+.designer-card__image {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+}
+
+.designer-card__text {
+    position: absolute;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+}
+
+.designer-card__name-ko {
+    font-weight: 500;
+    line-height: normal;
+    letter-spacing: -0.03em;
+}
+
+.designer-card__name-en {
+    color: var(--color-gray-300);
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -0.02em;
+}
+
+/* ============================== Slide View ==============================*/
+.designer-page.slide-view .designer-heading {
+    align-items: flex-end;
+}
+
+.designer-page.slide-view .designer-heading__top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+}
+
+.slide-view .designer-heading__title--grid {
+    display: none;
+}
+
+.slide-view .search-bar {
+    margin-top: 20px;
+}
+
+.slide-view .label-slide {
+    display: inline;
+}
+
+.slide-view .label-grid {
+    display: none;
+}
+
+.slide-view .view-buttons {
+    height: 45px;
+    align-items: center;
+}
+
+.slide-view .designer-stage {
+    width: calc(
+        100vw - max(
+            var(--side-padding),
+            calc((100vw - var(--container-width)) / 2 + var(--side-padding))
+        )
+    );
+    margin-top: 55px;
+    display: flex;
+    align-items: start;
+    gap: var(--designer-slide-side-gap);
+}
+
+.slide-view .designer-side {
+    flex: 0 0 var(--designer-slide-side-width);
+}
+
+.slide-view .designer-side__line {
+    height: 69px;
+}
+
+.slide-view .designer-filter {
+    width: 168px;
+    margin-top: 67px;
+    display: grid;
+    grid-template-columns: repeat(3, 48px);
+    grid-auto-rows: 48px;
+    column-gap: 12px;
+    row-gap: 15px;
+}
+
+.slide-view .designer-filter__button {
+    width: 48px;
+    height: 48px;
+    font-size: 16px;
+}
+
+.slide-view .designer-filter__button.is-active {
+    border-radius: 7px;
+    background: #3a3a3a;
+}
+
+.slide-view .designer-slider {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin-top: -8px;
+    padding-top: 48px;
+    padding-bottom: 33px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+}
+
+.slide-view .designer-slider::-webkit-scrollbar {
+    display: none;
+}
+
+.slide-view .designer-track {
+    position: relative;
+    top: 0;
+    width: max-content;
+    min-width: 100%;
+    display: flex;
+    align-items: flex-end;
+    gap: var(--designer-slide-gap);
+    transition: top 0.3s ease, gap 0.3s ease;
+}
+
+.slide-view .designer-card {
+    flex: 0 0 var(--designer-slide-default-width);
+    width: var(--designer-slide-default-width);
+    aspect-ratio: var(--designer-slide-default-ratio);
+    transition: flex-basis 0.3s ease, width 0.3s ease, aspect-ratio 0.3s ease, margin 0.3s ease;
+}
+
+.slide-view .designer-card__image-wrap {
+    height: 100%;
+    border-radius: 17px;
+}
+
+.slide-view .designer-card__image-wrap::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(to bottom, rgba(102, 102, 102, 0) 45%, rgba(0, 0, 0, 0.8) 91%);
+}
+
+.slide-view .designer-card__image {
+    filter: grayscale(100%);
+    transition: filter 0.3s ease;
+}
+
+.slide-view .designer-card__text {
+    left: 35px;
+    bottom: 35px;
+    gap: 3px;
+}
+
+.slide-view .designer-card__name-ko {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.slide-view .designer-card__name-en {
+    font-size: 18px;
+    font-weight: 300;
+}
+
+.slide-view .designer-track:has(.designer-card:hover) {
+    top: -48px;
+    gap: var(--designer-slide-small-gap);
+}
+
+.slide-view .designer-track:has(.designer-card:hover) .designer-card {
+    flex-basis: var(--designer-slide-small-width);
+    width: var(--designer-slide-small-width);
+    aspect-ratio: var(--designer-slide-small-ratio);
+}
+
+.slide-view .designer-track:has(.designer-card:hover) .designer-card__text {
+    left: 30px;
+    bottom: 30px;
+    gap: 3px;
+}
+
+.slide-view .designer-track:has(.designer-card:hover) .designer-card:not(:hover) .designer-card__name-ko {
+    font-size: 19px;
+}
+
+.slide-view .designer-track:has(.designer-card:hover) .designer-card:not(:hover) .designer-card__name-en {
+    font-size: 17px;
+}
+
+.slide-view .designer-track:has(.designer-card:hover) .designer-card:not(:hover) .designer-card__image {
+    filter: grayscale(100%) blur(6px);
+}
+
+.slide-view .designer-track:has(.designer-card:hover) .designer-card:hover {
+    flex-basis: var(--designer-slide-hover-width);
+    width: var(--designer-slide-hover-width);
+    aspect-ratio: var(--designer-slide-hover-ratio);
+    margin-left: 20px;
+    margin-right: calc(var(--designer-slide-hover-gap) - var(--designer-slide-small-gap));
+}
+
+.slide-view .designer-track:has(.designer-card:hover) .designer-card:hover .designer-card__image {
+    filter: grayscale(0%);
+}
+
+.slide-view .designer-track:has(.designer-card:hover) .designer-card:hover .designer-card__text {
+    left: 36px;
+    bottom: 34.57px;
+    gap: 2.88px;
+}
+
+.slide-view .designer-track:has(.designer-card:hover) .designer-card:hover .designer-card__name-ko {
+    font-size: 22px;
+}
+
+.slide-view .designer-track:has(.designer-card:hover) .designer-card:hover .designer-card__name-en {
+    font-size: 20px;
+}
+
+/* ============================== Grid View ============================== */
+.grid-view .designer-heading__title--slide {
+    display: none;
+}
+
+.grid-view .designer-heading__title--grid {
+    display: block;
+}
+
+.grid-view .designer-stage {
+    margin-top: 75px;
+    width: 100%;
+}
+
+.grid-view .designer-side__line {
+    display: none;
+}
+
+.grid-view .designer-filter {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.grid-view .label-slide {
+    display: none;
+}
+
+.grid-view .label-grid {
+    display: inline;
+}
+
+.grid-view .designer-filter__button {
+    color: #3a3a3a;
+    font-size: 16px;
+}
+
+.grid-view .designer-filter__button.is-active {
+    color: #fff;
+}
+
+.grid-view .designer-slider {
+    margin-top: 55px;
+}
+
+.grid-view .designer-track {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    column-gap: var(--designer-grid-column-gap);
+    row-gap: var(--designer-grid-row-gap);
+}
+
+.grid-view .designer-card {
+    width: 100%;
+}
+
+.grid-view .designer-card__image-wrap {
+    aspect-ratio: var(--designer-grid-card-ratio);
+    border-radius: 9.79px;
+}
+
+.grid-view .designer-card__image {
+    filter: none;
+}
+
+.grid-view .designer-card__text {
+    position: static;
+    margin-top: 25px;
+    gap: 2px;
+}
+
+.grid-view .designer-card__name-ko {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 0;
+}
+
+.grid-view .designer-card__name-en {
+    font-size: 18px;
+    font-weight: 300;
+    letter-spacing: 0;
+}
+
+/* View 전환은 즉시, Slide Hover에만 위 transition을 적용합니다. */
+.designer-page.is-view-changing .designer-card,
+.designer-page.is-view-changing .designer-card__image-wrap,
+.designer-page.is-view-changing .designer-card__image,
+.designer-page.is-view-changing .designer-track {
+    transition: none;
+}
+
+/* ============================== button ============================== */
+.view-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.view-buttons button {
+    color: var(--color-white);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--color-gray-500);
+    border-radius: 999px;
+    padding: 0 1.6rem 0 0.8rem;
+    cursor: pointer;
+}
+
+/* ============================== Footer ============================== */
+.footer {
+    background-color: var(--color-black);
+    padding: 20px 0;
+    text-align: center;
+}
+
+.designer-footer {
+    min-height: 1px;
+    padding: 0;
+}
