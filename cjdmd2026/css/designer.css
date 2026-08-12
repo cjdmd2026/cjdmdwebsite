@@ -133,7 +133,7 @@ img {
 
 .header .logo {
     font-size: 1.5rem;
-    font-weight: bold;
+    font-weight: bold;  
 }
 
 .header .nav {
@@ -299,6 +299,8 @@ img {
     letter-spacing: -0.02em;
 }
 
+
+
 /* ============================== Slide View ==============================*/
 .designer-page.slide-view .designer-heading {
     align-items: flex-end;
@@ -434,12 +436,12 @@ img {
 }
 
 .slide-view .designer-card__name-ko {
-    font-size: 20px;
+    font-size: 1rem;
     font-weight: 600;
 }
 
 .slide-view .designer-card__name-en {
-    font-size: 18px;
+    font-size: 1rem;
     font-weight: 300;
 }
 
@@ -461,11 +463,11 @@ img {
 }
 
 .slide-view .designer-track:has(.designer-card:hover) .designer-card:not(:hover) .designer-card__name-ko {
-    font-size: 19px;
+    font-size: 1rem;
 }
 
 .slide-view .designer-track:has(.designer-card:hover) .designer-card:not(:hover) .designer-card__name-en {
-    font-size: 17px;
+    font-size: 1rem;
 }
 
 .slide-view .designer-track:has(.designer-card:hover) .designer-card:not(:hover) .designer-card__image-wrap::after {
@@ -491,11 +493,11 @@ img {
 }
 
 .slide-view .designer-track:has(.designer-card:hover) .designer-card:hover .designer-card__name-ko {
-    font-size: 22px;
+    font-size: 1.375rem;
 }
 
 .slide-view .designer-track:has(.designer-card:hover) .designer-card:hover .designer-card__name-en {
-    font-size: 20px;
+    font-size: 1.25rem;
 }
 
 /* ============================== Grid View ============================== */
@@ -566,17 +568,18 @@ img {
 .grid-view .designer-card__text {
     position: static;
     margin-top: 25px;
+    margin-left: 0.25rem;
     gap: 2px;
 }
 
 .grid-view .designer-card__name-ko {
-    font-size: 24px;
+    font-size: 1rem;
     font-weight: 600;
     letter-spacing: 0;
 }
 
 .grid-view .designer-card__name-en {
-    font-size: 18px;
+    font-size: 0.75rem;
     font-weight: 300;
     letter-spacing: 0;
 }
