@@ -229,11 +229,12 @@ img {
 .container .grid-view .content .card {
     width: 100%;
     aspect-ratio: 384 / 515;
-    background-color: var(--color-gray-100);
+    background-color: var(--color-gray-500);
 
     border-radius: 10px;
 }
 
+/*
 .container .slide-view {
     width: 100vw;
     margin-left: calc(50% - 51vw);
@@ -265,7 +266,92 @@ img {
     background-color: var(--color-gray-100);
 
     border-radius: 10px;
+}*/
+
+/* ============================== slide view - v2 ============================== */
+.container .slide-view {
+    width: 100vw;
+    height: 100vh;
+
+    position: fixed;
+    
+    top: 0;
+    left: 0;
+
+   z-index: -999;
 }
+
+.container .slide-view .content {
+    display: flex;
+
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    
+    gap: 2rem;
+
+    scrollbar-width: none;
+}
+
+.container .slide-view .card {
+    aspect-ratio: 16 / 9;
+    background-color: rgba(255, 255, 255, 0.01);
+
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+}
+
+.container:has(#slideview:not([hidden])) {
+    margin: 0 auto;
+
+    width: var(--container-width);
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.container:has(#slideview:not([hidden])) .title-section {
+    margin: 0;
+    padding: 0;
+
+    margin-top: auto;
+    margin-bottom: 8rem;
+}
+
+.container:has(#slideview:not([hidden])) .title-section .left-side {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding-right: 2rem;
+
+    margin-left: 0;
+}
+
+.container:has(#slideview:not([hidden])) .gradient {
+    width: 100vw;
+    height: 100vh;
+
+    margin: 0;
+    padding: 0;
+
+    background: linear-gradient(0deg, 
+    #111 0%, #161616 20%, #1c1c1c 40%, 
+    #222 60%, #2a2a2a 80%, #333 100%);
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    z-index: -1;
+}
+
 
 /* ============================== button ============================== */
 .view-buttons {
