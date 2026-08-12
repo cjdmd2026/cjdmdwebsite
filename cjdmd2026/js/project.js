@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // 처음에는 그리드 보기
-    changeView("grid");
+    changeView("slide");
 });
 
 //마우스 휠

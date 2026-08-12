@@ -93,6 +93,8 @@ img {
     justify-content: space-between;
     height: 100%;
     width: var(--container-width);
+    box-sizing: border-box;
+    padding: 0 var(--side-padding);
     
 }
 
