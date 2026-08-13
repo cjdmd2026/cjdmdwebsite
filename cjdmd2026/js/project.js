@@ -29,34 +29,40 @@ document.addEventListener("DOMContentLoaded", () => {
     // 처음에는 그리드 보기
     changeView("slide");
 });
+// 마우스 휠로 카드 전환 (opacity 크로스페이드)
+const slideview = document.querySelector("#slideview");
+const cards = [...document.querySelectorAll("#slideview .card")];
 
-//마우스 휠
-const slider = document.querySelector("#slideview .content");
-const card = slider.querySelector(".card");
-
+let currentIndex = 0;
 let isScrolling = false;
 
-slider.addEventListener(
+// 초기 카드 활성화
+cards[currentIndex].classList.add("is-active");
+
+document.addEventListener(
     "wheel",
     (event) => {
-        if (slider.scrollWidth <= slider.clientWidth) return;
+        // 슬라이드 뷰가 아니면 무시
+        if (slideview.hidden) return;
 
         event.preventDefault();
 
         if (isScrolling) return;
+
+        const direction = event.deltaY > 0 ? 1 : -1;
+        const nextIndex = currentIndex + direction;
+
+        if (nextIndex < 0 || nextIndex >= cards.length) return;
+
         isScrolling = true;
 
-    const gap = parseFloat(getComputedStyle(slider).gap) || 0;
-    const moveAmount = card.offsetWidth + gap;
+        cards[currentIndex].classList.remove("is-active");
+        currentIndex = nextIndex;
+        cards[currentIndex].classList.add("is-active");
 
-    slider.scrollBy({
-      left: event.deltaY > 0 ? moveAmount : -moveAmount,
-      behavior: "smooth"
-    });
-
-    setTimeout(() => {
-      isScrolling = false;
-    }, 500);
-  },
-  { passive: false }
+        setTimeout(() => {
+            isScrolling = false;
+        }, 600);
+    },
+    { passive: false }
 );

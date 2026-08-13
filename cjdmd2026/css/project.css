@@ -3,11 +3,13 @@
 :root {
     /* color */
     --color-black: #111;
+    --color-black-50: rgba(17, 17, 17, 0.75);
     --color-white: #f2f2f2;
     --color-gray-100: #ddd;
     --color-gray-300: #bbb;
     --color-gray-500: #999;
     --color-accent: #ff6f61;
+    
 
     /* typography */
     --font-main: "pretendard", sans-serif;
@@ -25,6 +27,7 @@
 html {
     font-size: 16px;
     scroll-behavior: smooth;
+    scrollbar-gutter: stable;
 }
 
 * {
@@ -84,7 +87,7 @@ img {
     top: 0;
     left: 0;
     z-index: 1000;
-    background-color: var(--color-black);
+    background-color: var(--color-black-50);
 }
 
 .header .container {
@@ -175,7 +178,7 @@ img {
     border: 1px solid var(--color-gray-500);
     border-radius: 999px;
 
-    background-color: var(--color-black);
+    background-color: rgba(255, 255, 255, 0.01);
     color: var(--color-white);
 
     font-size: 1rem;
@@ -190,6 +193,7 @@ img {
     gap: 30px;
 
     margin-top: 5rem;
+    margin-bottom: 5rem;
 }
 
 .container .grid-view .filter {
@@ -303,8 +307,19 @@ img {
     position: absolute;
     width: 100vw;
     height: 100vh;
+
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    pointer-events: none;
 }
 
+.container .slide-view .card.is-active {
+    opacity: 1;
+    z-index: 1;
+    pointer-events: auto;
+}
+
+/* ============================== slide view일때 css 조절 ============================== */
 .container:has(#slideview:not([hidden])) {
     margin: 0 auto;
 
@@ -320,7 +335,7 @@ img {
     padding: 0;
 
     margin-top: auto;
-    margin-bottom: 8rem;
+    margin-bottom: 1.875rem;
 }
 
 .container:has(#slideview:not([hidden])) .title-section .left-side {
@@ -333,6 +348,46 @@ img {
     margin-left: 0;
 }
 
+.container:has(#slideview:not([hidden])) .title-section h1 {
+    display: flex;
+
+    line-height: 1.2;
+}
+
+.worker {
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: var(--color-white);
+    line-height: 1.4;
+
+    display: none;
+}
+
+.container:has(#slideview:not([hidden])) .worker {
+    display: flex;
+    align-items: end;
+
+    margin-left: 1.875rem;
+}
+
+
+
+.slide-description {
+    display: none;
+}
+
+.container:has(#slideview:not([hidden])) .slide-description {
+    margin: 0;
+    padding: 0;
+
+    display: block;
+
+    margin-bottom: 5rem;
+
+    font-size: 1rem;
+    font-weight: 100;
+}
+
 .container:has(#slideview:not([hidden])) .gradient {
     width: 100vw;
     height: 100vh;
@@ -341,8 +396,12 @@ img {
     padding: 0;
 
     background: linear-gradient(0deg, 
-    #111 0%, #161616 20%, #1c1c1c 40%, 
-    #222 60%, #2a2a2a 80%, #333 100%);
+    rgba(17,17,17,0.9) 0%, 
+    rgba(22,22,22,0.7) 20%, 
+    rgba(28,28,28,0.5) 40%, 
+    rgba(34,34,34,0.3) 60%, 
+    rgba(42,42,42,0.15) 80%, 
+    rgba(51,51,51,0) 100%);
 
     position: fixed;
 
@@ -350,6 +409,18 @@ img {
     left: 0;
 
     z-index: -1;
+
+    pointer-events: none;
+}
+
+.container:has(#slideview:not([hidden])) .content .card {
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+
+body:has(#slideview:not([hidden])) .footer {
+    display: none;
 }
 
 
