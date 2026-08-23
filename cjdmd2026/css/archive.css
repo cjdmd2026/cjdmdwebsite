@@ -3,14 +3,22 @@
 :root {
     /* color */
     --color-black: #111;
+    --color-black-75: rgba(17, 17, 17, 0.75);
     --color-white: #f2f2f2;
     --color-gray-100: #ddd;
     --color-gray-300: #bbb;
     --color-gray-500: #999;
     --color-accent: #ff6f61;
 
+    --color-font-gray: #9A9A9A;
+    
+
     /* typography */
     --font-main: "pretendard", sans-serif;
+
+    --font-size-small: 0.75rem;
+    --font-size-medium: 1rem;
+    --font-size-large: 1.5rem;
 
     /* size */
     --header-height: 80px;
@@ -25,6 +33,7 @@
 html {
     font-size: 16px;
     scroll-behavior: smooth;
+    scrollbar-gutter: stable;
 }
 
 * {
@@ -71,6 +80,10 @@ img {
     height: 2rem;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 /* ============================== Header ============================== */
 
 .header {
@@ -80,7 +93,7 @@ img {
     top: 0;
     left: 0;
     z-index: 1000;
-    background-color: var(--color-black);
+    background-color: var(--color-black-75);
 }
 
 .header .container {
@@ -89,6 +102,8 @@ img {
     justify-content: space-between;
     height: 100%;
     width: var(--container-width);
+    box-sizing: border-box;
+    padding: 0;
     
 }
 
@@ -112,6 +127,8 @@ img {
 }
 
 /* ============================== Main ============================== */
+
+/* ============================== History ============================== */
 .main {
     min-height: 100vh;
 }
@@ -119,7 +136,86 @@ img {
 .main .container {
     width: var(--container-width);
     padding: 100px 0 0;
+
+    display: flex;
+    flex-direction: column;
+
+    color: var(--color-white);
+
+    margin-top: 3rem;
 }
+
+.main .container h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0 auto;
+
+}
+
+.history {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6rem;
+    row-gap: 6rem;
+
+    margin-top: 4rem;
+}
+
+.history .card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.history .card .image {
+    width: 100%;
+    height: 382px;
+
+    border-radius: 10px;
+    background-color: var(--color-gray-500);
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.history .card .content {
+    display: flex;
+    flex-direction: column;
+}
+
+.history .card .title {
+    display: flex;
+    align-items: end;
+    gap: 1rem;
+
+    margin-top: 0.5rem;
+    line-height: 1;
+}
+
+.history .card .title h2 {
+    font-size: var(--font-size-large);
+    font-weight: bold;
+}
+
+.history .card .title h3 {
+    font-size: var(--font-size-medium);
+    font-weight: 500;
+
+    color: var(--color-font-gray);
+}
+
+.history .card p {
+    margin-top: 0.75rem;
+    line-height: 1;
+    
+    font-size: var(--font-size-medium);
+    font-weight: 500;
+
+    color: var(--color-font-gray);
+}
+
+
 
 /* ============================== Footer ============================== */
 .footer {
