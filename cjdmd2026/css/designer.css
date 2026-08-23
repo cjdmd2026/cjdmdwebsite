@@ -24,21 +24,21 @@
     --designer-grid-row-gap: 52.39px; /* Grid 카드 행 사이 간격 */
 
     /* Designer Slide */
-    --designer-slide-gap: 30px; /* Hover가 없는 기본 카드 사이 간격 */
+    --designer-slide-gap: 1rem; /* Hover가 없는 기본 카드 사이 간격 */
     --designer-slide-default-ratio: 280 / 476; /* 기본 카드 가로/세로 비율 */
     --designer-slide-hover-ratio: 320 / 557; /* Hover 카드 가로/세로 비율 */
     --designer-slide-small-ratio: 236 / 399; /* Hover 시 비활성 카드 가로/세로 비율 */
-    --designer-slide-default-width: 280px; /* 기본 Slide 카드 너비 */
-    --designer-slide-hover-width: 320px; /* 마우스 Hover 시 확대되는 카드 너비 */
-    --designer-slide-small-width: 236px; /* 다른 카드 Hover 시 축소되는 카드 너비 */
-    --designer-slide-hover-gap: 50px; /* Hover 카드와 다음 축소 카드 사이 목표 간격 */
-    --designer-slide-small-gap: 24px; /* Hover 상태에서 축소 카드끼리의 간격 */
+    --designer-slide-default-width: 250px; /* 기본 Slide 카드 너비 */
+    --designer-slide-hover-width: 260px; /* 마우스 Hover 시 확대되는 카드 너비 */
+    --designer-slide-small-width: 240px; /* 다른 카드 Hover 시 축소되는 카드 너비 */
+    --designer-slide-hover-gap: 2rem; /* Hover 카드와 다음 축소 카드 사이 목표 간격 */
+    --designer-slide-small-gap: 1rem; /* Hover 상태에서 축소 카드끼리의 간격 */
 
     /* Designer Slide 좌측 영역 */
     --designer-slide-side-width: 168px; /* 세로선과 초성 필터를 포함하는 영역 너비 */
     --designer-slide-side-gap: 131px; /* 초성 필터 영역 오른쪽과 첫 카드 사이 간격 */
 
-    /* transition */
+    /* transition */    
     --transition-basic: 0.3s ease;
 }
 
@@ -360,6 +360,7 @@ img {
 
 .slide-view .designer-side {
     flex: 0 0 var(--designer-slide-side-width);
+    z-index: 1;
 }
 
 .slide-view .designer-side__line {
@@ -390,11 +391,13 @@ img {
 .slide-view .designer-slider {
     flex: 1 1 auto;
     min-width: 0;
-    margin-top: -8px;
-    padding-top: 48px;
+    
     padding-bottom: 33px;
+    padding-left: 500px;
+    margin-left: -500px;
+
     overflow-x: auto;
-    overflow-y: hidden;
+    
     overscroll-behavior-x: contain;
     scrollbar-width: none;
 }
@@ -409,9 +412,10 @@ img {
     width: max-content;
     min-width: 100%;
     display: flex;
-    align-items: flex-end;
+    align-items: flex-start;
     gap: var(--designer-slide-gap);
     transition: top 0.3s ease, gap 0.3s ease;
+    z-index: 0;
 }
 
 .slide-view .designer-card {
@@ -458,7 +462,6 @@ img {
 }
 
 .slide-view .designer-track:has(.designer-card:hover) {
-    top: -48px;
     gap: var(--designer-slide-small-gap);
 }
 
@@ -468,11 +471,11 @@ img {
     aspect-ratio: var(--designer-slide-small-ratio);
 }
 
-.slide-view .designer-track:has(.designer-card:hover) .designer-card__text {
+/*.slide-view .designer-track:has(.designer-card:hover) .designer-card__text {
     left: 30px;
     bottom: 30px;
     gap: 3px;
-}
+}*/
 
 .slide-view .designer-track:has(.designer-card:hover) .designer-card:not(:hover) .designer-card__name-ko {
     font-size: 1rem;
@@ -490,8 +493,14 @@ img {
     flex-basis: var(--designer-slide-hover-width);
     width: var(--designer-slide-hover-width);
     aspect-ratio: var(--designer-slide-hover-ratio);
-    margin-left: 20px;
-    margin-right: calc(var(--designer-slide-hover-gap) - var(--designer-slide-small-gap));
+
+    margin-left: calc(
+        (var(--designer-slide-small-width) - var(--designer-slide-hover-width)) / 2
+    );
+
+    margin-right: calc(
+        (var(--designer-slide-small-width) - var(--designer-slide-hover-width)) / 2
+    );
 }
 
 .slide-view .designer-track:has(.designer-card:hover) .designer-card:hover .designer-card__image-wrap::after {
@@ -505,11 +514,11 @@ img {
 }
 
 .slide-view .designer-track:has(.designer-card:hover) .designer-card:hover .designer-card__name-ko {
-    font-size: 1.375rem;
+    font-size: 1rem;
 }
 
 .slide-view .designer-track:has(.designer-card:hover) .designer-card:hover .designer-card__name-en {
-    font-size: 1.25rem;
+    font-size: 1rem;
 }
 
 /* ============================== Grid View ============================== */
@@ -522,7 +531,7 @@ img {
 }
 
 .grid-view .designer-stage {
-    margin-top: 75px;
+    margin-top: 4rem;
     width: 100%;
 }
 

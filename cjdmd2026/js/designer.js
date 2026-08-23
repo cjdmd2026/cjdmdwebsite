@@ -56,3 +56,4 @@ document.addEventListener("DOMContentLoaded", () => {
     // 페이지 진입 시 Slide View로 초기화
     changeView("slide");
 });
+
