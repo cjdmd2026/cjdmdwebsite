@@ -17,16 +17,27 @@
  *
  * =========================================================
  *
+ * viewport 동작
+ *
+ * 화면 중앙 근처 진입
+ * → Stamp 실행
+ *
+ * 화면에서 완전히 벗어남
+ * → 자동 Reset
+ *
+ * 다시 중앙 근처 진입
+ * → Stamp 다시 실행
+ *
+ * =========================================================
+ *
  * 자동 성능 최적화
  *
- * 1개 실행:
- * - 기존 효과 그대로
+ * 1개 실행
+ * → 기존 효과
  *
- * 2개 이상 동시 실행:
- * - 도장 개수 약 1/3
- * - 도장 크기 조절
- * - 애니메이션 속도 조절
- * - 이미 실행 중인 Stamp도 자동 최적화
+ * 2개 이상 동시 실행
+ * → 도장 개수 약 1/3
+ * → Performance 설정 적용
  */
 
 (() => {
@@ -43,11 +54,14 @@
     const SVG_NS =
         "http://www.w3.org/2000/svg";
 
+
     const states =
         new WeakMap();
 
+
     const runningStamps =
         new Set();
+
 
     let uid = 0;
 
@@ -59,12 +73,15 @@
 
     const PERFORMANCE = {
 
+        // 동시 실행 시 글자 개수
         density:
             1 / 3,
 
+        // 동시 실행 시 글자 크기
         sizeBoost:
             1,
 
+        // 현재 설정값
         playbackRate:
             0.5
 
@@ -83,6 +100,7 @@
         "결",
         "합"
     ];
+
 
 
     const fonts = [
@@ -133,16 +151,19 @@
 
         style.textContent = `
 
+            /*
+             * Stamp 요소는
+             * 애니메이션 준비 전까지 숨김
+             */
+
             [stamp]:not(.stamp-effect-ready),
             [data-stamp]:not(.stamp-effect-ready) {
-
                 opacity: 0 !important;
-
             }
 
 
-            .stamp-effect-svg-defs {
 
+            .stamp-effect-svg-defs {
                 position: fixed;
 
                 width: 0;
@@ -151,12 +172,11 @@
                 overflow: hidden;
 
                 pointer-events: none;
-
             }
 
 
-            .stamp-effect-letter {
 
+            .stamp-effect-letter {
                 opacity: 0;
 
                 transform-box: fill-box;
@@ -176,12 +196,11 @@
 
                 animation-iteration-count:
                     1;
-
             }
 
 
-            .stamp-effect-full {
 
+            .stamp-effect-full {
                 opacity: 0;
 
                 animation-name:
@@ -198,14 +217,13 @@
 
                 animation-iteration-count:
                     1;
-
             }
+
 
 
             @keyframes stamp-effect-punch {
 
                 0% {
-
                     opacity: 0;
 
                     transform:
@@ -213,12 +231,10 @@
                         rotate(
                             var(--stamp-rotate)
                         );
-
                 }
 
 
                 35% {
-
                     opacity: 1;
 
                     transform:
@@ -226,24 +242,20 @@
                         rotate(
                             var(--stamp-rotate)
                         );
-
                 }
 
 
                 55% {
-
                     transform:
                         scale(1.05)
                         rotate(
                             var(--stamp-rotate)
                         );
-
                 }
 
 
                 75%,
                 100% {
-
                     opacity: 1;
 
                     transform:
@@ -251,28 +263,24 @@
                         rotate(
                             var(--stamp-rotate)
                         );
-
                 }
 
             }
+
 
 
             @keyframes stamp-effect-full-reveal {
 
                 from {
-
                     opacity: 0;
-
                 }
 
-
                 to {
-
                     opacity: 1;
-
                 }
 
             }
+
 
 
             @media (
@@ -343,8 +351,10 @@
 
 
     /* =========================================================
-       Viewport
-       화면 중앙 근처에서 실행
+       화면 중앙 진입 감지
+
+       화면 전체가 아니라
+       중앙 약 20% 영역에 들어왔을 때 실행
     ========================================================= */
 
     const viewportObserver =
@@ -368,19 +378,142 @@
                         entry.target;
 
 
+                    const state =
+                        states.get(el);
+
+
+
+                    /*
+                     * 이미 애니메이션 실행 중이면
+                     * 다시 실행하지 않음
+                     */
+
+                    if (
+                        state &&
+                        state.running
+                    ) {
+
+                        continue;
+
+                    }
+
+
+
+                    /*
+                     * 화면 중앙에 들어오면 실행
+                     */
+
                     play(el);
+
+                }
+
+            },
+
+            {
+
+                root:
+                    null,
+
+                threshold:
+                    0,
+
+
+                /*
+                 * 화면 위 40%
+                 * 화면 아래 40%
+                 *
+                 * 제외
+                 *
+                 * 중앙 20% 영역에서 실행
+                 */
+
+                rootMargin:
+                    "-40% 0px -40% 0px"
+
+            }
+
+        );
+
+
+
+    /* =========================================================
+       화면 완전 이탈 감지
+
+       중요:
+       중앙 20%에서 나갔다고 Reset하는 게 아니라
+       실제 브라우저 화면에서 완전히 사라졌을 때 Reset
+    ========================================================= */
+
+    const viewportExitObserver =
+        new IntersectionObserver(
+
+            entries => {
+
+                for (
+                    const entry
+                    of entries
+                ) {
+
+                    const el =
+                        entry.target;
+
+
+
+                    /*
+                     * 기본 viewport Stamp만 적용
+                     *
+                     * active / hover / click에는
+                     * 영향을 주지 않음
+                     */
+
+                    if (
+                        getOptions(el).trigger
+                        !==
+                        "viewport"
+                    ) {
+
+                        continue;
+
+                    }
+
+
+
+                    /*
+                     * 아직 화면에 조금이라도
+                     * 보이고 있으면 유지
+                     */
+
+                    if (
+                        entry.isIntersecting
+                    ) {
+
+                        continue;
+
+                    }
+
+
+
+                    const state =
+                        states.get(el);
 
 
                     if (
-                        !el.hasAttribute(
-                            "stamp-repeat"
-                        )
+                        !state
                     ) {
 
-                        viewportObserver
-                            .unobserve(el);
+                        continue;
 
                     }
+
+
+
+                    /*
+                     * 화면에서 완전히 사라짐
+                     *
+                     * → 처음 상태로 되돌림
+                     */
+
+                    reset(el);
 
                 }
 
@@ -395,7 +528,7 @@
                     0,
 
                 rootMargin:
-                    "-40% 0px -40% 0px"
+                    "0px"
 
             }
 
@@ -404,7 +537,7 @@
 
 
     /* =========================================================
-       옵션
+       숫자 Attribute
     ========================================================= */
 
     function numberAttr(
@@ -456,6 +589,10 @@
     }
 
 
+
+    /* =========================================================
+       옵션
+    ========================================================= */
 
     function getOptions(el) {
 
@@ -550,7 +687,7 @@
 
 
     /* =========================================================
-       SVG 생성
+       SVG 요소
     ========================================================= */
 
     function svgEl(
@@ -596,32 +733,50 @@
         performanceMode = false
     ) {
 
+
         const effectiveDensity =
+
             performanceMode
 
-                ? density
-                  *
-                  PERFORMANCE.density
+                ?
 
-                : density;
+                density
+                *
+                PERFORMANCE.density
+
+                :
+
+                density;
+
 
 
         const effectiveSpeed =
+
             performanceMode
 
-                ? speed
-                  /
-                  PERFORMANCE.playbackRate
+                ?
 
-                : speed;
+                speed
+                /
+                PERFORMANCE.playbackRate
+
+                :
+
+                speed;
+
 
 
         const sizeBoost =
+
             performanceMode
 
-                ? PERFORMANCE.sizeBoost
+                ?
 
-                : 1;
+                PERFORMANCE.sizeBoost
+
+                :
+
+                1;
 
 
 
@@ -638,7 +793,9 @@
             );
 
 
+
         const minSize =
+
             Math.max(
 
                 42,
@@ -648,15 +805,23 @@
                 0.16
 
             )
+
             *
+
             sizeBoost;
+
 
 
         const stamps = [];
 
+
         let t = 0;
 
 
+
+        /* =====================================================
+           화면 크기에 따른 밀도
+        ========================================================= */
 
         const coverageScale =
             Math.max(
@@ -686,6 +851,10 @@
             );
 
 
+
+        /* =====================================================
+           랜덤 위치
+        ========================================================= */
 
         const randomPos =
             () => ({
@@ -727,6 +896,10 @@
 
 
 
+        /* =====================================================
+           도장 개수
+        ========================================================= */
+
         const count =
             base =>
 
@@ -737,9 +910,13 @@
                     Math.round(
 
                         base
+
                         *
+
                         effectiveDensity
+
                         *
+
                         Math.sqrt(
                             coverageScale
                         )
@@ -750,16 +927,29 @@
 
 
 
+        /* =====================================================
+           빈 공간 감지 Canvas
+        ========================================================= */
+
         const canvas =
             document.createElement(
                 "canvas"
             );
 
 
+
         const maxCanvasWidth =
+
             performanceMode
-                ? 500
-                : 900;
+
+                ?
+
+                500
+
+                :
+
+                900;
+
 
 
         const scale =
@@ -779,6 +969,7 @@
             );
 
 
+
         canvas.width =
             Math.max(
 
@@ -791,6 +982,7 @@
                 )
 
             );
+
 
 
         canvas.height =
@@ -807,10 +999,12 @@
             );
 
 
+
         const ctx =
             canvas.getContext(
                 "2d"
             );
+
 
 
         ctx.fillStyle =
@@ -828,6 +1022,10 @@
         );
 
 
+
+        /* =====================================================
+           Canvas Coverage
+        ========================================================= */
 
         function drawCoverage(
             stamp
@@ -898,6 +1096,10 @@
         }
 
 
+
+        /* =====================================================
+           Stamp 추가
+        ========================================================= */
 
         function place(
             x,
@@ -971,7 +1173,9 @@
 
 
 
-        /* 큰 도장 */
+        /* =====================================================
+           큰 도장
+        ========================================================= */
 
         for (
             let i = 0;
@@ -991,7 +1195,6 @@
 
 
                 minSide
-
                 *
                 (
                     0.52
@@ -1016,7 +1219,9 @@
 
 
 
-        /* 중간 도장 */
+        /* =====================================================
+           중간 도장
+        ========================================================= */
 
         for (
             let i = 0;
@@ -1036,7 +1241,6 @@
 
 
                 minSide
-
                 *
                 (
                     0.28
@@ -1061,7 +1265,9 @@
 
 
 
-        /* 작은 도장 */
+        /* =====================================================
+           작은 도장
+        ========================================================= */
 
         for (
             let i = 0;
@@ -1081,7 +1287,6 @@
 
 
                 minSide
-
                 *
                 (
                     0.17
@@ -1108,7 +1313,7 @@
 
         /* =====================================================
            빈 공간 채우기
-        ===================================================== */
+        ========================================================= */
 
         function scanAndFill(
             stepRatio,
@@ -1129,6 +1334,7 @@
                 );
 
 
+
             const image =
                 ctx.getImageData(
 
@@ -1141,8 +1347,10 @@
                 );
 
 
+
             const data =
                 image.data;
+
 
 
             const canvasStep =
@@ -1183,9 +1391,12 @@
 
                             canvas.width - 1,
 
-                            Math.floor(gx)
+                            Math.floor(
+                                gx
+                            )
 
                         );
+
 
 
                     const iy =
@@ -1193,9 +1404,12 @@
 
                             canvas.height - 1,
 
-                            Math.floor(gy)
+                            Math.floor(
+                                gy
+                            )
 
                         );
+
 
 
                     const idx =
@@ -1210,8 +1424,10 @@
                         4;
 
 
+
                     const brightness =
                         data[idx];
+
 
 
                     if (
@@ -1338,6 +1554,10 @@
 
 
 
+        /* =====================================================
+           일반 모드
+        ========================================================= */
+
         if (
             !performanceMode
         ) {
@@ -1389,6 +1609,11 @@
         }
 
 
+
+        /* =====================================================
+           성능 모드
+        ========================================================= */
+
         else {
 
             scanAndFill(
@@ -1425,7 +1650,7 @@
 
 
     /* =========================================================
-       종료 처리
+       완료
     ========================================================= */
 
     function finishStamp(
@@ -1450,6 +1675,7 @@
 
         state.endAt =
             0;
+
 
 
         el.dispatchEvent(
@@ -1550,8 +1776,7 @@
 
 
         if (
-            state.svg
-            &&
+            state.svg &&
             state.svg.isConnected
         ) {
 
@@ -1580,19 +1805,18 @@
        실행 중 Stamp 최적화
     ========================================================= */
 
-    function optimizeRunningStamp(el) {
+    function optimizeRunningStamp(
+        el
+    ) {
 
         const state =
             states.get(el);
 
 
         if (
-            !state
-            ||
-            !state.running
-            ||
-            state.performanceMode
-            ||
+            !state ||
+            !state.running ||
+            state.performanceMode ||
             !state.svg
         ) {
 
@@ -1601,8 +1825,10 @@
         }
 
 
+
         state.performanceMode =
             true;
+
 
 
         const letters =
@@ -1615,6 +1841,11 @@
 
             );
 
+
+
+        /*
+         * 3개 중 1개만 유지
+         */
 
         letters.forEach(
             (
@@ -1645,6 +1876,7 @@
                     );
 
 
+
                 if (
                     Number.isFinite(
                         currentSize
@@ -1672,6 +1904,10 @@
 
 
 
+        /* =====================================================
+           실행 중 Animation 속도 변경
+        ========================================================= */
+
         const animations =
             state.svg.getAnimations();
 
@@ -1686,6 +1922,10 @@
         );
 
 
+
+        /* =====================================================
+           종료 Timer 보정
+        ========================================================= */
 
         if (
             state.endAt > 0
@@ -1707,6 +1947,7 @@
                 );
 
 
+
             if (
                 state.timeoutId
             ) {
@@ -1718,6 +1959,7 @@
             }
 
 
+
             const optimizedRemaining =
 
                 remaining
@@ -1727,6 +1969,7 @@
                 PERFORMANCE.playbackRate;
 
 
+
             state.endAt =
 
                 now
@@ -1734,6 +1977,7 @@
                 +
 
                 optimizedRemaining;
+
 
 
             state.timeoutId =
@@ -1757,6 +2001,10 @@
     }
 
 
+
+    /* =========================================================
+       동시 2개 이상 체크
+    ========================================================= */
 
     function checkPerformanceMode() {
 
@@ -1811,6 +2059,7 @@
             states.get(el);
 
 
+
         if (
             !state
         ) {
@@ -1828,6 +2077,10 @@
 
 
 
+        /*
+         * 이미 실행 중
+         */
+
         if (
             state.running
         ) {
@@ -1838,11 +2091,17 @@
 
 
 
+        /*
+         * 완료 상태
+         *
+         * 화면 밖으로 나가면 reset()에서
+         * done = false가 되기 때문에
+         * 재진입 시 다시 실행 가능
+         */
+
         if (
-            state.done
-            &&
-            !options.repeat
-            &&
+            state.done &&
+            !options.repeat &&
             !force
         ) {
 
@@ -1852,9 +2111,15 @@
 
 
 
+        /*
+         * 다시 시작할 때
+         * 기본 숨김 상태
+         */
+
         el.classList.remove(
             "stamp-effect-ready"
         );
+
 
 
         cleanupMask(
@@ -1869,18 +2134,20 @@
             el.getBoundingClientRect();
 
 
+
+        /* =====================================================
+           크기 없는 상태
+        ========================================================= */
+
         if (
-            rect.width < 1
-            ||
+            rect.width < 1 ||
             rect.height < 1
         ) {
 
 
             if (
-                !state.sizeObserver
-                &&
-                "ResizeObserver"
-                in window
+                !state.sizeObserver &&
+                "ResizeObserver" in window
             ) {
 
 
@@ -1894,14 +2161,14 @@
 
 
                             if (
-                                nextRect.width < 1
-                                ||
+                                nextRect.width < 1 ||
                                 nextRect.height < 1
                             ) {
 
                                 return;
 
                             }
+
 
 
                             state
@@ -1913,6 +2180,7 @@
                                 null;
 
 
+
                             play(
                                 el,
                                 force
@@ -1920,6 +2188,7 @@
 
                         }
                     );
+
 
 
                 state
@@ -1946,6 +2215,10 @@
 
 
 
+        /* =====================================================
+           성능 모드 판정
+        ========================================================= */
+
         const performanceMode =
             runningStamps.size >= 1;
 
@@ -1970,8 +2243,13 @@
 
 
 
+        /* =====================================================
+           SVG
+        ========================================================= */
+
         const id =
             `stamp-mask-${++uid}`;
+
 
 
         const svg =
@@ -2001,10 +2279,12 @@
             );
 
 
+
         const defs =
             svgEl(
                 "defs"
             );
+
 
 
         const mask =
@@ -2035,6 +2315,7 @@
                 }
 
             );
+
 
 
         mask.style.maskType =
@@ -2073,6 +2354,10 @@
 
 
 
+        /* =====================================================
+           도장 생성
+        ========================================================= */
+
         const {
 
             stamps,
@@ -2099,33 +2384,36 @@
 
 
         /* =====================================================
-           전체 시퀀스 시간
+           전체 Sequence 시간
         ========================================================= */
 
         const extraSequenceTime =
 
             performanceMode
 
-                ? 0.5
+                ?
 
-                : 1.0;
+                0.5
+
+                :
+
+                1.0;
 
 
 
         const sequenceDuration =
+
             endTime
+
             +
+
             extraSequenceTime;
 
 
 
         /* =====================================================
-           초반 느리게 → 후반 빠르게
-           
-           1에 가까울수록 균일
-           0.7 = 약한 가속
-           0.55 = 추천
-           0.4 = 후반에 매우 강하게 몰림
+           처음 천천히
+           마지막 빠르게
         ========================================================= */
 
         const STAMP_ACCELERATION =
@@ -2146,6 +2434,7 @@
             }
 
 
+
             const progress =
                 Math.min(
 
@@ -2164,10 +2453,6 @@
                 );
 
 
-            /*
-             * progress가 진행될수록
-             * 간격이 점점 촘촘해짐
-             */
 
             const acceleratedProgress =
                 Math.pow(
@@ -2177,6 +2462,7 @@
                     STAMP_ACCELERATION
 
                 );
+
 
 
             return (
@@ -2204,7 +2490,7 @@
 
 
         /* =====================================================
-           글자 생성
+           도장 글자 생성
         ========================================================= */
 
         for (
@@ -2264,6 +2550,7 @@
             );
 
 
+
             text.style.setProperty(
 
                 "--stamp-duration",
@@ -2274,14 +2561,11 @@
 
 
 
-            /*
-             * 가속 곡선 적용
-             */
-
             const acceleratedDelay =
                 getAcceleratedDelay(
                     s.delay
                 );
+
 
 
             text.style.animationDelay =
@@ -2300,8 +2584,10 @@
                 }s`;
 
 
+
             text.textContent =
                 s.char;
+
 
 
             mask.appendChild(
@@ -2332,10 +2618,6 @@
             ];
 
 
-
-        /*
-         * Reveal도 같은 가속 곡선 기준
-         */
 
         const fullRevealDelay =
 
@@ -2404,6 +2686,7 @@
             );
 
 
+
         full.style.setProperty(
 
             "--stamp-full-duration",
@@ -2413,8 +2696,10 @@
         );
 
 
+
         full.style.animationDelay =
             `${fullRevealDelay.toFixed(3)}s`;
+
 
 
         mask.appendChild(
@@ -2422,6 +2707,10 @@
         );
 
 
+
+        /* =====================================================
+           SVG DOM 연결
+        ========================================================= */
 
         defs.appendChild(
             mask
@@ -2520,9 +2809,9 @@
 
 
 
-        /*
-         * 마스크가 준비된 뒤 표시
-         */
+        /* =====================================================
+           마스크 준비 후 요소 표시
+        ========================================================= */
 
         requestAnimationFrame(
             () => {
@@ -2537,7 +2826,7 @@
 
 
         /* =====================================================
-           종료
+           종료 시간
         ========================================================= */
 
         const totalMs =
@@ -2590,6 +2879,10 @@
 
 
 
+        /* =====================================================
+           동시 실행 최적화
+        ========================================================= */
+
         checkPerformanceMode();
 
     }
@@ -2598,6 +2891,9 @@
 
     /* =========================================================
        Reset
+
+       화면 밖으로 완전히 나갔을 때도
+       여기로 들어옴
     ========================================================= */
 
     function reset(el) {
@@ -2627,9 +2923,15 @@
         );
 
 
+
+        /*
+         * 다시 숨김
+         */
+
         el.classList.remove(
             "stamp-effect-ready"
         );
+
 
 
         if (
@@ -2647,6 +2949,11 @@
         }
 
 
+
+        /*
+         * 재실행 가능하도록 초기화
+         */
+
         state.done =
             false;
 
@@ -2663,7 +2970,7 @@
 
 
     /* =========================================================
-       초기화
+       요소 초기화
     ========================================================= */
 
     function initElement(el) {
@@ -2675,6 +2982,7 @@
             return;
 
         }
+
 
 
         let state =
@@ -2719,6 +3027,10 @@
 
 
 
+        /* =====================================================
+           Hover
+        ========================================================= */
+
         if (
             trigger ===
             "hover"
@@ -2735,6 +3047,10 @@
         }
 
 
+
+        /* =====================================================
+           Click
+        ========================================================= */
 
         else if (
             trigger ===
@@ -2753,6 +3069,10 @@
 
 
 
+        /* =====================================================
+           Manual
+        ========================================================= */
+
         else if (
             trigger ===
             "manual"
@@ -2764,13 +3084,17 @@
 
 
 
+        /* =====================================================
+           Active
+        ========================================================= */
+
         else if (
             trigger ===
             "active"
         ) {
 
 
-            if (
+            if (    
                 el.classList.contains(
                     "is-active"
                 )
@@ -2790,9 +3114,23 @@
 
 
 
+        /* =====================================================
+           기본 = Viewport
+
+           두 Observer에 동시에 등록
+
+           1. 중앙 진입
+           2. 화면 완전 이탈
+        ========================================================= */
+
         else {
 
             viewportObserver.observe(
+                el
+            );
+
+
+            viewportExitObserver.observe(
                 el
             );
 
@@ -2801,6 +3139,10 @@
     }
 
 
+
+    /* =========================================================
+       Init
+    ========================================================= */
 
     function init(
         root = document
@@ -2855,6 +3197,10 @@
                 ) {
 
 
+                    /* =================================================
+                       새 Stamp 요소
+                    ================================================= */
+
                     if (
                         record.type ===
                         "childList"
@@ -2888,6 +3234,10 @@
                     }
 
 
+
+                    /* =================================================
+                       is-active 변화
+                    ================================================= */
 
                     if (
 
@@ -2994,6 +3344,7 @@
 
         reset,
 
+
         getRunningCount() {
 
             return runningStamps.size;
@@ -3021,10 +3372,8 @@
             boot,
 
             {
-
                 once:
                     true
-
             }
 
         );
@@ -3039,3 +3388,4 @@
     }
 
 })();
+

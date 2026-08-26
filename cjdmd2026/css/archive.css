@@ -169,9 +169,16 @@ img {
 
 .main .container h1 {
     font-size: 3rem;
-    font-weight: bold;
+    font-weight: 700;
+    margin: 0 auto;
+}
+
+.main .container p {
+    font-size: 0.875rem;
+    font-weight: 300;
     margin: 0 auto;
 
+    color: var(--color-gray-500);
 }
 
 .history {
@@ -240,7 +247,7 @@ img {
     line-height: 1.5;
     letter-spacing: -0.02em;
     
-    font-size: var(--font-size-medium);
+    font-size: var(--font-size-small);
     font-weight: 300;
 
     color: var(--color-font-gray);
@@ -287,4 +294,9 @@ img {
     display: flex;
     align-items: end;
     gap: 20px;
+}
+
+.footer .container .footer-icons .icon {
+    width: 2rem;
+    height: 2rem;
 }
