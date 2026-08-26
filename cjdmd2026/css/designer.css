@@ -14,7 +14,7 @@
     --font-main: "pretendard", sans-serif;
 
     /* size */
-    --header-height: 80px; /* 상단 고정 Header 높이 */
+    --header-height: 60px; /* 상단 고정 Header 높이 */
     --container-width: 1220px; /* Header/Main 공통 container 너비 */
     --side-padding: 60px; /* container 내부 좌우 콘텐츠 여백 */
 
@@ -40,6 +40,16 @@
 
     /* transition */    
     --transition-basic: 0.3s ease;
+}
+
+[data-theme="light"] {
+    --color-black: #ffffff;
+    --color-black-75: rgba(255, 255, 255, 0.75);
+    --color-white: #111111;
+    --color-gray-100: #f5f5f5;
+    --color-gray-300: #eeeeee;
+    --color-gray-500: #dddddd;
+    --color-accent: #ff6f61;
 }
 
 /* ============================== Reset ============================== */
@@ -104,8 +114,11 @@ img {
 }
 
 .icon {
-    width: 2rem;
-    height: 2rem;
+    filter: invert(0);
+}
+
+[data-theme="light"] .icon {
+    filter: invert(1);
 }
 
 [hidden] {
@@ -120,7 +133,13 @@ img {
     top: 0;
     left: 0;
     z-index: 1000;
-    background-color: var(--color-black-75);
+
+    /*background-color: var(--color-black-75);*/
+
+    background: rgba(255, 255, 255, 0.36);
+    backdrop-filter: blur(11.9px);
+    -webkit-backdrop-filter: blur(11.9px);
+    border: 1px solid rgba(255, 255, 255, 0.35);
 }
 
 .header .container {
@@ -131,25 +150,29 @@ img {
     width: var(--container-width);
     box-sizing: border-box;
     padding: 0;
+    
 }
 
 .header .logo {
     font-size: 1.5rem;
-    font-weight: bold;  
+    font-weight: bold;
 }
 
 .header .nav {
     display: flex;
     align-items: center;
+
+    
 }
 
 .header .nav ul {
     display: flex;
-    gap: 5rem;
+    gap: 2rem;
 }
 
 .header .nav ul li {
-    font-size: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
 }
 
 /* ============================== Main ==============================
@@ -167,7 +190,7 @@ img {
     flex-direction: column;
     color: var(--color-white);
     
-    margin-top: 5rem;
+    margin-top: 2rem;
 }
 
 .container .title-section {
@@ -215,15 +238,19 @@ img {
     font-size: 1rem;
     font-family: inherit;
     padding: 0 3rem;
+    transition: border-color 0.3s ease;
+}
 
-
+.container .title-section input:focus {
+    border-color: var(--color-white);
+    outline: none;
 }
 
 /* ============================== Designer Common ==============================
  * Slide/Grid에서 공유하는 필터, 카드 이미지, 이름 overlay의 기본 규칙*/
 .designer-page {
-    padding-bottom: 120px;
     overflow-x: clip;
+    height: 100vh;
 }
 
 .designer-heading {
@@ -368,31 +395,30 @@ img {
 }
 
 .slide-view .designer-filter {
-    width: 168px;
     margin-top: 67px;
     display: grid;
-    grid-template-columns: repeat(3, 48px);
-    grid-auto-rows: 48px;
-    column-gap: 12px;
-    row-gap: 15px;
+    grid-template-columns: repeat(3, 42px);
+    grid-auto-rows: 42px;
 }
 
 .slide-view .designer-filter__button {
-    width: 48px;
-    height: 48px;
-    font-size: 16px;
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+
+    margin: 0 auto;
 }
 
 .slide-view .designer-filter__button.is-active {
     border-radius: 7px;
-    background: #3a3a3a;
+    background: #111;
+    color: #ffffff;
 }
 
 .slide-view .designer-slider {
     flex: 1 1 auto;
     min-width: 0;
     
-    padding-bottom: 33px;
     padding-left: 500px;
     margin-left: -500px;
 
@@ -626,8 +652,8 @@ img {
     align-items: center;
     border: 1px solid var(--color-gray-500);
     border-radius: 999px;
-    padding: 0 1.6rem 0 0.8rem;
     cursor: pointer;
+    padding: 0.1rem;
 }
 
 /* ============================== Footer ============================== */

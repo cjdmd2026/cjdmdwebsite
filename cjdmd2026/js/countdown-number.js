@@ -1,4 +1,4 @@
-const goalDate = new Date("2026-11-01T00:00:00+09:00").getTime();
+const goalDate = new Date("2026-11-20T00:00:00+09:00").getTime();
 
 function calcDate() {
     const now = new Date().getTime();

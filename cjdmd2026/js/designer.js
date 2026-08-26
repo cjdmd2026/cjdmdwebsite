@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
         viewIcon.src = isSlideView
             ? "../assets/images/icons/grid-scroll-icon.svg"
             : "../assets/images/icons/side-scroll-icon.svg";
-        viewLabel.textContent = isSlideView ? "그리드 보기" : "슬라이드 보기";
+        viewLabel.textContent = isSlideView ? "" : "";
 
         if (!isSlideView) slider.scrollLeft = 0;
 

@@ -13,12 +13,29 @@
     --font-main: "pretendard", sans-serif;
 
     /* size */
-    --header-height: 80px;
+    --header-height: 60px;
     --container-width: 1220px;
     --side-padding: 60px;
 
     /* transition */
     --transition-basic: 0.3s ease;
+}
+
+[data-theme="light"] {
+    --color-black: #ffffff;
+    --color-black-75: rgba(255, 255, 255, 0.75);
+    --color-white: #111111;
+    --color-gray-100: #f5f5f5;
+    --color-gray-300: #dddddd;
+    --color-gray-500: #999999;
+    --color-accent: #ff6f61;
+    --gradient-color: linear-gradient(0deg, 
+    rgba(255,255,255,0.9) 0%,
+    rgba(255,255,255,0.7) 20%,
+    rgba(255,255,255,0.5) 40%,
+    rgba(255,255,255,0.3) 60%,
+    rgba(255,255,255,0.15) 80%,
+    rgba(255,255,255,0) 100%);
 }
 
 /* ============================== Reset ============================== */
@@ -67,8 +84,11 @@ img {
 }
 
 .icon {
-    width: 2rem;
-    height: 2rem;
+    filter: invert(0);
+}
+
+[data-theme="light"] .icon {
+    filter: invert(1);
 }
 
 /* ============================== Header ============================== */
@@ -80,7 +100,13 @@ img {
     top: 0;
     left: 0;
     z-index: 1000;
-    background-color: var(--color-black);
+
+    /*background-color: var(--color-black-75);*/
+
+    background: rgba(255, 255, 255, 0.36);
+    backdrop-filter: blur(11.9px);
+    -webkit-backdrop-filter: blur(11.9px);
+    border: 1px solid rgba(255, 255, 255, 0.35);
 }
 
 .header .container {
@@ -89,6 +115,8 @@ img {
     justify-content: space-between;
     height: 100%;
     width: var(--container-width);
+    box-sizing: border-box;
+    padding: 0;
     
 }
 
@@ -100,15 +128,18 @@ img {
 .header .nav {
     display: flex;
     align-items: center;
+
+    
 }
 
 .header .nav ul {
     display: flex;
-    gap: 5rem;
+    gap: 2rem;
 }
 
 .header .nav ul li {
-    font-size: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
 }
 
 /* ============================== Main ============================== */
@@ -160,4 +191,9 @@ img {
     display: flex;
     align-items: end;
     gap: 20px;
+}
+
+.footer .container .footer-icons .icon {
+    width: 2rem;
+    height: 2rem;
 }
