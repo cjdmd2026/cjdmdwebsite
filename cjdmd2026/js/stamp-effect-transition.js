@@ -156,9 +156,14 @@
              * 애니메이션 준비 전까지 숨김
              */
 
-            [stamp]:not(.stamp-effect-ready),
-            [data-stamp]:not(.stamp-effect-ready) {
+            [stamp]:not([stamp-invert]):not(.stamp-effect-ready),
+            [data-stamp]:not([stamp-invert]):not(.stamp-effect-ready) {
                 opacity: 0 !important;
+            }
+
+            [stamp][stamp-invert]:not(.stamp-effect-ready),
+            [data-stamp][stamp-invert]:not(.stamp-effect-ready) {
+                opacity: 1 !important;
             }
 
 
@@ -1824,6 +1829,18 @@
         state
     ) {
 
+        if (
+            el.hasAttribute(
+                "stamp-invert"
+            )
+        ) {
+
+            el.style.opacity =
+                "0";
+
+        }
+
+
         cleanupMask(
             el,
             state,
@@ -2220,6 +2237,21 @@
             getOptions(el);
 
 
+        const invert =
+            el.hasAttribute(
+                "stamp-invert"
+            );
+
+
+        if (
+            invert
+        ) {
+            el.style.removeProperty(
+                "opacity"
+            );
+        }
+
+
 
         let state =
             states.get(el);
@@ -2507,7 +2539,11 @@
                     height,
 
                     fill:
-                        "black"
+                        invert
+                            ?
+                            "white"
+                            :
+                            "black"
 
                 }
 
@@ -2835,7 +2871,11 @@
                             ),
 
                         fill:
-                            "white",
+                            invert
+                                ?
+                                "black"
+                                :
+                                "white",
 
                         class:
                             "stamp-effect-letter"
@@ -2981,7 +3021,11 @@
                     height,
 
                     fill:
-                        "white",
+                        invert
+                            ?
+                            "black"
+                            :
+                            "white",
 
                     class:
                         "stamp-effect-full"
@@ -3202,6 +3246,21 @@
     ========================================================= */
 
     function reset(el) {
+
+        if (
+            el instanceof Element
+            &&
+            el.hasAttribute(
+                "stamp-invert"
+            )
+        ) {
+
+            el.style.removeProperty(
+                "opacity"
+            );
+
+        }
+
 
         const state =
             states.get(el);

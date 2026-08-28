@@ -5,20 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>유연한 결합: 청주대학교 디지털미디어디자인</title>
     <link rel="stylesheet" href="../css/archive.css">
+    <script>
+        if (sessionStorage.getItem('stamp-page-transition') === '1') {
+            document.documentElement.classList.add('page-transition-preload');
+        }
+    </script>
 </head>
 <body>
     <!-- Header:S -->
     <header class="header">
         <div class="container">
             <!-- 로고 -->
-            <h1 class="logo"><a href="../index.html">유연한 결합</a></h1>
+            <h1 class="logo"><a href="../index.html" page-transition>유연한 결합</a></h1>
 
             <!-- 네비게이션 -->
             <nav class="nav">
                 <ul>
-                    <li><a href="../project/index.html">프로젝트</a></li>
-                    <li><a href="../designer/index.html">디자이너</a></li>
-                    <li><a href="../archive/index.html" aria-current="page">아카이브</a></li>
+                    <li><a href="../project/index.html" page-transition>프로젝트</a></li>
+                    <li><a href="../designer/index.html" page-transition>디자이너</a></li>
+                    <li><a href="../archive/index.html" page-transition aria-current="page">아카이브</a></li>
                 </ul>
             </nav>
 
@@ -98,13 +103,50 @@
                 </div>
             </div>
 
+            <!-- 이미지01 -->
+            <div class="RP01">
+                <h2>365일 동안 서로를 엮어낸 기록</h2>
+                <div class="RPimage">
+                    <div class="card" style="background-image: url(../assets/images/archive/photo/1.jpg);"></div>
+                    <div class="card" style="background-image: url(../assets/images/archive/photo/2.jpg);"></div>
+                    <div class="card" style="background-image: url(../assets/images/archive/photo/3.jpg);"></div>
+                </div>
+            </div>
             
+            <div class="archive-wrap">
+                <div class="archive-box card01" style="background-image: url(../assets/images/archive/photo/4.jpg);"></div>
+                <div class="archive-box card02" style="background-image: url(../assets/images/archive/photo/5.jpg);"></div>
+                <div class="archive-box card03"><h4 typewriter-effect>서툰 시작과<br>수많은 수정 끝에</h4></div>
+                <div class="archive-box card04" style="background-image: url(../assets/images/archive/photo/10.jpg);"></div>
+                <div class="archive-box card05" style="background-image: url(../assets/images/archive/photo/21.jpg);"></div>
+                <div class="archive-box card06" style="background-image: url(../assets/images/archive/photo/17.jpg);"></div>
+                <div class="archive-box card07" style="background-image: url(../assets/images/archive/photo/25.jpg);"></div>
+                <div class="archive-box card08" style="background-image: url(../assets/images/archive/photo/13.jpg);"></div>
+                <div class="archive-box card09"><h4 typewriter-effect>끝까지 포기하지 않은<br>우리에게 이 전시를 바친다</h4></div>
+                <div class="archive-box card10" style="background-image: url(../assets/images/archive/photo/11.jpg);"></div>
+                <div class="archive-box card11" style="background-image: url(../assets/images/archive/photo/31.jpg);"></div>
+                <div class="archive-box card12" style="background-image: url(../assets/images/archive/photo/16.jpg);"></div>
+                <div class="archive-box card13" style="background-image: url(../assets/images/archive/photo/19.jpg);"></div>
+                <div class="archive-box card14" style="background-image: url(../assets/images/archive/photo/7.jpg);"></div>
+                <div class="archive-box card15" style="background-image: url(../assets/images/archive/photo/3.jpg);"></div>
+                <div class="archive-box card16"><h4 typewriter-effect>서로의 흔적이<br>겹쳐진 자리에서</h4></div>
+                <div class="archive-box card17"><h4 typewriter-effect>우리는 비로소<br>하나의 장면이 되었다</h4></div>
+                <div class="archive-box card18" style="background-image: url(../assets/images/archive/photo/15.jpg);"></div>
+                <div class="archive-box card19" style="background-image: url(../assets/images/archive/photo/20.jpg);"></div>
+                <div class="archive-box card20" style="background-image: url(../assets/images/archive/photo/8.jpg);"></div>
+                <div class="archive-box card21" style="background-image: url(../assets/images/archive/photo/2.jpg);"></div>
+            </div>
         </div>
     </main>
     <!-- Main:E -->
 
     <!-- Scripts:S -->
+    <script src="../js/stamp-effect-transition.js" defer></script>
+    <script src="../js/page-transition.js" defer></script>
+
     <script src="../js/project.js"></script>
+    <script src="../js/typing-effect.js"></script>
+    <script src="../js/typewriter-effect.js"></script>
     <!-- Scripts:E -->
 
     <!-- Footer:S -->

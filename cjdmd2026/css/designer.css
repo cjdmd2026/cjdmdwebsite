@@ -74,6 +74,10 @@ body {
     line-height: 1.5;
 }
 
+html.page-transition-preload body {
+    visibility: hidden;
+}
+
 /* ============================== Common ============================== */
 a {
     color: inherit;
@@ -595,7 +599,8 @@ body:has(.designer-page.slide-view) {
 }
 
 .grid-view .designer-filter__button.is-active {
-    color: #fff;
+    color: var(--color-white);
+    font-weight: 600;   
 }
 
 .grid-view .designer-slider {

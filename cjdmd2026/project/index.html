@@ -5,20 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>유연한 결합: 청주대학교 디지털미디어디자인</title>
     <link rel="stylesheet" href="../css/project.css">
+    <script>
+        if (sessionStorage.getItem('stamp-page-transition') === '1') {
+            document.documentElement.classList.add('page-transition-preload');
+        }
+    </script>
+
+    <!-- Scripts:S -->
+    <script src="../js/stamp-effect-transition.js" defer></script>
+    <script src="../js/typewriter-effect.js" defer></script>
+    <script src="../js/project.js" defer></script>
+    <script src="../js/page-transition.js" defer></script>
+    <!-- <script src="../js/stamp-effect.js" defer></script> -->
+     
+    <!-- Scripts:E -->
+
 </head>
 <body>
     <!-- Header:S -->
     <header class="header">
         <div class="container">
             <!-- 로고 -->
-            <h1 class="logo"><a href="../index.html">유연한 결합</a></h1>
+            <h1 class="logo"><a href="../index.html" page-transition>유연한 결합</a></h1>
 
             <!-- 네비게이션 -->
             <nav class="nav">
                 <ul>
-                    <li><a href="../project/index.html" aria-current="page">프로젝트</a></li>
-                    <li><a href="../designer/index.html">디자이너</a></li>
-                    <li><a href="../archive/index.html">아카이브</a></li>
+                    <li><a href="../project/index.html" page-transition aria-current="page">프로젝트</a></li>
+                    <li><a href="../designer/index.html" page-transition>디자이너</a></li>
+                    <li><a href="../archive/index.html" page-transition>아카이브</a></li>
                 </ul>
             </nav>
 
@@ -36,14 +51,14 @@
             <!-- 프로젝트 섹션 -->
             <div class="title-section">
                 <div class="left-side"> 
-                    <h1>프로젝트 <span class="worker">작업자 이름</span></h1> 
-                    <div class="view-buttons">
+                    <h1 typewriter-effect typewriter-trigger="manual">프로젝트 <span class="worker">작업자 이름</span></h1> 
+                    <div class="view-buttons page-enter-up">
                         <button class="view-button" type="button" data-view="slide"><img src="../assets/images/icons/side-scroll-icon.svg" class="icon"></button>
                         <button class="view-button is-active" type="button" data-view="grid" hidden><img src="../assets/images/icons/grid-scroll-icon.svg" class="icon"></button>
                     </div>
                 </div>
                 
-                <div class="search-bar">
+                <div class="search-bar page-enter-up">
                     <img src="../assets/images/icons/search-icon.svg" class="icon">
                     <input type="text" placeholder="프로젝트를 검색해주세요">
                 </div>
@@ -51,7 +66,7 @@
 
             <!-- 설명 -->
             <div class="slide-description">
-                <p>프로젝트 설명하는 글</p>
+                <p typewriter-effect typewriter-trigger="manual">프로젝트 설명하는 글</p>
             </div>
 
             <!-- 슬라이드 그라데이션 배경 -->
@@ -68,7 +83,7 @@
                     <button type="button" aria-pressed="false" data-filter="leisure">여가</button>
                     <button type="button" aria-pressed="false" data-filter="welfare">복지</button>
                     <button type="button" aria-pressed="false" data-filter="XR">생활</button>
-                    <button type="button" class="filter-reset"> <img src="../assets/images/icons/cancel-icon.svg" alt="Reset">선택 초기화</button>
+                    <button type="button" class="filter-reset"> <img class="icon" src="../assets/images/icons/cancel-icon.svg" alt="Reset">선택 초기화</button>
                 </div>
                 <div class="content">
                     <div class="card"  style="background-image: url('https://picsum.photos/seed/2/800/600');"></div>
@@ -91,7 +106,7 @@
 
             <!-- 슬라이드 뷰 -->
              <div id="slideview" class="slide-view">
-                <div class="content">
+                <!--<div class="content">
                     <div class="card" stamp stamp-trigger="active" style="background-image: url('https://picsum.photos/seed/1/800/600');"></div>
                     <div class="card" stamp stamp-trigger="active" style="background-image: url('https://picsum.photos/seed/2/800/600');"></div>
                     <div class="card" stamp stamp-trigger="active" style="background-image: url('https://picsum.photos/seed/3/800/600');"></div>
@@ -108,16 +123,29 @@
                     <div class="card" stamp stamp-trigger="active" style="background-image: url('https://picsum.photos/seed/14/800/600');"></div>
                     <div class="card" stamp stamp-trigger="active" style="background-image: url('https://picsum.photos/seed/15/800/600');"></div>
                     <div class="card" stamp stamp-trigger="active" style="background-image: url('https://picsum.photos/seed/16/800/600');"></div>
+                </div>-->
+                <div class="content">
+                    <div class="card is-active" style="background-image: url('https://picsum.photos/seed/1/800/600');"></div>
+                    <div class="card" style="background-image: url('https://picsum.photos/seed/2/800/600');"></div>
+                    <div class="card" style="background-image: url('https://picsum.photos/seed/3/800/600');"></div>
+                    <div class="card" style="background-image: url('https://picsum.photos/seed/4/800/600');"></div>
+                    <div class="card" style="background-image: url('https://picsum.photos/seed/5/800/600');"></div>
+                    <div class="card" style="background-image: url('https://picsum.photos/seed/6/800/600');"></div>
+                    <div class="card" style="background-image: url('https://picsum.photos/seed/7/800/600');"></div>
+                    <div class="card" style="background-image: url('https://picsum.photos/seed/8/800/600');"></div>
+                    <div class="card" style="background-image: url('https://picsum.photos/seed/9/800/600');"></div>
+                    <div class="card" style="background-image: url('https://picsum.photos/seed/10/800/600');"></div>
+                    <div class="card" style="background-image: url('https://picsum.photos/seed/11/800/600');"></div>
+                    <div class="card" style="background-image: url('https://picsum.photos/seed/12/800/600');"></div>
+                    <div class="card" style="background-image: url('https://picsum.photos/seed/13/800/600');"></div>
+                    <div class="card" style="background-image: url('https://picsum.photos/seed/14/800/600');"></div>
+                    <div class="card" style="background-image: url('https://picsum.photos/seed/15/800/600');"></div>
+                    <div class="card" style="background-image: url('https://picsum.photos/seed/16/800/600');"></div>
                 </div>
              </div>
         </div>
     </main>
     <!-- Main:E -->
-
-    <!-- Scripts:S -->
-    <script src="../js/project.js"></script>
-    <script src="../js/stamp-effect.js" defer></script>
-    <!-- Scripts:E -->
 
     <!-- Footer:S -->
     <footer class="footer">
