@@ -401,11 +401,11 @@ img {
 .container:has(#slideview:not([hidden])) .title-section h1 {
     display: flex;
 
-    line-height: 1.2;
+    line-height: 1;
 }
 
 .worker {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 400;
     color: var(--color-white);
     line-height: 1.4;
@@ -417,7 +417,7 @@ img {
     display: flex;
     align-items: end;
 
-    margin-left: 1rem;
+    margin-left: 1.15rem;
 }
 
 .slide-description {
@@ -432,8 +432,8 @@ img {
 
     margin-bottom: 5rem;
 
-    font-size: 1rem;
-    font-weight: 400;
+    font-size: 0.875rem;
+    font-weight: 300;
 }
 
 .container:has(#slideview:not([hidden])) .title-section input {

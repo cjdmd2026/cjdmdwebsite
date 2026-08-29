@@ -212,7 +212,7 @@
          * 후반 리버브 시작 지점
          *
          * 0.55 = 전체 진행도의 55%부터
-         * 부드러운 작은 방 공간감이 서서히 증가
+         * 리버브 잔향이 서서히 증가
          */
         reverbStartProgress:
             0.10,
@@ -226,7 +226,7 @@
 
 
         /*
-         * 가까운 벽의 작은 방처럼 짧고 부드럽게 남는 잔향 시간
+         * 부드럽게 남는 리버브 잔향 시간
          */
         reverbDuration:
             0.82,
@@ -238,30 +238,6 @@
          */
         reverbDecay:
             5.2,
-
-
-        /*
-         * 작은 방의 가까운 벽 반사 느낌.
-         * 원음 직후 아주 짧은 초기 반사가 들리도록 함.
-         */
-        roomPreDelayMs:
-            7,
-
-
-        /*
-         * 리버브의 고역을 부드럽게 깎아
-         * 커튼 / 가구가 있는 따뜻한 방처럼 만듦.
-         */
-        roomLowpassHz:
-            3200,
-
-
-        /*
-         * 초기 반사 강도.
-         * 너무 높이면 욕실처럼 딱딱하게 들릴 수 있음.
-         */
-        roomEarlyReflection:
-            0.34,
 
 
         /*
@@ -330,7 +306,7 @@
        Web Audio Reverb Engine
 
        - 별도 리버브 음원 파일 없이 브라우저에서 Impulse Response 생성
-       - 후반으로 갈수록 Wet 신호를 키워 가까운 벽의 따뜻한 방 공간감 형성
+       - 후반으로 갈수록 Wet 신호를 키워 잔향만 자연스럽게 증가
        - AudioContext는 실제 재생 시점에만 생성/재개
     ========================================================= */
 
@@ -338,14 +314,6 @@
         null;
 
     let stampReverbNode =
-        null;
-
-
-    let stampReverbLowpass =
-        null;
-
-
-    let stampReverbPreDelay =
         null;
 
 
@@ -412,125 +380,69 @@
 
 
         /*
-         * 따뜻한 작은 방 Impulse Response
+         * 단순 Reverb Impulse Response
          *
-         * - 길이는 짧게
-         * - 초반 반사는 또렷하지만 강하지 않게
-         * - 뒤쪽 잔향은 빠르게 사라지게
+         * 공간 방향감 / 초기 반사 / 방 크기 느낌 없이
+         * 잔향만 부드럽게 남도록 생성.
          */
-        const earlyReflectionTimes =
-            [
-                0.012,
-                0.024,
-                0.041,
-                0.063
-            ];
+        const monoNoise =
+            new Float32Array(
+                length
+            );
 
 
+        for (
+            let i = 0;
+            i < length;
+            i++
+        ) {
+
+            const progress =
+                i
+                /
+                length;
+
+
+            const decay =
+                Math.pow(
+                    1 - progress,
+                    STAMP_SOUND_CONFIG
+                        .reverbDecay
+                );
+
+
+            monoNoise[i] =
+                (
+                    Math.random()
+                    *
+                    2
+                    -
+                    1
+                )
+                *
+                decay
+                *
+                0.34;
+
+        }
+
+
+        /*
+         * 좌/우 채널에 같은 잔향을 사용해서
+         * 스테레오 공간감이 생기지 않도록 함.
+         */
         for (
             let channel = 0;
             channel < impulse.numberOfChannels;
             channel++
         ) {
 
-            const data =
-                impulse.getChannelData(
+            impulse
+                .getChannelData(
                     channel
-                );
-
-
-            for (
-                let i = 0;
-                i < length;
-                i++
-            ) {
-
-                const progress =
-                    i
-                    /
-                    length;
-
-
-                const decay =
-                    Math.pow(
-                        1 - progress,
-                        STAMP_SOUND_CONFIG
-                            .reverbDecay
-                    );
-
-
-                /*
-                 * 작은 방은 넓은 홀보다
-                 * 잔향 밀도와 폭을 줄여 더 가까운 느낌으로 만듦.
-                 */
-                const random =
-                    Math.random()
-                    *
-                    2
-                    -
-                    1;
-
-
-                data[i] =
-                    random
-                    *
-                    decay
-                    *
-                    0.34;
-
-            }
-
-
-            /*
-             * 가까운 벽에서 튕겨오는 초기 반사.
-             * 좌/우 타이밍을 아주 조금 다르게 만들어
-             * 자연스러운 실내 폭만 남김.
-             */
-            earlyReflectionTimes
-                .forEach(
-                    (
-                        time,
-                        index
-                    ) => {
-
-                        const channelOffset =
-                            channel === 0
-                                ?
-                                0
-                                :
-                                0.0025;
-
-
-                        const sampleIndex =
-                            Math.min(
-                                length - 1,
-                                Math.floor(
-                                    (
-                                        time
-                                        +
-                                        channelOffset
-                                    )
-                                    *
-                                    stampAudioContext
-                                        .sampleRate
-                                )
-                            );
-
-
-                        const reflectionGain =
-                            STAMP_SOUND_CONFIG
-                                .roomEarlyReflection
-                            *
-                            Math.pow(
-                                0.72,
-                                index
-                            );
-
-
-                        data[sampleIndex] +=
-                            reflectionGain;
-
-                    }
+                )
+                .set(
+                    monoNoise
                 );
 
         }
@@ -550,56 +462,10 @@
 
 
         /*
-         * 아주 짧은 Pre-delay:
-         * 원음 직후 벽에 부딪혀 돌아오는 느낌.
+         * 공간 처리 없이
+         * Reverb 잔향만 바로 출력
          */
-        stampReverbPreDelay =
-            stampAudioContext
-                .createDelay(
-                    0.1
-                );
-
-
-        stampReverbPreDelay.delayTime.value =
-            STAMP_SOUND_CONFIG
-                .roomPreDelayMs
-            /
-            1000;
-
-
-        /*
-         * 따뜻한 룸 톤:
-         * 리버브의 고역을 줄여 딱딱한 욕실 느낌을 피함.
-         */
-        stampReverbLowpass =
-            stampAudioContext
-                .createBiquadFilter();
-
-
-        stampReverbLowpass.type =
-            "lowpass";
-
-
-        stampReverbLowpass.frequency.value =
-            STAMP_SOUND_CONFIG
-                .roomLowpassHz;
-
-
-        stampReverbLowpass.Q.value =
-            0.55;
-
-
         stampReverbNode.connect(
-            stampReverbPreDelay
-        );
-
-
-        stampReverbPreDelay.connect(
-            stampReverbLowpass
-        );
-
-
-        stampReverbLowpass.connect(
             stampAudioContext.destination
         );
 
