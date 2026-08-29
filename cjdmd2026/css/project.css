@@ -436,6 +436,14 @@ img {
     font-weight: 400;
 }
 
+.container:has(#slideview:not([hidden])) .title-section input {
+    border: 1px solid var(--color-black);
+}
+
+.container:has(#slideview:not([hidden])) .title-section input::placeholder {
+    color: var(--color-white);
+}
+
 .container:has(#slideview:not([hidden])) .gradient {
     width: 100vw;
     height: 100vh;
@@ -514,6 +522,11 @@ body:has(#slideview:not([hidden])) .footer {
 
     cursor: pointer;
 }
+
+.container:has(#slideview:not([hidden])) .view-buttons button {
+    border: 1px solid var(--color-black);
+}
+
 
 
 

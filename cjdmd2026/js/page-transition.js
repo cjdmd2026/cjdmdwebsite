@@ -640,6 +640,15 @@
             ""
         );
 
+        cover.setAttribute(
+            "stamp-sound",
+            ""
+        );
+        cover.setAttribute(
+            "stamp-sound-volume",
+            "0.7"
+        );
+
 
 
         /* --------------------------------
@@ -829,74 +838,60 @@
 
     function showPageContent() {
 
-
         /* ==============================
-           제목 Typewriter
+           Manual Typewriter 전부 검색
         ============================== */
 
-        const title =
-            document.querySelector(
-                '.title-section h1[typewriter-effect]'
+        const typewriters =
+            document.querySelectorAll(
+                '[typewriter-effect][typewriter-trigger="manual"]'
             );
 
 
-
-        /* ==============================
-           설명 Typewriter
-        ============================== */
-
-        const description =
-            document.querySelector(
-                '.slide-description [typewriter-effect]'
-            );
+        let typewriterIndex = 0;
 
 
+        typewriters.forEach(
+            el => {
 
-        /* --------------------------------
-           제목 타이핑
-        -------------------------------- */
-
-        if (
-            window.TypewriterEffect
-            &&
-            title
-        ) {
-
-            window.TypewriterEffect.play(
-                title
-            );
-
-        }
+                /*
+                 * display:none 등으로
+                 * 현재 화면에 보이지 않는 요소는 제외
+                 */
+                if (
+                    el.offsetParent === null
+                ) {
+                    return;
+                }
 
 
+                /*
+                 * TypewriterEffect가 없으면 제외
+                 */
+                if (
+                    !window.TypewriterEffect
+                ) {
+                    return;
+                }
 
-        /* --------------------------------
-           설명 타이핑
 
-           제목보다 조금 늦게 실행
-        -------------------------------- */
+                window.setTimeout(
+                    () => {
 
-        if (
-            window.TypewriterEffect
-            &&
-            description
-        ) {
+                        window.TypewriterEffect.play(
+                            el
+                        );
 
-            window.setTimeout(
+                    },
 
-                () => {
+                    typewriterIndex * 180
+                );
 
-                    window.TypewriterEffect.play(
-                        description
-                    );
 
-                },
+                typewriterIndex++;
 
-                180
-
-            );
-
-        }
+            }
+        );
 
 
 
@@ -910,20 +905,23 @@
             );
 
 
-
-        /*
-         * 각 요소마다 100ms 간격으로 등장
-         */
-
         enterElements.forEach(
-
             (
                 el,
                 index
             ) => {
 
-                window.setTimeout(
+                /*
+                 * 현재 화면에 보이지 않는 요소는 제외
+                 */
+                if (
+                    el.offsetParent === null
+                ) {
+                    return;
+                }
 
+
+                window.setTimeout(
                     () => {
 
                         el.classList.add(
@@ -934,14 +932,10 @@
 
                     100
                     +
-                    index
-                    *
-                    100
-
+                    index * 100
                 );
 
             }
-
         );
 
     }

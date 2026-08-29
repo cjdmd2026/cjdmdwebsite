@@ -14,6 +14,8 @@
  * stamp-speed="1"
  * stamp-density="1"
  * stamp-repeat
+ * stamp-sound
+ * stamp-sound-volume="0.7"
  *
  * =========================================================
  *
@@ -118,6 +120,687 @@
         "Verdana, 'Malgun Gothic', sans-serif"
 
     ];
+
+
+    /* =========================================================
+       Stamp Sound
+
+       핵심:
+       - 소리는 "별도 리듬"으로 재생하지 않음
+       - 실제 Stamp가 찍히는 정확한 animationDelay를 사용
+       - 너무 많은 소리가 겹치지 않도록 최대 재생 횟수 제한
+       - 첫 유 / 연 / 한 / 결 / 합은 항상 실제 Stamp와 함께 재생
+    ========================================================= */
+
+    const STAMP_SOUND_FILES = [
+        "stamp01.wav",
+        "stamp02.wav",
+        "stamp03.wav",
+        "stamp04.wav",
+        "stamp05.wav",
+        "stamp06.wav"
+    ];
+
+
+    const STAMP_SOUND_CONFIG = {
+
+        /*
+         * 유 / 연 / 한 / 결 / 합 볼륨
+         */
+        introVolume:
+            0.72,
+
+
+        /*
+         * 이후 일반 Stamp 볼륨
+         */
+        hitVolume:
+            0.40,
+
+
+        /*
+         * 한 번의 Stamp Effect에서
+         * 재생할 수 있는 최대 소리 횟수.
+         *
+         * 첫 5회(유연한결합)도 이 숫자에 포함.
+         */
+        maxSounds:
+            28,
+
+
+        /*
+         * 소리와 소리 사이 최소 간격.
+         *
+         * 시각 효과에는 영향을 주지 않고
+         * 오디오가 지나치게 겹치는 것만 방지.
+         */
+        minGapMs:
+            48,
+
+
+        /*
+         * 오디오 체감 지연 보정
+         *
+         * -30 = Stamp 화면 타이밍보다
+         * 사운드 예약을 30ms 먼저 걸어
+         * 실제로 들리는 타이밍을 맞춤
+         */
+        syncOffsetMs:
+            -30,
+
+
+        /*
+         * 같은 소리가 빠르게 겹칠 수 있도록
+         * 파일 하나당 Audio Voice 여러 개 준비.
+         */
+        voicesPerSound:
+            4
+
+    };
+
+
+    /*
+     * 이 JS 파일의 위치:
+     * /js/stamp-effect-transition.js
+     *
+     * 사운드 위치:
+     * /assets/sounds/stamp01.wav
+     * ...
+     * /assets/sounds/stamp06.wav
+     */
+    const stampScriptURL =
+        document.currentScript
+            ?
+            document.currentScript.src
+            :
+            "";
+
+
+    function resolveStampSoundURL(
+        fileName
+    ) {
+
+        if (
+            stampScriptURL
+        ) {
+
+            try {
+
+                return new URL(
+                    `../assets/sounds/${fileName}`,
+                    stampScriptURL
+                ).href;
+
+            }
+
+            catch (error) {
+                // fallback 사용
+            }
+
+        }
+
+
+        return `/assets/sounds/${fileName}`;
+
+    }
+
+
+    const stampSoundURLs =
+        STAMP_SOUND_FILES.map(
+            resolveStampSoundURL
+        );
+
+
+    /* =========================================================
+       Audio Pool
+    ========================================================= */
+
+    const stampSoundPools =
+        stampSoundURLs.map(
+            src => {
+
+                return Array.from(
+
+                    {
+                        length:
+                            STAMP_SOUND_CONFIG
+                                .voicesPerSound
+                    },
+
+                    () => {
+
+                        const audio =
+                            new Audio(src);
+
+
+                        audio.preload =
+                            "auto";
+
+
+                        return audio;
+
+                    }
+
+                );
+
+            }
+        );
+
+
+    const stampSoundVoiceIndexes =
+        new Array(
+            STAMP_SOUND_FILES.length
+        ).fill(0);
+
+
+    let lastStampSoundIndex =
+        -1;
+
+
+    let stampAudioWarned =
+        false;
+
+
+
+    /* =========================================================
+       실제 Stamp Sound 재생
+    ========================================================= */
+
+    function playStampSound(
+        volume = 1
+    ) {
+
+        if (
+            STAMP_SOUND_FILES.length === 0
+        ) {
+            return;
+        }
+
+
+        let soundIndex;
+
+
+        /*
+         * 같은 파일이 바로 두 번 연속 선택되는 것만 방지.
+         * 실제 Stamp 타이밍 자체는 전혀 변경하지 않음.
+         */
+        do {
+
+            soundIndex =
+                Math.floor(
+                    Math.random()
+                    *
+                    STAMP_SOUND_FILES.length
+                );
+
+        }
+        while (
+            STAMP_SOUND_FILES.length > 1
+            &&
+            soundIndex ===
+            lastStampSoundIndex
+        );
+
+
+        lastStampSoundIndex =
+            soundIndex;
+
+
+        const pool =
+            stampSoundPools[
+                soundIndex
+            ];
+
+
+        const voiceIndex =
+            stampSoundVoiceIndexes[
+                soundIndex
+            ];
+
+
+        const audio =
+            pool[
+                voiceIndex
+            ];
+
+
+        stampSoundVoiceIndexes[
+            soundIndex
+        ] =
+            (
+                voiceIndex
+                +
+                1
+            )
+            %
+            pool.length;
+
+
+        /*
+         * 아주 미세한 볼륨 편차만 적용.
+         * 타이밍에는 영향을 주지 않음.
+         */
+        const variation =
+            0.92
+            +
+            Math.random()
+            *
+            0.12;
+
+
+        audio.volume =
+            Math.min(
+                1,
+                Math.max(
+                    0,
+                    volume
+                    *
+                    variation
+                )
+            );
+
+
+        try {
+
+            audio.pause();
+            audio.currentTime = 0;
+
+        }
+
+        catch (error) {
+            // 무시
+        }
+
+
+        const promise =
+            audio.play();
+
+
+        if (
+            promise
+            &&
+            typeof promise.catch ===
+            "function"
+        ) {
+
+            promise.catch(
+                error => {
+
+                    if (
+                        !stampAudioWarned
+                    ) {
+
+                        stampAudioWarned =
+                            true;
+
+
+                        console.warn(
+                            "[StampEffect] Stamp 사운드를 재생하지 못했습니다. 경로 또는 브라우저 자동재생 정책을 확인해주세요.",
+                            error
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+
+    }
+
+
+
+    /* =========================================================
+       Sound Timer 정리
+    ========================================================= */
+
+    function clearStampSoundTimers(
+        state
+    ) {
+
+        if (
+            !state
+            ||
+            !Array.isArray(
+                state.soundTimeoutIds
+            )
+        ) {
+            return;
+        }
+
+
+        state.soundTimeoutIds
+            .forEach(
+                id => {
+
+                    window.clearTimeout(
+                        id
+                    );
+
+                }
+            );
+
+
+        state.soundTimeoutIds =
+            [];
+
+    }
+
+
+
+    /* =========================================================
+       실제 Stamp 시점에 Sound 예약
+    ========================================================= */
+
+    function scheduleStampSound(
+        state,
+        delayMs,
+        volume
+    ) {
+
+        const timeoutId =
+            window.setTimeout(
+
+                () => {
+
+                    const index =
+                        state.soundTimeoutIds
+                            .indexOf(
+                                timeoutId
+                            );
+
+
+                    if (
+                        index >= 0
+                    ) {
+
+                        state.soundTimeoutIds
+                            .splice(
+                                index,
+                                1
+                            );
+
+                    }
+
+
+                    playStampSound(
+                        volume
+                    );
+
+                },
+
+                Math.max(
+                    0,
+                    delayMs
+                )
+
+            );
+
+
+        state.soundTimeoutIds
+            .push(
+                timeoutId
+            );
+
+    }
+
+
+
+    /* =========================================================
+       Stamp와 1:1로 연결된 Sound Sequence
+
+       별도의 사운드 리듬을 만들지 않고,
+       선택된 "실제 Stamp"의 animationDelay를 그대로 사용.
+
+       단,
+       Stamp 수가 수백 개이므로 모든 Stamp에서 소리를 내지 않고
+       maxSounds / minGapMs 한도로 제한.
+    ========================================================= */
+
+    function scheduleStampSoundSequence({
+
+        state,
+        stamps,
+        options,
+        getDelay
+
+    }) {
+
+        if (
+            !options.sound
+            ||
+            !Array.isArray(stamps)
+            ||
+            stamps.length === 0
+        ) {
+            return;
+        }
+
+
+        clearStampSoundTimers(
+            state
+        );
+
+
+        const masterVolume =
+            options.soundVolume;
+
+
+        const introCount =
+            Math.min(
+                5,
+                stamps.length
+            );
+
+
+        let scheduledCount =
+            0;
+
+
+        let lastSoundTime =
+            -Infinity;
+
+
+
+        /* ---------------------------------------------------------
+           1. 유 → 연 → 한 → 결 → 합
+           실제 첫 5개 Stamp에 정확하게 연결
+        --------------------------------------------------------- */
+
+        for (
+            let i = 0;
+            i < introCount;
+            i++
+        ) {
+
+            if (
+                scheduledCount
+                >=
+                STAMP_SOUND_CONFIG
+                    .maxSounds
+            ) {
+                break;
+            }
+
+
+            const stamp =
+                stamps[i];
+
+
+            const soundTime =
+
+                options.delayMs
+
+                +
+
+                getDelay(
+                    stamp.delay
+                )
+                *
+                1000
+
+                +
+
+                STAMP_SOUND_CONFIG
+                    .syncOffsetMs;
+
+
+            scheduleStampSound(
+
+                state,
+
+                soundTime,
+
+                STAMP_SOUND_CONFIG
+                    .introVolume
+                *
+                masterVolume
+
+            );
+
+
+            scheduledCount++;
+
+            lastSoundTime =
+                soundTime;
+
+        }
+
+
+
+        /* ---------------------------------------------------------
+           2. 나머지 Stamp
+
+           전체 Stamp 구간에 골고루 분산시키기 위해
+           자동으로 몇 개의 Stamp마다 소리를 낼지 계산.
+
+           소리가 나는 순간은 무조건 실제 Stamp가 찍히는 순간.
+        --------------------------------------------------------- */
+
+        const remainingSoundLimit =
+            Math.max(
+                0,
+                STAMP_SOUND_CONFIG
+                    .maxSounds
+                -
+                scheduledCount
+            );
+
+
+        if (
+            remainingSoundLimit <= 0
+            ||
+            stamps.length <= introCount
+        ) {
+            return;
+        }
+
+
+        const remainingStampCount =
+            stamps.length
+            -
+            introCount;
+
+
+        /*
+         * Stamp가 많을수록 자동으로 더 띄엄띄엄 선택.
+         *
+         * 예:
+         * 남은 Stamp 180개 / 소리 23개
+         * → 대략 8개 Stamp마다 한 번.
+         */
+        const stampStep =
+            Math.max(
+                1,
+                Math.ceil(
+                    remainingStampCount
+                    /
+                    remainingSoundLimit
+                )
+            );
+
+
+        for (
+            let i = introCount;
+            i < stamps.length;
+            i += stampStep
+        ) {
+
+            if (
+                scheduledCount
+                >=
+                STAMP_SOUND_CONFIG
+                    .maxSounds
+            ) {
+                break;
+            }
+
+
+            const stamp =
+                stamps[i];
+
+
+            const soundTime =
+
+                options.delayMs
+
+                +
+
+                getDelay(
+                    stamp.delay
+                )
+                *
+                1000
+
+                +
+
+                STAMP_SOUND_CONFIG
+                    .syncOffsetMs;
+
+
+            /*
+             * 선택된 Stamp들이 너무 가까운 경우에는
+             * 오디오만 생략.
+             *
+             * 시각 Stamp에는 아무 영향 없음.
+             */
+            if (
+                soundTime
+                -
+                lastSoundTime
+                <
+                STAMP_SOUND_CONFIG
+                    .minGapMs
+            ) {
+
+                continue;
+
+            }
+
+
+            scheduleStampSound(
+
+                state,
+
+                soundTime,
+
+                STAMP_SOUND_CONFIG
+                    .hitVolume
+                *
+                masterVolume
+
+            );
+
+
+            scheduledCount++;
+
+            lastSoundTime =
+                soundTime;
+
+        }
+
+    }
+
 
 
 
@@ -347,7 +1030,14 @@
                 0,
 
             sizeObserver:
-                null
+                null,
+
+
+            /*
+             * Stamp Sound 예약 Timer
+             */
+            soundTimeoutIds:
+                []
 
         };
 
@@ -651,6 +1341,30 @@
 
                 el.hasAttribute(
                     "stamp-repeat"
+                ),
+
+
+            /*
+             * Stamp Sound 사용 여부
+             */
+            sound:
+
+                el.hasAttribute(
+                    "stamp-sound"
+                ),
+
+
+            /*
+             * 전체 Stamp Sound 볼륨
+             */
+            soundVolume:
+
+                numberAttr(
+                    el,
+                    "stamp-sound-volume",
+                    1,
+                    0,
+                    1
                 )
 
         };
@@ -1007,7 +1721,11 @@
 
         const ctx =
             canvas.getContext(
-                "2d"
+                "2d",
+                {
+                    willReadFrequently:
+                        true
+                }
             );
 
 
@@ -1899,6 +2617,15 @@
         reveal = true
     ) {
 
+        /*
+         * Stamp가 취소 / Reset / 완료되면
+         * 남아있는 Sound 예약도 모두 취소
+         */
+        clearStampSoundTimers(
+            state
+        );
+
+
         if (
             state.timeoutId
         ) {
@@ -2703,6 +3430,28 @@
             );
 
         }
+
+
+
+        /* =====================================================
+           Stamp Sound
+
+           화면의 Stamp와 동일한 getAcceleratedDelay()를 사용.
+           즉, 선택된 실제 Stamp가 찍히는 순간에만 소리가 재생됨.
+        ========================================================= */
+
+        scheduleStampSoundSequence({
+
+            state,
+
+            stamps,
+
+            options,
+
+            getDelay:
+                getAcceleratedDelay
+
+        });
 
 
 

@@ -3,6 +3,13 @@
 
     const SELECTOR = '[typewriter-effect]';
 
+    /*
+     * 요소별 현재 실행 중인 타이머 저장
+     * replay / cancel 시 이전 타이핑 중지용
+     */
+    const typingTimers =
+        new WeakMap();
+
 
     /* =========================
        스타일
@@ -32,27 +39,24 @@
         ========================= */
 
         .typewriter-cursor {
+            width: 1px;
+            height: 0.9em;
+
             display: inline-block;
 
-            width: 2px;
-            height: 0.95em;
+            margin-left: 0.06em;
 
-            margin-left: 0.08em;
+            background-color: #111;
 
-            background-color: currentColor;
+            vertical-align: -0.06em;
 
-            vertical-align: -0.08em;
-
-            opacity: 0.5;
-
-            box-shadow:
-                0 0 4px currentColor;
+            opacity: 0.3;
 
             animation:
-                typewriter-cursor-blink
-                0.75s
-                steps(1, end)
-                infinite;
+            typewriter-cursor-blink
+            0.9s
+            steps(1, end)
+            infinite;
         }
 
 
@@ -60,7 +64,7 @@
 
             0%,
             45% {
-                opacity: 0.55;
+                opacity: 0.4;
             }
 
             46%,
@@ -293,10 +297,19 @@
                         Node.TEXT_NODE
                     ) {
 
+                        /*
+                        * HTML 들여쓰기 / 줄바꿈처럼
+                        * 화면에 의미 없는 공백만 있는 Text Node는 무시
+                        */
+                        if (
+                            node.textContent.trim() === ''
+                        ) {
+                            return;
+                        }
+
+
                         const textNode =
-                            document.createTextNode(
-                                ''
-                            );
+                            document.createTextNode('');
 
 
                         target.appendChild(
@@ -304,24 +317,32 @@
                         );
 
 
+                        /*
+                        * 연속된 공백과 줄바꿈은
+                        * 일반 공백 하나로 정리
+                        */
+                        const text =
+                            node.textContent
+                                .replace(/\s+/g, ' ')
+                                .trim();
+
+
                         for (
                             const char
-                            of node.textContent
+                            of text
                         ) {
 
-                            tasks.push(
-                                () => {
+                            tasks.push(() => {
 
-                                    textNode.textContent +=
-                                        char;
+                                textNode.textContent +=
+                                    char;
 
 
-                                    moveCursorAfter(
-                                        textNode
-                                    );
+                                moveCursorAfter(
+                                    textNode
+                                );
 
-                                }
-                            );
+                            });
 
                         }
 
@@ -466,6 +487,12 @@
 
 
 
+                /* 저장된 타이머 정리 */
+                typingTimers.delete(
+                    el
+                );
+
+
                 /* 완료 이벤트 */
 
                 el.dispatchEvent(
@@ -493,9 +520,16 @@
 
 
 
-            setTimeout(
-                type,
-                speed
+            const timer =
+                window.setTimeout(
+                    type,
+                    speed
+                );
+
+
+            typingTimers.set(
+                el,
+                timer
             );
 
         }
@@ -506,9 +540,16 @@
            Delay 후 시작
         ========================= */
 
-        setTimeout(
-            type,
-            delay
+        const timer =
+            window.setTimeout(
+                type,
+                delay
+            );
+
+
+        typingTimers.set(
+            el,
+            timer
         );
 
     }
@@ -571,6 +612,7 @@
 
     window.TypewriterEffect = {
 
+        /* 기본 실행 */
         play(
             el
         ) {
@@ -578,6 +620,86 @@
             if (!el) {
                 return;
             }
+
+
+            playTypewriter(
+                el
+            );
+
+        },
+
+
+        /* 현재 타이핑 중지 */
+        cancel(
+            el
+        ) {
+
+            if (!el) {
+                return;
+            }
+
+
+            const timer =
+                typingTimers.get(
+                    el
+                );
+
+
+            if (timer) {
+
+                window.clearTimeout(
+                    timer
+                );
+
+                typingTimers.delete(
+                    el
+                );
+
+            }
+
+
+            const cursor =
+                el.querySelector(
+                    '.typewriter-cursor'
+                );
+
+
+            if (cursor) {
+
+                cursor.remove();
+
+            }
+
+
+            el.dataset.typing =
+                'false';
+
+
+            el.dataset.typed =
+                'false';
+
+
+            el.classList.remove(
+                'is-typing',
+                'is-typed'
+            );
+
+        },
+
+
+        /* 처음부터 다시 실행 */
+        replay(
+            el
+        ) {
+
+            if (!el) {
+                return;
+            }
+
+
+            this.cancel(
+                el
+            );
 
 
             playTypewriter(

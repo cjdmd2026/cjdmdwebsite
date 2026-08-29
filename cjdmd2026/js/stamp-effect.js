@@ -14,6 +14,8 @@
  * stamp-speed="1"
  * stamp-density="1"
  * stamp-repeat
+ * stamp-sound
+ * stamp-sound-volume="1"
  *
  * =========================================================
  *
@@ -118,6 +120,231 @@
         "Verdana, 'Malgun Gothic', sans-serif"
 
     ];
+
+
+
+    /* =========================================================
+       Stamp Sound
+
+       - 처음 유 / 연 / 한 / 결 / 합은 각 글자 타이밍에 맞춰 재생
+       - 이후 구간은 모든 도장에 소리를 붙이지 않고
+         점점 짧아지는 간격으로 샘플링해서 재생
+       - 6개 파일을 랜덤 사용하며 같은 파일 연속 재생 방지
+    ========================================================= */
+
+    const currentScriptUrl =
+        document.currentScript?.src
+        ||
+        window.location.href;
+
+
+    const STAMP_SOUND_BASE_URL =
+        new URL(
+            "../assets/sounds/stamp/",
+            currentScriptUrl
+        );
+
+
+    /*
+     * 실제 파일명을 다르게 사용한다면
+     * 아래 6개 이름만 변경하면 됨.
+     */
+    const STAMP_SOUND_FILES = [
+
+        "../assets/sounds/stamp01.wav",
+        "../assets/sounds/stamp02.wav",
+        "../assets/sounds/stamp03.wav",
+        "../assets/sounds/stamp04.wav",
+        "../assets/sounds/stamp05.wav",
+        "../assets/sounds/stamp06.wav"
+
+    ].map(
+        file =>
+            new URL(
+                file,
+                STAMP_SOUND_BASE_URL
+            ).href
+    );
+
+
+    const STAMP_SOUND_CONFIG = {
+
+        /* 유 / 연 / 한 / 결 / 합 */
+        introVolume:
+            0.46,
+
+        /* 후반 연속 도장 */
+        burstVolume:
+            0.28,
+
+        /* 전체 진행도의 이 지점부터 연속 사운드 시작 */
+        burstStartProgress:
+            0.30,
+
+        /* 연속 구간 초반 최소 간격(ms) */
+        burstStartGap:
+            125,
+
+        /* 연속 구간 마지막 최소 간격(ms) */
+        burstEndGap:
+            42,
+
+        /* 한 파일이 겹쳐 재생될 수 있도록 Voice 확보 */
+        voicesPerSound:
+            4
+
+    };
+
+
+    const stampSoundPools =
+        STAMP_SOUND_FILES.map(
+            src =>
+                Array.from(
+                    {
+                        length:
+                            STAMP_SOUND_CONFIG
+                                .voicesPerSound
+                    },
+                    () => {
+
+                        const audio =
+                            new Audio(src);
+
+                        audio.preload =
+                            "auto";
+
+                        return audio;
+                    }
+                )
+        );
+
+
+    const stampSoundVoiceIndexes =
+        new Array(
+            STAMP_SOUND_FILES.length
+        ).fill(0);
+
+
+    let lastStampSoundIndex =
+        -1;
+
+
+    function playStampSound(
+        volume = 1
+    ) {
+
+        if (
+            STAMP_SOUND_FILES.length === 0
+        ) {
+            return;
+        }
+
+
+        let soundIndex;
+
+
+        do {
+
+            soundIndex =
+                Math.floor(
+                    Math.random()
+                    *
+                    STAMP_SOUND_FILES.length
+                );
+
+        }
+        while (
+            STAMP_SOUND_FILES.length > 1
+            &&
+            soundIndex === lastStampSoundIndex
+        );
+
+
+        lastStampSoundIndex =
+            soundIndex;
+
+
+        const pool =
+            stampSoundPools[
+                soundIndex
+            ];
+
+
+        const voiceIndex =
+            stampSoundVoiceIndexes[
+                soundIndex
+            ];
+
+
+        const audio =
+            pool[
+                voiceIndex
+            ];
+
+
+        stampSoundVoiceIndexes[
+            soundIndex
+        ] =
+            (
+                voiceIndex + 1
+            )
+            %
+            pool.length;
+
+
+        const volumeVariation =
+            0.88
+            +
+            Math.random()
+            *
+            0.18;
+
+
+        audio.volume =
+            Math.min(
+                1,
+                Math.max(
+                    0,
+                    volume
+                    *
+                    volumeVariation
+                )
+            );
+
+
+        try {
+
+            audio.pause();
+            audio.currentTime =
+                0;
+
+        }
+        catch (error) {
+            // currentTime 변경 불가 환경은 무시
+        }
+
+
+        const playPromise =
+            audio.play();
+
+
+        if (
+            playPromise
+            &&
+            typeof playPromise.catch ===
+            "function"
+        ) {
+
+            playPromise.catch(
+                () => {
+                    /*
+                     * 브라우저 자동재생 정책 등으로
+                     * 거절되면 애니메이션은 그대로 유지
+                     */
+                }
+            );
+        }
+    }
 
 
 
@@ -342,7 +569,11 @@
                 0,
 
             sizeObserver:
-                null
+                null,
+
+            /* Stamp Sound 예약 Timer */
+            soundTimeoutIds:
+                []
 
         };
 
@@ -646,6 +877,27 @@
 
                 el.hasAttribute(
                     "stamp-repeat"
+                ),
+
+
+            /*
+             * stamp-sound 속성이 있을 때만 사용
+             */
+            sound:
+
+                el.hasAttribute(
+                    "stamp-sound"
+                ),
+
+
+            soundVolume:
+
+                numberAttr(
+                    el,
+                    "stamp-sound-volume",
+                    1,
+                    0,
+                    1
                 )
 
         };
@@ -1316,7 +1568,7 @@
                         0.012
                     ),
 
-                    0.045,
+                    0.01,
 
                     char,
 
@@ -1816,6 +2068,274 @@
 
 
     /* =========================================================
+       Stamp Sound Timer 정리
+    ========================================================= */
+
+    function clearStampSoundTimers(
+        state
+    ) {
+
+        if (
+            !state
+            ||
+            !Array.isArray(
+                state.soundTimeoutIds
+            )
+        ) {
+            return;
+        }
+
+
+        state.soundTimeoutIds
+            .forEach(
+                id => {
+
+                    window.clearTimeout(
+                        id
+                    );
+                }
+            );
+
+
+        state.soundTimeoutIds =
+            [];
+    }
+
+
+
+    /* =========================================================
+       Stamp Sound 예약
+    ========================================================= */
+
+    function scheduleStampSound(
+        state,
+        delayMs,
+        volume
+    ) {
+
+        const timeoutId =
+            window.setTimeout(
+                () => {
+
+                    playStampSound(
+                        volume
+                    );
+                },
+                Math.max(
+                    0,
+                    delayMs
+                )
+            );
+
+
+        state.soundTimeoutIds.push(
+            timeoutId
+        );
+    }
+
+
+
+    /* =========================================================
+       Stamp Sound Sequence
+    ========================================================= */
+
+    function scheduleStampSoundSequence({
+
+        state,
+        stamps,
+        endTime,
+        options,
+        getDelay
+
+    }) {
+
+        if (
+            !options.sound
+            ||
+            stamps.length === 0
+        ) {
+            return;
+        }
+
+
+        clearStampSoundTimers(
+            state
+        );
+
+
+        const masterVolume =
+            options.soundVolume;
+
+
+        /* =====================================================
+           1. 유 → 연 → 한 → 결 → 합
+        ========================================================= */
+
+        const introCount =
+            Math.min(
+                5,
+                stamps.length
+            );
+
+
+        for (
+            let i = 0;
+            i < introCount;
+            i++
+        ) {
+
+            const stamp =
+                stamps[i];
+
+
+            const delayMs =
+                options.delayMs
+                +
+                getDelay(
+                    stamp.delay
+                )
+                *
+                1000;
+
+
+            scheduleStampSound(
+                state,
+                delayMs,
+                STAMP_SOUND_CONFIG
+                    .introVolume
+                *
+                masterVolume
+            );
+        }
+
+
+        /* =====================================================
+           2. 후반 연속 Stamp
+
+           모든 도장마다 소리를 내지 않고
+           뒤로 갈수록 간격을 좁혀
+           탕 - 탕 - 타 - 타타타타 느낌으로 재생
+        ========================================================= */
+
+        let nextSoundTime =
+            -Infinity;
+
+
+        for (
+            let i = introCount;
+            i < stamps.length;
+            i++
+        ) {
+
+            const stamp =
+                stamps[i];
+
+
+            const progress =
+                endTime > 0
+                    ?
+                    Math.min(
+                        1,
+                        Math.max(
+                            0,
+                            stamp.delay
+                            /
+                            endTime
+                        )
+                    )
+                    :
+                    1;
+
+
+            if (
+                progress
+                <
+                STAMP_SOUND_CONFIG
+                    .burstStartProgress
+            ) {
+                continue;
+            }
+
+
+            const burstProgress =
+                Math.min(
+                    1,
+                    Math.max(
+                        0,
+                        (
+                            progress
+                            -
+                            STAMP_SOUND_CONFIG
+                                .burstStartProgress
+                        )
+                        /
+                        (
+                            1
+                            -
+                            STAMP_SOUND_CONFIG
+                                .burstStartProgress
+                        )
+                    )
+                );
+
+
+            const gap =
+                STAMP_SOUND_CONFIG
+                    .burstStartGap
+                +
+                (
+                    STAMP_SOUND_CONFIG
+                        .burstEndGap
+                    -
+                    STAMP_SOUND_CONFIG
+                        .burstStartGap
+                )
+                *
+                Math.pow(
+                    burstProgress,
+                    1.35
+                );
+
+
+            const soundTime =
+                options.delayMs
+                +
+                getDelay(
+                    stamp.delay
+                )
+                *
+                1000;
+
+
+            if (
+                soundTime
+                <
+                nextSoundTime
+            ) {
+                continue;
+            }
+
+
+            scheduleStampSound(
+                state,
+                soundTime,
+                STAMP_SOUND_CONFIG
+                    .burstVolume
+                *
+                masterVolume
+            );
+
+
+            nextSoundTime =
+                soundTime
+                +
+                gap;
+        }
+    }
+
+
+
+    /* =========================================================
        완료
     ========================================================= */
 
@@ -1881,6 +2401,12 @@
         state,
         reveal = true
     ) {
+
+        /* 예약되어 있던 Stamp Sound도 함께 정리 */
+        clearStampSoundTimers(
+            state
+        );
+
 
         if (
             state.timeoutId
@@ -2667,6 +3193,27 @@
             );
 
         }
+
+
+
+        /* =====================================================
+           Stamp Sound
+
+           시각 Stamp와 같은 가속 Delay 계산을 사용하기 때문에
+           유 / 연 / 한 / 결 / 합 및 후반 연속 타격이
+           화면 애니메이션 타이밍과 맞춰짐.
+        ========================================================= */
+
+        scheduleStampSoundSequence({
+
+            state,
+            stamps,
+            endTime,
+            options,
+            getDelay:
+                getAcceleratedDelay
+
+        });
 
 
 

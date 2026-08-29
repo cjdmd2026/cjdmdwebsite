@@ -101,6 +101,15 @@ img {
   display: none !important;
 }
 
+[typewriter-effect] {
+    visibility: hidden;
+}
+
+[typewriter-effect].is-typing,
+[typewriter-effect].is-typed {
+    visibility: visible;
+}
+
 /* ============================== Header ============================== */
 
 .header {
@@ -176,7 +185,9 @@ img {
 
 .main .container p {
     font-size: 0.875rem;
-    font-weight: 300;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+
     margin: 0 auto;
 
     color: var(--color-gray-500);
