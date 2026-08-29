@@ -11,6 +11,7 @@
     --color-gray-100: #ddd;
     --color-gray-300: #bbb;
     --color-gray-500: #999;
+    --color-gray-800: #444444;
     --color-accent: #ff6f61;
     --gradient-color: linear-gradient(0deg, 
     rgba(17,17,17,0.9) 0%, 
@@ -39,6 +40,7 @@
     --color-gray-100: #f5f5f5;
     --color-gray-300: #eeeeee;
     --color-gray-500: #dddddd;
+    --color-gray-800: #999999;
     --color-accent: #ff6f61;
     --gradient-color: linear-gradient(0deg, 
     rgba(255,255,255,0.9) 0%,
@@ -196,6 +198,8 @@ img {
 .container .title-section h1 {
     font-size: 3rem;
     font-weight: 700;
+
+    letter-spacing: -0..02em;
 }
 
 .container .title-section .search-bar {
@@ -211,6 +215,7 @@ img {
     transform: translateY(-50%);
 
     width: 1.5rem;
+    z-index: 5;
 }
 
 .container .title-section input {
@@ -219,8 +224,12 @@ img {
     border: 1px solid var(--color-gray-500);
     border-radius: 999px;
 
-    background-color: rgba(255, 255, 255, 0.01);
+    /*background-color: rgba(255, 255, 255, 0.01);*/
     color: var(--color-white);
+
+    background: rgba(255, 255, 255, 0.36);
+    backdrop-filter: blur(11.9px);
+    -webkit-backdrop-filter: blur(11.9px);
 
     font-size: 1rem;
     font-family: inherit;
@@ -234,58 +243,6 @@ img {
 .container .title-section input:focus {
     border-color: var(--color-white);
     outline: none;
-}
-
-.container .grid-view {
-    display: grid;
-    grid-template-columns: 140px 1fr;
-    gap: 30px;
-
-    margin-top: 5rem;
-    margin-bottom: 5rem;
-}
-
-.container .grid-view .filter {
-    display: flex;
-    align-items: start;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.container .grid-view .filter button {
-    font-size: 0.875rem;
-    font-weight: 500;
-
-    color: var(--color-white);
-}
-
-.container .grid-view .filter .filter-reset {
-    display: flex;
-    align-items: center;
-
-    border: 1px solid var(--color-white);
-    border-radius: 999px;
-
-    padding: 0 1rem 0 0rem;
-    opacity: 0.5;
-
-    margin-top: 2rem;
-}
-
-.container .grid-view .content {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-
-    column-gap: 30px;
-    row-gap: 55px;
-}
-
-.container .grid-view .content .card {
-    width: 100%;
-    aspect-ratio: 384 / 515;
-    background-color: var(--color-gray-500);
-
-    border-radius: 10px;
 }
 
 /*
@@ -402,13 +359,16 @@ img {
     display: flex;
 
     line-height: 1;
+    font-size: 4rem;
+    font-weight: 800;
 }
 
 .worker {
-    font-size: 1.25rem;
-    font-weight: 400;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
     color: var(--color-white);
-    line-height: 1.4;
+    line-height: 2;
 
     display: none;
 }
@@ -432,8 +392,9 @@ img {
 
     margin-bottom: 5rem;
 
-    font-size: 0.875rem;
-    font-weight: 300;
+    font-size: 1.25rem;
+    font-weight: 400;
+    letter-spacing: -0.02em;
 }
 
 .container:has(#slideview:not([hidden])) .title-section input {
@@ -518,6 +479,10 @@ body:has(#slideview:not([hidden])) .footer {
     border: 1px solid var(--color-gray-500);
     border-radius: 999px;
 
+    background: rgba(255, 255, 255, 0.36);
+    backdrop-filter: blur(11.9px);
+    -webkit-backdrop-filter: blur(11.9px);
+
     padding: 0.1rem;
 
     cursor: pointer;
@@ -527,7 +492,392 @@ body:has(#slideview:not([hidden])) .footer {
     border: 1px solid var(--color-black);
 }
 
+/* ============================== grid view ============================== */
 
+.container .grid-view {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 30px;
+
+    margin-top: 5rem;
+    margin-bottom: 5rem;
+}
+
+.container .grid-view .filter {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+
+    gap: 0.5rem;
+
+    position: sticky;
+    top: 10rem;
+
+    align-self: start;
+}
+
+.container .grid-view .filter button {
+    position: relative;
+
+    z-index: 2;
+
+    font-size: 0.875rem;
+    font-weight: 500;
+
+    color: var(--color-white);
+
+    padding: 0.45rem 0.8rem;
+
+    border-radius: 999px;
+
+    opacity: 0.45;
+
+    transition:
+        opacity 0.3s ease,
+        color 0.3s ease;
+}
+
+.container .grid-view .filter button[aria-pressed="true"] {
+    opacity: 1;
+
+    color: var(--color-black);
+}
+
+.container .grid-view .filter .filter-indicator {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 0;
+    height: 0;
+
+    z-index: 1;
+
+    pointer-events: none;
+
+    transition:
+        top 0.52s cubic-bezier(0.22, 1, 0.36, 1),
+        width 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        height 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+
+    will-change:
+        top,
+        width,
+        height;
+}
+
+.container .grid-view .filter .filter-indicator-shape {
+    position: absolute;
+
+    inset: 0;
+
+    display: block;
+
+    background-color: #111;
+
+    border-radius: 999px;
+
+    transform-origin: center;
+}   
+
+.container .grid-view .filter .filter-reset {
+    display: flex;
+    align-items: center;
+
+    border: 1px solid var(--color-white);
+    border-radius: 999px;
+
+    opacity: 0.5;
+
+    margin-top: 0.5rem;
+
+    padding: 0;
+    font-size: 0rem;
+    scale: 0.8;
+    transition: 0.25s;
+}
+
+.container .grid-view .filter .filter-reset:hover{
+    padding: 0 1rem 0 0rem;
+    font-size: 0.875rem;
+    scale: 1;
+
+    transition: 0.25s;
+}
+
+.container .grid-view .content {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    column-gap: 30px;
+    row-gap: 55px;
+}
+
+.container .grid-view .content .card {
+    position: relative;
+
+    width: 100%;
+    aspect-ratio: 384 / 515;
+
+    overflow: hidden;
+
+    background-color: var(--color-black);
+    color: var(--color-white);
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+        border-radius 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* ==============================
+   카드 이미지
+============================== */
+
+.container .grid-view .content .card .card-image {
+    position: absolute;
+
+    inset: 0;
+
+    background-color: var(--color-gray-500);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+
+    border-radius: inherit;
+
+    /* 이미지가 텍스트보다 앞 */
+    z-index: 3;
+
+    transition:
+        top 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+        left 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+        right 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+        bottom 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+        border-radius 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* ==============================
+   카드 정보
+============================== */
+
+.container .grid-view .content .card .card-info {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    padding: 1.25rem;
+
+    z-index: 2;
+
+    pointer-events: none;
+}
+
+
+.container .grid-view .content .card .card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 0.75rem;
+
+    margin-bottom: 1.25rem;
+}
+
+
+.container .grid-view .content .card .card-category {
+    flex: 0 0 auto;
+
+    padding: 0.35rem 0.65rem;
+
+    /*border: 1px solid var(--color-white);*/
+    border-radius: 999px;
+
+    font-size: 0.6875rem;
+    font-weight: 500;
+    line-height: 1.2;
+
+    color: var(--color-black);
+    background-color: var(--color-white);
+}
+
+
+.container .grid-view .content .card .card-members {
+    min-width: 0;
+    max-width: 68%;
+
+    overflow: hidden;
+
+    font-size: 0.6875rem;
+    font-weight: 400;
+
+    color: var(--color-gray-500);
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+.container .grid-view .content .card .card-title {
+    margin: 0 0 0.5rem;
+
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.15;
+
+    color: var(--color-white);
+}
+
+
+.container .grid-view .content .card .card-description {
+    max-width: 95%;
+
+    margin: 0;
+
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+
+    color: var(--color-gray-800);
+}
+
+
+/* ==============================
+   텍스트 애니메이션 기본 상태
+============================== */
+
+/* Category - Scale */
+.container .grid-view .content .card .card-category {
+    opacity: 0;
+
+    transform: scale(0.65);
+    transform-origin: left center;
+
+    transition:
+        opacity 0.22s ease,
+        transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* Members - 왼쪽에서 오른쪽 */
+.container .grid-view .content .card .card-members {
+    opacity: 0;
+
+    transform: translateX(-1.2rem);
+
+    transition:
+        opacity 0.28s ease,
+        transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* Title */
+.container .grid-view .content .card .card-title {
+    opacity: 0;
+
+    transform: translateY(0.65rem);
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* Description */
+.container .grid-view .content .card .card-description {
+    opacity: 0;
+
+    transform: translateY(0.65rem);
+
+    transition:
+        opacity 0.32s ease,
+        transform 0.44s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* ==============================
+   Hover
+============================== */
+
+.container .grid-view .content .card:hover {
+    transform: translateY(-0.35rem);
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 1.5rem 3rem
+        rgba(0, 0, 0, 0.12);
+}
+
+
+/* 이미지 먼저 축소 */
+.container .grid-view .content .card:hover .card-image {
+    top: 48%;
+
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+
+    border-radius: 12px;
+}
+
+
+/* 1. Category */
+.container .grid-view .content .card:hover .card-category {
+    opacity: 1;
+
+    transform: scale(1);
+
+    transition-delay: 0.50s;
+}
+
+
+/* 2. Members */
+.container .grid-view .content .card:hover .card-members {
+    opacity: 1;
+
+    transform: translateX(0);
+
+    transition-delay: 0.66s;
+}
+
+
+/* 3. Title */
+.container .grid-view .content .card:hover .card-title {
+    opacity: 1;
+
+    transform: translateY(0);
+
+    transition-delay: 0.86s;
+}
+
+
+/* 4. Description */
+.container .grid-view .content .card:hover .card-description {
+    opacity: 1;
+
+    transform: translateY(0);
+
+    transition-delay: 0.98s;
+}
+
+
+/* Hover 해제 시 바로 사라지게 */
+.container .grid-view .content .card:not(:hover) .card-category,
+.container .grid-view .content .card:not(:hover) .card-members,
+.container .grid-view .content .card:not(:hover) .card-title,
+.container .grid-view .content .card:not(:hover) .card-description {
+    transition-delay: 0s;
+}
 
 
 /* ============================== Footer ============================== */

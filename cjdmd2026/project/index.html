@@ -16,6 +16,7 @@
     <script src="../js/typewriter-effect.js" defer></script>
     <script src="../js/project-data.js" defer></script>
     <script src="../js/project.js" defer></script>
+    <script src="../js/project-filter.js" defer></script>
     <script src="../js/page-transition.js" defer></script>
     <!-- <script src="../js/stamp-effect.js" defer></script> -->
      
@@ -79,70 +80,234 @@
             <!-- 그리드 뷰 -->
             <div id="gridview" class="grid-view" hidden>
                 <div class="filter">
-                    <button type="button" aria-pressed="false" data-filter="all">all</button>
+                    <span class="filter-indicator"><span class="filter-indicator-shape"></span></span>
+                    <button type="button" aria-pressed="true" data-filter="all">all</button>
                     <button type="button" aria-pressed="false" data-filter="health">건강</button>
                     <button type="button" aria-pressed="false" data-filter="education">교육</button>
                     <button type="button" aria-pressed="false" data-filter="environment">환경</button>
                     <button type="button" aria-pressed="false" data-filter="culture">문화</button>
                     <button type="button" aria-pressed="false" data-filter="leisure">여가</button>
                     <button type="button" aria-pressed="false" data-filter="welfare">복지</button>
-                    <button type="button" aria-pressed="false" data-filter="XR">생활</button>
+                    <button type="button" aria-pressed="false" data-filter="life">생활</button>
                     <button type="button" class="filter-reset"> <img class="icon" src="../assets/images/icons/cancel-icon.svg" alt="Reset">선택 초기화</button>
                 </div>
                 <div class="content">
-                    <div class="card"  style="background-image: url('https://picsum.photos/seed/2/800/600');"></div>
-                    <div class="card"  style="background-image: url('https://picsum.photos/seed/3/800/600');"></div>
-                    <div class="card"  style="background-image: url('https://picsum.photos/seed/4/800/600');"></div>
-                    <div class="card"  style="background-image: url('https://picsum.photos/seed/5/800/600');"></div>
-                    <div class="card"  style="background-image: url('https://picsum.photos/seed/6/800/600');"></div>
-                    <div class="card"  style="background-image: url('https://picsum.photos/seed/7/800/600');"></div>
-                    <div class="card"  style="background-image: url('https://picsum.photos/seed/8/800/600');"></div>
-                    <div class="card"  style="background-image: url('https://picsum.photos/seed/9/800/600');"></div>
-                    <div class="card"  style="background-image: url('https://picsum.photos/seed/10/800/600');"></div>
-                    <div class="card"  style="background-image: url('https://picsum.photos/seed/11/800/600');"></div>
-                    <div class="card"  style="background-image: url('https://picsum.photos/seed/12/800/600');"></div>
-                    <div class="card"  style="background-image: url('https://picsum.photos/seed/13/800/600');"></div>
-                    <div class="card"  style="background-image: url('https://picsum.photos/seed/14/800/600');"></div>
-                    <div class="card"  style="background-image: url('https://picsum.photos/seed/15/800/600');"></div>
-                    <div class="card"  style="background-image: url('https://picsum.photos/seed/16/800/600');"></div>
+                    <div class="card" data-project-id="dadeullim">
+                        <div class="card-info">
+                            <div class="card-meta">
+                                <span class="card-category"></span>
+                                <span class="card-members"></span>
+                            </div>
+
+                            <h2 class="card-title"></h2>
+                            <p class="card-description"></p>
+                        </div>
+
+                        <div class="card-image"></div>
+                    </div>
+                    <div class="card" data-project-id="magmoa">
+                        <div class="card-info">
+                            <div class="card-meta">
+                                <span class="card-category"></span>
+                                <span class="card-members"></span>
+                            </div>
+
+                            <h2 class="card-title"></h2>
+                            <p class="card-description"></p>
+                        </div>
+
+                        <div class="card-image"></div>
+                    </div>
+                    <div class="card" data-project-id="apuchika">
+                        <div class="card-info">
+                            <div class="card-meta">
+                                <span class="card-category"></span>
+                                <span class="card-members"></span>
+                            </div>
+
+                            <h2 class="card-title"></h2>
+                            <p class="card-description"></p>
+                        </div>
+
+                        <div class="card-image"></div>
+                    </div>
+                    <div class="card" data-project-id="ilkko">
+                        <div class="card-info">
+                            <div class="card-meta">
+                                <span class="card-category"></span>
+                                <span class="card-members"></span>
+                            </div>
+
+                            <h2 class="card-title"></h2>
+                            <p class="card-description"></p>
+                        </div>
+
+                        <div class="card-image"></div>
+                    </div>
+                    <div class="card" data-project-id="jikji">
+                        <div class="card-info">
+                            <div class="card-meta">
+                                <span class="card-category"></span>
+                                <span class="card-members"></span>
+                            </div>
+
+                            <h2 class="card-title"></h2>
+                            <p class="card-description"></p>
+                        </div>
+
+                        <div class="card-image"></div>
+                    </div>
+                    <div class="card" data-project-id="cheoma">
+                        <div class="card-info">
+                            <div class="card-meta">
+                                <span class="card-category"></span>
+                                <span class="card-members"></span>
+                            </div>
+
+                            <h2 class="card-title"></h2>
+                            <p class="card-description"></p>
+                        </div>
+
+                        <div class="card-image"></div>
+                    </div>
+                    <div class="card" data-project-id="kokorang">
+                        <div class="card-info">
+                            <div class="card-meta">
+                                <span class="card-category"></span>
+                                <span class="card-members"></span>
+                            </div>
+
+                            <h2 class="card-title"></h2>
+                            <p class="card-description"></p>
+                        </div>
+
+                        <div class="card-image"></div>
+                    </div>
+                    <div class="card" data-project-id="phishing-ddook">
+                        <div class="card-info">
+                            <div class="card-meta">
+                                <span class="card-category"></span>
+                                <span class="card-members"></span>
+                            </div>
+
+                            <h2 class="card-title"></h2>
+                            <p class="card-description"></p>
+                        </div>
+
+                        <div class="card-image"></div>
+                    </div>
+                    <div class="card" data-project-id="curo">
+                        <div class="card-info">
+                            <div class="card-meta">
+                                <span class="card-category"></span>
+                                <span class="card-members"></span>
+                            </div>
+
+                            <h2 class="card-title"></h2>
+                            <p class="card-description"></p>
+                        </div>
+
+                        <div class="card-image"></div>
+                    </div>
+                    <div class="card" data-project-id="efact">
+                        <div class="card-info">
+                            <div class="card-meta">
+                                <span class="card-category"></span>
+                                <span class="card-members"></span>
+                            </div>
+
+                            <h2 class="card-title"></h2>
+                            <p class="card-description"></p>
+                        </div>
+
+                        <div class="card-image"></div>
+                    </div>
+                    <div class="card" data-project-id="none">
+                        <div class="card-info">
+                            <div class="card-meta">
+                                <span class="card-category"></span>
+                                <span class="card-members"></span>
+                            </div>
+
+                            <h2 class="card-title"></h2>
+                            <p class="card-description"></p>
+                        </div>
+
+                        <div class="card-image"></div>
+                    </div>
+                    <div class="card" data-project-id="omix">
+                        <div class="card-info">
+                            <div class="card-meta">
+                                <span class="card-category"></span>
+                                <span class="card-members"></span>
+                            </div>
+
+                            <h2 class="card-title"></h2>
+                            <p class="card-description"></p>
+                        </div>
+
+                        <div class="card-image"></div>
+                    </div>
+                    <div class="card" data-project-id="stylens">
+                        <div class="card-info">
+                            <div class="card-meta">
+                                <span class="card-category"></span>
+                                <span class="card-members"></span>
+                            </div>
+
+                            <h2 class="card-title"></h2>
+                            <p class="card-description"></p>
+                        </div>
+
+                        <div class="card-image"></div>
+                    </div>
+                    <div class="card" data-project-id="year-on">
+                        <div class="card-info">
+                            <div class="card-meta">
+                                <span class="card-category"></span>
+                                <span class="card-members"></span>
+                            </div>
+
+                            <h2 class="card-title"></h2>
+                            <p class="card-description"></p>
+                        </div>
+
+                        <div class="card-image"></div>
+                    </div>
+                    <div class="card" data-project-id="28">
+                        <div class="card-info">
+                            <div class="card-meta">
+                                <span class="card-category"></span>
+                                <span class="card-members"></span>
+                            </div>
+
+                            <h2 class="card-title"></h2>
+                            <p class="card-description"></p>
+                        </div>
+
+                        <div class="card-image"></div>
+                    </div>
                 </div>
             </div>
 
             <!-- 슬라이드 뷰 -->
              <div id="slideview" class="slide-view">
-                <!--<div class="content">
-                    <div class="card" stamp stamp-trigger="active" style="background-image: url('https://picsum.photos/seed/1/800/600');"></div>
-                    <div class="card" stamp stamp-trigger="active" style="background-image: url('https://picsum.photos/seed/2/800/600');"></div>
-                    <div class="card" stamp stamp-trigger="active" style="background-image: url('https://picsum.photos/seed/3/800/600');"></div>
-                    <div class="card" stamp stamp-trigger="active" style="background-image: url('https://picsum.photos/seed/4/800/600');"></div>
-                    <div class="card" stamp stamp-trigger="active" style="background-image: url('https://picsum.photos/seed/5/800/600');"></div>
-                    <div class="card" stamp stamp-trigger="active" style="background-image: url('https://picsum.photos/seed/6/800/600');"></div>
-                    <div class="card" stamp stamp-trigger="active" style="background-image: url('https://picsum.photos/seed/7/800/600');"></div>
-                    <div class="card" stamp stamp-trigger="active" style="background-image: url('https://picsum.photos/seed/8/800/600');"></div>
-                    <div class="card" stamp stamp-trigger="active" style="background-image: url('https://picsum.photos/seed/9/800/600');"></div>
-                    <div class="card" stamp stamp-trigger="active" style="background-image: url('https://picsum.photos/seed/10/800/600');"></div>
-                    <div class="card" stamp stamp-trigger="active" style="background-image: url('https://picsum.photos/seed/11/800/600');"></div>
-                    <div class="card" stamp stamp-trigger="active" style="background-image: url('https://picsum.photos/seed/12/800/600');"></div>
-                    <div class="card" stamp stamp-trigger="active" style="background-image: url('https://picsum.photos/seed/13/800/600');"></div>
-                    <div class="card" stamp stamp-trigger="active" style="background-image: url('https://picsum.photos/seed/14/800/600');"></div>
-                    <div class="card" stamp stamp-trigger="active" style="background-image: url('https://picsum.photos/seed/15/800/600');"></div>
-                </div>-->
                 <div class="content">
-                    <div class="card is-active" style="background-image: url('https://picsum.photos/seed/1/800/600');"></div>
-                    <div class="card" style="background-image: url('https://picsum.photos/seed/2/800/600');"></div>
-                    <div class="card" style="background-image: url('https://picsum.photos/seed/3/800/600');"></div>
-                    <div class="card" style="background-image: url('https://picsum.photos/seed/4/800/600');"></div>
-                    <div class="card" style="background-image: url('https://picsum.photos/seed/5/800/600');"></div>
-                    <div class="card" style="background-image: url('https://picsum.photos/seed/6/800/600');"></div>
-                    <div class="card" style="background-image: url('https://picsum.photos/seed/7/800/600');"></div>
-                    <div class="card" style="background-image: url('https://picsum.photos/seed/8/800/600');"></div>
-                    <div class="card" style="background-image: url('https://picsum.photos/seed/9/800/600');"></div>
-                    <div class="card" style="background-image: url('https://picsum.photos/seed/10/800/600');"></div>
-                    <div class="card" style="background-image: url('https://picsum.photos/seed/11/800/600');"></div>
-                    <div class="card" style="background-image: url('https://picsum.photos/seed/12/800/600');"></div>
-                    <div class="card" style="background-image: url('https://picsum.photos/seed/13/800/600');"></div>
-                    <div class="card" style="background-image: url('https://picsum.photos/seed/14/800/600');"></div>
-                    <div class="card" style="background-image: url('https://picsum.photos/seed/15/800/600');"></div>
+                    <div class="card is-active" data-project-id="phishing-ddook"></div>
+                    <div class="card" data-project-id="apuchika"></div>
+                    <div class="card" data-project-id="curo"></div>
+                    <div class="card" data-project-id="stylens"></div>
+                    <div class="card" data-project-id="ilkko"></div>
+                    <div class="card" data-project-id="dadeullim"></div>
+                    <div class="card" data-project-id="none"></div>
+                    <div class="card" data-project-id="omix"></div>
+                    <div class="card" data-project-id="year-on"></div>
+                    <div class="card" data-project-id="jikji"></div>
+                    <div class="card" data-project-id="cheoma"></div>
+                    <div class="card" data-project-id="kokorang"></div>
+                    <div class="card" data-project-id="magmoa"></div>
+                    <div class="card" data-project-id="efact"></div>
+                    <div class="card" data-project-id="28"></div>
                 </div>
              </div>
         </div>

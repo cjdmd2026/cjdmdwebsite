@@ -28,7 +28,7 @@ window.PROJECTS = [
             "이고은"
         ],
 
-        category: "education-health",
+        category: "교육",
 
         topic: "보이스피싱 교육",
 
@@ -53,7 +53,7 @@ window.PROJECTS = [
             "이나영"
         ],
 
-        category: "education-health",
+        category: "교육",
 
         topic: "아동 양치 교육",
 
@@ -78,7 +78,7 @@ window.PROJECTS = [
             "박윤아"
         ],
 
-        category: "education-health",
+        category: "건강",
 
         topic: "당뇨 환자를 위한 바늘 친숙화 서비스",
 
@@ -107,7 +107,7 @@ window.PROJECTS = [
             "김하원"
         ],
 
-        category: "accessibility-support",
+        category: "복지",
 
         topic: "시각장애인을 위한 스타일링 서비스",
 
@@ -132,7 +132,7 @@ window.PROJECTS = [
             "임종원"
         ],
 
-        category: "accessibility-support",
+        category: "교육",
 
         topic: "난독증 재택 훈련 서비스",
 
@@ -157,7 +157,7 @@ window.PROJECTS = [
             "김성은"
         ],
 
-        category: "accessibility-support",
+        category: "복지",
 
         topic: "청각장애인을 위한 운전 보조 서비스",
 
@@ -180,7 +180,7 @@ window.PROJECTS = [
             "유길종"
         ],
 
-        category: "accessibility-support",
+        category: "건강",
 
         topic: "DCD 아동 재택 훈련 서비스",
 
@@ -210,7 +210,7 @@ window.PROJECTS = [
             "송승빈"
         ],
 
-        category: "culture",
+        category: "문화",
 
         topic: "불교 홍보",
 
@@ -234,7 +234,7 @@ window.PROJECTS = [
             "권민성"
         ],
 
-        category: "culture",
+        category: "문화",
 
         topic: "한국 문화 소개",
 
@@ -257,7 +257,7 @@ window.PROJECTS = [
             "김주연"
         ],
 
-        category: "culture",
+        category: "문화",
 
         topic: "문화 소개",
 
@@ -281,7 +281,7 @@ window.PROJECTS = [
             "조우성"
         ],
 
-        category: "culture",
+        category: "문화",
 
         topic: "한국 문화 소개",
 
@@ -310,7 +310,7 @@ window.PROJECTS = [
             "김지윤"
         ],
 
-        category: "lifestyle-environment",
+        category: "생활",
 
         topic: "반려동물",
 
@@ -334,7 +334,7 @@ window.PROJECTS = [
             "손예진"
         ],
 
-        category: "lifestyle-environment",
+        category: "여가",
 
         topic: "여행 서비스",
 
@@ -358,7 +358,7 @@ window.PROJECTS = [
             "김혜진"
         ],
 
-        category: "lifestyle-environment",
+        category: "환경",
 
         topic: "환경 보호",
 
@@ -382,7 +382,7 @@ window.PROJECTS = [
             "주예진"
         ],
 
-        category: "lifestyle-environment",
+        category: "여가",
 
         topic: "별자리 서비스",
 
