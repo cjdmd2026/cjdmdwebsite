@@ -165,7 +165,7 @@
          * 첫 5회(유연한결합)도 이 숫자에 포함.
          */
         maxSounds:
-            28,
+            42,
 
 
         /*
@@ -175,7 +175,7 @@
          * 오디오가 지나치게 겹치는 것만 방지.
          */
         minGapMs:
-            48,
+            36,
 
 
         /*
@@ -186,7 +186,82 @@
          * 실제로 들리는 타이밍을 맞춤
          */
         syncOffsetMs:
-            -30,
+            -40,
+
+
+        /*
+         * 전체 Stamp 진행도의 이 지점부터
+         * 소리가 점점 작아지기 시작.
+         *
+         * 0.70 = 마지막 30% 구간에서 Fade Out
+         */
+        fadeStartProgress:
+            0.40,
+
+
+        /*
+         * 마지막 Stamp 근처에서 남길 볼륨 비율
+         *
+         * 0.18 = 기본 hitVolume의 18%
+         */
+        fadeEndVolumeRatio:
+            0,
+
+
+        /*
+         * 후반 리버브 시작 지점
+         *
+         * 0.55 = 전체 진행도의 55%부터
+         * 부드러운 작은 방 공간감이 서서히 증가
+         */
+        reverbStartProgress:
+            0.10,
+
+
+        /*
+         * 마지막 구간에서 Wet 신호의 최대 비율
+         */
+        reverbEndWetRatio:
+            0.56,
+
+
+        /*
+         * 가까운 벽의 작은 방처럼 짧고 부드럽게 남는 잔향 시간
+         */
+        reverbDuration:
+            0.82,
+
+
+        /*
+         * 잔향 감쇠 곡선
+         * 값이 클수록 초반은 선명하고 뒤가 길게 남음
+         */
+        reverbDecay:
+            5.2,
+
+
+        /*
+         * 작은 방의 가까운 벽 반사 느낌.
+         * 원음 직후 아주 짧은 초기 반사가 들리도록 함.
+         */
+        roomPreDelayMs:
+            7,
+
+
+        /*
+         * 리버브의 고역을 부드럽게 깎아
+         * 커튼 / 가구가 있는 따뜻한 방처럼 만듦.
+         */
+        roomLowpassHz:
+            3200,
+
+
+        /*
+         * 초기 반사 강도.
+         * 너무 높이면 욕실처럼 딱딱하게 들릴 수 있음.
+         */
+        roomEarlyReflection:
+            0.34,
 
 
         /*
@@ -252,6 +327,394 @@
 
 
     /* =========================================================
+       Web Audio Reverb Engine
+
+       - 별도 리버브 음원 파일 없이 브라우저에서 Impulse Response 생성
+       - 후반으로 갈수록 Wet 신호를 키워 가까운 벽의 따뜻한 방 공간감 형성
+       - AudioContext는 실제 재생 시점에만 생성/재개
+    ========================================================= */
+
+    let stampAudioContext =
+        null;
+
+    let stampReverbNode =
+        null;
+
+
+    let stampReverbLowpass =
+        null;
+
+
+    let stampReverbPreDelay =
+        null;
+
+
+    function getStampAudioContext() {
+
+        if (
+            stampAudioContext
+        ) {
+
+            if (
+                stampAudioContext.state ===
+                "suspended"
+            ) {
+
+                stampAudioContext
+                    .resume()
+                    .catch(
+                        () => {}
+                    );
+
+            }
+
+            return stampAudioContext;
+
+        }
+
+
+        const AudioContextClass =
+            window.AudioContext
+            ||
+            window.webkitAudioContext;
+
+
+        if (
+            !AudioContextClass
+        ) {
+            return null;
+        }
+
+
+        stampAudioContext =
+            new AudioContextClass();
+
+
+        const length =
+            Math.max(
+                1,
+                Math.floor(
+                    stampAudioContext.sampleRate
+                    *
+                    STAMP_SOUND_CONFIG
+                        .reverbDuration
+                )
+            );
+
+
+        const impulse =
+            stampAudioContext
+                .createBuffer(
+                    2,
+                    length,
+                    stampAudioContext.sampleRate
+                );
+
+
+        /*
+         * 따뜻한 작은 방 Impulse Response
+         *
+         * - 길이는 짧게
+         * - 초반 반사는 또렷하지만 강하지 않게
+         * - 뒤쪽 잔향은 빠르게 사라지게
+         */
+        const earlyReflectionTimes =
+            [
+                0.012,
+                0.024,
+                0.041,
+                0.063
+            ];
+
+
+        for (
+            let channel = 0;
+            channel < impulse.numberOfChannels;
+            channel++
+        ) {
+
+            const data =
+                impulse.getChannelData(
+                    channel
+                );
+
+
+            for (
+                let i = 0;
+                i < length;
+                i++
+            ) {
+
+                const progress =
+                    i
+                    /
+                    length;
+
+
+                const decay =
+                    Math.pow(
+                        1 - progress,
+                        STAMP_SOUND_CONFIG
+                            .reverbDecay
+                    );
+
+
+                /*
+                 * 작은 방은 넓은 홀보다
+                 * 잔향 밀도와 폭을 줄여 더 가까운 느낌으로 만듦.
+                 */
+                const random =
+                    Math.random()
+                    *
+                    2
+                    -
+                    1;
+
+
+                data[i] =
+                    random
+                    *
+                    decay
+                    *
+                    0.34;
+
+            }
+
+
+            /*
+             * 가까운 벽에서 튕겨오는 초기 반사.
+             * 좌/우 타이밍을 아주 조금 다르게 만들어
+             * 자연스러운 실내 폭만 남김.
+             */
+            earlyReflectionTimes
+                .forEach(
+                    (
+                        time,
+                        index
+                    ) => {
+
+                        const channelOffset =
+                            channel === 0
+                                ?
+                                0
+                                :
+                                0.0025;
+
+
+                        const sampleIndex =
+                            Math.min(
+                                length - 1,
+                                Math.floor(
+                                    (
+                                        time
+                                        +
+                                        channelOffset
+                                    )
+                                    *
+                                    stampAudioContext
+                                        .sampleRate
+                                )
+                            );
+
+
+                        const reflectionGain =
+                            STAMP_SOUND_CONFIG
+                                .roomEarlyReflection
+                            *
+                            Math.pow(
+                                0.72,
+                                index
+                            );
+
+
+                        data[sampleIndex] +=
+                            reflectionGain;
+
+                    }
+                );
+
+        }
+
+
+        stampReverbNode =
+            stampAudioContext
+                .createConvolver();
+
+
+        stampReverbNode.buffer =
+            impulse;
+
+
+        stampReverbNode.normalize =
+            true;
+
+
+        /*
+         * 아주 짧은 Pre-delay:
+         * 원음 직후 벽에 부딪혀 돌아오는 느낌.
+         */
+        stampReverbPreDelay =
+            stampAudioContext
+                .createDelay(
+                    0.1
+                );
+
+
+        stampReverbPreDelay.delayTime.value =
+            STAMP_SOUND_CONFIG
+                .roomPreDelayMs
+            /
+            1000;
+
+
+        /*
+         * 따뜻한 룸 톤:
+         * 리버브의 고역을 줄여 딱딱한 욕실 느낌을 피함.
+         */
+        stampReverbLowpass =
+            stampAudioContext
+                .createBiquadFilter();
+
+
+        stampReverbLowpass.type =
+            "lowpass";
+
+
+        stampReverbLowpass.frequency.value =
+            STAMP_SOUND_CONFIG
+                .roomLowpassHz;
+
+
+        stampReverbLowpass.Q.value =
+            0.55;
+
+
+        stampReverbNode.connect(
+            stampReverbPreDelay
+        );
+
+
+        stampReverbPreDelay.connect(
+            stampReverbLowpass
+        );
+
+
+        stampReverbLowpass.connect(
+            stampAudioContext.destination
+        );
+
+
+        return stampAudioContext;
+
+    }
+
+
+
+    /*
+     * Audio 요소마다 Web Audio Source는
+     * 한 번만 생성할 수 있으므로 WeakMap으로 보관
+     */
+    const stampVoiceGraphs =
+        new WeakMap();
+
+
+    function getStampVoiceGraph(
+        audio
+    ) {
+
+        const existing =
+            stampVoiceGraphs.get(
+                audio
+            );
+
+
+        if (
+            existing
+        ) {
+            return existing;
+        }
+
+
+        const context =
+            getStampAudioContext();
+
+
+        if (
+            !context
+            ||
+            !stampReverbNode
+        ) {
+            return null;
+        }
+
+
+        let source;
+
+
+        try {
+
+            source =
+                context.createMediaElementSource(
+                    audio
+                );
+
+        }
+
+        catch (error) {
+
+            return null;
+
+        }
+
+
+        const dryGain =
+            context.createGain();
+
+
+        const wetGain =
+            context.createGain();
+
+
+        source.connect(
+            dryGain
+        );
+
+
+        source.connect(
+            wetGain
+        );
+
+
+        dryGain.connect(
+            context.destination
+        );
+
+
+        wetGain.connect(
+            stampReverbNode
+        );
+
+
+        const graph = {
+            source,
+            dryGain,
+            wetGain
+        };
+
+
+        stampVoiceGraphs.set(
+            audio,
+            graph
+        );
+
+
+        return graph;
+
+    }
+
+
+
+    /* =========================================================
        Audio Pool
     ========================================================= */
 
@@ -307,7 +770,8 @@
     ========================================================= */
 
     function playStampSound(
-        volume = 1
+        dryVolume = 1,
+        wetVolume = 0
     ) {
 
         if (
@@ -388,16 +852,81 @@
             0.12;
 
 
-        audio.volume =
-            Math.min(
-                1,
-                Math.max(
-                    0,
-                    volume
-                    *
-                    variation
-                )
+        /*
+         * Web Audio Graph이 사용 가능하면
+         * 원음(Dry)과 잔향(Wet)을 분리해서 제어.
+         *
+         * 지원되지 않는 환경에서는
+         * 기존 HTMLAudio volume 방식으로 fallback.
+         */
+        const graph =
+            getStampVoiceGraph(
+                audio
             );
+
+
+        if (
+            graph
+        ) {
+
+            const now =
+                stampAudioContext
+                    .currentTime;
+
+
+            graph.dryGain.gain
+                .setValueAtTime(
+                    Math.min(
+                        1,
+                        Math.max(
+                            0,
+                            dryVolume
+                            *
+                            variation
+                        )
+                    ),
+                    now
+                );
+
+
+            graph.wetGain.gain
+                .setValueAtTime(
+                    Math.min(
+                        1.2,
+                        Math.max(
+                            0,
+                            wetVolume
+                            *
+                            variation
+                        )
+                    ),
+                    now
+                );
+
+
+            /*
+             * MediaElement 자체 볼륨은 1로 두고
+             * GainNode에서 실제 볼륨을 제어
+             */
+            audio.volume =
+                1;
+
+        }
+
+        else {
+
+            audio.volume =
+                Math.min(
+                    1,
+                    Math.max(
+                        0,
+                        dryVolume
+                        *
+                        variation
+                    )
+                );
+
+        }
 
 
         try {
@@ -495,7 +1024,8 @@
     function scheduleStampSound(
         state,
         delayMs,
-        volume
+        dryVolume,
+        wetVolume = 0
     ) {
 
         const timeoutId =
@@ -524,7 +1054,8 @@
 
 
                     playStampSound(
-                        volume
+                        dryVolume,
+                        wetVolume
                     );
 
                 },
@@ -654,7 +1185,9 @@
                 STAMP_SOUND_CONFIG
                     .introVolume
                 *
-                masterVolume
+                masterVolume,
+
+                0
 
             );
 
@@ -778,16 +1311,168 @@
             }
 
 
+            /*
+             * 후반으로 갈수록 소리가 자연스럽게 작아짐.
+             *
+             * fadeStartProgress 이전에는 100%,
+             * 마지막에는 fadeEndVolumeRatio까지 감소.
+             */
+            const stampProgress =
+                stamps.length > 1
+                    ?
+                    i
+                    /
+                    (stamps.length - 1)
+                    :
+                    1;
+
+
+            let fadeVolumeRatio =
+                1;
+
+
+            if (
+                stampProgress
+                >
+                STAMP_SOUND_CONFIG
+                    .fadeStartProgress
+            ) {
+
+                const fadeProgress =
+                    Math.min(
+                        1,
+                        (
+                            stampProgress
+                            -
+                            STAMP_SOUND_CONFIG
+                                .fadeStartProgress
+                        )
+                        /
+                        (
+                            1
+                            -
+                            STAMP_SOUND_CONFIG
+                                .fadeStartProgress
+                        )
+                    );
+
+
+                /*
+                 * 부드럽게 감쇠하도록 Smoothstep 적용
+                 */
+                const smoothFade =
+                    fadeProgress
+                    *
+                    fadeProgress
+                    *
+                    (
+                        3
+                        -
+                        2
+                        *
+                        fadeProgress
+                    );
+
+
+                fadeVolumeRatio =
+                    1
+                    +
+                    (
+                        STAMP_SOUND_CONFIG
+                            .fadeEndVolumeRatio
+                        -
+                        1
+                    )
+                    *
+                    smoothFade;
+
+            }
+
+
+            /*
+             * 후반으로 갈수록:
+             * - Dry는 fadeVolumeRatio에 따라 작아지고
+             * - Wet 리버브는 점점 강해져 마지막에 잔향이 남음
+             */
+            let reverbProgress =
+                0;
+
+
+            if (
+                stampProgress
+                >
+                STAMP_SOUND_CONFIG
+                    .reverbStartProgress
+            ) {
+
+                reverbProgress =
+                    Math.min(
+                        1,
+                        (
+                            stampProgress
+                            -
+                            STAMP_SOUND_CONFIG
+                                .reverbStartProgress
+                        )
+                        /
+                        (
+                            1
+                            -
+                            STAMP_SOUND_CONFIG
+                                .reverbStartProgress
+                        )
+                    );
+
+            }
+
+
+            /*
+             * 리버브도 갑자기 커지지 않도록 Smoothstep
+             */
+            const smoothReverb =
+                reverbProgress
+                *
+                reverbProgress
+                *
+                (
+                    3
+                    -
+                    2
+                    *
+                    reverbProgress
+                );
+
+
+            const dryVolume =
+                STAMP_SOUND_CONFIG
+                    .hitVolume
+                *
+                fadeVolumeRatio
+                *
+                masterVolume;
+
+
+            const wetVolume =
+                STAMP_SOUND_CONFIG
+                    .hitVolume
+                *
+                STAMP_SOUND_CONFIG
+                    .reverbEndWetRatio
+                *
+                smoothReverb
+                *
+                masterVolume;
+
+
             scheduleStampSound(
 
                 state,
 
                 soundTime,
 
-                STAMP_SOUND_CONFIG
-                    .hitVolume
-                *
-                masterVolume
+                dryVolume,
+
+                wetVolume
 
             );
 
