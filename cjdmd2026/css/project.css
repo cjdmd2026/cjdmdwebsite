@@ -395,6 +395,8 @@ img {
     font-size: 1.25rem;
     font-weight: 400;
     letter-spacing: -0.02em;
+
+    color: var(--color-white);
 }
 
 .container:has(#slideview:not([hidden])) .title-section input {

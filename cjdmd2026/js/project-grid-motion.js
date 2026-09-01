@@ -1,23 +1,4 @@
-/* 프로젝트 슬라이드 RGB 유체 전환 — 부드러운 재시작
- * 기존 ../js/project.js를 이 파일로 교체하세요. HTML/CSS 추가 수정 불필요.
- * 매 카드마다 효과를 새로 재생하고, 직전 화면과 짧게 섞어 화면의 급격한 전환을 줄입니다.
- */
-(function(){
-const PROJECT_FLUID_SETTINGS={
-    duration: 1.6,        // 매번 적용되는 이미지 전환 시간 (초)
-    rgbRelease: 1.0,      // RGB가 천천히 풀리는 추가 시간 (초)
-    restartBlend: 0.22,   // 직전 화면에서 새 재생으로 부드럽게 연결하는 시간 (초)
-    rgb: 14,             // RGB 분리 강도
-    fluid: 1.0,          // 유체 왜곡 강도
-    wheelThreshold: 25,  // 작을수록 적은 휠 이동에도 반응
-    wheelInterval: 140,  // 연속 휠의 카드 이동 간격 (ms)
-    pixelRatio: 1.25,
-    maxTextureSize: 1920,
-    ...window.PROJECT_FLUID_OPTIONS
-};
-let ProjectFluidEngine;
-
-/*
+/* Project Grid Motion — Three.js 내장, 외부 CDN 불필요.
 The MIT License
 
 Copyright © 2010-2023 three.js authors
@@ -41,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
+(function(){
 const module={exports:{}};
 (function(module,exports){
 console.warn('Scripts "build/three.js" and "build/three.min.js" are deprecated with r150+, and will be removed with r160. Please use ES Modules or alternatives: https://threejs.org/docs/index.html#manual/en/introduction/Installation'),
@@ -53,965 +35,331 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
 
 }).call({},module,module.exports);
 const THREE=module.exports;
-/* RGBFluidTransition — 동일한 위치의 이미지를 유체 + RGB 분리로 전환합니다.
- * Three.js는 배포 파일에 포함되어 있습니다. 외부 라이브러리 연결 불필요.
- * new RGBFluidTransition(element, { images, duration:1.6, rgbRelease:1.0, fluid:1, rgb:14 });
- * API: next(), prev(), goTo(index), preview(0..1), play(), cancel(),
- *      setOptions({duration,rgbRelease,fluid,rgb}), setImages(sources), destroy().
+/*
+ * ProjectGridMotion — #gridview 카드 이미지의 세로 꿀렁임 + 미세 RGB 분리
+ * 사용: project.js / project-filter.js 뒤에 이 파일을 defer로 연결하세요.
+ * 기존 그리드·필터·링크·호버·Lenis를 유지합니다. 새 스크롤러를 만들지 않습니다.
+ * 옵션은 이 파일을 연결하기 전에 window.ProjectGridMotionOptions = {...} 로 지정할 수 있습니다.
  */
-(function (THREE) {
+(function installProjectGridMotion(THREE) {
   'use strict';
-
-  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  if (window.ProjectGridMotion) return;
+  const OPTIONS = Object.assign({
+    root: '#gridview',
+    images: '.content .card .card-image',
+    strength: 1,                 // 꿀렁임 강도. 0 = 효과 끄기
+    bendDepth: 28,               // 이미지 면이 앞뒤로 휘어지는 깊이 (px)
+    rgbShiftPx: 500,            // 아주 약한 색 채널 어긋남 (CSS px)
+    rgbMaxSeparationPx: 500,      // 두 채널 간 최대 간격
+    pixelRatio: 1.5,             // 과도한 고해상도 렌더링 제한
+    maxTextureSize: 1024,        // 이미지는 최초 로드 때만 축소
+    zIndex: 4,                  // 기존 헤더 z-index: 1000보다 낮게 배치
+  }, window.ProjectGridMotionOptions || {});
+  for (const [key,lo,hi] of [['strength',0,3],['bendDepth',0,80],['rgbShiftPx',0,3],['rgbMaxSeparationPx',0,4],['pixelRatio',1,2],['maxTextureSize',256,2048]]) {
+    OPTIONS[key] = Number.isFinite(Number(OPTIONS[key])) ? Math.max(lo,Math.min(hi,Number(OPTIONS[key]))) : lo;
+  }
+  const MARK = 'data-pgm-hidden';
+  const entries = new Map(), disposers=[];
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+  let grid,renderer,scene,camera,geometry,style,observer,intersection,resizeObserver;
+  let raf=0,dirty=true,destroyed=false,failed=false,enabled=true,lastTime=0,lastY=window.scrollY;
+  let width=0,height=0,renderCount=0;
+  const line={position:0,velocity:0};
+  const channels=[
+    {position:0,velocity:0,spring:145,damping:18,gain:1},
+    {position:0,velocity:0,spring:100,damping:15,gain:.1},
+    {position:0,velocity:0,spring:62,damping:12,gain:-1},
+  ];
+  const shared={
+    uBend:{value:0},uViewport:{value:new THREE.Vector2(1,1)},
+    uPixelRatio:{value:1},uRGB:{value:new THREE.Vector3()},
+    uDepth:{value:OPTIONS.bendDepth},
+  };
   const vertexShader=`
-    varying vec2 vUv;
-    void main(){vUv=uv;gl_Position=vec4(position.xy,0.0,1.0);}
+    uniform vec2 uSize;
+    uniform vec2 uCenter;
+    uniform vec2 uViewport;
+    uniform float uBend;
+    uniform float uDepth;
+    varying vec2 vImageUV;
+    void main(){
+      vImageUV=uv;
+      vec3 p=vec3(position.xy*uSize+uCenter,0.0);
+      // 모든 카드가 화면 좌표를 기준으로 하나의 곡선을 공유합니다.
+      float phase=p.y/max(uViewport.y,1.0)*5.0;
+      p.z+=uBend*(cos(phase)-1.0)*uDepth;
+      p.x+=uBend*sin(phase)*3.5;
+      p.y+=uBend*sin(phase)*2.0;
+      gl_Position=projectionMatrix*viewMatrix*vec4(p,1.0);
+    }
   `;
   const fragmentShader=`
-    uniform sampler2D uFrom;
-    uniform sampler2D uTo;
-    uniform vec2 uFromSize;
-    uniform vec2 uToSize;
-    uniform vec2 uView;
-    uniform vec2 uFromAnchor;
-    uniform vec2 uToAnchor;
-    uniform vec3 uMatte;
-    uniform float uProgress;
-    uniform float uFluid;
-    uniform float uRGB;
-    uniform float uDirection;
-    uniform float uReveal;
-    uniform float uRGBEnvelope;
-    uniform float uFluidEnvelope;
-    varying vec2 vUv;
-    float hash21(vec2 p){
-      vec3 p3=fract(vec3(p.xyx)*.1031);
-      p3+=dot(p3,p3.yzx+33.33);
-      return fract((p3.x+p3.y)*p3.z);
+    uniform sampler2D uTexture;
+    uniform vec2 uSize;
+    uniform vec2 uUvScale;
+    uniform vec2 uUvOffset;
+    uniform vec4 uRadius;
+    uniform vec4 uClip;
+    uniform vec4 uClipRadius;
+    uniform vec2 uViewport;
+    uniform vec3 uRGB;
+    uniform float uPixelRatio;
+    uniform vec3 uBackground;
+    uniform float uBackgroundAlpha;
+    varying vec2 vImageUV;
+    float roundedBox(vec2 p,vec2 size,vec4 radii){
+      vec2 halfSize=size*.5;
+      float r=p.x<halfSize.x?(p.y<halfSize.y?radii.x:radii.w):(p.y<halfSize.y?radii.y:radii.z);
+      r=min(r,min(halfSize.x,halfSize.y));
+      vec2 q=abs(p-halfSize)-halfSize+vec2(r);
+      return length(max(q,0.0))+min(max(q.x,q.y),0.0)-r;
     }
-    float noise(vec2 p){
-      vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
-      return mix(mix(hash21(i),hash21(i+vec2(1,0)),f.x),mix(hash21(i+vec2(0,1)),hash21(i+vec2(1,1)),f.x),f.y);
+    vec4 readImage(vec2 uv){
+      if(any(lessThan(uv,vec2(0.0)))||any(greaterThan(uv,vec2(1.0))))return vec4(uBackground,uBackgroundAlpha);
+      vec4 c=texture2D(uTexture,uv);
+      float a=c.a+uBackgroundAlpha*(1.0-c.a);
+      vec3 rgb=(c.rgb*c.a+uBackground*uBackgroundAlpha*(1.0-c.a))/max(a,0.00001);
+      return vec4(rgb,a);
     }
-    float fbm(vec2 p){
-      float n=.57*noise(p);
-      p=mat2(.8,-.6,.6,.8)*p*2.03+vec2(3.7,1.9);
-      n+=.28*noise(p);
-      p=mat2(.8,-.6,.6,.8)*p*2.01+vec2(5.3,7.1);
-      return n+.15*noise(p);
-    }
-    vec2 cover(vec2 uv,vec2 size,vec2 anchor){
-      float imageAspect=size.x/max(size.y,1.0);
-      float viewAspect=uView.x/max(uView.y,1.0);
-      vec2 scale=vec2(min(viewAspect/imageAspect,1.0),min(imageAspect/viewAspect,1.0));
-      return clamp(uv*scale+(vec2(1.0)-scale)*anchor,.5/size,vec2(1.0)-.5/size);
-    }
-    vec3 fromSample(vec2 uv){vec4 c=texture2D(uFrom,cover(uv,uFromSize,uFromAnchor));return mix(uMatte,c.rgb,c.a);}
-    vec3 toSample(vec2 uv){vec4 c=texture2D(uTo,cover(uv,uToSize,uToAnchor));return mix(uMatte,c.rgb,c.a);}
     void main(){
-      float p=clamp(uProgress,0.0,1.0);
-      vec3 result;
-      // 양 끝에서는 왜곡과 RGB 분리가 완전히 사라지고 원본 이미지를 그대로 표시합니다.
-      if(p<=.00001){result=fromSample(vUv);}
-      else if(p>=.99999){result=toSample(vUv);}
-      else{
-        float t=uReveal;
-        float envelope=uFluidEnvelope;
-        // 이미지는 먼저 전환하고, RGB 분리의 복귀는 별도의 긴 곡선을 따릅니다.
-        float rgbEnvelope=uRGBEnvelope;
-        vec2 domain=vec2(vUv.x*uView.x/max(uView.y,1.0),vUv.y)*3.1;
-        float n1=fbm(domain+vec2(t*.9,-t*.6));
-        float n2=fbm(domain+vec2(8.3,2.7)+vec2(-t*.65,t*.7));
-        vec2 curl=vec2(n2-.5,-(n1-.5));
-        curl+=.24*vec2(sin(vUv.y*8.0+n1*5.0-t*2.0),cos(vUv.x*7.0+n2*4.0+t));
-        curl.x*=uDirection;
-        float axis=uDirection>0.0?vUv.x:1.0-vUv.x;
-        float wave=(n1-.5)*.5+sin(vUv.y*6.0+n2*3.0+t*2.0)*.075;
-        float front=mix(-.42,1.42,t)-axis+wave*uFluid*sin(t*3.14159265359);
-        float band=1.0-smoothstep(.05,.5,abs(front));
-        // 전환 경계 가까이에서 강하게 흐르고, 같은 프레임 안에서 두 이미지가 섞입니다.
-        vec2 flow=curl*uFluid*envelope*(.07+.25*band);
-        flow.x+=uDirection*uFluid*envelope*.045*band;
-        vec2 oldUV=vUv+flow*(.55+.65*t);
-        vec2 newUV=vUv-flow*(1.15-.60*t);
-        vec2 tangent=normalize(curl+vec2(uDirection*.45,.17));
-        vec2 split=tangent/max(uView,vec2(1.0))*uRGB*rgbEnvelope*(.7+.3*band);
-        vec2 perpendicular=vec2(-split.y,split.x)*.12;
-        vec3 a=vec3(fromSample(oldUV+split).r,fromSample(oldUV+perpendicular).g,fromSample(oldUV-split*.9).b);
-        vec3 b=vec3(toSample(newUV-split*.85).r,toSample(newUV-perpendicular).g,toSample(newUV+split).b);
-        // 채널별 전환 경계도 살짝 달리해 유체의 가장자리에 색이 흐르도록 합니다.
-        float fringe=uRGB/max(uView.x,1.0)*1.05*rgbEnvelope;
-        float feather=.065+.035*uFluid;
-        vec3 reveal=smoothstep(vec3(-feather),vec3(feather),vec3(front)+vec3(fringe,0.0,-fringe));
-        result=mix(a,b,reveal);
+      vec2 local=vec2(vImageUV.x,1.0-vImageUV.y)*uSize;
+      float d=roundedBox(local,uSize,uRadius);
+      float mask=1.0-smoothstep(-max(fwidth(d),.6),max(fwidth(d),.6),d);
+      // 부모 카드의 overflow:hidden과 둥근 모서리도 유지합니다.
+      vec2 screen=vec2(gl_FragCoord.x/uPixelRatio,uViewport.y-gl_FragCoord.y/uPixelRatio);
+      float clipDistance=roundedBox(screen-uClip.xy,uClip.zw,uClipRadius);
+      mask*=1.0-smoothstep(-.65,.65,clipDistance);
+      if(mask<.001)discard;
+      vec2 uv=vImageUV*uUvScale+uUvOffset;
+      vec2 shift=(dFdx(uv)*.28735+dFdy(uv)*.95783)*uPixelRatio;
+      vec4 color=readImage(uv);
+      if(max(max(abs(uRGB.r),abs(uRGB.g)),abs(uRGB.b))>.00001){
+        vec4 r=readImage(uv+shift*uRGB.r);
+        vec4 g=readImage(uv+shift*uRGB.g);
+        vec4 b=readImage(uv+shift*uRGB.b);
+        color.rgb=vec3(mix(color.r,r.r,r.a),mix(color.g,g.g,g.a),mix(color.b,b.b,b.a));
       }
-      gl_FragColor=vec4(result,1.0);
+      gl_FragColor=vec4(color.rgb,color.a*mask);
       #include <colorspace_fragment>
     }
   `;
-  class RGBFluidTransition {
-    constructor(element,options={}){
-      this.element=typeof element==='string'?document.querySelector(element):element;
-      if(!this.element)throw new Error('전환 이미지를 표시할 요소가 없습니다.');
-      this.options={duration:1.6,rgbRelease:1.0,fluid:1,rgb:14,pixelRatio:1.5,maxTextureSize:1600,...options};
-      this.textures=[];this.index=0;this.transition=null;this.queued=null;this.raf=0;this.lastTime=0;this.disposed=false;this.generation=0;this.renderCount=0;this.loadError=null;
-      this.reduce=matchMedia('(prefers-reduced-motion: reduce)');
-      this.renderer=new THREE.WebGLRenderer({antialias:false,alpha:false,powerPreference:'low-power'});
-      this.renderer.outputColorSpace=THREE.SRGBColorSpace;
-      this.renderer.debug.onShaderError=(gl,program)=>{
-        this.loadError=new Error(gl.getProgramInfoLog(program)||'셰이더 실행 오류');
-        cancelAnimationFrame(this.raf);this.raf=0;this._emit('onError',this.loadError);
-      };
-      this.canvas=this.renderer.domElement;
-      this.canvas.setAttribute('aria-hidden','true');
-      Object.assign(this.canvas.style,{display:'block',width:'100%',height:'100%',pointerEvents:'none'});
-      this.element.appendChild(this.canvas);
-      this.scene=new THREE.Scene();this.camera=new THREE.Camera();
-      this.uniforms={uFromAnchor:{value:new THREE.Vector2(0,1)},uToAnchor:{value:new THREE.Vector2(0,1)},uMatte:{value:new THREE.Color(0x111111)},uFrom:{value:null},uTo:{value:null},uFromSize:{value:new THREE.Vector2(1,1)},uToSize:{value:new THREE.Vector2(1,1)},uView:{value:new THREE.Vector2(1,1)},uProgress:{value:0},uFluid:{value:1},uRGB:{value:14},uDirection:{value:1},uReveal:{value:0},uRGBEnvelope:{value:0},uFluidEnvelope:{value:0}};
-      this.geometry=new THREE.PlaneGeometry(2,2);
-      this.material=new THREE.ShaderMaterial({uniforms:this.uniforms,vertexShader,fragmentShader,depthTest:false,depthWrite:false,toneMapped:false});
-      this.mesh=new THREE.Mesh(this.geometry,this.material);this.mesh.frustumCulled=false;this.scene.add(this.mesh);
-      this._onVisibility=()=>{
-        if(document.hidden){cancelAnimationFrame(this.raf);this.raf=0;this.lastTime=0;}
-        else if(this.transition?.playing)this._request();
-      };
-      this._onReduced=()=>{if(this.reduce.matches&&this.transition){this.uniforms.uProgress.value=1;this.render();this._commit();}};
-      this._onLost=e=>{e.preventDefault();this.loadError=new Error('그래픽 연결이 끊겼습니다. 페이지를 새로고침해 주세요.');cancelAnimationFrame(this.raf);this.raf=0;this._emit('onError',this.loadError);};
-      document.addEventListener('visibilitychange',this._onVisibility);
-      this.reduce.addEventListener('change',this._onReduced);
-      this.canvas.addEventListener('webglcontextlost',this._onLost);
-      this.resizeObserver=new ResizeObserver(()=>{if(this.element.getClientRects().length)this.resize();});this.resizeObserver.observe(this.element);
-      this.setOptions(this.options);this.resize();
-      this.ready=Promise.resolve(true);
-    }
-    _emit(name,value){if(typeof this.options[name]==='function')this.options[name](value);}
-    get totalDuration(){return this.options.duration+this.options.rgbRelease;}
-    getTiming(progress=this.uniforms.uProgress.value){
-      const p=clamp(Number(progress)||0,0,1),duration=this.options.duration,total=this.totalDuration;
-      const elapsed=p*total,peak=duration*.5;
-      // 5차 S 곡선: 양 끝의 속도와 가속도가 0. 마지막에 갑자기 붙지 않습니다.
-      const smoother=x=>{const t=clamp(x,0,1);return t*t*t*(t*(t*6-15)+10);};
-      const envelope=end=>elapsed<=peak?smoother(elapsed/peak):1-smoother((elapsed-peak)/(end-peak));
-      return {
-        progress:p,elapsed,duration,totalDuration:total,
-        revealProgress:clamp(elapsed/duration,0,1),
-        reveal:smoother(elapsed/duration),
-        rgbEnvelope:envelope(total),
-        fluidEnvelope:envelope(duration+this.options.rgbRelease*.55),
-      };
-    }
-    get state(){return {...this.getTiming(),index:this.index,count:this.textures.length,progress:this.uniforms.uProgress.value,playing:!!this.transition?.playing,previewing:!!this.transition&&!this.transition.playing,target:this.transition?.to??this.index,renderCount:this.renderCount};}
-    setOptions(options={}){
-      Object.assign(this.options,options);
-      const number=(key,fallback,min,max)=>clamp(Number.isFinite(Number(this.options[key]))?Number(this.options[key]):fallback,min,max);
-      this.options.restartBlend=number('restartBlend',.22,.08,.6);this.options.duration=number('duration',1.6,.2,5);this.options.rgbRelease=number('rgbRelease',1,0,3);this.options.fluid=number('fluid',1,0,2);this.options.rgb=number('rgb',14,0,40);this.options.pixelRatio=number('pixelRatio',1.5,1,2);
-      this.uniforms.uFluid.value=this.options.fluid;this.uniforms.uRGB.value=this.options.rgb;
-      if(this.transition){this.transition.duration=this.totalDuration;this.transition.elapsed=this.uniforms.uProgress.value*this.transition.duration;}
-      this.render();
-    }
-    resize(){
-      if(this.disposed)return;
-      const w=Math.max(1,this.element.clientWidth),h=Math.max(1,this.element.clientHeight);
-      this.uniforms.uView.value.set(w,h);this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,this.options.pixelRatio));this.renderer.setSize(w,h,false);this.render();
-    }
-    async _texture(source){
-      let image=source;
-      if(typeof source==='string'){
-        image=new Image();if(!/^(data:|blob:)/i.test(source))image.crossOrigin='anonymous';
-        image.src=source;await image.decode();
-      }else if(image instanceof HTMLImageElement&&!image.complete){await image.decode();}
-      const w=image?.naturalWidth||image?.width,h=image?.naturalHeight||image?.height;
-      if(!w||!h)throw new Error('이미지 크기를 읽지 못했습니다. JPG, PNG, WebP 파일을 사용해 주세요.');
-      const scale=Math.min(1,Math.max(256,this.options.maxTextureSize)/Math.max(w,h));
-      const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(w*scale));canvas.height=Math.max(1,Math.round(h*scale));
-      canvas.getContext('2d').drawImage(image,0,0,canvas.width,canvas.height);
-      const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
-      texture.anisotropy=Math.min(4,this.renderer.capabilities.getMaxAnisotropy());
-      return texture;
-    }
-    async loadTexture(source){
-      this.imageCache??=new Map();this.imageLoads??=new Map();
-      if(this.imageCache.has(source)){
-        const texture=this.imageCache.get(source);this.imageCache.delete(source);this.imageCache.set(source,texture);return texture;
+  const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+  function listen(target,type,fn,options){target.addEventListener(type,fn,options);disposers.push(()=>target.removeEventListener(type,fn,options));}
+  function wake(){if(!raf&&!destroyed&&!failed&&!document.hidden){raf=requestAnimationFrame(frame);}}
+  function refresh(){
+    dirty=true;
+    // 뷰를 바꾸는 즉시 원본을 복원합니다. 다음 렌더 프레임까지 잔상이 남지 않습니다.
+    if(grid&&(!enabled||reduced.matches||!gridVisible())){restore();resetPhysics();cancelAnimationFrame(raf);raf=0;return;}
+    wake();
+  }
+  function resetPhysics(){line.position=line.velocity=0;for(const c of channels)c.position=c.velocity=0;shared.uBend.value=0;shared.uRGB.value.set(0,0,0);lastY=window.scrollY;lastTime=0;}
+  function restore(){for(const entry of entries.values())entry.host.removeAttribute(MARK);if(renderer)renderer.domElement.style.display='none';}
+  function gridVisible(){
+    if(!grid||!grid.isConnected||grid.closest('[hidden]')||!grid.getClientRects().length)return false;
+    const cs=getComputedStyle(grid);return cs.display!=='none'&&cs.visibility==='visible';
+  }
+  function fail(error){failed=true;restore();cancelAnimationFrame(raf);raf=0;console.warn('[ProjectGridMotion] 효과를 중지하고 원본 이미지를 표시합니다.',error);}
+  function setupRenderer(){
+    if(renderer)return true;
+    try{
+      renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:'low-power'});
+      renderer.debug.onShaderError=(gl,program)=>fail(gl.getProgramInfoLog(program)||'Shader compilation failed');
+      renderer.setClearColor(0x000000,0);renderer.outputColorSpace=THREE.SRGBColorSpace;
+      const c=renderer.domElement;
+      c.setAttribute('aria-hidden','true');c.setAttribute('data-project-grid-motion','');
+      Object.assign(c.style,{position:'fixed',inset:'0',width:'100%',height:'100%',zIndex:String(OPTIONS.zIndex),pointerEvents:'none',display:'none',background:'transparent'});
+      document.body.appendChild(c);
+      scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(40,1,.1,10000);
+      geometry=new THREE.PlaneGeometry(1,1,16,28);
+      listen(c,'webglcontextlost',e=>{e.preventDefault();fail('WebGL context lost');});
+      return true;
+    }catch(error){fail(error);return false;}
+  }
+  function resizeViewport(){
+    const w=document.documentElement.clientWidth,h=window.innerHeight;
+    const dpr=Math.min(window.devicePixelRatio||1,OPTIONS.pixelRatio);
+    if(w===width&&h===height&&dpr===shared.uPixelRatio.value)return;
+    width=w;height=h;shared.uViewport.value.set(w,h);shared.uPixelRatio.value=dpr;
+    camera.aspect=w/h;camera.position.z=h/(2*Math.tan(THREE.MathUtils.degToRad(20)));camera.updateProjectionMatrix();
+    renderer.setPixelRatio(dpr);renderer.setSize(w,h,false);
+  }
+  function imageSource(host){
+    const cs=getComputedStyle(host),child=host.querySelector('img');
+    const match=cs.backgroundImage.match(/^url\((?:"((?:\\.|[^"\\])*)"|'((?:\\.|[^'\\])*)'|([^)]*))\)$/);
+    // CSS background-image 단일 URL과 일반 <img> 모두 지원.
+    const raw=match?(match[1]||match[2]||match[3]||'').replace(/\\(["'\\])/g,'$1').trim():child?.currentSrc||child?.src||'';
+    return {url:raw,cs,child:match?null:child};
+  }
+  function discardEntry(entry){
+    entry.version++;entry.host.removeAttribute(MARK);entry.texture?.dispose();
+    if(entry.mesh){scene?.remove(entry.mesh);entry.mesh.material.dispose();}
+    intersection?.unobserve(entry.host);resizeObserver?.unobserve(entry.host);
+  }
+  function reconcile(){
+    dirty=false;
+    // 원래 배경을 복원한 뒤, 프로젝트 JS가 지정한 실제 URL을 읽습니다.
+    for(const e of entries.values())e.host.removeAttribute(MARK);
+    const hosts=new Set(grid.querySelectorAll(OPTIONS.images));
+    for(const [host,entry] of entries){if(!hosts.has(host)){discardEntry(entry);entries.delete(host);}}
+    for(const host of hosts){
+      let e=entries.get(host);
+      if(!e){e={host,card:host.closest('.card'),version:0,url:'',texture:null,mesh:null,near:!intersection,pending:false,broken:false};entries.set(host,e);intersection?.observe(host);resizeObserver?.observe(host);}
+      const source=imageSource(host);e.child=source.child;
+      if(e.background!==source.cs.backgroundColor&&e.mesh){
+        const [color,alpha]=colorAndAlpha(source.cs.backgroundColor);
+        e.mesh.material.uniforms.uBackground.value.copy(color);e.mesh.material.uniforms.uBackgroundAlpha.value=alpha;
       }
-      if(this.imageLoads.has(source))return this.imageLoads.get(source);
-      const promise=this._texture(source).then(texture=>{
-        if(this.disposed){texture.dispose();throw new Error('전환이 종료되었습니다.');}
-        this.imageCache.set(source,texture);this.trimImages();return texture;
-      }).finally(()=>this.imageLoads.delete(source));
-      this.imageLoads.set(source,promise);return promise;
-    }
-    trimImages(){
-      if(!this.imageCache)return;
-      for(const [source,texture] of this.imageCache){
-        if(this.imageCache.size<=4)break;
-        if(!this.textures.includes(texture)){texture.dispose();this.imageCache.delete(source);}
+      e.background=source.cs.backgroundColor;
+      if(e.url!==source.url){
+        e.version++;e.texture?.dispose();e.texture=null;e.url=source.url;e.pending=false;e.broken=false;
+        if(e.mesh){scene?.remove(e.mesh);e.mesh.material.dispose();e.mesh=null;}
       }
-    }
-    startTexture(source,destination,fromAnchor,toAnchor,direction){
-      const interrupted=!!this.transition;
-      const previous=interrupted?this.captureCurrent():null;
-      cancelAnimationFrame(this.raf);this.raf=0;this.lastTime=0;
-      this.transition=null;this.queued=null;
-      // Restart the effect from original images; blend the visible output from the previous frame.
-      this.handoff=previous?{texture:previous,duration:Math.min(this.options.restartBlend,this.options.duration*.8)}:null;
-      this.textures=[source,destination];this.index=0;
-      this.uniforms.uFromAnchor.value.set(...fromAnchor);
-      this.uniforms.uToAnchor.value.set(...toAnchor);
-      this._bind(0,1);
-      this.uniforms.uProgress.value=0;
-      this.uniforms.uReveal.value=0;
-      this.uniforms.uRGBEnvelope.value=0;
-      this.uniforms.uFluidEnvelope.value=0;
-      this.uniforms.uDirection.value=direction<0?-1:1;
-      this.transition={from:0,to:1,playing:true,elapsed:0,duration:this.totalDuration};
-      this.restarts=(this.restarts||0)+1;
-      this.interruptions=(this.interruptions||0)+(interrupted?1:0);
-      this.render();this.trimImages();
-      this._emit('onProgress',this.state);
-      if(this.reduce.matches){this.uniforms.uProgress.value=1;this.render();this._commit();}else this._request();
-    }
-    settleSurface(){
-      this.releaseHandoff();
-      const destination=this.textures[1];
-      if(destination){
-        this.textures=[destination,destination];this.index=0;
-        this.uniforms.uFromAnchor.value.copy(this.uniforms.uToAnchor.value);
-        this._bind(0,0);this.uniforms.uProgress.value=0;
-      }
-      this.trimImages();
-    }
-    _bind(from,to){
-      const a=this.textures[from],b=this.textures[to];
-      this.uniforms.uFrom.value=a;this.uniforms.uTo.value=b;
-      this.uniforms.uFromSize.value.set(a.image.width,a.image.height);this.uniforms.uToSize.value.set(b.image.width,b.image.height);
-    }
-    _valid(index){const n=this.textures.length;return n?((Math.trunc(index)%n)+n)%n:0;}
-    next(){this.goTo((this.queued?.index??this.transition?.to??this.index)+1,1);}
-    prev(){this.goTo((this.queued?.index??this.transition?.to??this.index)-1,-1);}
-    goTo(index,direction){
-      if(this.disposed||this.loadError||this.textures.length<2||!Number.isFinite(index))return;
-      const target=this._valid(index),dir=direction===-1?-1:direction===1?1:target<this.index?-1:1;
-      if(this.transition?.playing){this.queued=target===this.transition.to?null:{index:target,direction:dir};return;}
-      this.cancel();if(target===this.index)return;
-      this._bind(this.index,target);this.uniforms.uDirection.value=dir;this.uniforms.uProgress.value=0;
-      this.transition={from:this.index,to:target,playing:true,elapsed:0,duration:this.totalDuration};
-      this._emit('onProgress',this.state);
-      if(this.reduce.matches){this.uniforms.uProgress.value=1;this.render();this._commit();}else this._request();
-    }
-    preview(progress){
-      if(this.disposed||this.loadError||this.textures.length<2)return;
-      cancelAnimationFrame(this.raf);this.raf=0;this.lastTime=0;this.queued=null;
-      if(!this.transition){const to=this._valid(this.index+1);this._bind(this.index,to);this.uniforms.uDirection.value=1;this.transition={from:this.index,to,playing:false,elapsed:0,duration:this.totalDuration};}
-      this.transition.playing=false;
-      const p=clamp(Number(progress)||0,0,1);this.uniforms.uProgress.value=p;this.transition.elapsed=p*this.transition.duration;
-      this.render();this._emit('onProgress',this.state);
-    }
-    play(){
-      if(!this.transition){this.next();return;}
-      if(this.transition.playing)return;
-      this.transition.playing=true;
-      if(this.reduce.matches||this.uniforms.uProgress.value>=1){this.uniforms.uProgress.value=1;this.render();this._commit();}
-      else this._request();
-    }
-    cancel(){
-      cancelAnimationFrame(this.raf);this.raf=0;this.lastTime=0;this.transition=null;this.queued=null;
-      if(this.textures.length){this._bind(this.index,this.index);this.uniforms.uProgress.value=0;this.render();this._emit('onProgress',this.state);}
-    }
-    _request(){if(!this.raf&&!this.disposed&&!document.hidden&&!this.loadError){this.lastTime=0;this.raf=requestAnimationFrame(t=>this._tick(t));}}
-    _tick(time){
-      this.raf=0;if(!this.transition?.playing||this.disposed||this.loadError)return;
-      const delta=this.lastTime?Math.min((time-this.lastTime)/1000,.08):0;this.lastTime=time;
-      this.transition.elapsed+=delta;const p=clamp(this.transition.elapsed/this.transition.duration,0,1);this.uniforms.uProgress.value=p;
-      this.render();this._emit('onProgress',this.state);
-      if(p>=1)this._commit();else if(!document.hidden&&!this.loadError)this.raf=requestAnimationFrame(t=>this._tick(t));
-    }
-    _commit(){
-      if(!this.transition)return;
-      const queued=this.queued;this.index=this.transition.to;this.transition=null;this.queued=null;this.lastTime=0;
-      this._bind(this.index,this.index);this.uniforms.uProgress.value=0;this.render();this._emit('onChange',this.state);this._emit('onProgress',this.state);
-      if(queued&&queued.index!==this.index)this.goTo(queued.index,queued.direction);
-    }
-    bufferSize(){
-      const size=this.renderer.getDrawingBufferSize(new THREE.Vector2());
-      const scale=Math.min(1,Math.max(512,Number(this.options.maxTextureSize)||1920)/Math.max(size.x,size.y));
-      return [Math.max(1,Math.round(size.x*scale)),Math.max(1,Math.round(size.y*scale))];
-    }
-    makeBuffer(width,height){
-      const half=this.renderer.capabilities.isWebGL2&&this.renderer.extensions.has('EXT_color_buffer_float');
-      return new THREE.WebGLRenderTarget(width,height,{
-        type:half?THREE.HalfFloatType:THREE.UnsignedByteType,
-        minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,
-        depthBuffer:false,stencilBuffer:false,generateMipmaps:false,
-        colorSpace:THREE.LinearSRGBColorSpace
-      });
-    }
-    initBlend(){
-      if(this.blendScene)return;
-      this.blendUniforms={uPrevious:{value:null},uNext:{value:null},uMix:{value:0}};
-      this.blendMaterial=new THREE.ShaderMaterial({
-        uniforms:this.blendUniforms,vertexShader,depthTest:false,depthWrite:false,toneMapped:false,
-        fragmentShader:`
-          uniform sampler2D uPrevious;
-          uniform sampler2D uNext;
-          uniform float uMix;
-          varying vec2 vUv;
-          void main(){
-            vec3 before=texture2D(uPrevious,vUv).rgb;
-            vec3 after=texture2D(uNext,vUv).rgb;
-            gl_FragColor=vec4(mix(before,after,uMix),1.0);
-            #include <colorspace_fragment>
-          }
-        `
-      });
-      this.blendScene=new THREE.Scene();
-      const mesh=new THREE.Mesh(this.geometry,this.blendMaterial);mesh.frustumCulled=false;
-      this.blendScene.add(mesh);
-    }
-    captureCurrent(){
-      this.historyBuffers??=[];
-      const [w,h]=this.bufferSize();
-      // Ping-pong: never write into the previous frame being sampled by the compositor.
-      let target=this.historyBuffers.find(rt=>rt.texture!==this.handoff?.texture);
-      if(!target){target=this.makeBuffer(w,h);this.historyBuffers.push(target);}
-      if(target.width!==w||target.height!==h)target.setSize(w,h);
-      const output=this.renderer.getRenderTarget();
-      try{this.renderer.setRenderTarget(target);this.render();}
-      finally{this.renderer.setRenderTarget(output);}
-      return target.texture;
-    }
-    getHandoffMix(){
-      if(!this.handoff||!this.transition)return 1;
-      const elapsed=this.transition?.elapsed||0;
-      const t=clamp(elapsed/this.handoff.duration,0,1);
-      // Zero slope/acceleration at both ends of the short handoff.
-      return t*t*t*(t*(t*6-15)+10);
-    }
-    releaseHandoff(){
-      this.handoff=null;
-      this.historyBuffers?.forEach(rt=>rt.dispose());this.historyBuffers=[];
-      this.effectBuffer?.dispose();this.effectBuffer=null;
-      if(this.blendUniforms){this.blendUniforms.uPrevious.value=null;this.blendUniforms.uNext.value=null;}
-    }
-    render(){
-      if(this.disposed||!this.textures.length||this.loadError)return;
-      const timing=this.getTiming();
-      this.uniforms.uReveal.value=timing.reveal;
-      this.uniforms.uRGBEnvelope.value=timing.rgbEnvelope;
-      this.uniforms.uFluidEnvelope.value=timing.fluidEnvelope;
-      const mix=this.getHandoffMix();
-      if(!this.handoff||mix>=1){
-        this.renderer.render(this.scene,this.camera);
-      }else{
-        this.initBlend();
-        const [w,h]=this.bufferSize();
-        if(!this.effectBuffer)this.effectBuffer=this.makeBuffer(w,h);
-        if(this.effectBuffer.width!==w||this.effectBuffer.height!==h)this.effectBuffer.setSize(w,h);
-        const output=this.renderer.getRenderTarget();
-        try{
-          this.renderer.setRenderTarget(this.effectBuffer);
-          this.renderer.render(this.scene,this.camera);
-          this.blendUniforms.uPrevious.value=this.handoff.texture;
-          this.blendUniforms.uNext.value=this.effectBuffer.texture;
-          this.blendUniforms.uMix.value=mix;
-          this.renderer.setRenderTarget(output);
-          this.renderer.render(this.blendScene,this.camera);
-        }finally{this.renderer.setRenderTarget(output);}
-      }
-      this.renderCount++;
-    }
-    destroy(){
-      this.disposed=true;this.generation++;cancelAnimationFrame(this.raf);this.raf=0;
-      this.resizeObserver.disconnect();document.removeEventListener('visibilitychange',this._onVisibility);this.reduce.removeEventListener('change',this._onReduced);this.canvas.removeEventListener('webglcontextlost',this._onLost);
-      this.releaseHandoff();this.blendMaterial?.dispose();
-      this.imageCache?.forEach(t=>t.dispose());this.imageCache?.clear();this.geometry.dispose();this.material.dispose();this.renderer.dispose();this.canvas.remove();
     }
   }
-  ProjectFluidEngine=RGBFluidTransition;
-})(THREE);
-
-(() => {
-    "use strict";
-    let writerFrame=0,writerTimer=0;
-    function clearWriterQueue(){cancelAnimationFrame(writerFrame);clearTimeout(writerTimer);}
-    // =========================================================
-    // PROJECTS 데이터
-    // =========================================================
-    function getProjects() {
-        if (
-            !window.PROJECTS ||
-            !Array.isArray(window.PROJECTS)
-        ) {
-            console.error(
-                "PROJECTS 데이터를 찾을 수 없습니다. project-data.js 연결을 확인해주세요."
-            );
-            return [];
-        }
-        return window.PROJECTS;
-    }
-    function getProjectById(
-        projectId
-    ) {
-        return getProjects().find(
-            project =>
-                String(project.id) ===
-                String(projectId)
-        );
-    }
-    // =========================================================
-    // Category Label
-    // =========================================================
-    const CATEGORY_LABELS = {
-        all:
-            "ALL",
-        health:
-            "건강",
-        education:
-            "교육",
-        environment:
-            "환경",
-        culture:
-            "문화",
-        leisure:
-            "여가",
-        welfare:
-            "복지",
-        life:
-            "생활",
-        XR:
-            "생활",
-        xr:
-            "생활"
+  function loadTexture(e){
+    if(!e.url||e.pending||e.texture||e.broken)return;
+    e.pending=true;const version=++e.version;
+    const image=new Image();
+    if(!/^(data:|blob:)/i.test(e.url))image.crossOrigin='anonymous';
+    image.onload=()=>{
+      if(destroyed||version!==e.version)return;
+      try{
+        e.imageWidth=image.naturalWidth;e.imageHeight=image.naturalHeight;
+        const scale=Math.min(1,OPTIONS.maxTextureSize/Math.max(e.imageWidth,e.imageHeight));
+        const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(e.imageWidth*scale));canvas.height=Math.max(1,Math.round(e.imageHeight*scale));
+        canvas.getContext('2d').drawImage(image,0,0,canvas.width,canvas.height);
+        const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
+        texture.anisotropy=Math.min(4,renderer?.capabilities.getMaxAnisotropy()||1);
+        e.texture=texture;e.pending=false;wake();
+      }catch(error){e.pending=false;e.broken=true;console.warn('[ProjectGridMotion] 이미지 효과 생략:',e.url,error);}
     };
-    function getCategoryLabel(
-        category
-    ) {
-        return (
-            CATEGORY_LABELS[category]
-            ||
-            category
-            ||
-            ""
-        );
+    image.onerror=()=>{if(version!==e.version)return;e.pending=false;e.broken=true;e.host.removeAttribute(MARK);console.warn('[ProjectGridMotion] 이미지를 읽지 못해 원본을 유지합니다. 경로/CORS 또는 Live Server 실행을 확인하세요:',e.url);};
+    image.src=e.url;
+  }
+  function radii(cs,w,h){
+    return ['borderTopLeftRadius','borderTopRightRadius','borderBottomRightRadius','borderBottomLeftRadius'].map(key=>{
+      const s=cs[key]||'0';return clamp(parseFloat(s)*(s.includes('%')?Math.min(w,h)/100:1)||0,0,Math.min(w,h)/2);
+    });
+  }
+  function colorAndAlpha(css){
+    const numbers=css.match(/[\d.]+/g)||[];
+    const alpha=css==='transparent'?0:css.startsWith('rgba')?Number(numbers[3]):1;
+    return [new THREE.Color(css==='transparent'?'#000000':css.replace(/rgba\(([^)]+)\)/,(_,v)=>'rgb('+v.split(',').slice(0,3).join(',')+')')),alpha];
+  }
+  function placement(e,cs,w,h){
+    let dw,dh;
+    const size=e.child?getComputedStyle(e.child).objectFit:cs.backgroundSize;
+    if(size==='contain'||size==='cover'){
+      const s=(size==='contain'?Math.min:Math.max)(w/e.imageWidth,h/e.imageHeight);dw=e.imageWidth*s;dh=e.imageHeight*s;
+    }else if(e.child&&size==='fill'){dw=w;dh=h;}
+    else{
+      const tokens=size.split(/\s+/),dim=(t,total)=>!t||t==='auto'?null:t.includes('%')?parseFloat(t)*total/100:parseFloat(t);
+      dw=dim(tokens[0],w);dh=dim(tokens[1],h);
+      if(!dw&&!dh){dw=e.imageWidth;dh=e.imageHeight;}
+      else if(!dw)dw=dh*e.imageWidth/e.imageHeight;else if(!dh)dh=dw*e.imageHeight/e.imageWidth;
     }
-    // =========================================================
-    // HTML 카드 ↔ project-data.js 연결
-    //
-    // Slide / Grid 순서는 HTML 순서를 그대로 사용.
-    // =========================================================
-    function bindProjectCards() {
-        const cards =
-            document.querySelectorAll(
-                `
-                #slideview .card[data-project-id],
-                #gridview .card[data-project-id]
-                `
-            );
-        cards.forEach(
-            card => {
-                const projectId =
-                    card.dataset.projectId;
-                const project =
-                    getProjectById(
-                        projectId
-                    );
-                if (!project) {
-                    console.warn(
-                        `프로젝트 데이터를 찾을 수 없습니다: ${projectId}`
-                    );
-                    return;
-                }
-                // =============================================
-                // Category
-                // =============================================
-                if (project.category) {
-                    card.dataset.category =
-                        project.category;
-                }
-                // =============================================
-                // Grid Image
-                // =============================================
-                const gridImage =
-                    card.querySelector(
-                        ".card-image"
-                    );
-                if (
-                    gridImage &&
-                    project.image
-                ) {
-                    gridImage.style.backgroundImage =
-                        `url("${project.image}")`;
-                }
-                // =============================================
-                // Slide Image
-                // =============================================
-                if (
-                    card.closest(
-                        "#slideview"
-                    ) &&
-                    project.image
-                ) {
-                    card.style.backgroundImage =
-                        `url("${project.image}")`;
-                }
-                // =============================================
-                // Grid Info
-                // =============================================
-                const category =
-                    card.querySelector(
-                        ".card-category"
-                    );
-                const title =
-                    card.querySelector(
-                        ".card-title"
-                    );
-                const members =
-                    card.querySelector(
-                        ".card-members"
-                    );
-                const description =
-                    card.querySelector(
-                        ".card-description"
-                    );
-                if (category) {
-                    category.textContent =
-                        getCategoryLabel(
-                            project.category
-                        );
-                }
-                if (title) {
-                    title.textContent =
-                        project.title;
-                }
-                if (members) {
-                    members.textContent =
-                        project.members.join(" / ");
-                }
-                if (description) {
-                    description.textContent =
-                        project.description;
-                }
-            }
-        );
-    }
-    // =========================================================
-    // Slide 프로젝트 정보 변경
-    // =========================================================
-    function updateSlideInfo(
-        projectId,
-        animate = false
-    ) {
-        clearWriterQueue();
-        const project =
-            getProjectById(
-                projectId
-            );
-        if (!project) {
-            return;
-        }
-        const titleGroup =
-            document.querySelector(
-                ".title-section h1[typewriter-effect]"
-            );
-        const title =
-            document.querySelector(
-                ".project-title"
-            );
-        const worker =
-            document.querySelector(
-                ".worker"
-            );
-        const description =
-            document.querySelector(
-                ".slide-description p"
-            );
-        // =====================================================
-        // 기존 Writer 중지
-        // =====================================================
-        if (
-            animate &&
-            window.TypewriterEffect
-        ) {
-            if (titleGroup) {
-                window.TypewriterEffect.cancel(
-                    titleGroup
-                );
-            }
-            if (description) {
-                window.TypewriterEffect.cancel(
-                    description
-                );
-            }
-        }
-        // =====================================================
-        // 프로젝트 정보 입력
-        // =====================================================
-        if (title) {
-            title.textContent =
-                project.title;
-        }
-        if (worker) {
-            worker.textContent =
-                project.members.join(" / ");
-        }
-        if (description) {
-            description.textContent =
-                project.description;
-        }
-        // =====================================================
-        // Writer 다시 실행
-        // =====================================================
-        if (
-            animate &&
-            window.TypewriterEffect
-        ) {
-            writerFrame=requestAnimationFrame(
-                () => {
-                    if (titleGroup) {
-                        window.TypewriterEffect.replay(
-                            titleGroup
-                        );
-                    }
-                    if (description) {
-                        writerTimer=window.setTimeout(
-                            () => {
-                                window.TypewriterEffect.replay(
-                                    description
-                                );
-                            },
-                            120
-                        );
-                    }
-                }
-            );
-        }
-    }
-    // =========================================================
-    // Grid 제목
-    // =========================================================
-    function showGridTitle() {
-        clearWriterQueue();
-        const titleGroup =
-            document.querySelector(
-                ".title-section h1[typewriter-effect]"
-            );
-        const title =
-            document.querySelector(
-                ".project-title"
-            );
-        const worker =
-            document.querySelector(
-                ".worker"
-            );
-        const description =
-            document.querySelector(
-                ".slide-description p[typewriter-effect]"
-            );
-        if (
-            window.TypewriterEffect
-        ) {
-            if (titleGroup) {
-                window.TypewriterEffect.cancel(
-                    titleGroup
-                );
-            }
-            if (description) {
-                window.TypewriterEffect.cancel(
-                    description
-                );
-            }
-        }
-        if (title) {
-            title.textContent =
-                "프로젝트";
-        }
-        if (worker) {
-            worker.textContent =
-                "";
-        }
-        /*
-         * cancel() 이후 manual typewriter가
-         * 숨겨지는 것을 방지
-         */
-        if (titleGroup) {
-            titleGroup.classList.add(
-                "is-typed"
-            );
-            titleGroup.dataset.typing =
-                "false";
-            titleGroup.dataset.typed =
-                "true";
-        }
-    }
-    // =========================================================
-    // 초기화
-    // =========================================================
-
-    function initProjectPage() {
-        if (window.ProjectFluidSlide) return;
-        bindProjectCards();
-        const slideview=document.querySelector('#slideview');
-        const gridview=document.querySelector('#gridview');
-        const cards=[...document.querySelectorAll('#slideview .card[data-project-id]')];
-        const viewButtons=[...document.querySelectorAll('.view-button')];
-        if (!slideview || !cards.length) return;
-        const events=new AbortController();
-        const listen=(el,event,handler,options={})=>el.addEventListener(event,handler,{...options,signal:events.signal});
-        const settings={...PROJECT_FLUID_SETTINGS};
-        const reduce=matchMedia('(prefers-reduced-motion: reduce)');
-        let index=Math.max(0,cards.findIndex(c=>c.classList.contains('is-active')));
-        let engine=null,phase='idle',pending=null,request=0,disabled=false,disposed=false;
-        let wheelTotal=0,lastWheel=0,searchFrame=0,wheelTimer=0,lastStep=-Infinity;
-        let wanted=null,wantedDirection=1,loading=false,fromIndex=index;
-        let initial=true,stoppedLenis=null;
-        const root=document.documentElement;
-        const originalView=root.getAttribute('data-project-fluid-view');
-        const host=document.createElement('div');
-        host.className='project-fluid-surface';host.setAttribute('aria-hidden','true');
-        slideview.appendChild(host);
-        const style=document.createElement('style');
-        style.dataset.projectFluidStyle='';
-        style.textContent=`
-          #slideview .project-fluid-surface { position:absolute;inset:0;z-index:2;visibility:hidden;pointer-events:none;overflow:hidden; }
-          #slideview.is-fluid-transitioning .project-fluid-surface { visibility:visible; }
-          #slideview.is-fluid-transitioning .card { background-image:none!important;background-color:transparent!important;transition:none!important; }
-          #slideview.is-fluid-transitioning .card img { visibility:hidden; }
-          #slideview .card[data-fluid-instant] { transition:none!important; }
-          html[data-project-fluid-view="slide"],html[data-project-fluid-view="slide"] body { overflow:hidden; }
-        `;
-        document.head.appendChild(style);
-        function visibleCards(){return cards.filter(card=>!card.hidden);}
-        function getSource(card){
-            const project=getProjectById(card.dataset.projectId);
-            if(project?.image)return new URL(project.image,document.baseURI).href;
-            const value=getComputedStyle(card).backgroundImage;
-            const match=value.match(/^url\(["']?(.*?)["']?\)$/);
-            return match?new URL(match[1],document.baseURI).href:'';
-        }
-        function markActive(next,instant=false){
-            if(instant)cards.forEach(c=>c.setAttribute('data-fluid-instant',''));
-            cards.forEach((c,i)=>c.classList.toggle('is-active',i===next));
-            index=next;
-            if(instant){void slideview.offsetWidth;cards.forEach(c=>c.removeAttribute('data-fluid-instant'));}
-        }
-        function forceTextVisible(){
-            document.querySelectorAll('.title-section h1[typewriter-effect],.slide-description p[typewriter-effect]').forEach(el=>{
-                el.classList.add('is-typed');el.dataset.typing='false';el.dataset.typed='true';
-            });
-        }
-        function clearTransition(){
-            request++;clearTimeout(wheelTimer);wheelTimer=0;
-            wanted=null;phase='idle';pending=null;wheelTotal=0;lastStep=-Infinity;
-            engine?.cancel();engine?.settleSurface();slideview.classList.remove('is-fluid-transitioning');
-        }
-        function jump(next,updateText=true){
-            clearTransition();markActive(next,true);
-            if(updateText&&!slideview.hidden)updateSlideInfo(cards[next].dataset.projectId,false);
-        }
-        function complete(){
-            if(phase!=='animating'||pending===null)return;
-            const next=pending;pending=null;phase=loading?'loading':'idle';
-            markActive(next,true);slideview.classList.remove('is-fluid-transitioning');
-            engine?.settleSurface();
-        }
-        function fail(error){
-            if(disposed)return;
-            const next=wanted??pending;
-            disabled=true;clearTransition();engine?.destroy();engine=null;
-            if(next!==null){markActive(next,true);if(!slideview.hidden)updateSlideInfo(cards[next].dataset.projectId,false);}
-            console.warn('[ProjectFluidSlide] RGB 전환을 사용할 수 없어 기본 이미지 전환을 사용합니다.',error);
-        }
-        function anchor(card,texture){
-            const css=getComputedStyle(card),w=host.clientWidth,h=host.clientHeight;
-            const iw=texture.image.width,ih=texture.image.height,s=Math.max(w/iw,h/ih);
-            const axis=(value,travel)=>{
-                if(value.endsWith('%'))return parseFloat(value)/100;
-                if(value==='center')return .5;
-                if(value==='right'||value==='bottom')return 1;
-                return Math.abs(travel)>0.01?-(parseFloat(value)||0)/travel:0;
-            };
-            return [axis(css.backgroundPositionX,iw*s-w),1-axis(css.backgroundPositionY,ih*s-h)];
-        }
-        function syncAppearance(){
-            if(!engine?.textures.length)return;
-            engine.resize();
-            engine.uniforms.uFromAnchor.value.set(...anchor(cards[fromIndex],engine.textures[0]));
-            if(pending!==null)engine.uniforms.uToAnchor.value.set(...anchor(cards[pending],engine.textures[1]));
-            engine.uniforms.uMatte.value.set(getComputedStyle(document.body).backgroundColor);
-            engine.render();
-        }
-        function transitionTo(next,direction=1){
-            if(disposed||slideview.hidden||!cards[next]||cards[next].hidden)return;
-            if(next===index){
-                // Reversing back to the current destination cancels an obsolete pending load.
-                wanted=null;request++;return;
-            }
-            if(reduce.matches){jump(next);return;}
-            if(disabled){markActive(next);updateSlideInfo(cards[next].dataset.projectId,true);return;}
-            wanted=next;wantedDirection=direction;request++;
-            void pump();
-        }
-        async function pump(){
-            if(loading||wanted===null||disposed||slideview.hidden||disabled)return;
-            const next=wanted,token=request,direction=wantedDirection,from=index;
-            loading=true;
-            if(!engine?.transition)phase='loading';
-            let timer=0;
-            try{
-                let activeEngine=engine;
-                if(!activeEngine){
-                    activeEngine=new ProjectFluidEngine(host,{
-                        ...settings,
-                        onChange:()=>complete(),
-                        onError:error=>queueMicrotask(()=>{if(!disposed&&engine===activeEngine)fail(error);}),
-                    });
-                    engine=activeEngine;
-                }
-                const source=getSource(cards[from]),destination=getSource(cards[next]);
-                if(!source||!destination)throw new Error('project-data.js의 image 경로를 확인해 주세요.');
-                // Loading does not freeze the running transition. Only the newest request is displayed.
-                const textures=await Promise.race([
-                    Promise.all([activeEngine.loadTexture(source),activeEngine.loadTexture(destination)]),
-                    new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('이미지 로딩 시간 초과')),12000);})
-                ]);
-                if(token!==request||disposed||slideview.hidden||activeEngine!==engine)return;
-                if(engine.loadError)throw engine.loadError;
-                if(reduce.matches){jump(next);return;}
-                engine.resize();engine.uniforms.uMatte.value.set(getComputedStyle(document.body).backgroundColor);
-                fromIndex=from;pending=next;wanted=null;phase='animating';
-                // Start a fresh cycle and smoothly blend its visible output from the current frame.
-                engine.startTexture(textures[0],textures[1],anchor(cards[from],textures[0]),anchor(cards[next],textures[1]),direction);
-                slideview.classList.add('is-fluid-transitioning');
-                markActive(next,true);updateSlideInfo(cards[next].dataset.projectId,true);
-            }catch(error){if(token===request&&!disposed)fail(error);}
-            finally{
-                clearTimeout(timer);loading=false;
-                if(!disposed){
-                    if(!engine?.transition)phase='idle';
-                    if(wanted!==null&&!slideview.hidden&&!disabled)void pump();
-                }
-            }
-        }
-        function navigate(direction){
-            const list=visibleCards();if(!list.length||slideview.hidden)return;
-            const at=list.indexOf(cards[wanted??index]);
-            const next=at<0?list[0]:list[at+direction];
-            if(next)transitionTo(cards.indexOf(next),direction);
-        }
-        function currentLenis(){
-            // The supplied HTML declares `const lenis` at window scope (not window.lenis).
-            try{return typeof lenis!=='undefined'?lenis:window.lenis;}catch{return window.lenis;}
-        }
-        function changeView(view){
-            if(view!=='grid'&&view!=='slide')return;
-            const wasSlide=!slideview.hidden;
-            clearTransition();clearWriterQueue();
-            slideview.hidden=view!=='slide';if(gridview)gridview.hidden=view!=='grid';
-            root.setAttribute('data-project-fluid-view',view);
-            viewButtons.forEach(button=>{
-                button.hidden=button.dataset.view===view;
-                button.classList.toggle('is-active',button.dataset.view===view);
-            });
-            if(view==='grid'){
-                showGridTitle();
-                if(stoppedLenis){stoppedLenis.start();stoppedLenis=null;}
-            }else{
-                const l=currentLenis();if(l&&!l.isStopped&&typeof l.stop==='function'){l.stop();stoppedLenis=l;}
-                if(!wasSlide||initial)window.scrollTo({top:0,left:0,behavior:'instant'});
-                const visible=visibleCards();
-                if(visible.length&&cards[index].hidden)markActive(cards.indexOf(visible[0]),true);
-                updateSlideInfo(cards[index].dataset.projectId,false);
-                if(!initial)forceTextVisible();
-            }
-            initial=false;
-        }
-        function reconcileSearch(){
-            if(disposed)return;
-            const list=visibleCards();
-            if(!list.length){clearTransition();return;}
-            if(!list.includes(cards[index]))jump(cards.indexOf(list[0]));
-            else if(wanted!==null&&!list.includes(cards[wanted])){wanted=null;request++;}
-        }
-        listen(document,'project-search-change',event=>{
-            // The existing filter sets card.hidden and publishes visibleIds.
-            const raw=event.detail?.visibleIds;
-            if(Array.isArray(raw)){
-                const ids=new Set(raw.map(String));
-                const allowed=cards.filter(c=>ids.has(String(c.dataset.projectId)));
-                if(!allowed.length){clearTransition();return;}
-                if(!allowed.includes(cards[index]))jump(cards.indexOf(allowed[0]));
-                else if(wanted!==null&&!allowed.includes(cards[wanted])){wanted=null;request++;}
-            }
-            cancelAnimationFrame(searchFrame);searchFrame=requestAnimationFrame(reconcileSearch);
-        });
-        const observer=new MutationObserver(reconcileSearch);
-        cards.forEach(card=>observer.observe(card,{attributes:true,attributeFilter:['hidden']}));
-        viewButtons.forEach(button=>listen(button,'click',()=>changeView(button.dataset.view)));
-        const editable=target=>target instanceof Element&&target.closest('input,textarea,select,[contenteditable="true"],[role="dialog"],[data-fluid-ignore]');
-        const wheelOption=(name,fallback,min,max)=>Math.min(max,Math.max(min,Number.isFinite(Number(settings[name]))?Number(settings[name]):fallback));
-        function flushWheel(){
-            wheelTimer=0;
-            if(disposed||slideview.hidden){wheelTotal=0;return;}
-            const threshold=wheelOption('wheelThreshold',10,1,500);
-            if(Math.abs(wheelTotal)<threshold)return;
-            const dir=Math.sign(wheelTotal);wheelTotal=0;lastStep=performance.now();navigate(dir);
-        }
-        listen(document,'wheel',event=>{
-            if(slideview.hidden||event.ctrlKey||event.metaKey)return;
-            const nested=event.composedPath().find(el=>el instanceof Element&&el.matches('[data-fluid-ignore],[role="dialog"]'));
-            if(nested)return;
-            if(event.cancelable)event.preventDefault();
-            event.lenisStopPropagation=true;
-            const delta=Math.abs(event.deltaY)>=Math.abs(event.deltaX)?event.deltaY:event.deltaX;
-            if(!delta)return;
-            const now=performance.now();
-            if(now-lastWheel>160||Math.sign(delta)!==Math.sign(wheelTotal))wheelTotal=0;
-            lastWheel=now;
-            const unit=event.deltaMode===1?16:event.deltaMode===2?innerHeight:1;
-            wheelTotal+=delta*unit;
-            const threshold=wheelOption('wheelThreshold',10,1,500);
-            if(Math.abs(wheelTotal)>=threshold){
-                const wait=wheelOption('wheelInterval',140,0,1000)-(now-lastStep);
-                if(wait<=0){clearTimeout(wheelTimer);flushWheel();}
-                else if(!wheelTimer)wheelTimer=setTimeout(flushWheel,wait);
-            }
-        },{passive:false,capture:true});
-        listen(document,'keydown',event=>{
-            if(slideview.hidden||editable(event.target)||event.ctrlKey||event.metaKey||event.altKey)return;
-            const dir=['ArrowDown','ArrowRight','PageDown'].includes(event.key)?1:['ArrowUp','ArrowLeft','PageUp'].includes(event.key)?-1:0;
-            if(dir){event.preventDefault();if(!event.repeat)navigate(dir);}
-        });
-        let touch=null;
-        listen(document,'touchstart',event=>{
-            if(slideview.hidden||editable(event.target)||event.touches.length!==1){touch=null;return;}
-            touch={x:event.touches[0].clientX,y:event.touches[0].clientY};
-        },{passive:true});
-        listen(document,'touchmove',event=>{if(touch&&!slideview.hidden&&event.touches.length===1&&event.cancelable)event.preventDefault();},{passive:false});
-        listen(document,'touchend',event=>{
-            if(!touch||slideview.hidden)return;
-            const end=event.changedTouches[0],dx=touch.x-end.clientX,dy=touch.y-end.clientY;touch=null;
-            const delta=Math.abs(dy)>Math.abs(dx)?dy:dx;if(Math.abs(delta)>45)navigate(Math.sign(delta));
-        },{passive:true});
-        listen(document,'touchcancel',()=>{touch=null;},{passive:true});
-        listen(window,'resize',()=>{if(phase==='animating'&&engine)syncAppearance();});
-        markActive(index,true);changeView('slide');
-        window.ProjectFluidSlide={
-            next:()=>navigate(1),prev:()=>navigate(-1),
-            goTo(projectId){const next=cards.findIndex(c=>String(c.dataset.projectId)===String(projectId));if(next>=0)void transitionTo(next,next<index?-1:1);},
-            setOptions(options){Object.assign(settings,options);engine?.setOptions(options);if(engine&&!slideview.hidden)engine.resize();},
-            changeView,
-            get state(){return {view:slideview.hidden?'grid':'slide',phase,index,projectId:cards[index]?.dataset.projectId,pendingId:pending===null?null:cards[pending]?.dataset.projectId,disabled,requestedId:wanted===null?null:cards[wanted]?.dataset.projectId,loading,textureCount:engine?.imageCache?.size||0,restartCount:engine?.restarts||0,handoffMix:engine?.getHandoffMix()??1,bufferCount:(engine?.historyBuffers?.length||0)+(engine?.effectBuffer?1:0),interruptions:engine?.interruptions||0,renderCount:engine?.renderCount||0,progress:engine?.state.progress||0,rgbEnvelope:engine?.state.rgbEnvelope||0};},
-            destroy(){
-                clearTransition();disposed=true;clearWriterQueue();cancelAnimationFrame(searchFrame);
-                observer.disconnect();events.abort();engine?.destroy();engine=null;host.remove();style.remove();
-                if(stoppedLenis)stoppedLenis.start();
-                if(originalView===null)root.removeAttribute('data-project-fluid-view');else root.setAttribute('data-project-fluid-view',originalView);
-                delete window.ProjectFluidSlide;
-            }
-        };
-    }
-    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initProjectPage,{once:true});
-    else initProjectPage();
-})();
+    const pos=(e.child?getComputedStyle(e.child).objectPosition:cs.backgroundPosition).split(/\s+/);
+    const position=(value,available)=>{
+      if(value==='center')return available*.5;if(value==='left'||value==='top')return 0;if(value==='right'||value==='bottom')return available;
+      return value?.includes('%')?available*parseFloat(value)/100:parseFloat(value)||0;
+    };
+    if(pos.length===1)pos.push('50%');
+    const ox=position(pos[0],w-dw),oy=position(pos[1],h-dh);
+    return [w/dw,h/dh,-ox/dw,1+(oy-h)/dh];
+  }
+  function meshFor(e){
+    if(e.mesh)return e.mesh;
+    const [color,alpha]=colorAndAlpha(e.background);
+    const uniforms={...shared,uTexture:{value:e.texture},uSize:{value:new THREE.Vector2()},uCenter:{value:new THREE.Vector2()},uUvScale:{value:new THREE.Vector2(1,1)},uUvOffset:{value:new THREE.Vector2()},uRadius:{value:new THREE.Vector4()},uClip:{value:new THREE.Vector4()},uClipRadius:{value:new THREE.Vector4()},uBackground:{value:color},uBackgroundAlpha:{value:alpha}};
+    const material=new THREE.ShaderMaterial({uniforms,vertexShader,fragmentShader,transparent:true,depthTest:false,depthWrite:false,side:THREE.DoubleSide,toneMapped:false,extensions:{derivatives:true}});
+    e.mesh=new THREE.Mesh(geometry,material);e.mesh.frustumCulled=false;scene.add(e.mesh);return e.mesh;
+  }
+  function stepSpring(state,goal,stiffness,damping,dt){
+    const n=Math.ceil(dt*120),h=dt/n;
+    for(let k=0;k<n;k++){state.velocity+=((goal-state.position)*stiffness-state.velocity*damping)*h;state.position+=state.velocity*h;}
+    if(Math.abs(goal)<.0001&&Math.abs(state.position)<.0001&&Math.abs(state.velocity)<.0005)state.position=state.velocity=0;
+  }
+  function updatePhysics(dt,delta){
+    const goal=clamp(delta/dt/1400,-1.6,1.6)*OPTIONS.strength;
+    stepSpring(line,goal,100,12,dt);shared.uBend.value=line.position;
+    const drive=clamp(line.position,-1,1)*OPTIONS.rgbShiftPx;
+    for(const c of channels)stepSpring(c,drive*c.gain,c.spring,c.damping,dt);
+    const offsets=channels.map(c=>c.position),mean=offsets.reduce((a,b)=>a+b)/3;
+    const span=Math.max(...offsets)-Math.min(...offsets),factor=span>OPTIONS.rgbMaxSeparationPx?OPTIONS.rgbMaxSeparationPx/span:1;
+    shared.uRGB.value.set(...offsets.map(v=>(v-mean)*factor));
+    return Math.abs(line.position)>.0001||Math.abs(line.velocity)>.0005||channels.some(c=>Math.abs(c.position)>.0001||Math.abs(c.velocity)>.0005);
+  }
+  function frame(time){
+    raf=0;
+    if(destroyed||failed)return;
+    if(!enabled||reduced.matches||OPTIONS.strength===0||!gridVisible()){restore();resetPhysics();return;}
+    try{
+      if(dirty)reconcile();
+      const dt=lastTime?clamp((time-lastTime)/1000,1/240,1/30):1/60;lastTime=time;
+      const y=window.scrollY,delta=y-lastY;lastY=y;
+      const moving=updatePhysics(dt,delta);
+      if(!setupRenderer())return;resizeViewport();
+      for(const e of entries.values())if(e.near&&!e.texture)loadTexture(e);
+      if(!moving){restore();lastTime=0;return;}
+      // 레이아웃을 모아서 읽은 뒤, 마지막에 숨김 속성을 적용합니다.
+      const styles=new Map(),readStyle=el=>{if(!styles.has(el))styles.set(el,getComputedStyle(el));return styles.get(el);};
+      const snapshots=[];
+      for(const e of entries.values()){
+        if(e.mesh)e.mesh.visible=false;
+        if(!e.texture||!e.near||!e.host.isConnected||e.host.closest('[hidden]'))continue;
+        const rect=e.host.getBoundingClientRect();
+        if(rect.width<1||rect.height<1||rect.bottom<0||rect.top>height||rect.right<0||rect.left>width)continue;
+        const cs=readStyle(e.host),cardRect=e.card.getBoundingClientRect(),cardStyle=readStyle(e.card);
+        let solid=true;
+        // 페이드/페이지 전환 중에는 원본 DOM이 자체 애니메이션을 그대로 처리합니다.
+        for(let node=e.host;node&&node!==document.documentElement;node=node.parentElement){const st=readStyle(node);if(st.visibility!=='visible'||Number(st.opacity)<.999||st.display==='none'){solid=false;break;}}
+        if(!solid)continue;
+        snapshots.push({e,rect,cs,cardRect,cardStyle});
+      }
+      for(const {e,rect,cs,cardRect,cardStyle} of snapshots){
+        const mesh=meshFor(e),u=mesh.material.uniforms;mesh.visible=true;
+        u.uSize.value.set(rect.width,rect.height);u.uCenter.value.set(rect.left+rect.width/2-width/2,height/2-rect.top-rect.height/2);
+        u.uRadius.value.set(...radii(cs,rect.width,rect.height));u.uClip.value.set(cardRect.left,cardRect.top,cardRect.width,cardRect.height);u.uClipRadius.value.set(...radii(cardStyle,cardRect.width,cardRect.height));
+        const fit=placement(e,cs,rect.width,rect.height);u.uUvScale.value.set(fit[0],fit[1]);u.uUvOffset.value.set(fit[2],fit[3]);
+      }
+      // 렌더링 성공 후에만 원본 배경을 숨깁니다. 실패 시 원본을 유지합니다.
+      renderer.domElement.style.display='block';renderer.render(scene,camera);if(failed)return;renderCount++;
+      const visible=new Set(snapshots.map(s=>s.e));
+      for(const e of entries.values()){if(visible.has(e))e.host.setAttribute(MARK,'');else e.host.removeAttribute(MARK);}
+      wake();
+    }catch(error){fail(error);}
+  }
+  function mount(){
+    if(destroyed||grid)return;
+    grid=document.querySelector(OPTIONS.root);if(!grid)return;
+    style=document.createElement('style');style.setAttribute('data-project-grid-motion-style','');
+    style.textContent=`${OPTIONS.root} .card-image[${MARK}]{background-image:none!important;background-color:transparent!important;} ${OPTIONS.root} .card-image[${MARK}] img{opacity:0!important;}`;
+    document.head.appendChild(style);
+    if('IntersectionObserver' in window)intersection=new IntersectionObserver(records=>{for(const r of records){const e=entries.get(r.target);if(e)e.near=r.isIntersecting;}wake();},{rootMargin:'450px 0px'});
+    resizeObserver=new ResizeObserver(()=>wake());resizeObserver.observe(grid);
+    observer=new MutationObserver(refresh);
+    observer.observe(grid,{subtree:true,childList:true,attributes:true,attributeFilter:['class','style','hidden','src','srcset']});
+    for(let node=grid.parentElement;node;node=node.parentElement)observer.observe(node,{attributes:true,attributeFilter:['class','style','hidden','data-theme']});
+    listen(window,'scroll',wake,{passive:true});listen(window,'resize',()=>{resetPhysics();refresh();},{passive:true});
+    listen(grid,'load',refresh,true);
+    listen(document,'visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(raf);raf=0;restore();resetPhysics();}else refresh();});
+    listen(reduced,'change',()=>{restore();resetPhysics();refresh();});
+    refresh();
+  }
+  function destroy(){
+    destroyed=true;cancelAnimationFrame(raf);raf=0;restore();
+    observer?.disconnect();intersection?.disconnect();resizeObserver?.disconnect();
+    for(const dispose of disposers)dispose();for(const e of entries.values())discardEntry(e);entries.clear();
+    geometry?.dispose();renderer?.dispose();renderer?.domElement.remove();style?.remove();
+  }
+  window.ProjectGridMotion={
+    refresh(){if(!grid)mount();refresh();},
+    enable(){enabled=true;resetPhysics();refresh();},
+    disable(){enabled=false;restore();resetPhysics();},
+    destroy,
+    get status(){return {enabled,failed,animating:!!raf,renderCount,cards:entries.size,loaded:[...entries.values()].filter(e=>e.texture).length,rgbOffsets:shared.uRGB.value.toArray()};},
+  };
+  if(document.readyState==='loading')listen(document,'DOMContentLoaded',mount,{once:true});else mount();
+})(THREE);
 
 })();
