@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>유연한 결합: 청주대학교 디지털미디어디자인</title>
-    <link rel="stylesheet" href="../css/project.css">
+    <link rel="stylesheet" href="../css/project_02.css">
     <script>
         if (sessionStorage.getItem('stamp-page-transition') === '1') {
             document.documentElement.classList.add('page-transition-preload');
@@ -18,7 +18,7 @@
 
 
     <script src="../js/project-data.js" defer></script>
-    <script src="../js/project.js" defer></script>
+    <script src="../js/project_02.js" defer></script>
     <script src="../js/project-filter.js" defer></script>
     <script src="../js/page-transition.js" defer></script>
 
@@ -72,30 +72,24 @@
         <div class="container">
             <!-- 프로젝트 섹션 -->
             <div class="title-section">
-                <div class="left-side"> 
-                    <h1 typewriter-effect typewriter-trigger="manual">
-                        <span class="project-title">프로젝트</span>
-                        <!--<span class="worker">작업자 이름</span>-->
+                <div class="left-side">
+                    <!--
+                        같은 타이틀을 두 겹으로 겹쳐서
+                        이미지 영역은 white / 아래 여백은 black으로 보이게 하는 구조.
+                        실제 클리핑 위치는 CSS에서 조절합니다.
+                    -->
+                    <h1 class="project-title-heading" typewriter-effect typewriter-trigger="manual">
+                        <span class="project-title title-white">프로젝트</span>
+                        <span class="project-title title-black" aria-hidden="true">프로젝트</span>
                     </h1>
-                    <div class="view-buttons page-enter-up">
-                        <button class="view-button" type="button" data-view="slide"><img src="../assets/images/icons/side-scroll-icon.svg" class="icon"></button>
-                        <button class="view-button is-active" type="button" data-view="grid" hidden><img src="../assets/images/icons/grid-scroll-icon.svg" class="icon"></button>
-                    </div>
-                </div>
-                
-                <div class="search-bar page-enter-up">
-                    <img src="../assets/images/icons/search-icon.svg" class="icon">
-                    <input type="text" placeholder="프로젝트를 검색해주세요">
                 </div>
             </div>
 
-            <!-- 설명 -->
-            <div class="slide-description">
-                <p typewriter-effect typewriter-trigger="manual">프로젝트 설명하는 글</p>
-            </div>
+            
+            
 
             <!-- 슬라이드 그라데이션 배경 -->
-            <div class="gradient" style="display: hidden"></div>
+            <!--<div class="gradient" style="display: hidden"></div>-->
 
             <!-- 그리드 뷰 -->
             <div id="gridview" class="grid-view" hidden>
@@ -330,6 +324,44 @@
                     <div class="card" data-project-id="28"></div>
                 </div>
              </div>
+
+            <!-- 프로젝트 정보 섹션:S -->
+            <!--
+                첫 화면에서는 이미지 + 타이틀만 보여주고,
+                다음 화면에서 설명과 메타 정보가 독립적으로 등장하도록 구성했습니다.
+                현재 project.js는 slide 모드에서 body overflow를 막고 있기 때문에
+                실제 스크롤 동작은 다음 JS 수정 단계에서 연결하면 됩니다.
+            -->
+            <section class="project-info-section" aria-label="프로젝트 정보">
+                <div class="project-info-inner">
+                    <div class="project-info-copy">
+                        <span class="project-info-index">01</span>
+
+                        <div class="slide-description">
+                            <h3>About Project</h3>
+                            <p typewriter-effect typewriter-trigger="manual">프로젝트 설명하는 글</p>
+                        </div>
+                    </div>
+
+                    <dl class="project-meta">
+                        <div class="project-meta-row">
+                            <dt>Project</dt>
+                            <dd class="project-meta-title">프로젝트</dd>
+                        </div>
+
+                        <div class="project-meta-row">
+                            <dt>Designer</dt>
+                            <dd class="worker">작업자 이름</dd>
+                        </div>
+
+                        <div class="project-meta-row">
+                            <dt>Category</dt>
+                            <dd class="project-category">UX / UI</dd>
+                        </div>
+                    </dl>
+                </div>
+            </section>
+            <!-- 프로젝트 정보 섹션:E -->
         </div>
     </main>
     <!-- Main:E -->

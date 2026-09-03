@@ -63,22 +63,15 @@
 }
 
 @font-face {
-    font-family: 'KboDiamondGothic';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/KBO-Dia-Gothic_light.woff') format('woff');
-    font-weight: 300;
+    font-family: 'BookkMyungjo';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/BookkMyungjo-Lt.woff2') format('woff2');
+    font-weight: 400;
     font-display: swap;
 }
 
 @font-face {
-    font-family: 'KboDiamondGothic';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/KBO-Dia-Gothic_medium.woff') format('woff');
-    font-weight: 500;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'KboDiamondGothic';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/KBO-Dia-Gothic_bold.woff') format('woff');
+    font-family: 'BookkMyungjo';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/BookkMyungjo-Bd.woff2') format('woff2');
     font-weight: 700;
     font-display: swap;
 }
@@ -126,11 +119,11 @@
     --color-gray-800: #999999;
     --color-accent: #ff6f61;
     --gradient-color: linear-gradient(0deg, 
-    rgba(255,255,255,0.9) 0%,
-    rgba(255,255,255,0.7) 20%,
-    rgba(255,255,255,0.5) 40%,
-    rgba(255,255,255,0.3) 60%,
-    rgba(255,255,255,0.15) 80%,
+    rgba(255,255,255,0.5) 0%,
+    rgba(255,255,255,0.4) 20%,
+    rgba(255,255,255,0.3) 40%,
+    rgba(255,255,255,0.2) 60%,
+    rgba(255,255,255,0.1) 80%,
     rgba(255,255,255,0) 100%);
 }
 
@@ -285,7 +278,7 @@ img {
     font-size: 3rem;
     font-weight: 700;
 
-    letter-spacing: -0.02em;
+    letter-spacing: -0..02em;
 }
 
 .container .title-section .search-bar {
@@ -424,8 +417,11 @@ img {
 }
 
 .container:has(#slideview:not([hidden])) .title-section {
-    margin: 0;
+    margin: 0 auto;
     padding: 0;
+
+    display: block;
+    align-items: center;
 
     margin-top: auto;
     margin-bottom: 1.875rem;
@@ -434,23 +430,30 @@ img {
 
 .container:has(#slideview:not([hidden])) .title-section .left-side {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: space-between;
     width: 100%;
     padding-right: 1rem;
+}
 
-    margin-left: 0;
+.container:has(#slideview:not([hidden])) .title-section .right-side {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    padding-left: 1rem;
 }
 
 .container:has(#slideview:not([hidden])) .title-section h1 {
     display: flex;
 
     line-height: 1;
-    font-size: 4rem;
+    font-size: 6rem;
     font-weight: 800;
-    color: rgba(0, 0, 0, 0.8);
-
-    font-family: 'KboDiamondGothic', var(--font-main);
+    color: var(--color-white);
 }
 
 .worker {
@@ -592,6 +595,7 @@ img {
     background-size: cover;
     background-position: center;
 
+    height: 65vh;
 }
 
 
@@ -1092,4 +1096,377 @@ body:has(#slideview:not([hidden])) .footer {
 .footer .container .footer-icons .icon {
     width: 2rem;
     height: 2rem;
+}
+/* ========================================================================
+   Slide View — Editorial Text Layout
+   ------------------------------------------------------------------------
+   레이아웃 전용 오버라이드.
+   기존 Grid View 스타일은 건드리지 않고 Slide View일 때만 적용합니다.
+
+   구조
+   1) 첫 화면: 65vh 이미지 + 경계에 살짝 걸친 대형 타이틀
+   2) 다음 화면: 오른쪽에 독립된 About / Meta 정보 블록
+   ======================================================================== */
+
+:root {
+    --slide-image-height: 65vh;
+    --slide-title-overlap: 70%;
+}
+
+/* slide view에서는 첫 화면 + 정보 화면을 담을 수 있도록 높이를 열어둡니다.
+   현재 project.js가 html/body overflow:hidden을 주기 때문에 실제 스크롤 연결은
+   JS 수정 단계에서 처리하면 됩니다. */
+.container:has(#slideview:not([hidden])) {
+    position: relative;
+
+    width: var(--container-width);
+    height: auto;
+    min-height: 200vh;
+
+    margin: 0 auto;
+    padding: 0;
+}
+
+/* =========================================================
+   01. Hero / Title
+   ========================================================= */
+
+.container:has(#slideview:not([hidden])) .title-section {
+    position: relative;
+
+    display: block;
+
+    width: 100%;
+    height: 100vh;
+
+    margin: 0;
+    padding: 0;
+
+    z-index: 10;
+    pointer-events: none;
+}
+
+.container:has(#slideview:not([hidden])) .title-section .left-side {
+    position: relative;
+
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    padding: 0;
+}
+
+/* 이미지와 하단 흰 영역의 경계에 타이틀을 살짝 걸칩니다. */
+.container:has(#slideview:not([hidden])) .project-title-heading {
+    position: absolute;
+
+    top: var(--slide-image-height);
+    left: -0.85rem;
+
+    display: block;
+
+    width: max-content;
+
+    margin: 0;
+
+    transform: translateY(calc(var(--slide-title-overlap) * -1));
+
+    font-family: 'BookkMyungjo', var(--font-main);
+    font-size: clamp(5rem, 7.5vw, 9rem);
+    font-weight: 800;
+    line-height: 0.86;
+    letter-spacing: -0.065em;
+
+    white-space: nowrap;
+
+    /* 기존 h1 color 영향 제거 */
+    color: transparent;
+}
+
+/* white를 normal flow로 두어 h1의 실제 크기를 잡습니다. */
+.container:has(#slideview:not([hidden])) .project-title-heading .project-title {
+    display: block;
+    white-space: nowrap;
+}
+
+/* 이미지 위에 걸린 위쪽 조각 */
+.container:has(#slideview:not([hidden])) .project-title-heading .title-white {
+    position: relative;
+
+    color: #fff;
+
+    clip-path: inset(0 0 30% 0);
+}
+
+/* 흰 배경으로 내려온 아래쪽 조각 */
+.container:has(#slideview:not([hidden])) .project-title-heading .title-black {
+    position: absolute;
+
+    inset: 0;
+
+    color: #111;
+
+    clip-path: inset(70% 0 0 0);
+}
+
+/* 첫 화면 하단에 아주 작은 스크롤 가이드만 남깁니다. */
+.slide-scroll-guide {
+    position: absolute;
+
+    left: 0;
+    bottom: clamp(2rem, 4.5vh, 3.75rem);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+
+    color: rgba(17, 17, 17, 0.46);
+
+    font-size: 0.55rem;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.16em;
+}
+
+.slide-scroll-line {
+    display: block;
+
+    width: 1px;
+    height: 2.75rem;
+
+    background-color: rgba(17, 17, 17, 0.25);
+}
+
+/* 슬라이드 이미지는 기존 65vh 구조를 그대로 명시 */
+.container:has(#slideview:not([hidden])) .content .card {
+    height: var(--slide-image-height);
+}
+
+
+/* =========================================================
+   02. Project Information
+   ========================================================= */
+
+.project-info-section {
+    display: none;
+}
+
+.container:has(#slideview:not([hidden])) .project-info-section {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+    min-height: 100vh;
+
+    padding: clamp(7rem, 13vh, 11rem) 0;
+
+    color: #111;
+
+    z-index: 20;
+}
+
+.project-info-inner {
+    width: min(720px, 62%);
+
+    margin-left: auto;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(170px, 0.8fr);
+    gap: clamp(3.5rem, 5.5vw, 6.25rem);
+
+    align-items: end;
+}
+
+.project-info-copy {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr;
+    column-gap: 1.25rem;
+    align-items: start;
+}
+
+.project-info-index {
+    padding-top: 0.22rem;
+
+    font-family: 'Paperozi', var(--font-main);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+
+    color: rgba(17, 17, 17, 0.62);
+}
+
+/* 기존 .slide-description의 display:none을 여기서 다시 엽니다. */
+.container:has(#slideview:not([hidden])) .project-info-section .slide-description {
+    display: block;
+
+    margin: 0;
+    padding: 0;
+
+    color: #111;
+}
+
+.project-info-section .slide-description h3 {
+    margin: 0 0 1.6rem;
+
+    font-family: 'Paperozi', var(--font-main);
+    font-size: clamp(1.25rem, 1.55vw, 1.65rem);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+}
+
+.project-info-section .slide-description p {
+    max-width: 34rem;
+
+    margin: 0;
+
+    color: rgba(17, 17, 17, 0.62);
+
+    font-size: clamp(0.76rem, 0.82vw, 0.9rem);
+    font-weight: 400;
+    line-height: 1.8;
+    letter-spacing: -0.015em;
+
+    word-break: keep-all;
+}
+
+.project-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    margin: 0;
+    padding: 0;
+}
+
+.project-meta-row {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr);
+    gap: 1.1rem;
+
+    align-items: start;
+}
+
+.project-meta dt,
+.project-meta dd {
+    margin: 0;
+
+    font-size: 0.625rem;
+    line-height: 1.45;
+    letter-spacing: 0.08em;
+}
+
+.project-meta dt {
+    color: rgba(17, 17, 17, 0.42);
+
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.project-meta dd {
+    color: rgba(17, 17, 17, 0.72);
+
+    font-weight: 500;
+}
+
+/* worker는 기존 CSS에서 display:none이므로 meta 안에서는 다시 표시 */
+.container:has(#slideview:not([hidden])) .project-meta .worker {
+    display: block;
+
+    margin: 0;
+
+    color: rgba(17, 17, 17, 0.72);
+
+    font-size: 0.625rem;
+    font-weight: 500;
+    line-height: 1.45;
+    letter-spacing: 0.08em;
+}
+
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+
+@media (max-width: 1280px) {
+    .container:has(#slideview:not([hidden])) {
+        width: calc(100% - 6rem);
+    }
+
+    .project-info-inner {
+        width: min(720px, 68%);
+    }
+}
+
+@media (max-width: 900px) {
+    :root {
+        --slide-image-height: 62vh;
+        --slide-title-overlap: 28%;
+    }
+
+    .container:has(#slideview:not([hidden])) {
+        width: calc(100% - 2.5rem);
+    }
+
+    .container:has(#slideview:not([hidden])) .project-title-heading {
+        left: 0;
+
+        font-size: clamp(4.3rem, 12vw, 7rem);
+    }
+
+    .container:has(#slideview:not([hidden])) .project-title-heading .title-white {
+        clip-path: inset(0 0 72% 0);
+    }
+
+    .container:has(#slideview:not([hidden])) .project-title-heading .title-black {
+        clip-path: inset(28% 0 0 0);
+    }
+
+    .project-info-inner {
+        width: 100%;
+
+        grid-template-columns: 1fr;
+        gap: 3.5rem;
+    }
+
+    .project-meta {
+        width: min(25rem, 100%);
+        margin-left: auto;
+    }
+}
+
+@media (max-width: 600px) {
+    :root {
+        --slide-image-height: 58vh;
+    }
+
+    .container:has(#slideview:not([hidden])) {
+        width: calc(100% - 2rem);
+    }
+
+    .container:has(#slideview:not([hidden])) .project-title-heading {
+        font-size: clamp(3.7rem, 17vw, 5.2rem);
+        letter-spacing: -0.07em;
+    }
+
+    .slide-scroll-guide {
+        display: none;
+    }
+
+    .project-info-copy {
+        grid-template-columns: 1fr;
+        row-gap: 0.75rem;
+    }
+
+    .project-info-index {
+        padding: 0;
+    }
+
+    .project-meta {
+        margin-left: 0;
+    }
 }

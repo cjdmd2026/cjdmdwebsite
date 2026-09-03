@@ -47,7 +47,7 @@ const THREE=module.exports;
   const OPTIONS = Object.assign({
     root: '#gridview',
     images: '.content .card .card-image',
-    strength: 1,                 // 꿀렁임 강도. 0 = 효과 끄기
+    strength: 2,                 // 꿀렁임 강도. 0 = 효과 끄기
     bendDepth: 28,               // 이미지 면이 앞뒤로 휘어지는 깊이 (px)
     rgbShiftPx: 500,            // 아주 약한 색 채널 어긋남 (CSS px)
     rgbMaxSeparationPx: 500,      // 두 채널 간 최대 간격

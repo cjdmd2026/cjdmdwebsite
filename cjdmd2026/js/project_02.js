@@ -455,8 +455,8 @@
                 document.querySelector(
                     ".title-section h1[typewriter-effect]"
                 );
-            const title =
-                document.querySelector(
+            const titles =
+                document.querySelectorAll(
                     ".project-title"
                 );
             const worker =
@@ -488,10 +488,12 @@
             // =====================================================
             // 프로젝트 정보 입력
             // =====================================================
-            if (title) {
-                title.textContent =
-                    project.title;
-            }
+            titles.forEach(
+                title => {
+                    title.textContent =
+                        project.title;
+                }
+            );
             if (worker) {
                 worker.textContent =
                     project.members.join(" / ");
@@ -537,8 +539,8 @@
                 document.querySelector(
                     ".title-section h1[typewriter-effect]"
                 );
-            const title =
-                document.querySelector(
+            const titles =
+                document.querySelectorAll(
                     ".project-title"
                 );
             const worker =
@@ -563,10 +565,12 @@
                     );
                 }
             }
-            if (title) {
-                title.textContent =
-                    "프로젝트";
-            }
+            titles.forEach(
+                title => {
+                    title.textContent =
+                        "프로젝트";
+                }
+            );
             if (worker) {
                 worker.textContent =
                     "";
@@ -614,7 +618,17 @@
             const style=document.createElement('style');
             style.dataset.projectFluidStyle='';
             style.textContent=`
-            #slideview .project-fluid-surface { position:absolute;inset:0;z-index:2;visibility:hidden;pointer-events:none;overflow:hidden; }
+            #slideview .project-fluid-surface {
+                position:absolute;
+                left:0;
+                top:0;
+                width:1px;
+                height:1px;
+                z-index:2;
+                visibility:hidden;
+                pointer-events:none;
+                overflow:hidden;
+            }
             #slideview.is-fluid-transitioning .project-fluid-surface { visibility:visible; }
             #slideview.is-fluid-transitioning .card { background-image:none!important;background-color:transparent!important;transition:none!important; }
             #slideview.is-fluid-transitioning .card img { visibility:hidden; }
@@ -623,6 +637,27 @@
             `;
             document.head.appendChild(style);
             function visibleCards(){return cards.filter(card=>!card.hidden);}
+
+            // =========================================================
+            // Fluid Surface Bounds
+            // ---------------------------------------------------------
+            // WebGL 전환 캔버스를 #slideview 전체(100vh)가 아니라
+            // 실제 슬라이드 카드가 차지하는 영역에만 맞춥니다.
+            // 따라서 CSS에서 카드 높이/위치를 바꿔도 애니메이션이
+            // 현재 레이아웃을 그대로 따라갑니다.
+            // =========================================================
+            function syncFluidSurfaceBounds(card=cards[wanted??index]||cards[index]){
+                if(!card||slideview.hidden)return;
+
+                const viewRect=slideview.getBoundingClientRect();
+                const cardRect=card.getBoundingClientRect();
+
+                host.style.left=`${cardRect.left-viewRect.left}px`;
+                host.style.top=`${cardRect.top-viewRect.top}px`;
+                host.style.width=`${Math.max(1,cardRect.width)}px`;
+                host.style.height=`${Math.max(1,cardRect.height)}px`;
+            }
+
             function getSource(card){
                 const project=getProjectById(card.dataset.projectId);
                 if(project?.image)return new URL(project.image,document.baseURI).href;
@@ -678,6 +713,7 @@
             }
             function frame(cardIndex,texture){return {id:cards[cardIndex].dataset.projectId,texture,anchor:anchor(cards[cardIndex],texture)};}
             function syncAppearance(){
+                syncFluidSurfaceBounds(cards[wanted??index]||cards[index]);
                 if(!engine)return;
                 engine.resize();
                 const frames=[engine.base,...engine.nodes.flatMap(n=>[n.from,n.to])].filter(Boolean);
@@ -685,7 +721,11 @@
                 engine.uniforms.uMatte.value.set(getComputedStyle(document.body).backgroundColor);engine.render();
             }
             function ensureEngine(){
-                if(engine)return engine;
+                syncFluidSurfaceBounds(cards[wanted??index]||cards[index]);
+                if(engine){
+                    engine.resize();
+                    return engine;
+                }
                 const activeEngine=new ProjectFluidEngine(host,{
                     ...settings,onFrame:()=>tryStart(),onIdle:()=>complete(),
                     onError:error=>queueMicrotask(()=>{if(!disposed&&engine===activeEngine)fail(error);})
@@ -779,6 +819,8 @@
                     if(!wasSlide||initial)window.scrollTo({top:0,left:0,behavior:'instant'});
                     const visible=visibleCards();
                     if(visible.length&&cards[index].hidden)markActive(cards.indexOf(visible[0]),true);
+                    syncFluidSurfaceBounds(cards[index]);
+                    if(engine)engine.resize();
                     updateSlideInfo(cards[index].dataset.projectId,false);
                     if(!initial)forceTextVisible();
                 }
@@ -854,7 +896,10 @@
                 const delta=Math.abs(dy)>Math.abs(dx)?dy:dx;if(Math.abs(delta)>45)navigate(Math.sign(delta));
             },{passive:true});
             listen(document,'touchcancel',()=>{touch=null;},{passive:true});
-            listen(window,'resize',()=>{if(phase==='animating'&&engine)syncAppearance();});
+            listen(window,'resize',()=>{
+                syncFluidSurfaceBounds(cards[wanted??index]||cards[index]);
+                if(engine)syncAppearance();
+            });
             listen(reduce,'change',()=>{if(reduce.matches){const next=wanted??index;jump(next);}else warm();});
             markActive(index,true);changeView('slide');
             window.ProjectFluidSlide={
