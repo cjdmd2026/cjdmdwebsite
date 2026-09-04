@@ -593,11 +593,8 @@ img {
     background-size: cover;
     background-position: center;
 
-    height: 70vh;
-    width: 95vw;
-    transform: translateX(2.5vw);
-
-    border-radius: 0 0 90px 90px;
+    height: auto;
+    width: 100vw;
 }
 
 
