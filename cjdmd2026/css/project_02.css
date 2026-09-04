@@ -593,14 +593,17 @@ img {
     background-size: cover;
     background-position: center;
 
-    height: 70vh;
-    width: 95vw;
+    height: 30rem;
+    width: var(--container-width);
 
-    /* 입장 애니메이션에서도 최종 위치를 그대로 재사용 */
-    --slide-card-x: 2.5vw;
-    transform: translateX(var(--slide-card-x));
+    left: 50%;
 
-    border-radius: 0 0 90px 90px;
+    /* 인트로 애니메이션에서도 동일한 최종 위치 사용 */
+    --slide-card-x: -50%;
+    transform: translateX(var(--slide-card-x))
+               translateY(60px);
+
+    border-radius: 5px;
 }
 
 
