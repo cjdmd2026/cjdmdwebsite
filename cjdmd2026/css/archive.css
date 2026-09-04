@@ -85,7 +85,7 @@
 
     /* size */
     --header-height: 60px;
-    --container-width: 1220px;
+    --container-width: min(63.5vw, 1600px);
     --side-padding: 60px;
 
     /* transition */

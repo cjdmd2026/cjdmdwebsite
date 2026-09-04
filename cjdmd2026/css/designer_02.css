@@ -79,7 +79,7 @@
 
     /* size */
     --header-height: 60px; /* 상단 고정 Header 높이 */
-    --container-width: 1220px; /* Header/Main 공통 container 너비 */
+    --container-width: min(63.5vw, 1600px);
     --side-padding: 60px; /* container 내부 좌우 콘텐츠 여백 */
 
     /* Designer Grid*/

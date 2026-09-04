@@ -1,25 +1,7 @@
-/* =========================================================
-   Project Data
-   =========================================================
-
-   프로젝트 공통 데이터
-
-   - Grid View
-   - Slide View
-   - 추후 Project Detail Page
-
-   모두 이 데이터를 기준으로 사용
-========================================================= */
-
 window.PROJECTS = [
-
-    /* =====================================================
-       01. 교육 · 건강
-    ===================================================== */
 
     {
         id: "phishing-ddook",
-
         title: "피싱뚝!",
 
         members: [
@@ -29,7 +11,6 @@ window.PROJECTS = [
         ],
 
         category: "교육",
-
         topic: "보이스피싱 교육",
 
         description:
@@ -38,13 +19,14 @@ window.PROJECTS = [
         image:
             "../assets/images/project/test/project_1.png",
 
+        slideImage:
+            "../assets/images/project/test/wide/project_1.png",
+
         slideOrder: 1
     },
 
-
     {
         id: "apuchika",
-
         title: "아푸치카",
 
         members: [
@@ -54,7 +36,6 @@ window.PROJECTS = [
         ],
 
         category: "교육",
-
         topic: "아동 양치 교육",
 
         description:
@@ -63,13 +44,14 @@ window.PROJECTS = [
         image:
             "../assets/images/project/test/project_2.png",
 
+        slideImage:
+            "../assets/images/project/test/wide/project_2.png",
+
         slideOrder: 2
     },
 
-
     {
         id: "curo",
-
         title: "CURO",
 
         members: [
@@ -79,7 +61,6 @@ window.PROJECTS = [
         ],
 
         category: "건강",
-
         topic: "당뇨 환자를 위한 바늘 친숙화 서비스",
 
         description:
@@ -88,18 +69,14 @@ window.PROJECTS = [
         image:
             "../assets/images/project/test/project_3.png",
 
+        slideImage:
+            "../assets/images/project/test/wide/project_3.png",
+
         slideOrder: 3
     },
 
-
-
-    /* =====================================================
-       02. 접근성 · 보조
-    ===================================================== */
-
     {
         id: "stylens",
-
         title: "Stylens",
 
         members: [
@@ -108,7 +85,6 @@ window.PROJECTS = [
         ],
 
         category: "복지",
-
         topic: "시각장애인을 위한 스타일링 서비스",
 
         description:
@@ -117,13 +93,14 @@ window.PROJECTS = [
         image:
             "../assets/images/project/test/project_4.png",
 
+        slideImage:
+            "../assets/images/project/test/wide/project_4.png",
+
         slideOrder: 4
     },
 
-
     {
         id: "ilkko",
-
         title: "읽:꼬",
 
         members: [
@@ -133,7 +110,6 @@ window.PROJECTS = [
         ],
 
         category: "교육",
-
         topic: "난독증 재택 훈련 서비스",
 
         description:
@@ -142,13 +118,14 @@ window.PROJECTS = [
         image:
             "../assets/images/project/test/project_5.png",
 
+        slideImage:
+            "../assets/images/project/test/wide/project_5.png",
+
         slideOrder: 5
     },
 
-
     {
         id: "dadeullim",
-
         title: "다들림",
 
         members: [
@@ -158,7 +135,6 @@ window.PROJECTS = [
         ],
 
         category: "복지",
-
         topic: "청각장애인을 위한 운전 보조 서비스",
 
         description:
@@ -167,13 +143,14 @@ window.PROJECTS = [
         image:
             "../assets/images/project/test/project_6.png",
 
+        slideImage:
+            "../assets/images/project/test/wide/project_6.png",
+
         slideOrder: 6
     },
 
-
     {
         id: "todadak",
-
         title: "토다닥",
 
         members: [
@@ -181,7 +158,6 @@ window.PROJECTS = [
         ],
 
         category: "건강",
-
         topic: "DCD 아동 재택 훈련 서비스",
 
         description:
@@ -190,18 +166,14 @@ window.PROJECTS = [
         image:
             "../assets/images/project/test/project_7.png",
 
+        slideImage:
+            "../assets/images/project/test/wide/project_7.png",
+
         slideOrder: 7
     },
 
-
-
-    /* =====================================================
-       03. 문화
-    ===================================================== */
-
     {
         id: "omix",
-
         title: "OMIX",
 
         members: [
@@ -211,7 +183,6 @@ window.PROJECTS = [
         ],
 
         category: "문화",
-
         topic: "불교 홍보",
 
         description:
@@ -220,13 +191,14 @@ window.PROJECTS = [
         image:
             "../assets/images/project/test/project_8.png",
 
+        slideImage:
+            "../assets/images/project/test/wide/project_8.png",
+
         slideOrder: 8
     },
 
-
     {
         id: "year-on",
-
         title: "YEAR-ON",
 
         members: [
@@ -235,7 +207,6 @@ window.PROJECTS = [
         ],
 
         category: "문화",
-
         topic: "한국 문화 소개",
 
         description:
@@ -244,13 +215,14 @@ window.PROJECTS = [
         image:
             "../assets/images/project/test/project_9.png",
 
+        slideImage:
+            "../assets/images/project/test/wide/project_9.png",
+
         slideOrder: 9
     },
 
-
     {
         id: "jikji",
-
         title: "직지잼버리",
 
         members: [
@@ -258,7 +230,6 @@ window.PROJECTS = [
         ],
 
         category: "문화",
-
         topic: "문화 소개",
 
         description:
@@ -267,13 +238,14 @@ window.PROJECTS = [
         image:
             "../assets/images/project/test/project_10.png",
 
+        slideImage:
+            "../assets/images/project/test/wide/project_10.png",
+
         slideOrder: 10
     },
 
-
     {
         id: "cheoma",
-
         title: "처마",
 
         members: [
@@ -282,7 +254,6 @@ window.PROJECTS = [
         ],
 
         category: "문화",
-
         topic: "한국 문화 소개",
 
         description:
@@ -291,18 +262,14 @@ window.PROJECTS = [
         image:
             "../assets/images/project/test/project_11.png",
 
+        slideImage:
+            "../assets/images/project/test/wide/project_11.png",
+
         slideOrder: 11
     },
 
-
-
-    /* =====================================================
-       04. 라이프스타일 · 환경
-    ===================================================== */
-
     {
         id: "cocorang",
-
         title: "COCO:LANG",
 
         members: [
@@ -311,7 +278,6 @@ window.PROJECTS = [
         ],
 
         category: "생활",
-
         topic: "반려동물",
 
         description:
@@ -320,13 +286,14 @@ window.PROJECTS = [
         image:
             "../assets/images/project/test/project_12.png",
 
+        slideImage:
+            "../assets/images/project/test/wide/project_12.png",
+
         slideOrder: 12
     },
 
-
     {
         id: "magmoa",
-
         title: "마그모아",
 
         members: [
@@ -335,22 +302,22 @@ window.PROJECTS = [
         ],
 
         category: "여가",
-
         topic: "여행 서비스",
 
         description:
             "여행의 탐색부터 경험까지 보다 즐겁고 편리하게 이어질 수 있도록 제안하는 여행 서비스입니다.",
 
         image:
-            "../assets/images/project/test/project_13.png ",
+            "../assets/images/project/test/project_13.png",
+
+        slideImage:
+            "../assets/images/project/test/wide/project_13.png",
 
         slideOrder: 13
     },
 
-
     {
         id: "efact",
-
         title: "E.FACT",
 
         members: [
@@ -359,7 +326,6 @@ window.PROJECTS = [
         ],
 
         category: "환경",
-
         topic: "환경 보호",
 
         description:
@@ -368,13 +334,14 @@ window.PROJECTS = [
         image:
             "../assets/images/project/test/project_14.png",
 
+        slideImage:
+            "../assets/images/project/test/wide/project_14.png",
+
         slideOrder: 14
     },
 
-
     {
         id: "28",
-
         title: "28(二十八)",
 
         members: [
@@ -383,7 +350,6 @@ window.PROJECTS = [
         ],
 
         category: "여가",
-
         topic: "별자리 서비스",
 
         description:
@@ -391,6 +357,9 @@ window.PROJECTS = [
 
         image:
             "../assets/images/project/test/project_15.png",
+
+        slideImage:
+            "../assets/images/project/test/wide/project_15.png",
 
         slideOrder: 15
     }

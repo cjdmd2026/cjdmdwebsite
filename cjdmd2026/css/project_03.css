@@ -109,7 +109,7 @@
 
     /* size */
     --header-height: 60px;
-    --container-width: min(63.5vw, 1600px);
+    --container-width: 1220px;
     --side-padding: 60px;
 
     /* transition */
@@ -125,13 +125,7 @@
     --color-gray-500: #dddddd;
     --color-gray-800: #999999;
     --color-accent: #ff6f61;
-    --gradient-color: linear-gradient(0deg, 
-    rgba(255,255,255,0.9) 0%,
-    rgba(255,255,255,0.7) 20%,
-    rgba(255,255,255,0.5) 40%,
-    rgba(255,255,255,0.3) 60%,
-    rgba(255,255,255,0.15) 80%,
-    rgba(255,255,255,0) 100%);
+    --gradient-color: rgba(0, 0, 0, 0.2);
 }
 
 /* ============================== Reset ============================== */
@@ -213,6 +207,13 @@ img {
     border: 1px solid rgba(255, 255, 255, 0.35);
 }
 
+body:has(#slideview:not([hidden])) .header {
+    background: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+}
+
 .header .container {
     display: flex;
     align-items: center;
@@ -227,6 +228,11 @@ img {
 .header .logo {
     font-size: 1.5rem;
     font-weight: bold;
+    color: rgba(0, 0, 0, 0.75);
+}
+
+body:has(#slideview:not([hidden])) .header .logo {
+    color: rgba(255, 255, 255, 0.75);
 }
 
 .header .nav {
@@ -244,9 +250,13 @@ img {
 .header .nav ul li {
     font-size: 0.875rem;
     font-weight: 600;
-    color: rgba(0, 0, 0, 0.7);
+    color: rgba(0, 0, 0, 0.75);
 
     font-family: 'Paperozi', sans-serif;
+}
+
+body:has(#slideview:not([hidden])) .header .nav ul li {
+    color: rgba(255, 255, 255, 0.75);
 }
 
 /* ============================== Main ============================== */
@@ -276,7 +286,7 @@ img {
 
 .container .title-section .left-side {
     display: flex;
-    flex-direction: start;
+    flex-direction: row;
     align-items: center;
     gap: 2rem;
 }
@@ -288,82 +298,69 @@ img {
     letter-spacing: -0.02em;
 }
 
-.container .title-section .search-bar {
+/* ============================== Search Bar ============================== */
+
+/* 공통 */
+.search-bar {
     position: relative;
-    width: 276px;
+
     height: 45px;
 }
 
-.container .title-section .search-bar img {
+.search-bar img {
     position: absolute;
-    left: 1rem;
+
     top: 50%;
-    transform: translateY(-50%);
+    left: 1rem;
 
     width: 1.5rem;
+
+    transform: translateY(-50%);
+
     z-index: 5;
+    pointer-events: none;
 }
 
-.container .title-section input {
+.search-bar input {
     width: 100%;
     height: 100%;
+
     border: 1px solid var(--color-gray-500);
     border-radius: 999px;
 
-    /*background-color: rgba(255, 255, 255, 0.01);*/
     color: var(--color-white);
-
     background: rgba(255, 255, 255, 0.36);
+
     backdrop-filter: blur(11.9px);
     -webkit-backdrop-filter: blur(11.9px);
 
     font-size: 1rem;
     font-family: inherit;
 
-    padding: 0 3rem;
-
-    transition: border-color 0.3s ease;
-
-}
-
-.container .title-section input:focus {
-    border-color: var(--color-white);
     outline: none;
+
+    transition:
+        padding 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 0.3s ease;
 }
 
-/*
-.container .slide-view {
-    width: 100vw;
-    margin-left: calc(50% - 51vw);
-    
+.search-bar input:focus {
+    border-color: var(--color-white);
 }
 
-.container .slide-view .content {
-    display: flex;
-
-    width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-    
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-
-    padding-left: max(var(--side-padding),calc((100vw - var(--container-width)) / 2 + var(--side-padding)));
-
-    gap: 2rem;
-
-    scrollbar-width: none;
-
-    margin-top: 3rem;
+/* Grid View 검색창 */
+.title-section .search-bar {
+    width: 276px;
 }
 
-.container .slide-view .card {
-    flex: 0 0 900px;
-    aspect-ratio: 16 / 9;
-    background-color: var(--color-gray-100);
+.title-section .search-bar input {
+    padding: 0 3rem;
+    cursor: text;
+}
 
-    border-radius: 10px;
-}*/
+.title-section .search-bar input::placeholder {
+    color: rgba(0, 0, 0, 0.55);
+}
 
 /* ============================== slide view - v2 ============================== */
 .container .slide-view {
@@ -375,7 +372,7 @@ img {
     top: 0;
     left: 0;
 
-   z-index: -999;
+    z-index: -999;
 }
 
 .container .slide-view .content {
@@ -412,59 +409,34 @@ img {
     pointer-events: auto;
 }
 
-/* ============================== slide view일때 css 조절 ============================== */
-.container:has(#slideview:not([hidden])) {
-    margin: 0 auto;
+/* ============================== Slide View UI ============================== */
 
+/* Slide View 활성 시 메인 컨테이너 */
+.container:has(#slideview:not([hidden])) {
     width: var(--container-width);
     height: 100vh;
+
+    margin: 0 auto;
 
     display: flex;
     flex-direction: column;
 }
 
-.container:has(#slideview:not([hidden])) .slide-info {
-    margin-top: 63vh;
-}
-
+/* Grid용 상단 제목 영역은 Slide View에서 숨김 */
 .container:has(#slideview:not([hidden])) .title-section {
-    margin: 0;
-    padding: 0;
-
-    margin-top: auto;
-    margin-bottom: 1.5rem;
-    /*margin-top: 40vh;*/
+    display: none;
 }
 
-.container:has(#slideview:not([hidden])) .title-section .left-side {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding-right: 1rem;
-
-    margin-left: 0;
-}
-
-.container:has(#slideview:not([hidden])) .title-section h1 {
-    display: flex;
-
-    line-height: 1;
-    font-size: 4rem;
-    font-weight: 800;
-    color: rgba(0, 0, 0, 0.8);
-
-    font-family: 'KboDiamondGothic', var(--font-main);
-}
-
+/* 작업자 정보 */
 .worker {
+    display: none;
+
     font-size: 0.875rem;
     font-weight: 600;
-    letter-spacing: -0.02em;
-    color: var(--color-white);
     line-height: 2;
+    letter-spacing: -0.02em;
 
-    display: none;
+    color: var(--color-white);
 }
 
 .container:has(#slideview:not([hidden])) .worker {
@@ -474,104 +446,255 @@ img {
     margin-left: 1.15rem;
 }
 
+/* 기존 Slide 설명은 현재 사용하지 않음 */
 .slide-description {
     display: none;
 }
 
-.container:has(#slideview:not([hidden])) .slide-description {
-    margin: 0;
-    padding: 0;
+
+/* ============================== Project Dial ============================== */
+
+.project-dial {
+    display: none;
+}
+
+.container:has(#slideview:not([hidden])) .project-dial {
+    position: fixed;
+
+    top: 0;
+    left: 6rem;
+
+    width: 36vw;
+    height: 100vh;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    overflow: hidden;
+
+    z-index: 90;
+    pointer-events: none;
+}
+
+.container:has(#slideview:not([hidden])) .project-dial-list {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    gap: 5rem;
+
+    transition: transform 650ms cubic-bezier(.22, 1, .36, 1);
+    will-change: transform;
+}
+
+.container:has(#slideview:not([hidden])) .project-dial-item {
+    height: var(--item-height);
+
+    display: flex;
+    align-items: center;
+
+    font-size: 14px;
+    font-weight: 400;
+
+    opacity: 0.22;
+
+    transform:
+        scale(0.88)
+        translateX(0);
+
+    transform-origin: left center;
+
+    transition:
+        opacity 500ms ease,
+        transform 600ms cubic-bezier(.22, 1, .36, 1),
+        filter 500ms ease;
+}
+
+.container:has(#slideview:not([hidden])) .project-dial-item.is-active {
+    opacity: 1;
+
+    transform:
+        scale(1)
+        translateX(0);
+
+    filter: blur(0);
+}
+
+.container:has(#slideview:not([hidden])) .project-dial-item.is-near {
+    opacity: 0.3;
+}
+
+.container:has(#slideview:not([hidden])) .project-dial-item.is-far {
+    opacity: 0.22;
+}
+
+.container:has(#slideview:not([hidden])) .project-dial-item.is-none {
+    opacity: 0.05;
+}
+
+.container:has(#slideview:not([hidden])) .project-dial-title {
+    font-family: 'KboDiamondGothic', var(--font-main);
+    font-size: 5rem;
+    font-weight: 800;
+    line-height: 1;
+
+    color: rgba(255, 255, 255, 0.9);
+}
+
+
+/* ============================== Project Description Layer ============================== */
+
+/* Grid View에서는 레이어 자체를 제거 */
+.project-description {
+    display: none;
+}
+
+/* Slide View에서만 전체 화면 UI 레이어로 사용 */
+.container:has(#slideview:not([hidden])) .project-description {
+    position: fixed;
+    inset: 0;
 
     display: block;
 
-    margin-bottom: 5rem;
+    width: 100vw;
+    height: 100vh;
 
-    font-size: 1rem;
-    font-weight: 400;
-    letter-spacing: -0.01em;
+    z-index: 100;
 
-    color: rgba(0, 0, 0, 0.8);
+    pointer-events: none;
 }
 
-.container:has(#slideview:not([hidden])) .title-section .search-bar {
+.container:has(#slideview:not([hidden])) .project-warp {
+    position: absolute;
+
+    right: 6rem;
+    top: 10%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 0.75rem;
+
+    z-index: 20;
+
+    pointer-events: auto;
+}
+
+.project-description .project-visual {
+    width: 100%;
+    height: 100%;
+}
+
+.project-description .project-info {
+    position: absolute;
+
+    right: 6rem;
+    bottom: 10vh;
+
+    width: clamp(180px, 16vw, 280px);
+
+    display: flex;
+    flex-direction: column;
+    gap: 5rem;
+
+    pointer-events: auto;
+}
+
+.project-description .project-info-block {
+    font-size: 1.2rem;
+    line-height: 1.5;
+    font-weight: 300;
+
+    color: rgba(255, 255, 255, 0.9);
+}
+
+
+/* ============================== Slide View Controls ============================== */
+
+.project-description .view-buttons {
+    position: static;
+
+    right: 6vw;
+    top: 52%;
+
+    z-index: 20;
+
+    pointer-events: auto;
+}
+
+/* Slide 전용 검색창: 기본은 45px 원형 */
+.container:has(#slideview:not([hidden]))
+.project-description .search-bar {
     position: relative;
 
     width: 45px;
     height: 45px;
 
-    transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    right: auto;
+    top: auto;
+
+    transition:
+        width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.container:has(#slideview:not([hidden])) .title-section .search-bar:focus-within {
-    width: 260px;
-}
-
-.container:has(#slideview:not([hidden])) .title-section input {
-    width: 100%;
-    height: 100%;
-
-    /*border: 1px solid var(--color-black);*/
-    border: 1px solid var(--color-gray-500);
-    border-radius: 999px;
-
+.container:has(#slideview:not([hidden]))
+.project-description .search-bar input {
     padding: 0;
 
     cursor: pointer;
-
-    transition:
-        padding 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-        border-color 0.3s ease;
 }
 
+/* 원형 상태에서는 검색 아이콘을 정확히 중앙에 */
 .container:has(#slideview:not([hidden]))
-.title-section .search-bar:focus-within input {
-    padding: 0 1rem 0 3rem;
-
-    cursor: text;
-}
-
-.container:has(#slideview:not([hidden])) .title-section input::placeholder {
-    color: var(--color-white);
-    display: none;
-}
-
-.container:has(#slideview:not([hidden]))
-.title-section .search-bar img {
-    margin: 0;
-    padding: 0;
-
+.project-description .search-bar img {
     left: 50%;
-    top: 50%;
 
     transform: translate(-50%, -50%);
-
-    pointer-events: none;
 
     transition:
         left 0.45s cubic-bezier(0.22, 1, 0.36, 1),
         transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* 포커스 시 확장 */
 .container:has(#slideview:not([hidden]))
-.title-section .search-bar:focus-within img {
+.project-description .search-bar:focus-within {
+    width: 260px;
+}
+
+.container:has(#slideview:not([hidden]))
+.project-description .search-bar:focus-within input {
+    padding: 0 1rem 0 3rem;
+
+    cursor: text;
+}
+
+.container:has(#slideview:not([hidden]))
+.project-description .search-bar:focus-within img {
     left: 1rem;
 
     transform: translate(0, -50%);
 }
 
+/* 원형일 때 placeholder 숨김 */
 .container:has(#slideview:not([hidden]))
-.title-section .search-bar input::placeholder {
+.project-description .search-bar input::placeholder {
     color: transparent;
 
     transition: color 0.2s ease;
 }
 
+/* 확장된 뒤 placeholder 표시 */
 .container:has(#slideview:not([hidden]))
-.title-section .search-bar:focus-within input::placeholder {
+.project-description .search-bar:focus-within input::placeholder {
     color: rgba(0, 0, 0, 0.55);
 
     transition-delay: 0.15s;
 }
+
+
+/* ============================== Slide View Background ============================== */
 
 .container:has(#slideview:not([hidden])) .gradient {
     width: 100vw;
@@ -597,24 +720,14 @@ img {
     background-size: cover;
     background-position: center;
 
-    height: 60vh;
-    width: var(--container-width);
-
-    left: 50%;
-
-    /* 인트로 애니메이션에서도 동일한 최종 위치 사용 */
-    --slide-card-x: -50%;
-    transform: translateX(var(--slide-card-x))
-               translateY(100px);
-
-    border-radius: 5px;
+    height: 100vh;
+    width: 100vw;
 }
 
 
 body:has(#slideview:not([hidden])) .footer {
     display: none;
 }
-
 
 
 /* ============================== 페이지 진입 요소 ============================== */
@@ -646,7 +759,6 @@ body:has(#slideview:not([hidden])) .footer {
 }
 
 
-
 /* ============================== button ============================== */
 .view-buttons {
     display: flex;
@@ -672,9 +784,6 @@ body:has(#slideview:not([hidden])) .footer {
     cursor: pointer;
 }
 
-/*container:has(#slideview:not([hidden])) .view-buttons button {
-    border: 1px solid var(--color-black);
-} */
 
 /* ============================== grid view ============================== */
 
@@ -819,6 +928,33 @@ body:has(#slideview:not([hidden])) .footer {
         box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+.container:has(#gridview:not([hidden])) .title-section .view-buttons,
+.container:has(#gridview:not([hidden])) .title-section .search-bar {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Grid */
+.container:has(#gridview:not([hidden])) .title-section {
+    display: flex;
+}
+
+/* Slide */
+.container:has(#slideview:not([hidden])) .title-section {
+    display: none;
+}
+
+.project-description {
+    display: none;
+}
+
+.container:has(#slideview:not([hidden])) .project-description {
+    display: block;
+}
+
+.container:has(#slideview:not([hidden])) .search-bar input:focus {
+    border-color: var(--color-black);
+}
 
 /* ==============================
    카드 이미지
@@ -1108,185 +1244,4 @@ body:has(#slideview:not([hidden])) .footer {
 .footer .container .footer-icons .icon {
     width: 2rem;
     height: 2rem;
-}
-
-
-/* ========================================================================
-   Project Intro Animation
-   ------------------------------------------------------------------------
-   흐름
-   1. Slide card는 숨긴 상태
-   2. Title을 화면 중앙에 고정
-   3. 프로젝트명을 빠른 writer 방식으로 순서대로 표시
-   4. 중앙 title fade-out
-   5. 활성 card가 위에서 아래로 내려와 기존 CSS 위치에 안착
-   6. 최종 title / UI를 원래 레이아웃에서 다시 표시
-   ======================================================================== */
-
-/* manual typewriter가 완료된 뒤에도 보이도록 보완 */
-[typewriter-effect][typewriter-trigger="manual"].is-typed {
-    visibility: visible;
-}
-
-/* intro 중에는 스크롤/입력을 시각적으로 잠금 */
-html.project-intro-pending,
-html.project-intro-pending body,
-html.project-intro-running,
-html.project-intro-running body {
-    overflow: hidden !important;
-}
-
-/* JS 시작 전 아주 짧은 구간: card 플래시 방지 */
-html.project-intro-pending #slideview .card {
-    opacity: 0 !important;
-}
-
-/* ------------------------------------------------------------------------
-   중앙 Title Stage
-   ------------------------------------------------------------------------ */
-
-html.project-intro-pending
-.container:has(#slideview:not([hidden])) .title-section,
-html.project-intro-running
-.container:has(#slideview:not([hidden])) .title-section {
-    position: fixed !important;
-    inset: 0 !important;
-
-    width: 100vw !important;
-    height: 100vh !important;
-
-    margin: 0 !important;
-    padding: 0 !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    z-index: 50 !important;
-    pointer-events: none !important;
-}
-
-html.project-intro-pending
-.container:has(#slideview:not([hidden])) .title-section .left-side,
-html.project-intro-running
-.container:has(#slideview:not([hidden])) .title-section .left-side {
-    width: auto !important;
-
-    margin: 0 !important;
-    padding: 0 !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-/* 중앙에서는 검색 / 뷰 버튼 / 설명이 나오지 않게 */
-html.project-intro-pending
-.container:has(#slideview:not([hidden])) .title-section .search-bar,
-html.project-intro-running
-.container:has(#slideview:not([hidden])) .title-section .search-bar,
-html.project-intro-pending
-.container:has(#slideview:not([hidden])) .view-buttons,
-html.project-intro-running
-.container:has(#slideview:not([hidden])) .view-buttons,
-html.project-intro-pending
-.container:has(#slideview:not([hidden])) .slide-description,
-html.project-intro-running
-.container:has(#slideview:not([hidden])) .slide-description {
-    display: none !important;
-}
-
-html.project-intro-pending
-.container:has(#slideview:not([hidden])) .title-section h1,
-html.project-intro-running
-.container:has(#slideview:not([hidden])) .title-section h1 {
-    visibility: visible !important;
-
-    margin: 0 !important;
-
-    font-size: clamp(4.5rem, 6.8vw, 8rem) !important;
-    line-height: 0.95 !important;
-    letter-spacing: -0.045em !important;
-
-    opacity: 1;
-    transform: translateY(0);
-
-    transition:
-        opacity 240ms ease,
-        transform 240ms cubic-bezier(.22, 1, .36, 1);
-}
-
-html.project-intro-pending
-.container:has(#slideview:not([hidden])) .title-section h1 {
-    opacity: 0;
-}
-
-html.project-intro-title-exit
-.container:has(#slideview:not([hidden])) .title-section h1 {
-    opacity: 0 !important;
-    transform: translateY(18px) !important;
-}
-
-/* ------------------------------------------------------------------------
-   Card Drop
-   ------------------------------------------------------------------------ */
-
-/* writer가 진행되는 동안 모든 slide card는 보이지 않음 */
-html.project-intro-running #slideview .card {
-    opacity: 0 !important;
-    pointer-events: none !important;
-}
-
-/* 활성 card는 최종 X 위치를 유지한 채 화면 위쪽에서 대기 */
-html.project-intro-running #slideview .card.is-active {
-    transform:
-        translate(
-            var(--slide-card-x, 2.5vw),
-            -78vh
-        ) !important;
-
-    opacity: 0 !important;
-    transition: none !important;
-}
-
-/* writer 종료 후 위 -> 아래로 내려옴 */
-html.project-intro-running.project-intro-card-enter
-#slideview .card.is-active {
-    transform:
-        translate(
-            var(--slide-card-x, 2.5vw),
-            0
-        ) !important;
-
-    opacity: 1 !important;
-
-    transition:
-        transform 1150ms cubic-bezier(.16, 1, .3, 1),
-        opacity 280ms ease !important;
-}
-
-/* ------------------------------------------------------------------------
-   Final UI Reveal
-   ------------------------------------------------------------------------ */
-
-/* 중앙 title을 없앤 뒤 최종 위치에서 새로 등장시키기 위한 준비 상태 */
-html.project-intro-final-reveal
-.container:has(#slideview:not([hidden])) .title-section h1 {
-    opacity: 0 !important;
-    transform: translateY(12px);
-}
-
-.container:has(#slideview:not([hidden])) .title-section h1 {
-    transition:
-        opacity 520ms ease,
-        transform 620ms cubic-bezier(.22, 1, .36, 1);
-}
-
-/* reduced motion */
-@media (prefers-reduced-motion: reduce) {
-    html.project-intro-running #slideview .card.is-active,
-    html.project-intro-running.project-intro-card-enter #slideview .card.is-active {
-        transform: translateX(var(--slide-card-x, 2.5vw)) !important;
-        transition: none !important;
-    }
 }

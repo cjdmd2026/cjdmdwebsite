@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>유연한 결합: 청주대학교 디지털미디어디자인</title>
-    <link rel="stylesheet" href="../css/project_02.css">
+    <link rel="stylesheet" href="../css/project_03.css">
     <script>
         if (sessionStorage.getItem('stamp-page-transition') === '1') {
             document.documentElement.classList.add('page-transition-preload');
@@ -12,15 +12,13 @@
     </script>
 
     <!-- Scripts:S -->
-    
     <script src="../js/stamp-effect-transition.js" defer></script>
     <script src="../js/typewriter-effect.js" defer></script>
     <script src="../js/project-grid-motion.js" defer></script>
 
 
     <script src="../js/project-data.js" defer></script>
-    <script src="../js/project.js" defer></script>
-    <!--<script src="../js/project-intro.js" defer></script>-->
+    <script src="../js/project_03.js" defer></script>
     <script src="../js/project-filter.js" defer></script>
     <script src="../js/page-transition.js" defer></script>
 
@@ -54,7 +52,7 @@
             <!-- 네비게이션 -->
             <nav class="nav">
                 <ul>
-                    <li><a href="../project/index_02.html" page-transition aria-current="page">프로젝트</a></li>
+                    <li><a href="../project/index.html" page-transition aria-current="page">프로젝트</a></li>
                     <li><a href="../designer/index.html" page-transition>디자이너</a></li>
                     <li><a href="../archive/index.html" page-transition>아카이브</a></li>
                 </ul>
@@ -71,35 +69,130 @@
     <!-- Main:S -->
     <main class="main">
         <div class="container">
-            <div class="slide-info">
-                <!-- 프로젝트 섹션 -->
-                <div class="title-section">
-                    <div class="left-side"> 
-                        <h1 typewriter-effect typewriter-trigger="manual">
-                            <span class="project-title">프로젝트</span>
-                            <!--<span class="worker">작업자 이름</span>-->
-                        </h1>
-                        <div class="view-buttons page-enter-up">
-                            <button class="view-button" type="button" data-view="slide"><img src="../assets/images/icons/side-scroll-icon.svg" class="icon"></button>
-                            <button class="view-button is-active" type="button" data-view="grid" hidden><img src="../assets/images/icons/grid-scroll-icon.svg" class="icon"></button>
-                        </div>
+            <!-- 프로젝트 섹션 -->
+            <div class="title-section">
+                <div class="left-side"> 
+                    <h1 typewriter-effect typewriter-trigger="manual">
+                        <span class="project-title">프로젝트</span>
+                        <!--<span class="worker">작업자 이름</span>-->
+                    </h1>
+                    <div class="view-buttons page-enter-up">
+                        <button class="view-button" type="button" data-view="slide"><img src="../assets/images/icons/side-scroll-icon.svg" class="icon"></button>
+                        <button class="view-button is-active" type="button" data-view="grid" hidden><img src="../assets/images/icons/grid-scroll-icon.svg" class="icon"></button>
                     </div>
-                    
+                </div>  
+                
+                <div class="search-bar page-enter-up">
+                    <img src="../assets/images/icons/search-icon.svg" class="icon">
+                    <input type="text" placeholder="프로젝트를 검색해주세요">
+                </div>
+            </div>
+
+            <!-- 설명 -->
+            <div class="slide-description">
+                <p typewriter-effect typewriter-trigger="manual">프로젝트 설명하는 글</p>
+            </div>
+
+            <div class="project-dial">
+                <ul class="project-dial-list">
+
+                    <li class="project-dial-item is-none" data-project-id="phishing-ddook">
+                        <span class="project-dial-title">피싱뚝!</span>
+                    </li>
+
+                    <li class="project-dial-item is-none" data-project-id="apuchika">
+                        <span class="project-dial-title">아푸치카</span>
+                    </li>
+
+                    <li class="project-dial-item is-none" data-project-id="curo">
+                        <span class="project-dial-title">CURO</span>
+                    </li>
+
+                    <li class="project-dial-item is-far" data-project-id="stylens">
+                        <span class="project-dial-title">Stylens</span>
+                    </li>
+
+                    <li class="project-dial-item is-near" data-project-id="ilkko">
+                        <span class="project-dial-title">읽:꼬</span>
+                    </li>
+
+                    <li class="project-dial-item is-active" data-project-id="dadeullim">
+                        <span class="project-dial-title">다들림</span>
+                    </li>
+
+                    <li class="project-dial-item is-near" data-project-id="todadak">
+                        <span class="project-dial-title">토다닥</span>
+                    </li>
+
+                    <li class="project-dial-item is-far" data-project-id="omix">
+                        <span class="project-dial-title">OMIX</span>
+                    </li>
+
+                    <li class="project-dial-item is-none" data-project-id="year-on">
+                        <span class="project-dial-title">YEAR-ON</span>
+                    </li>
+
+                    <li class="project-dial-item is-none" data-project-id="jikji">
+                        <span class="project-dial-title">직지잼버리</span>
+                    </li>
+
+                    <li class="project-dial-item is-none" data-project-id="cheoma">
+                        <span class="project-dial-title">처마</span>
+                    </li>
+
+                    <li class="project-dial-item is-none" data-project-id="cocorang">
+                        <span class="project-dial-title">COCO:LANG</span>
+                    </li>
+
+                    <li class="project-dial-item is-none" data-project-id="magmoa">
+                        <span class="project-dial-title">마그모아</span>
+                    </li>
+
+                    <li class="project-dial-item is-none" data-project-id="efact">
+                        <span class="project-dial-title">E.FACT</span>
+                    </li>
+
+                    <li class="project-dial-item is-none" data-project-id="28">
+                        <span class="project-dial-title">28(二十八)</span>
+                    </li>
+
+                </ul>
+            </div>
+
+            <div class="project-description">
+                <div class="project-warp">
                     <div class="search-bar page-enter-up">
                         <img src="../assets/images/icons/search-icon.svg" class="icon">
                         <input type="text" placeholder="프로젝트를 검색해주세요">
                     </div>
+                    <div class="view-buttons page-enter-up">
+                        <button class="view-button" type="button" data-view="slide"><img src="../assets/images/icons/side-scroll-icon.svg" class="icon"></button>
+                        <button class="view-button is-active" type="button" data-view="grid" hidden><img src="../assets/images/icons/grid-scroll-icon.svg" class="icon"></button>
+                    </div>
                 </div>
-                
 
-                <!-- 설명 -->
-                <div class="slide-description">
-                    <p typewriter-effect typewriter-trigger="manual">프로젝트 설명하는 글</p>
+                <div class="project-visual">
+                    <div class="project-info">
+                        <div class="project-info-block">
+                            <p>
+                                설명문이 들어가는 영역입니다.
+                                프로젝트에 대한 간단한 소개를 작성합니다.
+                            </p>
+                        </div>
+
+                        <div class="project-info-block">
+                            <p>
+                                추가적인 정보나 프로젝트 특징,
+                                작업 내용 등을 작성합니다.
+                            </p>
+                        </div>
+                    </div>
                 </div>
+
             </div>
 
             <!-- 슬라이드 그라데이션 배경 -->
-            <!--<div class="gradient" style="display: hidden"></div>-->
+            <div class="gradient" style="display: hidden"></div>
 
             <!-- 그리드 뷰 -->
             <div id="gridview" class="grid-view" hidden>
@@ -315,7 +408,7 @@
             </div>
 
             <!-- 슬라이드 뷰 -->
-            <div id="slideview" class="slide-view">
+             <div id="slideview" class="slide-view">
                 <div class="content">
                     <div class="card is-active" data-project-id="phishing-ddook"></div>
                     <div class="card" data-project-id="apuchika"></div>
@@ -333,7 +426,7 @@
                     <div class="card" data-project-id="efact"></div>
                     <div class="card" data-project-id="28"></div>
                 </div>
-            </div>
+             </div>
         </div>
     </main>
     <!-- Main:E -->
