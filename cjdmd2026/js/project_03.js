@@ -949,7 +949,33 @@
                         opacity=.035;
                     }
 
-                    const scale=dialClamp(1-distance*.045,.865,1);
+                    let scale;
+
+                    if(distance<=1){
+                        // active 1.0 → near 0.8
+                        scale=dialLerp(
+                            1,
+                            .8,
+                            distance
+                        );
+                    }else if(distance<=2){
+                        // near 0.8 → far 0.4
+                        scale=dialLerp(
+                            .8,
+                            .4,
+                            distance-1
+                        );
+                    }else if(distance<=3){
+                        // far 0.4 → none 0.3
+                        scale=dialLerp(
+                            .4,
+                            .3,
+                            distance-2
+                        );
+                    }else{
+                        scale=.3;
+                    }
+
                     const blur=distance<=1.15
                         ? 0
                         : dialClamp((distance-1.15)*.34,0,.8);
@@ -1197,29 +1223,117 @@
             }
             function changeView(view){
                 if(view!=='grid'&&view!=='slide')return;
+
                 const wasSlide=!slideview.hidden;
-                clearTransition();clearWriterQueue();
-                slideview.hidden=view!=='slide';if(gridview)gridview.hidden=view!=='grid';
-                root.setAttribute('data-project-fluid-view',view);
+
+                clearTransition();
+                clearWriterQueue();
+
+                slideview.hidden=view!=='slide';
+                if(gridview)gridview.hidden=view!=='grid';
+
+                root.setAttribute(
+                    'data-project-fluid-view',
+                    view
+                );
+
                 viewButtons.forEach(button=>{
-                    button.hidden=button.dataset.view===view;
-                    button.classList.toggle('is-active',button.dataset.view===view);
+                    button.hidden=
+                        button.dataset.view===view;
+
+                    button.classList.toggle(
+                        'is-active',
+                        button.dataset.view===view
+                    );
                 });
+
                 if(view==='grid'){
+                    /*
+                     * Grid에서는 project-dial이 display:none이 되므로
+                     * 숨겨진 상태에서 위치 계산 RAF가 계속 돌지 않게 정지합니다.
+                     */
+                    stopDialMotion();
+
                     showGridTitle();
-                    if(stoppedLenis){stoppedLenis.start();stoppedLenis=null;}
+
+                    if(stoppedLenis){
+                        stoppedLenis.start();
+                        stoppedLenis=null;
+                    }
                 }else{
-                    const l=currentLenis();if(l&&!l.isStopped&&typeof l.stop==='function'){l.stop();stoppedLenis=l;}
-                    if(!wasSlide||initial)window.scrollTo({top:0,left:0,behavior:'instant'});
+                    const l=currentLenis();
+
+                    if(
+                        l &&
+                        !l.isStopped &&
+                        typeof l.stop==='function'
+                    ){
+                        l.stop();
+                        stoppedLenis=l;
+                    }
+
+                    if(!wasSlide||initial){
+                        window.scrollTo({
+                            top:0,
+                            left:0,
+                            behavior:'instant'
+                        });
+                    }
+
                     const visible=visibleCards();
-                    if(visible.length&&cards[index].hidden)markActive(cards.indexOf(visible[0]),true);
-                    syncFluidSurfaceBounds(cards[index]);
-                    if(engine)engine.resize();
-                    updateSlideInfo(cards[index].dataset.projectId,false);
-                    if(!initial)forceTextVisible();
+
+                    if(
+                        visible.length &&
+                        cards[index].hidden
+                    ){
+                        markActive(
+                            cards.indexOf(visible[0]),
+                            true
+                        );
+                    }
+
+                    syncFluidSurfaceBounds(
+                        cards[index]
+                    );
+
+                    if(engine){
+                        engine.resize();
+                    }
+
+                    updateSlideInfo(
+                        cards[index].dataset.projectId,
+                        false
+                    );
+
+                    if(!initial){
+                        forceTextVisible();
+                    }
+
+                    /*
+                     * Slide가 다시 display 상태가 된 다음 프레임에
+                     * Dial의 실제 크기/offsetTop을 다시 읽어 중앙 위치를 계산합니다.
+                     *
+                     * 이전 Grid 상태에서 남아 있던 dialPosition도 버려
+                     * 화면 밖 translate 값이 재사용되지 않게 합니다.
+                     */
+                    requestAnimationFrame(()=>{
+                        if(slideview.hidden)return;
+
+                        dialPosition=null;
+
+                        syncProjectDial(
+                            cards[index]?.dataset.projectId,
+                            0,
+                            true
+                        );
+                    });
                 }
+
                 initial=false;
-                if(view==='slide')queueMicrotask(warm);
+
+                if(view==='slide'){
+                    queueMicrotask(warm);
+                }
             }
             function reconcileSearch(){
                 if(disposed)return;

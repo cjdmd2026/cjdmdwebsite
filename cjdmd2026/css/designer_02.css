@@ -88,15 +88,11 @@
     --designer-grid-row-gap: 52.39px; /* Grid 카드 행 사이 간격 */
 
     /* Designer Slide */
-    --designer-slide-gap: 1rem; /* Hover가 없는 기본 카드 사이 간격 */
-    --designer-slide-default-ratio: 280 / 476; /* 기본 카드 가로/세로 비율 */
-    --designer-slide-hover-ratio: 320 / 557; /* Hover 카드 가로/세로 비율 */
-    --designer-slide-small-ratio: 236 / 399; /* Hover 시 비활성 카드 가로/세로 비율 */
-    --designer-slide-default-width: 250px; /* 기본 Slide 카드 너비 */
-    --designer-slide-hover-width: 260px; /* 마우스 Hover 시 확대되는 카드 너비 */
-    --designer-slide-small-width: 240px; /* 다른 카드 Hover 시 축소되는 카드 너비 */
-    --designer-slide-hover-gap: 2rem; /* Hover 카드와 다음 축소 카드 사이 목표 간격 */
-    --designer-slide-small-gap: 1rem; /* Hover 상태에서 축소 카드끼리의 간격 */
+    --designer-slide-gap: clamp(12px, 1vw, 20px);
+
+    --designer-slide-default-ratio: 280 / 476;
+
+    --designer-slide-default-width: 16.67vw;
 
     /* Designer Slide 좌측 영역 */
     --designer-slide-side-width: 168px; /* 세로선과 초성 필터를 포함하는 영역 너비 */
@@ -328,7 +324,7 @@ img {
 }
 
 body:has(.designer-page.slide-view) {
-    overflow: hidden;
+    overflow-x: hidden;
 }
 
 .designer-heading {
@@ -398,14 +394,28 @@ body:has(.designer-page.slide-view) {
     pointer-events: none;
 }
 
-.designer-card__name-ko {
+.grid-view .designer-card__name-ko {
     color: var(--color-white);
     font-weight: 500;
     line-height: normal;
     letter-spacing: -0.03em;
 }
 
-.designer-card__name-en {
+.grid-view .designer-card__name-en {
+    color: var(--color-gray-800);
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -0.02em;
+}
+
+.slide-view .designer-card__name-ko {
+    color: var(--color-black);
+    font-weight: 500;
+    line-height: normal;
+    letter-spacing: -0.03em;
+}
+
+.slide-view .designer-card__name-en {
     color: var(--color-gray-800);
     font-weight: 400;
     line-height: normal;
@@ -437,11 +447,11 @@ body:has(.designer-page.slide-view) {
 }
 
 .slide-view .label-slide {
-    display: inline;
+    display: none;
 }
 
 .slide-view .label-grid {
-    display: none;
+    display: inline;
 }
 
 .slide-view .view-buttons {
@@ -449,64 +459,57 @@ body:has(.designer-page.slide-view) {
     align-items: center;
 }
 
+/* Slide View에서도 Grid View처럼 필터를 위쪽 가로형으로 사용 */
 .slide-view .designer-stage {
-    width: calc(
-        100vw - max(
-            0px,
-            calc((100vw - var(--container-width)) / 2)
-        )
-    );
-
-    margin-top: 55px;
-
-    display: flex;
-    align-items: start;
-    gap: var(--designer-slide-side-gap);
+    position: relative;
+    width: 100%;
+    margin-top: 1.5rem;
+    display: block;
 }
 
 .slide-view .designer-side {
-    flex: 0 0 var(--designer-slide-side-width);
+    width: 100%;
+    padding: 0;
+    transform: none;
+    background: transparent;
     z-index: 1;
-    background: var(--color-black);
-    padding: 0 3rem 8rem 8rem;
-    transform: translateX(-8rem);
 }
 
 .slide-view .designer-side__line {
-    height: 69px;
+    display: none;
 }
 
 .slide-view .designer-filter {
-    margin-top: 67px;
-    display: grid;
-    grid-template-columns: repeat(3, 42px);
-    grid-auto-rows: 42px;
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 32px;
 }
 
 .slide-view .designer-filter__button {
-    width: 32px;
-    height: 32px;
-    font-size: 1rem;
-
-    margin: 0 auto;
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    color: #3a3a3a;
+    font-size: 16px;
 }
 
 .slide-view .designer-filter__button.is-active {
-    border-radius: 7px;
-    background: var(--color-white);
-    color: var(--color-black);
+    border-radius: 0;
+    background: transparent;
+    color: var(--color-white);
+    font-weight: 600;
 }
 
+/* Slide View: 카드 영역은 화면 전체 폭 */
 .slide-view .designer-slider {
-    flex: 1 1 auto;
-    min-width: 0;
-    
-    padding-left: 500px;
-    margin-left: -500px;
+    width: 100%;
+    margin-top: 55px;
 
     overflow-x: auto;
     overflow-y: hidden;
-    
     overscroll-behavior-x: contain;
     scrollbar-width: none;
 }
@@ -515,23 +518,24 @@ body:has(.designer-page.slide-view) {
     display: none;
 }
 
-.slide-view .designer-track {
-    position: relative;
-    top: 0;
+.slide-view .card-container {
     width: max-content;
-    min-width: 100%;
+    padding-left: max(0px, calc((100vw - var(--container-width)) / 2));
+    padding-right: max(0px, calc((100vw - var(--container-width)) / 2));
+    box-sizing: border-box;
+}
+
+.slide-view .designer-track {
+    width: max-content;
     display: flex;
     align-items: flex-start;
     gap: var(--designer-slide-gap);
-    transition: top 0.3s ease, gap 0.3s ease;
-    z-index: 0;
 }
 
 .slide-view .designer-card {
     flex: 0 0 var(--designer-slide-default-width);
     width: var(--designer-slide-default-width);
     aspect-ratio: var(--designer-slide-default-ratio);
-    transition: flex-basis 0.3s ease, width 0.3s ease, aspect-ratio 0.3s ease, margin 0.3s ease;
 }
 
 .slide-view .designer-card__image-wrap {
@@ -551,7 +555,6 @@ body:has(.designer-page.slide-view) {
 
 .slide-view .designer-card__image-wrap::after {
     filter: grayscale(100%);
-    transition: filter 0.3s ease;
 }
 
 .slide-view .designer-card__text {
@@ -570,66 +573,6 @@ body:has(.designer-page.slide-view) {
     font-weight: 300;
 }
 
-.slide-view .designer-track:has(.designer-card:hover) {
-    gap: var(--designer-slide-small-gap);
-}
-
-.slide-view .designer-track:has(.designer-card:hover) .designer-card {
-    flex-basis: var(--designer-slide-small-width);
-    width: var(--designer-slide-small-width);
-    aspect-ratio: var(--designer-slide-small-ratio);
-}
-
-/*.slide-view .designer-track:has(.designer-card:hover) .designer-card__text {
-    left: 30px;
-    bottom: 30px;
-    gap: 3px;
-}*/
-
-.slide-view .designer-track:has(.designer-card:hover) .designer-card:not(:hover) .designer-card__name-ko {
-    font-size: 1rem;
-}
-
-.slide-view .designer-track:has(.designer-card:hover) .designer-card:not(:hover) .designer-card__name-en {
-    font-size: 1rem;
-}
-
-.slide-view .designer-track:has(.designer-card:hover) .designer-card:not(:hover) .designer-card__image-wrap::after {
-    filter: grayscale(100%) blur(6px);
-}
-
-.slide-view .designer-track:has(.designer-card:hover) .designer-card:hover {
-    flex-basis: var(--designer-slide-hover-width);
-    width: var(--designer-slide-hover-width);
-    aspect-ratio: var(--designer-slide-hover-ratio);
-
-    margin-left: calc(
-        (var(--designer-slide-small-width) - var(--designer-slide-hover-width)) / 2
-    );
-
-    margin-right: calc(
-        (var(--designer-slide-small-width) - var(--designer-slide-hover-width)) / 2
-    );
-}
-
-.slide-view .designer-track:has(.designer-card:hover) .designer-card:hover .designer-card__image-wrap::after {
-    filter: grayscale(0%);
-}
-
-.slide-view .designer-track:has(.designer-card:hover) .designer-card:hover .designer-card__text {
-    left: 36px;
-    bottom: 34.57px;
-    gap: 2.88px;
-}
-
-.slide-view .designer-track:has(.designer-card:hover) .designer-card:hover .designer-card__name-ko {
-    font-size: 1rem;
-}
-
-.slide-view .designer-track:has(.designer-card:hover) .designer-card:hover .designer-card__name-en {
-    font-size: 1rem;
-}
-
 /* ============================== Grid View ============================== */
 .grid-view .designer-heading__title--slide {
     display: none;
@@ -640,7 +583,7 @@ body:has(.designer-page.slide-view) {
 }
 
 .grid-view .designer-stage {
-    margin-top: 4rem;
+    margin-top: 1.5rem;
     width: 100%;
 }
 
@@ -673,7 +616,17 @@ body:has(.designer-page.slide-view) {
 }
 
 .grid-view .designer-slider {
-    margin-top: 55px;
+    width: var(--container-width);
+    margin: 0 auto;
+    overflow: visible;
+
+    margin-top: 4rem;
+}
+
+.grid-view .card-container {
+    width: var(--container-width);
+    margin: 0 auto;
+    padding: 0;
 }
 
 .grid-view .designer-track {
@@ -681,6 +634,7 @@ body:has(.designer-page.slide-view) {
     grid-template-columns: repeat(5, minmax(0, 1fr));
     column-gap: var(--designer-grid-column-gap);
     row-gap: var(--designer-grid-row-gap);
+    margin-bottom: 5rem;
 }
 
 .grid-view .designer-card {
@@ -715,7 +669,7 @@ body:has(.designer-page.slide-view) {
     letter-spacing: 0;
 }
 
-/* View 전환은 즉시, Slide Hover에만 위 transition을 적용합니다. */
+/* View 전환 시 transition 제거 */
 .designer-page.is-view-changing .designer-card,
 .designer-page.is-view-changing .designer-card__image-wrap,
 .designer-page.is-view-changing .designer-card__image,

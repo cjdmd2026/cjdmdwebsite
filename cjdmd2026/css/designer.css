@@ -417,11 +417,9 @@ body:has(.designer-page.slide-view) {
 /* ============================== Slide View ==============================*/
 .designer-page.slide-view .designer-heading {
     align-items: center;
-
 }
 
 .designer-page.slide-view .designer-heading__top {
-   
     align-items: center;
     gap: 2;
 }
@@ -431,7 +429,6 @@ body:has(.designer-page.slide-view) {
 }
 
 .slide-view .search-bar {
-
     display: flex;
     align-items: center;
 }
@@ -466,10 +463,10 @@ body:has(.designer-page.slide-view) {
 
 .slide-view .designer-side {
     flex: 0 0 var(--designer-slide-side-width);
-    z-index: 1;
+    /*z-index: 1;
     background: var(--color-black);
     padding: 0 3rem 8rem 8rem;
-    transform: translateX(-8rem);
+    transform: translateX(-8rem);*/
 }
 
 .slide-view .designer-side__line {
@@ -479,13 +476,13 @@ body:has(.designer-page.slide-view) {
 .slide-view .designer-filter {
     margin-top: 67px;
     display: grid;
-    grid-template-columns: repeat(3, 42px);
-    grid-auto-rows: 42px;
+    grid-template-columns: repeat(3, 48px);
+    grid-auto-rows: 48px;
 }
 
 .slide-view .designer-filter__button {
-    width: 32px;
-    height: 32px;
+    width: 38px;
+    height: 38px;
     font-size: 1rem;
 
     margin: 0 auto;
@@ -500,13 +497,11 @@ body:has(.designer-page.slide-view) {
 .slide-view .designer-slider {
     flex: 1 1 auto;
     min-width: 0;
-    
-    padding-left: 500px;
-    margin-left: -500px;
-
+    margin-top: -8px;
+    padding-top: 48px;
+    padding-bottom: 33px;
     overflow-x: auto;
     overflow-y: hidden;
-    
     overscroll-behavior-x: contain;
     scrollbar-width: none;
 }
