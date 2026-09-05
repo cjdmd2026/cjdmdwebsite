@@ -492,15 +492,16 @@ body:has(.designer-page.slide-view) {
     height: auto;
     margin: 0;
     padding: 0;
-    color: #3a3a3a;
-    font-size: 16px;
+    color: var(--color-white);
+    font-size: 1rem;
+    font-weight: 500;
 }
 
 .slide-view .designer-filter__button.is-active {
     border-radius: 0;
     background: transparent;
-    color: var(--color-white);
-    font-weight: 600;
+    color: var(--color-black);
+    font-weight: 500;
 }
 
 /* Slide View: 카드 영역은 화면 전체 폭 */
@@ -536,11 +537,25 @@ body:has(.designer-page.slide-view) {
     flex: 0 0 var(--designer-slide-default-width);
     width: var(--designer-slide-default-width);
     aspect-ratio: var(--designer-slide-default-ratio);
+
+    --designer-slide-card-offset-y: 20vh;
+
+    /* Slide View WebGL 카드 border */
+    --designer-card-border-width: 0;
+    --designer-card-border-color: none;
+
+    /*
+     * Slide View WebGL 텍스트 위치
+     * 아래 세 값만 수정하면 JS canvas 텍스트 위치도 같이 바뀝니다.
+     */
+    --designer-card-text-left: 35px;
+    --designer-card-text-bottom: 35px;
+    --designer-card-text-gap: 3px;
 }
 
 .slide-view .designer-card__image-wrap {
     height: 100%;
-    border-radius: 17px;
+    border-radius: 25px;
 }
 
 .slide-view .designer-card__image-wrap::before {
@@ -558,9 +573,9 @@ body:has(.designer-page.slide-view) {
 }
 
 .slide-view .designer-card__text {
-    left: 35px;
-    bottom: 35px;
-    gap: 3px;
+    left: var(--designer-card-text-left);
+    bottom: var(--designer-card-text-bottom);
+    gap: var(--designer-card-text-gap);
 }
 
 .slide-view .designer-card__name-ko {
@@ -606,13 +621,15 @@ body:has(.designer-page.slide-view) {
 }
 
 .grid-view .designer-filter__button {
-    color: #3a3a3a;
-    font-size: 16px;
+    color: var(--color-white);
+    font-size: 1rem;
+    font-weight: 500;
 }
 
 .grid-view .designer-filter__button.is-active {
-    color: var(--color-white);
-    font-weight: 600;   
+    color: var(--color-black);
+    font-size: 1rem;
+    font-weight: 500;
 }
 
 .grid-view .designer-slider {
@@ -692,6 +709,130 @@ body:has(.designer-page.slide-view) {
     border-radius: 999px;
     cursor: pointer;
     padding: 0.1rem;
+}
+
+/* =========================================================
+    Designer Filter
+   ========================================================= */
+
+.designer-filter {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    /* 검은 젤리 여백 - 이 값만 수정하면 JS가 자동으로 읽습니다. */
+    --designer-filter-pad-y: 0.45rem;
+    --designer-filter-pad-x: 0.8rem;
+
+    /* 기존 네 필터 간격에 맞게 조절 */
+    gap: 0.5rem;
+
+    isolation: isolate;
+
+    z-index: 30;
+}
+
+.designer-filter__button {
+    position: relative;
+    z-index: 2;
+
+    background: transparent;
+    border: 0;
+
+    transition: color 0.25s ease;
+}
+
+/* 선택된 버튼 글자 */
+.designer-filter__button[aria-pressed="true"] {
+    color: var(--color-black);
+}
+
+/* =========================================================
+    Jelly Indicator
+   ========================================================= */
+
+.designer-filter__indicator {
+    position: absolute;
+    z-index: 1;
+
+    top: 0;
+    left: 0;
+
+    display: block;
+
+    width: 0;
+    height: 0;
+
+    pointer-events: none;
+    overflow: visible;
+
+    will-change:
+        left,
+        width,
+        height;
+}
+
+.designer-filter__indicator-shape {
+    position: absolute;
+    inset: 0;
+
+    display: block;
+    z-index: 999;
+
+    background: var(--color-white);
+    border-radius: 999px;
+
+    transform-origin: center;
+    will-change:
+        transform,
+        border-radius;
+}
+
+
+/* =========================================================
+    Disabled Initial
+   ========================================================= */
+
+.designer-filter__button:disabled {
+    opacity: 0.25;
+    cursor: default;
+}
+
+
+
+/* =========================================================
+   Designer Ribbon WebGL
+   JS 내부 스타일을 전부 CSS로 분리
+   ========================================================= */
+
+.designer-ribbon-webgl {
+    position: fixed;
+    z-index: 20;
+    overflow: hidden;
+
+    display: none;
+    opacity: 0;
+    pointer-events: none;
+
+    touch-action: none;
+}
+
+.designer-ribbon-webgl.is-active {
+    display: block;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.designer-ribbon-webgl canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .designer-ribbon-webgl {
+        display: none !important;
+    }
 }
 
 /* ============================== Footer ============================== */

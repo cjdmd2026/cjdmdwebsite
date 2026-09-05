@@ -14,7 +14,9 @@
     <!-- Scripts:S -->
     <script src="../js/stamp-effect-transition.js" defer></script>
     <script src="../js/typewriter-effect.js" defer></script>
+    <script src="../js/designer-data.js" defer></script>
     <script src="../js/designer_02.js" defer></script>
+    <script src="../js/designer-filter.js" defer></script>
     <script src="../js/designer-ribbon-slider.js" defer></script>
 
     <script src="../js/page-transition.js" defer></script>
@@ -74,8 +76,6 @@
                         <h2 class="designer-heading__title designer-heading__title--grid">디자이너</h2>
                     </div>
                     
-                    <!-- TODO: data-name-ko / data-name-en 기반 검색 기능 연결 -->
-                    
                     <div class="view-buttons">
                         <button class="view-button" type="button" data-view="grid" aria-label="그리드 보기로 전환">
                             <img src="../assets/images/icons/grid-scroll-icon.svg" class="icon" alt="">
@@ -97,8 +97,10 @@
             <aside class="designer-side">
                 <!--<span class="designer-side__line" aria-hidden="true"></span>-->
 
-                <!-- TODO: 버튼과 카드의 data-initial 기반 초성 필터 연결 -->
                 <nav class="designer-filter" aria-label="디자이너 초성 필터">
+                    <span class="designer-filter__indicator" aria-hidden="true">
+                        <span class="designer-filter__indicator-shape"></span>
+                    </span>
                     <button class="designer-filter__button is-active" type="button" data-initial="all" aria-pressed="true"><span class="label-slide">All</span><span class="label-grid">전체</span></button>
                     <button class="designer-filter__button" type="button" data-initial="ㄱ" aria-pressed="false">ㄱ</button>
                     <button class="designer-filter__button" type="button" data-initial="ㄴ" aria-pressed="false">ㄴ</button>
@@ -127,280 +129,7 @@
         <section class="designer-slider" aria-label="디자이너 목록">
                 <div class="card-container">
                     <div class="designer-track">
-                    <!-- Designer 카드 공통 구조
-                        이미지와 한글/영문 이름 overlay로 구성
-                        TODO: 디자이너별 상세 페이지 URL 전달 후 연결 -->
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-01.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-02.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-03.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-04.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-05.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-06.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-07.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-08.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-09.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-10.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-11.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-12.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-13.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-14.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-15.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-16.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-17.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-18.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-19.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-20.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-21.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-22.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-23.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-24.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-25.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-26.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-27.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-28.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-29.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-30.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-31.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-32.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-33.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
-
-                    <a class="designer-card" href="" data-name-ko="홍길동" data-name-en="Hong Gil-dong" data-initial="ㅎ" aria-label="홍길동 상세 페이지 연결 예정">
-                        <span class="designer-card__image-wrap" style="--designer-card-image: url('../assets/images/designer/designer-34.png')"></span>
-                        <span class="designer-card__text">
-                            <strong class="designer-card__name-ko">홍길동</strong>
-                            <span class="designer-card__name-en">Hong Gil-dong</span>
-                        </span>
-                    </a>
+                        <!-- designer-data.js + designer_02.js에서 카드 자동 생성 -->
                     </div>
                 </div>
             </section>
