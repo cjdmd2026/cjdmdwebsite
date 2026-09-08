@@ -1,30 +1,9 @@
 /* =========================================================
    Designer Data
-   =========================================================
-
-   window.DESIGNERS: 설문 응답 34명 / 설문 순서(가나다순).
-   Grid View, Slide View, 추후 Designer Detail Page 공통 데이터.
-
-   id           : 디자이너 고유 ID (동명이인은 별도 ID)
-   nameKo       : 설문 국문 이름
-   nameEn       : 설문 영문 이름 (철자/대소문자 유지)
-   initial      : 초성 필터용
-   projectIds   : window.PROJECTS의 id 연결
-   teamName     : 설문에 입력된 팀명 원문
-   teammateIds  : 본인을 제외한 팀원의 DESIGNERS.id
-   phone        : 설문 연락처
-   email        : 설문 이메일
-   instagram    : @를 제외한 계정명, 설문 X는 빈 문자열
-   image        : 프로필 사진 경로 (사진 미제공으로 빈 문자열)
-   order        : 기본 표시 순서 (1~34)
-
-   - 이름으로 연결하지 않고 id / projectIds로 연결합니다.
-   - 김지유: 피싱 뚝! / COCO:LANG을 서로 다른 디자이너로 관리.
-   - PROJECTS의 title과 설문 teamName은 서로 다를 수 있습니다.
-   - 화면 생성/필터/클릭 동작은 designer.js에서 처리합니다.
-========================================================= */
+   ========================================================= */
 
 window.DESIGNERS = [
+
     /* 01. 고비주 · GO BIJU */
     {
         id: "go-biju",
@@ -37,7 +16,7 @@ window.DESIGNERS = [
         phone: "010-5050-5867",
         email: "gobiju48@gmail.com",
         instagram: "biju._.487",
-        image: "",
+        image: "../assets/images/designer/student/gobiju.webp",
         order: 1
     },
 
@@ -53,7 +32,7 @@ window.DESIGNERS = [
         phone: "010-6207-7054",
         email: "dpqms67@naver.com",
         instagram: "minsnrnjsrnjs",
-        image: "",
+        image: "../assets/images/designer/student/kwonminseong.webp",
         order: 2
     },
 
@@ -69,7 +48,7 @@ window.DESIGNERS = [
         phone: "010-4234-7428",
         email: "dahyun.kim.gbc@gmail.com",
         instagram: "dxhxxnnnn._.a",
-        image: "",
+        image: "../assets/images/designer/student/kimdahyun.webp",
         order: 3
     },
 
@@ -85,7 +64,7 @@ window.DESIGNERS = [
         phone: "010-7123-8872",
         email: "ehdus2964@gmail.com",
         instagram: "do_doye",
-        image: "",
+        image: "../assets/images/designer/student/kimdoyeon.webp",
         order: 4
     },
 
@@ -101,7 +80,7 @@ window.DESIGNERS = [
         phone: "010-9584-6658",
         email: "kimdgb012@naver.com",
         instagram: "threereload",
-        image: "",
+        image: "../assets/images/designer/student/kimminjae.webp",
         order: 5
     },
 
@@ -117,7 +96,7 @@ window.DESIGNERS = [
         phone: "010-9866-4729",
         email: "2023010283cju@gmail.com",
         instagram: "seonminto",
-        image: "",
+        image: "../assets/images/designer/student/kimsungeun.webp",
         order: 6
     },
 
@@ -133,7 +112,7 @@ window.DESIGNERS = [
         phone: "010-2939-3616",
         email: "jju01277@gmail.com",
         instagram: "yahooooooooooooio",
-        image: "",
+        image: "../assets/images/designer/student/kimjuyoun.webp",
         order: 7
     },
 
@@ -149,7 +128,7 @@ window.DESIGNERS = [
         phone: "010-8029-8793",
         email: "jiyoo4213@naver.com",
         instagram: "wldbdak",
-        image: "",
+        image: "../assets/images/designer/student/kimjiyoo.webp",
         order: 8
     },
 
@@ -165,7 +144,7 @@ window.DESIGNERS = [
         phone: "010-4694-8065",
         email: "Ekcqka2004@gmail.com",
         instagram: "_ream.o",
-        image: "",
+        image: "../assets/images/designer/student/kimjiyou.webp",
         order: 9
     },
 
@@ -181,7 +160,7 @@ window.DESIGNERS = [
         phone: "010-2468-4219",
         email: "jy24684219@gmail.com",
         instagram: "jiyoon_2468",
-        image: "",
+        image: "../assets/images/designer/student/kimjiyoon.webp",
         order: 10
     },
 
@@ -197,7 +176,7 @@ window.DESIGNERS = [
         phone: "010-4853-7632",
         email: "hawon041228@gmail.com",
         instagram: "nyamahaki",
-        image: "",
+        image: "../assets/images/designer/student/kimhawon.webp",
         order: 11
     },
 
@@ -213,7 +192,7 @@ window.DESIGNERS = [
         phone: "010-9342-0260",
         email: "gpwls4502@gmail.com",
         instagram: "hye.ejjj",
-        image: "",
+        image: "../assets/images/designer/student/kimhyejin.webp",
         order: 12
     },
 
@@ -229,7 +208,7 @@ window.DESIGNERS = [
         phone: "010-2207-4109",
         email: "zerodesign16@gmail.com",
         instagram: "h_ove.o",
-        image: "",
+        image: "../assets/images/designer/student/namnayoung.webp",
         order: 13
     },
 
@@ -245,7 +224,7 @@ window.DESIGNERS = [
         phone: "010-5824-7667",
         email: "designer.zeibe@gmail.com",
         instagram: "",
-        image: "",
+        image: "../assets/images/designer/student/nohminyeong.webp",
         order: 14
     },
 
@@ -261,7 +240,7 @@ window.DESIGNERS = [
         phone: "010-2660-2036",
         email: "alswlgh2004@gmail.com",
         instagram: "mn__zio",
-        image: "",
+        image: "../assets/images/designer/student/minjiho.webp",
         order: 15
     },
 
@@ -277,7 +256,7 @@ window.DESIGNERS = [
         phone: "010-5016-1925",
         email: "yuha1925@naver.com",
         instagram: "yun_a01_",
-        image: "",
+        image: "../assets/images/designer/student/parkyuna.webp",
         order: 16
     },
 
@@ -293,7 +272,7 @@ window.DESIGNERS = [
         phone: "010-7221-1076",
         email: "pyj.cloud@gmail.com",
         instagram: "0i0i0_nn",
-        image: "",
+        image: "../assets/images/designer/student/parkyoonji.webp",
         order: 17
     },
 
@@ -309,7 +288,7 @@ window.DESIGNERS = [
         phone: "010-2716-9901",
         email: "yeonwoo9901@gmail.com",
         instagram: "west.__.kite_woo",
-        image: "",
+        image: "../assets/images/designer/student/seoyeonwoo.webp",
         order: 18
     },
 
@@ -325,7 +304,7 @@ window.DESIGNERS = [
         phone: "010-7148-4100",
         email: "songlass1031@gmail.com",
         instagram: "rock9_rock9",
-        image: "",
+        image: "../assets/images/designer/student/sonyejin.webp",
         order: 19
     },
 
@@ -341,7 +320,7 @@ window.DESIGNERS = [
         phone: "010-8679-0250",
         email: "beanbin0306@naver.com",
         instagram: "",
-        image: "",
+        image: "../assets/images/designer/student/songseungbin.webp",
         order: 20
     },
 
@@ -357,7 +336,7 @@ window.DESIGNERS = [
         phone: "010-5578-6908",
         email: "syj.design1206@gmail.com",
         instagram: "songyzin",
-        image: "",
+        image: "../assets/images/designer/student/songyujin.webp",
         order: 21
     },
 
@@ -373,7 +352,7 @@ window.DESIGNERS = [
         phone: "010-4174-1228",
         email: "zzzk88x@gmail.com",
         instagram: "nk2i.o",
-        image: "",
+        image: "../assets/images/designer/student/ahnnagyeong.webp",
         order: 22
     },
 
@@ -389,7 +368,7 @@ window.DESIGNERS = [
         phone: "010-9220-5744",
         email: "gil10504@naver.com",
         instagram: "yugil_jong",
-        image: "",
+        image: "../assets/images/designer/student/yoogiljong.webp",
         order: 23
     },
 
@@ -405,7 +384,7 @@ window.DESIGNERS = [
         phone: "010-5937-4311",
         email: "hyejin010266@gmail.com",
         instagram: "hyejin133",
-        image: "",
+        image: "../assets/images/designer/student/yoohyejin.webp",
         order: 24
     },
 
@@ -421,7 +400,7 @@ window.DESIGNERS = [
         phone: "010-4565-7098",
         email: "yunjiwon105@naver.com",
         instagram: "happyunw",
-        image: "",
+        image: "../assets/images/designer/student/yunjiwon.webp",
         order: 25
     },
 
@@ -437,7 +416,7 @@ window.DESIGNERS = [
         phone: "010-5730-9497",
         email: "010290cj@naver.com",
         instagram: "y_tegyun",
-        image: "",
+        image: "../assets/images/designer/student/yountaegyun.webp",
         order: 26
     },
 
@@ -453,7 +432,7 @@ window.DESIGNERS = [
         phone: "010-3141-5438",
         email: "dleksms86@naver.com",
         instagram: "olgoeun__",
-        image: "",
+        image: "../assets/images/designer/student/leegoeun.webp",
         order: 27
     },
 
@@ -469,7 +448,7 @@ window.DESIGNERS = [
         phone: "010-2206-0140",
         email: "rosaria0140@naver.com",
         instagram: "01_.na0",
-        image: "",
+        image: "../assets/images/designer/student/leenayeong.webp",
         order: 28
     },
 
@@ -485,7 +464,7 @@ window.DESIGNERS = [
         phone: "010-9207-2467",
         email: "tkfkd9207@gmail.com",
         instagram: "l_bell.1",
-        image: "",
+        image: "../assets/images/designer/student/limjongwon.webp",
         order: 29
     },
 
@@ -501,7 +480,7 @@ window.DESIGNERS = [
         phone: "010-7392-6880",
         email: "qawer1236@gmail.com",
         instagram: "qawer1236",
-        image: "",
+        image: "../assets/images/designer/student/jowooseong.webp",
         order: 30
     },
 
@@ -517,7 +496,7 @@ window.DESIGNERS = [
         phone: "010-4150-8452",
         email: "chooz779@gmail.com",
         instagram: "goodgyo_o",
-        image: "",
+        image: "../assets/images/designer/student/joeungyo.webp",
         order: 31
     },
 
@@ -533,7 +512,7 @@ window.DESIGNERS = [
         phone: "010-9483-4032",
         email: "bmbm1027@naver.com",
         instagram: "nyam1027",
-        image: "",
+        image: "../assets/images/designer/student/jubomin.webp",
         order: 32
     },
 
@@ -549,7 +528,7 @@ window.DESIGNERS = [
         phone: "010-7267-0023",
         email: "ha098776@naver.com",
         instagram: "2chyj",
-        image: "",
+        image: "../assets/images/designer/student/juyejin.webp",
         order: 33
     },
 
@@ -562,10 +541,11 @@ window.DESIGNERS = [
         projectIds: ["omix"],
         teamName: "OMIX",
         teammateIds: ["noh-minyeong", "song-seungbin"],
-        phone: "010-4074-2849",
+        phone: "010-4079-2849",
         email: "tyou1218@naver.com",
         instagram: "im_real_daeyeon",
-        image: "",
+        image: "../assets/images/designer/student/hamdaeyeon.webp",
         order: 34
     }
+
 ];

@@ -139,7 +139,7 @@
         /* ---------------------------------
            Shader
         --------------------------------- */
-        rgbSplit: 5.0,
+        rgbSplit: 2.0,
 
         /*
          * 흰 배경 기준 가상 조명
@@ -148,15 +148,15 @@
          * - rim: 옆으로 꺾인 가장자리 반사광
          * - reflection: 카드 표면을 스치는 은은한 반사띠
          */
-        lightAmbient: 0.86,
-        lightDiffuse: 0.14,
-        lightRim: 0.16,
+        lightAmbient: 1.0,
+        lightDiffuse: 0.0,
+        lightRim: 0.025,
         lightRimPower: 2.2,
-        lightReflection: 0.045,
+        lightReflection: 0.008,
         lightReflectionCenter: 0.36,
         lightReflectionWidth: 0.42,
-        lightColorR: 0.96,
-        lightColorG: 0.97,
+        lightColorR: 1.0,
+        lightColorG: 1.0,
         lightColorB: 1.0,
 
         /*
@@ -165,9 +165,9 @@
          * 둥근 모서리를 따라 뒤쪽으로 side wall을 생성합니다.
          */
         cardThickness: 5,
-        cardThicknessColorR: 0.16,
-        cardThicknessColorG: 0.16,
-        cardThicknessColorB: 0.17,
+        cardThicknessColorR: 1.0,
+        cardThicknessColorG: 1.0,
+        cardThicknessColorB: 1.0,
         cardThicknessOpacity: 1.0,
 
         /* ---------------------------------
@@ -913,7 +913,7 @@
 
             try {
                 borderColorContext.fillStyle =
-                    "#000000";
+                    "rgba(0,0,0,.72)";
 
                 borderColorContext.fillStyle =
                     value.trim();
@@ -1253,7 +1253,7 @@
         const placeholderCtx =
             placeholderCanvas.getContext("2d");
 
-        placeholderCtx.fillStyle = "#222";
+        placeholderCtx.fillStyle = "#eee";
         placeholderCtx.fillRect(0, 0, 2, 2);
 
         const placeholderTexture =
@@ -1401,7 +1401,7 @@
             const W = canvas.width;
             const H = canvas.height;
 
-            ctx.fillStyle = "#222";
+            ctx.fillStyle = "#eee";
             ctx.fillRect(0, 0, W, H);
 
             try {
@@ -1478,7 +1478,7 @@
 
             gradient.addColorStop(
                 1,
-                "rgba(0,0,0,.78)"
+                "rgba(0,0,0,0)"
             );
 
             ctx.fillStyle = gradient;
@@ -1528,10 +1528,10 @@
                 "bottom";
 
             ctx.fillStyle =
-                "#fff";
+                "#111";
 
             ctx.font =
-                `600 ${nameKoFontSize}px Pretendard, Arial, sans-serif`;
+                `700 ${nameKoFontSize}px Pretendard, Arial, sans-serif`;
 
             /*
              * 영어 이름을 먼저 아래에 두고,
@@ -1553,7 +1553,7 @@
             );
 
             ctx.fillStyle =
-                "rgba(255,255,255,.72)";
+                "#222";
 
             ctx.font =
                 `300 ${nameEnFontSize}px Pretendard, Arial, sans-serif`;
@@ -2178,6 +2178,16 @@
                         facing *
                         rounded
                     );
+                    gl_FragColor =
+                    vec4(
+                        rgb,
+                        center.a *
+                        uOpacity *
+                        facing *
+                        rounded
+                    );
+
+                #include <colorspace_fragment>
             }
         `;
 

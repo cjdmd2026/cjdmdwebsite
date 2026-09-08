@@ -85,7 +85,7 @@
 
     /* size */
     --header-height: 60px;
-    --container-width: min(63.5vw, 1600px);
+    --container-width: 1220px;
     --side-padding: 60px;
 
     /* transition */
@@ -106,7 +106,7 @@
 html {
     font-size: 16px;
     scroll-behavior: smooth;
-    scrollbar-gutter: stable;
+    scrollbar-gutter: auto;
 }
 
 * {
