@@ -62,6 +62,13 @@
     font-display: swap;
 }
 
+@font-face {
+    font-family: 'NohHaeChan';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/ROEHOE-CHAN.woff') format('woff');
+    font-weight: normal;
+    font-display: swap;
+}
+
 
 :root {
     /* color */
@@ -87,6 +94,15 @@
     --header-height: 60px;
     --container-width: 1220px;
     --side-padding: 60px;
+
+    /* archive page layout */
+    --hero-height: 200vh;
+    --hero-title-top: 35vh;
+    --explanation-sticky-top: 60vh;
+    --explanation-gap: 2rem;
+    --history-start: 100vh;
+    --history-card-gap: 1rem;
+    --archive-block-space: 10rem;
 
     /* transition */
     --transition-basic: 0.3s ease;
@@ -226,160 +242,267 @@ img {
 
 /* ============================== Main ============================== */
 
-/* ============================== History ============================== */
 .main {
     min-height: 100vh;
 }
 
 .main .container {
     width: var(--container-width);
-    padding: 100px 0 0;
+    margin: 0 auto;
 
     display: flex;
     flex-direction: column;
 
     color: var(--color-white);
-
-    margin-top: 2rem;
 }
 
-.main .container h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    margin: 0 auto;
+
+/* ============================== Hero ============================== */
+
+.hero {
+    position: relative;
+
+    width: 100%;
+    height: var(--hero-height);
 }
 
-.main .container p {
-    font-size: 0.875rem;
-    font-weight: 500;
-    letter-spacing: -0.002em;
+.hero .card {
+    position: relative;
 
-    margin: 0 auto;
-
-    color: var(--color-gray-500);
+    width: 100%;
+    height: 100%;
 }
 
-.history {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6rem;
-    row-gap: 12rem;
 
-    margin-top: 4rem;
-    padding: 0 2rem;
-    margin-bottom: 4rem;
-}
+/* ============================== Hero Title ============================== */
 
-.history .card {
+.hero .title {
+    position: absolute;
+    top: var(--hero-title-top);
+    left: 50%;
+
+    transform: translateX(-50%);
+
     display: flex;
     flex-direction: column;
-    gap: 1rem; 
-
-    scale: 1;
+    justify-content: center;
+    align-items: center;
 }
 
-.history .card .image {
-    width: 100%;
-    aspect-ratio: 1/1;
+.hero .title h1 {
+    font-size: 6rem;
+    font-weight: 400;
+    line-height: 1.2;
+    text-align: center;
 
-    border-radius: 10px;
-    background-color: var(--color-gray-500);
+    font-family: 'NohHaeChan', sans-serif;
+}
+
+.hero .title .long {
+    letter-spacing: 0.7em;
+    padding-left: 0.7em;
+}
+
+
+/* ============================== Explanation ============================== */
+
+.hero .explanation {
+    position: sticky;
+    top: var(--explanation-sticky-top);
+
+    z-index: 10;
+
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    gap: var(--explanation-gap);
+
+
+    padding-left: 9rem;
+    padding-top: 3rem;
+    margin: 0;
+
+    color: #111;
+
+    overflow: visible;
+
+    opacity: 1;
+
+    transition: 0.3s ease;
+
+    will-change:
+        transform,
+        opacity;
+}
+
+.hero .explanation.is-archive-hidden {
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.3s ease;
+}
+
+.hero .card .explanation h2 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-align: right;
+}
+
+.hero .card .explanation p {
+    font-size: 0.9rem;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    text-align: left;
+    line-height: 1.8;
+    color: #111;
+
+    overflow: visible;
+}
+
+
+.history-title-mask {
+    display: block;
+    align-self: flex-start;
+
+    overflow: hidden;
+}
+
+.history-title-mask h2 {
+    margin: 0;
+
+    will-change: transform;
+}
+
+.hero .explanation.is-history-section .history-title-mask h2 {
+    font-size: 1.5rem;
+}
+
+.hero .explanation.is-history-section p {
+    font-size: 1rem;
+}
+
+.history-description-line-mask {
+    display: block;
+
+    overflow: hidden;
+}
+
+.history-description-line {
+    display: block;
+
+    will-change: transform;
+}
+
+
+/* ============================== History ============================== */
+
+/*
+ * history는 hero 안의 정확한 100vh 지점에 배치.
+ *
+ * 첫 번째 휠에서 100vh로 이동하면
+ * history-card가 화면 중앙에 들어온다.
+ */
+.history {
+    position: absolute;
+    top: var(--history-start);
+    left: 0;
+
+    width: 100%;
+    height: 100vh;
+
+    margin: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.history .card-wrap {
+    width: 100%;
+    margin: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--history-card-gap);
+}
+
+.history .card-wrap .history-card {
+    width: 100px;
+    height: 100px;
+
+    background-color: var(--color-gray-300);
 
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-}
 
-.history .card .content {
-    display: flex;
-    flex-direction: column;
-}
-
-.history .card .title {
-    display: flex;
-    align-items: end;
-    gap: 1rem;
-
-    margin-top: 0.5rem;
-    line-height: 1;
-}
-
-.history .card .title h2 {
-    font-size: var(--font-size-large);
-    font-weight: 600;
-
-    line-height: 1;
-
-}
-
-.history .card .title h3 {
-    font-size: var(--font-size-medium);
-    font-weight: 500;
-    letter-spacing: -0.02em;
-
-    color: var(--color-font-gray);
-}
-
-.history .card p {
-    margin-top: 1rem;
-    line-height: 1.5;
-    letter-spacing: -0.02em;
-    
-    font-size: var(--font-size-small);
-    font-weight: 300;
-
-    color: var(--color-font-gray);
-}
-
-/* ============================== image01 ============================== */
-.RP01 {
-    width: 100%;
-
-    margin-top: 5rem;
-}
-
-.RP01 h2 {
-    font-size: var(--font-size-large);
-    text-align: center;
-}
-
-
-.container .RPimage {
-    width: 100%;
-    height: 80vh;
-
-    display: flex;
-
-    overflow-x: hidden;
-
-    margin-top: 1rem;
     border-radius: 5px;
+
+    cursor: pointer;
+
+    /* 화면 밖 기본 상태 */
+    opacity: 0;
+
+    transform:
+        translate3d(0, 55px, 0)
+        scale(0.78);
+
+    transform-origin: center center;
+
+    transition:
+        opacity
+        1.35s
+        ease
+        var(--history-current-delay, 0ms),
+
+        transform
+        2.08s
+        cubic-bezier(.18, .82, .22, 1)
+        var(--history-current-delay, 0ms),
+
+        scale
+        1.65s
+        cubic-bezier(.22, 1, .36, 1);
+
+    will-change:
+        transform,
+        opacity,
+        scale;
 }
 
-.container .RPimage .card {
-    background-color: #999;
-    width: 100%;
-    height: 100%;
+.history .card-wrap .history-card.is-history-visible {
+    opacity: 1;
 
-    flex: 0 0 100%;
-    background-size: cover;
-    background-position: center;
-    
+    transform:
+        translate3d(0, 0, 0)
+        scale(1);
 }
 
-/* ============================== archive ============================== */
+.history .card-wrap .history-card:hover {
+    scale: 2;
+    z-index: 999;
+}
+
+
+/* ============================== Archive ============================== */
+
 .archive-wrap {
     width: var(--container-width);
-    margin: 0 auto;
+
+    /*
+     * 200vh에 도착하자마자 archive가 시작되도록
+     * 상단 margin은 제거하고 하단 여백만 유지.
+     */
+    margin: 0 auto var(--archive-block-space);
 
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     grid-auto-rows: 72px;
     gap: 1.5rem;
-
-    margin-top: 10rem;
-    margin-bottom: 10rem    ;
 }
+
 
 .archive-box {
     width: 100%;
@@ -393,6 +516,20 @@ img {
 
     border-radius: 5px;
     overflow: hidden;
+
+    opacity: 0;
+    transform: translate3d(0, 70px, 0);
+
+    transition:
+        opacity 0.9s ease var(--reveal-delay, 0ms),
+        transform 0.9s cubic-bezier(.22, 1, .36, 1) var(--reveal-delay, 0ms);
+
+    will-change: transform, opacity;
+}
+
+.archive-box.is-visible {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
 }
 
 .archive-box h4 {
@@ -586,47 +723,70 @@ img {
 }
 
 /* ============================== Footer ============================== */
+
 .footer {
     background-color: var(--color-black);
-    padding: 20px 0;
+    padding: 1.25rem 0;
+
     text-align: center;
 }
 
 .footer .container {
     width: var(--container-width);
+    margin: 0 auto;
+
     display: flex;
     justify-content: space-between;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
 }
 
 .footer .container .footer-info {
-    display: column;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
     text-align: left;
 }
 
 .footer .container .footer-info h3 {
+    margin: 0;
+
     color: var(--color-white);
     line-height: 1.2;
-    margin-bottom: 0.5rem;
 }
 
 .footer .container .footer-info p {
+    margin: 0;
+
     color: var(--color-white);
     font-size: 0.5rem;
 }
 
 .footer .container .footer-info img {
-    margin-bottom: 0.5rem;
+    margin: 0;
 }
 
 .footer .container .footer-icons {
     display: flex;
-    align-items: end;
+    align-items: flex-end;
     gap: 20px;
 }
 
 .footer .container .footer-icons .icon {
     width: 2rem;
     height: 2rem;
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+    .archive-box,
+    .history .card-wrap .history-card {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+
+    .history-title-mask h2,
+    .history-description-line {
+        animation-duration: 1ms !important;
+    }
 }

@@ -27,7 +27,7 @@
     const lenis = new Lenis({
         duration: 1.1,
         smoothWheel: true,
-        wheelMultiplier: 0.75
+        wheelMultiplier: 1.25
     });
 
     function raf(time) {
@@ -51,7 +51,7 @@
                 <ul>
                     <li><a href="../project/index_03.html" page-transition>프로젝트</a></li>
                     <li><a href="../designer/index_02.html" page-transition aria-current="page">디자이너</a></li>
-                    <li><a href="../archive/index.html" page-transition>아카이브</a></li>
+                    <li><a href="../archive/index_02.html" page-transition>아카이브</a></li>
                 </ul>
             </nav>
 
@@ -76,7 +76,7 @@
                         <h2 class="designer-heading__title designer-heading__title--grid">디자이너</h2>
                     </div>
                     
-                    <div class="view-buttons">
+                    <div class="view-buttons page-enter-up">
                         <button class="view-button" type="button" data-view="grid" aria-label="그리드 보기로 전환">
                             <img src="../assets/images/icons/grid-scroll-icon.svg" class="icon" alt="">
                             <span>그리드 보기</span>
@@ -118,10 +118,6 @@
                     <button class="designer-filter__button" type="button" data-initial="ㅎ" aria-pressed="false">ㅎ</button>
                 </nav>
             </aside>
-
-            <!-- Designer Slider
-                TODO: 추후 pointer 기반 drag/carousel 기능 연결 -->
-
         </div>
         </div>
 

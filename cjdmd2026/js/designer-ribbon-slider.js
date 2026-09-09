@@ -91,6 +91,17 @@
         maxScrollVelocity: 3.6,
         maxWheelStep: 0.30,
 
+        /* ---------------------------------
+           오른쪽 화면 왜곡부 Soft Blur
+           셰이더 텍스처를 벌려 샘플링하지 않고,
+           WebGL 결과 위에 실제 backdrop blur를 그라데이션으로 겹칩니다.
+        --------------------------------- */
+        edgeBlurPx: 0,
+        edgeBlurWidthRatio: 0.4,
+
+        /* 방향키 1회 입력당 이동 카드 수 */
+        keyboardStep: 1.0,
+
         /*
          * 초성 필터가 All이 아닐 때는 무한 루프를 끄고
          * 끝에서 고무줄처럼 살짝 넘어갔다가 튕겨 돌아옵니다.
@@ -337,6 +348,56 @@
         }
 
         overlay.appendChild(renderer.domElement);
+
+        /* =====================================================
+           Right Edge Soft Blur
+           -----------------------------------------------------
+           오른쪽으로 갈수록 강해지는 화면 공간 blur.
+           텍스처를 여러 장 벌려 그리는 방식이 아니므로
+           이미지가 2~3개로 갈라져 보이는 ghosting이 생기지 않습니다.
+        ===================================================== */
+        const edgeBlur = document.createElement("div");
+
+        edgeBlur.className =
+            "designer-ribbon-edge-blur";
+
+        Object.assign(
+            edgeBlur.style,
+            {
+                position: "absolute",
+                top: "0",
+                right: "0",
+                bottom: "0",
+                width:
+                    `${Math.round(
+                        OPTIONS.edgeBlurWidthRatio * 10000
+                    ) / 100}%`,
+                pointerEvents: "none",
+                zIndex: "2",
+
+                /*
+                 * backdrop-filter가 완전 투명 요소에서도
+                 * 안정적으로 합성되도록 아주 미세한 투명 배경을 둡니다.
+                 */
+                background:
+                    "rgba(255,255,255,0.001)",
+
+                backdropFilter:
+                    `blur(${OPTIONS.edgeBlurPx}px)`,
+                WebkitBackdropFilter:
+                    `blur(${OPTIONS.edgeBlurPx}px)`,
+
+                /*
+                 * 왼쪽은 원본 100%, 오른쪽으로 갈수록 blur 100%.
+                 */
+                maskImage:
+                    "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.10) 18%, rgba(0,0,0,0.42) 48%, rgba(0,0,0,0.78) 74%, #000 100%)",
+                WebkitMaskImage:
+                    "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.10) 18%, rgba(0,0,0,0.42) 48%, rgba(0,0,0,0.78) 74%, #000 100%)"
+            }
+        );
+
+        overlay.appendChild(edgeBlur);
 
         const scene = new THREE.Scene();
 
@@ -3918,6 +3979,68 @@
         );
 
         /* =====================================================
+           Keyboard
+           ArrowLeft / ArrowRight로 카드 1장 단위 이동
+        ===================================================== */
+
+        window.addEventListener(
+            "keydown",
+            event => {
+                if (!isSlideView()) {
+                    return;
+                }
+
+                if (
+                    event.key !== "ArrowLeft" &&
+                    event.key !== "ArrowRight"
+                ) {
+                    return;
+                }
+
+                /* input / textarea / select / contenteditable 조작은 방해하지 않음 */
+                const target = event.target;
+
+                if (
+                    target instanceof HTMLInputElement ||
+                    target instanceof HTMLTextAreaElement ||
+                    target instanceof HTMLSelectElement ||
+                    target?.isContentEditable
+                ) {
+                    return;
+                }
+
+                if (
+                    event.altKey ||
+                    event.ctrlKey ||
+                    event.metaKey
+                ) {
+                    return;
+                }
+
+                /* 길게 눌렀을 때 과도하게 넘어가는 것 방지 */
+                if (event.repeat) {
+                    event.preventDefault();
+                    return;
+                }
+
+                event.preventDefault();
+
+                const direction =
+                    event.key === "ArrowRight"
+                        ? 1
+                        : -1;
+
+                targetScroll +=
+                    direction *
+                    OPTIONS.keyboardStep;
+
+                limitScrollTarget();
+                scheduleFiniteEdgeReturn();
+                wake();
+            }
+        );
+
+        /* =====================================================
            Click card
         ===================================================== */
 
@@ -4099,7 +4222,15 @@
                 deactivate();
                 return;
             }
+            hideOriginalTrackForSlide();
 
+                sourceCards =
+                    getOriginalCards();
+
+                cardData =
+                    sourceCards.map(
+                        readCard
+                    );
             /*
              * Slide View로 들어온 순간에만 데이터 갱신.
              */
@@ -4379,13 +4510,21 @@
         const pageObserver =
             new MutationObserver(() => {
                 if (isSlideView()) {
+
+                    /*
+                    * slide-view 클래스로 바뀐 즉시
+                    * 기존 DOM 카드를 먼저 숨김.
+                    */
+                    hideOriginalTrackForSlide();
+
                     previousSliderScroll =
                         slider.scrollLeft;
 
                     requestAnimationFrame(
                         activate
                     );
-                } else {
+                }
+                else {
                     /*
                      * class가 grid-view로 바뀌는 그 순간 바로 복원.
                      */

@@ -6,26 +6,54 @@
        기본 설정
     ======================================== */
 
-    const LINK_SELECTOR = "[page-transition]";
-    const HEADER_SELECTOR = ".header";
+    const LINK_SELECTOR =
+        "[page-transition]";
 
-    const STORAGE_KEY = "stamp-page-transition";
-
-
-    /* Header 올라가는 시간 */
-    const HEADER_LEAVE_DURATION = 450;
-
-    /* 흰 배경이 덮이는 시간 */
-    const COVER_DURATION = 500;
-
-    /* Header 내려오는 시간 */
-    const HEADER_ENTER_DURATION = 800;
+    /*
+     * 기존 코드와 동일한 키 유지.
+     * 기존 HTML의 preload 체크 코드와도 호환됨.
+     */
+    const STORAGE_KEY =
+        "stamp-page-transition";
 
 
     /*
-     * 중복 클릭 방지
+     * 8 Box Transition
      */
-    let isTransitioning = false;
+    const IN_DURATION =
+        760;
+
+    const IN_STAGGER =
+        55;
+
+    const OUT_DURATION =
+        980;
+
+    /*
+     * 세로 4개 OUT 순서
+     * 가운데 → 바깥
+     */
+    const OUT_DELAYS =
+        [
+            105,
+            0,
+            45,
+            150
+        ];
+
+
+    const TRANSITION_COLOR =
+        "#111";
+
+    const TRANSITION_Z_INDEX =
+        999999;
+
+
+    let isTransitioning =
+        false;
+
+    let activeLayer =
+        null;
 
 
 
@@ -34,120 +62,89 @@
     ======================================== */
 
     const style =
-        document.createElement("style");
+        document.createElement(
+            "style"
+        );
 
 
     style.textContent = `
 
-        /* ==============================
-           페이지 전환 Cover
-        ============================== */
-
-        .page-transition-cover {
+        .page-transition-layer {
             position: fixed;
             inset: 0;
 
             width: 100vw;
             height: 100dvh;
 
-            background: #f2f2f2;
+            overflow: hidden;
 
-            opacity: 0;
+            z-index:
+                ${TRANSITION_Z_INDEX};
 
-            z-index: 999999;
+            pointer-events: none;
 
-            pointer-events: auto;
+            contain:
+                layout paint style;
 
-            transition:
-                opacity
-                ${COVER_DURATION}ms
-                ease;
+            transform:
+                translateZ(0);
         }
 
 
-        .page-transition-cover.is-covering {
-            opacity: 1;
+        .page-transition-box {
+            position: absolute;
+
+            margin: 0;
+            padding: 0;
+
+            border: 0;
+
+            background:
+                var(
+                    --page-transition-color,
+                    ${TRANSITION_COLOR}
+                );
+
+            backface-visibility:
+                hidden;
+
+            will-change:
+                transform;
         }
-
-
-        /*
-         * 새 페이지에서는
-         * 처음부터 완전히 덮인 상태
-         */
-        .page-transition-cover.is-entering {
-            opacity: 1;
-
-            transition: none;
-        }
-
 
 
         /* ==============================
-           Header 올라가기
+           IN
+           가로 4등분
         ============================== */
 
-        .header.page-transition-header-leave {
-            top: calc(
-                0px
-                -
-                var(--header-height)
-                -
-                2px
-            );
+        .page-transition-layer[data-mode="in"]
+        .page-transition-box {
 
-            opacity: 0;
+            left: 0;
 
-            transition:
-                top
-                ${HEADER_LEAVE_DURATION}ms
-                cubic-bezier(.65, 0, .35, 1),
+            width: 100%;
 
-                opacity
-                ${HEADER_LEAVE_DURATION}ms
-                ease;
+            height:
+                calc(25% + 1px);
         }
 
 
-
         /* ==============================
-           새 페이지 Header 초기 상태
+           OUT
+           세로 4등분
         ============================== */
 
-        .header.page-transition-header-enter {
-            top: calc(
-                0px
-                -
-                var(--header-height)
-                -
-                2px
-            );
+        .page-transition-layer[data-mode="out"]
+        .page-transition-box {
 
-            opacity: 0;
-
-            transition: none;
-        }
-
-
-
-        /* ==============================
-           Header 내려오기
-        ============================== */
-
-        .header.page-transition-header-enter.is-show {
             top: 0;
 
-            opacity: 1;
+            width:
+                calc(25% + 1px);
 
-            transition:
-                top
-                ${HEADER_ENTER_DURATION}ms
-                cubic-bezier(.22, 1, .36, 1),
-
-                opacity
-                ${HEADER_ENTER_DURATION}ms
-                ease;
+            height: 100%;
         }
-
 
 
         /* ==============================
@@ -179,7 +176,6 @@
         }
 
 
-
         /* ==============================
            접근성
         ============================== */
@@ -189,14 +185,14 @@
             reduce
         ) {
 
-            .page-transition-cover,
-            .header.page-transition-header-leave,
-            .header.page-transition-header-enter.is-show,
+            .page-transition-box,
             .page-enter-up {
+
+                animation-duration:
+                    1ms !important;
 
                 transition-duration:
                     1ms !important;
-
             }
 
         }
@@ -211,44 +207,401 @@
 
 
     /* ========================================
-       Cover 생성
+       공통 유틸
     ======================================== */
 
-    function createCover(
-        entering = false
+    function nextFrame() {
+
+        return new Promise(
+            resolve => {
+
+                requestAnimationFrame(
+                    () => {
+
+                        requestAnimationFrame(
+                            resolve
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+    }
+
+
+
+    function removeLayer() {
+
+        if (
+            activeLayer
+            &&
+            activeLayer.isConnected
+        ) {
+
+            activeLayer.remove();
+
+        }
+
+
+        activeLayer =
+            null;
+
+    }
+
+
+
+    function createLayer(
+        mode
     ) {
 
-        const cover =
+        removeLayer();
+
+
+        const layer =
             document.createElement(
                 "div"
             );
 
 
-        cover.className =
-            "page-transition-cover";
+        layer.className =
+            "page-transition-layer";
 
 
-        if (entering) {
-
-            cover.classList.add(
-                "is-entering"
-            );
-
-        }
+        layer.dataset.mode =
+            mode;
 
 
-        cover.setAttribute(
+        layer.setAttribute(
             "aria-hidden",
             "true"
         );
 
 
-        document.body.appendChild(
-            cover
+        layer.style.setProperty(
+            "--page-transition-color",
+            TRANSITION_COLOR
         );
 
 
-        return cover;
+        const boxes =
+            [];
+
+
+        for (
+            let i = 0;
+            i < 4;
+            i++
+        ) {
+
+            const box =
+                document.createElement(
+                    "div"
+                );
+
+
+            box.className =
+                "page-transition-box";
+
+
+            if (
+                mode ===
+                "in"
+            ) {
+
+                box.style.top =
+                    `${i * 25}%`;
+
+            }
+
+            else {
+
+                box.style.left =
+                    `${i * 25}%`;
+
+            }
+
+
+            layer.appendChild(
+                box
+            );
+
+
+            boxes.push(
+                box
+            );
+
+        }
+
+
+        document.body.appendChild(
+            layer
+        );
+
+
+        activeLayer =
+            layer;
+
+
+        return {
+
+            layer,
+            boxes
+
+        };
+
+    }
+
+
+
+    function isModifiedClick(
+        event
+    ) {
+
+        return (
+            event.metaKey
+            ||
+            event.ctrlKey
+            ||
+            event.shiftKey
+            ||
+            event.altKey
+        );
+
+    }
+
+
+
+    /* ========================================
+       Transition IN
+       가로 4개
+    ======================================== */
+
+    async function playIn() {
+
+        const {
+            boxes
+        } =
+            createLayer(
+                "in"
+            );
+
+
+        /*
+         * 1,3 = 왼쪽에서
+         * 2,4 = 오른쪽에서
+         */
+        const directions =
+            [
+                -1,
+                1,
+                -1,
+                1
+            ];
+
+
+        boxes.forEach(
+            (
+                box,
+                index
+            ) => {
+
+                box.style.transform =
+                    `translate3d(${
+                        directions[index]
+                        *
+                        105
+                    }%, 0, 0)`;
+
+            }
+        );
+
+
+        /*
+         * 초기 위치를 먼저 렌더
+         */
+        void activeLayer
+            .offsetWidth;
+
+
+        await nextFrame();
+
+
+        const animations =
+            boxes.map(
+                (
+                    box,
+                    index
+                ) => {
+
+                    return box.animate(
+                        [
+
+                            {
+                                transform:
+                                    `translate3d(${
+                                        directions[index]
+                                        *
+                                        105
+                                    }%, 0, 0)`
+                            },
+
+                            {
+                                transform:
+                                    "translate3d(0, 0, 0)"
+                            }
+
+                        ],
+
+                        {
+
+                            duration:
+                                IN_DURATION,
+
+                            delay:
+                                index
+                                *
+                                IN_STAGGER,
+
+                            easing:
+                                "cubic-bezier(.72, 0, .22, 1)",
+
+                            fill:
+                                "forwards"
+
+                        }
+                    );
+
+                }
+            );
+
+
+        await Promise.all(
+            animations.map(
+                animation =>
+                    animation
+                        .finished
+                        .catch(
+                            () => {}
+                        )
+            )
+        );
+
+
+        /*
+         * 페이지 이동 전까지
+         * 흰 화면 그대로 유지
+         */
+
+    }
+
+
+
+    /* ========================================
+       Transition OUT
+       세로 4개
+    ======================================== */
+
+    async function playOut() {
+
+        const {
+            boxes
+        } =
+            createLayer(
+                "out"
+            );
+
+
+        /*
+         * 처음에는 화면을 완전히 덮음
+         */
+        boxes.forEach(
+            box => {
+
+                box.style.transform =
+                    "translate3d(0, 0, 0)";
+
+            }
+        );
+
+
+        void activeLayer
+            .offsetWidth;
+
+
+        /*
+         * layer가 확실히 생성된 뒤
+         * preload 해제
+         */
+        document.documentElement
+            .classList
+            .remove(
+                "page-transition-preload"
+            );
+
+
+        await nextFrame();
+
+
+        const animations =
+            boxes.map(
+                (
+                    box,
+                    index
+                ) => {
+
+                    return box.animate(
+                        [
+
+                            {
+                                transform:
+                                    "translate3d(0, 0, 0)"
+                            },
+
+                            {
+                                transform:
+                                    "translate3d(0, -105%, 0)"
+                            }
+
+                        ],
+
+                        {
+
+                            duration:
+                                OUT_DURATION,
+
+                            delay:
+                                OUT_DELAYS[
+                                    index
+                                ],
+
+                            easing:
+                                "cubic-bezier(.76, 0, .18, 1)",
+
+                            fill:
+                                "forwards"
+
+                        }
+                    );
+
+                }
+            );
+
+
+        await Promise.all(
+            animations.map(
+                animation =>
+                    animation
+                        .finished
+                        .catch(
+                            () => {}
+                        )
+            )
+        );
+
+
+        removeLayer();
 
     }
 
@@ -258,11 +611,13 @@
        현재 페이지 퇴장
     ======================================== */
 
-    function leavePage(
+    async function leavePage(
         href
     ) {
 
-        if (isTransitioning) {
+        if (
+            isTransitioning
+        ) {
             return;
         }
 
@@ -271,151 +626,21 @@
             true;
 
 
-        const header =
-            document.querySelector(
-                HEADER_SELECTOR
-            );
+        await playIn();
 
 
-
-        /* --------------------------------
-           1. Header 올라가기
-        -------------------------------- */
-
-        if (header) {
-
-            header.classList.add(
-                "page-transition-header-leave"
-            );
-
-        }
-
-
-
-        /* --------------------------------
-           2. Header 퇴장 후 Cover 시작
-        -------------------------------- */
-
-        window.setTimeout(
-
-            () => {
-
-                const cover =
-                    createCover(false);
-
-
-                let moved =
-                    false;
-
-
-
-                /* --------------------------------
-                   실제 페이지 이동
-                -------------------------------- */
-
-                const movePage =
-                    () => {
-
-                        if (moved) {
-                            return;
-                        }
-
-
-                        moved =
-                            true;
-
-
-                        /*
-                         * 다음 페이지에
-                         * 전환 상태 전달
-                         */
-                        sessionStorage.setItem(
-                            STORAGE_KEY,
-                            "1"
-                        );
-
-
-                        window.location.href =
-                            href;
-
-                    };
-
-
-
-                /* --------------------------------
-                   Cover Fade 완료 후 이동
-                -------------------------------- */
-
-                cover.addEventListener(
-
-                    "transitionend",
-
-                    event => {
-
-                        if (
-                            event.propertyName
-                            ===
-                            "opacity"
-                        ) {
-
-                            movePage();
-
-                        }
-
-                    },
-
-                    {
-                        once: true
-                    }
-
-                );
-
-
-
-                /* --------------------------------
-                   Fade 시작
-                -------------------------------- */
-
-                requestAnimationFrame(
-                    () => {
-
-                        requestAnimationFrame(
-                            () => {
-
-                                cover
-                                    .classList
-                                    .add(
-                                        "is-covering"
-                                    );
-
-                            }
-                        );
-
-                    }
-                );
-
-
-
-                /*
-                 * transitionend가
-                 * 발생하지 않을 경우 안전장치
-                 */
-
-                window.setTimeout(
-
-                    movePage,
-
-                    COVER_DURATION
-                    +
-                    100
-
-                );
-
-            },
-
-            HEADER_LEAVE_DURATION
-
+        /*
+         * 다음 페이지에
+         * 전환 상태 전달
+         */
+        sessionStorage.setItem(
+            STORAGE_KEY,
+            "1"
         );
+
+
+        window.location.href =
+            href;
 
     }
 
@@ -433,31 +658,23 @@
             event.currentTarget;
 
 
-
         /*
-         * 새 탭,
-         * Ctrl / Shift / Alt 클릭 등은
-         * 기존 브라우저 동작 유지
+         * 새 탭 / modifier click은
+         * 브라우저 기본 동작 유지
          */
-
         if (
             event.defaultPrevented
             ||
             event.button !== 0
             ||
-            event.metaKey
-            ||
-            event.ctrlKey
-            ||
-            event.shiftKey
-            ||
-            event.altKey
+            isModifiedClick(
+                event
+            )
         ) {
 
             return;
 
         }
-
 
 
         const href =
@@ -469,7 +686,6 @@
         }
 
 
-
         const target =
             link.getAttribute(
                 "target"
@@ -479,13 +695,13 @@
         if (
             target
             &&
-            target !== "_self"
+            target !==
+                "_self"
         ) {
 
             return;
 
         }
-
 
 
         const url =
@@ -495,11 +711,9 @@
             );
 
 
-
         /*
          * 외부 링크 제외
          */
-
         if (
             url.origin
             !==
@@ -511,11 +725,9 @@
         }
 
 
-
         /*
-         * 현재 페이지 링크 클릭
+         * 현재 페이지 링크 제외
          */
-
         if (
             url.href
             ===
@@ -527,7 +739,6 @@
             return;
 
         }
-
 
 
         event.preventDefault();
@@ -545,7 +756,7 @@
        새 페이지 진입
     ======================================== */
 
-    function enterPage() {
+    async function enterPage() {
 
         const shouldEnter =
 
@@ -558,17 +769,19 @@
             "1";
 
 
+        /*
+         * 직접 접속 / 새로고침
+         */
+        if (
+            !shouldEnter
+        ) {
 
-        /* --------------------------------
-           직접 접속 / 새로고침
-        -------------------------------- */
+            document.documentElement
+                .classList
+                .remove(
+                    "page-transition-preload"
+                );
 
-        if (!shouldEnter) {
-
-            /*
-             * Stamp 없이
-             * 콘텐츠 등장 애니메이션만 실행
-             */
 
             showPageContent();
 
@@ -577,256 +790,29 @@
         }
 
 
-
         /*
-         * 새로고침 시
-         * Stamp 반복 방지
+         * 한 번만 사용
          */
-
         sessionStorage.removeItem(
             STORAGE_KEY
         );
 
 
-
-        const header =
-            document.querySelector(
-                HEADER_SELECTOR
-            );
-
-
-
-        /* --------------------------------
-           1. Header 위쪽에 숨김
-        -------------------------------- */
-
-        if (header) {
-
-            header.classList.add(
-                "page-transition-header-enter"
-            );
-
-        }
-
-
-
-        /* --------------------------------
-           2. 흰색 Cover 생성
-        -------------------------------- */
-
-        const cover =
-            createCover(true);
-
-
-
-        /* --------------------------------
-           3. Stamp 설정
-        -------------------------------- */
-
-        cover.setAttribute(
-            "stamp",
-            ""
-        );
-
-
-        cover.setAttribute(
-            "stamp-trigger",
-            "manual"
-        );
-
-
-        cover.setAttribute(
-            "stamp-invert",
-            ""
-        );
-
-        cover.setAttribute(
-            "stamp-sound",
-            ""
-        );
-        cover.setAttribute(
-            "stamp-sound-volume",
-            "0.7"
-        );
-
-
-
-        /* --------------------------------
-           4. 새 페이지 표시
-        -------------------------------- */
-
         /*
-         * Cover가 위에 있기 때문에
-         * body를 표시해도 화면은
-         * 계속 흰색으로 보임
+         * 세로 4박스 OUT
          */
-
-        document.documentElement
-            .classList
-            .remove(
-                "page-transition-preload"
-            );
-
-
-
-        /* --------------------------------
-           StampEffect가 없는 경우
-        -------------------------------- */
-
-        if (
-            !window.StampEffect
-        ) {
-
-            cover.remove();
-
-
-            showHeader(
-                header
-            );
-
-
-            showPageContent();
-
-
-            return;
-
-        }
-
-
-
-        /* --------------------------------
-           Stamp 등록
-        -------------------------------- */
-
-        window.StampEffect.init(
-            cover
-        );
-
-
-
-        /* --------------------------------
-           Stamp 완료
-        -------------------------------- */
-
-        cover.addEventListener(
-
-            "stampcomplete",
-
-            () => {
-
-
-                /*
-                 * Cover 제거
-                 */
-
-                cover.remove();
-
-
-
-                /*
-                 * Header 등장
-                 */
-
-                showHeader(
-                    header
-                );
-
-
-
-                /*
-                 * 페이지 콘텐츠 등장
-                 */
-
-                showPageContent();
-
-            },
-
-            {
-                once: true
-            }
-
-        );
-
-
-
-        /* --------------------------------
-           Stamp 즉시 시작
-        -------------------------------- */
-
-        requestAnimationFrame(
-            () => {
-
-                window.StampEffect.play(
-                    cover,
-                    true
-                );
-
-            }
-        );
-
-    }
-
-
-
-    /* ========================================
-       Header 등장
-    ======================================== */
-
-    function showHeader(
-        header
-    ) {
-
-        if (!header) {
-            return;
-        }
-
+        await playOut();
 
 
         /*
-         * transition:none인 초기 상태를
-         * 브라우저가 먼저 인식하도록
-         * 두 프레임 대기
+         * OUT이 끝난 뒤
+         * Typewriter + Fade Up
          */
-
-        requestAnimationFrame(
-            () => {
-
-                requestAnimationFrame(
-                    () => {
-
-                        header.classList.add(
-                            "is-show"
-                        );
-
-                    }
-                );
-
-            }
-        );
+        showPageContent();
 
 
-
-        /* --------------------------------
-           Header 애니메이션 완료 후
-           클래스 제거
-        -------------------------------- */
-
-        window.setTimeout(
-
-            () => {
-
-                header.classList.remove(
-                    "page-transition-header-enter",
-                    "is-show"
-                );
-
-            },
-
-            HEADER_ENTER_DURATION
-            +
-            50
-
-        );
+        isTransitioning =
+            false;
 
     }
 
@@ -834,12 +820,14 @@
 
     /* ========================================
        페이지 콘텐츠 등장
+       기존 로직 유지
     ======================================== */
 
     function showPageContent() {
 
+
         /* ==============================
-           Manual Typewriter 전부 검색
+           Manual Typewriter
         ============================== */
 
         const typewriters =
@@ -848,43 +836,52 @@
             );
 
 
-        let typewriterIndex = 0;
+        let typewriterIndex =
+            0;
 
 
         typewriters.forEach(
             el => {
 
+
                 /*
-                 * display:none 등으로
-                 * 현재 화면에 보이지 않는 요소는 제외
+                 * display:none 등
+                 * 현재 화면에 보이지 않는 요소 제외
                  */
                 if (
-                    el.offsetParent === null
+                    el.offsetParent
+                    ===
+                    null
                 ) {
+
                     return;
+
                 }
 
 
-                /*
-                 * TypewriterEffect가 없으면 제외
-                 */
                 if (
                     !window.TypewriterEffect
                 ) {
+
                     return;
+
                 }
 
 
                 window.setTimeout(
                     () => {
 
-                        window.TypewriterEffect.play(
-                            el
-                        );
+                        window
+                            .TypewriterEffect
+                            .play(
+                                el
+                            );
 
                     },
 
-                    typewriterIndex * 180
+                    typewriterIndex
+                    *
+                    180
                 );
 
 
@@ -896,7 +893,7 @@
 
 
         /* ==============================
-           버튼 / 검색창 Fade Up
+           .page-enter-up
         ============================== */
 
         const enterElements =
@@ -911,13 +908,15 @@
                 index
             ) => {
 
-                /*
-                 * 현재 화면에 보이지 않는 요소는 제외
-                 */
+
                 if (
-                    el.offsetParent === null
+                    el.offsetParent
+                    ===
+                    null
                 ) {
+
                     return;
+
                 }
 
 
@@ -932,7 +931,9 @@
 
                     100
                     +
-                    index * 100
+                    index
+                    *
+                    100
                 );
 
             }
@@ -950,7 +951,7 @@
 
 
         /* --------------------------------
-           NAV 링크 등록
+           page-transition 링크 등록
         -------------------------------- */
 
         document
@@ -967,7 +968,6 @@
 
                 }
             );
-
 
 
         /* --------------------------------
@@ -991,19 +991,15 @@
     ) {
 
         document.addEventListener(
-
             "DOMContentLoaded",
-
             boot,
-
             {
-                once: true
+                once:
+                    true
             }
-
         );
 
     }
-
 
     else {
 

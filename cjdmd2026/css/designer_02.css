@@ -236,7 +236,7 @@ img {
 }
 
 .header .nav ul li {
-    font-size: 0.875rem;
+    font-size: 0.95rem;
     font-weight: 600;
     color: rgba(0, 0, 0, 0.7);
 
@@ -385,6 +385,7 @@ html:has(.designer-page.slide-view) {
     width: 100%;
     overflow: hidden;
     background: #eee;
+    
 }
 
 .designer-card__image-wrap::after {
@@ -397,6 +398,13 @@ html:has(.designer-page.slide-view) {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    transition: var(--transition-basic);
+}
+
+.designer-card__image-wrap:hover::after {
+    scale: 1.03;
+    transition: var(--transition-basic);
+    background-color: #f9f9f9;
 }
 
 .designer-card__text {
@@ -705,6 +713,20 @@ html:has(.designer-page.slide-view) {
 .designer-page.is-view-changing .designer-card__image,
 .designer-page.is-view-changing .designer-track {
     transition: none;
+}
+
+/* Slide에서는 DOM 카드 절대 표시하지 않음 */
+.designer-page.slide-view .designer-track {
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Grid일 때만 표시 */
+.designer-page.grid-view:not(.is-view-changing) .designer-track {
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto;
 }
 
 /* ============================== button ============================== */

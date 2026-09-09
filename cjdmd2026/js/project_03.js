@@ -955,13 +955,13 @@
                         // active 1.0 → near 0.8
                         scale=dialLerp(
                             1,
-                            .8,
+                            .5,
                             distance
                         );
                     }else if(distance<=2){
                         // near 0.8 → far 0.4
                         scale=dialLerp(
-                            .8,
+                            .5,
                             .4,
                             distance-1
                         );
