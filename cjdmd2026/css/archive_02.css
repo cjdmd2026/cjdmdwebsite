@@ -481,7 +481,7 @@ img {
 }
 
 .history .card-wrap .history-card:hover {
-    scale: 2;
+    scale: 1.5;
     z-index: 999;
 }
 
