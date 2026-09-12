@@ -134,11 +134,11 @@ window.DESIGNERS = [
 
     /* 09. 김지유 · KIM JIYOU */
     {
-        id: "kim-jiyou-kokorang",
+        id: "kim-jiyou-cocorang",
         nameKo: "김지유",
         nameEn: "KIM JIYOU",
         initial: "ㄱ",
-        projectIds: ["kokorang"],
+        projectIds: ["cocorang"],
         teamName: "COCO:LANG",
         teammateIds: ["kim-jiyoon"],
         phone: "010-4694-8065",
@@ -154,9 +154,9 @@ window.DESIGNERS = [
         nameKo: "김지윤",
         nameEn: "KIM JIYOON",
         initial: "ㄱ",
-        projectIds: ["kokorang"],
+        projectIds: ["cocorang"],
         teamName: "COCO:LANG",
-        teammateIds: ["kim-jiyou-kokorang"],
+        teammateIds: ["kim-jiyou-cocorang"],
         phone: "010-2468-4219",
         email: "jy24684219@gmail.com",
         instagram: "jiyoon_2468",

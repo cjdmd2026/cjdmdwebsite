@@ -1,0 +1,682 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
+
+@font-face {
+    font-family: "Paperozi";
+    src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-1Thin.woff2") format("woff2");
+    font-weight: 100;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Paperozi";
+    src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-2ExtraLight.woff2") format("woff2");
+    font-weight: 200;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Paperozi";
+    src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-3Light.woff2") format("woff2");
+    font-weight: 300;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Paperozi";
+    src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-4Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Paperozi";
+    src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-5Medium.woff2") format("woff2");
+    font-weight: 500;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Paperozi";
+    src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-6SemiBold.woff2") format("woff2");
+    font-weight: 600;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Paperozi";
+    src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-7Bold.woff2") format("woff2");
+    font-weight: 700;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Paperozi";
+    src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-8ExtraBold.woff2") format("woff2");
+    font-weight: 800;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Paperozi";
+    src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-9Black.woff2") format("woff2");
+    font-weight: 900;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "NohHaeChan";
+    src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/ROEHOE-CHAN.woff") format("woff");
+    font-weight: normal;
+    font-display: swap;
+}
+
+/* ============================== Variables ============================== */
+
+:root {
+    --color-black: #111;
+    --color-white: #f2f2f2;
+    --color-gray-100: #ddd;
+    --color-gray-300: #bbb;
+    --color-gray-500: #999;
+    --color-accent: #ff6f61;
+
+    --font-main: "pretendard", sans-serif;
+
+    --header-height: 60px;
+    --container-width: 1220px;
+    --side-padding: 60px;
+
+    --transition-basic: 0.3s ease;
+
+    --card-radius: 20px;
+    --stage-height: 100vh;
+    --motion-travel: 310vh;
+}
+
+[data-theme="light"] {
+    --color-black: #ffffff;
+    --color-black-75: rgba(255, 255, 255, 0.75);
+    --color-white: #111111;
+    --color-gray-100: #f5f5f5;
+    --color-gray-300: #dddddd;
+    --color-gray-500: #999999;
+    --color-accent: #ff6f61;
+
+    --gradient-color: linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.9) 0%,
+        rgba(255, 255, 255, 0.7) 20%,
+        rgba(255, 255, 255, 0.5) 40%,
+        rgba(255, 255, 255, 0.3) 60%,
+        rgba(255, 255, 255, 0.15) 80%,
+        rgba(255, 255, 255, 0) 100%
+    );
+}
+
+/* ============================== Reset ============================== */
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    color: var(--color-white);
+    background-color: var(--color-black);
+    line-height: 1.5;
+}
+
+html.page-transition-preload body {
+    visibility: hidden;
+}
+
+/* ============================== Common ============================== */
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+ul,
+ol {
+    list-style: none;
+}
+
+button {
+    border: none;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+.container {
+    margin: 0 auto;
+}
+
+.icon {
+    filter: invert(0);
+}
+
+[data-theme="light"] .icon {
+    filter: invert(1);
+}
+
+/* ============================== Header ============================== */
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+
+    width: 100%;
+    height: var(--header-height);
+
+    background: rgba(255, 255, 255, 0.36);
+    backdrop-filter: blur(11.9px);
+    -webkit-backdrop-filter: blur(11.9px);
+
+    border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.header .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    width: var(--container-width);
+    height: 100%;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.header .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.header .nav {
+    display: flex;
+    align-items: center;
+}
+
+.header .nav ul {
+    display: flex;
+    gap: 2rem;
+}
+
+.header .nav ul li {
+    font-family: "Paperozi", sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+/* ============================== Main ============================== */
+
+.main {
+    min-height: 100vh;
+    position: relative;
+}
+
+/* ============================== Intro ============================== */
+
+.intro {
+    padding: 60px 0 0;
+}
+
+.main .intro .container {
+    width: var(--container-width);
+}
+
+.profile {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 5rem;
+
+    width: 100%;
+    height: 100vh;
+    padding: 0 5vw;
+}
+
+.profile .image {
+    position: relative;
+
+    width: 20vw;
+    min-width: 300px;
+    height: auto;
+    flex-shrink: 0;  
+    aspect-ratio: 3 / 4;
+
+    background-size: cover;
+    background-position: center bottom;
+    background-repeat: no-repeat;
+}
+
+.profile .image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background-image: linear-gradient(
+        to bottom,
+        transparent 40%,
+        rgba(255, 255, 255, 1) 100%
+    );
+
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+.profile .text-wrap {
+    flex: 1;
+    min-width: 0;
+}
+
+.profile .text-wrap,
+.profile .text-wrap .name {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile .text-wrap .name h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--color-white);
+}
+
+.profile .text-wrap .name h2 {
+    font-size: 0.95rem;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    color: rgba(0, 0, 0, 0.25);
+}
+
+.profile .text-wrap .sentence p {
+    margin-top: 2rem;
+
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: var(--color-white);
+
+}
+
+/* ============================== Handoff ============================== */
+
+.handoff-section {
+    position: relative;
+    width: 100%;
+    background: #fff;
+}
+
+.sticky-stage {
+    display: none;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+
+    width: 100%;
+    height: var(--stage-height);
+
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.motion-ready .sticky-stage {
+    display: block;
+}
+
+/* ============================== List ============================== */
+
+.list-layer {
+    /* 여기서 카드 높이와 간격을 조절 */
+    --open-height: 380px;
+    --closed-height: 150px;
+    --row-gap: 1.5rem;
+
+    position: relative;
+    z-index: 20;
+
+    width: 100%;
+    padding: 72px 0 120px;
+
+    background: #fff;
+}
+
+.list-layer .container {
+    width: min(
+        var(--container-width),
+        calc(100% - 48px)
+    );
+
+    margin-inline: auto;
+}
+
+.list-layer .container:has(> .project-card) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+
+    grid-template-rows:
+        auto
+        var(--open-height)
+        var(--closed-height)
+        var(--closed-height);
+
+    row-gap: var(--row-gap);
+    transition: grid-template-rows 0.5s ease;
+}
+
+/* 두 번째 카드 활성 */
+.list-layer .container:has(> .project-card:nth-of-type(2).is-active) {
+    grid-template-rows:
+        auto
+        var(--closed-height)
+        var(--open-height)
+        var(--closed-height);
+}
+
+/* 세 번째 카드 활성 */
+.list-layer .container:has(> .project-card:nth-of-type(3).is-active) {
+    grid-template-rows:
+        auto
+        var(--closed-height)
+        var(--closed-height)
+        var(--open-height);
+}
+
+.motion-ready .list-layer {
+    margin-top: calc(
+        var(--motion-travel) - var(--stage-height)
+    );
+}
+
+.list-title {
+    /* row-gap 24px과 합쳐 제목 아래 간격 32px */
+    margin: 0 0 8px;
+
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.project-card {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.15fr)
+        minmax(0, 0.85fr);
+
+    grid-template-rows: minmax(0, 1fr);
+
+    gap: 44px;
+    align-items: center;
+
+    height: 100%;
+    min-height: 0;
+}
+
+.project-card + .project-card {
+    margin-top: 0;
+}
+
+.project-thumb {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    aspect-ratio: auto;
+
+    overflow: hidden;
+    border-radius: var(--card-radius);
+    background: #f3f3f3;
+
+    opacity: 0.25;
+    transition: opacity 0.5s ease;
+}
+
+.project-card.is-active .project-thumb {
+    opacity: 1;
+}
+
+.project-card .card-copy p:not(.category) {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.project-card.is-active .card-copy p:not(.category) {
+    opacity: 1;
+}
+
+.motion-ready #firstProjectThumb {
+    background: transparent;
+}
+
+.project-image {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: 50% 50%;
+}
+
+.project-image:not([src]),
+.project-image[src=""] {
+    background-color: #111;
+}
+
+/* ============================== Shared Image ============================== */
+
+.hero-flyer {
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+    border-radius: inherit;
+
+    transform-origin: left top;
+    will-change: width, height, transform;
+}
+
+.hero-flyer.is-docked {
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    transform: none;
+    border-radius: inherit;
+    will-change: auto;
+}
+
+.media-frame {
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 100%;
+
+    transform-origin: left top;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.4),
+        transparent 50%
+    );
+
+    opacity: 0;
+    pointer-events: none;
+}
+
+.hero-title {
+    position: absolute;
+
+    left: clamp(24px, 5vw, 80px);
+    bottom: 20vh;
+
+    margin: 0;
+    max-width: calc(100% - 48px);
+
+    font-family: "pretendard";
+    font-size: clamp(1.75rem, 5vw, 5rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.04em;
+
+    color: #fff;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ============================== Card Copy ============================== */
+
+.card-copy {
+    min-width: 0;
+}
+
+.card-copy .category {
+    margin: 0 0 8px;
+    font-size: 0.875rem;
+    color: #888;
+}
+
+.card-copy h3 {
+    margin: 0 0 16px;
+
+    font-size: clamp(1.5rem, 2vw, 2rem);
+    line-height: 1.3;
+    letter-spacing: -0.04em;
+}
+
+.card-copy p:not(.category) {
+    margin: 0;
+
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #666;
+}
+
+/* ============================== Reduced Motion ============================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .list-layer .container:has(> .project-card),
+    .project-thumb,
+    .project-card .card-copy p:not(.category) {
+        transition: none;
+    }
+}
+
+/* ============================== Button ============================== */
+/* 버튼을 배치할 1220px 영역 */
+.main .back-wrap {
+    position: absolute;
+    top: 8vw;
+    left: 0;
+    right: 0;
+
+    width: min(1220px, calc(100% - 48px));
+    margin-inline: auto;
+}
+
+.main .back-wrap button {
+    position: static;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    height: 45px;
+    
+
+    border: 1px solid var(--color-gray-500);
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.36);
+    backdrop-filter: blur(11.9px);
+    -webkit-backdrop-filter: blur(11.9px);
+
+    padding: 0 1rem;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.main .back-wrap button img {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+
+/* ============================== Footer ============================== */
+
+.footer {
+    background-color: var(--color-black);
+    padding: 20px 0;
+    text-align: center;
+}
+
+.footer .container {
+    display: flex;
+    justify-content: space-between;
+
+    width: var(--container-width);
+
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.footer .container .footer-info {
+    display: block;
+    text-align: left;
+}
+
+.footer .container .footer-info h3 {
+    color: var(--color-white);
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+}
+
+.footer .container .footer-info p {
+    color: var(--color-white);
+    font-size: 0.5rem;
+}
+
+.footer .container .footer-info img {
+    margin-bottom: 0.5rem;
+}
+
+.footer .container .footer-icons {
+    display: flex;
+    align-items: end;
+    gap: 20px;
+}
+
+.footer .container .footer-icons .icon {
+    width: 2rem;
+    height: 2rem;
+}

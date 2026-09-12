@@ -1,5 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
     // =========================================================
+    // Detail Page
+    // =========================================================
+
+    // 현재 디자이너 목록 HTML 기준 경로입니다.
+    // 예: designer/index_02.html → designer/detail/designer-detail.html
+    // 실제 상세 HTML 위치가 다르면 아래 한 줄만 수정하세요.
+    const DESIGNER_DETAIL_PATH = "./designer-detail/designer-detail.html";
+
+    // =========================================================
     // DOM
     // =========================================================
 
@@ -45,8 +54,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function getDesignerHref(designer) {
-        // 상세 페이지가 생기면 data 쪽에 href를 추가해서 그대로 사용
-        return designer.href || "";
+        // 개별 href가 있으면 그 경로를 사용하고, 없으면 공통 상세 페이지를 사용합니다.
+        const url = new URL(
+            designer.href || DESIGNER_DETAIL_PATH,
+            document.baseURI
+        );
+
+        // 기존 쿼리와 해시는 유지하고 학생 ID만 설정합니다.
+        // designer-detail.js에서 같은 ?id= 값을 읽어 학생을 찾습니다.
+        url.searchParams.set("id", designer.id);
+
+        return url.href;
     }
 
     function createDesignerCard(designer) {
@@ -58,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         card.className = "designer-card";
         card.href = getDesignerHref(designer);
+        card.setAttribute("page-transition", "");
 
         card.dataset.designerId = designer.id;
         card.dataset.nameKo = designer.nameKo;
@@ -68,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         card.setAttribute(
             "aria-label",
-            `${designer.nameKo} 상세 페이지 연결 예정`
+            `${designer.nameKo} 상세 페이지 보기`
         );
 
         imageWrap.className =

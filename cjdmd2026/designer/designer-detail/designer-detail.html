@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유연한 결합: 청주대학교 디지털미디어디자인</title>
+    <link rel="stylesheet" href="../../css/designer-detail.css">
+    <script>
+        if (sessionStorage.getItem('stamp-page-transition') === '1') {
+            document.documentElement.classList.add('page-transition-preload');
+        }
+    </script>
+
+    <!-- Scripts:S -->
+    <script src="../../js/page-transition.js" defer></script>
+    <script src="../../js/designer-data.js" defer></script>
+    <script src="../../js/project-data.js" defer></script>
+    <script src="../../js/designer-detail.js" defer></script>
+    <script src="../../js/thread-crosshair.js" defer></script>
+
+    <script src="https://unpkg.com/lenis@1.3.15/dist/lenis.min.js"></script>
+
+    <script>
+    const lenis = new Lenis({
+        duration: 1.0,
+        smoothWheel: true,
+        wheelMultiplier: 0.75
+    });
+
+    function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+    </script>
+    <!-- Scripts:E -->
+</head>
+<body>
+    <!-- Header:S -->
+    <header class="header">
+        <div class="container">
+            <!-- 로고 -->
+            <h1 class="logo"><a href="../../index.html" page-transition>유연한 결합</a></h1>
+
+            <!-- 네비게이션 -->
+            <nav class="nav">
+                <ul>
+                    <li><a href="../../project/index_03.html" page-transition>프로젝트</a></li>
+                    <li><a href="../../designer/index_02.html" page-transition>디자이너</a></li>
+                    <li><a href="../../archive/index_02.html" page-transition>아카이브</a></li>
+                </ul>
+            </nav>
+
+            <!-- 모바일 메뉴 버튼 -->
+            <!--<button class="menu-button">
+                <span class="menu-icon"></span>
+            </button> -->
+        </div>
+    </header>
+    <!-- Header:E -->   
+
+    <!-- Main:S -->
+    <main class="main">
+        <div class="back-wrap">
+            <button class="back-button" type="button" onclick="history.back()"><img src="../../assets/images/icons/back-icon.svg" class="icon"><p>돌아가기</p></button>
+        </div>
+        <section class="intro">
+            <div class="container">
+                    <div class="profile">
+                        <div class="image"></div>
+                        <div class="text-wrap">
+                            <div class="name">
+                                <h1>한글이름</h1>
+                                <h2>english name</h2>
+                            </div>
+                            <div class="sentence">
+                                <p>소감문</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </section>
+
+        <section class="handoff-section" id="handoffSection">
+            <div class="sticky-stage" id="stickyStage"></div>
+
+            <section class="list-layer" id="listLayer">
+                <div class="container">
+                    <h2 class="list-title">전시 목록</h2>
+                    <article class="project-card">
+                        <div class="project-thumb" id="firstProjectThumb">
+                            <div class="hero-flyer is-docked" id="heroFlyer">
+                                <div class="media-frame" id="mediaFrame">
+                                    <img class="project-image" id="projectImage">
+                                </div>
+                                <div class="hero-overlay" id="heroOverlay"></div>
+                                <div class="hero-title" id="heroTitle">
+                                    타이틀
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 카드 오른쪽 설명 -->
+                        <div class="card-copy">
+                            <p class="category">INTERACTIVE DESIGN</p>
+                            <h3>제목</h3>
+                            <p>프로젝트 설명</p>
+                        </div>
+                    </article>
+
+                    <article class="project-card">
+                        <div class="project-thumb">
+                            <img class="project-image">
+                        </div>
+
+                        <div class="card-copy">
+                            <p class="category">SERVICE DESIGN</p>
+                            <h3>제목</h3>
+                            <p>프로젝트 설명</p>
+                        </div>
+                    </article>
+
+                    <article class="project-card">
+                        <div class="project-thumb">
+                            <img class="project-image">
+                        </div>
+
+                        <div class="card-copy">
+                            <p class="category">INTERFACE DESIGN</p>
+                            <h3>제목</h3>
+                            <p>프로젝트 설명</p>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </section>
+        
+    </main>
+    <!-- Main:E -->
+
+    <!-- Footer:S -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-info">
+                <h3>청주대학교 <br> 디지털미디어디자인학과</h3>
+                <img class="icon" src="" alt="DMD Logo">
+                <p>&copy; 2026 Digital Media Design. All rights reserved.</p>
+            </div>
+            <div class="footer-icons">
+                <a href="#"><img class="icon" src="../../assets/images/icons/dmd-icon.svg" alt="Digital Media Design"></a>
+                <a href="#"><img class="icon" src="../../assets/images/icons/instagram-icon.svg" alt="Instagram"></a>
+            </div>
+        </div>
+    </footer>
+    <!-- Footer:E -->
+</body>
+</html>

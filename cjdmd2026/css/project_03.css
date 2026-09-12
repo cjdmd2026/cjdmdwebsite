@@ -461,7 +461,6 @@ body:has(#slideview:not([hidden])) .header .nav ul li {
 
 
 /* ============================== Project Dial ============================== */
-
 .project-dial {
     display: none;
 }
@@ -614,7 +613,7 @@ body:has(#slideview:not([hidden])) .header .nav ul li {
 }
 
 .project-info-block {
-    font-size: clamp(1rem, 0.8vw, 1.2rem);
+    font-size: clamp(1.25rem, 0.8vw, 1.5rem);
     line-height: 1.6;
     font-weight: 400;
 
