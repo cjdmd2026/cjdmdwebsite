@@ -1,5 +1,5 @@
 /**
- * designer-ribbon-slider.js
+ * designer-ribbon-slider.js — BIG ARC / SCREEN MATCH 2.1
  * ------------------------------------------------------------
  * 현재 designer HTML 전용 WebGL Slide View
  *
@@ -15,7 +15,10 @@
  * 기능:
  * - Slide View에서만 WebGL 카드 렌더링
  * - 왼쪽 1/3 지점 카드가 가장 정면
- * - 오른쪽으로 갈수록 하나의 공통 3D 리본 흐름을 따라 왜곡
+ * - 오른쪽으로 갈수록 하나의 큰 깊이 곡선을 따라 후퇴 (X축 눕힘 없음)
+ * - 승인한 테스트 값: 깊이 2400 / 펼침 27% / 간격 6 / 시작 1.3장
+ * - 곡선 길이 4.5장: 스크린샷에 없는 항목은 테스트 기본값 유지
+ * - 원근 투영을 고려한 비대칭 슬롯 재사용 + 실제 곡면 기준 클릭 판정
  * - 스크롤 시 카드 Mesh 자체가 이동
  * - 스프링 + 감쇠로 부드러운 카드 이동
  * - 리본 흐름은 화면에 보이지 않음
@@ -35,9 +38,10 @@
         /* ---------------------------------
            WebGL Pool
         --------------------------------- */
-        poolSize: 13,
+        poolSize: 13,       // 최소 슬롯 수. 깊이로 인해 더 필요한 슬롯은 자동 확보.
+        maxPoolSize: 64,    // 초광폭 화면에서도 무제한으로 늘어나지 않도록 상한.
         textureWidth: 420,
-        textureCacheSize: 14,
+        textureCacheSize: 40,
 
         /* ---------------------------------
            3D Ribbon Flow
@@ -45,28 +49,59 @@
         --------------------------------- */
         focusRatio: 1 / 3,
 
-        rightMaxTwistDeg: 64,
-        leftMaxTwistDeg: 9,
+        /* 승인한 큰 곡선 — 아래 5개 값으로 형태를 조절합니다. */
+        arcDepth: 4400,          // 최대 후퇴 깊이: 테스트 2400 px
+        arcSpreadRatio: 0.0,    // 끝점 펼침: 테스트 27%
+        slideGap: 20,             // WebGL Slide만 적용. null이면 원래 CSS gap 사용.
+        arcStart: 2.4,           // 정면 위치에서 1.3장 뒤부터 휘기 시작
+        arcSpan: 4.0,            // 테스트 기본값. 높일수록 길고 완만하게 휨
+
+        arcRipple: true,         // 이동할 때만 아주 작은 깊이 반응. 정지하면 큰 곡선 1개.
+        arcMatchGapRadius: false, // 이전 옵션 호환용. CSS radius를 gap으로 제한하지 않습니다.
+
+        /* 테스트 화면과 실제 페이지의 카메라/카드 크기 차이를 보정합니다.
+         * 참조: 화면 폭 1600, 카드 약 240 + 간격 6, 카메라 거리 약 720.
+         * arcDepth 2400은 이 참조 좌표의 깊이입니다. 실제 world 깊이는 자동 환산.
+         * true일 때 start/span도 참조 화면의 카드 간격 단위입니다.
+         * 카드 원래 크기/세로 위치와 Grid CSS는 바꾸지 않습니다.
+         */
+        arcMatchPrototype: true,
+        arcReferenceStepRatio: 246 / 1600,
+        arcReferenceCameraZ: 720,
+        arcDepthScale: 1.0,       // 추가 강도. 1 = 참조 테스트의 원근 비율
+
+        /* 깊이 기반 흐림: 정면은 유지하고 큰 곡선의 뒤쪽만 연해집니다.
+         * start/end는 최대 후퇴 깊이 대비 0~1 비율입니다.
+         * 기존 카드 크기, 곡선, CSS 테두리/모서리 설정은 변경하지 않습니다.
+         */
+        distanceOpacity: true,
+        distanceMinOpacity: 0.35, // 가장 먼 구간의 불투명도. 작을수록 더 연해짐.
+        distanceFadeStart: 0.03,  // 최대 깊이의 3%까지 원래 불투명도 유지.
+        distanceFadeEnd: 0.75,    // 최대 깊이의 75%부터 최소 불투명도 유지.
+
+        /* 이전 옵션 이름은 호환을 위해 남겨 둡니다. X축 회전 셰이더는 사용하지 않습니다. */
+        rightMaxTwistDeg: 0,
+        leftMaxTwistDeg: 0,
 
         rightTwistDistance: 1150,
         leftTwistDistance: 820,
 
-        rightDepth: 180,
-        leftDepth: 22,
+        rightDepth: 0,
+        leftDepth: 0,
 
-        screwWaveDeg: 5,
+        screwWaveDeg: 0,
         screwWaveLength: 1500,
 
-        mountOffset: 14,
+        mountOffset: 0,
 
         /* ---------------------------------
            살아있는 듯한 리본 움직임
         --------------------------------- */
-        wobbleStrengthDeg: 9,
+        wobbleStrengthDeg: 0,
         wobbleFrequency: 0.0055,
         wobbleSpeed: 2.0,
 
-        velocityTwistDeg: 5.5,
+        velocityTwistDeg: 0,
         velocityDepth: 18,
 
         /* ---------------------------------
@@ -193,6 +228,26 @@
 
     const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
     const mod = (n, m) => ((n % m) + m) % m;
+
+    // 외부 옵션의 비정상 값으로 NaN / 음수 깊이가 발생하지 않게 정규화합니다.
+    const finiteNumber = (value, fallback) =>
+        typeof value === "number" && Number.isFinite(value) ? value : fallback;
+    OPTIONS.arcDepth = Math.max(0, finiteNumber(OPTIONS.arcDepth, 2400));
+    OPTIONS.distanceMinOpacity = clamp(finiteNumber(OPTIONS.distanceMinOpacity, 0.55), 0, 1);
+    OPTIONS.distanceFadeStart = clamp(finiteNumber(OPTIONS.distanceFadeStart, 0.03), 0, 0.999);
+    OPTIONS.distanceFadeEnd = clamp(finiteNumber(OPTIONS.distanceFadeEnd, 0.75), OPTIONS.distanceFadeStart + 0.001, 1);
+    OPTIONS.arcReferenceStepRatio = clamp(finiteNumber(OPTIONS.arcReferenceStepRatio, 246 / 1600), 0.02, 1);
+    OPTIONS.arcReferenceCameraZ = Math.max(1, finiteNumber(OPTIONS.arcReferenceCameraZ, 720));
+    OPTIONS.arcDepthScale = clamp(finiteNumber(OPTIONS.arcDepthScale, 1), 0, 4);
+    // 간격 6px이라는 이유로 CSS 모서리를 4.8px로 덮어쓰지 않습니다.
+    OPTIONS.arcMatchGapRadius = false;
+    OPTIONS.arcSpreadRatio = clamp(finiteNumber(OPTIONS.arcSpreadRatio, 0.27), 0, 1);
+    OPTIONS.arcStart = Math.max(0, finiteNumber(OPTIONS.arcStart, 1.3));
+    OPTIONS.arcSpan = Math.max(0.1, finiteNumber(OPTIONS.arcSpan, 4.5));
+    OPTIONS.slideGap = OPTIONS.slideGap == null ? null : Math.max(0, finiteNumber(OPTIONS.slideGap, 6));
+    OPTIONS.focusRatio = clamp(finiteNumber(OPTIONS.focusRatio, 1 / 3), 0, 1);
+    OPTIONS.maxPoolSize = clamp(Math.floor(finiteNumber(OPTIONS.maxPoolSize, 64)), 13, 128);
+    OPTIONS.poolSize = clamp(Math.floor(finiteNumber(OPTIONS.poolSize, 13)), 1, OPTIONS.maxPoolSize);
 
     async function getThree() {
         if (window.THREE) return window.THREE;
@@ -422,6 +477,7 @@
         let filterTransitionRaf = 0;
         let filterTransitionRunning = false;
         let pendingFilterTransition = null;
+        let initialEntrancePlayed = false;
 
         const easeInCubic = t => t * t * t;
 
@@ -850,14 +906,7 @@
                         slot.virtualIndex -
                         ribbonState.position;
 
-                    const baseOpacity =
-                        clamp(
-                            1 -
-                                Math.abs(relative) *
-                                0.055,
-                            0.42,
-                            1
-                        );
+                    const baseOpacity = cardBaseOpacity(relative, slot.position);
 
                     slot.uniforms
                         .uOpacity
@@ -911,12 +960,24 @@
         let cardHeight = 470;
         let gap = 24;
         let step = 344;
+        let domStep = 344; // 기존 designer_02.js의 DOM scrollLeft 단위 (CSS gap 포함)
 
         /*
          * Slide View 카드 모양도 CSS에서 읽습니다.
          * .designer-card__image-wrap의 border-radius를 WebGL shader에 전달합니다.
          */
-        let cardRadius = 17;
+        let cardRadius = 17; // 하위 호환용 대표값. 실제 렌더는 네 모서리를 각각 사용.
+        // 순서: top-left, top-right, bottom-right, bottom-left.
+        let cardRadiiX = [17, 17, 17, 17];
+        let cardRadiiY = [17, 17, 17, 17];
+        // 순서: top, right, bottom, left.
+        let cardBorderWidths = [0, 0, 0, 0];
+        const cardBorderColors = Array.from({length:4}, () => new THREE.Vector4(0,0,0,0));
+        let cardRadiusSource = 'image-wrap';
+        let cardBorderSource = 'none';
+        let arcPathStep = 344;
+        let arcWorldDepth = OPTIONS.arcDepth;
+        let arcCameraScale = 1;
 
         /*
          * WebGL 카드 border는 CSS 변수에서 읽습니다.
@@ -961,103 +1022,92 @@
         const borderColorContext =
             borderColorCanvas.getContext("2d");
 
-        function readCssColor(
-            value,
-            target
-        ) {
-            if (
-                !borderColorContext ||
-                !value
-            ) {
-                return;
-            }
-
+        function readCssColor(value, target) {
+            if (!borderColorContext || !value) return;
             try {
-                borderColorContext.fillStyle =
-                    "rgba(0,0,0,.72)";
+                if (window.CSS?.supports && !CSS.supports('color', value.trim())) return;
+                borderColorContext.clearRect(0, 0, 1, 1);
+                borderColorContext.fillStyle = value.trim();
+                borderColorContext.fillRect(0, 0, 1, 1);
+                const [r, g, b, a] = borderColorContext.getImageData(0, 0, 1, 1).data;
+                const linear = n => { n /= 255; return n <= .04045 ? n / 12.92 : Math.pow((n + .055) / 1.055, 2.4); };
+                // colorspace_fragment에서 다시 sRGB로 출력하므로 CSS 색은 선형값으로 전달.
+                target.set(linear(r), linear(g), linear(b), a / 255);
+            } catch (_) { /* invalid color: retain previous value */ }
+        }
 
-                borderColorContext.fillStyle =
-                    value.trim();
+        const cornerProperties = ['borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomRightRadius', 'borderBottomLeftRadius'];
+        const borderSides = ['Top', 'Right', 'Bottom', 'Left'];
+        const radiusProbe = document.createElement('div');
+        Object.assign(radiusProbe.style, {position:'fixed', left:'-10000px', top:'-10000px', visibility:'hidden', pointerEvents:'none', boxSizing:'border-box', contain:'strict'});
+        radiusProbe.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(radiusProbe);
 
-                const normalized =
-                    borderColorContext.fillStyle;
-
-                if (
-                    normalized.startsWith("#")
-                ) {
-                    let hex =
-                        normalized.slice(1);
-
-                    if (hex.length === 3) {
-                        hex =
-                            hex
-                                .split("")
-                                .map(
-                                    char =>
-                                        char + char
-                                )
-                                .join("");
-                    }
-
-                    if (
-                        hex.length === 6 ||
-                        hex.length === 8
-                    ) {
-                        const r =
-                            parseInt(
-                                hex.slice(0, 2),
-                                16
-                            ) / 255;
-
-                        const g =
-                            parseInt(
-                                hex.slice(2, 4),
-                                16
-                            ) / 255;
-
-                        const b =
-                            parseInt(
-                                hex.slice(4, 6),
-                                16
-                            ) / 255;
-
-                        const a =
-                            hex.length === 8
-                                ? parseInt(
-                                    hex.slice(6, 8),
-                                    16
-                                ) / 255
-                                : 1;
-
-                        target.set(
-                            r,
-                            g,
-                            b,
-                            a
-                        );
-
-                        return;
-                    }
-                }
-
-                const match =
-                    normalized.match(
-                        /rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:\s*[,/]\s*([\d.]+))?\s*\)/i
-                    );
-
-                if (match) {
-                    target.set(
-                        Number(match[1]) / 255,
-                        Number(match[2]) / 255,
-                        Number(match[3]) / 255,
-                        match[4] !== undefined
-                            ? Number(match[4])
-                            : 1
-                    );
-                }
-            } catch (_) {
-                // invalid CSS color -> keep previous value
+        function radiusLength(value, axisSize) {
+            const number = parseFloat(value);
+            return Number.isFinite(number) ? Math.max(0, value.includes('%') ? axisSize * number / 100 : number) : 0;
+        }
+        function radiiFromStyle(style) {
+            const x = [], y = [];
+            for (const property of cornerProperties) {
+                const pair = String(style[property] || '0').trim().split(/\s+/);
+                x.push(radiusLength(pair[0], cardWidth));
+                y.push(radiusLength(pair[1] || pair[0], cardHeight));
             }
+            return {x,y};
+        }
+        function normalizeRadii(radii) {
+            // CSS와 동일하게 서로 만나는 모서리들의 합이 변 길이를 넘을 때만 축소.
+            const {x,y} = radii;
+            const scale = Math.min(1,
+                cardWidth / Math.max(1e-8,x[0]+x[1]), cardWidth / Math.max(1e-8,x[3]+x[2]),
+                cardHeight / Math.max(1e-8,y[0]+y[3]), cardHeight / Math.max(1e-8,y[1]+y[2]));
+            return {x:x.map(v=>v*scale), y:y.map(v=>v*scale)};
+        }
+        function readCardAppearance(cardStyle, imageStyle) {
+            const styles = [cardStyle, imageStyle].filter(Boolean);
+            const custom = name => styles.map(st => st.getPropertyValue(name).trim()).find(Boolean) || '';
+            const radiusValue = custom('--designer-slide-card-radius') || custom('--designer-card-border-radius') || custom('--designer-card-radius');
+            const outer = radiiFromStyle(cardStyle);
+            const inner = imageStyle ? radiiFromStyle(imageStyle) : outer;
+            let radii;
+            if (radiusValue && CSS.supports('border-radius', radiusValue)) {
+                radiusProbe.style.width = cardWidth+'px'; radiusProbe.style.height = cardHeight+'px';
+                radiusProbe.style.fontSize = cardStyle.fontSize;
+                radiusProbe.style.borderRadius = radiusValue;
+                radii = radiiFromStyle(getComputedStyle(radiusProbe));
+                cardRadiusSource = 'CSS variable';
+            } else if (outer.x.some(v=>v>0) || outer.y.some(v=>v>0)) {
+                radii = outer; cardRadiusSource = '.designer-card';
+            } else {
+                radii = inner; cardRadiusSource = imageStyle ? '.designer-card__image-wrap' : '.designer-card';
+            }
+            radii = normalizeRadii(radii);
+            cardRadiiX = radii.x; cardRadiiY = radii.y;
+            cardRadius = Math.max(...cardRadiiX, ...cardRadiiY);
+
+            // 기존 CSS 변수 우선, 없으면 실제 border 속성의 width/color를 읽습니다.
+            const widthValue = custom('--designer-card-border-width');
+            const parsedWidth = parseFloat(widthValue);
+            const colorValue = custom('--designer-card-border-color');
+            const hasBorder = st => st && borderSides.some(side => !['none','hidden'].includes(st['border'+side+'Style']) && parseFloat(st['border'+side+'Width']) > 0);
+            const borderStyle = hasBorder(cardStyle) ? cardStyle : hasBorder(imageStyle) ? imageStyle : cardStyle;
+            cardBorderSource = Number.isFinite(parsedWidth) ? 'CSS variable' : hasBorder(borderStyle) ? (borderStyle===cardStyle ? '.designer-card' : '.designer-card__image-wrap') : 'none';
+            cardBorderWidths = borderSides.map(side => Number.isFinite(parsedWidth) ? Math.max(0, parsedWidth) :
+                (!['none','hidden'].includes(borderStyle['border'+side+'Style']) ? Math.max(0,parseFloat(borderStyle['border'+side+'Width']) || 0) : 0));
+            for (let i=0;i<4;i++) {
+                const cssColor = colorValue || borderStyle['border'+borderSides[i]+'Color'] || 'rgba(0,0,0,.18)';
+                readCssColor(cssColor, cardBorderColors[i]);
+            }
+            cardBorderWidth = Math.max(...cardBorderWidths);
+            cardBorderColor.copy(cardBorderColors[0]);
+        }
+
+        function syncArcMetrics() {
+            const cameraZ = Math.max(camera.position.z, 1);
+            arcCameraScale = OPTIONS.arcMatchPrototype ? cameraZ / OPTIONS.arcReferenceCameraZ : 1;
+            arcPathStep = OPTIONS.arcMatchPrototype ? Math.max(1, overlayWidth * OPTIONS.arcReferenceStepRatio) : Math.max(1, step);
+            arcWorldDepth = OPTIONS.arcDepth * arcCameraScale * OPTIONS.arcDepthScale;
         }
 
         function measure() {
@@ -1080,27 +1130,9 @@
                         ".designer-card__image-wrap"
                     );
 
-                if (imageWrap) {
-                    const imageStyle =
-                        getComputedStyle(imageWrap);
-
-                    const radius =
-                        parseFloat(
-                            imageStyle.borderTopLeftRadius
-                        );
-
-                    if (Number.isFinite(radius)) {
-                        cardRadius = radius;
-                    }
-                }
-
-                /*
-                 * CSS --designer-slide-card-offset-y 값을 읽습니다.
-                 */
-                const cardStyle =
-                    getComputedStyle(
-                        sourceCards[0]
-                    );
+                const cardStyle = getComputedStyle(sourceCards[0]);
+                const imageStyle = imageWrap ? getComputedStyle(imageWrap) : null;
+                readCardAppearance(cardStyle, imageStyle);
 
                 const offsetY =
                     parseFloat(
@@ -1113,33 +1145,6 @@
                     Number.isFinite(offsetY)
                         ? offsetY
                         : 0;
-
-                const borderWidth =
-                    parseFloat(
-                        cardStyle.getPropertyValue(
-                            "--designer-card-border-width"
-                        )
-                    );
-
-                cardBorderWidth =
-                    Number.isFinite(borderWidth)
-                        ? Math.max(
-                            0,
-                            borderWidth
-                        )
-                        : 0;
-
-                const borderColor =
-                    cardStyle.getPropertyValue(
-                        "--designer-card-border-color"
-                    );
-
-                if (borderColor.trim()) {
-                    readCssColor(
-                        borderColor,
-                        cardBorderColor
-                    );
-                }
 
                 const textLeft =
                     parseFloat(
@@ -1179,14 +1184,13 @@
             }
 
             const trackStyle = getComputedStyle(track);
-
-            gap =
-                parseFloat(
-                    trackStyle.columnGap ||
-                    trackStyle.gap
-                ) || 24;
-
+            const cssGap = parseFloat(trackStyle.columnGap || trackStyle.gap);
+            domStep = cardWidth + (Number.isFinite(cssGap) ? Math.max(0, cssGap) : 24);
+            gap = OPTIONS.slideGap == null
+                ? (Number.isFinite(cssGap) ? Math.max(0, cssGap) : 24)
+                : OPTIONS.slideGap;
             step = cardWidth + gap;
+            // DOM/CSS gap은 변경하지 않습니다. Grid View는 기존 레이아웃 그대로입니다.
 
             updateOverlayRect();
 
@@ -1200,6 +1204,7 @@
                 resizeRenderer();
             }
 
+            syncArcMetrics();
             syncCssCardUniforms();
         }
 
@@ -1222,7 +1227,12 @@
                 `${Math.round(rect.height + extra * 2)}px`;
         }
 
+        function effectiveCardRadius() {
+            return cardRadius; // 절대 gap*0.8로 자르지 않습니다.
+        }
+
         function syncCssCardUniforms() {
+            const radius = effectiveCardRadius();
             for (const slot of slots) {
                 if (!slot?.uniforms) continue;
 
@@ -1231,8 +1241,28 @@
                     cardHeight
                 );
 
-                slot.uniforms.uRadius.value =
-                    cardRadius;
+                slot.uniforms.uRadius.value = radius;
+                slot.uniforms.uRadiusX.value.set(...cardRadiiX);
+                slot.uniforms.uRadiusY.value.set(...cardRadiiY);
+                slot.uniforms.uBorderWidths.value.set(...cardBorderWidths);
+                ['Top','Right','Bottom','Left'].forEach((side,i) => slot.uniforms['uBorderColor'+side].value.copy(cardBorderColors[i]));
+                slot.uniforms.uArcDepth.value = arcWorldDepth;
+                slot.uniforms.uStep.value = arcPathStep;
+                slot.uniforms.uArcSpread.value = overlayWidth * OPTIONS.arcSpreadRatio;
+                slot.uniforms.uCameraZ.value = camera.position.z;
+
+                // Grid에서 처음 시작해 Slide에 진입한 경우에도 실제 CSS 크기로 맞춥니다.
+                const geometry = slot.mesh.geometry;
+                if (geometry.parameters.width !== cardWidth || geometry.parameters.height !== cardHeight) {
+                    geometry.dispose();
+                    slot.mesh.geometry = new THREE.PlaneGeometry(cardWidth, cardHeight, 44, 18);
+                }
+                const sideKey = [cardWidth, cardHeight, ...cardRadiiX, ...cardRadiiY, OPTIONS.cardThickness].join("|");
+                if (slot.sideMesh && slot.sideGeometryKey !== sideKey) {
+                    slot.sideMesh.geometry.dispose();
+                    slot.sideMesh.geometry = createRoundedSideGeometry(cardWidth, cardHeight, cardRadiiX, cardRadiiY, OPTIONS.cardThickness);
+                    slot.sideGeometryKey = sideKey;
+                }
 
                 slot.uniforms.uCardOffsetY.value =
                     cardOffsetY;
@@ -1297,8 +1327,11 @@
              * WebGL world 좌표 기준
              * 왼쪽 1/3 = center 기준 -width/6
              */
-            focusX =
-                -overlayWidth / 6;
+            focusX = overlayWidth * (OPTIONS.focusRatio - 0.5);
+            syncArcMetrics();
+            // 실제 카메라에 맞게 환산한 깊이까지 보이도록 far plane도 함께 갱신합니다.
+            camera.far = Math.max(5000, cameraZ + arcWorldDepth + Math.abs(OPTIONS.velocityDepth) + 1500);
+            camera.updateProjectionMatrix();
         }
 
         /* =====================================================
@@ -1329,6 +1362,24 @@
         const textureCache = new Map();
 
         let textureUseClock = 0;
+        const pendingTextures = new Map();
+
+        function cardTextureKey(item) {
+            return item ? [item.id || item.url, item.url, item.nameKo, item.nameEn,
+                cardTextLeft, cardTextBottom, cardTextGap, cardWidth, cardHeight].join("|") : "";
+        }
+
+        function createCardTexture(index) {
+            const item = cardData[index];
+            if (!item) return Promise.resolve(placeholderTexture);
+            const key = cardTextureKey(item);
+            const cached = textureCache.get(key);
+            if (cached) { cached.used = ++textureUseClock; return Promise.resolve(cached.texture); }
+            if (pendingTextures.has(key)) return pendingTextures.get(key);
+            const task = buildCardTexture(index).finally(() => pendingTextures.delete(key));
+            pendingTextures.set(key, task);
+            return task;
+        }
 
         async function loadImage(url) {
             return await new Promise(
@@ -1382,8 +1433,9 @@
             const candidates =
                 [...textureCache.entries()]
                     .filter(
-                        ([, entry]) =>
-                            !active.has(entry.texture)
+                        ([key, entry]) =>
+                            !active.has(entry.texture) &&
+                            !slots.some(slot => slot.active && slot.pendingTextureKey === key)
                     )
                     .sort(
                         (a, b) =>
@@ -1404,7 +1456,7 @@
             }
         }
 
-        async function createCardTexture(index) {
+        async function buildCardTexture(index) {
             const item = cardData[index];
 
             if (!item) {
@@ -1415,16 +1467,8 @@
              * 필터 전환으로 배열 index가 바뀌어도
              * 동일 디자이너 텍스처를 재사용합니다.
              */
-            const cacheKey =
-                [
-                    item.id || item.url,
-                    item.url,
-                    item.nameKo,
-                    item.nameEn,
-                    cardTextLeft,
-                    cardTextBottom,
-                    cardTextGap
-                ].join("|");
+            const cacheKey = cardTextureKey(item);
+            const metrics = {cardWidth, cardHeight, cardTextLeft, cardTextBottom, cardTextGap};
 
             const cached =
                 textureCache.get(cacheKey);
@@ -1435,10 +1479,10 @@
             }
 
             const ratio =
-                cardWidth /
+                metrics.cardWidth /
                 Math.max(
                     1,
-                    cardHeight
+                    metrics.cardHeight
                 );
 
             const canvas =
@@ -1547,32 +1591,32 @@
 
             /*
              * CSS px 값을 texture canvas 크기에 맞게 스케일링합니다.
-             * WebGL 카드의 실제 cardWidth/cardHeight와 canvas W/H가 다르기 때문입니다.
+             * WebGL 카드의 실제 metrics.cardWidth/metrics.cardHeight와 canvas W/H가 다르기 때문입니다.
              */
             const scaleX =
                 W /
                 Math.max(
                     1,
-                    cardWidth
+                    metrics.cardWidth
                 );
 
             const scaleY =
                 H /
                 Math.max(
                     1,
-                    cardHeight
+                    metrics.cardHeight
                 );
 
             const left =
-                cardTextLeft *
+                metrics.cardTextLeft *
                 scaleX;
 
             const bottom =
-                cardTextBottom *
+                metrics.cardTextBottom *
                 scaleY;
 
             const gap =
-                cardTextGap *
+                metrics.cardTextGap *
                 scaleY;
 
             const nameKoFontSize =
@@ -1655,313 +1699,72 @@
         ===================================================== */
 
         const FLOW_GLSL = `
-            float PI = 3.14159265359;
-
-            float smootherstep5(
-                float edge0,
-                float edge1,
-                float x
-            ) {
-                float t =
-                    clamp(
-                        (x - edge0) /
-                        max(
-                            0.0001,
-                            edge1 - edge0
-                        ),
-                        0.0,
-                        1.0
-                    );
-
-                return
-                    t * t * t *
-                    (
-                        t *
-                        (
-                            t * 6.0 -
-                            15.0
-                        ) +
-                        10.0
-                    );
+            // 승인한 slider-big-arc-test.html의 실제 vertex 식과 동일합니다.
+            // 모든 카드의 모든 vertex가 같은 global X를 샘플링합니다.
+            float bigArcAmount(float x) {
+                float progress = max((x - uFocusX) / max(uStep, 1.0) - uArcStart, 0.0);
+                float bendT = clamp(1.0 - exp(-progress / max(uArcSpan, 0.0001)), 0.0, 0.9995);
+                return 1.0 - cos(bendT * 1.57079632679);
             }
-
-            float ribbonTwist(
-                float x,
-                float focusX,
-                float rightDistance,
-                float leftDistance,
-                float rightMax,
-                float leftMax,
-                float waveAmount,
-                float waveLength
-            ) {
-                float d =
-                    x -
-                    focusX;
-
-                float rightT =
-                    smootherstep5(
-                        0.0,
-                        rightDistance,
-                        max(d, 0.0)
-                    );
-
-                float leftT =
-                    smootherstep5(
-                        0.0,
-                        leftDistance,
-                        max(-d, 0.0)
-                    );
-
-                float angle =
-                    rightT * rightMax -
-                    leftT * leftMax;
-
-                float distanceFactor =
-                    smootherstep5(
-                        100.0,
-                        650.0,
-                        abs(d)
-                    );
-
-                angle +=
-                    sin(
-                        x /
-                        waveLength *
-                        6.28318530718
-                    ) *
-                    waveAmount *
-                    distanceFactor;
-
-                return angle;
-            }
-
-            float ribbonDepth(
-                float x,
-                float focusX,
-                float rightDistance,
-                float leftDistance,
-                float rightDepth,
-                float leftDepth
-            ) {
-                float d =
-                    x -
-                    focusX;
-
-                float rightT =
-                    smootherstep5(
-                        0.0,
-                        rightDistance,
-                        max(d, 0.0)
-                    );
-
-                float leftT =
-                    smootherstep5(
-                        0.0,
-                        leftDistance,
-                        max(-d, 0.0)
-                    );
-
-                return
-                    -rightT * rightDepth -
-                    leftT * leftDepth;
+            float bigArcDepth(float x, float arc) {
+                // 반복 웨이브로 경로를 만들지 않습니다. 이동 중의 작은 반응만 유지합니다.
+                return -uArcDepth * arc
+                    + sin(x * 0.004 + uTime * 2.0) * uDynamicDepth * uArcRipple * arc;
             }
         `;
 
-        /* =====================================================
-           Card Shader
-           보이지 않는 공통 ribbon field만 사용.
-        ===================================================== */
-
+        /* 앞면과 두께 옆면이 같은 곡면을 사용합니다. localY는 회전시키지 않습니다. */
         const vertexShader = `
             uniform float uCardCenterX;
             uniform float uFocusX;
-
-            uniform float uRightDistance;
-            uniform float uLeftDistance;
-
-            uniform float uRightMaxTwist;
-            uniform float uLeftMaxTwist;
-
-            uniform float uRightDepth;
-            uniform float uLeftDepth;
-
-            uniform float uWaveAmount;
-            uniform float uWaveLength;
-
-            uniform float uMountOffset;
-
-            /*
-             * CSS --designer-slide-card-offset-y 연동값
-             */
+            uniform float uStep;
+            uniform float uArcDepth;
+            uniform float uArcSpread;
+            uniform float uArcStart;
+            uniform float uArcSpan;
+            uniform float uArcRipple;
+            uniform float uCameraZ;
             uniform float uCardOffsetY;
             uniform float uFilterOffsetY;
-
-            uniform float uDynamicTwist;
             uniform float uDynamicDepth;
-
             uniform float uTime;
-            uniform float uVelocity;
-
-            uniform float uWobbleStrength;
-            uniform float uWobbleFrequency;
-            uniform float uWobbleSpeed;
-
             varying vec2 vUv;
             varying float vFacing;
-
             ${FLOW_GLSL}
 
             void main() {
                 vUv = uv;
+                float sampleX = uCardCenterX + position.x;
+                float arc = bigArcAmount(sampleX);
+                float z = position.z + bigArcDepth(sampleX, arc);
+                float x = sampleX + uArcSpread * arc;
 
-                /*
-                 * 모든 카드 vertex가
-                 * 같은 화면 X 기반 ribbon field를 샘플링.
-                 */
-                float x =
-                    uCardCenterX +
-                    position.x;
+                // CSS 세로 offset과 필터 낙하량은 화면 px로 유지합니다.
+                // 깊어진다고 카드 중심선이 위/아래로 휘지 않습니다.
+                float offsetY = -uCardOffsetY + uFilterOffsetY;
+                float inversePerspective = (uCameraZ - z) / max(uCameraZ, 1.0);
+                float y = position.y + offsetY * inversePerspective;
 
-                float baseAngle =
-                    ribbonTwist(
-                        x,
-                        uFocusX,
-                        uRightDistance,
-                        uLeftDistance,
-                        uRightMaxTwist,
-                        uLeftMaxTwist,
-                        uWaveAmount,
-                        uWaveLength
-                    );
-
-                /*
-                 * Scroll velocity가 있을 때만
-                 * 같은 ribbon phase로 wobble.
-                 */
-                float wobble =
-                    sin(
-                        x *
-                        uWobbleFrequency +
-                        uTime *
-                        uWobbleSpeed
-                    ) *
-                    uWobbleStrength *
-                    abs(uVelocity);
-
-                wobble +=
-                    sin(
-                        x *
-                        uWobbleFrequency *
-                        0.55 -
-                        uTime *
-                        uWobbleSpeed *
-                        0.75 +
-                        1.7
-                    ) *
-                    uWobbleStrength *
-                    0.42 *
-                    abs(uVelocity);
-
-                float angle =
-                    baseAngle +
-                    uDynamicTwist +
-                    wobble;
-
-                float c =
-                    cos(angle);
-
-                float s =
-                    sin(angle);
-
-                /*
-                 * 가로 중심축(X축)을 기준으로
-                 * 카드 위/아래가 실제 Z 방향으로 회전.
-                 */
-                float localY =
-                    position.y;
-
-                /*
-                 * front Plane은 position.z = 0,
-                 * side wall은 0 ~ -cardThickness 범위의 local Z를 가집니다.
-                 * 같은 리본 회전에 포함시켜 실제 입체 카드처럼 움직입니다.
-                 */
-                float localZ =
-                    position.z;
-
-                float y =
-                    localY * c -
-                    localZ * s;
-
-                /*
-                 * CSS의 양수 Y는 화면 아래 방향.
-                 * WebGL 좌표계는 위가 +Y이므로 부호를 반대로 적용합니다.
-                 */
-                y -=
-                    uCardOffsetY;
-
-                /*
-                 * 필터 전환용 개별 카드 offset.
-                 * 음수면 화면 아래쪽.
-                 */
-                y +=
-                    uFilterOffsetY;
-
-                float z =
-                    localY * s +
-                    localZ * c;
-
-                z +=
-                    ribbonDepth(
-                        x,
-                        uFocusX,
-                        uRightDistance,
-                        uLeftDistance,
-                        uRightDepth,
-                        uLeftDepth
-                    );
-
-                z +=
-                    sin(
-                        x * 0.004 +
-                        uTime * 2.0
-                    ) *
-                    uDynamicDepth;
-
-                /*
-                 * 보이지 않는 ribbon 표면보다
-                 * 아주 조금 앞쪽에 카드 배치.
-                 */
-                y +=
-                    -s *
-                    uMountOffset;
-
-                z +=
-                    c *
-                    uMountOffset;
-
-                vFacing = c;
-
-                gl_Position =
-                    projectionMatrix *
-                    modelViewMatrix *
-                    vec4(
-                        x,
-                        y,
-                        z,
-                        1.0
-                    );
+                vFacing = 1.0;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(x, y, z, 1.0);
             }
         `;
 
         const fragmentShader = `
             uniform sampler2D uTexture;
+            uniform float uTextureReady;
             uniform float uSplit;
             uniform float uOpacity;
 
             uniform vec2 uCardSize;
-            uniform float uRadius;
-
+            uniform float uRadius; // legacy alias
+            uniform vec4 uRadiusX;
+            uniform vec4 uRadiusY;
+            uniform vec4 uBorderWidths; // top, right, bottom, left
+            uniform vec4 uBorderColorTop;
+            uniform vec4 uBorderColorRight;
+            uniform vec4 uBorderColorBottom;
+            uniform vec4 uBorderColorLeft;
             uniform float uBorderWidth;
             uniform vec4 uBorderColor;
 
@@ -1980,58 +1783,32 @@
             varying vec2 vUv;
             varying float vFacing;
 
-            float roundedRectDistance(
-                vec2 uv,
-                vec2 sizePx,
-                float radiusPx
-            ) {
-                float r =
-                    clamp(
-                        radiusPx,
-                        0.0,
-                        min(sizePx.x, sizePx.y) * 0.5
-                    );
-
-                vec2 p =
-                    (uv - 0.5) *
-                    sizePx;
-
-                vec2 b =
-                    sizePx * 0.5 -
-                    vec2(r);
-
-                vec2 q =
-                    abs(p) -
-                    b;
-
-                return
-                    length(max(q, 0.0)) +
-                    min(max(q.x, q.y), 0.0) -
-                    r;
+            // p는 왼쪽 아래 원점. corner vec4는 TL, TR, BR, BL 순서.
+            float ellipseCornerDistance(vec2 p, vec2 center, vec2 radius) {
+                return (length((p-center)/max(radius,vec2(0.0001)))-1.0)*min(radius.x,radius.y);
             }
-
-            float roundedRectMask(
-                vec2 uv,
-                vec2 sizePx,
-                float radiusPx
-            ) {
-                float d =
-                    roundedRectDistance(
-                        uv,
-                        sizePx,
-                        radiusPx
-                    );
-
-                return
-                    1.0 -
-                    smoothstep(
-                        -1.0,
-                        1.0,
-                        d
-                    );
+            float cardShapeDistance(vec2 p, vec2 size, vec4 rx, vec4 ry) {
+                float d = max(max(-p.x,p.x-size.x),max(-p.y,p.y-size.y));
+                if(rx.x>0.0 && ry.x>0.0 && p.x<rx.x && p.y>size.y-ry.x)
+                    d=ellipseCornerDistance(p,vec2(rx.x,size.y-ry.x),vec2(rx.x,ry.x));
+                if(rx.y>0.0 && ry.y>0.0 && p.x>size.x-rx.y && p.y>size.y-ry.y)
+                    d=ellipseCornerDistance(p,vec2(size.x-rx.y,size.y-ry.y),vec2(rx.y,ry.y));
+                if(rx.z>0.0 && ry.z>0.0 && p.x>size.x-rx.z && p.y<ry.z)
+                    d=ellipseCornerDistance(p,vec2(size.x-rx.z,ry.z),vec2(rx.z,ry.z));
+                if(rx.w>0.0 && ry.w>0.0 && p.x<rx.w && p.y<ry.w)
+                    d=ellipseCornerDistance(p,vec2(rx.w,ry.w),vec2(rx.w,ry.w));
+                return d;
+            }
+            float shapeAA(float distanceValue) {
+                #if defined(GL_OES_standard_derivatives) || __VERSION__ >= 300
+                    return max(0.35, 0.5*fwidth(distanceValue));
+                #else
+                    return 0.75;
+                #endif
             }
 
             void main() {
+                if (uTextureReady < 0.5 || uOpacity < 0.001) discard;
                 /*
                  * 거의 옆면까지만 표시.
                  * 뒤집힌 뒷면은 보이지 않음.
@@ -2181,55 +1958,31 @@
                         vec3(1.0)
                     );
 
-                float rounded =
-                    roundedRectMask(
-                        vUv,
-                        uCardSize,
-                        uRadius
-                    );
+                vec2 p = vUv*uCardSize;
+                float outerDistance = cardShapeDistance(p,uCardSize,uRadiusX,uRadiusY);
+                float aa = shapeAA(outerDistance);
+                float rounded = 1.0-smoothstep(-aa,aa,outerDistance);
+                if(rounded<=0.001) discard;
 
-                /*
-                 * 투명한 둥근 모서리 바깥 영역이
-                 * 뒤쪽 side wall의 depth를 가리지 않도록 제거합니다.
-                 */
-                if (rounded <= 0.001) {
-                    discard;
+                vec2 inset = vec2(uBorderWidths.w,uBorderWidths.z);
+                vec2 innerSize = uCardSize-vec2(uBorderWidths.w+uBorderWidths.y,uBorderWidths.x+uBorderWidths.z);
+                vec4 innerRX = max(vec4(0.0),uRadiusX-vec4(uBorderWidths.w,uBorderWidths.y,uBorderWidths.y,uBorderWidths.w));
+                vec4 innerRY = max(vec4(0.0),uRadiusY-vec4(uBorderWidths.x,uBorderWidths.x,uBorderWidths.z,uBorderWidths.z));
+                float innerMask=0.0;
+                if(innerSize.x>0.0 && innerSize.y>0.0) {
+                    float innerDistance = cardShapeDistance(p-inset,innerSize,innerRX,innerRY);
+                    float innerAA=shapeAA(innerDistance);
+                    innerMask=1.0-smoothstep(-innerAA,innerAA,innerDistance);
                 }
-
-                float borderDistance =
-                    roundedRectDistance(
-                        vUv,
-                        uCardSize,
-                        uRadius
-                    );
-
-                float innerMask =
-                    1.0 -
-                    smoothstep(
-                        -1.0,
-                        1.0,
-                        borderDistance +
-                            max(
-                                0.0,
-                                uBorderWidth
-                            )
-                    );
-
-                float borderMask =
-                    clamp(
-                        rounded -
-                            innerMask,
-                        0.0,
-                        1.0
-                    );
-
-                rgb =
-                    mix(
-                        rgb,
-                        uBorderColor.rgb,
-                        borderMask *
-                            uBorderColor.a
-                    );
+                float borderMask=clamp((rounded-innerMask)/max(rounded,0.0001),0.0,1.0);
+                // 코너에서는 가장 가까운 테두리 방향의 색을 선택합니다.
+                vec4 distances=vec4(uCardSize.y-p.y,uCardSize.x-p.x,p.y,p.x)/max(uBorderWidths,vec4(0.0001));
+                vec4 edgeColor=uBorderColorTop;
+                float nearest=distances.x;
+                if(distances.y<nearest){nearest=distances.y;edgeColor=uBorderColorRight;}
+                if(distances.z<nearest){nearest=distances.z;edgeColor=uBorderColorBottom;}
+                if(distances.w<nearest){edgeColor=uBorderColorLeft;}
+                rgb=mix(rgb,edgeColor.rgb,borderMask*edgeColor.a);
 
                 gl_FragColor =
                     vec4(
@@ -2239,15 +1992,6 @@
                         facing *
                         rounded
                     );
-                    gl_FragColor =
-                    vec4(
-                        rgb,
-                        center.a *
-                        uOpacity *
-                        facing *
-                        rounded
-                    );
-
                 #include <colorspace_fragment>
             }
         `;
@@ -2259,6 +2003,7 @@
          */
         const thicknessFragmentShader = `
             uniform float uOpacity;
+            uniform float uTextureReady;
 
             uniform vec3 uThicknessColor;
             uniform float uThicknessOpacity;
@@ -2270,6 +2015,7 @@
             varying float vFacing;
 
             void main() {
+                if (uTextureReady < 0.5 || uOpacity < 0.001) discard;
                 float face =
                     clamp(
                         abs(vFacing),
@@ -2322,298 +2068,29 @@
          * border-radius를 따라가는 3D side wall geometry.
          * 앞면 z=0에서 뒤쪽 z=-thickness까지 연결합니다.
          */
-        function createRoundedSideGeometry(
-            width,
-            height,
-            radius,
-            thickness
-        ) {
-            const geometry =
-                new THREE.BufferGeometry();
-
-            const halfW =
-                width * 0.5;
-
-            const halfH =
-                height * 0.5;
-
-            const r =
-                clamp(
-                    radius,
-                    0,
-                    Math.min(
-                        halfW,
-                        halfH
-                    )
-                );
-
-            const points = [];
-
-            const addLine = (
-                x0,
-                y0,
-                x1,
-                y1,
-                segments
-            ) => {
-                for (
-                    let i = 0;
-                    i < segments;
-                    i++
-                ) {
-                    const t =
-                        i / segments;
-
-                    points.push([
-                        x0 +
-                            (x1 - x0) *
-                            t,
-                        y0 +
-                            (y1 - y0) *
-                            t
-                    ]);
-                }
+        function createRoundedSideGeometry(width, height, rx, ry, thickness) {
+            const geometry = new THREE.BufferGeometry();
+            const hw=width/2, hh=height/2, points=[];
+            const line=(x0,y0,x1,y1,segments=44)=>{
+                for(let i=0;i<segments;i++){const t=i/segments;points.push([x0+(x1-x0)*t,y0+(y1-y0)*t]);}
             };
-
-            const addArc = (
-                cx,
-                cy,
-                startAngle,
-                endAngle,
-                segments
-            ) => {
-                for (
-                    let i = 0;
-                    i < segments;
-                    i++
-                ) {
-                    const t =
-                        i / segments;
-
-                    const angle =
-                        startAngle +
-                        (
-                            endAngle -
-                            startAngle
-                        ) *
-                        t;
-
-                    points.push([
-                        cx +
-                            Math.cos(angle) *
-                            r,
-                        cy +
-                            Math.sin(angle) *
-                            r
-                    ]);
-                }
+            const arc=(cx,cy,rX,rY,a0,a1)=>{
+                for(let i=0;i<16;i++){const a=a0+(a1-a0)*i/16;points.push([cx+Math.cos(a)*rX,cy+Math.sin(a)*rY]);}
             };
-
-            /*
-             * 화면 기준 시계 방향 perimeter.
-             * 직선도 충분히 분할해 front와 비슷하게 ribbon bend를 샘플링합니다.
-             */
-            const straightSegments = 10;
-            const arcSegments = 8;
-
-            if (r <= 0.001) {
-                addLine(
-                    -halfW,
-                    halfH,
-                    halfW,
-                    halfH,
-                    straightSegments
-                );
-                addLine(
-                    halfW,
-                    halfH,
-                    halfW,
-                    -halfH,
-                    straightSegments
-                );
-                addLine(
-                    halfW,
-                    -halfH,
-                    -halfW,
-                    -halfH,
-                    straightSegments
-                );
-                addLine(
-                    -halfW,
-                    -halfH,
-                    -halfW,
-                    halfH,
-                    straightSegments
-                );
-            } else {
-                addLine(
-                    -halfW + r,
-                    halfH,
-                    halfW - r,
-                    halfH,
-                    straightSegments
-                );
-
-                addArc(
-                    halfW - r,
-                    halfH - r,
-                    Math.PI * 0.5,
-                    0,
-                    arcSegments
-                );
-
-                addLine(
-                    halfW,
-                    halfH - r,
-                    halfW,
-                    -halfH + r,
-                    straightSegments
-                );
-
-                addArc(
-                    halfW - r,
-                    -halfH + r,
-                    0,
-                    -Math.PI * 0.5,
-                    arcSegments
-                );
-
-                addLine(
-                    halfW - r,
-                    -halfH,
-                    -halfW + r,
-                    -halfH,
-                    straightSegments
-                );
-
-                addArc(
-                    -halfW + r,
-                    -halfH + r,
-                    -Math.PI * 0.5,
-                    -Math.PI,
-                    arcSegments
-                );
-
-                addLine(
-                    -halfW,
-                    -halfH + r,
-                    -halfW,
-                    halfH - r,
-                    straightSegments
-                );
-
-                addArc(
-                    -halfW + r,
-                    halfH - r,
-                    Math.PI,
-                    Math.PI * 0.5,
-                    arcSegments
-                );
-            }
-
-            const positions = [];
-            const uvs = [];
-            const indices = [];
-
-            const backZ =
-                -Math.max(
-                    0,
-                    thickness
-                );
-
-            for (
-                let i = 0;
-                i < points.length;
-                i++
-            ) {
-                const [x, y] =
-                    points[i];
-
-                /*
-                 * 같은 perimeter point의 앞/뒤 vertex.
-                 */
-                positions.push(
-                    x,
-                    y,
-                    0
-                );
-
-                positions.push(
-                    x,
-                    y,
-                    backZ
-                );
-
-                const u =
-                    i /
-                    Math.max(
-                        1,
-                        points.length - 1
-                    );
-
-                uvs.push(
-                    u,
-                    1,
-                    u,
-                    0
-                );
-            }
-
-            for (
-                let i = 0;
-                i < points.length;
-                i++
-            ) {
-                const next =
-                    (i + 1) %
-                    points.length;
-
-                const a =
-                    i * 2;
-
-                const b =
-                    next * 2;
-
-                const c =
-                    next * 2 + 1;
-
-                const d =
-                    i * 2 + 1;
-
-                indices.push(
-                    a,
-                    b,
-                    d,
-
-                    b,
-                    c,
-                    d
-                );
-            }
-
-            geometry.setAttribute(
-                "position",
-                new THREE.Float32BufferAttribute(
-                    positions,
-                    3
-                )
-            );
-
-            geometry.setAttribute(
-                "uv",
-                new THREE.Float32BufferAttribute(
-                    uvs,
-                    2
-                )
-            );
-
-            geometry.setIndex(
-                indices
-            );
-
-            geometry.computeBoundingSphere();
-
-            return geometry;
+            line(-hw+rx[0],hh,hw-rx[1],hh);
+            arc(hw-rx[1],hh-ry[1],rx[1],ry[1],Math.PI/2,0);
+            line(hw,hh-ry[1],hw,-hh+ry[2],8);
+            arc(hw-rx[2],-hh+ry[2],rx[2],ry[2],0,-Math.PI/2);
+            line(hw-rx[2],-hh,-hw+rx[3],-hh);
+            arc(-hw+rx[3],-hh+ry[3],rx[3],ry[3],-Math.PI/2,-Math.PI);
+            line(-hw,-hh+ry[3],-hw,hh-ry[0],8);
+            arc(-hw+rx[0],hh-ry[0],rx[0],ry[0],Math.PI,Math.PI/2);
+            const positions=[],uvs=[],indices=[],z=-Math.max(0,thickness);
+            points.forEach(([x,y],i)=>{positions.push(x,y,0,x,y,z);uvs.push(i/points.length,1,i/points.length,0);});
+            for(let i=0;i<points.length;i++){const a=2*i,b=2*((i+1)%points.length);indices.push(a,b,a+1,b,b+1,a+1);}
+            geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
+            geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));
+            geometry.setIndex(indices);geometry.computeBoundingSphere();return geometry;
         }
 
         /* =====================================================
@@ -2657,20 +2134,76 @@
             };
         }
 
-        function getDesiredPoolSize() {
-            /*
-             * 필터 결과보다 WebGL 슬롯을 더 만들지 않습니다.
-             * 예:
-             * ㄴ = 2명 → Mesh도 2개
-             * ㅎ = 1명 → Mesh도 1개
-             *
-             * 전체 34명일 때는 OPTIONS.poolSize까지만 유지해
-             * 기존 성능 특성을 보존합니다.
-             */
-            return Math.min(
-                OPTIONS.poolSize,
-                cardData.length
+        function arcAmountAt(x) {
+            const progress = Math.max((x - focusX) / Math.max(arcPathStep, 1) - OPTIONS.arcStart, 0);
+            const bend = clamp(1 - Math.exp(-progress / OPTIONS.arcSpan), 0, 0.9995);
+            return 1 - Math.cos(bend * Math.PI * 0.5);
+        }
+
+        function sampleArcPoint(x, localY = 0, filterY = 0, time = 0, localZ = 0) {
+            const arc = arcAmountAt(x);
+            const z = localZ - arcWorldDepth * arc
+                + Math.sin(x * 0.004 + time * 2) * dynamicDepthState.position * (OPTIONS.arcRipple ? 1 : 0) * arc;
+            const cameraZ = Math.max(camera.position.z, 1);
+            return {
+                x: x + overlayWidth * OPTIONS.arcSpreadRatio * arc,
+                y: localY + (-cardOffsetY + filterY) * (cameraZ - z) / cameraZ,
+                z
+            };
+        }
+
+        function cardBaseOpacity(relative, centerX = focusX + relative * step) {
+            if (!OPTIONS.distanceOpacity || arcWorldDepth <= 0.001) return 1;
+
+            // 카드 순서가 아닌, 큰 곡선에서 카드 중심이 실제로 후퇴한 비율.
+            // 정면/왼쪽은 arcAmountAt() == 0이므로 불투명도 1을 유지합니다.
+            // 작은 이동 중 ripple은 제외해 불투명도가 미세하게 떨리지 않게 합니다.
+            const depthRatio = clamp(arcAmountAt(centerX), 0, 1);
+            const t = clamp(
+                (depthRatio - OPTIONS.distanceFadeStart) /
+                    Math.max(0.001, OPTIONS.distanceFadeEnd - OPTIONS.distanceFadeStart),
+                0,
+                1
             );
+            const eased = t * t * (3 - 2 * t);
+            return 1 - (1 - OPTIONS.distanceMinOpacity) * eased;
+        }
+
+        function getPoolLayout() {
+            const padding = cardWidth * Math.max(1, OPTIONS.spawnPaddingCards);
+            const cameraZ = Math.max(camera.position.z, 1);
+            // 원근 투영 후 화면에 남는 범위를 최대 후퇴량까지 포함해서 계산합니다.
+            // 깊이 때문에 작아진 카드가 화면 안에서 재사용되어 사라지는 것을 방지합니다.
+            const farDepth = arcWorldDepth + Math.abs(OPTIONS.velocityDepth) + OPTIONS.cardThickness;
+            const rawLeft = -overlayWidth / 2 - padding - cardWidth / 2;
+            const rawRight = (overlayWidth / 2) * (1 + farDepth / cameraZ) + padding + cardWidth / 2;
+            const left = Math.floor((rawLeft - focusX) / Math.max(step, 1));
+            const right = Math.ceil((rawRight - focusX) / Math.max(step, 1));
+            const size = clamp(Math.max(OPTIONS.poolSize, right - left + 1), 1, OPTIONS.maxPoolSize);
+            return {left, size, right: left + size};
+        }
+
+        function getPhysicalPoolSize() {
+            return getPoolLayout().size;
+        }
+
+        function getDesiredPoolSize() {
+            if (!cardData.length) return 0;
+            // All은 적은 데이터도 반복해 띠를 끝까지 채웁니다.
+            // 초성 필터는 실제 결과 수만큼만 표시합니다 (1명 = 1장).
+            return isFiniteCardList()
+                ? Math.min(getPhysicalPoolSize(), cardData.length)
+                : getPhysicalPoolSize();
+        }
+
+        function getVirtualWindow() {
+            const layout = getPoolLayout();
+            if (isFiniteCardList()) {
+                const first = clamp(Math.floor(ribbonState.position) + layout.left, 0, Math.max(0, cardData.length - poolSize));
+                return {first, end: first + poolSize};
+            }
+            const first = Math.ceil(ribbonState.position + layout.left);
+            return {first, end: first + poolSize};
         }
 
         function createSlots() {
@@ -2678,10 +2211,12 @@
              * 이 함수는 최초 생성 / 실제 resize 때만 사용합니다.
              * 필터 전환에서는 절대 호출하지 않습니다.
              *
-             * 물리 Mesh pool은 항상 OPTIONS.poolSize개 유지하고,
+             * 물리 Mesh pool은 원근 가시 범위에 필요한 수만 유지하고,
              * 실제 사용하는 카드 수만 poolSize로 별도 관리합니다.
              */
             for (const slot of slots) {
+                slot.active = false;
+                slot.loadToken++;
                 group.remove(slot.mesh);
 
                 if (slot.sideMesh) {
@@ -2710,11 +2245,7 @@
                     poolSize / 2
                 );
 
-            const physicalPoolSize =
-                Math.max(
-                    1,
-                    OPTIONS.poolSize
-                );
+            const physicalPoolSize = Math.max(1, getPhysicalPoolSize());
 
             for (
                 let i = 0;
@@ -2735,9 +2266,15 @@
                             placeholderTexture
                     },
 
-                    uCardCenterX: {
-                        value: 0
-                    },
+                    uTextureReady: { value: 0 },
+                    uStep: { value: arcPathStep },
+                    uArcDepth: { value: arcWorldDepth },
+                    uArcSpread: { value: overlayWidth * OPTIONS.arcSpreadRatio },
+                    uArcStart: { value: OPTIONS.arcStart },
+                    uArcSpan: { value: OPTIONS.arcSpan },
+                    uArcRipple: { value: OPTIONS.arcRipple ? 1 : 0 },
+                    uCameraZ: { value: camera.position.z },
+                    uCardCenterX: { value: 0 },
 
                     uFocusX: {
                         value: focusX
@@ -2852,10 +2389,14 @@
                             )
                     },
 
-                    uRadius: {
-                        value:
-                            cardRadius
-                    },
+                    uRadius: { value: effectiveCardRadius() },
+                    uRadiusX: {value:new THREE.Vector4(...cardRadiiX)},
+                    uRadiusY: {value:new THREE.Vector4(...cardRadiiY)},
+                    uBorderWidths: {value:new THREE.Vector4(...cardBorderWidths)},
+                    uBorderColorTop: {value:cardBorderColors[0].clone()},
+                    uBorderColorRight: {value:cardBorderColors[1].clone()},
+                    uBorderColorBottom: {value:cardBorderColors[2].clone()},
+                    uBorderColorLeft: {value:cardBorderColors[3].clone()},
 
                     uBorderWidth: {
                         value:
@@ -2917,6 +2458,7 @@
                         uniforms,
                         vertexShader,
                         fragmentShader,
+                        extensions: { derivatives: true },
                         transparent: true,
                         depthTest: true,
                         depthWrite: true,
@@ -2953,7 +2495,8 @@
                     createRoundedSideGeometry(
                         cardWidth,
                         cardHeight,
-                        cardRadius,
+                        cardRadiiX,
+                        cardRadiiY,
                         OPTIONS.cardThickness
                     );
 
@@ -3006,9 +2549,10 @@
                     currentDesignerId: "",
                     active: false,
 
-                    texture:
-                        placeholderTexture,
-
+                    texture: placeholderTexture,
+                    textureKey: "",
+                    pendingTextureKey: "",
+                    sideGeometryKey: [cardWidth, cardHeight, ...cardRadiiX, ...cardRadiiY, OPTIONS.cardThickness].join("|"),
                     loadToken: 0,
 
                     position: 0,
@@ -3074,8 +2618,8 @@
             ) {
                 targetVirtualIndexes.push(
                     finite
-                        ? i
-                        : i - halfPool
+                        ? getVirtualWindow().first + i
+                        : Math.floor(ribbonState.position) + getPoolLayout().left + i
                 );
             }
 
@@ -3245,14 +2789,11 @@
                  * currentDesignerId는 실제 texture가 연결될 때 assignTexture에서 갱신.
                  * 여기서 미리 바꾸면 이전 texture를 새 카드로 착각할 수 있습니다.
                  */
-                slot.uniforms
-                    .uFilterOffsetY
-                    .value =
-                        -startDrop;
-
-                slot.uniforms
-                    .uOpacity
-                    .value = 0;
+                const animateIncoming = !initialEntrancePlayed || !!pendingFilterTransition;
+                slot.uniforms.uFilterOffsetY.value = animateIncoming ? -startDrop : 0;
+                slot.uniforms.uOpacity.value = animateIncoming
+                    ? 0
+                    : cardBaseOpacity(entry.virtualIndex - ribbonState.position);
 
                 assignTexture(
                     slot,
@@ -3314,6 +2855,7 @@
         ===================================================== */
 
         let targetScroll = 0;
+        let lastRenderedTime = 0;
 
         const scrollState = {
             position: 0,
@@ -3451,130 +2993,37 @@
            Texture Assignment
         ===================================================== */
 
-        async function assignTexture(
-            slot,
-            virtualIndex
-        ) {
-            if (!cardData.length) {
-                slot.mesh.visible = false;
-
-                if (slot.sideMesh) {
-                    slot.sideMesh.visible = false;
-                }
+        async function assignTexture(slot, virtualIndex) {
+            if (!cardData.length || !slot.active) return;
+            const index = mod(virtualIndex, cardData.length);
+            const item = cardData[index];
+            if (!item) return;
+            const key = cardTextureKey(item);
+            slot.dataIndex = index;
+            if (slot.textureKey === key && slot.texture !== placeholderTexture) {
+                // 필터 identity는 그리는 실제 텍스처와 함께 관리합니다.
+                slot.currentDesignerId = item.id;
+                slot.uniforms.uTextureReady.value = 1;
                 return;
             }
-
-            slot.mesh.visible = true;
-
-            if (slot.sideMesh) {
-                slot.sideMesh.visible = true;
-            }
-
-            const index =
-                mod(
-                    virtualIndex,
-                    cardData.length
-                );
-
-            const item =
-                cardData[index];
-
-            if (!item) {
-                return;
-            }
-
-            /*
-             * 배열 index가 아니라 designer id 기준으로 동일성 판단.
-             * 필터로 배열 순서가 달라져도 남는 카드는 texture를 다시 연결하지 않습니다.
-             */
-            if (
-                slot.currentDesignerId ===
-                    item.id &&
-                slot.texture &&
-                slot.texture !==
-                    placeholderTexture
-            ) {
-                slot.dataIndex =
-                    index;
-
-                return;
-            }
-
-            slot.dataIndex =
-                index;
-
-            const token =
-                ++slot.loadToken;
-
-            /*
-             * 이미 캐시된 카드라면 placeholder로 잠깐 되돌리지 않습니다.
-             * 필터 전환 중 이미지/조명이 꺼졌다 켜지는 느낌을 줄입니다.
-             */
-
-            const cacheKey =
-                item
-                    ? `${item.id || item.url}|${item.url}|${item.nameKo}|${item.nameEn}`
-                    : "";
-
-            const cached =
-                cacheKey
-                    ? textureCache.get(
-                        cacheKey
-                    )
-                    : null;
-
-            if (cached?.texture) {
-                cached.used =
-                    ++textureUseClock;
-
-                slot.texture =
-                    cached.texture;
-
-                slot.currentDesignerId =
-                    item.id;
-
-                slot.uniforms
-                    .uTexture
-                    .value =
-                        cached.texture;
-            } else {
-                /*
-                 * 새 카드가 화면 아래 + opacity 0 상태이므로
-                 * 기존 texture를 유지한 채 새 texture 로드를 기다립니다.
-                 * placeholder로 바꾸는 순간적인 어두운 프레임을 제거합니다.
-                 */
-            }
-
+            if (slot.pendingTextureKey === key) return;
+            const token = ++slot.loadToken;
+            slot.pendingTextureKey = key;
+            slot.currentDesignerId = item.id;
+            slot.uniforms.uTextureReady.value = 0;
             try {
-                const texture =
-                    await createCardTexture(
-                        index
-                    );
-
-                if (
-                    token !==
-                    slot.loadToken
-                ) {
-                    return;
-                }
-
-                slot.texture =
-                    texture;
-
-                slot.currentDesignerId =
-                    item.id;
-
-                slot.uniforms
-                    .uTexture
-                    .value =
-                        texture;
-
+                const texture = await createCardTexture(index);
+                if (token !== slot.loadToken || !slot.active || slot.pendingTextureKey !== key) return;
+                slot.texture = texture;
+                slot.textureKey = key;
+                slot.uniforms.uTexture.value = texture;
+                slot.uniforms.uTextureReady.value = texture !== placeholderTexture ? 1 : 0;
+                slot.currentDesignerId = item.id;
                 wake();
             } catch (error) {
-                console.warn(
-                    "[DesignerRibbonSlider] texture 생성 실패:",
-                    error
-                );
+                console.warn("[DesignerRibbonSlider] texture 생성 실패:", error);
+            } finally {
+                if (token === slot.loadToken) slot.pendingTextureKey = "";
             }
         }
 
@@ -3682,78 +3131,18 @@
                             : 0
                     );
 
-                /*
-                 * All일 때만 기존 무한 루프 재사용.
-                 * 초성 필터가 선택된 상태에서는 끝이 있는 slider로 동작합니다.
-                 */
-                if (!isFiniteCardList()) {
-                    const spawnPadding =
-                        cardWidth *
-                        OPTIONS.spawnPaddingCards;
-
-                    const leftRecycleEdge =
-                        -overlayWidth * 0.5 -
-                        spawnPadding;
-
-                    const rightRecycleEdge =
-                        overlayWidth * 0.5 +
-                        spawnPadding;
-
-                    /*
-                     * 왼쪽 경계를 완전히 벗어난 카드만
-                     * 오른쪽 바깥으로 재사용.
-                     */
-                    if (
-                        targetCenter <
-                        leftRecycleEdge
-                    ) {
-                        slot.virtualIndex +=
-                            poolSize;
-
-                        relative =
-                            slot.virtualIndex -
-                            ribbonState.position;
-
-                        targetCenter =
-                            focusX +
-                            relative *
-                            step;
-
-                        slot.position =
-                            targetCenter;
-
-                        slot.velocity = 0;
-                        slot.dataIndex = -1;
-                        slot.currentDesignerId = "";
-                    }
-
-                    /*
-                     * 오른쪽 경계를 완전히 벗어난 카드만
-                     * 왼쪽 바깥으로 재사용.
-                     */
-                    else if (
-                        targetCenter >
-                        rightRecycleEdge
-                    ) {
-                        slot.virtualIndex -=
-                            poolSize;
-
-                        relative =
-                            slot.virtualIndex -
-                            ribbonState.position;
-
-                        targetCenter =
-                            focusX +
-                            relative *
-                            step;
-
-                        slot.position =
-                            targetCenter;
-
-                        slot.velocity = 0;
-                        slot.dataIndex = -1;
-                        slot.currentDesignerId = "";
-                    }
+                // 같은 원근 구간에서만 재사용합니다. 비대칭 창의 폭은 정확히 poolSize입니다.
+                const windowRange = getVirtualWindow();
+                let recycled = false;
+                while (slot.virtualIndex < windowRange.first) { slot.virtualIndex += poolSize; recycled = true; }
+                while (slot.virtualIndex >= windowRange.end) { slot.virtualIndex -= poolSize; recycled = true; }
+                if (recycled) {
+                    relative = slot.virtualIndex - ribbonState.position;
+                    targetCenter = focusX + relative * step + (isFiniteCardList() ? edgeGroupBounceState.position : 0);
+                    slot.position = targetCenter;
+                    slot.velocity = 0;
+                    slot.dataIndex = -1;
+                    slot.currentDesignerId = "";
                 }
 
                 assignTexture(
@@ -3814,44 +3203,25 @@
                             cardWidth
                         );
 
-                if (
-                    !filterTransitionRunning &&
-                    !pendingFilterTransition
-                ) {
-
-
-                    slot.uniforms
-
-
-                        .uOpacity
-
-
-                        .value =
-
-
-                            clamp(
-
-
-                                1 -
-
-
-                                    Math.abs(relative) *
-
-
-                                    0.055,
-
-
-                                0.42,
-
-
-                                1
-
-
-                            );
-
-
+                if (!filterTransitionRunning && !pendingFilterTransition) {
+                    slot.uniforms.uOpacity.value = cardBaseOpacity(relative, slot.position);
                 }
+
+                slot.uniforms.uStep.value = arcPathStep;
+                slot.uniforms.uArcDepth.value = arcWorldDepth;
+                slot.uniforms.uArcSpread.value = overlayWidth * OPTIONS.arcSpreadRatio;
+                slot.uniforms.uCameraZ.value = camera.position.z;
+
+                // 셰이더 변형은 Three.js의 기본 transparent sort에 반영되지 않습니다.
+                // 실제 후퇴 깊이를 renderOrder에 반영해 먼 카드를 먼저 그립니다.
+                slot.depth = sampleArcPoint(slot.position, 0, 0, time).z;
             }
+            const ordered = slots.filter(slot => slot.active).sort((a, b) => a.depth - b.depth);
+            ordered.forEach((slot, i) => {
+                if (slot.sideMesh) slot.sideMesh.renderOrder = i * 2;
+                slot.mesh.renderOrder = i * 2 + 1;
+            });
+            lastRenderedTime = time;
         }
 
         /* =====================================================
@@ -3865,6 +3235,7 @@
         overlay.addEventListener(
             "pointerdown",
             event => {
+                if (event.button !== 0 || !isSlideView()) return;
                 dragging = true;
 
                 dragStartX =
@@ -3905,9 +3276,9 @@
         function stopDrag(event) {
             dragging = false;
 
-            overlay.releasePointerCapture?.(
-                event.pointerId
-            );
+            if (overlay.hasPointerCapture?.(event.pointerId)) {
+                overlay.releasePointerCapture(event.pointerId);
+            }
 
             overlay.style.cursor =
                 "grab";
@@ -4044,112 +3415,73 @@
            Click card
         ===================================================== */
 
-        const raycaster =
-            new THREE.Raycaster();
+        const raycaster = new THREE.Raycaster();
+        const pointer = new THREE.Vector2();
+        const hitA = new THREE.Vector3(), hitB = new THREE.Vector3();
+        const hitC = new THREE.Vector3(), hitD = new THREE.Vector3();
+        const hitPoint = new THREE.Vector3();
+        let pointerDownX = 0, pointerDownY = 0;
 
-        const pointer =
-            new THREE.Vector2();
+        function pointInsideRoundedCard(x,y) {
+            const px=x+cardWidth/2,py=y+cardHeight/2,rx=cardRadiiX,ry=cardRadiiY;
+            if(px<0 || px>cardWidth || py<0 || py>cardHeight) return false;
+            const corners=[
+                [0,rx[0],cardHeight-ry[0],px<rx[0]&&py>cardHeight-ry[0]],
+                [1,cardWidth-rx[1],cardHeight-ry[1],px>cardWidth-rx[1]&&py>cardHeight-ry[1]],
+                [2,cardWidth-rx[2],ry[2],px>cardWidth-rx[2]&&py<ry[2]],
+                [3,rx[3],ry[3],px<rx[3]&&py<ry[3]]
+            ];
+            for(const [i,cx,cy,inside] of corners) if(inside && rx[i]>0 && ry[i]>0 && Math.hypot((px-cx)/rx[i],(py-cy)/ry[i])>1) return false;
+            return true;
+        }
 
-        let pointerDownX = 0;
-        let pointerDownY = 0;
-
-        overlay.addEventListener(
-            "pointerdown",
-            event => {
-                pointerDownX =
-                    event.clientX;
-
-                pointerDownY =
-                    event.clientY;
-            }
-        );
-
-        overlay.addEventListener(
-            "click",
-            event => {
-                if (
-                    Math.hypot(
-                        event.clientX -
-                            pointerDownX,
-                        event.clientY -
-                            pointerDownY
-                    ) > 6
-                ) {
-                    return;
-                }
-
-                const rect =
-                    overlay.getBoundingClientRect();
-
-                pointer.x =
-                    (
-                        (
-                            event.clientX -
-                            rect.left
-                        ) /
-                        rect.width
-                    ) *
-                    2 -
-                    1;
-
-                pointer.y =
-                    -(
-                        (
-                            event.clientY -
-                            rect.top
-                        ) /
-                        rect.height
-                    ) *
-                    2 +
-                    1;
-
-                raycaster.setFromCamera(
-                    pointer,
-                    camera
-                );
-
-                const intersections =
-                    raycaster.intersectObjects(
-                        slots.map(
-                            slot =>
-                                slot.mesh
-                        ),
-                        false
-                    );
-
-                if (!intersections.length) {
-                    return;
-                }
-
-                const mesh =
-                    intersections[0].object;
-
-                const slot =
-                    slots.find(
-                        item =>
-                            item.mesh === mesh
-                    );
-
-                if (!slot) return;
-
-                const index =
-                    mod(
-                        slot.virtualIndex,
-                        cardData.length
-                    );
-
-                const href =
-                    cardData[index]?.href;
-
-                if (
-                    href &&
-                    href !== "#"
-                ) {
-                    window.location.href =
-                        href;
+        function pickCurvedCard(clientX, clientY) {
+            if (!isSlideView() || !overlay.classList.contains("is-active")) return null;
+            const rect = overlay.getBoundingClientRect();
+            pointer.set((clientX - rect.left) / rect.width * 2 - 1, -(clientY - rect.top) / rect.height * 2 + 1);
+            camera.updateMatrixWorld();
+            raycaster.setFromCamera(pointer, camera);
+            let closest = Infinity, result = null;
+            const segments = 44; // 실제 mesh와 같은 가로 분할 수
+            for (const slot of slots) {
+                if (!slot.active || !slot.mesh.visible || slot.uniforms.uTextureReady.value < 0.5 || slot.uniforms.uOpacity.value < 0.05) continue;
+                const filterY = slot.uniforms.uFilterOffsetY.value;
+                const halfW = cardWidth / 2, halfH = cardHeight / 2;
+                const setPoint = (target, lx, ly) => {
+                    const p = sampleArcPoint(slot.position + lx, ly, filterY, lastRenderedTime);
+                    target.set(p.x, p.y, p.z);
+                };
+                for (let col = 0; col < segments; col++) {
+                    const lx0 = -halfW + col / segments * cardWidth;
+                    const lx1 = -halfW + (col + 1) / segments * cardWidth;
+                    setPoint(hitA, lx0, -halfH); setPoint(hitB, lx1, -halfH);
+                    setPoint(hitC, lx0, halfH);  setPoint(hitD, lx1, halfH);
+                    const intersects = raycaster.ray.intersectTriangle(hitA, hitB, hitC, false, hitPoint)
+                        || raycaster.ray.intersectTriangle(hitB, hitD, hitC, false, hitPoint);
+                    if (!intersects) continue;
+                    const t = clamp((hitPoint.x - hitA.x) / Math.max(hitB.x - hitA.x, 0.00001), 0, 1);
+                    const localX = lx0 + (lx1 - lx0) * t;
+                    const baseline = hitA.y + (hitB.y - hitA.y) * t;
+                    const localY = hitPoint.y - baseline - halfH;
+                    if(!pointInsideRoundedCard(localX,localY)) continue;
+                    const distance = hitPoint.distanceToSquared(raycaster.ray.origin);
+                    if (distance < closest) { closest = distance; result = slot; }
                 }
             }
-        );
+            return result;
+        }
+
+        overlay.addEventListener("pointerdown", event => {
+            pointerDownX = event.clientX;
+            pointerDownY = event.clientY;
+        });
+        overlay.addEventListener("click", event => {
+            if (event.button !== 0 || Math.hypot(event.clientX - pointerDownX, event.clientY - pointerDownY) > 6) return;
+            const slot = pickCurvedCard(event.clientX, event.clientY);
+            if (!slot) return;
+            const href = cardData[mod(slot.virtualIndex, cardData.length)]?.href;
+            if (href && href !== "#") window.location.href = href;
+        });
 
         /* =====================================================
            View State
@@ -4220,6 +3552,10 @@
         function activate() {
             if (!isSlideView()) {
                 deactivate();
+                return;
+            }
+            if (!initialEntrancePlayed) {
+                startInitialEntrance();
                 return;
             }
             hideOriginalTrackForSlide();
@@ -4296,6 +3632,10 @@
              * WebGL 카드 geometry와 간격을 맞춤.
              */
             measure();
+            if (slots.length !== getPhysicalPoolSize()) {
+                createSlots();
+                if (pendingFilterTransition) prepareIncomingSlotsBeforeRender();
+            }
 
             /*
              * 원본 DOM track은 WebGL 준비가 끝난 다음 숨깁니다.
@@ -4318,10 +3658,8 @@
                 slot.velocity = 0;
             }
 
-            /*
-             * 첫 프레임을 즉시 그려서
-             * DOM track을 숨인 뒤 빈 화면이 보이지 않게 합니다.
-             */
+            /* 첫 프레임 전에 실제 위치/곡선 uniform도 동기화합니다. */
+            updateSlots(performance.now() / 1000, 0);
             renderer.render(
                 scene,
                 camera
@@ -4425,7 +3763,8 @@
                     edgeGroupBounceState.velocity
                 ) > 0.01 ||
 
-                dragging;
+                dragging ||
+                slots.some(slot => slot.active && Math.abs(slot.velocity) > 0.01);
 
             if (moving) {
                 wake();
@@ -4492,7 +3831,7 @@
                         diff /
                         Math.max(
                             1,
-                            step
+                            domStep
                         );
 
                     limitScrollTarget();
@@ -4631,6 +3970,8 @@
         ===================================================== */
 
         window.DesignerRibbonSlider = {
+            version: 'big-arc-screen-match-2.1',
+            syncStyles() { if(isSlideView()){measure();wake();} },
             /*
              * 필터 결과를 바꾸기 전에 호출.
              * 제거되는 카드만 떨어지고 남는 카드는 유지합니다.
@@ -4747,6 +4088,8 @@
                 trackObserver.disconnect();
 
                 for (const slot of slots) {
+                    slot.active = false;
+                    slot.loadToken++;
                     slot.mesh.geometry.dispose();
                     slot.material.dispose();
 
@@ -4770,12 +4113,34 @@
                 renderer.dispose();
 
                 overlay.remove();
-                style.remove();
+                radiusProbe.remove();
+                // Overlay CSS는 외부 stylesheet 소유이므로 여기서 삭제하지 않습니다.
 },
 
             get status() {
                 return {
+                    version: 'big-arc-screen-match-2.1',
                     cards: cardData.length,
+                    arc: {
+                        depth: OPTIONS.arcDepth,
+                        effectiveWorldDepth: arcWorldDepth,
+                        cameraZ: camera.position.z,
+                        depthToCameraRatio: arcWorldDepth/Math.max(camera.position.z,1),
+                        pathStep: arcPathStep,
+                        matchPrototype: OPTIONS.arcMatchPrototype,
+                        spreadRatio: OPTIONS.arcSpreadRatio,
+                        gap,
+                        start: OPTIONS.arcStart,
+                        span: OPTIONS.arcSpan,
+                        xAxisTilt: 0,
+                        radius: effectiveCardRadius()
+                    },
+                    cssAppearance: {
+                        radiusSource:cardRadiusSource,
+                        radiusX:[...cardRadiiX],radiusY:[...cardRadiiY],
+                        borderSource:cardBorderSource,
+                        borderWidths:[...cardBorderWidths]
+                    },
                     poolSize: poolSize,
                     physicalPoolSize: slots.length,
                     scroll:
@@ -4839,7 +4204,7 @@
          * 이전에는 최초 start()에서 activate()만 호출해서
          * 아래에 있는 카드가 playFilterEnter()를 타지 못했습니다.
          */
-        let initialEntrancePlayed = false;
+
 
         function startInitialEntrance() {
             if (

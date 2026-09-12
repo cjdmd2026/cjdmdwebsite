@@ -562,8 +562,9 @@ html:has(.designer-page.slide-view) {
     --designer-slide-card-offset-y: 20vh;
 
     /* Slide View WebGL 카드 border */
-    --designer-card-border-width: 0;
+    --designer-card-border-width: 0px;
     --designer-card-border-color: none;
+    /*--designer-slide-card-radius: 0;*/
 
     /*
      * Slide View WebGL 텍스트 위치
