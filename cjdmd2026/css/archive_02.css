@@ -330,6 +330,7 @@ img {
     opacity: 1;
 
     transition: 0.3s ease;
+    transition: padding-left 1s ;
 
     will-change:
         transform,
@@ -372,6 +373,12 @@ img {
     margin: 0;
 
     will-change: transform;
+}
+
+.hero .explanation.is-history-section {
+    padding-left: 0rem;
+    padding-top: 5rem;
+    transition: 1s ease;
 }
 
 .hero .explanation.is-history-section .history-title-mask h2 {
@@ -429,8 +436,8 @@ img {
 }
 
 .history .card-wrap .history-card {
-    width: 100px;
-    height: 100px;
+    width: 200px;
+    height: 200px;
 
     background-color: var(--color-gray-300);
 
@@ -444,6 +451,8 @@ img {
 
     /* 화면 밖 기본 상태 */
     opacity: 0;
+
+    box-shadow: 0 0 500px 15px rgba(255, 255, 255, 0);
 
     transform:
         translate3d(0, 55px, 0)
@@ -464,12 +473,17 @@ img {
 
         scale
         1.65s
-        cubic-bezier(.22, 1, .36, 1);
+        cubic-bezier(.22, 1, .36, 1),
+        
+        box-shadow
+        0.5s
+        ease;
 
     will-change:
         transform,
         opacity,
-        scale;
+        scale,
+        box-shadow;
 }
 
 .history .card-wrap .history-card.is-history-visible {
@@ -481,8 +495,11 @@ img {
 }
 
 .history .card-wrap .history-card:hover {
-    scale: 1.5;
+    scale: 1.1;
     z-index: 999;
+
+    box-shadow: 0 0 500px 15px rgba(255, 255, 255, 0.3);
+    transition: 0.8xs ease;
 }
 
 
