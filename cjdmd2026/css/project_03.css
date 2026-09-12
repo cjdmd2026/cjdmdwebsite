@@ -282,7 +282,7 @@ body:has(#slideview:not([hidden])) .header .nav ul li {
 
     color: var(--color-white);
 
-    margin-top: 4rem;
+    margin-top: 2rem;
 }
 
 .container .title-section {

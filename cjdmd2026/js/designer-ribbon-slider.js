@@ -54,8 +54,8 @@
         arcDepth: 3400,          // 최대 후퇴 깊이: 테스트 2400 px
         arcSpreadRatio: 0.0,    // 끝점 펼침: 테스트 27%
         slideGap: 20,             // WebGL Slide만 적용. null이면 원래 CSS gap 사용.
-        arcStart: 2.0,           // 정면 위치에서 1.3장 뒤부터 휘기 시작
-        arcSpan: 3.5,            // 테스트 기본값. 높일수록 길고 완만하게 휨
+        arcStart: 2.9,           // 정면 위치에서 1.3장 뒤부터 휘기 시작
+        arcSpan: 4.0,            // 테스트 기본값. 높일수록 길고 완만하게 휨
 
         arcRipple: true,         // 이동할 때만 아주 작은 깊이 반응. 정지하면 큰 곡선 1개.
         arcMatchGapRadius: false, // 이전 옵션 호환용. CSS radius를 gap으로 제한하지 않습니다.
