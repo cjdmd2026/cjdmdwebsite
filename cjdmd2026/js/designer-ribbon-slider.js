@@ -1,5 +1,5 @@
 /**
- * designer-ribbon-slider.js — BIG ARC / SCREEN MATCH 2.1
+ * designer-ribbon-slider.js — BIG ARC / VIEWPORT FIT 2.2
  * ------------------------------------------------------------
  * 현재 designer HTML 전용 WebGL Slide View
  *
@@ -24,6 +24,7 @@
  * - 리본 흐름은 화면에 보이지 않음
  * - 카드가 너무 빨리 사라지지 않도록 이동 속도 제한
  * - 화면 밖 슬롯을 반대편에서 재사용하는 무한 루프
+ * - 높이가 부족하면 카드의 비율을 유지해 축소, 아래 여백 확보
  * - Grid View에서는 WebGL 제거 + 원래 DOM 카드 표시
  *
  * 연결:
@@ -50,11 +51,11 @@
         focusRatio: 1 / 3,
 
         /* 승인한 큰 곡선 — 아래 5개 값으로 형태를 조절합니다. */
-        arcDepth: 4400,          // 최대 후퇴 깊이: 테스트 2400 px
+        arcDepth: 3400,          // 최대 후퇴 깊이: 테스트 2400 px
         arcSpreadRatio: 0.0,    // 끝점 펼침: 테스트 27%
         slideGap: 20,             // WebGL Slide만 적용. null이면 원래 CSS gap 사용.
-        arcStart: 2.4,           // 정면 위치에서 1.3장 뒤부터 휘기 시작
-        arcSpan: 4.0,            // 테스트 기본값. 높일수록 길고 완만하게 휨
+        arcStart: 2.0,           // 정면 위치에서 1.3장 뒤부터 휘기 시작
+        arcSpan: 3.5,            // 테스트 기본값. 높일수록 길고 완만하게 휨
 
         arcRipple: true,         // 이동할 때만 아주 작은 깊이 반응. 정지하면 큰 곡선 1개.
         arcMatchGapRadius: false, // 이전 옵션 호환용. CSS radius를 gap으로 제한하지 않습니다.
@@ -75,7 +76,7 @@
          * 기존 카드 크기, 곡선, CSS 테두리/모서리 설정은 변경하지 않습니다.
          */
         distanceOpacity: true,
-        distanceMinOpacity: 0.35, // 가장 먼 구간의 불투명도. 작을수록 더 연해짐.
+        distanceMinOpacity: 0.55, // 가장 먼 구간의 불투명도. 작을수록 더 연해짐.
         distanceFadeStart: 0.03,  // 최대 깊이의 3%까지 원래 불투명도 유지.
         distanceFadeEnd: 0.75,    // 최대 깊이의 75%부터 최소 불투명도 유지.
 
@@ -1110,8 +1111,89 @@
             arcWorldDepth = OPTIONS.arcDepth * arcCameraScale * OPTIONS.arcDepthScale;
         }
 
+        /* =====================================================
+           Viewport fit — CSS preferred width, height-aware cap
+           -----------------------------------------------------
+           그리드에는 적용하지 않습니다. 위쪽 영역의 높이는 추정하지 않고
+           실제 slider 위치와 정면 카드의 투영 위치를 기준으로 계산합니다.
+           preferred width를 다시 읽으므로 창이 커지면 원래 크기로 복귀합니다.
+        ===================================================== */
+        const FIT_WIDTH_PROPERTY = "--designer-slide-fit-width";
+        let viewportFitState = null;
+
+        function fitCardsToViewport() {
+            if (!isSlideView() || !sourceCards[0]) return;
+            const card = sourceCards[0];
+
+            // 이전 창 크기에서 얻은 상한을 해제합니다. 이 함수 안에서만 해제되므로
+            // 브라우저가 중간의 큰 카드를 별도 프레임으로 그리지 않습니다.
+            page.style.removeProperty(FIT_WIDTH_PROPERTY);
+            const preferred = card.getBoundingClientRect();
+            if (preferred.width <= 2 || preferred.height <= 2) return;
+
+            const viewportHeight = document.documentElement.clientHeight || window.innerHeight;
+            const pageStyle = getComputedStyle(page);
+            const configuredGap = parseFloat(pageStyle.getPropertyValue("--designer-slide-bottom-gap"));
+            const bottomGap = Number.isFinite(configuredGap) ? Math.max(0, configuredGap) : 40;
+            const configuredOffset = parseFloat(getComputedStyle(card).getPropertyValue("--designer-slide-card-offset-y"));
+            // 기존 셰이더와 동일한 px 해석. CSS offset에는 px를 사용합니다.
+            const offset = Number.isFinite(configuredOffset) ? configuredOffset : 0;
+            const safeBottom = viewportHeight - bottomGap - 1; // 반올림/테두리 AA용 1px
+            const preferredSlider = slider.getBoundingClientRect();
+
+            // 정면 카드의 실제 screen-space bottom. Overlay padding은 중심에서 상쇄됩니다.
+            const projectedBottom = (sliderRect, cardRect) =>
+                Math.round(sliderRect.top - OPTIONS.verticalPadding)
+                + Math.round(sliderRect.height + OPTIONS.verticalPadding * 2) / 2
+                + offset + cardRect.height / 2;
+
+            const preferredBottom = projectedBottom(preferredSlider, preferred);
+            let finalRect = preferred;
+            let finalSlider = preferredSlider;
+            let availableHeight = Math.max(0, preferred.height - (preferredBottom - safeBottom));
+
+            if (preferredBottom > safeBottom) {
+                const ratio = preferred.width / preferred.height;
+                const width = Math.max(3, Math.min(preferred.width, availableHeight * ratio));
+                const setWidth = value => page.style.setProperty(FIT_WIDTH_PROPERTY, `${Math.floor(value * 100) / 100}px`);
+                setWidth(width);
+                finalRect = card.getBoundingClientRect();
+                finalSlider = slider.getBoundingClientRect();
+
+                // 현재 CSS(auto height)에서는 위 계산 한 번으로 끝납니다.
+                // 별도 고정 높이/중앙 정렬을 추가한 경우에만 측정값으로 보정합니다.
+                if (projectedBottom(finalSlider, finalRect) > safeBottom + 0.5) {
+                    let low = 3, high = width;
+                    for (let i = 0; i < 12; i++) {
+                        const middle = (low + high) / 2;
+                        setWidth(middle);
+                        const candidate = card.getBoundingClientRect();
+                        const sliderRect = slider.getBoundingClientRect();
+                        if (projectedBottom(sliderRect, candidate) <= safeBottom) low = middle;
+                        else high = middle;
+                    }
+                    setWidth(low);
+                    finalRect = card.getBoundingClientRect();
+                    finalSlider = slider.getBoundingClientRect();
+                }
+            }
+
+            const actualBottom = projectedBottom(finalSlider, finalRect);
+            viewportFitState = {
+                viewportHeight, bottomGap, sliderTop: finalSlider.top,
+                preferredWidth: preferred.width, preferredHeight: preferred.height,
+                width: finalRect.width, height: finalRect.height,
+                scale: finalRect.width / preferred.width,
+                renderedTop: actualBottom - finalRect.height,
+                renderedBottom: actualBottom,
+                availableHeight,
+                fits: actualBottom <= viewportHeight - bottomGap + 0.5
+            };
+        }
+
         function measure() {
             sourceCards = getOriginalCards();
+            fitCardsToViewport();
 
             if (sourceCards[0]) {
                 const rect =
@@ -3669,6 +3751,8 @@
         }
 
         function deactivate() {
+            page.style.removeProperty(FIT_WIDTH_PROPERTY);
+            viewportFitState = null;
             /*
              * Grid View:
              * 1) 원본 DOM track 즉시 복원
@@ -3882,36 +3966,51 @@
         });
 
         let resizeTimer = 0;
+        let layoutDestroyed = false;
 
-        window.addEventListener(
-            "resize",
-            () => {
-                clearTimeout(resizeTimer);
+        function applyLayoutResize() {
+            resizeTimer = 0;
+            if (layoutDestroyed || !isSlideView()) return;
+            // 등장/필터 애니메이션이 들고 있는 slot 참조를 중간에 폐기하지 않습니다.
+            if (filterTransitionRunning || pendingFilterTransition) {
+                resizeTimer = setTimeout(applyLayoutResize, 80);
+                return;
+            }
+            const previousWidth = cardWidth;
+            const previousHeight = cardHeight;
+            const previousStep = step;
+            const previousFocus = focusX;
+            measure();
+            const poolChanged = slots.length !== getPhysicalPoolSize();
+            if (poolChanged) createSlots();
+            if (!initialEntrancePlayed || poolChanged || Math.abs(previousWidth - cardWidth) > 0.01
+                || Math.abs(previousHeight - cardHeight) > 0.01 || Math.abs(previousStep - step) > 0.01
+                || Math.abs(previousFocus - focusX) > 0.01) {
+                activate();
+            } else {
+                // 폰트 완료 통지 등으로 실제 크기가 같으면 slot/texture를 재생성하지 않습니다.
+                wake();
+            }
+        }
 
-                resizeTimer =
-                    setTimeout(() => {
-                        /*
-                         * Grid View에서는 WebGL용 measure/createSlots를
-                         * 실행하지 않습니다.
-                         * Grid 카드의 실제 CSS 레이아웃만 브라우저가 처리합니다.
-                         */
-                        if (!isSlideView()) {
-                            return;
-                        }
+        function scheduleLayoutResize() {
+            if (layoutDestroyed) return;
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(applyLayoutResize, 120);
+        }
 
-                        measure();
+        // 브라우저 F11은 Fullscreen API와 다릅니다. 실제 viewport resize에 반응합니다.
+        window.addEventListener("resize", scheduleLayoutResize, { passive: true });
 
-                        /*
-                         * Slide View일 때만 실제 CSS 카드 크기에 맞춰
-                         * WebGL geometry를 재생성합니다.
-                         */
-                        createSlots();
-
-                        activate();
-                    }, 120);
-            },
-            { passive: true }
-        );
+        // 웹폰트/필터 줄바꿈으로 위쪽 영역의 높이가 달라지는 경우도 다시 측정합니다.
+        const headingSizeObserver = typeof ResizeObserver === "function"
+            ? new ResizeObserver(scheduleLayoutResize) : null;
+        page.querySelectorAll(".designer-heading, .designer-side, .title-section").forEach(element => {
+            headingSizeObserver?.observe(element);
+        });
+        if (document.fonts?.ready) {
+            document.fonts.ready.then(() => { if (!layoutDestroyed) scheduleLayoutResize(); });
+        }
 
         const trackObserver =
             new MutationObserver(() => {
@@ -3970,8 +4069,17 @@
         ===================================================== */
 
         window.DesignerRibbonSlider = {
-            version: 'big-arc-screen-match-2.1',
-            syncStyles() { if(isSlideView()){measure();wake();} },
+            version: 'big-arc-viewport-fit-2.2',
+            syncStyles() {
+                if (!isSlideView()) return;
+                if (filterTransitionRunning || pendingFilterTransition) {
+                    scheduleLayoutResize();
+                    return;
+                }
+                measure();
+                if (slots.length !== getPhysicalPoolSize()) createSlots();
+                activate();
+            },
             /*
              * 필터 결과를 바꾸기 전에 호출.
              * 제거되는 카드만 떨어지고 남는 카드는 유지합니다.
@@ -4076,6 +4184,11 @@
             },
 
             destroy() {
+                layoutDestroyed = true;
+                clearTimeout(resizeTimer);
+                window.removeEventListener("resize", scheduleLayoutResize);
+                headingSizeObserver?.disconnect();
+                page.style.removeProperty(FIT_WIDTH_PROPERTY);
                 restoreOriginalTrack();
 
                 hardStopWebGL();
@@ -4119,7 +4232,7 @@
 
             get status() {
                 return {
-                    version: 'big-arc-screen-match-2.1',
+                    version: 'big-arc-viewport-fit-2.2',
                     cards: cardData.length,
                     arc: {
                         depth: OPTIONS.arcDepth,
@@ -4149,6 +4262,7 @@
                         scrollState.velocity,
                     cssCardRadius:
                         cardRadius,
+                    viewportFit: viewportFitState ? { ...viewportFitState } : null,
                     cssCardSize: {
                         width: cardWidth,
                         height: cardHeight

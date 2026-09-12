@@ -321,6 +321,10 @@ img {
 
 .designer-page.slide-view {
     height: 100vh;
+    min-height: 0;
+    overflow: hidden;
+
+    --designer-slide-bottom-gap: 40px;
 }
 
 html:has(.designer-page.slide-view),
@@ -555,11 +559,23 @@ html:has(.designer-page.slide-view) {
 }
 
 .slide-view .designer-card {
-    flex: 0 0 var(--designer-slide-default-width);
-    width: var(--designer-slide-default-width);
+    /* 기본 너비와 화면 안에 들어가는 너비 중 작은 값 사용 */
+    --designer-slide-render-width: min(
+        var(--designer-slide-default-width),
+        var(--designer-slide-fit-width, var(--designer-slide-default-width))
+    );
+
+    flex: 0 0 var(--designer-slide-render-width);
+    width: var(--designer-slide-render-width);
+
+    min-width: 0;
+    min-height: 0;
+    height: auto;
+
     aspect-ratio: var(--designer-slide-default-ratio);
 
-    --designer-slide-card-offset-y: 20vh;
+    /* 카드 세로 위치 */
+    --designer-slide-card-offset-y: 20px;
 
     /* Slide View WebGL 카드 border */
     --designer-card-border-width: 0px;
