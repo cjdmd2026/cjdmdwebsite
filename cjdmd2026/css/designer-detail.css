@@ -286,6 +286,7 @@ img {
 .profile .text-wrap {
     width: 100%;
     min-width: 0;
+    margin-left: 1rem;
 }
 
 .profile .text-wrap,
@@ -310,7 +311,6 @@ img {
 
 .profile .text-wrap .sentence p {
     margin-top: 1.5rem;
-    margin-left: 1rem;
 
     font-size: 1rem;
     font-weight: 400;
