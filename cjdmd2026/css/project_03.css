@@ -115,7 +115,7 @@
     --font-main: "pretendard", sans-serif;
 
     /* size */
-    --header-height: 60px;
+    --header-height: 70px;
     --container-width: 1220px;
     --side-padding: 60px;
 
@@ -1077,6 +1077,7 @@ body:has(#slideview:not([hidden])) .footer {
     max-width: 95%;
 
     margin: 0;
+    margin-top: 1rem;
 
     font-size: 0.875rem;
     font-weight: 400;

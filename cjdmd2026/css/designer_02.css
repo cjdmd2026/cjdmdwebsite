@@ -78,7 +78,7 @@
     --font-main: "pretendard", sans-serif;
 
     /* size */
-    --header-height: 60px; /* 상단 고정 Header 높이 */
+    --header-height: 70px; /* 상단 고정 Header 높이 */
     --container-width: 1220px;
     --side-padding: 60px; /* container 내부 좌우 콘텐츠 여백 */
 
