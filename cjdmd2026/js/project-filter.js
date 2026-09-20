@@ -86,7 +86,8 @@
                 [
                     project.title,
                     ...(project.members || []),
-                    project.topic
+                    project.topic,
+                    project.description
                 ].join(" ")
             );
 
