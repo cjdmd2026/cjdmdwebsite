@@ -520,6 +520,8 @@ img {
     grid-template-columns: repeat(6, 1fr);
     grid-auto-rows: 72px;
     gap: 1.5rem;
+
+    margin-top: 5rem
 }
 
 

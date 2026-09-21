@@ -9,8 +9,8 @@
         rgbRelease: 0.18,    // 안전용 잔여값. 실제 Fluid 해제는 wipe 마지막 구간 안에서 끝냄
         rgb: 5,              // RGB를 한 단계 부드럽게
         fluid: 50,          // 세로 전환에서 과한 출렁임을 줄임
-        wheelThreshold: 14,  // 미세 휠 입력에 너무 민감하게 반응하지 않도록
-        wheelInterval: 120,  // 연속 입력 간 호흡
+        wheelThreshold: 200,  // 미세 휠 입력에 너무 민감하게 반응하지 않도록
+        wheelInterval: 60,  // 연속 입력 간 호흡
         pixelRatio: 1.25,
         maxTextureSize: 1920,
         ...window.PROJECT_FLUID_OPTIONS
