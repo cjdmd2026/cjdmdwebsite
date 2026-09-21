@@ -12,7 +12,13 @@
         bannerHeight: 0.36,
         bannerRadius: 0,
         focalX: 0.5,
-        focalY: 0.5
+        focalY: 0.5,
+
+        // 프로필 ↔ 최대 확대 이미지 ↔ 카드 목록 시작
+        stepScroll: true,
+        stepDuration: 1500,       // 한 단계 이동 시간(ms)
+        wheelThreshold: 12,      // 작을수록 가벼운 스크롤에도 반응
+        gestureIdle: 0         // 다음 제스처로 판단할 입력 간격(ms)
     };
 
     const COURSE_CARDS = [
@@ -80,6 +86,196 @@
                 behavior: "instant"
             });
         }
+    }
+
+    /* ==================== 단계별 휠 스크롤 ==================== */
+
+    function createStepScroller(getStops) {
+        const tolerance = 4;
+        let animationFrame = 0;
+        let resizeFrame = 0;
+        let restingIndex = null;
+        let moving = false;
+        let gestureUsed = false;
+        let lastWheelAt = -Infinity;
+        let wheelTotal = 0;
+
+        // 입력창, 별도 스크롤 영역, 팝업 안에서는 원래 휠 동작 유지.
+        function isIndependentScroll(event, direction) {
+            for (const element of event.composedPath()) {
+                if (!(element instanceof Element)) continue;
+                if (element === document.body || element === root) break;
+
+                if (element.matches(
+                    'input, textarea, select, [contenteditable]:not([contenteditable="false"]), ' +
+                    '[role="dialog"], dialog, [data-lenis-prevent], [data-lenis-prevent-wheel]'
+                )) return true;
+
+                const overflow = getComputedStyle(element).overflowY;
+                if (!/auto|scroll|overlay/.test(overflow)) continue;
+                const limit = element.scrollHeight - element.clientHeight;
+                if (limit <= 1) continue;
+
+                if (
+                    (direction < 0 && element.scrollTop > 0) ||
+                    (direction > 0 && element.scrollTop < limit - 1)
+                ) return true;
+            }
+            return false;
+        }
+
+        function cancel() {
+            cancelAnimationFrame(animationFrame);
+            cancelAnimationFrame(resizeFrame);
+            animationFrame = 0;
+            resizeFrame = 0;
+            restingIndex = null;
+            moving = false;
+            gestureUsed = false;
+            wheelTotal = 0;
+            lastWheelAt = -Infinity;
+        }
+
+        function consumeWheel(event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        function moveTo(index) {
+            const from = window.scrollY;
+            const startedAt = performance.now();
+            moving = true;
+            restingIndex = null;
+            gestureUsed = true;
+            wheelTotal = 0;
+
+            // 진행 중이던 Lenis 관성을 현재 위치에서 정리.
+            scrollInstantly(from);
+
+            function tick(now) {
+                const stops = getStops();
+                if (!stops) {
+                    cancel();
+                    return;
+                }
+
+                const progress = clamp(
+                    (now - startedAt) / Math.max(1, CONFIG.stepDuration)
+                );
+
+                // 매 프레임 도착 위치를 읽어 화면 크기 변경도 반영.
+                scrollInstantly(lerp(from, stops[index], smooth(progress)));
+
+                if (progress < 1) {
+                    animationFrame = requestAnimationFrame(tick);
+                } else {
+                    animationFrame = 0;
+                    moving = false;
+                    restingIndex = index;
+                }
+            }
+
+            animationFrame = requestAnimationFrame(tick);
+        }
+
+        function onWheel(event) {
+            if (
+                !CONFIG.stepScroll || event.defaultPrevented ||
+                !event.cancelable || event.ctrlKey || event.metaKey ||
+                event.shiftKey || !event.deltaY ||
+                Math.abs(event.deltaX) > Math.abs(event.deltaY)
+            ) return;
+
+            const direction = Math.sign(event.deltaY);
+            if (isIndependentScroll(event, direction)) return;
+
+            const stops = getStops();
+            if (!stops) return;
+
+            const now = performance.now();
+            const freshGesture = now - lastWheelAt > CONFIG.gestureIdle;
+            lastWheelAt = now;
+
+            // 한 번의 휠/트랙패드 관성으로 다음 단계까지 넘어가지 않음.
+            if (moving || (gestureUsed && !freshGesture)) {
+                consumeWheel(event);
+                return;
+            }
+            if (freshGesture) {
+                gestureUsed = false;
+                wheelTotal = 0;
+            }
+
+            const unit = event.deltaMode === 1 ? 16
+                : event.deltaMode === 2 ? window.innerHeight : 1;
+            const delta = event.deltaY * unit;
+            const current = window.scrollY;
+            const last = stops.length - 1;
+            let next = -1;
+
+            if (current > stops[last] + tolerance) {
+                // 목록 내부는 자유롭게 스크롤. 위로 돌아올 때 시작점에서 정지.
+                const pending = getLenis()?.targetScroll;
+                const projected = (Number.isFinite(pending) ? pending : current) + delta;
+                if (direction < 0 && projected <= stops[last]) next = last;
+            } else if (direction > 0) {
+                next = stops.findIndex(stop => stop > current + tolerance);
+            } else {
+                for (let index = last; index >= 0; index--) {
+                    if (stops[index] < current - tolerance) {
+                        next = index;
+                        break;
+                    }
+                }
+            }
+
+            if (next < 0) {
+                restingIndex = null;
+                wheelTotal = 0;
+                return;
+            }
+
+            // Lenis보다 먼저 입력을 잡아 자동 이동과 일반 스크롤의 충돌 방지.
+            consumeWheel(event);
+            if (Math.sign(wheelTotal) !== direction) wheelTotal = 0;
+            wheelTotal += delta;
+            if (Math.abs(wheelTotal) >= CONFIG.wheelThreshold) moveTo(next);
+        }
+
+        function onResize() {
+            if (moving || restingIndex === null) return;
+            cancelAnimationFrame(resizeFrame);
+            resizeFrame = requestAnimationFrame(() => {
+                resizeFrame = 0;
+                const stops = getStops();
+                if (stops && restingIndex !== null) {
+                    resizeLenis();
+                    scrollInstantly(stops[restingIndex]);
+                }
+            });
+        }
+
+        window.addEventListener("wheel", onWheel, {
+            capture: true,
+            passive: false
+        });
+        // 스크롤바/터치/키보드 조작은 사용자가 직접 위치를 바꾸려는 동작.
+        window.addEventListener("pointerdown", cancel, true);
+        window.addEventListener("touchstart", cancel, { passive: true, capture: true });
+        window.addEventListener("keydown", cancel, true);
+        window.addEventListener("resize", onResize);
+
+        return {
+            cancel,
+            destroy() {
+                cancel();
+                window.removeEventListener("wheel", onWheel, true);
+                window.removeEventListener("pointerdown", cancel, true);
+                window.removeEventListener("touchstart", cancel, true);
+                window.removeEventListener("keydown", cancel, true);
+                window.removeEventListener("resize", onResize);
+            }
+        };
     }
 
     /* ==================== 데이터 연결 ==================== */
@@ -704,6 +900,30 @@
         let sourceWidth = 0;
         let sourceHeight = 0;
 
+        const stepScroller = createStepScroller(() => {
+            if (
+                dead || !active || reducedMotion.matches ||
+                !image.complete || !image.naturalWidth || !target.isConnected
+            ) return null;
+
+            if (needsMeasure || !geometry) measure();
+
+            const intro = document.querySelector(".intro");
+            const headerHeight = document.querySelector(".header")
+                ?.getBoundingClientRect().height || 0;
+            const profileTop = intro
+                ? Math.max(0, intro.getBoundingClientRect().top + window.scrollY - headerHeight)
+                : 0;
+
+            // 최대 크기가 유지되는 구간의 중앙에서 멈춤.
+            const fullProgress = (CONFIG.expandEnd + CONFIG.shrinkStart) / 2;
+            return [
+                profileTop,
+                geometry.sectionTop + geometry.range * fullProgress,
+                Math.ceil(geometry.endScroll)
+            ];
+        });
+
         const projectCard = target.closest(".project-card");
         const cardTransitions = new Set();
 
@@ -780,6 +1000,8 @@
 
         function setActive(next) {
             if (active === next) return;
+
+            if (!next) stepScroller.cancel();
 
             const scrollBefore = window.scrollY;
 
@@ -1318,6 +1540,7 @@
 
             destroy() {
                 dead = true;
+                stepScroller.destroy();
 
                 if (frame) {
                     cancelAnimationFrame(frame);

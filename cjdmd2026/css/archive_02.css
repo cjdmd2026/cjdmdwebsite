@@ -264,6 +264,8 @@ img {
 
     width: 100%;
     height: var(--hero-height);
+
+    margin-bottom: 12rem;
 }
 
 .hero .card {
