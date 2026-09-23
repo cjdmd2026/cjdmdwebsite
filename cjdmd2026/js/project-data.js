@@ -210,36 +210,6 @@ window.PROJECTS = [
         }
     },
     {
-        id: "todadak",
-        title: "토다닥",
-        members: [
-            "유길종"
-        ],
-        category: "건강",
-        topic: "DCD 아동 재택 훈련 서비스",
-        description: "DCD 아동이 가정에서도 지속적으로 신체 활동과 훈련을 진행할 수 있도록 지원하는 재택 훈련 서비스입니다.",
-        image: "../assets/images/project/test/project_7.png",
-        slideImage: "../assets/images/project/test/wide/project_7.png",
-        slideOrder: 7,
-        courseCards: {
-            interactive: {
-                title: "",
-                description: "",
-                image: ""
-            },
-            service: {
-                title: "",
-                description: "",
-                image: ""
-            },
-            interface: {
-                title: "",
-                description: "",
-                image: ""
-            }
-        }
-    },
-    {
         id: "omix",
         title: "OMIX",
         members: [
@@ -334,7 +304,7 @@ window.PROJECTS = [
     },
     {
         id: "cheoma",
-        title: "처마",
+        title: "그늘잡이",
         members: [
             "김민재",
             "조우성"
@@ -458,7 +428,7 @@ window.PROJECTS = [
     },
     {
         id: "28",
-        title: "28(二十八)",
+        title: "별운간",
         members: [
             "박윤지",
             "주예진"
