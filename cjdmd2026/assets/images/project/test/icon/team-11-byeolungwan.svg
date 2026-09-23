@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" id="team-11-byeolungwan" viewBox="-14 -14 268 268" role="img" aria-labelledby="team-11-byeolungwan-title">
+  <title id="team-11-byeolungwan-title">Byeolungwan animated icon</title>
+  <style>
+    #team-11-byeolungwan .icon-layer {
+      transform-box: view-box;
+      transform-origin: 120px 120px;
+      animation: team-11-byeolungwan-enter 700ms cubic-bezier(.22, 1, .36, 1) both;
+    }
+    #team-11-byeolungwan .layer-1 { animation-delay: 120ms; }
+    #team-11-byeolungwan .layer-2 { animation-delay: 500ms; }
+    @keyframes team-11-byeolungwan-enter {
+      0% { transform: scale(0); animation-timing-function: ease-in-out; }
+      50% { transform: scale(1.11); animation-timing-function: ease-in-out; }
+      70% { transform: scale(.96); animation-timing-function: ease-out; }
+      100% { transform: scale(1); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #team-11-byeolungwan .icon-layer { animation: none; }
+    }
+  </style>
+  <g id="team-11-byeolungwan-background"><rect width="240" height="240" fill="#15131a"></rect></g>
+  <g id="team-11-byeolungwan-layer-1" class="icon-layer layer-1">
+    <path d="M.34.26v30h30V.26H.34ZM60.34,30.26V.26l-30,30h30ZM.34,60.26h30v-30L.34,60.26ZM90.34,90.26l-30,30,30,30,30,30,30-30,30-30-30-30-30-30-30,30ZM30.34,180.26H.34l30,30v-30ZM30.34,210.26H.34v30h30v-30ZM60.34,240.26v-30h-30l30,30ZM180.34.26v30h30L180.34.26ZM210.34,30.26h30V.26h-30v30ZM210.34,60.26h30l-30-30v30ZM240.34,180.26h-30v30l30-30ZM180.34,210.26v30l30-30h-30ZM240.34,240.26v-30h-30v30h30Z" fill="#d5c8ac" fill-rule="evenodd"></path>
+  </g>
+  <g id="team-11-byeolungwan-layer-2" class="icon-layer layer-2">
+    <path d="M60.34,60.26h120v-30h-30V.26h-60v30h-30v30ZM.34,120.26v30h30v30h30V60.26h-30v30H.34v30ZM180.34,120.26v60h30v-30h30v-60h-30v-30h-30v60ZM60.34,210.26h30v30h60v-30h30v-30H60.34v30Z" fill="#065182" fill-rule="evenodd"></path>
+  </g>
+</svg>

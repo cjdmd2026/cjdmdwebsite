@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" id="team-03-phishing-ttuk" viewBox="-14 -14 268 268" role="img" aria-labelledby="team-03-phishing-ttuk-title">
+  <title id="team-03-phishing-ttuk-title">Phishing Ttuk animated icon</title>
+  <style>
+    #team-03-phishing-ttuk .icon-layer {
+      transform-box: view-box;
+      transform-origin: 120px 120px;
+      animation: team-03-phishing-ttuk-enter 700ms cubic-bezier(.22, 1, .36, 1) both;
+    }
+    #team-03-phishing-ttuk .layer-1 { animation-delay: 120ms; }
+    #team-03-phishing-ttuk .layer-2 { animation-delay: 500ms; }
+    #team-03-phishing-ttuk .layer-3 { animation-delay: 880ms; }
+    @keyframes team-03-phishing-ttuk-enter {
+      0% { transform: scale(0); animation-timing-function: ease-in-out; }
+      50% { transform: scale(1.11); animation-timing-function: ease-in-out; }
+      70% { transform: scale(.96); animation-timing-function: ease-out; }
+      100% { transform: scale(1); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #team-03-phishing-ttuk .icon-layer { animation: none; }
+    }
+  </style>
+  <g id="team-03-phishing-ttuk-background"><rect width="240" height="240" fill="#15131a"></rect></g>
+  <g id="team-03-phishing-ttuk-layer-1" class="icon-layer layer-1">
+    <path d="M-.22-.05h120L-.22,119.95V-.05ZM-.22,119.95l120,120,120-120L119.78-.05h120v240H-.22v-120Z" fill="#f2f070"></path>
+  </g>
+  <g id="team-03-phishing-ttuk-layer-2" class="icon-layer layer-2">
+    <path d="M127.82,239.42c-11.17.29-24.5.07-37.02-3.38l-.14-39.9c0-.58.82-1.54.39-2.55-.45-1.05-2.12-1.08-2.71-.16l-1.4,2.18-27.29,27.56c-17.98-10.36-32.02-24.86-42.67-42.62l29.83-30.25-42.63-.51c-4.91-20.02-5.03-40.34.04-59.96l42.82-.46-29.97-30.57c10.56-17.82,24.8-31.85,42.57-42.56l30.66,30.52.25-43.23c19.79-5.1,40.03-5.06,59.83.03l.14,43.46,30.97-30.75c17.48,10.61,31.85,24.8,42.38,42.5l-29.78,30.41,42.58.61c5.16,19.69,4.91,39.94.05,60.05l-42.46.44c9.71,10.68,19.1,19.49,29.62,29.87-9.83,17.85-24.56,32.39-42.46,42.97l-30.62-30.2-.39,42.78c-6.55,2.14-13.28,3.49-19.64,3.57M90.64,149.62l-.02-59.69,59.65-.05.34,60.11,41.24-.37-28.61-29.84,28.92-29.62-41.7-.43-.37-41.55-29.89,29.13-29.34-28.93-.35,41.52-42.55.38,29.88,29.71-29.55,29.83,41.95.33c.21-.24.43-.39.39-.52ZM91.87,150.04c-.31.54-.71.93-1.24,1.24l.15,40.67,29.69-29.58,29.55,28.9.26-41.3-58.42.05Z" fill="#eec35a"></path>
+  </g>
+  <g id="team-03-phishing-ttuk-layer-3" class="icon-layer layer-3">
+    <path d="M120,240L0,120,120,0l120,120-120,120ZM120,200l80-80L120,40,40,120l80,80ZM86.67,120l33.33-33.33,33.33,33.33-33.33,33.33-33.33-33.33Z" fill="#e5903a"></path>
+  </g>
+</svg>

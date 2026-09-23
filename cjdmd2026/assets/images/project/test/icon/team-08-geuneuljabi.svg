@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" id="team-08-geuneuljabi" viewBox="-14 -14 268 268" role="img" aria-labelledby="team-08-geuneuljabi-title">
+  <title id="team-08-geuneuljabi-title">Geuneuljabi animated icon</title>
+  <style>
+    #team-08-geuneuljabi .icon-layer {
+      transform-box: view-box;
+      transform-origin: 120px 120px;
+      animation: team-08-geuneuljabi-enter 700ms cubic-bezier(.22, 1, .36, 1) both;
+    }
+    #team-08-geuneuljabi .layer-1 { animation-delay: 120ms; }
+    #team-08-geuneuljabi .layer-2 { animation-delay: 500ms; }
+    @keyframes team-08-geuneuljabi-enter {
+      0% { transform: scale(0); animation-timing-function: ease-in-out; }
+      50% { transform: scale(1.11); animation-timing-function: ease-in-out; }
+      70% { transform: scale(.96); animation-timing-function: ease-out; }
+      100% { transform: scale(1); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #team-08-geuneuljabi .icon-layer { animation: none; }
+    }
+  </style>
+  <g id="team-08-geuneuljabi-background"><rect width="240" height="240" fill="#15131a"></rect></g>
+  <g id="team-08-geuneuljabi-layer-1" class="icon-layer layer-1">
+    <path d="M160,80.01V0h80v80h-80ZM240,240.01h-80v-80h80v80ZM0,80.01V0h80v80H0ZM80,80.01h80v80h-80v-80ZM80,240.01H0v-80h80v80Z" fill="#b5b5b5"></path>
+  </g>
+  <g id="team-08-geuneuljabi-layer-2" class="icon-layer layer-2">
+    <path d="M240,86.31v25.26h-88.42v-23.15h-23.15V0h25.26v86.31h86.31ZM240,128.43v25.26h-86.31v86.31h-25.26v-88.42h23.15v-23.15h88.42ZM98.94,141.06v-42.13h42.13v42.13h-42.13ZM0,86.31h86.31V0h25.26v88.42h-23.15v23.15H0v-25.26ZM86.31,153.69H0v-25.26h88.42v23.15h23.15v88.42h-25.26v-86.31Z" fill="#ffffff"></path>
+  </g>
+</svg>

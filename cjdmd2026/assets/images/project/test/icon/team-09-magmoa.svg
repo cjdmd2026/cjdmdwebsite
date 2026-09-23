@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" id="team-09-magmoa" viewBox="-14 -14 268 268" role="img" aria-labelledby="team-09-magmoa-title">
+  <title id="team-09-magmoa-title">Magmoa animated icon</title>
+  <style>
+    #team-09-magmoa .icon-layer {
+      transform-box: view-box;
+      transform-origin: 120px 120px;
+      animation: team-09-magmoa-enter 700ms cubic-bezier(.22, 1, .36, 1) both;
+    }
+    #team-09-magmoa .layer-1 { animation-delay: 120ms; }
+    #team-09-magmoa .layer-2 { animation-delay: 500ms; }
+    @keyframes team-09-magmoa-enter {
+      0% { transform: scale(0); animation-timing-function: ease-in-out; }
+      50% { transform: scale(1.11); animation-timing-function: ease-in-out; }
+      70% { transform: scale(.96); animation-timing-function: ease-out; }
+      100% { transform: scale(1); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #team-09-magmoa .icon-layer { animation: none; }
+    }
+  </style>
+  <g id="team-09-magmoa-background"><rect x="-.01" y=".27" width="240" height="240" fill="#15131a"></rect></g>
+  <g id="team-09-magmoa-layer-1" class="icon-layer layer-1">
+    <polygon points="117.34 68.5 67.06 17.22 16.13 68.38 67.4 118.43 66.86 68.43 117.34 68.5" fill="#4df4ff"></polygon>
+    <polygon points="117.96 170.13 168.66 119.44 117.34 68.5 67.4 118.43 15.94 170.09 66.83 221.24 117.42 170.52 66.82 170.16 67.05 119.58 117.96 170.13" fill="#4df4ff"></polygon>
+    <polygon points="169.2 118.7 219.73 68.39 168.7 17.38 118.3 68.23 168.73 68.47 169.2 118.7" fill="#4df4ff"></polygon>
+    <polygon points="169.04 119.85 168.73 170.27 118.35 170.54 169.01 221.12 219.83 170.04 169.04 119.85" fill="#4df4ff"></polygon>
+  </g>
+  <g id="team-09-magmoa-layer-2" class="icon-layer layer-2">
+    <path d="M-.16.02v84h24V24.02h60V.02H-.16ZM215.84,24.02v60h24V.02h-84v24h60ZM-.16,156.02v84h84v-24H23.84v-60H-.16ZM155.84,240.02h84v-84h-24v60h-60v24Z" fill="#536dea" fill-rule="evenodd"></path>
+    <path d="M134.2,52.94v-12.41h-33.1v12.41h33.1ZM51.45,135.69v-33.1h-12.41v33.1h12.41ZM196.26,135.69v-33.1h-12.41v33.1h12.41ZM134.2,197.75v-12.41h-33.1v12.41h33.1ZM107.31,119.14l10.34,10.34,10.34-10.34-10.34-10.34-10.34,10.34Z" fill="#536dea" fill-rule="evenodd"></path>
+  </g>
+</svg>

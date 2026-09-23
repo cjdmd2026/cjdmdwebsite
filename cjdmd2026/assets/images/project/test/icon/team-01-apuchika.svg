@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" id="team-01-apuchika" viewBox="-14 -14 268 268" role="img" aria-labelledby="team-01-apuchika-title">
+  <title id="team-01-apuchika-title">Apuchika animated icon</title>
+  <style>
+    #team-01-apuchika .icon-layer {
+      transform-box: view-box;
+      transform-origin: 120px 120px;
+      animation: team-01-apuchika-enter 700ms cubic-bezier(.22, 1, .36, 1) both;
+    }
+    #team-01-apuchika .layer-1 { animation-delay: 120ms; }
+    #team-01-apuchika .layer-2 { animation-delay: 500ms; }
+    #team-01-apuchika .layer-3 { animation-delay: 880ms; }
+    @keyframes team-01-apuchika-enter {
+      0% { transform: scale(0); animation-timing-function: ease-in-out; }
+      50% { transform: scale(1.11); animation-timing-function: ease-in-out; }
+      70% { transform: scale(.96); animation-timing-function: ease-out; }
+      100% { transform: scale(1); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #team-01-apuchika .icon-layer { animation: none; }
+    }
+  </style>
+  <g id="team-01-apuchika-background"><rect width="240" height="240" fill="#15131a"></rect></g>
+  <g id="team-01-apuchika-layer-1" class="icon-layer layer-1">
+    <path d="M133.33,106.67V0h106.67v40h-66.67v26.67h66.67v40h-106.67ZM133.33,240v-106.67h106.67v40h-66.67v26.67h66.67v40h-106.67ZM106.67,0v106.67H0v-40h66.67v-26.67H0V0h106.67ZM106.67,133.33v106.67H0v-40h66.67v-26.67H0v-40h106.67Z" fill="#ffce07"></path>
+  </g>
+  <g id="team-01-apuchika-layer-2" class="icon-layer layer-2">
+    <path d="M159.57,62.27v-24.19l17.3-17.3h24.19l17.3,17.3v24.19l-17.3,17.3h-24.19l-17.3-17.3ZM176.87,217.86l-17.3-17.3v-24.19l17.3-17.3h24.19l17.3,17.3v24.19l-17.3,17.3h-24.19ZM90.44,131.43v-24.22l17.27-17.27h24.22l17.27,17.27v24.22l-17.27,17.27h-24.22l-17.27-17.27ZM21.28,62.27v-24.19l17.3-17.3h24.19l17.3,17.3v24.19l-17.3,17.3h-24.19l-17.3-17.3ZM38.58,217.86l-17.3-17.3v-24.19l17.3-17.3h24.19l17.3,17.3v24.19l-17.3,17.3h-24.19Z" fill="#00aaff"></path>
+  </g>
+  <g id="team-01-apuchika-layer-3" class="icon-layer layer-3">
+    <path d="M214.99,133.31h-55.09l-13.31-13.31,13.31-13.31h55.09l13.31,13.31-13.31,13.31ZM120,139.01l-19.01-19.01,19.01-19.01,19.01,19.01-19.01,19.01ZM106.69,214.99v-55.09l13.31-13.31,13.31,13.31v55.09l-13.31,13.31-13.31-13.31ZM133.31,80.1l-13.31,13.31-13.31-13.31V25.01l13.31-13.31,13.31,13.31v55.09ZM80.1,106.69l13.31,13.31-13.31,13.31H25.01l-13.31-13.31,13.31-13.31h55.09Z" fill="#ccebf5"></path>
+  </g>
+</svg>
