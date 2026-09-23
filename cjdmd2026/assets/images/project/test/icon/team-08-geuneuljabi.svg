@@ -19,7 +19,6 @@
       #team-08-geuneuljabi .icon-layer { animation: none; }
     }
   </style>
-  <g id="team-08-geuneuljabi-background"><rect width="240" height="240" fill="#15131a"></rect></g>
   <g id="team-08-geuneuljabi-layer-1" class="icon-layer layer-1">
     <path d="M160,80.01V0h80v80h-80ZM240,240.01h-80v-80h80v80ZM0,80.01V0h80v80H0ZM80,80.01h80v80h-80v-80ZM80,240.01H0v-80h80v80Z" fill="#b5b5b5"></path>
   </g>

@@ -20,7 +20,6 @@
       #team-01-apuchika .icon-layer { animation: none; }
     }
   </style>
-  <g id="team-01-apuchika-background"><rect width="240" height="240" fill="#15131a"></rect></g>
   <g id="team-01-apuchika-layer-1" class="icon-layer layer-1">
     <path d="M133.33,106.67V0h106.67v40h-66.67v26.67h66.67v40h-106.67ZM133.33,240v-106.67h106.67v40h-66.67v26.67h66.67v40h-106.67ZM106.67,0v106.67H0v-40h66.67v-26.67H0V0h106.67ZM106.67,133.33v106.67H0v-40h66.67v-26.67H0v-40h106.67Z" fill="#ffce07"></path>
   </g>

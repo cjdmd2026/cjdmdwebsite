@@ -20,7 +20,6 @@
       #team-03-phishing-ttuk .icon-layer { animation: none; }
     }
   </style>
-  <g id="team-03-phishing-ttuk-background"><rect width="240" height="240" fill="#15131a"></rect></g>
   <g id="team-03-phishing-ttuk-layer-1" class="icon-layer layer-1">
     <path d="M-.22-.05h120L-.22,119.95V-.05ZM-.22,119.95l120,120,120-120L119.78-.05h120v240H-.22v-120Z" fill="#f2f070"></path>
   </g>

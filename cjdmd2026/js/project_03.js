@@ -9,8 +9,8 @@
         rgbRelease: 0.18,    // 안전용 잔여값. 실제 Fluid 해제는 wipe 마지막 구간 안에서 끝냄
         rgb: 5,              // RGB를 한 단계 부드럽게
         fluid: 50,          // 세로 전환에서 과한 출렁임을 줄임
-        wheelThreshold: 200,  // 미세 휠 입력에 너무 민감하게 반응하지 않도록
-        wheelInterval: 60,  // 연속 입력 간 호흡
+        wheelThreshold: 90,  // 미세 휠 입력에 너무 민감하게 반응하지 않도록
+        wheelInterval: 120,  // 연속 입력 간 호흡
         pixelRatio: 1.25,
         maxTextureSize: 1920,
         ...window.PROJECT_FLUID_OPTIONS
@@ -754,6 +754,299 @@
                 ? [...projectDialList.querySelectorAll('.project-dial-item[data-project-id]')]
                 : [];
 
+            // SVG 조각은 화면 좌표로 움직이고, 조립되면 원본의 좌표/겹침 순서로 돌아갑니다.
+            const projectIconFiles={
+                'apuchika':'team-01-apuchika.svg',
+                'omix':'team-02-ommix.svg',
+                'phishing-ddook':'team-03-phishing-ttuk.svg',
+                'ilkko':'team-04-ilkko.svg',
+                'curo':'team-05-kuro.svg',
+                'dadeullim':'team-06-dadeullim.svg',
+                'stylens':'team-07-style-lens.svg',
+                'cheoma':'team-08-geuneuljabi.svg',
+                'magmoa':'team-09-magmoa.svg',
+                'year-on':'team-10-ieoon.svg',
+                '28':'team-11-byeolungwan.svg',
+                'cocorang':'team-12-kokorang.svg',
+                'efact':'team-13-effect.svg',
+                'jikji':'team-14-jikji-jamboree.svg'
+            };
+            // 조립/분산/간격은 ms. flowSpeed와 flowDistance는 흐름의 속도/이동 폭 배율입니다.
+            const iconAssemblySettings={
+                gatherDuration:700,scatterDuration:650,stagger:120,
+                flowSpeed:1,flowDistance:1
+            };
+            const svgNamespace='http://www.w3.org/2000/svg';
+            const svgElement=name=>document.createElementNS(svgNamespace,name);
+            const dialIcons=new Map();
+            let dialIconProjectId=null,iconFrame=0,iconFieldReady=false;
+            let iconFlowTime=0,iconLastFrame=0,iconFlowBounds=null;
+            const iconField=svgElement('svg');
+            iconField.classList.add('project-icon-field');
+            iconField.setAttribute('aria-hidden','true');
+            iconField.setAttribute('focusable','false');
+            document.body.appendChild(iconField);
+
+            // 복합 path의 구멍은 바깥 윤곽과 함께 움직여야 합니다.
+            // 안쪽 윤곽은 바깥 윤곽과 묶어 fill-rule과 원래 도형을 보존합니다.
+            function splitIconShape(shape,measure){
+                const clone=()=>{
+                    const node=shape.cloneNode(true);
+                    node.removeAttribute('id');
+                    return node;
+                };
+                const path=shape.getAttribute('d')||'';
+                if(shape.localName!=='path'||/m/.test(path))return [clone()];
+                const contours=path.match(/M[^M]+/g)||[];
+                if(contours.length<2)return [clone()];
+                const groups=contours.map(d=>{
+                    const node=clone();node.setAttribute('d',d);measure.appendChild(node);
+                    const box=measure.getBBox();node.remove();
+                    return {paths:[d],box};
+                });
+                const contains=(a,b)=>a.x<=b.x+.01&&a.y<=b.y+.01&&
+                    a.x+a.width>=b.x+b.width-.01&&a.y+a.height>=b.y+b.height-.01;
+                for(let i=0;i<groups.length;i++){
+                    for(let j=i+1;j<groups.length;j++){
+                        const a=groups[i],b=groups[j];
+                        if(!contains(a.box,b.box)&&!contains(b.box,a.box))continue;
+                        const x=Math.min(a.box.x,b.box.x),y=Math.min(a.box.y,b.box.y);
+                        a.box={x,y,width:Math.max(a.box.x+a.box.width,b.box.x+b.box.width)-x,
+                            height:Math.max(a.box.y+a.box.height,b.box.y+b.box.height)-y};
+                        a.paths.push(...b.paths);groups.splice(j,1);i=-1;break;
+                    }
+                }
+                return groups.map(group=>{const node=clone();node.setAttribute('d',group.paths.join(''));return node;});
+            }
+
+            const iconLoads=projectDialItems.map(async(item,projectOrder)=>{
+                const projectId=String(item.dataset.projectId),file=projectIconFiles[projectId];
+                const title=item.querySelector('.project-dial-title');
+                if(!file||!title)return;
+                const slot=document.createElement('span');
+                slot.className='project-dial-icon';slot.setAttribute('aria-hidden','true');
+                title.before(slot);item.classList.add('has-project-icon');
+                const group=svgElement('g');group.dataset.projectId=projectId;iconField.appendChild(group);
+                const entry={item,slot,group,pieces:[],projectOrder};
+                dialIcons.set(projectId,entry);
+                const measureSvg=svgElement('svg'),measure=svgElement('g');
+                measureSvg.style.cssText='position:fixed;width:1px;height:1px;visibility:hidden;pointer-events:none';
+                measureSvg.setAttribute('aria-hidden','true');measureSvg.appendChild(measure);
+                try{
+                    const response=await fetch(new URL(`../assets/images/project/test/icon/${file}`,document.baseURI),{signal:events.signal});
+                    if(!response.ok)throw new Error(`SVG ${response.status}`);
+                    const xml=new DOMParser().parseFromString(await response.text(),'image/svg+xml');
+                    if(disposed)return;
+                    if(xml.querySelector('parsererror'))throw new Error('Invalid SVG');
+                    document.body.appendChild(measureSvg);
+                    for(const layer of xml.querySelectorAll('.icon-layer')){
+                        for(const source of layer.querySelectorAll('path,polygon,rect,circle,ellipse,polyline')){
+                            for(const shape of splitIconShape(source,measure)){
+                                measure.appendChild(shape);const box=measure.getBBox();shape.remove();
+                                const cx=box.x+box.width/2,cy=box.y+box.height/2;
+                                const node=svgElement('g'),centered=svgElement('g');
+                                centered.setAttribute('transform',`translate(${-cx} ${-cy})`);
+                                centered.appendChild(shape);node.appendChild(centered);group.appendChild(node);
+                                node.dataset.piece=String(entry.pieces.length);
+                                entry.pieces.push({node,cx,cy,size:Math.max(box.width,box.height,1),current:null,motion:null});
+                            }
+                        }
+                    }
+                    if(!entry.pieces.length)throw new Error('Empty SVG');
+                }catch(error){
+                    if(error.name!=='AbortError')console.warn(`[Project icons] ${file}`,error);
+                    group.remove();slot.remove();item.classList.remove('has-project-icon','is-icon-loaded');
+                    dialIcons.delete(projectId);
+                }finally{measureSvg.remove();}
+            });
+            if(dialIcons.size)projectDial?.classList.add('has-project-icons');
+
+            const iconMix=(a,b,t)=>a+(b-a)*t;
+            const iconEase=t=>1-Math.pow(1-t,3);
+            const iconRandom=seed=>{const value=Math.sin(seed*127.1+311.7)*43758.5453;return value-Math.floor(value);};
+            function paintIconPiece(piece){
+                const p=piece.current;
+                piece.node.setAttribute('transform',`translate(${p.x.toFixed(4)} ${p.y.toFixed(4)}) rotate(${p.rotation.toFixed(4)}) scale(${p.scale.toFixed(6)})`);
+                if(piece.paintedOpacity!==p.opacity){
+                    piece.node.setAttribute('opacity',p.opacity);piece.paintedOpacity=p.opacity;
+                }
+            }
+            function iconFlowRightAt(y){
+                const b=iconFlowBounds;
+                const vertical=(y-b.arcCenter)/b.arcRadius;
+                let right=b.inset+(b.arcRight-b.inset)*Math.sqrt(Math.max(0,1-vertical*vertical));
+                const dy=y-b.centerY;
+                // 완성된 아이콘 주변을 완만하게 돌아가도록 연속적인 안쪽 경계를 만듭니다.
+                const avoid=b.centerX-b.iconClearance+dy*dy/(2*b.iconClearance);
+                const blend=Math.max(10-Math.abs(right-avoid),0)/10;
+                right=Math.min(right,avoid)-blend*blend*2.5;
+                return Math.max(b.inset+.01,right);
+            }
+            function flowingIconPosition(piece){
+                if(reduce.matches||!iconFlowBounds)return {...piece.scattered};
+                const b=iconFlowBounds,phase=piece.seed*Math.PI*2;
+                const t=iconFlowTime*iconAssemblySettings.flowSpeed;
+                const distance=iconAssemblySettings.flowDistance;
+                // 삼각함수 좌표로 아치 내부를 순환하므로 경계에서 튕기거나 순간이동하지 않습니다.
+                const vertical=piece.flowVertical+distance*(
+                    (Math.sin(t*.24+phase)-Math.sin(phase))*28/b.arcRadius+
+                    (Math.sin(t*.13+phase*2)-Math.sin(phase*2))*10/b.arcRadius
+                );
+                const y=b.arcCenter+Math.sin(vertical)*b.arcRadius;
+                const horizontal=piece.flowHorizontal+distance*(
+                    (Math.sin(t*.29+phase*1.7)-Math.sin(phase*1.7))*.34+
+                    (Math.sin(t*.17+phase)-Math.sin(phase))*.12
+                );
+                const x=b.inset+(iconFlowRightAt(y)-b.inset)*(.5+.5*Math.sin(horizontal));
+                return {...piece.scattered,x,y,
+                    rotation:piece.scattered.rotation+(Math.sin(t*.22+phase)-Math.sin(phase))*12*distance};
+            }
+            function requestIconFrame(){
+                if(!iconFrame&&iconFieldReady&&!disposed&&!slideview.hidden&&!document.hidden){
+                    iconFrame=requestAnimationFrame(drawIconField);
+                }
+            }
+            function layoutIconField(){
+                if(!iconFieldReady||slideview.hidden||!projectDial)return;
+                const width=innerWidth,height=innerHeight;
+                iconField.setAttribute('viewBox',`0 0 ${width} ${height}`);
+                // clamp() 변수는 계산 전 문자열이므로 실제 슬롯의 CSS width를 읽습니다.
+                const slot=dialIcons.values().next().value?.slot;
+                const iconSize=slot?parseFloat(getComputedStyle(slot).width):72;
+                const left=projectDial.getBoundingClientRect().left,scale=iconSize/268;
+                const centerY=height/2,centerX=left+iconSize/2;
+                const pieces=[...dialIcons.values()].flatMap(entry=>entry.pieces);
+                // 순서를 섞되 위치는 고정하여 스크롤할 때마다 아치가 뒤바뀌지 않습니다.
+                const ranked=[...pieces].sort((a,b)=>a.seed-b.seed);
+                // 아치의 테두리가 아니라 왼쪽 가장자리부터 안쪽 면적 전체에 배치합니다.
+                const inset=18,arcRight=Math.max(inset+40,left+iconSize-10);
+                const arcTop=Math.max(72,height*.085),arcBottom=height-24;
+                const arcCenter=(arcTop+arcBottom)/2,arcRadius=(arcBottom-arcTop)/2;
+                const iconClearance=iconSize/2+18;
+                iconFlowBounds={inset,arcRight,arcCenter,arcRadius,centerX,centerY,iconClearance};
+                let candidate=0;
+                ranked.forEach((piece,i)=>{
+                    let x,y;
+                    // 고정된 2차원 수열로 조각들이 특정 선이나 지점에 몰리지 않게 합니다.
+                    do{
+                        candidate++;
+                        x=inset+((.5+candidate*.754877666)%1)*(arcRight-inset);
+                        y=arcTop+((.5+candidate*.569840291)%1)*(arcBottom-arcTop);
+                    }while(x>iconFlowRightAt(y));
+                    piece.scattered={x,y,scale:Math.min(.5,(11+iconRandom(i+31)*12)/piece.size),
+                        rotation:(iconRandom(i+73)-.5)*120,opacity:.3+iconRandom(i+101)*.35};
+                    const clampUnit=value=>Math.max(-1,Math.min(1,value));
+                    piece.flowVertical=Math.asin(clampUnit((y-arcCenter)/arcRadius));
+                    piece.flowHorizontal=Math.asin(clampUnit(2*(x-inset)/(iconFlowRightAt(y)-inset)-1));
+                    piece.assembled={x:centerX+(piece.cx-120)*scale,y:centerY+(piece.cy-120)*scale,
+                        scale,rotation:0,opacity:1};
+                    if(!piece.current){piece.current=flowingIconPosition(piece);paintIconPiece(piece);}
+                });
+                iconField.classList.add('is-ready');
+            }
+            function finishIconAssembly(){
+                const entry=dialIcons.get(dialIconProjectId);
+                if(entry&&entry.group.dataset.state!=='assembled'&&!entry.pieces.some(piece=>piece.motion)){
+                    entry.group.dataset.state='assembled';
+                }
+                if(entry&&entry.group.dataset.state==='assembled'&&!entry.item.classList.contains('is-icon-loaded')){
+                    entry.item.classList.add('is-icon-loaded');
+                }
+            }
+            function drawIconField(now){
+                iconFrame=0;
+                if(disposed||slideview.hidden||document.hidden){iconLastFrame=0;return;}
+                if(iconLastFrame&&!reduce.matches)iconFlowTime+=Math.min((now-iconLastFrame)/1000,.05);
+                iconLastFrame=now;
+                let moving=false;
+                dialIcons.forEach(entry=>{
+                    const active=entry.group.dataset.projectId===dialIconProjectId;
+                    entry.pieces.forEach(piece=>{
+                        const motion=piece.motion;
+                        if(!motion){
+                            if(!active&&!reduce.matches){piece.current=flowingIconPosition(piece);paintIconPiece(piece);}
+                            return;
+                        }
+                        const t=Math.max(0,Math.min(1,(now-motion.start)/motion.duration));
+                        const eased=iconEase(motion.gather?Math.min(1,t/.84):t);
+                        // 분산 목적지도 계속 흐르게 하여 도착 직후의 움직임이 이어지게 합니다.
+                        const target=motion.gather?motion.to:flowingIconPosition(piece);
+                        const p={};
+                        for(const key of ['x','y','rotation','opacity'])p[key]=iconMix(motion.from[key],target[key],eased);
+                        if(motion.gather){
+                            p.scale=t<.84?iconMix(motion.from.scale,target.scale*1.08,eased):
+                                target.scale*(t<.92?iconMix(1.08,.97,(t-.84)/.08):iconMix(.97,1,(t-.92)/.08));
+                        }else p.scale=iconMix(motion.from.scale,target.scale,eased);
+                        piece.current=t===1?{...target}:p;paintIconPiece(piece);
+                        if(t===1)piece.motion=null;else moving=true;
+                    });
+                    if(!active&&entry.group.dataset.state!=='scattered'&&!entry.pieces.some(piece=>piece.motion)){
+                        entry.group.dataset.state='scattered';
+                    }
+                });
+                finishIconAssembly();
+                if(moving||(!reduce.matches&&dialIcons.size>1))requestIconFrame();
+            }
+            function moveIconEntry(entry,gather){
+                const now=performance.now();
+                entry.group.dataset.state=gather?'assembling':'scattering';
+                entry.pieces.forEach((piece,i)=>{
+                    const to=gather?piece.assembled:flowingIconPosition(piece);
+                    if(reduce.matches){piece.current={...to};piece.motion=null;paintIconPiece(piece);return;}
+                    piece.motion={from:{...piece.current},to:{...to},gather,
+                        start:now+(i/Math.max(1,entry.pieces.length-1))*iconAssemblySettings.stagger,
+                        duration:gather?iconAssemblySettings.gatherDuration:iconAssemblySettings.scatterDuration};
+                });
+                if(reduce.matches)entry.group.dataset.state=gather?'assembled':'scattered';
+                requestIconFrame();
+            }
+            function syncDialIcon(projectId){
+                if(slideview.hidden)return;
+                const id=String(projectId);
+                if(id===dialIconProjectId)return;
+                const previous=dialIcons.get(dialIconProjectId);
+                previous?.item.classList.remove('is-icon-loaded');
+                dialIconProjectId=id;
+                if(!iconFieldReady)return;
+                layoutIconField();
+                if(previous)moveIconEntry(previous,false);
+                const active=dialIcons.get(id);
+                if(active){
+                    active.item.classList.remove('is-icon-loaded');
+                    iconField.appendChild(active.group);
+                    moveIconEntry(active,true);
+                }
+            }
+            function resetIconField(){
+                cancelAnimationFrame(iconFrame);iconFrame=0;dialIconProjectId=null;
+                iconFlowTime=0;iconLastFrame=0;
+                dialIcons.forEach(entry=>{
+                    entry.item.classList.remove('is-icon-loaded');entry.group.dataset.state='scattered';
+                    entry.pieces.forEach(piece=>{
+                        piece.motion=null;
+                        if(piece.scattered){piece.current={...piece.scattered};paintIconPiece(piece);}
+                    });
+                });
+            }
+            function resizeIconField(){
+                if(!iconFieldReady||slideview.hidden)return;
+                layoutIconField();
+                dialIcons.forEach(entry=>entry.pieces.forEach(piece=>{
+                    const target=entry.group.dataset.projectId===dialIconProjectId?piece.assembled:flowingIconPosition(piece);
+                    if(piece.motion){
+                        piece.motion.from={...piece.current};piece.motion.to={...target};piece.motion.start=performance.now();
+                    }else{piece.current={...target};paintIconPiece(piece);}
+                }));
+            }
+            Promise.all(iconLoads).then(()=>{
+                if(disposed)return;
+                dialIcons.forEach(entry=>entry.pieces.forEach((piece,i)=>{piece.seed=iconRandom(entry.projectOrder*101+i+1);}));
+                iconFieldReady=true;
+                if(slideview.hidden)return;
+                layoutIconField();
+                const id=dialIconProjectId||cards[index]?.dataset.projectId;
+                dialIconProjectId=null;syncDialIcon(id);
+            });
             // Dial은 현재 위치를 정수 index가 아니라 실수 position으로 관리합니다.
             // 예: 4 -> 5로 이동할 때 4.0, 4.1, 4.2 ... 5.0처럼
             // 연속적으로 변하기 때문에 opacity / scale도 끊기지 않습니다.
@@ -810,6 +1103,69 @@
                 transition:none!important;
                 transform-origin:left center;
                 will-change:transform,opacity,filter;
+            }
+
+            .project-dial.has-project-icons {
+                --project-dial-icon-size:clamp(48px,5vw,80px);
+                --project-dial-icon-gap:clamp(12px,1.25vw,24px);
+                --project-dial-title-duration:800ms;
+            }
+            .container:has(#slideview:not([hidden])) .project-dial.has-project-icons {
+                width:min(
+                    calc(36vw + var(--project-dial-icon-size) + var(--project-dial-icon-gap)),
+                    calc(100vw - 12rem)
+                );
+            }
+            .project-dial-item.has-project-icon {
+                gap:var(--project-dial-icon-gap);
+            }
+            .project-dial-icon {
+                display:block;
+                flex:0 0 var(--project-dial-icon-size);
+                width:var(--project-dial-icon-size);
+                height:var(--project-dial-icon-size);
+                max-width:none;
+                visibility:hidden;
+                pointer-events:none;
+            }
+            .project-icon-field {
+                display:none;
+                position:fixed;
+                inset:0;
+                width:100%;
+                height:100%;
+                z-index:90;
+                overflow:hidden;
+                pointer-events:none;
+            }
+            html[data-project-fluid-view="slide"] .project-icon-field.is-ready { display:block; }
+            /* 제목의 자리와 행 높이를 유지해 다이얼이 흔들리지 않게 합니다. */
+            html[data-project-fluid-view="slide"] .project-dial-title {
+                display:block;
+                visibility:hidden;
+                opacity:0;
+                clip-path:inset(0 100% 0 0);
+                animation:none;
+            }
+            html[data-project-fluid-view="slide"] .project-dial-item.is-active:not(.has-project-icon) .project-dial-title,
+            html[data-project-fluid-view="slide"] .project-dial-item.is-active.is-icon-loaded .project-dial-title {
+                visibility:visible;
+                opacity:1;
+                clip-path:inset(0 0 0 0);
+                animation:project-dial-title-reveal var(--project-dial-title-duration,800ms) cubic-bezier(.22,1,.36,1) both;
+            }
+            html[data-project-fluid-view="slide"] .project-dial-item.is-active.has-project-icon.is-icon-loaded .project-dial-title {
+                animation-delay:var(--project-dial-title-delay,0ms);
+            }
+            @keyframes project-dial-title-reveal {
+                from { clip-path:inset(0 100% 0 0); }
+                to { clip-path:inset(0 0 0 0); }
+            }
+            @media (prefers-reduced-motion:reduce) {
+                html[data-project-fluid-view="slide"] .project-dial-item.is-active:not(.has-project-icon) .project-dial-title,
+                html[data-project-fluid-view="slide"] .project-dial-item.is-active.has-project-icon.is-icon-loaded .project-dial-title {
+                    animation:none;
+                }
             }
             `;
             document.head.appendChild(style);
@@ -883,18 +1239,10 @@
             function updateDialClasses(activeIndex){
                 projectDialItems.forEach((item,i)=>{
                     const distance=Math.abs(i-activeIndex);
-
-                    item.classList.remove(
-                        'is-active',
-                        'is-near',
-                        'is-far',
-                        'is-none'
-                    );
-
-                    if(distance===0)item.classList.add('is-active');
-                    else if(distance===1)item.classList.add('is-near');
-                    else if(distance===2)item.classList.add('is-far');
-                    else item.classList.add('is-none');
+                    item.classList.toggle('is-active',distance===0);
+                    item.classList.toggle('is-near',distance===1);
+                    item.classList.toggle('is-far',distance===2);
+                    item.classList.toggle('is-none',distance>2);
                 });
             }
 
@@ -1009,6 +1357,7 @@
                 );
                 if(targetIndex<0)return;
 
+                syncDialIcon(projectId);
                 updateDialClasses(targetIndex);
 
                 projectDial.classList.toggle('is-moving-up',direction>0);
@@ -1248,6 +1597,7 @@
                 });
 
                 if(view==='grid'){
+                    resetIconField();
                     /*
                      * Grid에서는 project-dial이 display:none이 되므로
                      * 숨겨진 상태에서 위치 계산 RAF가 계속 돌지 않게 정지합니다.
@@ -1409,10 +1759,21 @@
                 if(engine)syncAppearance();
 
                 // 화면 크기가 바뀌어도 현재 이동 중인 위치를 유지한 채 중앙 재계산
+                resizeIconField();
                 if(dialPosition!==null)applyDialVisual(dialPosition);
                 else syncProjectDial(cards[index]?.dataset.projectId,0,true);
             });
-            listen(reduce,'change',()=>{if(reduce.matches){const next=wanted??index;jump(next);}else warm();});
+            listen(reduce,'change',()=>{
+                if(reduce.matches){
+                    const next=wanted??index;
+                    resetIconField();jump(next);
+                }else{iconLastFrame=0;requestIconFrame();warm();}
+            });
+            listen(document,'visibilitychange',()=>{
+                iconLastFrame=0;
+                if(document.hidden){cancelAnimationFrame(iconFrame);iconFrame=0;}
+                else requestIconFrame();
+            });
             markActive(index,true);changeView('slide');
             window.ProjectFluidSlide={
                 next:()=>navigate(1),prev:()=>navigate(-1),
@@ -1430,6 +1791,13 @@
                     clearTransition();disposed=true;clearWriterQueue();
                     cancelAnimationFrame(searchFrame);
                     stopDialMotion();
+                    resetIconField();
+                    dialIcons.forEach(entry=>{
+                        entry.item.classList.remove('has-project-icon','is-icon-loaded');
+                        entry.slot.remove();
+                    });
+                    dialIcons.clear();iconField.remove();
+                    projectDial?.classList.remove('has-project-icons');
                     observer.disconnect();events.abort();engine?.destroy();engine=null;host.remove();style.remove();
                     if(stoppedLenis)stoppedLenis.start();
                     if(originalView===null)root.removeAttribute('data-project-fluid-view');else root.setAttribute('data-project-fluid-view',originalView);

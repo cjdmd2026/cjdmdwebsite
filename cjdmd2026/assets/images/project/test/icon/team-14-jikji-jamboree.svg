@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" id="team-14-jikji-jamboree" viewBox="-14 -14 268 268" role="img" aria-labelledby="team-14-jikji-jamboree-title">
+  <title id="team-14-jikji-jamboree-title">Jikji Jamboree animated icon</title>
+  <style>
+    #team-14-jikji-jamboree .icon-layer {
+      transform-box: view-box;
+      transform-origin: 120px 120px;
+      animation: team-14-jikji-jamboree-enter 700ms cubic-bezier(.22, 1, .36, 1) both;
+    }
+    #team-14-jikji-jamboree .layer-1 { animation-delay: 120ms; }
+    @keyframes team-14-jikji-jamboree-enter {
+      0% { transform: scale(0); animation-timing-function: ease-in-out; }
+      50% { transform: scale(1.11); animation-timing-function: ease-in-out; }
+      70% { transform: scale(.96); animation-timing-function: ease-out; }
+      100% { transform: scale(1); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #team-14-jikji-jamboree .icon-layer { animation: none; }
+    }
+  </style>
+  <g id="team-14-jikji-jamboree-layer-1" class="icon-layer layer-1">
+    <path fill="#fbe19f" d="M160.68,183.3l22.62-22.62,56.7,56.7v2.61l-20.01,20.01h-2.61l-56.7-56.7ZM219.99,0l20.01,20.01v2.61l-56.7,56.7-22.62-22.62L217.38,0h2.61ZM135.99,218.01l-15.99,15.99-15.99-15.99v-82.02H21.99l-15.99-15.99,15.99-15.99h82.02V21.99l15.99-15.99,15.99,15.99v82.02h82.02l15.99,15.99-15.99,15.99h-82.02v82.02ZM0,219.99v-2.61l56.7-56.7,22.62,22.62-56.7,56.7h-2.61L0,219.99ZM79.32,56.7l-22.62,22.62L0,22.62v-2.61L20.01,0h2.61l56.7,56.7Z"/>
+  </g>
+</svg>

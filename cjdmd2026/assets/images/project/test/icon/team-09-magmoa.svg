@@ -19,7 +19,6 @@
       #team-09-magmoa .icon-layer { animation: none; }
     }
   </style>
-  <g id="team-09-magmoa-background"><rect x="-.01" y=".27" width="240" height="240" fill="#15131a"></rect></g>
   <g id="team-09-magmoa-layer-1" class="icon-layer layer-1">
     <polygon points="117.34 68.5 67.06 17.22 16.13 68.38 67.4 118.43 66.86 68.43 117.34 68.5" fill="#4df4ff"></polygon>
     <polygon points="117.96 170.13 168.66 119.44 117.34 68.5 67.4 118.43 15.94 170.09 66.83 221.24 117.42 170.52 66.82 170.16 67.05 119.58 117.96 170.13" fill="#4df4ff"></polygon>

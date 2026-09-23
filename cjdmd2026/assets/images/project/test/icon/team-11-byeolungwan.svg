@@ -19,7 +19,6 @@
       #team-11-byeolungwan .icon-layer { animation: none; }
     }
   </style>
-  <g id="team-11-byeolungwan-background"><rect width="240" height="240" fill="#15131a"></rect></g>
   <g id="team-11-byeolungwan-layer-1" class="icon-layer layer-1">
     <path d="M.34.26v30h30V.26H.34ZM60.34,30.26V.26l-30,30h30ZM.34,60.26h30v-30L.34,60.26ZM90.34,90.26l-30,30,30,30,30,30,30-30,30-30-30-30-30-30-30,30ZM30.34,180.26H.34l30,30v-30ZM30.34,210.26H.34v30h30v-30ZM60.34,240.26v-30h-30l30,30ZM180.34.26v30h30L180.34.26ZM210.34,30.26h30V.26h-30v30ZM210.34,60.26h30l-30-30v30ZM240.34,180.26h-30v30l30-30ZM180.34,210.26v30l30-30h-30ZM240.34,240.26v-30h-30v30h30Z" fill="#d5c8ac" fill-rule="evenodd"></path>
   </g>

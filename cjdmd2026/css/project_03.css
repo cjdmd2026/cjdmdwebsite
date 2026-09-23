@@ -219,6 +219,8 @@ body:has(#slideview:not([hidden])) .header {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     border: none;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.35);
 }
 
 .header .container {
@@ -582,7 +584,7 @@ body:has(#slideview:not([hidden])) .header .nav ul li {
     position: absolute;
 
     right: 6rem;
-    top: 10%;
+    top: 15%;
 
     display: flex;
     align-items: center;
@@ -957,6 +959,7 @@ body:has(#slideview:not([hidden])) .footer {
 /* Slide */
 .container:has(#slideview:not([hidden])) .title-section {
     display: none;
+
 }
 
 .project-description {

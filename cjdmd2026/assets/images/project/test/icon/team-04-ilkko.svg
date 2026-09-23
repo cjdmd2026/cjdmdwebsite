@@ -20,7 +20,6 @@
       #team-04-ilkko .icon-layer { animation: none; }
     }
   </style>
-  <g id="team-04-ilkko-background"><rect x=".02" y=".07" width="239.41" height="240" fill="#15131a"></rect></g>
   <g id="team-04-ilkko-layer-1" class="icon-layer layer-1">
     <path d="M185.28,54.89V0H54.89v54.89H0v130.4h54.89v54.72h130.4v-54.72h54.72V54.89h-54.72ZM174.65,65.35v109.29h-109.29v-109.29h109.29Z" fill="#f6ffe3"></path>
     <rect x="11.18" y="11.1" width="32.76" height="32.76" transform="translate(-11.36 27.54) rotate(-45)" fill="#f6ffe3"></rect>
