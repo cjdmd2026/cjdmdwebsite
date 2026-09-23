@@ -220,9 +220,23 @@ img {
 .header .nav ul li {
     font-family: "Paperozi", sans-serif;
     font-size: 0.95rem;
-    font-weight: 600;
+    font-weight: 500;
     color: rgba(0, 0, 0, 0.7);
 }
+
+.header .nav ul li a {
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+}
+
+.header .nav ul li a:hover,
+.header .nav ul li a[aria-current="page"] {
+    opacity: 1;
+
+    font-weight: 600;
+    transition: opacity 0.3s ease;
+}
+
 
 /* ============================== Main ============================== */
 
