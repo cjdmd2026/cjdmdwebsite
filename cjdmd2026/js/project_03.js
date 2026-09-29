@@ -1703,7 +1703,7 @@
 
                     updateSlideInfo(
                         cards[index].dataset.projectId,
-                        false
+                        true
                     );
 
                     if(!initial){

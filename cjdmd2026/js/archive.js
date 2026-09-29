@@ -35,7 +35,7 @@ function renderStudents(container, year) {
 document.addEventListener("DOMContentLoaded", () => {
     initHistoryExplanation();
     initTwoStepScroll();
-    initSmoothStickyExplanation();
+    // Scroll-linked movement is handled by initExplanationArchiveFade().
     initArchiveCardReveal();
     initHistoryCardReveal();
     initExplanationArchiveFade();
@@ -992,7 +992,6 @@ function initHistoryExplanation() {
             nextStudentYear
         );
 
-
         await playEnter();
 
 
@@ -1271,7 +1270,6 @@ function initHistoryExplanation() {
 
                                 hoveredHistoryCard =
                                     null;
-
 
                                 changeExplanation(
                                     defaultTitle,
@@ -2005,83 +2003,55 @@ function initHistoryCardReveal() {
 
 /* =========================================================
    5. Explanation Archive Fade
-   - archive-wrap 진입 시 explanation 숨김
-   - 다시 위로 올라오면 explanation 표시
+   - history 이후 스크롤 진행률에 맞춰 이동하며 사라짐
+   - sticky가 부모 끝에 닿기 전에 fade 완료
 ========================================================= */
 
 function initExplanationArchiveFade() {
+    const explanation = document.querySelector(".hero .explanation");
+    const parent = explanation?.closest(".hero .card");
+    const history = document.querySelector(".history");
+    if (!explanation || !parent || !history) return;
 
-    const explanation =
-        document.querySelector(
-            ".hero .explanation"
-        );
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+    let frame = 0;
 
-    const archiveWrap =
-        document.querySelector(
-            ".archive-wrap"
-        );
+    function update() {
+        frame = 0;
+        const y = window.scrollY;
+        const vh = window.innerHeight;
+        const stickyTop = parseFloat(getComputedStyle(explanation).top) || 0;
+        const height = explanation.offsetHeight;
+        const parentBottom = parent.getBoundingClientRect().bottom + y;
+        const historyTop = history.getBoundingClientRect().top + y;
+        const travel = reducedMotion.matches ? 0 : Math.min(40, vh * 0.04);
 
+        // Finish before the sticky box reaches its parent's bottom edge.
+        const fadeEnd = Math.max(1, parentBottom - stickyTop - height - travel - 16);
+        const fadeStart = Math.max(historyTop, fadeEnd - vh * 0.25 );
+        const progress = Math.max(0, Math.min(1,
+            (y - fadeStart) / Math.max(1, fadeEnd - fadeStart)
+        ));
+        const eased = progress * progress * (3 - 2 * progress);
 
-    if (
-        !explanation ||
-        !archiveWrap
-    ) {
-        return;
+        explanation.style.setProperty("--explanation-opacity", String(1 - eased));
+        explanation.style.transform = `translate3d(0, ${travel * progress}px, 0)`;
+        explanation.classList.toggle("is-archive-hidden", progress >= 1);
     }
 
+    function schedule() {
+        if (!frame) frame = requestAnimationFrame(update);
+    }
 
-    const observer =
-        new IntersectionObserver(
-            entries => {
-
-                entries.forEach(
-                    entry => {
-
-                        if (
-                            entry.isIntersecting
-                        ) {
-
-                            explanation.classList.add(
-                                "is-archive-hidden"
-                            );
-
-                        }
-                        else {
-
-                            explanation.classList.remove(
-                                "is-archive-hidden"
-                            );
-
-                        }
-
-                    }
-                );
-
-            },
-            {
-                /*
-                 * archive-wrap이 화면에 아주 조금만 들어와도
-                 * explanation이 사라지기 시작.
-                 */
-                threshold:
-                    0.04,
-
-                /*
-                 * 화면 하단보다 살짝 늦게 감지해서
-                 * history 구간에서는 explanation을 유지.
-                 */
-                rootMargin:
-                    "0px 0px -6% 0px"
-            }
-        );
-
-
-    observer.observe(
-        archiveWrap
-    );
-
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    window.addEventListener("pageshow", schedule);
+    reducedMotion.addEventListener("change", schedule);
+    const observer = new ResizeObserver(schedule);
+    observer.observe(explanation);
+    observer.observe(parent);
+    update();
 }
-
 
 
 /* =========================================================

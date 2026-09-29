@@ -366,6 +366,12 @@
         const portrait = profile.querySelector(".image");
         const sentenceWrap = profile.querySelector(".sentence");
         const sentence = sentenceWrap?.querySelector("p");
+        const emailItem = profile.querySelector(".contact-email");
+        const emailLink = emailItem?.querySelector("a");
+        const instagramItem = profile.querySelector(".contact-instagram");
+        const instagramLink = instagramItem?.querySelector("a");
+        const membersItem = profile.querySelector(".contact-members");
+        const membersText = membersItem?.querySelector("span");
 
         const korean =
             designer?.nameKo || "디자이너 정보 없음";
@@ -395,6 +401,50 @@
         if (sentenceWrap) {
             sentenceWrap.hidden = !statement;
         }
+
+        const email = typeof designer?.email === "string"
+            ? designer.email.trim()
+            : "";
+
+        if (emailLink) {
+            emailLink.textContent = email;
+            emailLink.href = email ? `mailto:${email}` : "";
+        }
+
+        if (emailItem) emailItem.hidden = !email;
+
+        const instagram = typeof designer?.instagram === "string"
+            ? designer.instagram.trim()
+            : "";
+        const instagramId = instagram
+            .replace(/^https?:\/\/(?:www\.)?instagram\.com\//i, "")
+            .replace(/^@/, "")
+            .replace(/\/?(?:\?.*)?$/, "");
+
+        if (instagramLink) {
+            instagramLink.textContent = instagramId ? `@${instagramId}` : "";
+            instagramLink.href = instagramId
+                ? `https://www.instagram.com/${encodeURIComponent(instagramId)}/`
+                : "";
+        }
+
+        if (instagramItem) instagramItem.hidden = !instagramId;
+
+        const designerMap = new Map(
+            (Array.isArray(window.DESIGNERS) ? window.DESIGNERS : [])
+                .filter(item => item?.id)
+                .map(item => [String(item.id), item])
+        );
+        const memberNames = (
+            Array.isArray(designer?.teammateIds)
+                ? designer.teammateIds
+                : []
+        )
+            .map(id => designerMap.get(String(id))?.nameKo?.trim())
+            .filter(Boolean);
+
+        if (membersText) membersText.textContent = memberNames.join(", ");
+        if (membersItem) membersItem.hidden = memberNames.length === 0;
 
         if (!portrait) return;
 

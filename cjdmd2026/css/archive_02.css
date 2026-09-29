@@ -278,8 +278,7 @@ img {
     position: relative;
 
     width: 100%;
-    height: var(--hero-height);
-
+    height: calc(var(--hero-height) + 3rem);
     margin-bottom: 12rem;
 }
 
@@ -344,10 +343,9 @@ img {
 
     overflow: visible;
 
-    opacity: 1;
+    opacity: var(--explanation-opacity, 1);
 
-    transition: 0.3s ease;
-    transition: padding-left 1s ;
+    transition: padding-left 1s;
 
     will-change:
         transform,
@@ -357,7 +355,6 @@ img {
 .hero .explanation.is-archive-hidden {
     opacity: 0;
     pointer-events: none;
-    transition: 0.3s ease;
 }
 
 .hero .card .explanation h2 {
@@ -704,7 +701,6 @@ img {
     grid-auto-rows: 72px;
     gap: 1.5rem;
 
-    margin-top: 5rem
 }
 
 
