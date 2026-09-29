@@ -814,6 +814,10 @@ body:has(#slideview:not([hidden])) .footer {
     cursor: pointer;
 }
 
+.view-button img {
+    transform: rotate(90deg);
+}
+
 
 /* ============================== grid view ============================== */
 

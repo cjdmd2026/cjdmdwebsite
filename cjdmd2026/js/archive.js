@@ -1,3 +1,37 @@
+// 참여 학생 이름을 연도별 배열에 입력하세요. 예: ["이름1", "이름2"]
+const STUDENTS_BY_YEAR = {
+    "2021": [],
+    "2022": [],
+    "2023": ["강서윤", "금윤서", "김민지", "김민채", "김윤아", "김윤희", "김정우", "김준호", "김혜인", "민서하", "백선혜", "변민섭", "신유진", "안성준", "안현정", "오소영", "윤선민", "이규민", "이서현", "이수민", "이시윤", "이지민", "이지선", "이지은", "이채은", "이현수", "임경용", "임지원", "장소희", "정주연", "조수아", "차은지", "최지수", "하예원", "하지원", "황인소"],
+    "2024": ["김건우", "김나현", "김동경", "김무경", "김미성", "김채린", "김희진", "박동현", "박소이", "소수화", "손성민", "손유진", "양시원", "윤동혁", "이강현", "이다결", "이상훈", "이지민", "정이봄", "정진서", "조상윤", "최빛나", "홍유리", "홍자현"],
+    "2025": ["강유림", "고현희", "곽초은", "권용우", "김도희", "김루나", "김민정", "김보미", "김선정", "김윤주", "김지수", "김현지", "김현진", "나원호", "노채린", "민유진", "박기연", "박미소", "박서희", "박순후", "박지수", "반상우", "백진주", "서동현", "손예진", "양윤보", "오우진", "오효진", "왕뢰이저", "유은비", "윤정원", "이새연", "이소현", "이연우", "이주연", "이채민", "이채현", "이현서", "임희원", "정예원", "정유민", "조범규", "조서영", "조예리", "최서윤", "최희선", "황서진", "황지원"],
+    "2026": ["고비주", "권민성","김다현", "김도연", "김민재", "김성은", "김주연","김지유", "김지윤", "김하원", "김혜진","남나영", "노민영","민지호","박윤아", "박윤지","손예진", "송승빈", "송유진","안나경", "유혜진", "윤태균","이고은", "이나영", "임종원","조우성", "조은교", "주보민", "주예진","함대연"]
+};
+
+const DEFAULT_STUDENT_YEAR = "2026";
+
+function renderStudents(container, year) {
+    if (!container) return;
+    const entries = STUDENTS_BY_YEAR[year];
+    const names = Array.isArray(entries)
+        ? entries.filter(name => typeof name === "string" && name.trim()).map(name => name.trim())
+        : [];
+    const fragment = document.createDocumentFragment();
+    names.forEach(name => {
+        const item = document.createElement("span");
+        item.className = "student-name";
+        item.setAttribute("role", "listitem");
+        item.textContent = name;
+        fragment.append(item);
+    });
+    container.replaceChildren(fragment);
+    container.setAttribute("role", "list");
+    container.setAttribute("aria-label", year ? `${year}년 참여 학생` : "참여 학생");
+    container.dataset.year = year || "";
+    container.hidden = names.length === 0;
+    container.closest(".explanation")?.classList.toggle("has-students", names.length > 0);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     initHistoryExplanation();
     initTwoStepScroll();
@@ -346,6 +380,13 @@ function initHistoryExplanation() {
             ".history .history-card"
         );
 
+    const studentList = explanation?.querySelector(".student");
+
+    function getStudentYear(card) {
+        return card.dataset.year?.trim() ||
+            card.closest(".history-item")?.querySelector(".history-year")?.textContent.trim() || null;
+    }
+
 
     if (
         !explanation ||
@@ -372,7 +413,7 @@ function initHistoryExplanation() {
      * history-card 구간에 들어왔을 때 사용할 기본 문구
      */
     const historySectionTitle =
-        "과거 전시";
+        "디미디의 흔적";
 
     const historySectionDescription =
         `서로 다른 시선과 고민이 모여 만들어진 지난 전시의 기록을 돌아봅니다.
@@ -417,10 +458,10 @@ function initHistoryExplanation() {
     ===================================================== */
 
     const LEAVE_DURATION =
-        540;
+        140;
 
     const ENTER_DURATION =
-        560;
+        260;
 
     const LINE_STAGGER =
         65;
@@ -437,6 +478,11 @@ function initHistoryExplanation() {
 
     let pendingHistoryMode =
         null;
+
+    let pendingStudentYear = null;
+    let currentStudentYear = DEFAULT_STUDENT_YEAR;
+    let studentAnimation = null;
+    renderStudents(studentList, currentStudentYear);
 
 
     let currentTitle =
@@ -570,6 +616,8 @@ function initHistoryExplanation() {
         const animations =
             [];
 
+        animations.push(animateStudents(1, 0, LEAVE_DURATION));
+
 
         /*
          * 제목:
@@ -696,6 +744,8 @@ function initHistoryExplanation() {
         const animations =
             [];
 
+        animations.push(animateStudents(0, 1, ENTER_DURATION));
+
 
         animations.push(
             animateElement(
@@ -800,9 +850,21 @@ function initHistoryExplanation() {
        Content Update
     ===================================================== */
 
+    function animateStudents(from, to, duration) {
+        if (!studentList || studentList.hidden) return Promise.resolve();
+        studentAnimation?.cancel();
+        studentAnimation = studentList.animate([{ opacity: from }, { opacity: to }], {
+            duration,
+            easing: "ease-out",
+            fill: "forwards"
+        });
+        return studentAnimation.finished.catch(() => {});
+    }
+
     function setContent(
         nextTitle,
-        nextDescription
+        nextDescription,
+        nextStudentYear
     ) {
 
         title.innerHTML =
@@ -812,6 +874,9 @@ function initHistoryExplanation() {
         renderDescriptionLines(
             nextDescription
         );
+
+        renderStudents(studentList, nextStudentYear);
+        currentStudentYear = nextStudentYear;
 
 
         currentTitle =
@@ -830,7 +895,8 @@ function initHistoryExplanation() {
     async function changeExplanation(
         nextTitle,
         nextDescription,
-        nextHistoryMode = null
+        nextHistoryMode = null,
+        nextStudentYear = DEFAULT_STUDENT_YEAR
     ) {
 
         nextTitle =
@@ -845,6 +911,8 @@ function initHistoryExplanation() {
         if (
             nextTitle === currentTitle &&
             nextDescription === currentDescription &&
+            nextStudentYear === currentStudentYear &&
+            (nextHistoryMode === null || nextHistoryMode === explanation.classList.contains("is-history-section")) &&
             !isAnimating
         ) {
             return;
@@ -864,6 +932,8 @@ function initHistoryExplanation() {
             pendingHistoryMode =
                 nextHistoryMode;
 
+            pendingStudentYear = nextStudentYear;
+
             return;
 
         }
@@ -874,6 +944,18 @@ function initHistoryExplanation() {
 
 
         await playLeave();
+
+        // 텍스트가 가려진 동안 도착한 요청은 최신 카드로 바로 교체한다.
+        if (pendingTitle !== null) {
+            nextTitle = pendingTitle;
+            nextDescription = pendingDescription;
+            nextHistoryMode = pendingHistoryMode;
+            nextStudentYear = pendingStudentYear;
+            pendingTitle = null;
+            pendingDescription = null;
+            pendingHistoryMode = null;
+            pendingStudentYear = null;
+        }
 
 
         /*
@@ -906,7 +988,8 @@ function initHistoryExplanation() {
 
         setContent(
             nextTitle,
-            nextDescription
+            nextDescription,
+            nextStudentYear
         );
 
 
@@ -930,6 +1013,8 @@ function initHistoryExplanation() {
             const queuedHistoryMode =
                 pendingHistoryMode;
 
+            const queuedStudentYear = pendingStudentYear;
+
 
             pendingTitle =
                 null;
@@ -940,16 +1025,21 @@ function initHistoryExplanation() {
             pendingHistoryMode =
                 null;
 
+            pendingStudentYear = null;
+
 
             if (
                 queuedTitle !== currentTitle ||
-                queuedDescription !== currentDescription
+                queuedDescription !== currentDescription ||
+                queuedStudentYear !== currentStudentYear ||
+                (queuedHistoryMode !== null && queuedHistoryMode !== explanation.classList.contains("is-history-section"))
             ) {
 
                 changeExplanation(
                     queuedTitle,
                     queuedDescription,
-                    queuedHistoryMode
+                    queuedHistoryMode,
+                    queuedStudentYear
                 );
 
             }
@@ -962,19 +1052,12 @@ function initHistoryExplanation() {
     function restoreExplanation() {
 
         /*
-         * history 구간 안이라면
-         * 원래 첫 문구가 아니라 "과거 전시" 문구로 복귀.
+         * 카드 사이의 여백에서도 마지막 카드 정보를 유지한다.
+         * 기본 설명 복귀는 historyObserver의 구간 이탈 처리에서 맡는다.
          */
         if (
             isHistorySectionActive
         ) {
-
-            changeExplanation(
-                historySectionTitle,
-                historySectionDescription,
-                true
-            );
-
             return;
 
         }
@@ -1006,7 +1089,8 @@ function initHistoryExplanation() {
                     changeExplanation(
                         card.dataset.title,
                         card.dataset.description,
-                        isHistorySectionActive
+                        isHistorySectionActive,
+                        getStudentYear(card)
                     );
 
                 }
@@ -1050,7 +1134,8 @@ function initHistoryExplanation() {
                     changeExplanation(
                         card.dataset.title,
                         card.dataset.description,
-                        isHistorySectionActive
+                        isHistorySectionActive,
+                        getStudentYear(card)
                     );
 
                 }
@@ -1148,7 +1233,8 @@ function initHistoryExplanation() {
                                     changeExplanation(
                                         hoveredHistoryCard.dataset.title,
                                         hoveredHistoryCard.dataset.description,
-                                        true
+                                        true,
+                                        getStudentYear(hoveredHistoryCard)
                                     );
 
                                     return;
@@ -1159,7 +1245,8 @@ function initHistoryExplanation() {
                                 changeExplanation(
                                     historySectionTitle,
                                     historySectionDescription,
-                                    true
+                                    true,
+                                    null
                                 );
 
 
@@ -1781,7 +1868,7 @@ function initHistoryCardReveal() {
 
     const cards =
         document.querySelectorAll(
-            ".history .history-card"
+            ".history .history-item"
         );
 
 
@@ -1995,3 +2082,393 @@ function initExplanationArchiveFade() {
 
 }
 
+
+
+/* =========================================================
+   6. Floating Outline Background
+   Append this block after the existing archive functions.
+========================================================= */
+;(() => {
+    "use strict";
+
+    // Replace these entries with your SVG URLs (relative to the HTML page).
+    const ICON_URLS = [
+        "../assets/images/project/test/icon/team-01-apuchika.svg",
+        "../assets/images/project/test/icon/team-02-ommix.svg",
+        "../assets/images/project/test/icon/team-03-phishing-ttuk.svg",
+        "../assets/images/project/test/icon/team-04-ilkko.svg",
+        "../assets/images/project/test/icon/team-05-kuro.svg",
+        "../assets/images/project/test/icon/team-06-dadeullim.svg",
+        "../assets/images/project/test/icon/team-07-style-lens.svg",
+        "../assets/images/project/test/icon/team-08-geuneuljabi.svg",
+        "../assets/images/project/test/icon/team-09-magmoa.svg",
+        "../assets/images/project/test/icon/team-10-ieoon.svg",
+        "../assets/images/project/test/icon/team-11-byeolungwan.svg",
+        "../assets/images/project/test/icon/team-12-kokorang.svg",
+        "../assets/images/project/test/icon/team-13-effect.svg",
+        "../assets/images/project/test/icon/team-14-jikji-jamboree.svg"
+    ];
+
+    const BACKGROUND = "#ffffff";
+    const LINE_COLOR = "#444444";
+    const STROKE_WIDTH = 1.25;
+    const TILE_HEIGHT_VH = 120;
+    const EDGE_DENSITY_POWER = 1.8;
+    const FLOW_SPEED = 18;
+    const TOUCH_RADIUS = 520;
+    const TOUCH_IMPULSE = 310;
+    const VELOCITY_DRAG = 1.5;
+    const HOST_ID = "cjdmd-floating-outline-background";
+    const BODY_CLASS = "cjdmd-outline-background-active";
+    const SVG_NS = "http://www.w3.org/2000/svg";
+    const SHAPES = "path, rect, circle, ellipse, polygon, polyline, line";
+    const GEOMETRY_ATTRIBUTES = [
+        "d", "x", "y", "x1", "y1", "x2", "y2", "cx", "cy", "r",
+        "rx", "ry", "width", "height", "points", "transform"
+    ];
+
+    async function loadIcon(url) {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`SVG HTTP ${response.status}: ${url}`);
+
+        const document = new DOMParser().parseFromString(await response.text(), "image/svg+xml");
+        const svg = document.documentElement;
+        if (document.querySelector("parsererror") || svg.localName !== "svg") {
+            throw new Error(`Invalid SVG: ${url}`);
+        }
+        return svg;
+    }
+
+    function createPiece(shape, source, index) {
+        const row = Math.floor(index / 2);
+        // Continuous edge-weighted distribution, with no fixed empty band.
+        const sample = ((index + 1) * 0.61803398875) % 1;
+        const edgeInset = 2 + 48 * Math.pow(sample, EDGE_DENSITY_POWER);
+        const x = index % 2 ? 100 - edgeInset : edgeInset;
+        const y = (row * 37 + (index % 2) * 9) % TILE_HEIGHT_VH;
+        const piece = document.createElement("div");
+        piece.className = "piece";
+        const properties = {
+            "--x": `${x}%`,
+            "--y": `${y}vh`,
+            "--size": `${86 + (index * 13) % 70}px`,
+            "--rot": `${((index * 31) % 92) - 46}deg`,
+            "--alpha": `${0.28 + (index % 6) * 0.07}`,
+        };
+        Object.entries(properties).forEach(([name, value]) => piece.style.setProperty(name, value));
+
+        const svg = document.createElementNS(SVG_NS, "svg");
+        svg.setAttribute("viewBox", source.getAttribute("viewBox") || "-14 -14 268 268");
+        svg.setAttribute("aria-hidden", "true");
+        svg.setAttribute("focusable", "false");
+        const outline = document.createElementNS(SVG_NS, shape.localName);
+        GEOMETRY_ATTRIBUTES.forEach(name => {
+            if (shape.hasAttribute(name)) outline.setAttribute(name, shape.getAttribute(name));
+        });
+
+        // Preserve the source geometry without importing its styles or animation.
+        let branch = outline;
+        for (let parent = shape.parentElement; parent && parent !== source; parent = parent.parentElement) {
+            if (!parent.hasAttribute("transform")) continue;
+            const group = document.createElementNS(SVG_NS, "g");
+            group.setAttribute("transform", parent.getAttribute("transform"));
+            group.append(branch);
+            branch = group;
+        }
+        svg.append(branch);
+        piece.append(svg);
+        return piece;
+    }
+
+    function createFlow(host) {
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+        const particles = new Map();
+        const pointers = new Map();
+        let width = host.clientWidth;
+        let height = host.clientHeight;
+        let frame = 0;
+        let lastTime = null;
+        let elapsed = 0;
+
+        function paint(particle, hostTop) {
+            const margin = particle.size;
+            const screenY = particle.y + hostTop;
+            const visible = screenY > -margin && screenY < window.innerHeight + margin;
+            if (visible !== particle.visible) {
+                particle.element.style.visibility = visible ? "visible" : "hidden";
+                particle.visible = visible;
+            }
+            if (visible) {
+                particle.element.style.transform = `translate3d(${particle.x}px, ${particle.y}px, 0) translate(-50%, -50%) rotate(${particle.angle}deg)`;
+            }
+        }
+
+        function render() {
+            const hostTop = host.getBoundingClientRect().top;
+            particles.forEach(particle => paint(particle, hostTop));
+        }
+
+        function tick(time) {
+            frame = 0;
+            if (!host.isConnected || document.hidden || reducedMotion.matches) {
+                lastTime = null;
+                return;
+            }
+            const dt = lastTime === null ? 0 : Math.min((time - lastTime) / 1000, 0.05);
+            lastTime = time;
+            elapsed += dt;
+            const drag = Math.exp(-VELOCITY_DRAG * dt);
+            const hostTop = host.getBoundingClientRect().top;
+
+            particles.forEach(particle => {
+                const flowX = FLOW_SPEED * 0.65 * Math.sin(particle.y * 0.0015 + elapsed * 0.12 + particle.phase);
+                const flowY = -FLOW_SPEED * (0.65 + 0.35 * Math.cos(particle.x * 0.002 + elapsed * 0.09 + particle.phase));
+                // Damp velocity only. Position has no spring or return target.
+                particle.vx = flowX + (particle.vx - flowX) * drag;
+                particle.vy = flowY + (particle.vy - flowY) * drag;
+                particle.x += particle.vx * dt;
+                particle.y += particle.vy * dt;
+                particle.angle = (particle.angle + particle.spin * dt) % 360;
+
+                // Re-enter from the opposite boundary only after leaving the document.
+                const margin = particle.size * 1.5;
+                if (particle.x < -margin) particle.x += width + margin * 2;
+                if (particle.x > width + margin) particle.x -= width + margin * 2;
+                if (particle.y < -margin) particle.y += height + margin * 2;
+                if (particle.y > height + margin) particle.y -= height + margin * 2;
+                paint(particle, hostTop);
+            });
+            frame = requestAnimationFrame(tick);
+        }
+
+        function syncMotion() {
+            if (frame) cancelAnimationFrame(frame);
+            frame = 0;
+            lastTime = null;
+            pointers.clear();
+            render();
+            if (!document.hidden && !reducedMotion.matches && host.isConnected) {
+                frame = requestAnimationFrame(tick);
+            }
+        }
+
+        function scatter(clientX, clientY, strength) {
+            if (document.hidden || reducedMotion.matches || !host.isConnected) return;
+            const radius = Math.min(TOUCH_RADIUS, Math.max(260, window.innerWidth * 0.4));
+            particles.forEach(particle => {
+                if (!particle.visible) return;
+                const bounds = particle.shape.getBoundingClientRect();
+                if (bounds.bottom < 0 || bounds.top > window.innerHeight ||
+                    bounds.right < 0 || bounds.left > window.innerWidth) return;
+                const dx = bounds.left + bounds.width / 2 - clientX;
+                const dy = bounds.top + bounds.height / 2 - clientY;
+                const distance = Math.hypot(dx, dy);
+                if (distance >= radius) return;
+                const falloff = Math.pow(1 - distance / radius, 1.4);
+                const angle = distance < 1 ? particle.phase : Math.atan2(dy, dx);
+                particle.vx += Math.cos(angle) * TOUCH_IMPULSE * falloff * strength;
+                particle.vy += Math.sin(angle) * TOUCH_IMPULSE * falloff * strength;
+                const limit = Math.min(1, TOUCH_IMPULSE * 2 / (Math.hypot(particle.vx, particle.vy) || 1));
+                particle.vx *= limit;
+                particle.vy *= limit;
+            });
+        }
+
+        document.addEventListener("pointerdown", event => {
+            if (event.button !== 0) return;
+            pointers.set(event.pointerId, { x: event.clientX, y: event.clientY, time: performance.now() });
+            scatter(event.clientX, event.clientY, 1);
+        }, { passive: true, capture: true });
+        document.addEventListener("pointermove", event => {
+            const pointer = pointers.get(event.pointerId);
+            if (!pointer) return;
+            const time = performance.now();
+            if (time - pointer.time < 70 || Math.hypot(event.clientX - pointer.x, event.clientY - pointer.y) < 6) return;
+            pointers.set(event.pointerId, { x: event.clientX, y: event.clientY, time });
+            scatter(event.clientX, event.clientY, 0.3);
+        }, { passive: true, capture: true });
+        const release = event => pointers.delete(event.pointerId);
+        document.addEventListener("pointerup", release, { passive: true, capture: true });
+        document.addEventListener("pointercancel", release, { passive: true, capture: true });
+        document.addEventListener("visibilitychange", syncMotion);
+        reducedMotion.addEventListener("change", syncMotion);
+        window.addEventListener("scroll", () => {
+            if (reducedMotion.matches) render();
+        }, { passive: true });
+        window.addEventListener("pagehide", () => {
+            if (frame) cancelAnimationFrame(frame);
+            frame = 0;
+            lastTime = null;
+            pointers.clear();
+        });
+        window.addEventListener("pageshow", syncMotion);
+        syncMotion();
+
+        return {
+            addStage(stage, row, rowCount) {
+                const hostTop = host.getBoundingClientRect().top;
+                stage.querySelectorAll(".piece").forEach((element, index) => {
+                    const phase = (index + row * stage.childElementCount) * 2.3999632297;
+                    const particle = {
+                        element, stage, shape: element.querySelector(SHAPES), phase,
+                        x: parseFloat(element.style.getPropertyValue("--x")) / 100 * width,
+                        y: (row + parseFloat(element.style.getPropertyValue("--y")) / TILE_HEIGHT_VH) * height / rowCount,
+                        size: parseFloat(element.style.getPropertyValue("--size")),
+                        angle: parseFloat(element.style.getPropertyValue("--rot")),
+                        spin: (index % 2 ? 1 : -1) * (0.7 + (index % 5) * 0.22),
+                        vx: FLOW_SPEED * 0.4 * Math.sin(phase),
+                        vy: -FLOW_SPEED * 0.7,
+                        visible: null
+                    };
+                    particles.set(element, particle);
+                    paint(particle, hostTop);
+                });
+            },
+            removeStage(stage) {
+                particles.forEach((particle, element) => {
+                    if (particle.stage === stage) particles.delete(element);
+                });
+            },
+            resize() {
+                const nextWidth = host.clientWidth;
+                const nextHeight = host.clientHeight;
+                particles.forEach(particle => {
+                    particle.x *= nextWidth / Math.max(1, width);
+                    particle.y *= nextHeight / Math.max(1, height);
+                });
+                width = nextWidth;
+                height = nextHeight;
+                render();
+            }
+        };
+    }
+
+    async function initFloatingOutlineBackground() {
+        if (document.getElementById(HOST_ID)) return;
+
+        const pageStyle = document.createElement("style");
+        pageStyle.textContent = `
+            body.${BODY_CLASS} {
+                position: relative;
+                min-height: 100vh;
+                isolation: isolate;
+                background: ${BACKGROUND};
+            }
+        `;
+        document.head.append(pageStyle);
+        document.body.classList.add(BODY_CLASS);
+
+        const host = document.createElement("div");
+        host.id = HOST_ID;
+        host.setAttribute("aria-hidden", "true");
+        host.setAttribute("inert", "");
+        host.style.cssText = `position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:${BACKGROUND};`;
+        // Shadow DOM keeps the site's generic SVG/div styles out of the effect.
+        const root = host.attachShadow({ mode: "open" });
+        const style = document.createElement("style");
+        style.textContent = `
+            *, *::before, *::after { box-sizing: border-box; pointer-events: none; }
+            .stage { position: absolute; inset: 0; }
+            .center-fade {
+                position: absolute;
+                inset: 0;
+                /* Fade continuously toward the center rather than clipping a band. */
+                mask-image: linear-gradient(to right,
+                    #000 0%, rgba(0, 0, 0, 0.82) 18%,
+                    rgba(0, 0, 0, 0.46) 30%, rgba(0, 0, 0, 0.12) 42%,
+                    transparent 50%,
+                    rgba(0, 0, 0, 0.12) 58%, rgba(0, 0, 0, 0.46) 70%,
+                    rgba(0, 0, 0, 0.82) 82%, #000 100%);
+                -webkit-mask-image: linear-gradient(to right,
+                    #000 0%, rgba(0, 0, 0, 0.82) 18%,
+                    rgba(0, 0, 0, 0.46) 30%, rgba(0, 0, 0, 0.12) 42%,
+                    transparent 50%,
+                    rgba(0, 0, 0, 0.12) 58%, rgba(0, 0, 0, 0.46) 70%,
+                    rgba(0, 0, 0, 0.82) 82%, #000 100%);
+            }
+            .piece {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: min(var(--size), 22vw);
+                aspect-ratio: 1;
+                opacity: var(--alpha);
+                color: ${LINE_COLOR};
+                transform: translate(-50%, -50%) rotate(var(--rot));
+                will-change: transform;
+            }
+            .piece:nth-child(7n) { opacity: calc(var(--alpha) * 0.72); }
+            svg { display: block; width: 100%; height: 100%; overflow: visible; }
+            :is(${SHAPES}) {
+                fill: none;
+                stroke: currentColor;
+                stroke-width: ${STROKE_WIDTH}px;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+                vector-effect: non-scaling-stroke;
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .piece { will-change: auto; }
+            }
+        `;
+        const centerFade = document.createElement("div");
+        centerFade.className = "center-fade";
+        root.append(style, centerFade);
+        document.body.prepend(host);
+
+        const urls = ICON_URLS.filter(url => typeof url === "string" && url.trim());
+        const results = await Promise.allSettled(urls.map(loadIcon));
+        const fragment = document.createDocumentFragment();
+        let index = 0;
+        results.forEach((result, iconIndex) => {
+            if (result.status === "rejected") {
+                console.warn("[Floating outline]", urls[iconIndex], result.reason);
+                return;
+            }
+            const svg = result.value;
+            svg.querySelectorAll(SHAPES).forEach(shape => {
+                if (shape.closest("defs, clipPath, mask, symbol, pattern, marker")) return;
+                fragment.append(createPiece(shape, svg, index++));
+            });
+        });
+        const template = document.createElement("div");
+        template.className = "stage";
+        template.append(fragment);
+        if (!index) return;
+
+        // Repeat along the document so scrolling never reaches an empty background.
+        const stages = [];
+        const flow = createFlow(host);
+
+        function syncStages() {
+            flow.resize();
+            const tileHeight = window.innerHeight * TILE_HEIGHT_VH / 100;
+            const count = Math.max(1, Math.ceil(host.clientHeight / Math.max(1, tileHeight)));
+            while (stages.length < count) {
+                const stage = template.cloneNode(true);
+                centerFade.append(stage);
+                flow.addStage(stage, stages.length, count);
+                stages.push(stage);
+            }
+            while (stages.length > count) {
+                const stage = stages.pop();
+                flow.removeStage(stage);
+                stage.remove();
+            }
+        }
+
+        syncStages();
+        const sizeObserver = new ResizeObserver(syncStages);
+        sizeObserver.observe(host);
+        window.addEventListener("resize", syncStages, { passive: true });
+    }
+
+    const start = () => initFloatingOutlineBackground().catch(error => {
+        console.warn("[Floating outline]", error);
+    });
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", start, { once: true });
+    } else {
+        start();
+    }
+})();

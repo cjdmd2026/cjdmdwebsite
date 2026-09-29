@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 현재 디자이너 목록 HTML 기준 경로입니다.
     // 예: designer/index_02.html → designer/detail/designer-detail.html
     // 실제 상세 HTML 위치가 다르면 아래 한 줄만 수정하세요.
-    const DESIGNER_DETAIL_PATH = "./designer-detail/designer-detail.html";
+    const DESIGNER_DETAIL_PATH = "./profile/";
 
     // =========================================================
     // DOM
