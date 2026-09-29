@@ -403,8 +403,52 @@
 
     (() => {
         "use strict";
-        let writerFrame=0,writerTimer=0;
-        function clearWriterQueue(){cancelAnimationFrame(writerFrame);clearTimeout(writerTimer);}
+        let writerFrame=0,writerTimer=0,infoRevealCleanup=null;
+        function clearWriterQueue(){
+            cancelAnimationFrame(writerFrame);
+            clearTimeout(writerTimer);
+            infoRevealCleanup?.();
+            infoRevealCleanup=null;
+        }
+        function revealProjectInfo(projectInfo,animate){
+            if(!projectInfo)return;
+
+            projectInfo.classList.remove('is-visible');
+            void projectInfo.offsetWidth;
+
+            if(!animate||matchMedia('(prefers-reduced-motion: reduce)').matches){
+                projectInfo.classList.add('is-visible');
+                return;
+            }
+
+            const activeTitle=document.querySelector(
+                '.project-dial-item.is-active .project-dial-title'
+            );
+            let done=false,fallbackTimer=0;
+            const cleanup=()=>{
+                activeTitle?.removeEventListener('animationstart',onTitleRevealStart);
+                clearTimeout(fallbackTimer);
+            };
+            const show=()=>{
+                if(done)return;
+                done=true;
+                cleanup();
+                requestAnimationFrame(()=>projectInfo.classList.add('is-visible'));
+            };
+            const onTitleRevealStart=event=>{
+                if(event.animationName!=='project-dial-title-reveal')return;
+                clearTimeout(fallbackTimer);
+                fallbackTimer=window.setTimeout(show,300);
+            };
+
+            if(activeTitle){
+                activeTitle.addEventListener('animationstart',onTitleRevealStart);
+                fallbackTimer=window.setTimeout(show,2400);
+                infoRevealCleanup=cleanup;
+            }else{
+                show();
+            }
+        }
         // =========================================================
         // PROJECTS 데이터
         // =========================================================
@@ -592,10 +636,9 @@
                 document.querySelector(
                     ".worker"
                 );
-            const description =
-                document.querySelector(
-                    ".slide-description p"
-                );
+            const description = document.querySelector(
+                ".project-description .project-info-block:first-child p"
+            );
             // =====================================================
             // 기존 Writer 중지
             // =====================================================
@@ -606,11 +649,6 @@
                 if (titleGroup) {
                     window.TypewriterEffect.cancel(
                         titleGroup
-                    );
-                }
-                if (description) {
-                    window.TypewriterEffect.cancel(
-                        description
                     );
                 }
             }
@@ -631,6 +669,9 @@
                 description.textContent =
                     project.description;
             }
+            const projectInfo = description?.closest(
+                ".project-info"
+            );
             // =====================================================
             // Writer 다시 실행
             // =====================================================
@@ -645,19 +686,10 @@
                                 titleGroup
                             );
                         }
-                        if (description) {
-                            writerTimer=window.setTimeout(
-                                () => {
-                                    window.TypewriterEffect.replay(
-                                        description
-                                    );
-                                },
-                                120
-                            );
-                        }
                     }
                 );
             }
+            revealProjectInfo(projectInfo,animate);
         }
         // =========================================================
         // Grid 제목
@@ -676,21 +708,12 @@
                 document.querySelector(
                     ".worker"
                 );
-            const description =
-                document.querySelector(
-                    ".slide-description p[typewriter-effect]"
-                );
             if (
                 window.TypewriterEffect
             ) {
                 if (titleGroup) {
                     window.TypewriterEffect.cancel(
                         titleGroup
-                    );
-                }
-                if (description) {
-                    window.TypewriterEffect.cancel(
-                        description
                     );
                 }
             }
@@ -1161,9 +1184,37 @@
                 from { clip-path:inset(0 100% 0 0); }
                 to { clip-path:inset(0 0 0 0); }
             }
+            html[data-project-fluid-view="slide"] .project-info {
+                opacity:0;
+                transform:translateX(-32px);
+                clip-path:inset(0 100% 0 0);
+                will-change:transform,opacity,clip-path;
+            }
+            html[data-project-fluid-view="slide"] .project-info.is-visible {
+                animation:project-info-reveal 700ms cubic-bezier(.22,1,.36,1) both;
+            }
+            @keyframes project-info-reveal {
+                from {
+                    opacity:0;
+                    transform:translateX(-32px);
+                    clip-path:inset(0 100% 0 0);
+                }
+                to {
+                    opacity:1;
+                    transform:translateX(0);
+                    clip-path:inset(0 0 0 0);
+                }
+            }
             @media (prefers-reduced-motion:reduce) {
                 html[data-project-fluid-view="slide"] .project-dial-item.is-active:not(.has-project-icon) .project-dial-title,
                 html[data-project-fluid-view="slide"] .project-dial-item.is-active.has-project-icon.is-icon-loaded .project-dial-title {
+                    animation:none;
+                }
+                html[data-project-fluid-view="slide"] .project-info,
+                html[data-project-fluid-view="slide"] .project-info.is-visible {
+                    opacity:1;
+                    transform:none;
+                    clip-path:none;
                     animation:none;
                 }
             }

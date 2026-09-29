@@ -617,10 +617,10 @@ body:has(#slideview:not([hidden])) .header .nav ul li {
 .project-info {
     position: absolute;
 
-    right: 6rem;
-    bottom: 12vh;
+    left: 13rem;
+    top: 58vh;
 
-    width: clamp(220px, 16vw, 280px);
+    width: 50vw;
 
     display: flex;
     flex-direction: column;
@@ -628,7 +628,7 @@ body:has(#slideview:not([hidden])) .header .nav ul li {
 }
 
 .project-info-block {
-    font-size: clamp(1.25rem, 0.8vw, 1.5rem);
+    font-size: clamp(1rem, 0.8vw, 1.25rem);
     line-height: 1.6;
     font-weight: 400;
 
