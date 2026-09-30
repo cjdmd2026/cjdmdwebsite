@@ -1,0 +1,228 @@
+/* Load this file after countdown.css. */
+
+@media (max-width: 768px) {
+    :root {
+        --mobile-gutter: clamp(1rem, 5vw, 1.5rem);
+    }
+
+    html,
+    body {
+        width: 100%;
+        min-height: 100%;
+        overflow-x: hidden;
+        overscroll-behavior: none;
+    }
+
+    body {
+        min-height: 100dvh;
+    }
+
+    .main,
+    .hero-section {
+        min-height: 100svh;
+    }
+
+    .hero-section {
+        height: var(--mobile-viewport-height, 100dvh);
+        align-items: stretch;
+        isolation: isolate;
+    }
+
+    .three-canvas {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        touch-action: pan-y;
+    }
+
+    .hero-content {
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: max(1rem, env(safe-area-inset-top)) var(--mobile-gutter)
+            calc(17rem + env(safe-area-inset-bottom));
+        pointer-events: none;
+    }
+
+    .main .d-day {
+        position: relative;
+        inset: auto;
+        transform: none;
+        align-items: baseline;
+        justify-content: center;
+        width: min(88vw, 31rem);
+        min-height: clamp(8.5rem, 37vw, 12rem);
+    }
+
+    .main .d-day h1 {
+        font-size: clamp(3.25rem, 18vw, 6rem);
+        line-height: 0.9;
+        letter-spacing: 0;
+        white-space: nowrap;
+    }
+
+    .main .info {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 40vh;
+        padding: 0 var(--mobile-gutter)
+            calc(max(1rem, env(safe-area-inset-bottom)));
+        transform: none;
+        color: var(--color-white);
+    }
+
+    .main .info hr {
+        width: 100%;
+        margin: 0 0 2rem;
+        border: 0;
+        border-top: 1px solid currentColor;
+        opacity: 0.24;
+    }
+
+    .main .info .container {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas:
+            "title icons"
+            "date date"
+            "venue venue";
+        width: 100%;
+        gap: 0.75rem 1rem;
+        align-items: end;
+        opacity: 1;
+    }
+
+    .main .info .textbox {
+        grid-area: title;
+    }
+
+    .main .info .date {
+        grid-area: date;
+        display: grid;
+        grid-template-columns: 3.25rem minmax(0, 1fr);
+        gap: 0.75rem;
+        align-items: baseline;
+
+        margin-top: 13rem;
+    }
+
+    .main .info .venue {
+        grid-area: venue;
+        display: grid;
+        grid-template-columns: 3.25rem minmax(0, 1fr);
+        gap: 0.75rem;
+        align-items: start;
+    }
+
+    .main .info .icons {
+        grid-area: icons;
+        align-self: start;
+        gap: 0.625rem;
+    }
+
+    .main .info h3,
+    .main .info h4,
+    .main .info .container .venue a {
+        letter-spacing: 0;
+    }
+
+    .main .info h3 {
+        font-size: clamp(0.875rem, 3.6vw, 1rem);
+        line-height: 1.3;
+    }
+
+    .main .info h4 {
+        font-size: 0.6875rem;
+        line-height: 1.35;
+    }
+
+    .main .info .container .venue a {
+        display: inline-block;
+        min-width: 0;
+        font-size: clamp(0.8125rem, 3.35vw, 0.9375rem);
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.18em;
+    }
+
+    .main .info .icons a {
+        display: grid;
+        width: 2.5rem;
+        height: 2.5rem;
+        place-items: center;
+        border-radius: 50%;
+        touch-action: manipulation;
+    }
+
+    .icon {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+    @media (hover: none) {
+        .main .info .icons a:hover,
+        .main .info .container .venue a:hover {
+            opacity: 1;
+            transform: none;
+        }
+
+        .main .info .icons a:active,
+        .main .info .container .venue a:active {
+            opacity: 0.45;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-content {
+        padding-bottom: calc(18rem + env(safe-area-inset-bottom));
+    }
+
+    .main .info .container {
+        gap: 0.625rem 0.75rem;
+    }
+
+    .main .info .textbox h4 {
+        max-width: 18rem;
+    }
+
+    .main .info .date,
+    .main .info .venue {
+        grid-template-columns: 2.875rem minmax(0, 1fr);
+        gap: 0.625rem;
+    }
+}
+
+@media (max-height: 620px) and (max-width: 768px) {
+    .hero-content {
+        padding-bottom: calc(14.5rem + env(safe-area-inset-bottom));
+    }
+
+    .main .d-day {
+        min-height: 6.5rem;
+    }
+
+    .main .d-day h1 {
+        font-size: clamp(2.75rem, 15vw, 4.5rem);
+    }
+
+    .main .info .container {
+        gap: 0.45rem 0.75rem;
+    }
+
+    .main .info hr {
+        margin-bottom: 0.6rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-content,
+    .main .info .icons a,
+    .main .info .container .venue a {
+        transition: none !important;
+    }
+}
