@@ -343,7 +343,7 @@ img {
 
 .contact-list {
     display: grid;
-    gap: 1rem;
+    gap: 0.5rem;
 
     margin: 0;
     padding: 0;
