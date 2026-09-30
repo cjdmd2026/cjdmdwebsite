@@ -52,6 +52,8 @@
         justify-content: center;
         width: min(88vw, 31rem);
         min-height: clamp(8.5rem, 37vw, 12rem);
+
+        transform: translateY(5rem);
     }
 
     .main .d-day h1 {
