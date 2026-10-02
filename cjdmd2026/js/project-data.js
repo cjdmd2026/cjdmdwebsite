@@ -335,7 +335,7 @@ window.PROJECTS = [
     },
     {
         id: "cocorang",
-        title: "COCO:LANG",
+        title: "COCO LANG",
         members: [
             "김지유",
             "김지윤"
