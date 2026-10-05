@@ -226,8 +226,6 @@ img {
 .header .nav {
     display: flex;
     align-items: center;
-
-    
 }
 
 .header .nav ul {
@@ -237,11 +235,25 @@ img {
 
 .header .nav ul li {
     font-size: 0.95rem;
-    font-weight: 600;
+    font-weight: 500;
     color: rgba(0, 0, 0, 0.7);
 
     font-family: 'Paperozi', sans-serif;
 }
+
+.header .nav ul li a {
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+}
+
+.header .nav ul li a:hover,
+.header .nav ul li a[aria-current="page"] {
+    opacity: 1;
+    font-weight: 600;
+    transition: opacity 0.3s ease;
+}
+
+
 
 /* ============================== Main ==============================
  * Project의 title-section, search-bar, view-buttons 구조를 공통 기반으로 사용합니다.
@@ -1444,3 +1456,78 @@ body.mobile-menu-open:has(.icon-slide-page) { overflow: hidden !important; }
   .formation-slide .interaction { padding-top: 2px; min-height: 34px; }
 }
 @media (prefers-reduced-motion: reduce) { .formation-slide *, .mobile-view-toggle::before { scroll-behavior: auto !important; transition-duration: 0s !important; } }
+
+/* 검색창 위 여백을 Grid View 기준으로 맞춥니다. */
+.icon-slide-page.slide-view > .container {
+    padding-top: calc(100px + 2rem - var(--header-height));
+}
+
+@media (min-width: 760px) {
+    .icon-slide-page.slide-view .designer-heading {
+        /* 그리드 제목의 3rem 글자 × 1.5 줄 높이 */
+        min-height: 4.5rem;
+    }
+}
+
+@media (max-width: 759px) {
+    .icon-slide-page.slide-view > .container {
+        padding-top: 42px;
+    }
+
+    .icon-slide-page.slide-view .designer-heading {
+        gap: 22px;
+    }
+
+    .icon-slide-page.slide-view .designer-heading .textbox {
+        position: relative;
+    }
+
+    .icon-slide-page.slide-view .designer-heading .designer-heading__title--grid {
+        /* 좁은 화면에서 그리드 제목이 두 줄이면 그 높이도 동일하게 확보합니다. */
+        display: block !important;
+        visibility: hidden;
+        font-size: 48px;
+        line-height: 1;
+    }
+
+    .icon-slide-page.slide-view .designer-heading__title--slide {
+        position: absolute;
+        inset: 0;
+        display: flex !important;
+        align-items: center;
+        white-space: nowrap;
+    }
+}
+
+@media (max-height: 500px) and (min-width: 760px) {
+    .icon-slide-page.slide-view > .container {
+        padding-bottom: 0;
+    }
+
+    .icon-slide-page.slide-view .designer-heading {
+        /* 가로 화면의 38px 검색창도 그리드의 45px 검색창과 상단을 맞춥니다. */
+        min-height: calc(4.5rem - 7px);
+    }
+
+    /* 검색창 아래의 빈 공간과 하단 보조 버튼 여백을 줄여 정보 카드 높이를 확보합니다. */
+    .icon-slide-page.slide-view .formation-slide {
+        margin-top: calc((45px - 4.5rem) / 2);
+        padding-top: 0;
+    }
+
+    .icon-slide-page.slide-view .interaction {
+        padding-top: 0;
+        min-height: 20px;
+    }
+
+    .icon-slide-page.slide-view .control {
+        min-height: 20px;
+        padding-block: 0;
+        font-size: 10px;
+    }
+}
+
+/* 하단 안내 및 조절 UI를 레이아웃과 키보드 탐색에서 제외합니다. */
+.icon-slide-page .formation-slide .interaction {
+    display: none !important;
+}

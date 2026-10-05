@@ -7,7 +7,7 @@
      * 각 학생의 projectIds에 아래 projectId가 있으면 해당 아이콘에 표시됩니다.
      * 예: projectIds: ["year-on"] → YEAR-ON 아이콘.
      * 아이콘 파일/프로젝트 설명 변경: 아래 ICON_PROJECTS에서 수정합니다.
-     * 클릭 후 학생 옆의 색상 조각 변경: 해당 프로젝트의 studentColors에서 수정합니다.
+     * 클릭 후 학생 옆의 색상 조각 변경: 해당 프로젝트의 studentColors에서 수정합니다.ㅁ
      * "학생 ID": "SVG의 색상 코드" 형식이며, 이름/카드 순서는 바뀌지 않습니다.
      * 두 학생의 조각을 맞바꾸려면 두 색상 값을 서로 교환하세요.
      * 같은 SVG 안의 색상을 사용하고, 하나의 색상을 여러 학생에게 중복 지정하지 마세요.
@@ -16,6 +16,8 @@
      */
     const scriptURL = document.currentScript?.src || new URL('../js/designer-icon-slide.js', document.baseURI).href;
     const iconBaseURL = new URL('../assets/images/project/test/icon/', scriptURL);
+    // 디자이너 목록 HTML 기준 상세 페이지 경로입니다. 개별 주소는 designer-data.js의 href로 지정합니다.
+    const DESIGNER_DETAIL_PATH = './profile/';
     const ICON_PROJECTS = [
         {
             "projectId": "apuchika",
@@ -165,7 +167,11 @@
     ];
 
     // wordScale: 결합 글자 크기. 1이 기본이며 현재는 0.88배입니다.
-    const SETTINGS = { wordScale: .88, columns: 56, minimumSpacing: 8.5, iconScale: 1.55, spring: .024, damping: .82, pointerRadius: 82 };
+    // wordCenterY: 초기 글자의 화면 내 중심 높이. 0.5 = 화면 중앙, 작은 값 = 위쪽.
+    // gallerySpreadX/Y: 펼쳐진 아이콘의 가로/세로 간격. 작을수록 중앙에 모입니다.
+    // galleryMobileSpreadX/Y: 750px 미만 화면의 간격. 아이콘 크기와 랜덤 순서는 유지합니다.
+    // galleryFloatX/Y: 떠다니는 최대 거리(px), galleryFloatSpeed: 속도, galleryHoverScale: 호버 배율.
+    const SETTINGS = { galleryFloatX: 6, galleryFloatY: 8, galleryFloatSpeed: .75, galleryHoverScale: 1.08, gallerySpreadX: .78, gallerySpreadY: .8, galleryMobileSpreadX: .9, galleryMobileSpreadY: .86, wordScale: .88, wordCenterY: .5, columns: 56, minimumSpacing: 8.5, iconScale: 1.55, spring: .024, damping: .82, pointerRadius: 82 };
     const canvas = document.getElementById("formation");
     if (!canvas || !document.getElementById("scrollScene")) return;
     if (!Array.isArray(window.DESIGNERS)) { console.error("designer-data.js를 먼저 연결해 주세요."); return; }
@@ -192,7 +198,13 @@
     let sprites = [], fragments = [], fragmentRows = [], particles = [], maskImage, width = 0, height = 0, spacing = 20;
     let paused = false, raf = 0, previousTime = 0, until = 0, loaded = false;
     let spread = 0, scrollTarget = 0, spreadSlots = [], lastDraw = [];
-    let idleTime = 0;
+    let galleryOrder = source.map((_, team) => team);
+    let galleryOffsets = source.map(() => ({ x: 0, y: 0 }));
+    let galleryShuffleArmed = true, galleryRevision = 0;
+    let idleTime = 0, galleryTime = 0;
+    let hoveredTeam = -1, focusedTeam = -1;
+    const galleryHover = source.map(() => 0), detailOrigins = source.map(() => null);
+    let wordShiftY = 0;
     let selectedTeam = -1;
     let viewActive = scene.classList.contains("slide-view"), savedProgress = 0, filterActive = false, resultCount = window.DESIGNERS.length;
     let visibleTeams = source.map(() => true);
@@ -207,6 +219,31 @@
     const lerp = (a, b, t) => a + (b - a) * t;
     const smooth = (a, b, value) => { const t = clamp((value - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
     const idleActive = () => viewActive && !paused && !motionReduced && !document.hidden && spread < .16;
+    const galleryIdleActive = () => viewActive && !paused && !motionReduced && !document.hidden && spread > .86 && visibleTeams.some(Boolean) && selectedTeam < 0 && !detailProgress.some(value => value > 0);
+    function hoverTarget(team) {
+      return viewActive && spread >= .995 && scrollTarget >= .995 && selectedTeam < 0 && visibleTeams[team] && (hoveredTeam === team || focusedTeam === team) ? 1 : 0;
+    }
+    function refreshGalleryHover() {
+      if (paused || motionReduced) {
+        galleryHover.forEach((_, team) => { galleryHover[team] = hoverTarget(team); });
+        draw();
+      } else wake(450);
+    }
+    function resetGalleryHover() {
+      hoveredTeam = focusedTeam = -1;
+      refreshGalleryHover();
+    }
+    function galleryPose(team) {
+      const slot = spreadSlots[team];
+      const weight = motionReduced ? 0 : smooth(.88, 1, spread);
+      const amplitude = Math.min(1, slot.size / 100);
+      const phase = galleryTime * SETTINGS.galleryFloatSpeed * (.85 + (team % 5) * .07);
+      const x = slot.x + Math.sin(phase * .83 + team * 2.39996) * SETTINGS.galleryFloatX * amplitude * weight;
+      const y = slot.y + Math.sin(phase + team * 1.61803) * SETTINGS.galleryFloatY * amplitude * weight;
+      const size = slot.size * lerp(1, SETTINGS.galleryHoverScale, galleryHover[team]);
+      const origin = detailOrigins[team], locked = origin ? smooth(0, .2, detailProgress[team]) : 0;
+      return { x: lerp(x, origin?.x ?? x, locked), y: lerp(y, origin?.y ?? y, locked), size: lerp(size, origin?.size ?? size, locked) };
+    }
     const loadImage = (src) => new Promise((resolve, reject) => {
       const image = new Image();
       image.onload = () => resolve(image);
@@ -292,12 +329,80 @@
       let next = 0;
       return rows.map(row => row >= 0 ? row : freeRows[next++]);
     }
+    // 한 번의 휠/스와이프로 글자와 아이콘 정렬 화면 사이를 이동합니다.
+    // duration: 이동 시간(ms), wheelThreshold: 휠 감도(px), swipeThreshold: 스와이프 거리(px).
+    const SCROLL_STEP = { duration: 850, wheelThreshold: 60, wheelIdle: 220, swipeThreshold: 42 };
+    let stepRaf = 0, stepDestination = null;
+    let wheelTotal = 0, wheelDirection = 0, lastWheelAt = 0, wheelConsumed = false;
+    let touchGesture = null;
+    function cancelStep() {
+      cancelAnimationFrame(stepRaf); stepRaf = 0; stepDestination = null;
+    }
+    function resetGestures() {
+      wheelTotal = 0; wheelDirection = 0; lastWheelAt = 0; wheelConsumed = false; touchGesture = null;
+    }
+    function acceptsStep(target) {
+      if (!loaded || !viewActive || window.DesignerReturnState?.restoring || document.body.classList.contains('mobile-menu-open')) return false;
+      const element = target instanceof Element ? target : document.activeElement;
+      if (element?.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"], .mobile-menu, [role="dialog"]')) return false;
+      // 독립적으로 스크롤되는 내용은 해당 영역의 기본 동작을 유지합니다.
+      for (let node = element; node && node !== scene && node !== document.body; node = node.parentElement) {
+        if (node.scrollHeight > node.clientHeight + 1 && /auto|scroll/.test(getComputedStyle(node).overflowY)) return false;
+      }
+      const box = scene.getBoundingClientRect();
+      return box.top < innerHeight / 2 && box.bottom > innerHeight / 2;
+    }
+    function stepInDirection(direction) {
+      if (stepDestination === null) scrollToState(direction > 0);
+    }
+    function onStepWheel(event) {
+      if (event.defaultPrevented || event.ctrlKey || !event.cancelable || !acceptsStep(event.target)) return;
+      if (!event.deltaY || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+      event.preventDefault();
+      const now = performance.now(), direction = Math.sign(event.deltaY);
+      if (now - lastWheelAt > SCROLL_STEP.wheelIdle) { wheelTotal = 0; wheelConsumed = false; }
+      lastWheelAt = now;
+      // 이동 중 입력과 같은 제스처의 관성 꼬리는 다음 이동으로 이어지지 않습니다.
+      if (stepDestination !== null) { wheelConsumed = true; return; }
+      if (wheelConsumed) return;
+      if (direction !== wheelDirection) wheelTotal = 0;
+      wheelDirection = direction;
+      wheelTotal += Math.abs(event.deltaY) * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? innerHeight : 1);
+      if (wheelTotal >= SCROLL_STEP.wheelThreshold) { wheelConsumed = true; wheelTotal = 0; stepInDirection(direction); }
+    }
+    function onStepTouchStart(event) {
+      touchGesture = event.touches.length === 1 && acceptsStep(event.target)
+        ? { x: event.touches[0].clientX, y: event.touches[0].clientY, consumed: stepDestination !== null } : null;
+    }
+    function onStepTouchMove(event) {
+      if (!touchGesture) return;
+      if (event.touches.length !== 1 || !event.cancelable || !acceptsStep(event.target)) { touchGesture = null; return; }
+      const dx = event.touches[0].clientX - touchGesture.x, dy = touchGesture.y - event.touches[0].clientY;
+      if (Math.abs(dx) > Math.abs(dy)) { touchGesture = null; return; }
+      if (!dy) return;
+      event.preventDefault();
+      if (!touchGesture.consumed && Math.abs(dy) >= SCROLL_STEP.swipeThreshold) {
+        touchGesture.consumed = true; stepInDirection(Math.sign(dy));
+      }
+    }
+    function onStepKey(event) {
+      if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey || !acceptsStep(event.target)) return;
+      if (event.key === ' ' && event.target instanceof Element && event.target.closest('a, button, [role="button"]')) return;
+      const direction = ['ArrowDown', 'PageDown', 'End'].includes(event.key) ? 1
+        : ['ArrowUp', 'PageUp', 'Home'].includes(event.key) ? -1 : event.key === ' ' ? (event.shiftKey ? -1 : 1) : 0;
+      if (!direction) return;
+      event.preventDefault();
+      if (!event.repeat) stepInDirection(direction);
+    }
     function scrollRange() { return Math.max(1, scene.offsetHeight - innerHeight); }
     function readScroll() { return clamp((scrollY - scene.offsetTop) / scrollRange(), 0, 1); }
     function onScroll() {
-      if (!viewActive) return;
+      if (!viewActive || window.DesignerReturnState?.restoring) return;
       scrollTarget = readScroll(); pointer.active = false;
+      if (scrollTarget < .995) resetGalleryHover();
       if (!loaded) return;
+      if (scrollTarget <= .001) galleryShuffleArmed = true;
+      else if (galleryShuffleArmed) { shuffleGallery(); positionSpreadSlots(); }
       if (scrollTarget < .995) closeDetails(false, true);
       // Explicit scrolling remains usable with motion paused or reduced.
       if (paused || motionReduced) { spread = scrollTarget; settle(); draw(); }
@@ -305,8 +410,27 @@
       setHint();
     }
     function scrollToState(expanded) {
+      if (!viewActive) return;
+      cancelStep();
       if (!expanded) closeDetails(false, true);
-      window.scrollTo({ top: scene.offsetTop + (expanded ? scrollRange() : 0), behavior: motionReduced || paused ? "instant" : "smooth" });
+      const target = expanded ? 1 : 0;
+      const destination = () => scene.offsetTop + target * scrollRange();
+      const from = scrollY;
+      if (motionReduced || paused || Math.abs(destination() - from) < 1) {
+        window.scrollTo({ top: destination(), behavior: 'instant' }); onScroll(); return;
+      }
+      stepDestination = target;
+      const started = performance.now();
+      function advance(now) {
+        stepRaf = 0;
+        if (!viewActive) { cancelStep(); return; }
+        const progress = clamp((now - started) / SCROLL_STEP.duration, 0, 1);
+        window.scrollTo({ top: lerp(from, destination(), smooth(0, 1, progress)), behavior: 'instant' });
+        onScroll();
+        if (progress < 1) stepRaf = requestAnimationFrame(advance);
+        else { stepDestination = null; onScroll(); }
+      }
+      stepRaf = requestAnimationFrame(advance);
     }
     function updateToolbar() {
       const opacity = viewActive ? smooth(.12, .68, spread) : 1;
@@ -320,10 +444,12 @@
     }
     function changeFormationView(view) {
       const active = view === 'slide';
+      if (window.DesignerReturnState?.restoring) { viewActive = active; updateToolbar(); return; }
       if (loaded && active === viewActive) { updateToolbar(); return; }
       if (!active) {
-        savedProgress = spread;
-        closeDetails(false, true); viewActive = false; pointer.active = false;
+        savedProgress = stepDestination ?? (spread >= .5 ? 1 : 0);
+        cancelStep(); resetGestures();
+        closeDetails(false, true); viewActive = false; pointer.active = false; resetGalleryHover();
         cancelAnimationFrame(raf); raf = 0;
         window.scrollTo({ top: 0, behavior: 'instant' });
       } else {
@@ -332,6 +458,63 @@
         if (loaded) { layout(); onScroll(); draw(); }
       }
       updateToolbar();
+    }
+    function captureReturnGallery() {
+      if (!loaded) return null;
+      return {
+        order: galleryOrder.map(team => source[team].projectId),
+        offsets: galleryOffsets.map(({ x, y }) => ({ x, y })),
+        progress: viewActive ? (stepDestination ?? scrollTarget) : savedProgress,
+        selectedProject: selectedTeam >= 0 ? source[selectedTeam].projectId : null,
+        revision: galleryRevision, shuffleArmed: galleryShuffleArmed, paused, floatTime: galleryTime
+      };
+    }
+    function restoreReturnGallery(state, view) {
+      cancelStep(); resetGestures(); cancelAnimationFrame(raf); raf = 0;
+      pointer.active = false; pointer.down = false;
+      viewActive = view === 'slide';
+      const progress = Number.isFinite(state?.progress) ? clamp(state.progress, 0, 1) : 0;
+      savedProgress = progress;
+      const indexes = new Map(source.map((project, team) => [project.projectId, team]));
+      if (Array.isArray(state?.order) && state.order.length === source.length && new Set(state.order).size === source.length && state.order.every(id => indexes.has(id))) {
+        galleryOrder = state.order.map(id => indexes.get(id));
+        galleryOffsets = galleryOrder.map((_, slot) => ({
+          x: Number.isFinite(state.offsets?.[slot]?.x) ? clamp(state.offsets[slot].x, -.1, .1) : 0,
+          y: Number.isFinite(state.offsets?.[slot]?.y) ? clamp(state.offsets[slot].y, -.14, .14) : 0
+        }));
+        galleryOrder.forEach(team => iconList.appendChild(iconButtons[team].parentElement));
+      }
+      galleryRevision = Number.isInteger(state?.revision) ? Math.max(0, state.revision) : 0;
+      galleryShuffleArmed = state?.shuffleArmed ?? progress <= .001;
+      paused = !!state?.paused;
+      galleryTime = Number.isFinite(state?.floatTime) ? Math.max(0, state.floatTime) : 0;
+      hoveredTeam = focusedTeam = -1; galleryHover.fill(0); detailOrigins.fill(null);
+      selectedTeam = -1; detailProgress.fill(0);
+      designerPanel.classList.remove('is-open'); designerPanel.hidden = true; designerPanel.inert = true;
+      designerPanel.setAttribute('aria-hidden', 'true');
+      iconButtons.forEach(button => button.setAttribute('aria-expanded', 'false'));
+      if (viewActive) {
+        window.scrollTo({ top: scene.offsetTop + progress * scrollRange(), behavior: 'instant' });
+        layout(); positionSpreadSlots(); spread = scrollTarget = readScroll(); settle(); draw();
+        const team = indexes.get(state?.selectedProject);
+        if (progress >= .995 && team !== undefined && visibleTeams[team]) openDetails(team, false, true);
+      }
+      updateToolbar(); setHint();
+    }
+    function createDesignerLink(member) {
+      const card = document.createElement('a'); card.className = 'formation-person-card';
+      const url = new URL(member.href || DESIGNER_DETAIL_PATH, document.baseURI);
+      url.searchParams.set('id', member.id);
+      card.href = url.href; card.setAttribute('page-transition', '');
+      card.dataset.designerId = member.id;
+      card.setAttribute('aria-label', member.nameKo + ' 상세 페이지 보기');
+      const portrait = document.createElement('img'); portrait.className = 'formation-portrait'; portrait.alt = ''; portrait.src = member.image;
+      const copy = document.createElement('span'); copy.className = 'formation-copy';
+      const name = document.createElement('span'); name.className = 'formation-name'; name.textContent = member.nameKo;
+      const english = document.createElement('span'); english.className = 'formation-name-en'; english.textContent = member.nameEn;
+      const plus = document.createElement('span'); plus.className = 'formation-plus'; plus.setAttribute('aria-hidden', 'true');
+      copy.append(name, english); card.append(portrait, copy, plus);
+      return card;
     }
     function applyDesignerFilter(detail) {
       const ids = new Set(detail.visibleIds);
@@ -342,17 +525,13 @@
       unmappedResults = filterActive ? window.DESIGNERS.filter(member => ids.has(member.id) && !mappedIds.has(member.id)) : [];
       unmappedList.replaceChildren();
       unmappedResults.forEach(member => {
-        const card = document.createElement('button'); card.type = 'button'; card.className = 'formation-person-card'; card.setAttribute('aria-expanded','false'); card.setAttribute('aria-label',member.nameKo+' 프로젝트 정보');
-        const portrait = document.createElement('img'); portrait.className = 'formation-portrait'; portrait.src = member.image; portrait.alt = '';
-        const copy = document.createElement('span'); copy.className = 'formation-copy';
-        const name = document.createElement('span'); name.className = 'formation-name'; name.textContent = member.nameKo;
-        const english = document.createElement('span'); english.className = 'formation-name-en'; english.textContent = member.nameEn;
-        const extra = document.createElement('span'); extra.className = 'formation-extra'; extra.textContent = member.teamName;
-        const plus = document.createElement('span'); plus.className = 'formation-plus'; plus.setAttribute('aria-hidden','true');
-        copy.append(name,english,extra); card.append(portrait,copy,plus); card.addEventListener('click',()=>card.setAttribute('aria-expanded',String(card.getAttribute('aria-expanded')!=='true'))); unmappedList.appendChild(card);
+        unmappedList.appendChild(createDesignerLink(member));
       });
       if (selectedTeam >= 0 && !visibleTeams[selectedTeam]) closeDetails(false, true);
       iconButtons.forEach((button, team) => { button.hidden = !visibleTeams[team]; });
+      if (!visibleTeams[hoveredTeam]) hoveredTeam = -1;
+      if (!visibleTeams[focusedTeam]) focusedTeam = -1;
+      refreshGalleryHover();
       if (loaded && viewActive) { draw(); setHint(); }
     }
     function positionDetails() {
@@ -370,8 +549,8 @@
       const portrait = Math.min(cardHeight * .74, narrow ? 58 : 84);
       Object.entries({ '--piece-space': pieceSpace, '--row-gap': rowGap, '--card-height': cardHeight,
         '--card-padding': Math.max(7, cardHeight * .12), '--card-gap': narrow ? 9 : 16,
-        '--portrait-size': portrait, '--name-size': Math.min(narrow ? 22 : 28, cardHeight * .29),
-        '--en-size': Math.min(narrow ? 12 : 18, cardHeight * .17)
+        '--portrait-size': portrait, '--name-size': Math.min(narrow ? 16 : 22, cardHeight * .29),
+        '--en-size': Math.min(narrow ? 7 : 13, cardHeight * .17)
       }).forEach(([key, value]) => designerPanel.style.setProperty(key, value + 'px'));
       Object.assign(designerPanel.style, { left: left + 'px', top: top + 'px', width: panelWidth + 'px' });
       detailTargets[selectedTeam] = fragments[selectedTeam].map((_, i) => {
@@ -401,39 +580,46 @@
       else if (previous >= 0) wake(850);
       if (loaded) setHint();
     }
-    function openDetails(team, keyboard = false) {
+    function openDetails(team, keyboard = false, immediate = false) {
       if (!viewActive || !visibleTeams[team] || spread < .995 || scrollTarget < .995) return;
       if (selectedTeam === team) { closeDetails(); return; }
-      selectedTeam = team; pointer.active = false;
-      designerPanel.hidden = false;
+      detailOrigins[team] = galleryPose(team);
+      selectedTeam = team; pointer.active = false; resetGalleryHover();
       const profile = profiles[team];
-      designerPanelTitle.textContent = profile.title + ' · ' + profile.members.length + ' DESIGNER' + (profile.members.length > 1 ? 'S' : '');
+      designerPanelTitle.textContent = '';
+      designerPanelTitle.setAttribute('aria-hidden', 'true');
+      designerPanel.removeAttribute('aria-labelledby');
+      designerPanel.setAttribute('aria-label', '디자이너 정보');
       designerRows.replaceChildren();
       profile.members.forEach((member, i) => {
-        const card = document.createElement('button'); card.type = 'button'; card.className = 'formation-person-card';
-        card.style.setProperty('--row', i); card.setAttribute('aria-expanded', 'false');
-        card.setAttribute('aria-label', member.nameKo + ' 프로젝트 정보');
-        const portrait = document.createElement('img'); portrait.className = 'formation-portrait'; portrait.alt = ''; portrait.src = member.image;
-        const copy = document.createElement('span'); copy.className = 'formation-copy';
-        const name = document.createElement('span'); name.className = 'formation-name'; name.textContent = member.nameKo;
-        const english = document.createElement('span'); english.className = 'formation-name-en'; english.textContent = member.nameEn;
-        const extra = document.createElement('span'); extra.className = 'formation-extra'; extra.id = 'formation-extra-' + member.id; extra.textContent = profile.title;
-        const topic = document.createElement('small'); topic.textContent = profile.topic; extra.appendChild(topic);
-        card.setAttribute('aria-controls', extra.id);
-        const plus = document.createElement('span'); plus.className = 'formation-plus'; plus.setAttribute('aria-hidden', 'true');
-        copy.append(name, english, extra); card.append(portrait, copy, plus);
-        card.addEventListener('click', () => card.setAttribute('aria-expanded', String(card.getAttribute('aria-expanded') !== 'true')));
+        const card = createDesignerLink(member);
+        card.style.setProperty('--row', i);
         designerRows.appendChild(card);
       });
       positionDetails();
+      designerPanel.hidden = false;
       designerPanel.inert = false; designerPanel.setAttribute('aria-hidden', 'false'); designerPanel.classList.add('is-open');
       iconButtons.forEach((button, i) => button.setAttribute('aria-expanded', String(i === team)));
-      if (motionReduced || paused) { syncDetailsInstantly(); draw(); } else wake(1100);
+      if (immediate || motionReduced || paused) { syncDetailsInstantly(); draw(); } else wake(1100);
       if (keyboard) designerRows.firstElementChild.focus({ preventScroll: true });
       setHint();
     }
+    function shuffleGallery() {
+      const previous = galleryOrder, next = [...previous];
+      for (let i = next.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [next[i], next[j]] = [next[j], next[i]];
+      }
+      // 우연히 같은 순서가 나오더라도 새로 내려올 때는 다른 배치를 보여줍니다.
+      if (next.length > 1 && next.every((team, i) => team === previous[i])) next.push(next.shift());
+      galleryOrder = next;
+      galleryOffsets = next.map(() => ({ x: random(-.1, .1), y: random(-.14, .14) }));
+      galleryShuffleArmed = false; galleryRevision++;
+      // 화면의 순서와 키보드 탐색 순서만 바꾸고 학생/색상 연결은 유지합니다.
+      galleryOrder.forEach(team => iconList.appendChild(iconButtons[team].parentElement));
+    }
     function makeSpreadSlots() {
-      // Staggered, roomy rows; every icon appears once, in original project order.
+      // 중앙에 모인 범위 안에서 위치를 섞되 아이콘 크기와 최소 간격은 유지합니다.
       const headingBottom = spreadHeading.offsetTop + spreadHeading.offsetHeight;
       const top = Math.min(height * .3, headingBottom + Math.min(26, height * .045));
       const bottom = Math.max(10, Math.min(30, height * .045));
@@ -443,18 +629,38 @@
       else if (width >= 750) rows = [5, 4, 5];
       else if (width >= 500) rows = [4, 3, 4, 3];
       else rows = [3, 3, 3, 3, 2];
-      const cellHeight = availableHeight / rows.length, usableWidth = width * .94;
-      const maxColumns = Math.max(...rows), cellWidth = usableWidth / maxColumns;
-      const size = Math.max(12, Math.min(112, cellWidth * .55, cellHeight * .65));
+      const rowHeight = availableHeight / rows.length, columnWidth = width * .94 / Math.max(...rows);
+      const size = Math.max(12, Math.min(112, columnWidth * .55, rowHeight * .65));
+      const compactX = width < 750 ? SETTINGS.galleryMobileSpreadX : SETTINGS.gallerySpreadX;
+      const compactY = width < 750 ? SETTINGS.galleryMobileSpreadY : SETTINGS.gallerySpreadY;
+      // 무작위 위치 편차(x ±.1, y ±.14)까지 포함해 서로 겹치지 않도록 제한합니다.
+      const cellWidth = Math.min(columnWidth, Math.max(columnWidth * compactX, size / .78));
+      const cellHeight = Math.min(rowHeight, Math.max(rowHeight * compactY, size / .70));
+      const galleryTop = top + (availableHeight - cellHeight * rows.length) / 2;
+      // 떠다니는 거리와 호버 확대까지 확보하고 좁은 화면에서는 위치 편차만 줄입니다.
+      const floatFactor = Math.min(1, size / 100);
+      const jitterRoomX = clamp((cellWidth - size * SETTINGS.galleryHoverScale - 2 * SETTINGS.galleryFloatX * floatFactor) / (cellWidth * .2), 0, 1);
+      const jitterRoomY = clamp((cellHeight - size * SETTINGS.galleryHoverScale - 2 * SETTINGS.galleryFloatY * floatFactor) / (cellHeight * .28), 0, 1);
       const slots = [];
       rows.forEach((columns, row) => {
         for (let col = 0; col < columns; col++) {
           const i = slots.length;
-          slots.push({ x: width / 2 + (col - (columns - 1) / 2) * cellWidth + Math.sin(i * 2.1) * cellWidth * .045,
-            y: top + (row + .5) * cellHeight + Math.sin(i * 1.7 + .8) * cellHeight * .08, size });
+          const offset = galleryOffsets[i];
+          slots.push({ x: width / 2 + (col - (columns - 1) / 2) * cellWidth + offset.x * cellWidth * jitterRoomX,
+            y: galleryTop + (row + .5) * cellHeight + offset.y * cellHeight * jitterRoomY, size });
         }
       });
-      return slots;
+      const byTeam = [];
+      galleryOrder.forEach((team, slot) => { byTeam[team] = slots[slot]; });
+      return byTeam;
+    }
+    function positionSpreadSlots() {
+      spreadSlots = makeSpreadSlots();
+      iconButtons.forEach((button, team) => {
+        const slot = spreadSlots[team], hitSize = Math.max(44, slot.size);
+        Object.assign(button.style, { left: slot.x - hitSize / 2 + 'px', top: slot.y - hitSize / 2 + 'px', width: hitSize + 'px', height: hitSize + 'px' });
+      });
+      positionDetails();
     }
     function targetPoints() {
       const wordWidth = Math.min(width * .93, Math.max(45, height - 76) * word.width / word.height, 1250) * SETTINGS.wordScale;
@@ -483,17 +689,18 @@
       if (!viewActive) return;
       const box = stage.getBoundingClientRect();
       if (box.width < 1 || box.height < 1) return;
-      if (!initial && Math.abs(width - box.width) < .5 && Math.abs(height - box.height) < .5) return;
+      const nextWordShiftY = innerHeight * SETTINGS.wordCenterY - (box.top + box.height / 2);
+      const wordPositionChanged = Math.abs(nextWordShiftY - wordShiftY) > .1;
+      wordShiftY = nextWordShiftY;
+      if (!initial && Math.abs(width - box.width) < .5 && Math.abs(height - box.height) < .5) {
+        if (wordPositionChanged) draw();
+        return;
+      }
       width = box.width; height = box.height;
       const dpr = Math.min(devicePixelRatio || 1, 2);
       canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      spreadSlots = makeSpreadSlots();
-      iconButtons.forEach((button, team) => {
-        const slot = spreadSlots[team], hitSize = Math.max(44, slot.size);
-        Object.assign(button.style, { left: slot.x - hitSize / 2 + 'px', top: slot.y - hitSize / 2 + 'px', width: hitSize + 'px', height: hitSize + 'px' });
-      });
-      positionDetails();
+      positionSpreadSlots();
       particles = targetPoints().map((point, i) => {
         const angle = random(-.65, .65), team = i % sprites.length;
         const bank = fragments[team], piece = bank[Math.floor(i / sprites.length) % bank.length];
@@ -523,7 +730,7 @@
       }
       particles.sort((a, b) => Number(a.assembly) - Number(b.assembly) || a.sprite.layer - b.sprite.layer);
       scrollTarget = readScroll(); spread = scrollTarget;
-      if (initial && !motionReduced && spread === 0) scatter(); else { settle(); draw(); }
+      if (initial && !window.DesignerReturnState?.restoring && !motionReduced && spread === 0) scatter(); else { settle(); draw(); }
       setHint();
     }
     function settle() {
@@ -531,16 +738,28 @@
     }
     function draw() {
       if (!loaded || !viewActive || !width || !height) return;
+      // 검색 영역이 비어 있는 첫 화면은 글자를 화면 중앙에 놓습니다.
+      // 캔버스를 이동하므로 작은 화면에서도 글자 조각이 위쪽에서 잘리지 않습니다.
+      // 스크롤 중에는 원래 좌표로 돌아가 정렬된 아이콘/정보 카드 위치를 유지합니다.
+      const wordOffset = Math.round(wordShiftY * (1 - smooth(0, .65, spread)) * 100) / 100;
+      const wordTransform = 'translateY(' + wordOffset + 'px)';
+      if (canvas.style.transform !== wordTransform) canvas.style.transform = wordTransform;
       designerPanel.hidden = selectedTeam < 0 && !detailProgress.some(progress => progress > 0);
       ctx.clearRect(0, 0, width, height);
+      const galleryPoses = spreadSlots.map((_, team) => galleryPose(team));
+      // 투명 버튼도 실제로 그려진 아이콘의 위치와 크기를 따라갑니다.
+      iconButtons.forEach((button, team) => {
+        const base = spreadSlots[team], pose = galleryPoses[team];
+        button.style.transform = 'translate(' + (pose.x - base.x) + 'px,' + (pose.y - base.y) + 'px) scale(' + pose.size / base.size + ')';
+      });
       const t = smooth(.08, 1, spread), fragmentOpacity = 1 - smooth(.88, 1, t);
       // Subtle independent motion around each fixed glyph anchor. It fades
-      // out early in the scroll, leaving the gallery and detail cards still.
+      // out early in the scroll; the finished gallery has its own slow drift.
       const idleWeight = motionReduced ? 0 : 1 - smooth(0, .16, spread);
       // Foreground groups assemble while background objects scatter separately.
       // No shared vanishing point or global transform is applied to the word.
       lastDraw = [];
-      for (const p of particles) {
+      if (t < 1) for (const p of particles) {
         const departure = p.departure;
         const local = clamp((spread - departure.delay) / (1 - departure.delay), 0, 1);
         const drift = smooth(0, 1, local * departure.speed);
@@ -549,7 +768,7 @@
         if (opacity < .001) continue;
         // Only the chosen color groups converge into their original icons.
         const travel = p.assembly ? smooth(0, .86, t) : 0;
-        const slot = spreadSlots[p.team], piece = p.sprite;
+        const slot = galleryPoses[p.team], piece = p.sprite;
         const finalX = slot.x + piece.offsetX * slot.size, finalY = slot.y + piece.offsetY * slot.size;
         const w = lerp(p.size * Math.min(1, piece.ratio), slot.size * piece.relativeWidth, travel) * perspective;
         const h = lerp(p.size / Math.max(1, piece.ratio), slot.size * piece.relativeHeight, travel) * perspective;
@@ -583,7 +802,7 @@
         const attention = Math.max(...detailProgress);
         sprites.forEach((icon, team) => {
           if (!visibleTeams[team]) return;
-          const { x, y, size } = spreadSlots[team];
+          const { x, y, size } = galleryPoses[team];
           const detail = detailProgress[team];
           const opacity = iconOpacity * (1 - smooth(0, .18, detail)) * lerp(1, .14, attention);
           if (opacity < .001) return;
@@ -596,7 +815,7 @@
         fragments.forEach((bank, team) => {
           const detail = detailProgress[team];
           if (detail < .001 || !detailTargets[team].length) return;
-          const slot = spreadSlots[team], travel = smooth(0, 1, detail);
+          const slot = galleryPoses[team], travel = smooth(0, 1, detail);
           const opacity = iconOpacity * smooth(0, .18, detail);
           bank.forEach((piece, i) => {
             const target = detailTargets[team][i];
@@ -616,16 +835,25 @@
       updateToolbar();
     }
     function wake(duration = 2600) {
-      if (!viewActive || paused || motionReduced || document.hidden || !loaded) return;
+      if (!viewActive || paused || motionReduced || document.hidden || !loaded || window.DesignerReturnState?.restoring) return;
       until = Math.max(until, performance.now() + duration);
       if (!raf) { previousTime = 0; raf = requestAnimationFrame(frame); }
     }
     function frame(now) {
       raf = 0;
-      if (!viewActive || paused || motionReduced || document.hidden) return;
+      if (!viewActive || paused || motionReduced || document.hidden || window.DesignerReturnState?.restoring) return;
       const dt = previousTime ? clamp((now - previousTime) / 16.667, .25, 2) : 1;
       previousTime = now;
       if (spread < .16) idleTime += dt / 60;
+      if (galleryIdleActive()) galleryTime += dt / 60;
+      let hoverMoving = false;
+      galleryHover.forEach((value, team) => {
+        const target = hoverTarget(team);
+        let next = lerp(value, target, 1 - Math.pow(.78, dt));
+        if (Math.abs(next - target) < .001) next = target;
+        galleryHover[team] = next;
+        if (next !== target) hoverMoving = true;
+      });
       spread = lerp(spread, scrollTarget, 1 - Math.pow(.78, dt));
       if (Math.abs(spread - scrollTarget) < .0005) spread = scrollTarget;
       let detailMoving = false;
@@ -638,7 +866,7 @@
       });
       const radius = Math.max(35, Math.min(SETTINGS.pointerRadius, width * .13));
       let motion = 0;
-      for (const p of particles) {
+      if (spread < 1 || scrollTarget < 1) for (const p of particles) {
         p.vx += (p.tx - p.x) * SETTINGS.spring * dt; p.vy += (p.ty - p.y) * SETTINGS.spring * dt;
         if (pointer.active && spread < .005 && scrollTarget === 0) {
           const dx = p.x - pointer.x, dy = p.y - pointer.y, d = Math.hypot(dx, dy);
@@ -657,7 +885,7 @@
       }
       draw();
       setHint();
-      if (idleActive() || now < until || motion > .12 || spread !== scrollTarget || detailMoving) raf = requestAnimationFrame(frame);
+      if (idleActive() || galleryIdleActive() || hoverMoving || now < until || motion > .12 || spread !== scrollTarget || detailMoving) raf = requestAnimationFrame(frame);
       else if (!pointer.active) { settle(); draw(); }
     }
     function scatter() {
@@ -702,17 +930,32 @@
       if (event.key === 'Escape' && selectedTeam >= 0) { event.preventDefault(); closeDetails(true); }
     });
     window.addEventListener("pointerup", release); window.addEventListener("blur", release);
+    window.addEventListener('blur', resetGalleryHover);
+    window.addEventListener('wheel', onStepWheel, { passive: false });
+    window.addEventListener('touchstart', onStepTouchStart, { passive: true });
+    window.addEventListener('touchmove', onStepTouchMove, { passive: false });
+    window.addEventListener('touchend', () => { touchGesture = null; }, { passive: true });
+    window.addEventListener('touchcancel', () => { touchGesture = null; }, { passive: true });
+    window.addEventListener('keydown', onStepKey);
+    window.addEventListener('blur', resetGestures);
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", () => { if (loaded) { layout(); onScroll(); } });
+    window.addEventListener("resize", () => {
+      if (!loaded || !viewActive) return;
+      const destination = stepDestination ?? (scrollTarget >= .5 ? 1 : 0);
+      layout(); scrollToState(destination === 1);
+    });
     spreadButton.addEventListener("click", () => scrollToState(scrollTarget <= .5));
     replayButton.addEventListener("click", scatter);
     pauseButton.addEventListener("click", () => {
       paused = !paused; pointer.active = false;
+      if (paused && stepDestination !== null) scrollToState(stepDestination === 1);
       if (paused) { cancelAnimationFrame(raf); raf = 0; spread = scrollTarget; syncDetailsInstantly(); settle(); draw(); } else wake();
       setHint();
     });
     reducedMotion.addEventListener("change", (event) => {
       motionReduced = event.matches;
+      galleryHover.forEach((_, team) => { galleryHover[team] = hoverTarget(team); });
+      if (motionReduced && stepDestination !== null) scrollToState(stepDestination === 1);
       pointer.active = false;
       if (motionReduced) { cancelAnimationFrame(raf); raf = 0; spread = scrollTarget; syncDetailsInstantly(); settle(); draw(); } else wake();
       setHint();
@@ -738,11 +981,27 @@
         const button = document.createElement('button'); button.type = 'button'; button.className = 'icon-hit';
         button.setAttribute('aria-label', profiles[team].title + ' 디자이너 보기');
         button.setAttribute('aria-expanded', 'false'); button.setAttribute('aria-controls', 'designerPanel'); button.hidden = !visibleTeams[team];
+        button.addEventListener('pointerenter', event => {
+          if (event.pointerType === 'touch') return;
+          hoveredTeam = team; refreshGalleryHover();
+        });
+        const leaveIcon = () => { if (hoveredTeam === team) { hoveredTeam = -1; refreshGalleryHover(); } };
+        button.addEventListener('pointerleave', leaveIcon);
+        button.addEventListener('pointercancel', leaveIcon);
+        button.addEventListener('focus', () => {
+          focusedTeam = button.matches(':focus-visible') ? team : -1; refreshGalleryHover();
+        });
+        button.addEventListener('blur', () => { if (focusedTeam === team) { focusedTeam = -1; refreshGalleryHover(); } });
         button.addEventListener('click', event => openDetails(team, event.detail === 0));
         item.appendChild(button); iconButtons.push(button);
         iconList.appendChild(item);
       }
-      loaded = true; layout(true); stage.classList.add("ready"); setHint();
+      loaded = true;
+      if (!window.DesignerReturnState?.restoring) {
+        if (readScroll() > .001) shuffleGallery();
+        layout(true);
+      }
+      stage.classList.add("ready"); setHint();
       if (viewActive) wake();
       new ResizeObserver(() => layout()).observe(stage);
       window.GyeolhapIcons = Object.freeze({ snapshot: () => ({
@@ -757,14 +1016,17 @@
         })),
         assemblyGroupCount: particles.filter(p => p.assembly).length,
         paused, reducedMotion: motionReduced, width, height, running: !!raf, idleActive: idleActive(),
-        spread, scrollTarget, visibleCount: lastDraw.length, renderedIcons: lastDraw,
-        selectedTeam, detailProgress: [...detailProgress],
+        spread, scrollTarget, stepping: stepDestination !== null, stepTarget: stepDestination, visibleCount: lastDraw.length, renderedIcons: lastDraw,
+        galleryOrder: [...galleryOrder], galleryRevision, selectedTeam, detailProgress: [...detailProgress],
+        galleryTime, galleryFloating: galleryIdleActive(), galleryHover: [...galleryHover],
+        galleryAnchors: spreadSlots.map(({ x, y, size }) => ({ x, y, size })),
         viewActive, filterActive, resultCount, visibleTeams: [...visibleTeams], toolbarVisible: !toolbar.inert, unmappedResultCount: unmappedResults.length,
         selectedDesigners: selectedTeam < 0 ? [] : profiles[selectedTeam].members.map(({ nameKo, nameEn }) => ({ nameKo, nameEn })),
         averageDistance: particles.reduce((sum, p) => sum + Math.hypot(p.x - p.tx, p.y - p.ty), 0) / particles.length,
         names: [...new Set(particles.map(p => p.sprite.name))],
         firstTarget: particles[0] ? { x: particles[0].tx, y: particles[0].ty } : null
       }) });
+      window.DesignerReturnState?.registerGallery({ capture: captureReturnGallery, restore: restoreReturnGallery, resume: () => wake() });
     }
     init().catch((error) => {
       cancelAnimationFrame(raf); raf = 0; stage.classList.remove("ready"); ctx?.clearRect(0, 0, width, height);
@@ -776,6 +1038,7 @@
       replayButton.disabled = pauseButton.disabled = spreadButton.disabled = true;
       console.error('[designer-icon-slide]', error);
       window.DesignerPage?.changeView('grid');
+      window.DesignerReturnState?.galleryFailed();
     });
   })();
   

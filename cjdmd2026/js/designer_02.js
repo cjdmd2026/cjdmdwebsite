@@ -1,3 +1,125 @@
+// 현재 방문 기록에만 목록 상태를 저장합니다. 새로 방문한 목록에는 적용하지 않습니다.
+(() => {
+    "use strict";
+    const page = document.querySelector('.designer-page');
+    if (!page || window.DesignerReturnState) return;
+    const KEY = '__cjdmdDesignerReturn';
+    const entryPath = location.pathname + location.search;
+    const input = page.querySelector('.search-bar input');
+    const buttons = [...page.querySelectorAll('.designer-filter__button[data-initial]')];
+    const navigation = performance.getEntriesByType('navigation')[0];
+    const read = () => {
+        const value = history.state?.[KEY];
+        return value?.version === 1 && value.path === entryPath && ['slide', 'grid'].includes(value.view) ? value : null;
+    };
+    let pending = navigation?.type === 'back_forward' ? read() : null;
+    let restoring = !!pending, listReady = false, gallery = null, applying = false;
+    let pageShown = document.readyState === 'complete', focusId = '', concealed = false;
+    const originalVisibility = page.style.getPropertyValue('visibility');
+    const originalPriority = page.style.getPropertyPriority('visibility');
+    const originalBusy = page.getAttribute('aria-busy');
+    try { history.scrollRestoration = 'manual'; } catch (_) {}
+
+    function prime(state) {
+        page.classList.toggle('slide-view', state.view === 'slide');
+        page.classList.toggle('grid-view', state.view === 'grid');
+        if (input) input.value = typeof state.query === 'string' ? state.query : '';
+        const initial = buttons.some(button => button.dataset.initial === state.initial) ? state.initial : 'all';
+        buttons.forEach(button => {
+            const active = button.dataset.initial === initial;
+            button.classList.toggle('is-active', active);
+            button.setAttribute('aria-pressed', String(active));
+        });
+    }
+    if (pending) {
+        // 필터 JS가 초기화되기 전에 보기 방식, 검색어, 초성 선택을 먼저 복원합니다.
+        prime(pending);
+        page.style.setProperty('visibility', 'hidden');
+        page.setAttribute('aria-busy', 'true');
+        concealed = true;
+    }
+    function reveal() {
+        if (!concealed) return;
+        if (originalVisibility) page.style.setProperty('visibility', originalVisibility, originalPriority);
+        else page.style.removeProperty('visibility');
+        if (originalBusy === null) page.removeAttribute('aria-busy');
+        else page.setAttribute('aria-busy', originalBusy);
+        concealed = false;
+    }
+    function save() {
+        if (restoring || !listReady) return;
+        const filter = window.DesignerFilter?.state;
+        const value = {
+            version: 1, path: entryPath,
+            view: page.classList.contains('grid-view') ? 'grid' : 'slide',
+            scrollX: window.scrollX, scrollY: window.scrollY,
+            query: input?.value || '',
+            initial: filter?.initial || buttons.find(button => button.getAttribute('aria-pressed') === 'true')?.dataset.initial || 'all',
+            focusId, gallery: gallery?.capture() || null
+        };
+        try { history.replaceState({ ...(history.state || {}), [KEY]: value }, ''); }
+        catch (_) { /* 기록을 저장할 수 없어도 링크 이동은 유지합니다. */ }
+    }
+    function restore() {
+        if (!restoring || !pending || applying || !listReady || !gallery || !pageShown) return;
+        applying = true;
+        const state = pending;
+        try {
+            window.DesignerPage.changeView(state.view);
+            if (input) {
+                input.value = typeof state.query === 'string' ? state.query : '';
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+            window.DesignerFilter?.apply();
+            gallery.restore(state.gallery, state.view);
+            if (state.view === 'grid') {
+                window.scrollTo({ top: Number.isFinite(state.scrollY) ? state.scrollY : 0, left: Number.isFinite(state.scrollX) ? state.scrollX : 0, behavior: 'instant' });
+            }
+        } catch (error) {
+            console.warn('[designer-return] 목록 복원 중 일부 상태를 적용하지 못했습니다.', error);
+        }
+        requestAnimationFrame(() => {
+            pending = null; restoring = false; applying = false;
+            reveal();
+            focusId = typeof state.focusId === 'string' ? state.focusId : '';
+            if (focusId) {
+                const selector = state.view === 'grid' ? '.designer-card' : '.formation-person-card';
+                const card = [...page.querySelectorAll(selector)].find(card => card.dataset.designerId === focusId);
+                card?.focus({ preventScroll: true });
+            }
+            gallery.resume?.();
+        });
+    }
+    window.DesignerReturnState = {
+        get restoring() { return restoring; },
+        get initialView() { return pending?.view || 'slide'; },
+        listReady() { listReady = true; restore(); },
+        registerGallery(value) { gallery = value; restore(); },
+        galleryFailed() {
+            if (pending) pending = { ...pending, view: 'grid', scrollY: 0, gallery: null };
+            gallery = { capture: () => null, restore() {} }; restore();
+        },
+        save
+    };
+    // 카드 클릭 후 다른 핸들러가 선택 상태를 바꾸기 전에 저장합니다.
+    document.addEventListener('click', event => {
+        const link = event.target.closest?.('a[href]');
+        if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+        const url = new URL(link.href, document.baseURI);
+        if (url.origin !== location.origin || url.href === location.href) return;
+        focusId = link.dataset.designerId || ''; save();
+    }, true);
+    window.addEventListener('pagehide', save);
+    window.addEventListener('pageshow', event => {
+        pageShown = true;
+        if (event.persisted) {
+            pending = read(); restoring = !!pending; applying = false;
+        }
+        restore();
+    });
+})();
+
+
 document.addEventListener("DOMContentLoaded", () => {
     // =========================================================
     // Detail Page
@@ -298,5 +420,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // =========================================================
 
     renderDesigners(designers);
-    changeView("slide");
+    changeView(window.DesignerReturnState?.initialView || "slide");
+    window.DesignerFilter?.apply();
+    window.DesignerReturnState?.listReady();
 });

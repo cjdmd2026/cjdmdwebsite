@@ -356,7 +356,7 @@ window.DESIGNERS = [
         order: 22
     },
 
-    /* 23. 유길종 · YOO GILJONG */
+    /* 23. 유길종 · YOO GILJONG 
     {
         id: "yoo-giljong",
         nameKo: "유길종",
@@ -370,7 +370,7 @@ window.DESIGNERS = [
         instagram: "yugil_jong",
         image: "../assets/images/designer/student/yoogiljong.webp",
         order: 23
-    },
+    },*/
 
     /* 24. 유혜진 · YOO HYEJIN */
     {

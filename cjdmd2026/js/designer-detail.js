@@ -428,7 +428,11 @@
                 : "";
         }
 
-        if (instagramItem) instagramItem.hidden = !instagramId;
+        if (instagramItem) {
+            instagramItem.hidden = !instagramId;
+            // CSS의 display: grid가 hidden을 덮어써도 아이콘을 포함한 행 전체를 숨깁니다.
+            instagramItem.style.display = instagramId ? "" : "none";
+        }
 
         const designerMap = new Map(
             (Array.isArray(window.DESIGNERS) ? window.DESIGNERS : [])
@@ -444,7 +448,10 @@
             .filter(Boolean);
 
         if (membersText) membersText.textContent = memberNames.join(", ");
-        if (membersItem) membersItem.hidden = memberNames.length === 0;
+        if (membersItem) {
+            membersItem.hidden = memberNames.length === 0;
+            membersItem.style.display = memberNames.length ? "" : "none";
+        }
 
         if (!portrait) return;
 
