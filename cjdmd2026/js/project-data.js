@@ -428,7 +428,7 @@ window.PROJECTS = [
     },
     {
         id: "28",
-        title: "별운간",
+        title: "별운관",
         members: [
             "박윤지",
             "주예진"

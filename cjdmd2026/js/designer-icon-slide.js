@@ -170,8 +170,9 @@
     // wordCenterY: 초기 글자의 화면 내 중심 높이. 0.5 = 화면 중앙, 작은 값 = 위쪽.
     // gallerySpreadX/Y: 펼쳐진 아이콘의 가로/세로 간격. 작을수록 중앙에 모입니다.
     // galleryMobileSpreadX/Y: 750px 미만 화면의 간격. 아이콘 크기와 랜덤 순서는 유지합니다.
-    // galleryFloatX/Y: 떠다니는 최대 거리(px), galleryFloatSpeed: 속도, galleryHoverScale: 호버 배율.
-    const SETTINGS = { galleryFloatX: 6, galleryFloatY: 8, galleryFloatSpeed: .75, galleryHoverScale: 1.08, gallerySpreadX: .78, gallerySpreadY: .8, galleryMobileSpreadX: .9, galleryMobileSpreadY: .86, wordScale: .88, wordCenterY: .5, columns: 56, minimumSpacing: 8.5, iconScale: 1.55, spring: .024, damping: .82, pointerRadius: 82 };
+    // galleryGap/galleryMobileGap: 확대된 아이콘 사이의 최소 여백(px). 좁은 화면에서는 가능한 범위로 조정합니다.
+    // galleryFloatX/Y: 떠다니는 최대 거리(px). 현재 0으로 고정. galleryHoverScale: 호버 배율.
+    const SETTINGS = { galleryFloatX: 0, galleryFloatY: 0, galleryFloatSpeed: .75, galleryHoverScale: 1.08, galleryGap: 32, galleryMobileGap: 18, gallerySpreadX: 1, gallerySpreadY: .8, galleryMobileSpreadX: 1, galleryMobileSpreadY: .86, wordScale: .88, wordCenterY: .5, columns: 56, minimumSpacing: 8.5, iconScale: 1.55, spring: .024, damping: .82, pointerRadius: 82 };
     const canvas = document.getElementById("formation");
     if (!canvas || !document.getElementById("scrollScene")) return;
     if (!Array.isArray(window.DESIGNERS)) { console.error("designer-data.js를 먼저 연결해 주세요."); return; }
@@ -219,7 +220,7 @@
     const lerp = (a, b, t) => a + (b - a) * t;
     const smooth = (a, b, value) => { const t = clamp((value - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
     const idleActive = () => viewActive && !paused && !motionReduced && !document.hidden && spread < .16;
-    const galleryIdleActive = () => viewActive && !paused && !motionReduced && !document.hidden && spread > .86 && visibleTeams.some(Boolean) && selectedTeam < 0 && !detailProgress.some(value => value > 0);
+    const galleryIdleActive = () => (SETTINGS.galleryFloatX !== 0 || SETTINGS.galleryFloatY !== 0) && viewActive && !paused && !motionReduced && !document.hidden && spread > .86 && visibleTeams.some(Boolean) && selectedTeam < 0 && !detailProgress.some(value => value > 0);
     function hoverTarget(team) {
       return viewActive && spread >= .995 && scrollTarget >= .995 && selectedTeam < 0 && visibleTeams[team] && (hoveredTeam === team || focusedTeam === team) ? 1 : 0;
     }
@@ -619,7 +620,7 @@
       galleryOrder.forEach(team => iconList.appendChild(iconButtons[team].parentElement));
     }
     function makeSpreadSlots() {
-      // 중앙에 모인 범위 안에서 위치를 섞되 아이콘 크기와 최소 간격은 유지합니다.
+      // 화면 양옆의 여백까지 활용해 펼치되 아이콘 크기와 최소 간격은 유지합니다.
       const headingBottom = spreadHeading.offsetTop + spreadHeading.offsetHeight;
       const top = Math.min(height * .3, headingBottom + Math.min(26, height * .045));
       const bottom = Math.max(10, Math.min(30, height * .045));
@@ -633,22 +634,48 @@
       const size = Math.max(12, Math.min(112, columnWidth * .55, rowHeight * .65));
       const compactX = width < 750 ? SETTINGS.galleryMobileSpreadX : SETTINGS.gallerySpreadX;
       const compactY = width < 750 ? SETTINGS.galleryMobileSpreadY : SETTINGS.gallerySpreadY;
-      // 무작위 위치 편차(x ±.1, y ±.14)까지 포함해 서로 겹치지 않도록 제한합니다.
-      const cellWidth = Math.min(columnWidth, Math.max(columnWidth * compactX, size / .78));
-      const cellHeight = Math.min(rowHeight, Math.max(rowHeight * compactY, size / .70));
+      // 좌우 편차를 확보하고 상하 편차는 아래에서 주변 아이콘과의 간격에 맞춰 조정합니다.
+      const sidePadding = Math.max(8, width * .01);
+      // 호버 확대와 클릭 영역까지 포함해 각 아이콘 사이에 여백을 확보합니다.
+      const safeSize = Math.max(44, size) * SETTINGS.galleryHoverScale;
+      const requestedGap = width < 750 ? SETTINGS.galleryMobileGap : SETTINGS.galleryGap;
+      const availableGapX = (width - sidePadding * 2 - safeSize * Math.max(...rows)) / Math.max(1, Math.max(...rows) - 1);
+      const availableGapY = (availableHeight - safeSize * rows.length) / Math.max(1, rows.length - 1);
+      const gap = Math.max(0, Math.min(requestedGap, availableGapX, availableGapY));
+      const safeGap = safeSize + gap;
+      // 각 줄의 양 끝을 호버 확대까지 포함한 안전 여백에 맞춥니다.
+      const horizontalRoom = width - sidePadding * 2 - Math.max(44, size) * SETTINGS.galleryHoverScale;
+      const maxCellHeight = Math.max(1, (availableHeight - safeSize) / Math.max(1, rows.length - 1));
+      const cellHeight = Math.min(maxCellHeight, Math.max(rowHeight * compactY, safeGap));
       const galleryTop = top + (availableHeight - cellHeight * rows.length) / 2;
       // 떠다니는 거리와 호버 확대까지 확보하고 좁은 화면에서는 위치 편차만 줄입니다.
       const floatFactor = Math.min(1, size / 100);
-      const jitterRoomX = clamp((cellWidth - size * SETTINGS.galleryHoverScale - 2 * SETTINGS.galleryFloatX * floatFactor) / (cellWidth * .2), 0, 1);
-      const jitterRoomY = clamp((cellHeight - size * SETTINGS.galleryHoverScale - 2 * SETTINGS.galleryFloatY * floatFactor) / (cellHeight * .28), 0, 1);
-      const slots = [];
+     const slots = [];
       rows.forEach((columns, row) => {
+        // 아이콘이 적은 줄도 같은 좌우 폭을 사용하도록 줄마다 간격을 계산합니다.
+        const maxCellWidth = Math.max(1, horizontalRoom / Math.max(1, columns - 1));
+        const cellWidth = Math.min(maxCellWidth, Math.max(maxCellWidth * compactX, safeGap));
+        const jitterRoomX = clamp((cellWidth - safeGap - 2 * SETTINGS.galleryFloatX * floatFactor) / (cellWidth * .2), 0, 1);
         for (let col = 0; col < columns; col++) {
           const i = slots.length;
           const offset = galleryOffsets[i];
-          slots.push({ x: width / 2 + (col - (columns - 1) / 2) * cellWidth + offset.x * cellWidth * jitterRoomX,
-            y: galleryTop + (row + .5) * cellHeight + offset.y * cellHeight * jitterRoomY, size });
+          // 양 끝은 고정하고 안쪽 아이콘에만 가로 편차를 주어 좌우 공간을 충분히 사용합니다.
+          const offsetX = col === 0 || col === columns - 1 ? 0 : offset.x * cellWidth * jitterRoomX;
+          slots.push({ x: width / 2 + (col - (columns - 1) / 2) * cellWidth + offsetX,
+            y: galleryTop + (row + .5) * cellHeight, size });
         }
+      });
+      // 각 아이콘의 높이 차이를 3배로 늘리되, 확대된 클릭 영역끼리 겹치지 않게 제한합니다.
+      const verticalJitter = cellHeight * .42;
+      slots.forEach((slot, i) => {
+        let minY = Math.max(top + safeSize / 2, slot.y - verticalJitter);
+        let maxY = Math.min(height - bottom - safeSize / 2, slot.y + verticalJitter);
+        slots.forEach(other => {
+          if (other === slot || Math.abs(other.x - slot.x) >= safeGap) return;
+          if (other.y < slot.y) minY = Math.max(minY, other.y + safeGap);
+          else maxY = Math.min(maxY, other.y - safeGap);
+        });
+        if (minY <= maxY) slot.y = clamp(slot.y + galleryOffsets[i].y * cellHeight * 3, minY, maxY);
       });
       const byTeam = [];
       galleryOrder.forEach((team, slot) => { byTeam[team] = slots[slot]; });
@@ -754,7 +781,7 @@
       });
       const t = smooth(.08, 1, spread), fragmentOpacity = 1 - smooth(.88, 1, t);
       // Subtle independent motion around each fixed glyph anchor. It fades
-      // out early in the scroll; the finished gallery has its own slow drift.
+      // out early in the scroll; the finished gallery stays at its fixed anchors.
       const idleWeight = motionReduced ? 0 : 1 - smooth(0, .16, spread);
       // Foreground groups assemble while background objects scatter separately.
       // No shared vanishing point or global transform is applied to the word.
