@@ -72,7 +72,7 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
 (() => {
   'use strict';
   const options = {
-    durationMs: 1400, cellSize: 16,
+    durationMs: 1400, cellSize: 12,
     ...window.PROJECT_ASCII_OPTIONS
   };
   const overlay = document.createElement('div');
@@ -101,7 +101,7 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
   const fragmentSource = `
     precision highp float;
     varying vec2 uv;
-    uniform sampler2D imageA, imageB, iconAtlas, foreground, nextForeground;
+    uniform sampler2D imageA, imageB, iconAtlas, foreground, nextForeground, controls, nextControls;
     uniform vec2 resolution, sizeA, sizeB, iconGrid;
     uniform vec4 sceneTint;
     uniform float progress, direction, cellSize, codeTime, iconCount;
@@ -143,6 +143,11 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
       float alpha=mix(content.a,nextContent.a,handoff);
       vec3 premultiplied=mix(content.rgb*content.a,nextContent.rgb*nextContent.a,handoff);
       vec3 background=mix(mix(a,b,incoming),sceneTint.rgb,sceneTint.a);
+      // Controls follow the scene, never the title's opacity/position animation.
+      // Each glass snapshot already includes its backdrop and translucent fill.
+      vec4 ui=texture2D(controls,p), nextUI=texture2D(nextControls,p);
+      float uiAlpha=mix(ui.a,nextUI.a,incoming);
+      background=background*(1.-uiAlpha)+mix(ui.rgb*ui.a,nextUI.rgb*nextUI.a,incoming);
       return background*(1.-alpha)+premultiplied;
     }
     void main() {
@@ -208,6 +213,7 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, nearest ? gl.NEAREST : gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, nearest ? gl.NEAREST : gl.LINEAR);
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
     return value;
   }
@@ -297,7 +303,7 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
     const position = gl.getAttribLocation(program, 'position');
     gl.enableVertexAttribArray(position);
     gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-    uniforms = Object.fromEntries(['imageA','imageB','iconAtlas','foreground','nextForeground','resolution','sizeA','sizeB','sceneTint','progress','direction','cellSize','codeTime','iconCount','iconGrid']
+    uniforms = Object.fromEntries(['imageA','imageB','iconAtlas','foreground','nextForeground','controls','nextControls','resolution','sizeA','sizeB','sceneTint','progress','direction','cellSize','codeTime','iconCount','iconGrid']
       .map(name => [name, gl.getUniformLocation(program, name)]));
     atlas = texture(icons.sheet);
     atlasCount = icons.count;
@@ -307,80 +313,118 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
     return true;
   }
 
-// Build input: capture the project foreground and controls, excluding the header.
-const asciiControlImages = new Map();
-async function captureProjectControls(bounds, ratio) {
-  const layer = document.createElement('canvas');
-  layer.width = Math.max(1,Math.round(bounds.width*ratio));
-  layer.height = Math.max(1,Math.round(bounds.height*ratio));
-  const context = layer.getContext('2d');
-  context.scale(ratio,ratio);
-  context.translate(-bounds.left,-bounds.top);
-  const root = document.querySelector('.project-description .project-warp');
-  const visible = element => {
-    const rect=element.getBoundingClientRect(), style=getComputedStyle(element);
-    return rect.width>0 && rect.height>0 && style.visibility==='visible' && Number(style.opacity)>0;
+// Rasterize the glass controls separately so their alpha is applied only once.
+async function captureControls(bounds, ratio, backgroundSource) {
+  const surface = document.createElement('canvas');
+  surface.width = Math.max(1, Math.round(bounds.width * ratio));
+  surface.height = Math.max(1, Math.round(bounds.height * ratio));
+  surface.controlCount = 0;
+  const elements = [...document.querySelectorAll(
+    '.project-description .search-bar input, .project-description .view-button'
+  )].filter(element => {
+    const rect = element.getBoundingClientRect(), style = getComputedStyle(element);
+    return element.getClientRects().length && rect.width && rect.height &&
+      style.visibility === 'visible' && style.display !== 'none';
+  });
+  if (!elements.length) return surface;
+  const image = await prepare(backgroundSource);
+  const backdrop = document.createElement('canvas');
+  backdrop.width = surface.width;
+  backdrop.height = surface.height;
+  const background = backdrop.getContext('2d');
+  const scale = Math.max(bounds.width / image.naturalWidth, bounds.height / image.naturalHeight);
+  const width = image.naturalWidth * scale, height = image.naturalHeight * scale;
+  background.scale(ratio, ratio);
+  background.drawImage(image, (bounds.width-width)/2, (bounds.height-height)/2, width, height);
+  const tint = readSceneTint();
+  background.fillStyle = `rgba(${tint[0]*255},${tint[1]*255},${tint[2]*255},${tint[3]})`;
+  background.fillRect(0, 0, bounds.width, bounds.height);
+  const ctx = surface.getContext('2d');
+  ctx.scale(ratio, ratio);
+  const opacity = element => {
+    let value = 1;
+    for (let node = element; node instanceof Element; node = node.parentElement) {
+      value *= Number(getComputedStyle(node).opacity);
+    }
+    return value;
   };
-  let count=0;
-  if (root && visible(root)) {
-    for (const element of root.querySelectorAll('input,button')) {
-      if (!visible(element)) continue;
-      const rect=element.getBoundingClientRect(), style=getComputedStyle(element);
-      const border=parseFloat(style.borderTopWidth)||0;
-      const radius=Math.min(parseFloat(style.borderTopLeftRadius)||0,rect.width/2,rect.height/2);
-      context.save();
-      context.globalAlpha=Number(style.opacity);
-      context.beginPath();
-      context.roundRect(rect.left+border/2,rect.top+border/2,rect.width-border,rect.height-border,Math.max(0,radius-border/2));
-      context.fillStyle=style.backgroundColor;
-      context.fill();
-      if (border) {
-        context.strokeStyle=style.borderTopColor;
-        context.lineWidth=border;
-        context.stroke();
-      }
-      if (element.matches('input')) {
-        context.clip();
-        const text=element.value || element.placeholder;
-        const textStyle=element.value?style:getComputedStyle(element,'::placeholder');
-        context.globalAlpha*=Number(textStyle.opacity);
-        context.font=`${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
-        context.fillStyle=textStyle.color;
-        context.textBaseline='middle';
-        context.fillText(text,rect.left+border+parseFloat(style.paddingLeft)-element.scrollLeft,rect.top+rect.height/2);
-      }
-      context.restore();
-      count++;
+  for (const element of elements) {
+    const rect = element.getBoundingClientRect(), style = getComputedStyle(element);
+    const x = rect.left-bounds.left, y = rect.top-bounds.top;
+    const patch = document.createElement('canvas');
+    patch.width = Math.ceil(rect.width*ratio);
+    patch.height = Math.ceil(rect.height*ratio);
+    const paint = patch.getContext('2d');
+    paint.scale(ratio, ratio);
+    const radius = Math.min(parseFloat(style.borderTopLeftRadius) || 0, rect.width/2, rect.height/2);
+    paint.beginPath();
+    paint.roundRect(0, 0, rect.width, rect.height, radius);
+    paint.clip();
+    const blur = Number((style.backdropFilter || style.webkitBackdropFilter || '').match(/blur\(([\d.]+)px\)/)?.[1]) || 0;
+    const padding = Math.ceil(blur*3);
+    paint.filter = blur ? `blur(${blur}px)` : 'none';
+    paint.drawImage(backdrop, (x-padding)*ratio, (y-padding)*ratio,
+      (rect.width+padding*2)*ratio, (rect.height+padding*2)*ratio,
+      -padding, -padding, rect.width+padding*2, rect.height+padding*2);
+    paint.filter = 'none';
+    paint.fillStyle = style.backgroundColor;
+    paint.fillRect(0, 0, rect.width, rect.height);
+    const border = parseFloat(style.borderTopWidth) || 0;
+    if (border && style.borderTopStyle !== 'none') {
+      paint.lineWidth = border;
+      paint.strokeStyle = style.borderTopColor;
+      paint.beginPath();
+      paint.roundRect(border/2, border/2, rect.width-border, rect.height-border, Math.max(0,radius-border/2));
+      paint.stroke();
     }
-    // Draw images after the input surfaces: the search symbol overlays its input.
-    for (const element of root.querySelectorAll('img')) {
-      if (!visible(element)) continue;
-      const url=element.currentSrc || element.src;
-      if (!asciiControlImages.has(url)) {
-        const image=new Image();
-        image.crossOrigin='anonymous';
-        image.src=url;
-        const promise=image.decode().then(()=>image);
-        asciiControlImages.set(url,promise);
-        promise.catch(()=>asciiControlImages.delete(url));
-      }
-      const image=await asciiControlImages.get(url);
-      const rect=element.getBoundingClientRect(), style=getComputedStyle(element);
-      context.save();
-      context.globalAlpha=Number(style.opacity);
-      context.filter=style.filter;
-      context.drawImage(image,rect.left,rect.top,rect.width,rect.height);
-      context.restore();
+    if (element instanceof HTMLInputElement) {
+      const placeholder = getComputedStyle(element, '::placeholder');
+      const text = element.value || element.placeholder;
+      const left = (parseFloat(style.paddingLeft)||0)+border;
+      const right = (parseFloat(style.paddingRight)||0)+border;
+      paint.save();
+      paint.beginPath();
+      paint.rect(left, border, Math.max(0,rect.width-left-right), rect.height-border*2);
+      paint.clip();
+      paint.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+      paint.textBaseline = 'alphabetic';
+      paint.fillStyle = element.value ? style.color : placeholder.color;
+      paint.globalAlpha = element.value ? 1 : Number(placeholder.opacity);
+      if ('letterSpacing' in paint) paint.letterSpacing = style.letterSpacing === 'normal' ? '0px' : style.letterSpacing;
+      const metrics = paint.measureText('Mg');
+      const ascent = metrics.fontBoundingBoxAscent ?? parseFloat(style.fontSize)*.8;
+      const descent = metrics.fontBoundingBoxDescent ?? parseFloat(style.fontSize)*.2;
+      paint.fillText(text, left-element.scrollLeft, (rect.height-ascent-descent)/2+ascent);
+      paint.restore();
     }
+    const images = (element instanceof HTMLInputElement ? element.parentElement : element).querySelectorAll('img');
+    for (const icon of images) {
+      const iconStyle = getComputedStyle(icon), iconRect = icon.getBoundingClientRect();
+      if (!iconRect.width || !iconRect.height || iconStyle.visibility !== 'visible') continue;
+      await icon.decode();
+      paint.save();
+      paint.globalAlpha = Number(iconStyle.opacity);
+      paint.filter = iconStyle.filter;
+      paint.translate(iconRect.left-rect.left+iconRect.width/2, iconRect.top-rect.top+iconRect.height/2);
+      const matrix = new DOMMatrixReadOnly(iconStyle.transform === 'none' ? undefined : iconStyle.transform);
+      paint.rotate(Math.atan2(matrix.b, matrix.a));
+      const iconWidth = parseFloat(iconStyle.width), iconHeight = parseFloat(iconStyle.height);
+      paint.drawImage(icon, -iconWidth/2, -iconHeight/2, iconWidth, iconHeight);
+      paint.restore();
+    }
+    ctx.save();
+    ctx.globalAlpha = opacity(element);
+    ctx.drawImage(patch, 0, 0, rect.width*ratio, rect.height*ratio, x, y, rect.width, rect.height);
+    ctx.restore();
+    surface.controlCount++;
   }
-  layer.controlCount=count;
-  return layer;
+  return surface;
 }
 
-async function captureForeground(target, {includeHidden = false} = {}) {
+// Keep title motion independent from the captured search and view controls.
+async function captureForeground(target, {includeHidden = false, backgroundSource} = {}) {
   const bounds = target.getBoundingClientRect();
   const ratio = Math.min(devicePixelRatio || 1, 1.5);
-  const controls = await captureProjectControls(bounds,ratio);
   const surface = document.createElement('canvas');
   surface.width = Math.max(1, Math.round(bounds.width * ratio));
   surface.height = Math.max(1, Math.round(bounds.height * ratio));
@@ -459,7 +503,9 @@ async function captureForeground(target, {includeHidden = false} = {}) {
       iconCount = 1;
     }
   }
-  surface.codeContent = {textRuns, iconCount, controlCount:controls.controlCount};
+  const source = backgroundSource || getComputedStyle(target).backgroundImage.match(/^url\(["']?(.*?)["']?\)$/)?.[1];
+  surface.controls = await captureControls(bounds, ratio, source);
+  surface.codeContent = {textRuns, iconCount, controlCount:surface.controls.controlCount};
   const ease = (a, b, value) => {
     const t = Math.max(0, Math.min(1, (value-a)/(b-a)));
     return t*t*t*(t*(t*6-15)+10);
@@ -472,7 +518,6 @@ async function captureForeground(target, {includeHidden = false} = {}) {
     ctx.globalAlpha = 1-copyPhase;
     ctx.drawImage(textLayer, (incoming?1:-1)*direction*72*ratio*copyPhase, 0);
     ctx.restore();
-    ctx.drawImage(controls,bounds.left,bounds.top,bounds.width,bounds.height);
     surface.codeContent.copyMotion = copyPhase;
     return surface;
   };
@@ -524,7 +569,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
       overlay.dataset[incoming?'incomingMotion':'outgoingMotion']=source.codeContent.copyMotion.toFixed(3);
     }
     job.paintedProgress=progress;
-    [job.a, job.b, atlas, job.content, job.nextContent].forEach((value, index) => {
+    [job.a, job.b, atlas, job.content, job.nextContent, job.controls, job.nextControls].forEach((value, index) => {
       gl.activeTexture(gl.TEXTURE0 + index);
       gl.bindTexture(gl.TEXTURE_2D, value);
     });
@@ -535,13 +580,15 @@ async function captureForeground(target, {includeHidden = false} = {}) {
     gl.uniform2f(uniforms.iconGrid, atlasGrid[0], atlasGrid[1]);
     gl.uniform1i(uniforms.foreground, 3);
     gl.uniform1i(uniforms.nextForeground, 4);
+    gl.uniform1i(uniforms.controls, 5);
+    gl.uniform1i(uniforms.nextControls, 6);
     gl.uniform2f(uniforms.sizeA, job.from.naturalWidth, job.from.naturalHeight);
     gl.uniform2f(uniforms.sizeB, job.to.naturalWidth, job.to.naturalHeight);
     gl.uniform4fv(uniforms.sceneTint, job.sceneTint);
     gl.uniform1f(uniforms.progress, progress);
     gl.uniform1f(uniforms.codeTime, job.codeTime);
     gl.uniform1f(uniforms.direction, job.direction);
-    gl.uniform1f(uniforms.cellSize, Math.max(8, Number(options.cellSize) || 16));
+    gl.uniform1f(uniforms.cellSize, Math.max(8, Number(options.cellSize) || 12));
     gl.drawArrays(gl.TRIANGLES, 0, 6);
     overlay.dataset.progress = progress.toFixed(3);
   }
@@ -558,6 +605,8 @@ async function captureForeground(target, {includeHidden = false} = {}) {
     gl?.deleteTexture(previous.b);
     gl?.deleteTexture(previous.content);
     gl?.deleteTexture(previous.nextContent);
+    gl?.deleteTexture(previous.controls);
+    gl?.deleteTexture(previous.nextControls);
     if (success) completed++;
     previous.resolve(success);
   }
@@ -583,6 +632,8 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             if(content) {
               gl.deleteTexture(active.nextContent);
               active.nextContent=texture(content);
+              gl.deleteTexture(active.nextControls);
+              active.nextControls=texture(content.controls || document.createElement('canvas'));
               active.nextSource=content;
               active.paintedProgress=null;
               overlay.dataset.incomingText=String(content.codeContent?.textRuns || 0);
@@ -649,6 +700,8 @@ async function captureForeground(target, {includeHidden = false} = {}) {
         job.content = texture(content);
         job.contentSource = content;
         job.nextContent = texture(document.createElement('canvas'));
+        job.controls = texture(content.controls || document.createElement('canvas'));
+        job.nextControls = texture(content.controls || document.createElement('canvas'));
         overlay.dataset.incomingText = '0';
         overlay.dataset.incomingIcons = '0';
         overlay.dataset.incomingControls = '0';
@@ -1103,7 +1156,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 if(!file||!title)return;
                 const slot=document.createElement('span');
                 slot.className='project-dial-icon';slot.setAttribute('aria-hidden','true');
-                title.before(slot);item.classList.add('has-project-icon');
+                title.after(slot);item.classList.add('has-project-icon');
                 dialIcons.set(projectId,{item,slot});
                 try{
                     const response=await fetch(new URL(file,iconBaseUrl),{signal:events.signal});
@@ -1184,8 +1237,8 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             }
 
             .project-dial.has-project-icons {
-                --project-dial-icon-size:clamp(48px,5vw,80px);
-                --project-dial-icon-gap:clamp(12px,1.25vw,24px);
+                --project-dial-icon-size:clamp(20px,2.1vw,32px);
+                --project-dial-icon-gap: 1rem;
                 --project-dial-title-duration:800ms;
             }
             .container:has(#slideview:not([hidden])) .project-dial.has-project-icons {
@@ -1203,6 +1256,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 width:var(--project-dial-icon-size);
                 height:var(--project-dial-icon-size);
                 max-width:none;
+                transform:translateY(-1.25rem);
                 visibility:hidden;
                 pointer-events:none;
             }
@@ -1661,7 +1715,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             }
 // Resolve the real DOM underneath the canvas to the incoming texture's final pose.
 function captureAsciiContent(target, options = {}) {
-    return window.ProjectASCII.captureForeground(target,options);
+    return window.ProjectASCII.captureForeground(target,{...options,backgroundSource:getSource(target)});
 }
 
 function settleAsciiContent() {

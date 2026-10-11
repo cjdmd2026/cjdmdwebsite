@@ -623,7 +623,7 @@ body:has(#slideview:not([hidden])) .header .nav ul li {
 .project-info {
     position: absolute;
 
-    left: 13rem;
+    left: 6.5rem;
     top: 58vh;
 
     width: 50vw;

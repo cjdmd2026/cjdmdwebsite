@@ -250,9 +250,13 @@ img {
     position: relative;
 }
 
-/* 개인 아이콘은 내용 뒤에 배치하고 가운데로 갈수록 옅어집니다. */
+/* 사진·그라디언트 → 개인 아이콘 → 텍스트·버튼 순서로 쌓습니다. */
 .main.has-designer-background {
     isolation: isolate;
+}
+
+.has-designer-background .profile .image {
+    z-index: -2;
 }
 
 .designer-floating-background {

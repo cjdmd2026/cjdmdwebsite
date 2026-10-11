@@ -26,8 +26,8 @@
       }
     }
   </style>
-  <rect x="312" y="212" width="400" height="600" rx="200" stroke="white" stroke-width="50"/>
+  <rect x="312" y="212" width="400" height="600" rx="200" stroke="white" stroke-width="40"/>
   <g class="mouse-scroll">
-    <path d="M512 367L512 437" stroke="white" stroke-width="50" stroke-linecap="round"/>
+    <path d="M512 367L512 437" stroke="white" stroke-width="40" stroke-linecap="round"/>
   </g>
 </svg>
