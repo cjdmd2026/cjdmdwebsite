@@ -1,4 +1,4 @@
-/* Project slide variant: colored matrix text dissolve (independent alternative to the white wave).
+/* Project slide variant: scene-colored personal icon matrix dissolve (independent alternative to the white wave).
  * Replace the existing project controller script with this file (use defer).
  * Required existing files: project-data.js and assets/images/project/test/icon/*.svg.
  * CSS and overlay markup are inserted automatically. No HTML body or CSS edits.
@@ -72,7 +72,7 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
 (() => {
   'use strict';
   const options = {
-    durationMs: 2600, cellSize: 8,
+    durationMs: 1400, cellSize: 16,
     ...window.PROJECT_ASCII_OPTIONS
   };
   const overlay = document.createElement('div');
@@ -83,6 +83,14 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
   document.body.append(overlay);
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const imageCache = new Map();
+  const iconFiles = [
+    'team-01-apuchika.svg', 'team-02-ommix.svg', 'team-03-phishing-ttuk.svg',
+    'team-04-ilkko.svg', 'team-05-kuro.svg', 'team-06-dadeullim.svg',
+    'team-07-style-lens.svg', 'team-08-geuneuljabi.svg', 'team-09-magmoa.svg',
+    'team-10-ieoon.svg', 'team-11-byeolungwan.svg', 'team-12-kokorang.svg',
+    'team-13-effect.svg', 'team-14-jikji-jamboree.svg'
+  ];
+  let iconAtlasLoad = null, atlasCount = 0, atlasGrid = [1, 1];
   let gl, program, buffer, atlas, uniforms;
   let job = null, frame = 0, generation = 0, completed = 0;
   const vertexSource = `
@@ -93,10 +101,10 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
   const fragmentSource = `
     precision highp float;
     varying vec2 uv;
-    uniform sampler2D imageA, imageB, glyphs, foreground, nextForeground;
-    uniform vec2 resolution, sizeA, sizeB;
+    uniform sampler2D imageA, imageB, iconAtlas, foreground, nextForeground;
+    uniform vec2 resolution, sizeA, sizeB, iconGrid;
     uniform vec4 sceneTint;
-    uniform float progress, direction, cellSize, scrollMode, codeTime;
+    uniform float progress, direction, cellSize, codeTime, iconCount;
     float random(vec2 p) {
       return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);
     }
@@ -121,12 +129,17 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
       float r=resolution.x/resolution.y, ir=size.x/size.y;
       return (p-.5)*vec2(min(1.,r/ir),min(1.,ir/r))+.5;
     }
+    vec2 iconUV(float index, vec2 local) {
+      // Canvas rows are uploaded bottom-up; keep each personal icon upright.
+      vec2 tile=vec2(mod(index,iconGrid.x),iconGrid.y-1.-floor(index/iconGrid.x));
+      return (tile+local)/iconGrid;
+    }
     vec3 scene(vec2 p, float incoming) {
       vec3 a=texture2D(imageA,cover(p,sizeA)).rgb;
       vec4 content=texture2D(foreground,p);
       vec3 b=texture2D(imageB,cover(p,sizeB)).rgb;
       vec4 nextContent=texture2D(nextForeground,p);
-      float handoff=ease(.66,.75,progress);
+      float handoff=ease(.60,.84,progress);
       float alpha=mix(content.a,nextContent.a,handoff);
       vec3 premultiplied=mix(content.rgb*content.a,nextContent.rgb*nextContent.a,handoff);
       vec3 background=mix(mix(a,b,incoming),sceneTint.rgb,sceneTint.a);
@@ -134,7 +147,7 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
     }
     void main() {
       float t=progress;
-      float q=mix(ease(0.,.86,t),t,scrollMode);
+      float q=ease(0.,.90,t);
       float amp=sin(q*3.14159265);
       vec2 domain=vec2(uv.x*resolution.x/resolution.y,uv.y)*3.1;
       float n1=fbm(domain+vec2(q*.72,-q*.48));
@@ -143,36 +156,36 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
       float wave=(n1-.5)*.24+sin(uv.x*5.5+n2*2.6+q*1.8)*.038;
       // Separate traveling edges: no full-frame opacity gate on the way out.
       float front=mix(-.24,1.28,q)-axis+wave*amp;
-      float imageFront=mix(-.32,1.4,ease(.5,1.,t))-axis+wave*1.3*amp;
-      float incoming=ease(-.16,.16,imageFront);
-      if(t<=.5) incoming=0.;
-      float release=clamp((t-.69)/.31,0.,1.);
-      release=release*release*(3.-2.*release);
+      float imageFront=mix(-.32,1.4,ease(.46,1.,t))-axis+wave*1.3*amp;
+      float incoming=ease(-.20,.20,imageFront);
+      // Overlap the longer reveal with the icon sweep for one continuous flow.
+      float release=ease(.58,1.,t);
       float exitFront=mix(-.28,1.30,release)-axis+wave*sin(release*3.14159265);
-      vec2 cells=resolution/vec2(cellSize,cellSize*1.3);
+      vec2 cells=resolution/vec2(cellSize);
       vec2 grid=uv*cells;
       vec2 cell=floor(grid);
       float seed=random(cell);
       vec2 center=(floor(grid)+.5)/cells;
       vec3 color=scene(center,incoming);
-      float luminance=dot(color,vec3(.2126,.7152,.0722));
-      // A separate clock keeps glyphs changing even when the scroll front is held.
-      float clock=codeTime*(1.6+seed*.9)+seed*5.;
-      float drift=mix(random(cell+floor(clock)),random(cell+floor(clock)+1.),ease(0.,1.,fract(clock)));
-      float density=clamp(pow(luminance,.65)*15.+(drift-.5)*2.4,0.,15.);
-      float glyphA=floor(density);
-      float glyphB=min(glyphA+1.,15.);
-      float inkA=texture2D(glyphs,vec2((glyphA+fract(grid.x))/16.,fract(grid.y))).r;
-      float inkB=texture2D(glyphs,vec2((glyphB+fract(grid.x))/16.,fract(grid.y))).r;
-      float ink=mix(inkA,inkB,ease(0.,1.,fract(density)));
+      // Keep the matrix alive throughout the automatic transition.
+      float clock=codeTime*(2.4+seed*1.4)+seed*5.;
+      float step=floor(clock);
+      float first=floor(random(cell+vec2(step,step*.37))*iconCount);
+      float second=floor(random(cell+vec2(step+1.,(step+1.)*.37))*iconCount);
+      vec2 local=fract(grid);
+      vec4 iconA=texture2D(iconAtlas,iconUV(first,local));
+      vec4 iconB=texture2D(iconAtlas,iconUV(second,local));
+      float change=ease(.68,1.,fract(clock));
+      float ink=mix(iconA.a,iconB.a,change);
       float grain=(region(cell/4.)-.5)*.025;
-      float becomeText=ease(-.16,.16,front+grain);
-      float becomeImage=ease(-.16,.16,exitFront+grain);
-      float asciiAmount=becomeText*(1.-becomeImage);
-      // The same feather blends into and out of black-backed colored glyphs.
+      float becomeIcons=ease(-.22,.22,front+grain);
+      float becomeImage=ease(-.22,.22,exitFront+grain);
+      float iconAmount=becomeIcons*(1.-becomeImage);
+      // As in the text version, each cell takes its color from the scene below.
       vec3 detail=scene(uv,incoming);
-      vec3 letterColor=min(color*1.35+.025,vec3(1.));
-      gl_FragColor=vec4(mix(detail,letterColor*ink,asciiAmount),1.);
+      vec3 iconColor=min(color*1.35+.025,vec3(1.));
+      vec3 iconLayer=mix(vec3(1.),iconColor,ink);
+      gl_FragColor=vec4(mix(detail,iconLayer,iconAmount),1.);
     }
   `;
 
@@ -198,7 +211,73 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
     return value;
   }
-  function initGL() {
+  function prepareIconAtlas() {
+    if (!iconAtlasLoad) {
+      iconAtlasLoad = Promise.allSettled(iconFiles.map(async file => {
+        const controller = new AbortController();
+        const urls = [];
+        let timer;
+        const load = async () => {
+          const response = await fetch(new URL(file, iconBaseUrl), {signal: controller.signal});
+          if (!response.ok) throw new Error('Icon ' + response.status + ' ' + file);
+          const xml = new DOMParser().parseFromString(await response.text(), 'image/svg+xml');
+          if (xml.querySelector('parsererror')) throw new Error('Invalid icon ' + file);
+          const svg = xml.documentElement;
+          svg.querySelectorAll('style,animate,animateTransform,animateMotion,set').forEach(node => node.remove());
+          svg.setAttribute('width', '64');
+          svg.setAttribute('height', '64');
+          const selector = 'path,rect,circle,ellipse,polygon,polyline,line';
+          const shapes = root => [...root.querySelectorAll(selector)].filter(node => !node.closest('defs,clipPath,mask'));
+          const fill = element => {
+            for (let node = element; node; node = node.parentElement) {
+              const value = node.style?.fill || node.getAttribute('fill');
+              if (value) return value.trim().toLowerCase();
+            }
+            return '#000000';
+          };
+          const colors = shapes(svg).map(fill);
+          // These groups match the personal assignments in designer-icon-data.js.
+          // Preserve every path of one color, including disconnected components.
+          return Promise.all([...new Set(colors.filter(color => color !== 'none'))].map(async color => {
+            const personal = svg.cloneNode(true);
+            shapes(personal).forEach((node, index) => { if (colors[index] !== color) node.remove(); });
+            const url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(personal)], {type: 'image/svg+xml'}));
+            urls.push(url);
+            const image = new Image();
+            image.src = url;
+            await image.decode();
+            return image;
+          }));
+        };
+        try {
+          return await Promise.race([load(), new Promise((_, reject) => {
+            timer = setTimeout(() => { controller.abort(); reject(new Error('Icon load timed out: ' + file)); }, 3000);
+          })]);
+        } finally {
+          clearTimeout(timer);
+          controller.abort();
+          urls.forEach(url => URL.revokeObjectURL(url));
+        }
+      })).then(results => {
+        const images = results.flatMap(result => result.status === 'fulfilled' ? result.value : []);
+        if (!images.length) throw new Error('No project icons available');
+        const columns = Math.min(8, images.length);
+        const rows = Math.ceil(images.length / columns);
+        const sheet = document.createElement('canvas');
+        sheet.width = columns * 64;
+        sheet.height = rows * 64;
+        const context = sheet.getContext('2d');
+        if (!context) throw new Error('Icon atlas canvas unavailable');
+        // Cache static SVGs once; every matrix cell samples the same small atlas.
+        images.forEach((image, index) => context.drawImage(image,
+          (index % columns) * 64 + 3, Math.floor(index / columns) * 64 + 3, 58, 58));
+        return {sheet, count: images.length, grid: [columns, rows]};
+      }).catch(error => { iconAtlasLoad = null; throw error; });
+    }
+    return iconAtlasLoad;
+  }
+
+  function initGL(icons) {
     if (program) return true;
     gl = canvas.getContext('webgl', {alpha: false, antialias: false, depth: false, powerPreference: 'low-power'});
     if (!gl || gl.isContextLost()) return false;
@@ -218,20 +297,13 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
     const position = gl.getAttribLocation(program, 'position');
     gl.enableVertexAttribArray(position);
     gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-    uniforms = Object.fromEntries(['imageA','imageB','glyphs','foreground','nextForeground','resolution','sizeA','sizeB','sceneTint','progress','direction','cellSize','scrollMode','codeTime']
+    uniforms = Object.fromEntries(['imageA','imageB','iconAtlas','foreground','nextForeground','resolution','sizeA','sizeB','sceneTint','progress','direction','cellSize','codeTime','iconCount','iconGrid']
       .map(name => [name, gl.getUniformLocation(program, name)]));
-    const sheet = document.createElement('canvas');
-    sheet.width = 32 * 16;
-    sheet.height = 48;
-    const ctx = sheet.getContext('2d');
-    ctx.fillStyle = '#000';
-    ctx.fillRect(0, 0, sheet.width, sheet.height);
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 38px monospace';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    [...' .:;!+*iox%#MW8@'].forEach((character, i) => ctx.fillText(character, i * 32 + 16, 25));
-    atlas = texture(sheet);
+    atlas = texture(icons.sheet);
+    atlasCount = icons.count;
+    atlasGrid = icons.grid;
+    overlay.dataset.iconCount = String(atlasCount);
+    overlay.dataset.renderMode = 'personal-icons';
     return true;
   }
 
@@ -305,7 +377,7 @@ async function captureProjectControls(bounds, ratio) {
   return layer;
 }
 
-async function captureForeground(target, {includeHidden = false, iconMotion = []} = {}) {
+async function captureForeground(target, {includeHidden = false} = {}) {
   const bounds = target.getBoundingClientRect();
   const ratio = Math.min(devicePixelRatio || 1, 1.5);
   const controls = await captureProjectControls(bounds,ratio);
@@ -370,85 +442,37 @@ async function captureForeground(target, {includeHidden = false, iconMotion = []
       return image;
     } finally { URL.revokeObjectURL(url); }
   };
-  const icons = document.querySelector('.project-icon-field');
-  let fieldImage = null, fieldRect = null, pieceAtlas = null;
+  const icon = document.querySelector('.project-dial-item.is-active .project-dial-icon svg');
   let iconCount = 0;
-  if (icons && getComputedStyle(icons).visibility !== 'hidden') {
-    const rect = icons.getBoundingClientRect();
+  if (icon && (includeHidden || getComputedStyle(icon).visibility !== 'hidden')) {
+    const rect = icon.getBoundingClientRect();
     if (rect.width && rect.height) {
-      const copy = icons.cloneNode(true);
+      const copy = icon.cloneNode(true);
       copy.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
       copy.setAttribute('width', String(rect.width));
       copy.setAttribute('height', String(rect.height));
-      copy.removeAttribute('class');
-      copy.removeAttribute('style');
-      iconCount = copy.querySelectorAll('[data-piece]').length;
-      // Rasterize all moving pieces once into an atlas, never serialize SVG per frame.
-      if (iconMotion.length) {
-        const movingGroups = new Set(iconMotion.map(piece=>piece.node.parentElement.dataset.projectId));
-        [...copy.children].filter(group=>movingGroups.has(group.dataset.projectId)).forEach(group=>group.remove());
-        const sheet = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        sheet.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-        sheet.setAttribute('width', String(128 * Math.min(16,iconMotion.length)));
-        sheet.setAttribute('height', String(128 * Math.ceil(iconMotion.length/16)));
-        iconMotion.forEach((piece, i) => {
-          const tile = document.createElementNS(sheet.namespaceURI, 'svg');
-          const size = piece.size + 4;
-          tile.setAttribute('x', String((i%16) * 128));
-          tile.setAttribute('y', String(Math.floor(i/16) * 128));
-          tile.setAttribute('width', '128');
-          tile.setAttribute('height', '128');
-          tile.setAttribute('viewBox', `${-size/2} ${-size/2} ${size} ${size}`);
-          const node = piece.node.cloneNode(true);
-          node.removeAttribute('transform');
-          node.removeAttribute('opacity');
-          tile.append(node);
-          sheet.append(tile);
-        });
-        pieceAtlas = await decodeSvg(sheet);
-      }
-      fieldImage = await decodeSvg(copy);
-      fieldRect = rect;
+      const image = await decodeSvg(copy);
+      // Capture the complete icon alongside the title, with no fragment motion.
+      textLayer.getContext('2d').drawImage(image,
+        (rect.left-bounds.left)*ratio, (rect.top-bounds.top)*ratio,
+        rect.width*ratio, rect.height*ratio);
+      iconCount = 1;
     }
   }
   surface.codeContent = {textRuns, iconCount, controlCount:controls.controlCount};
-  surface.hasLiveMotion = iconMotion.some(piece=>piece.readPosition);
   const ease = (a, b, value) => {
     const t = Math.max(0, Math.min(1, (value-a)/(b-a)));
-    return t*t*(3-2*t);
+    return t*t*t*(t*(t*6-15)+10);
   };
   surface.renderCodeFrame = (progress, incoming, direction) => {
-    const iconPhase = incoming ? 1-ease(.64,.80,progress) : ease(.57,.72,progress);
-    const copyPhase = incoming ? 1-ease(.70,.83,progress) : ease(.56,.69,progress);
+    const copyPhase = incoming ? 1-ease(.66,.92,progress) : ease(.48,.70,progress);
     ctx.save();
     ctx.setTransform(1,0,0,1,0,0);
     ctx.clearRect(0,0,surface.width,surface.height);
     ctx.globalAlpha = 1-copyPhase;
     ctx.drawImage(textLayer, (incoming?1:-1)*direction*72*ratio*copyPhase, 0);
     ctx.restore();
-    if (fieldImage) ctx.drawImage(fieldImage, fieldRect.left, fieldRect.top, fieldRect.width, fieldRect.height);
-    const fieldScaleX = fieldRect ? fieldRect.width/innerWidth : 1;
-    const fieldScaleY = fieldRect ? fieldRect.height/innerHeight : 1;
-    if (pieceAtlas) iconMotion.forEach((piece, i) => {
-      const p = {};
-      // Small stagger keeps the original SVG fragments distinct during assembly.
-      const phase = piece.active===false ? 1 : ease(0,1,Math.max(0,Math.min(1,iconPhase*1.12-(piece.stagger || 0)*.12)));
-      const scattered = piece.readPosition ? piece.readPosition() : piece.scattered;
-      for (const key of ['x','y','scale','rotation','opacity']) {
-        p[key] = piece.assembled[key] + (scattered[key]-piece.assembled[key])*phase;
-      }
-      ctx.save();
-      ctx.translate(fieldRect.left+p.x*fieldScaleX, fieldRect.top+p.y*fieldScaleY);
-      ctx.scale(fieldScaleX,fieldScaleY);
-      ctx.rotate(p.rotation*Math.PI/180);
-      ctx.scale(p.scale,p.scale);
-      ctx.globalAlpha = p.opacity;
-      const size = piece.size+4;
-      ctx.drawImage(pieceAtlas,(i%16)*128,Math.floor(i/16)*128,128,128,-size/2,-size/2,size,size);
-      ctx.restore();
-    });
     ctx.drawImage(controls,bounds.left,bounds.top,bounds.width,bounds.height);
-    surface.codeContent.iconMotion = iconPhase;
     surface.codeContent.copyMotion = copyPhase;
     return surface;
   };
@@ -491,13 +515,13 @@ async function captureForeground(target, {includeHidden = false, iconMotion = []
   function paint(progress) {
     gl.useProgram(program);
     syncBounds();
-    // Reuse cached text/fragment bitmaps; only their poses change under the code.
+    // Reuse the cached title and complete icon throughout the code transition.
     for (const [source, value, incoming] of [[job.contentSource,job.content,false],[job.nextSource,job.nextContent,true]]) {
-      if (!source?.renderCodeFrame || (!source.hasLiveMotion && progress === job.paintedProgress)) continue;
+      if (!source?.renderCodeFrame || progress === job.paintedProgress) continue;
       source.renderCodeFrame(progress,incoming,job.direction);
       gl.bindTexture(gl.TEXTURE_2D,value);
       gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,gl.RGBA,gl.UNSIGNED_BYTE,source);
-      overlay.dataset[incoming?'incomingMotion':'outgoingMotion']=source.codeContent.iconMotion.toFixed(3);
+      overlay.dataset[incoming?'incomingMotion':'outgoingMotion']=source.codeContent.copyMotion.toFixed(3);
     }
     job.paintedProgress=progress;
     [job.a, job.b, atlas, job.content, job.nextContent].forEach((value, index) => {
@@ -506,7 +530,9 @@ async function captureForeground(target, {includeHidden = false, iconMotion = []
     });
     gl.uniform1i(uniforms.imageA, 0);
     gl.uniform1i(uniforms.imageB, 1);
-    gl.uniform1i(uniforms.glyphs, 2);
+    gl.uniform1i(uniforms.iconAtlas, 2);
+    gl.uniform1f(uniforms.iconCount, atlasCount);
+    gl.uniform2f(uniforms.iconGrid, atlasGrid[0], atlasGrid[1]);
     gl.uniform1i(uniforms.foreground, 3);
     gl.uniform1i(uniforms.nextForeground, 4);
     gl.uniform2f(uniforms.sizeA, job.from.naturalWidth, job.from.naturalHeight);
@@ -515,8 +541,7 @@ async function captureForeground(target, {includeHidden = false, iconMotion = []
     gl.uniform1f(uniforms.progress, progress);
     gl.uniform1f(uniforms.codeTime, job.codeTime);
     gl.uniform1f(uniforms.direction, job.direction);
-    gl.uniform1f(uniforms.scrollMode, job.scrub ? 1 : 0);
-    gl.uniform1f(uniforms.cellSize, Math.max(4, Number(options.cellSize) || 8));
+    gl.uniform1f(uniforms.cellSize, Math.max(8, Number(options.cellSize) || 16));
     gl.drawArrays(gl.TRIANGLES, 0, 6);
     overlay.dataset.progress = progress.toFixed(3);
   }
@@ -542,41 +567,11 @@ async function captureForeground(target, {includeHidden = false, iconMotion = []
     const dt = Math.min(now - job.last, 48);
     job.last = now;
     job.codeTime += dt / 1000;
-    const duration = Math.max(300, Number(options.durationMs) || 2600);
-    if (job.scrub && !job.scrub.committed) {
-      const session=job.scrub;
-      if (now-session.lastInput >= session.returnDelay) {
-        if (job.returnStarted == null) {
-          job.returnStarted=now;
-          job.returnFrom=job.elapsed/duration;
-        }
-        const t=Math.min(1,(now-job.returnStarted)/session.returnDuration);
-        const eased=t*t*t*(t*(t*6-15)+10);
-        job.elapsed=job.returnFrom*(1-eased)*duration;
-        session.progress=job.elapsed/duration;
-        session.distance=session.progress*session.distanceScale;
-        overlay.dataset.phase='returning';
-        if (t===1) { paint(0); finish(false); return; }
-      } else {
-        if (job.returnStarted != null || job.scrubTarget !== session.progress) {
-          job.scrubFrom=job.elapsed/duration;
-          job.scrubTarget=session.progress;
-          job.scrubTime=now;
-          job.returnStarted=null;
-        }
-        const follow=Math.min(1,(now-job.scrubTime)/160);
-        const eased=follow*follow*(3-2*follow);
-        job.elapsed=(job.scrubFrom+(job.scrubTarget-job.scrubFrom)*eased)*duration;
-        overlay.dataset.phase='scrubbing';
-        if (follow===1 && session.progress===0) { paint(0); finish(false); return; }
-      }
-    } else {
-      if (job.scrub && !job.swapped) overlay.dataset.phase='covering';
-      job.elapsed += dt;
-    }
+    const duration = Math.max(300, Number(options.durationMs) || 1400);
+    job.elapsed += dt;
     const progress = Math.min(1, job.elapsed / duration);
     try {
-      if (!job.swapped && progress >= (job.scrub ? .5 : .38)) {
+      if (!job.swapped && progress >= .38) {
         job.swapped = true;
         const incoming = job.swap();
         overlay.dataset.phase = 'revealing';
@@ -623,31 +618,27 @@ async function captureForeground(target, {includeHidden = false, iconMotion = []
     const rgba = context.getImageData(0,0,1,1).data;
     return [rgba[0]/255,rgba[1]/255,rgba[2]/255,rgba[3]/255*Number(style.opacity)];
   }
-  async function transition({direction = 1, swap, from, to, target, scrub = null, foreground = null}) {
+  async function transition({direction = 1, swap, from, to, target, foreground = null}) {
     if (job) return false;
     const current = ++generation;
     if (reduced.matches) { await swap(); return true; }
     async function withoutCanvas() {
-      while (current === generation && scrub && !scrub.committed) {
-        if (performance.now()-scrub.lastInput >= scrub.returnDelay+scrub.returnDuration) return false;
-        await new Promise(resolve => requestAnimationFrame(resolve));
-      }
       if (current !== generation) return false;
       await swap();
       return true;
     }
     let sources;
     try {
-      sources = await Promise.all([prepare(from), prepare(to)]);
+      sources = await Promise.all([prepare(from), prepare(to), prepareIconAtlas()]);
       if (current !== generation) return false;
-      if (!initGL()) return withoutCanvas();
+      if (!initGL(sources[2])) return withoutCanvas();
     } catch (error) {
       if (current !== generation) return false;
       console.warn('[ProjectASCII] Image/WebGL unavailable; using the original image.', error);
       return withoutCanvas();
     }
     return new Promise(resolve => {
-      job = {direction: Math.sign(direction) || 1, swap, target, resolve, scrub,
+      job = {direction: Math.sign(direction) || 1, swap, target, resolve,
         codeTime: 0,
         sceneTint: readSceneTint(),
         from: sources[0], to: sources[1], swapped: false, elapsed: 0, last: performance.now()};
@@ -665,13 +656,12 @@ async function captureForeground(target, {includeHidden = false, iconMotion = []
         overlay.dataset.foregroundIcons = String(content.codeContent?.iconCount || 0);
         overlay.dataset.foregroundControls = String(content.codeContent?.controlCount || 0);
         paint(0);
-        overlay.dataset.phase = scrub ? 'scrubbing' : 'covering';
+        overlay.dataset.phase = 'covering';
         overlay.classList.add('is-active');
         document.documentElement.classList.add('project-wave-running');
         frame = requestAnimationFrame(tick);
       } catch (error) {
         console.warn('[ProjectASCII]', error);
-        if (scrub && !scrub.committed) { finish(false); return; }
         swap();
         finish(true);
       }
@@ -680,11 +670,6 @@ async function captureForeground(target, {includeHidden = false, iconMotion = []
   function cancel() { generation++; finish(false); }
   canvas.addEventListener('webglcontextlost', event => {
     event.preventDefault();
-    if (job?.scrub && !job.scrub.committed) {
-      finish(false);
-      program = null;
-      return;
-    }
     if (job && !job.swapped) job.swap();
     finish(true);
     program = null;
@@ -695,6 +680,7 @@ async function captureForeground(target, {includeHidden = false, iconMotion = []
       finish(true);
     }
   });
+  if (!reduced.matches) void prepareIconAtlas().catch(() => {});
   window.ProjectWave = window.ProjectASCII = Object.freeze({
     ready: Promise.resolve(), prepare, captureForeground, transition, cancel,
     get state() { return {busy: !!job, phase: overlay.dataset.phase || 'idle', completed, progress: Number(overlay.dataset.progress || 0)}; }
@@ -710,12 +696,12 @@ async function captureForeground(target, {includeHidden = false, iconMotion = []
         rgb: 5,              // RGB를 한 단계 부드럽게
         fluid: 50,          // 세로 전환에서 과한 출렁임을 줄임
         wheelThreshold: 90,  // 미세 휠 입력에 너무 민감하게 반응하지 않도록
-        wheelInterval: 120,  // 연속 입력 간 호흡
+        wheelGestureGap: 180, // 휠 입력이 끊긴 뒤 다음 제스처 허용
         pixelRatio: 1.25,
         maxTextureSize: 1920,
         ...window.PROJECT_FLUID_OPTIONS
     };
-    // Colored matrix text dissolve replaces the bundled RGB transition.
+    // Colored icon matrix dissolve replaces the bundled RGB transition.
 
     (() => {
         "use strict";
@@ -1075,7 +1061,7 @@ async function captureForeground(target, {includeHidden = false, iconMotion = []
             const reduce=matchMedia('(prefers-reduced-motion: reduce)');
             let index=Math.max(0,cards.findIndex(c=>c.classList.contains('is-active')));
             let engine=null,phase='idle',pending=null,request=0,disabled=false,disposed=false;
-            let wheelTotal=0,lastWheel=0,searchFrame=0,wheelTimer=0,lastStep=-Infinity;
+            let wheelTotal=0,lastWheel=0,searchFrame=0,wheelLocked=false,wheelDirection=0;
             let wanted=null,wantedDirection=1,loading=false,prepared=null;
             let initial=true,stoppedLenis=null;
             const root=document.documentElement;
@@ -1093,7 +1079,7 @@ async function captureForeground(target, {includeHidden = false, iconMotion = []
                 ? [...projectDialList.querySelectorAll('.project-dial-item[data-project-id]')]
                 : [];
 
-            // SVG 조각은 화면 좌표로 움직이고, 조립되면 원본의 좌표/겹침 순서로 돌아갑니다.
+            // 선택된 프로젝트의 완성된 SVG만 제목 옆에 표시합니다.
             const projectIconFiles={
                 'apuchika':'team-01-apuchika.svg',
                 'omix':'team-02-ommix.svg',
@@ -1110,309 +1096,35 @@ async function captureForeground(target, {includeHidden = false, iconMotion = []
                 'efact':'team-13-effect.svg',
                 'jikji':'team-14-jikji-jamboree.svg'
             };
-            // 조립/분산/간격은 ms. flowSpeed와 flowDistance는 흐름의 속도/이동 폭 배율입니다.
-            const iconAssemblySettings={
-                gatherDuration:700,scatterDuration:650,stagger:120,
-                flowSpeed:1,flowDistance:1
-            };
-            const svgNamespace='http://www.w3.org/2000/svg';
-            const svgElement=name=>document.createElementNS(svgNamespace,name);
             const dialIcons=new Map();
-            let dialIconProjectId=null,iconFrame=0,iconFieldReady=false;
-            let deferIconAssembly=false;
-            let iconAssemblyWaiter=null;
-            let iconFlowTime=0,iconLastFrame=0,iconFlowBounds=null;
-            const iconField=svgElement('svg');
-            iconField.classList.add('project-icon-field');
-            iconField.setAttribute('aria-hidden','true');
-            iconField.setAttribute('focusable','false');
-            document.body.appendChild(iconField);
-
-            // 복합 path의 구멍은 바깥 윤곽과 함께 움직여야 합니다.
-            // 안쪽 윤곽은 바깥 윤곽과 묶어 fill-rule과 원래 도형을 보존합니다.
-            function splitIconShape(shape,measure){
-                const clone=()=>{
-                    const node=shape.cloneNode(true);
-                    node.removeAttribute('id');
-                    return node;
-                };
-                const path=shape.getAttribute('d')||'';
-                if(shape.localName!=='path'||/m/.test(path))return [clone()];
-                const contours=path.match(/M[^M]+/g)||[];
-                if(contours.length<2)return [clone()];
-                const groups=contours.map(d=>{
-                    const node=clone();node.setAttribute('d',d);measure.appendChild(node);
-                    const box=measure.getBBox();node.remove();
-                    return {paths:[d],box};
-                });
-                const contains=(a,b)=>a.x<=b.x+.01&&a.y<=b.y+.01&&
-                    a.x+a.width>=b.x+b.width-.01&&a.y+a.height>=b.y+b.height-.01;
-                for(let i=0;i<groups.length;i++){
-                    for(let j=i+1;j<groups.length;j++){
-                        const a=groups[i],b=groups[j];
-                        if(!contains(a.box,b.box)&&!contains(b.box,a.box))continue;
-                        const x=Math.min(a.box.x,b.box.x),y=Math.min(a.box.y,b.box.y);
-                        a.box={x,y,width:Math.max(a.box.x+a.box.width,b.box.x+b.box.width)-x,
-                            height:Math.max(a.box.y+a.box.height,b.box.y+b.box.height)-y};
-                        a.paths.push(...b.paths);groups.splice(j,1);i=-1;break;
-                    }
-                }
-                return groups.map(group=>{const node=clone();node.setAttribute('d',group.paths.join(''));return node;});
-            }
-
-            const iconLoads=projectDialItems.map(async(item,projectOrder)=>{
+            const iconLoads=projectDialItems.map(async item=>{
                 const projectId=String(item.dataset.projectId),file=projectIconFiles[projectId];
                 const title=item.querySelector('.project-dial-title');
                 if(!file||!title)return;
                 const slot=document.createElement('span');
                 slot.className='project-dial-icon';slot.setAttribute('aria-hidden','true');
                 title.before(slot);item.classList.add('has-project-icon');
-                const group=svgElement('g');group.dataset.projectId=projectId;iconField.appendChild(group);
-                const entry={item,slot,group,pieces:[],projectOrder};
-                dialIcons.set(projectId,entry);
-                const measureSvg=svgElement('svg'),measure=svgElement('g');
-                measureSvg.style.cssText='position:fixed;width:1px;height:1px;visibility:hidden;pointer-events:none';
-                measureSvg.setAttribute('aria-hidden','true');measureSvg.appendChild(measure);
+                dialIcons.set(projectId,{item,slot});
                 try{
-                    const response=await fetch(new URL(file, iconBaseUrl),{signal:events.signal});
-                    if(!response.ok)throw new Error(`SVG ${response.status}`);
+                    const response=await fetch(new URL(file,iconBaseUrl),{signal:events.signal});
+                    if(!response.ok)throw new Error('SVG '+response.status);
                     const xml=new DOMParser().parseFromString(await response.text(),'image/svg+xml');
                     if(disposed)return;
                     if(xml.querySelector('parsererror'))throw new Error('Invalid SVG');
-                    document.body.appendChild(measureSvg);
-                    for(const layer of xml.querySelectorAll('.icon-layer')){
-                        for(const source of layer.querySelectorAll('path,polygon,rect,circle,ellipse,polyline')){
-                            for(const shape of splitIconShape(source,measure)){
-                                measure.appendChild(shape);const box=measure.getBBox();shape.remove();
-                                const cx=box.x+box.width/2,cy=box.y+box.height/2;
-                                const node=svgElement('g'),centered=svgElement('g');
-                                centered.setAttribute('transform',`translate(${-cx} ${-cy})`);
-                                centered.appendChild(shape);node.appendChild(centered);group.appendChild(node);
-                                node.dataset.piece=String(entry.pieces.length);
-                                entry.pieces.push({node,cx,cy,size:Math.max(box.width,box.height,1),current:null,motion:null});
-                            }
-                        }
-                    }
-                    if(!entry.pieces.length)throw new Error('Empty SVG');
+                    const icon=document.importNode(xml.documentElement,true);
+                    // 원본 SVG에 포함된 등장 애니메이션도 제거합니다.
+                    icon.querySelectorAll('style,animate,animateTransform,animateMotion,set').forEach(node=>node.remove());
+                    icon.removeAttribute('role');icon.removeAttribute('aria-labelledby');
+                    icon.setAttribute('aria-hidden','true');icon.setAttribute('focusable','false');
+                    slot.replaceChildren(icon);
+                    item.classList.add('is-icon-loaded');
                 }catch(error){
-                    if(error.name!=='AbortError')console.warn(`[Project icons] ${file}`,error);
-                    group.remove();slot.remove();item.classList.remove('has-project-icon','is-icon-loaded');
+                    if(error.name!=='AbortError')console.warn('[Project icons] '+file,error);
+                    slot.remove();item.classList.remove('has-project-icon','is-icon-loaded');
                     dialIcons.delete(projectId);
-                }finally{measureSvg.remove();}
+                }
             });
             if(dialIcons.size)projectDial?.classList.add('has-project-icons');
-
-            const iconMix=(a,b,t)=>a+(b-a)*t;
-            const iconEase=t=>1-Math.pow(1-t,3);
-            const iconRandom=seed=>{const value=Math.sin(seed*127.1+311.7)*43758.5453;return value-Math.floor(value);};
-            function paintIconPiece(piece){
-                const p=piece.current;
-                piece.node.setAttribute('transform',`translate(${p.x.toFixed(4)} ${p.y.toFixed(4)}) rotate(${p.rotation.toFixed(4)}) scale(${p.scale.toFixed(6)})`);
-                if(piece.paintedOpacity!==p.opacity){
-                    piece.node.setAttribute('opacity',p.opacity);piece.paintedOpacity=p.opacity;
-                }
-            }
-            function iconFlowRightAt(y){
-                const b=iconFlowBounds;
-                const vertical=(y-b.arcCenter)/b.arcRadius;
-                let right=b.inset+(b.arcRight-b.inset)*Math.sqrt(Math.max(0,1-vertical*vertical));
-                const dy=y-b.centerY;
-                // 완성된 아이콘 주변을 완만하게 돌아가도록 연속적인 안쪽 경계를 만듭니다.
-                const avoid=b.centerX-b.iconClearance+dy*dy/(2*b.iconClearance);
-                const blend=Math.max(10-Math.abs(right-avoid),0)/10;
-                right=Math.min(right,avoid)-blend*blend*2.5;
-                return Math.max(b.inset+.01,right);
-            }
-            function flowingIconPosition(piece){
-                if(reduce.matches||!iconFlowBounds)return {...piece.scattered};
-                const b=iconFlowBounds,phase=piece.seed*Math.PI*2;
-                const t=iconFlowTime*iconAssemblySettings.flowSpeed;
-                const distance=iconAssemblySettings.flowDistance;
-                // 삼각함수 좌표로 아치 내부를 순환하므로 경계에서 튕기거나 순간이동하지 않습니다.
-                const vertical=piece.flowVertical+distance*(
-                    (Math.sin(t*.24+phase)-Math.sin(phase))*28/b.arcRadius+
-                    (Math.sin(t*.13+phase*2)-Math.sin(phase*2))*10/b.arcRadius
-                );
-                const y=b.arcCenter+Math.sin(vertical)*b.arcRadius;
-                const horizontal=piece.flowHorizontal+distance*(
-                    (Math.sin(t*.29+phase*1.7)-Math.sin(phase*1.7))*.34+
-                    (Math.sin(t*.17+phase)-Math.sin(phase))*.12
-                );
-                const x=b.inset+(iconFlowRightAt(y)-b.inset)*(.5+.5*Math.sin(horizontal));
-                return {...piece.scattered,x,y,
-                    rotation:piece.scattered.rotation+(Math.sin(t*.22+phase)-Math.sin(phase))*12*distance};
-            }
-            function requestIconFrame(){
-                if(!iconFrame&&iconFieldReady&&!disposed&&!slideview.hidden&&!document.hidden){
-                    iconFrame=requestAnimationFrame(drawIconField);
-                }
-            }
-            function layoutIconField(){
-                if(!iconFieldReady||slideview.hidden||!projectDial)return;
-                const width=innerWidth,height=innerHeight;
-                iconField.setAttribute('viewBox',`0 0 ${width} ${height}`);
-                // clamp() 변수는 계산 전 문자열이므로 실제 슬롯의 CSS width를 읽습니다.
-                const slot=dialIcons.values().next().value?.slot;
-                const iconSize=slot?parseFloat(getComputedStyle(slot).width):72;
-                const left=projectDial.getBoundingClientRect().left,scale=iconSize/268;
-                const centerY=height/2,centerX=left+iconSize/2;
-                const pieces=[...dialIcons.values()].flatMap(entry=>entry.pieces);
-                // 순서를 섞되 위치는 고정하여 스크롤할 때마다 아치가 뒤바뀌지 않습니다.
-                const ranked=[...pieces].sort((a,b)=>a.seed-b.seed);
-                // 아치의 테두리가 아니라 왼쪽 가장자리부터 안쪽 면적 전체에 배치합니다.
-                const inset=18,arcRight=Math.max(inset+40,left+iconSize-10);
-                const arcTop=Math.max(72,height*.085),arcBottom=height-24;
-                const arcCenter=(arcTop+arcBottom)/2,arcRadius=(arcBottom-arcTop)/2;
-                const iconClearance=iconSize/2+18;
-                iconFlowBounds={inset,arcRight,arcCenter,arcRadius,centerX,centerY,iconClearance};
-                let candidate=0;
-                ranked.forEach((piece,i)=>{
-                    let x,y;
-                    // 고정된 2차원 수열로 조각들이 특정 선이나 지점에 몰리지 않게 합니다.
-                    do{
-                        candidate++;
-                        x=inset+((.5+candidate*.754877666)%1)*(arcRight-inset);
-                        y=arcTop+((.5+candidate*.569840291)%1)*(arcBottom-arcTop);
-                    }while(x>iconFlowRightAt(y));
-                    piece.scattered={x,y,scale:Math.min(.5,(11+iconRandom(i+31)*12)/piece.size),
-                        rotation:(iconRandom(i+73)-.5)*120,opacity:.3+iconRandom(i+101)*.35};
-                    const clampUnit=value=>Math.max(-1,Math.min(1,value));
-                    piece.flowVertical=Math.asin(clampUnit((y-arcCenter)/arcRadius));
-                    piece.flowHorizontal=Math.asin(clampUnit(2*(x-inset)/(iconFlowRightAt(y)-inset)-1));
-                    piece.assembled={x:centerX+(piece.cx-120)*scale,y:centerY+(piece.cy-120)*scale,
-                        scale,rotation:0,opacity:1};
-                    if(!piece.current){piece.current=flowingIconPosition(piece);paintIconPiece(piece);}
-                });
-                iconField.classList.add('is-ready');
-            }
-            function finishIconAssembly(){
-                if(!iconFieldReady)return;
-                const entry=dialIcons.get(dialIconProjectId);
-                if(entry&&entry.group.dataset.state!=='assembled'&&!entry.pieces.some(piece=>piece.motion)){
-                    entry.group.dataset.state='assembled';
-                }
-                if(entry&&entry.group.dataset.state==='assembled'&&!entry.item.classList.contains('is-icon-loaded')){
-                    entry.item.classList.add('is-icon-loaded');
-                }
-                const waiter=iconAssemblyWaiter;
-                const target=waiter&&dialIcons.get(waiter.id);
-                if(waiter&&(!target||target.group.dataset.state===waiter.state)){
-                    iconAssemblyWaiter=null;
-                    waiter.resolve(true);
-                }
-            }
-            function waitForIconMotion(projectId,state){
-                return new Promise(resolve=>{
-                    iconAssemblyWaiter={id:String(projectId),state,resolve};
-                    finishIconAssembly();
-                });
-            }
-            function drawIconField(now){
-                iconFrame=0;
-                if(disposed||slideview.hidden||document.hidden){iconLastFrame=0;return;}
-                if(iconLastFrame&&!reduce.matches)iconFlowTime+=Math.min((now-iconLastFrame)/1000,.05);
-                iconLastFrame=now;
-                let moving=false;
-                dialIcons.forEach(entry=>{
-                    const active=entry.group.dataset.projectId===dialIconProjectId;
-                    entry.pieces.forEach(piece=>{
-                        const motion=piece.motion;
-                        if(!motion){
-                            if(!active&&!reduce.matches){piece.current=flowingIconPosition(piece);paintIconPiece(piece);}
-                            return;
-                        }
-                        const t=Math.max(0,Math.min(1,(now-motion.start)/motion.duration));
-                        const eased=iconEase(motion.gather?Math.min(1,t/.84):t);
-                        // 분산 목적지도 계속 흐르게 하여 도착 직후의 움직임이 이어지게 합니다.
-                        const target=motion.gather?motion.to:flowingIconPosition(piece);
-                        const p={};
-                        for(const key of ['x','y','rotation','opacity'])p[key]=iconMix(motion.from[key],target[key],eased);
-                        if(motion.gather){
-                            p.scale=t<.84?iconMix(motion.from.scale,target.scale*1.08,eased):
-                                target.scale*(t<.92?iconMix(1.08,.97,(t-.84)/.08):iconMix(.97,1,(t-.92)/.08));
-                        }else p.scale=iconMix(motion.from.scale,target.scale,eased);
-                        piece.current=t===1?{...target}:p;paintIconPiece(piece);
-                        if(t===1)piece.motion=null;else moving=true;
-                    });
-                    if(!active&&entry.group.dataset.state!=='scattered'&&!entry.pieces.some(piece=>piece.motion)){
-                        entry.group.dataset.state='scattered';
-                    }
-                });
-                finishIconAssembly();
-                if(moving||(!reduce.matches&&dialIcons.size>1))requestIconFrame();
-            }
-            function moveIconEntry(entry,gather){
-                const now=performance.now();
-                entry.group.dataset.state=gather?'assembling':'scattering';
-                entry.pieces.forEach((piece,i)=>{
-                    const to=gather?piece.assembled:flowingIconPosition(piece);
-                    if(reduce.matches){piece.current={...to};piece.motion=null;paintIconPiece(piece);return;}
-                    piece.motion={from:{...piece.current},to:{...to},gather,
-                        start:now+(i/Math.max(1,entry.pieces.length-1))*iconAssemblySettings.stagger,
-                        duration:gather?iconAssemblySettings.gatherDuration:iconAssemblySettings.scatterDuration};
-                });
-                if(reduce.matches)entry.group.dataset.state=gather?'assembled':'scattered';
-                requestIconFrame();
-            }
-            function syncDialIcon(projectId){
-                if(slideview.hidden)return;
-                const id=String(projectId);
-                // Keep the incoming fragments flowing until the wave has fully exited.
-                if(deferIconAssembly){
-                    const previous=dialIcons.get(dialIconProjectId);
-                    previous?.item.classList.remove('is-icon-loaded');
-                    dialIconProjectId=null;
-                    if(iconFieldReady&&previous){
-                        layoutIconField();
-                        moveIconEntry(previous,false);
-                    }
-                    return;
-                }
-                if(id===dialIconProjectId)return;
-                const previous=dialIcons.get(dialIconProjectId);
-                previous?.item.classList.remove('is-icon-loaded');
-                dialIconProjectId=id;
-                if(!iconFieldReady)return;
-                layoutIconField();
-                if(previous)moveIconEntry(previous,false);
-                const active=dialIcons.get(id);
-                if(active){
-                    active.item.classList.remove('is-icon-loaded');
-                    iconField.appendChild(active.group);
-                    moveIconEntry(active,true);
-                }
-            }
-            function resetIconField(){
-                cancelAnimationFrame(iconFrame);iconFrame=0;dialIconProjectId=null;
-                iconFlowTime=0;iconLastFrame=0;
-                dialIcons.forEach(entry=>{
-                    entry.item.classList.remove('is-icon-loaded');entry.group.dataset.state='scattered';
-                    entry.pieces.forEach(piece=>{
-                        piece.motion=null;
-                        if(piece.scattered){piece.current={...piece.scattered};paintIconPiece(piece);}
-                    });
-                });
-            }
-            function resizeIconField(){
-                if(!iconFieldReady||slideview.hidden)return;
-                layoutIconField();
-                dialIcons.forEach(entry=>entry.pieces.forEach(piece=>{
-                    const target=entry.group.dataset.projectId===dialIconProjectId?piece.assembled:flowingIconPosition(piece);
-                    if(piece.motion){
-                        piece.motion.from={...piece.current};piece.motion.to={...target};piece.motion.start=performance.now();
-                    }else{piece.current={...target};paintIconPiece(piece);}
-                }));
-            }
-            Promise.all(iconLoads).then(()=>{
-                if(disposed)return;
-                dialIcons.forEach(entry=>entry.pieces.forEach((piece,i)=>{piece.seed=iconRandom(entry.projectOrder*101+i+1);}));
-                iconFieldReady=true;
-                if(slideview.hidden)return;
-                layoutIconField();
-                const id=dialIconProjectId||cards[index]?.dataset.projectId;
-                dialIconProjectId=null;syncDialIcon(id);
-                finishIconAssembly();
-            });
             // Dial은 현재 위치를 정수 index가 아니라 실수 position으로 관리합니다.
             // 예: 4 -> 5로 이동할 때 4.0, 4.1, 4.2 ... 5.0처럼
             // 연속적으로 변하기 때문에 opacity / scale도 끊기지 않습니다.
@@ -1494,17 +1206,12 @@ async function captureForeground(target, {includeHidden = false, iconMotion = []
                 visibility:hidden;
                 pointer-events:none;
             }
-            .project-icon-field {
-                display:none;
-                position:fixed;
-                inset:0;
-                width:100%;
-                height:100%;
-                z-index:90;
-                overflow:hidden;
-                pointer-events:none;
+            .project-dial-icon svg { display:block; width:100%; height:100%; }
+            .project-dial-icon svg,
+            .project-dial-icon svg * { animation:none!important; transition:none!important; }
+            html[data-project-fluid-view="slide"] .project-dial-item.is-active.is-icon-loaded .project-dial-icon {
+                visibility:visible;
             }
-            html[data-project-fluid-view="slide"] .project-icon-field.is-ready { display:block; }
             /* 제목의 자리와 행 높이를 유지해 다이얼이 흔들리지 않게 합니다. */
             html[data-project-fluid-view="slide"] .project-dial-title {
                 display:block;
@@ -1751,7 +1458,6 @@ async function captureForeground(target, {includeHidden = false, iconMotion = []
                 );
                 if(targetIndex<0)return;
 
-                syncDialIcon(projectId);
                 updateDialClasses(targetIndex);
 
                 projectDial.classList.toggle('is-moving-up',direction>0);
@@ -1848,15 +1554,12 @@ async function captureForeground(target, {includeHidden = false, iconMotion = []
                 return results.every(Boolean);
             }
             function clearTransition(){
-                scrollSession=null;
                 root.classList.remove('project-ascii-content-ready');
                 window.ProjectWave.cancel();
-                iconAssemblyWaiter?.resolve(false);
-                iconAssemblyWaiter=null;
-                deferIconAssembly=false;
                 root.classList.remove('project-wave-text-pending', 'project-wave-text-enter', 'project-wave-text-exit');
-                request++;clearTimeout(wheelTimer);wheelTimer=0;
-                wanted=null;prepared=null;loading=false;phase='idle';pending=null;wheelTotal=0;lastStep=-Infinity;
+                request++;
+                wanted=null;prepared=null;loading=false;phase='idle';pending=null;
+                wheelTotal=0;lastWheel=0;wheelLocked=false;wheelDirection=0;
                 engine?.cancel();slideview.classList.remove('is-fluid-transitioning');
             }
             function jump(next,updateText=true){
@@ -1885,7 +1588,7 @@ async function captureForeground(target, {includeHidden = false, iconMotion = []
                     if (card) { loadImage(getSource(card)).catch(() => {}); window.ProjectASCII.prepare(getSource(card)).catch(() => {}); }
                 }
             }
-            async function transitionTo(next, direction = 1, scrub = null) {
+            async function transitionTo(next, direction = 1) {
                 if (disposed || slideview.hidden || !cards[next] || cards[next].hidden) return;
                 if (next === index || phase !== 'idle') return;
                 if (reduce.matches) { jump(next); return; }
@@ -1899,16 +1602,14 @@ async function captureForeground(target, {includeHidden = false, iconMotion = []
                     const foreground=await captureAsciiContent(cards[index]);
                     if(current!==request||disposed||slideview.hidden||cards[next].hidden)return;
                     loading=false;
-                    deferIconAssembly=true;
                     phase = 'animating';
                     const finished = await window.ProjectWave.transition({
                         direction,
                         from: getSource(cards[index]),
                         to: getSource(cards[next]),
                         target: cards[index],
-                        scrub, foreground,
+                        foreground,
                         swap() {
-                            deferIconAssembly=true;
                             root.classList.add('project-wave-text-pending');
                             root.classList.remove('project-wave-text-enter', 'project-wave-text-exit');
                             root.style.setProperty('--project-wave-copy-offset', `${direction * 14}px`);
@@ -1916,24 +1617,21 @@ async function captureForeground(target, {includeHidden = false, iconMotion = []
                             updateSlideInfo(cards[next].dataset.projectId, false);
                             forceTextVisible();
                             wanted = null;
-                            settleAsciiContent(cards[next].dataset.projectId);
+                            settleAsciiContent();
                             return captureAsciiContent(cards[next],{includeHidden:true});
                         }
                     });
                     if (!finished && current === request && !disposed && !slideview.hidden) {
-                        deferIconAssembly=false;
                         root.classList.remove('project-wave-text-pending','project-wave-text-exit','project-wave-text-enter');
                         markActive(index,true);
                         updateSlideInfo(cards[index].dataset.projectId,false);
                     }
                     if (finished && current === request && !disposed && !slideview.hidden) {
-                        deferIconAssembly=false;
                         root.classList.remove('project-wave-text-pending','project-wave-text-enter','project-wave-text-exit');
                         forceTextVisible();
                     }
                 } catch (error) {
                     if (current === request && !disposed) {
-                        deferIconAssembly=false;
                         root.classList.remove('project-wave-text-pending', 'project-wave-text-enter', 'project-wave-text-exit');
                         console.error('[Project wave transition]', error);
                         markActive(next, true, direction);
@@ -1943,12 +1641,8 @@ async function captureForeground(target, {includeHidden = false, iconMotion = []
                     if (current === request) {
                         wanted = null;
                         phase = 'idle';
-                        if(scrollSession===scrub)scrollSession=null;
                         loading = false;
                         wheelTotal = 0;
-                        clearTimeout(wheelTimer);
-                        wheelTimer = 0;
-                        lastStep = performance.now();
                         warm();
                     }
                 }
@@ -1965,67 +1659,12 @@ async function captureForeground(target, {includeHidden = false, iconMotion = []
                 const next=at<0?list[0]:list[at+direction];
                 if(next)transitionTo(cards.indexOf(next),direction);
             }
-// Build input, inserted inside the existing project controller.
-let scrollSession = null;
-function handleAsciiWheel(delta) {
-    if (disposed || slideview.hidden || !delta) return;
-    if (root.classList.contains('project-intro-pending') || root.classList.contains('project-intro-running')) return;
-    if (!scrollSession) {
-        if (phase !== 'idle' || performance.now() - lastStep < 220) return;
-        const direction = Math.sign(delta);
-        const visible = visibleCards();
-        const next = visible[visible.indexOf(cards[index]) + direction];
-        if (!next) return;
-        const settings=window.PROJECT_ASCII_OPTIONS || {};
-        const option=(name,fallback,min,max)=>{
-            const value=Number(settings[name]);
-            return Number.isFinite(value)?Math.max(min,Math.min(max,value)):fallback;
-        };
-        scrollSession = {direction, progress:0, distance:0, committed:false,
-            lastInput:performance.now(), distanceScale:option('scrollDistance',700,320,10000)*2,
-            commitAt:option('scrollCommit',.4,.1,.5),
-            returnDelay:option('scrollReturnDelay',220,160,5000),
-            returnDuration:option('scrollReturnDuration',480,200,1200)};
-        void transitionTo(cards.indexOf(next), direction, scrollSession);
-    }
-    const session = scrollSession;
-    if (session.committed) return;
-    session.lastInput=performance.now();
-    const step = Math.sign(delta) * Math.min(Math.abs(delta), 160);
-    session.distance = Math.max(0, session.distance + step * session.direction);
-    session.progress = Math.min(.55, session.distance / session.distanceScale);
-    if (session.progress > session.commitAt+1e-6) session.committed = true;
-}
-
 // Resolve the real DOM underneath the canvas to the incoming texture's final pose.
 function captureAsciiContent(target, options = {}) {
-    const iconMotion=[...dialIcons.values()].flatMap(entry=>entry.pieces.filter(piece=>piece.current).map((piece,i)=>({
-        node:piece.node, size:piece.size,
-        active:String(entry.group.dataset.projectId)===String(target.dataset.projectId),
-        stagger:i/Math.max(1,entry.pieces.length-1),
-        assembled:{...piece.current}, scattered:{...flowingIconPosition(piece)},
-        readPosition:()=>flowingIconPosition(piece)
-    })));
-    return window.ProjectASCII.captureForeground(target,{...options,iconMotion});
+    return window.ProjectASCII.captureForeground(target,options);
 }
 
-function settleAsciiContent(projectId) {
-    deferIconAssembly=false;
-    syncDialIcon(projectId);
-    if (iconFieldReady) {
-        layoutIconField();
-        dialIcons.forEach((entry,id)=>{
-            const active=String(id)===String(projectId);
-            entry.pieces.forEach(piece=>{
-                piece.motion=null;
-                const position=active?piece.assembled:flowingIconPosition(piece);
-                if(position){piece.current={...position};paintIconPiece(piece);}
-            });
-            entry.group.dataset.state=active?'assembled':'scattered';
-            entry.item.classList.toggle('is-icon-loaded',active);
-        });
-        finishIconAssembly();
-    }
+function settleAsciiContent() {
     root.classList.remove('project-wave-text-enter','project-wave-text-exit');
     root.classList.add('project-ascii-content-ready');
 }
@@ -2061,7 +1700,6 @@ function settleAsciiContent(projectId) {
                 });
 
                 if(view==='grid'){
-                    resetIconField();
                     /*
                      * Grid에서는 project-dial이 display:none이 되므로
                      * 숨겨진 상태에서 위치 계산 RAF가 계속 돌지 않게 정지합니다.
@@ -2174,36 +1812,37 @@ function settleAsciiContent(projectId) {
             viewButtons.forEach(button=>listen(button,'click',()=>changeView(button.dataset.view)));
             const editable=target=>target instanceof Element&&target.closest('input,textarea,select,[contenteditable="true"],[role="dialog"],[data-fluid-ignore]');
             const wheelOption=(name,fallback,min,max)=>Math.min(max,Math.max(min,Number.isFinite(Number(settings[name]))?Number(settings[name]):fallback));
-            function flushWheel(){
-                wheelTimer=0;
-                if(disposed||slideview.hidden){wheelTotal=0;return;}
-                const threshold=wheelOption('wheelThreshold',10,1,500);
-                if(Math.abs(wheelTotal)<threshold)return;
-                const dir=Math.sign(wheelTotal);wheelTotal=0;lastStep=performance.now();navigate(dir);
-            }
             listen(document,'wheel',event=>{
-                if(slideview.hidden||event.ctrlKey||event.metaKey||editable(event.target))return;
+                if(disposed||slideview.hidden||event.ctrlKey||event.metaKey||editable(event.target))return;
                 const nested=event.composedPath().find(el=>el instanceof Element&&el.matches('[data-fluid-ignore],[role="dialog"]'));
                 if(nested)return;
                 if(event.cancelable)event.preventDefault();
                 event.lenisStopPropagation=true;
                 const delta=Math.abs(event.deltaY)>=Math.abs(event.deltaX)?event.deltaY:event.deltaX;
                 if(!delta)return;
-                if(!reduce.matches){
-                    const unit=event.deltaMode===1?16:event.deltaMode===2?innerHeight:1;
-                    handleAsciiWheel(delta*unit);
-                    return;
-                }
                 const now=performance.now();
-                if(now-lastWheel>160||Math.sign(delta)!==Math.sign(wheelTotal))wheelTotal=0;
+                const direction=Math.sign(delta);
+                const newGesture=now-lastWheel>wheelOption('wheelGestureGap',180,80,1000)
+                    || direction!==wheelDirection;
+                if(newGesture){wheelTotal=0;wheelLocked=false;}
                 lastWheel=now;
+                wheelDirection=direction;
+                // Drop input during a transition, including its inertial tail.
+                // A new gesture after settling can trigger one full animation.
+                if(phase!=='idle'||loading||root.classList.contains('project-intro-pending')
+                    ||root.classList.contains('project-intro-running')){
+                    wheelTotal=0;wheelLocked=true;return;
+                }
+                if(wheelLocked)return;
                 const unit=event.deltaMode===1?16:event.deltaMode===2?innerHeight:1;
                 wheelTotal+=delta*unit;
-                const threshold=wheelOption('wheelThreshold',10,1,500);
+                const threshold=wheelOption('wheelThreshold',90,1,500);
                 if(Math.abs(wheelTotal)>=threshold){
-                    const wait=wheelOption('wheelInterval',100,0,1000)-(now-lastStep);
-                    if(wait<=0){clearTimeout(wheelTimer);flushWheel();}
-                    else if(!wheelTimer)wheelTimer=setTimeout(flushWheel,wait);
+                    wheelTotal=0;
+                    navigate(direction);
+                    // Set after navigate: reduced motion may synchronously reset state.
+                    wheelLocked=true;
+                    lastWheel=now;wheelDirection=direction;
                 }
             },{passive:false,capture:true});
             listen(document,'keydown',event=>{
@@ -2227,20 +1866,14 @@ function settleAsciiContent(projectId) {
                 syncFluidSurfaceBounds(cards[wanted??index]||cards[index]);
 
                 // 화면 크기가 바뀌어도 현재 이동 중인 위치를 유지한 채 중앙 재계산
-                resizeIconField();
                 if(dialPosition!==null)applyDialVisual(dialPosition);
                 else syncProjectDial(cards[index]?.dataset.projectId,0,true);
             });
             listen(reduce,'change',()=>{
                 if(reduce.matches){
                     const next=wanted??index;
-                    resetIconField();jump(next);
-                }else{iconLastFrame=0;requestIconFrame();warm();}
-            });
-            listen(document,'visibilitychange',()=>{
-                iconLastFrame=0;
-                if(document.hidden){cancelAnimationFrame(iconFrame);iconFrame=0;}
-                else requestIconFrame();
+                    jump(next);
+                }else warm();
             });
             markActive(index,true);changeView('slide');
             window.ProjectFluidSlide={
@@ -2259,12 +1892,11 @@ function settleAsciiContent(projectId) {
                     clearTransition();disposed=true;clearWriterQueue();
                     cancelAnimationFrame(searchFrame);
                     stopDialMotion();
-                    resetIconField();
                     dialIcons.forEach(entry=>{
                         entry.item.classList.remove('has-project-icon','is-icon-loaded');
                         entry.slot.remove();
                     });
-                    dialIcons.clear();iconField.remove();
+                    dialIcons.clear();
                     projectDial?.classList.remove('has-project-icons');
                     observer.disconnect();events.abort();engine?.destroy();engine=null;host.remove();style.remove();
                     if(stoppedLenis)stoppedLenis.start();

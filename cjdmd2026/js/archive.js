@@ -2086,6 +2086,11 @@ function initExplanationArchiveFade() {
     const FLOW_SPEED = 18;
     const TOUCH_RADIUS = 520;
     const TOUCH_IMPULSE = 310;
+    const MERGE_DURATION = 0.65;
+    const MERGE_HOLD = 1.05;
+    const SPLIT_IMPULSE = 175;
+    const MERGE_COOLDOWN = 7;
+    const MAX_MERGES = 2;
     const VELOCITY_DRAG = 1.5;
     const HOST_ID = "cjdmd-floating-outline-background";
     const BODY_CLASS = "cjdmd-outline-background-active";
@@ -2108,7 +2113,26 @@ function initExplanationArchiveFade() {
         return svg;
     }
 
-    function createPiece(shape, source, index) {
+    function groupShapesByColor(source) {
+        const groups = new Map();
+        source.querySelectorAll(SHAPES).forEach(shape => {
+            if (shape.closest("defs, clipPath, mask, symbol, pattern, marker")) return;
+            let color = "#000000";
+            for (let node = shape; node; node = node.parentElement) {
+                const fill = node.style?.fill || node.getAttribute("fill");
+                if (fill && fill !== "inherit") { color = fill.trim().toLowerCase(); break; }
+                if (node === source) break;
+            }
+            if (/^#[0-9a-f]{3}$/.test(color)) {
+                color = "#" + [...color.slice(1)].map(value => value + value).join("");
+            }
+            if (!groups.has(color)) groups.set(color, []);
+            groups.get(color).push(shape);
+        });
+        return groups;
+    }
+
+    function createPiece(shapes, source, index, color) {
         const row = Math.floor(index / 2);
         // Continuous edge-weighted distribution, with no fixed empty band.
         const sample = ((index + 1) * 0.61803398875) % 1;
@@ -2117,6 +2141,8 @@ function initExplanationArchiveFade() {
         const y = (row * 37 + (index % 2) * 9) % TILE_HEIGHT_VH;
         const piece = document.createElement("div");
         piece.className = "piece";
+        piece.dataset.icon = source.id;
+        piece.dataset.color = color;
         const properties = {
             "--x": `${x}%`,
             "--y": `${y}vh`,
@@ -2130,21 +2156,25 @@ function initExplanationArchiveFade() {
         svg.setAttribute("viewBox", source.getAttribute("viewBox") || "-14 -14 268 268");
         svg.setAttribute("aria-hidden", "true");
         svg.setAttribute("focusable", "false");
-        const outline = document.createElementNS(SVG_NS, shape.localName);
-        GEOMETRY_ATTRIBUTES.forEach(name => {
-            if (shape.hasAttribute(name)) outline.setAttribute(name, shape.getAttribute(name));
+        const colorGroup = document.createElementNS(SVG_NS, "g");
+        colorGroup.setAttribute("class", "color-group");
+        // Same-color shapes keep their original layout and always move as one piece.
+        shapes.forEach(shape => {
+            const outline = document.createElementNS(SVG_NS, shape.localName);
+            GEOMETRY_ATTRIBUTES.forEach(name => {
+                if (shape.hasAttribute(name)) outline.setAttribute(name, shape.getAttribute(name));
+            });
+            let branch = outline;
+            for (let parent = shape.parentElement; parent && parent !== source; parent = parent.parentElement) {
+                if (!parent.hasAttribute("transform")) continue;
+                const group = document.createElementNS(SVG_NS, "g");
+                group.setAttribute("transform", parent.getAttribute("transform"));
+                group.append(branch);
+                branch = group;
+            }
+            colorGroup.append(branch);
         });
-
-        // Preserve the source geometry without importing its styles or animation.
-        let branch = outline;
-        for (let parent = shape.parentElement; parent && parent !== source; parent = parent.parentElement) {
-            if (!parent.hasAttribute("transform")) continue;
-            const group = document.createElementNS(SVG_NS, "g");
-            group.setAttribute("transform", parent.getAttribute("transform"));
-            group.append(branch);
-            branch = group;
-        }
-        svg.append(branch);
+        svg.append(colorGroup);
         piece.append(svg);
         return piece;
     }
@@ -2153,11 +2183,19 @@ function initExplanationArchiveFade() {
         const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
         const particles = new Map();
         const pointers = new Map();
+        const merges = new Set();
         let width = host.clientWidth;
         let height = host.clientHeight;
         let frame = 0;
         let lastTime = null;
         let elapsed = 0;
+        let nextCollisionCheck = 0;
+        let nextMerge = 0;
+        const transitionActive = () => document.documentElement.matches(
+            '.page-transition-preload, .page-transition-active'
+        );
+
+        const lerp = (from, to, amount) => from + (to - from) * amount;
 
         function paint(particle, hostTop) {
             const margin = particle.size;
@@ -2168,8 +2206,129 @@ function initExplanationArchiveFade() {
                 particle.visible = visible;
             }
             if (visible) {
-                particle.element.style.transform = `translate3d(${particle.x}px, ${particle.y}px, 0) translate(-50%, -50%) rotate(${particle.angle}deg)`;
+                const age = elapsed - particle.splitAt;
+                const recoil = age < 1 ? Math.sin(age * 18) * Math.exp(-age * 6) * 0.16 : 0;
+                const scale = particle.merge ? particle.mergeScale :
+                    1 + (particle.releaseScale - 1) * Math.exp(-age * 9);
+                particle.element.style.transform = `translate3d(${particle.x}px, ${particle.y}px, 0) translate(-50%, -50%) rotate(${particle.angle}deg) scale(${scale * (1 + recoil)}, ${scale * (1 - recoil * 0.6)})`;
             }
+        }
+
+        function finishMerge(merge, burst = true) {
+            merges.delete(merge);
+            merge.element.remove();
+            [merge.a, merge.b].forEach((particle, index) => {
+                const direction = index ? 1 : -1;
+                if (burst) {
+                    particle.x = merge.x + merge.nx * direction * 8;
+                    particle.y = merge.y + merge.ny * direction * 8;
+                    particle.vx = merge.vx + merge.nx * direction * SPLIT_IMPULSE;
+                    particle.vy = merge.vy + merge.ny * direction * SPLIT_IMPULSE;
+                }
+                particle.merge = null;
+                particle.releaseScale = burst ? particle.mergeScale : 1;
+                particle.splitAt = elapsed;
+                particle.mergeAfter = elapsed + MERGE_COOLDOWN + Math.random() * 3;
+                particle.element.style.removeProperty("--merge-alpha");
+            });
+        }
+
+        function beginMerge(first, second) {
+            const a = first.particle, b = second.particle;
+            const dx = second.x - first.x, dy = second.y - first.y;
+            const distance = Math.hypot(dx, dy);
+            const element = document.createElement("div");
+            element.className = "piece fusion-piece";
+            element.dataset.fusion = "joining";
+            const svg = a.element.querySelector("svg").cloneNode(false);
+            // Keep both original geometries in one SVG while they form a single icon.
+            [a, b].forEach(particle => {
+                Array.from(particle.element.querySelector("svg").children).forEach(shape => {
+                    svg.append(shape.cloneNode(true));
+                });
+            });
+            element.append(svg);
+            const size = Math.min((a.element.clientWidth + b.element.clientWidth) * 0.55, window.innerWidth * 0.22);
+            element.style.width = `${size}px`;
+            element.style.setProperty("--alpha", (parseFloat(a.element.style.getPropertyValue("--alpha")) +
+                parseFloat(b.element.style.getPropertyValue("--alpha"))) / 2);
+            element.style.setProperty("--merge-alpha", "0");
+            a.stage.parentElement.append(element);
+            const merge = {
+                a, b, element, started: elapsed, size,
+                x: (a.x + b.x) / 2, y: (a.y + b.y) / 2,
+                vx: (a.vx + b.vx) / 2, vy: (a.vy + b.vy) / 2,
+                angle: a.angle + ((b.angle - a.angle + 540) % 360 - 180) / 2,
+                nx: distance < 1 ? Math.cos(a.phase) : dx / distance,
+                ny: distance < 1 ? Math.sin(a.phase) : dy / distance,
+                origins: [a, b].map(particle => ({
+                    x: particle.x, y: particle.y, angle: particle.angle,
+                    scale: size / particle.element.clientWidth
+                }))
+            };
+            a.merge = b.merge = merge;
+            merges.add(merge);
+            nextMerge = elapsed + 0.8;
+        }
+
+        function animateMerges(dt) {
+            merges.forEach(merge => {
+                const age = elapsed - merge.started;
+                if (age >= MERGE_DURATION + MERGE_HOLD) {
+                    finishMerge(merge);
+                    return;
+                }
+                merge.x += merge.vx * dt;
+                merge.y += merge.vy * dt;
+                const progress = Math.min(1, age / MERGE_DURATION);
+                const ease = 1 - Math.pow(1 - progress, 3);
+                const fade = Math.max(0, Math.min(1, (progress - 0.65) / 0.35));
+                [merge.a, merge.b].forEach((particle, index) => {
+                    const origin = merge.origins[index];
+                    particle.x = lerp(origin.x, merge.x, ease);
+                    particle.y = lerp(origin.y, merge.y, ease);
+                    particle.angle = origin.angle + ((merge.angle - origin.angle + 540) % 360 - 180) * ease;
+                    particle.mergeScale = lerp(1, origin.scale, ease);
+                    particle.element.style.setProperty("--merge-alpha", 1 - fade);
+                });
+                const hold = Math.max(0, age - MERGE_DURATION);
+                const squeeze = Math.max(0, (hold - MERGE_HOLD + 0.22) / 0.22);
+                const pulse = 1 + Math.sin(hold * Math.PI / MERGE_HOLD) * 0.035;
+                merge.element.dataset.fusion = progress < 1 ? "joining" : squeeze > 0 ? "squeezing" : "joined";
+                merge.element.style.setProperty("--merge-alpha", fade);
+                merge.element.style.transform = `translate3d(${merge.x}px, ${merge.y}px, 0) translate(-50%, -50%) rotate(${merge.angle}deg) scale(${pulse * (1 + squeeze * 0.13)}, ${pulse * (1 - squeeze * 0.18)})`;
+            });
+        }
+
+        function checkCollisions() {
+            if (elapsed < nextCollisionCheck || elapsed < nextMerge || merges.size >= MAX_MERGES || pointers.size) return;
+            nextCollisionCheck = elapsed + 0.15;
+            // Read visible shape bounds together, at most a few times a second.
+            const candidates = [];
+            particles.forEach(particle => {
+                if (!particle.visible || particle.merge || elapsed < particle.mergeAfter ||
+                    Math.hypot(particle.vx, particle.vy) > 70) return;
+                const bounds = particle.shape.getBoundingClientRect();
+                const x = bounds.left + bounds.width / 2, y = bounds.top + bounds.height / 2;
+                if (x < 0 || x > window.innerWidth || y < 40 || y > window.innerHeight ||
+                    Math.abs(x - window.innerWidth / 2) < window.innerWidth * 0.12) return;
+                candidates.push({ particle, x, y, bounds });
+            });
+            let nearest = null, best = Infinity;
+            for (let i = 0; i < candidates.length; i++) {
+                for (let j = i + 1; j < candidates.length; j++) {
+                    const a = candidates[i], b = candidates[j];
+                    if (a.particle.kind === b.particle.kind) continue;
+                    const dx = Math.abs(a.x - b.x), dy = Math.abs(a.y - b.y);
+                    if (dx > (a.bounds.width + b.bounds.width) / 2 + 5 ||
+                        dy > (a.bounds.height + b.bounds.height) / 2 + 5) continue;
+                    const radius = (Math.max(a.bounds.width, a.bounds.height) +
+                        Math.max(b.bounds.width, b.bounds.height)) * 0.34 + 5;
+                    const score = Math.hypot(dx, dy) / radius;
+                    if (score < 1 && score < best) { nearest = [a, b]; best = score; }
+                }
+            }
+            if (nearest) beginMerge(...nearest);
         }
 
         function render() {
@@ -2179,7 +2338,7 @@ function initExplanationArchiveFade() {
 
         function tick(time) {
             frame = 0;
-            if (!host.isConnected || document.hidden || reducedMotion.matches) {
+            if (!host.isConnected || document.hidden || reducedMotion.matches || transitionActive()) {
                 lastTime = null;
                 return;
             }
@@ -2190,9 +2349,9 @@ function initExplanationArchiveFade() {
             const hostTop = host.getBoundingClientRect().top;
 
             particles.forEach(particle => {
+                if (particle.merge) return;
                 const flowX = FLOW_SPEED * 0.65 * Math.sin(particle.y * 0.0015 + elapsed * 0.12 + particle.phase);
                 const flowY = -FLOW_SPEED * (0.65 + 0.35 * Math.cos(particle.x * 0.002 + elapsed * 0.09 + particle.phase));
-                // Damp velocity only. Position has no spring or return target.
                 particle.vx = flowX + (particle.vx - flowX) * drag;
                 particle.vy = flowY + (particle.vy - flowY) * drag;
                 particle.x += particle.vx * dt;
@@ -2205,8 +2364,10 @@ function initExplanationArchiveFade() {
                 if (particle.x > width + margin) particle.x -= width + margin * 2;
                 if (particle.y < -margin) particle.y += height + margin * 2;
                 if (particle.y > height + margin) particle.y -= height + margin * 2;
-                paint(particle, hostTop);
             });
+            animateMerges(dt);
+            particles.forEach(particle => paint(particle, hostTop));
+            checkCollisions();
             frame = requestAnimationFrame(tick);
         }
 
@@ -2215,17 +2376,31 @@ function initExplanationArchiveFade() {
             frame = 0;
             lastTime = null;
             pointers.clear();
+            // Keep the outline field still while the page wave uses the frame budget.
+            if (transitionActive()) {
+                host.dataset.motion = 'paused';
+                return;
+            }
+            merges.forEach(merge => finishMerge(merge, false));
             render();
+            host.dataset.motion = 'paused';
             if (!document.hidden && !reducedMotion.matches && host.isConnected) {
+                host.dataset.motion = 'running';
                 frame = requestAnimationFrame(tick);
             }
         }
 
         function scatter(clientX, clientY, strength) {
-            if (document.hidden || reducedMotion.matches || !host.isConnected) return;
+            if (document.hidden || reducedMotion.matches || !host.isConnected || transitionActive()) return;
             const radius = Math.min(TOUCH_RADIUS, Math.max(260, window.innerWidth * 0.4));
+            merges.forEach(merge => {
+                const bounds = merge.element.getBoundingClientRect();
+                if (Math.hypot(bounds.left + bounds.width / 2 - clientX,
+                    bounds.top + bounds.height / 2 - clientY) < radius) finishMerge(merge);
+            });
+            render();
             particles.forEach(particle => {
-                if (!particle.visible) return;
+                if (!particle.visible || particle.merge) return;
                 const bounds = particle.shape.getBoundingClientRect();
                 if (bounds.bottom < 0 || bounds.top > window.innerHeight ||
                     bounds.right < 0 || bounds.left > window.innerWidth) return;
@@ -2240,11 +2415,12 @@ function initExplanationArchiveFade() {
                 const limit = Math.min(1, TOUCH_IMPULSE * 2 / (Math.hypot(particle.vx, particle.vy) || 1));
                 particle.vx *= limit;
                 particle.vy *= limit;
+                particle.mergeAfter = elapsed + MERGE_COOLDOWN;
             });
         }
 
         document.addEventListener("pointerdown", event => {
-            if (event.button !== 0) return;
+            if (event.button !== 0 || transitionActive()) return;
             pointers.set(event.pointerId, { x: event.clientX, y: event.clientY, time: performance.now() });
             scatter(event.clientX, event.clientY, 1);
         }, { passive: true, capture: true });
@@ -2260,6 +2436,7 @@ function initExplanationArchiveFade() {
         document.addEventListener("pointerup", release, { passive: true, capture: true });
         document.addEventListener("pointercancel", release, { passive: true, capture: true });
         document.addEventListener("visibilitychange", syncMotion);
+        document.addEventListener("page-transition:change", syncMotion);
         reducedMotion.addEventListener("change", syncMotion);
         window.addEventListener("scroll", () => {
             if (reducedMotion.matches) render();
@@ -2269,6 +2446,7 @@ function initExplanationArchiveFade() {
             frame = 0;
             lastTime = null;
             pointers.clear();
+            merges.forEach(merge => finishMerge(merge, false));
         });
         window.addEventListener("pageshow", syncMotion);
         syncMotion();
@@ -2279,7 +2457,7 @@ function initExplanationArchiveFade() {
                 stage.querySelectorAll(".piece").forEach((element, index) => {
                     const phase = (index + row * stage.childElementCount) * 2.3999632297;
                     const particle = {
-                        element, stage, shape: element.querySelector(SHAPES), phase,
+                        element, stage, shape: element.querySelector(".color-group"), phase,
                         x: parseFloat(element.style.getPropertyValue("--x")) / 100 * width,
                         y: (row + parseFloat(element.style.getPropertyValue("--y")) / TILE_HEIGHT_VH) * height / rowCount,
                         size: parseFloat(element.style.getPropertyValue("--size")),
@@ -2287,6 +2465,10 @@ function initExplanationArchiveFade() {
                         spin: (index % 2 ? 1 : -1) * (0.7 + (index % 5) * 0.22),
                         vx: FLOW_SPEED * 0.4 * Math.sin(phase),
                         vy: -FLOW_SPEED * 0.7,
+                        kind: index,
+                        merge: null, mergeScale: 1, releaseScale: 1,
+                        splitAt: -Infinity,
+                        mergeAfter: elapsed + 1.2 + (index % 7) * 0.13,
                         visible: null
                     };
                     particles.set(element, particle);
@@ -2294,11 +2476,15 @@ function initExplanationArchiveFade() {
                 });
             },
             removeStage(stage) {
+                merges.forEach(merge => {
+                    if (merge.a.stage === stage || merge.b.stage === stage) finishMerge(merge, false);
+                });
                 particles.forEach((particle, element) => {
                     if (particle.stage === stage) particles.delete(element);
                 });
             },
             resize() {
+                merges.forEach(merge => finishMerge(merge, false));
                 const nextWidth = host.clientWidth;
                 const nextHeight = host.clientHeight;
                 particles.forEach(particle => {
@@ -2361,12 +2547,12 @@ function initExplanationArchiveFade() {
                 top: 0;
                 width: min(var(--size), 22vw);
                 aspect-ratio: 1;
-                opacity: var(--alpha);
+                opacity: calc(var(--alpha) * var(--merge-alpha, 1));
                 color: ${LINE_COLOR};
                 transform: translate(-50%, -50%) rotate(var(--rot));
                 will-change: transform;
             }
-            .piece:nth-child(7n) { opacity: calc(var(--alpha) * 0.72); }
+            .piece:not(.fusion-piece):nth-child(7n) { opacity: calc(var(--alpha) * 0.72 * var(--merge-alpha, 1)); }
             svg { display: block; width: 100%; height: 100%; overflow: visible; }
             :is(${SHAPES}) {
                 fill: none;
@@ -2395,9 +2581,8 @@ function initExplanationArchiveFade() {
                 return;
             }
             const svg = result.value;
-            svg.querySelectorAll(SHAPES).forEach(shape => {
-                if (shape.closest("defs, clipPath, mask, symbol, pattern, marker")) return;
-                fragment.append(createPiece(shape, svg, index++));
+            groupShapesByColor(svg).forEach((shapes, color) => {
+                fragment.append(createPiece(shapes, svg, index++, color));
             });
         });
         const template = document.createElement("div");

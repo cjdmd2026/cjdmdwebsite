@@ -16,6 +16,7 @@
     <script src="../js/stamp-effect-transition.js" defer></script>
     <script src="../js/typewriter-effect.js" defer></script>
     <script src="../js/designer-data.js" defer></script>
+    <script src="../js/designer-icon-data.js" defer></script>
     <script src="../js/designer_02.js" defer></script>
     <script src="../js/designer-filter.js" defer></script>
 
@@ -24,6 +25,21 @@
     <script src="../js/page-transition.js" defer></script>
     <!--<script src="../js/thread-crosshair-mask.js" defer></script> -->
     <script src="../js/student-mouse-effect.js" defer></script>
+
+    <script>
+    const lenis = new Lenis({
+        duration: 1.0,  
+        smoothWheel: true,
+        wheelMultiplier: 1.25
+    });
+
+    function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+    </script>
 
     <!-- 아이콘 슬라이드는 브라우저 기본 세로 스크롤을 사용합니다. -->
     <!-- Scripts:E -->
@@ -122,6 +138,8 @@
                 </div>
                 <p class="formation-empty" id="formationEmpty" role="status" hidden>검색 결과가 없습니다.</p>
             </section>
+
+            <img class="formation-scroll-cue icon" id="formationScrollCue" src="../assets/images/icons/mouse-icon.svg" width="64" height="64" alt="" aria-hidden="true" hidden>
 
         <!-- Designer Stage. -->
         <div class="designer-stage">

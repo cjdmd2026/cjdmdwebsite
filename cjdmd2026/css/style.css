@@ -120,8 +120,13 @@ body {
     line-height: 1.5;
 }
 
+html.page-transition-preload {
+    background: #fff;
+}
+
 html.page-transition-preload body {
     visibility: hidden;
+    opacity: 0;
 }
 
 /* ============================== Common ============================== */

@@ -133,8 +133,13 @@ body {
     line-height: 1.5;
 }
 
+html.page-transition-preload {
+    background: #fff;
+}
+
 html.page-transition-preload body {
     visibility: hidden;
+    opacity: 0;
 }
 
 /* ============================== Common ============================== */
@@ -243,6 +248,60 @@ img {
 .main {
     min-height: 100vh;
     position: relative;
+}
+
+/* 개인 아이콘은 내용 뒤에 배치하고 가운데로 갈수록 옅어집니다. */
+.main.has-designer-background {
+    isolation: isolate;
+}
+
+.designer-floating-background {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    mask-image: linear-gradient(to right,
+        #000 0%, rgba(0, 0, 0, 0.82) 18%,
+        rgba(0, 0, 0, 0.36) 30%, rgba(0, 0, 0, 0.08) 42%,
+        transparent 50%, rgba(0, 0, 0, 0.08) 58%,
+        rgba(0, 0, 0, 0.36) 70%, rgba(0, 0, 0, 0.82) 82%, #000 100%);
+    -webkit-mask-image: linear-gradient(to right,
+        #000 0%, rgba(0, 0, 0, 0.82) 18%,
+        rgba(0, 0, 0, 0.36) 30%, rgba(0, 0, 0, 0.08) 42%,
+        transparent 50%, rgba(0, 0, 0, 0.08) 58%,
+        rgba(0, 0, 0, 0.36) 70%, rgba(0, 0, 0, 0.82) 82%, #000 100%);
+}
+
+.designer-floating-background__piece {
+    position: absolute;
+    top: 0;
+    left: 0;
+    aspect-ratio: 1;
+    will-change: transform;
+}
+
+.designer-floating-background svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.designer-floating-background :is(path, rect, circle, ellipse, polygon, polyline, line) {
+    fill: currentColor;
+    stroke: none;
+}
+
+.has-designer-background .handoff-section,
+.has-designer-background .list-layer {
+    background: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .designer-floating-background__piece {
+        will-change: auto;
+    }
 }
 
 /* ============================== Intro ============================== */

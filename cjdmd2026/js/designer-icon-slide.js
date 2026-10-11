@@ -2,12 +2,12 @@
     "use strict";
     /*
      * 적용: 앞서 제공한 designer HTML + designer_02.css와 함께 사용합니다.
-     * designer-data.js → designer_02.js → designer-filter.js → 이 파일 순서로 defer 연결합니다.
+     * designer-data.js → designer-icon-data.js → designer_02.js → designer-filter.js → 이 파일 순서로 defer 연결합니다.
      * 학생 이름/사진/연결 변경: designer-data.js의 nameKo, nameEn, image, projectIds.
      * 각 학생의 projectIds에 아래 projectId가 있으면 해당 아이콘에 표시됩니다.
      * 예: projectIds: ["year-on"] → YEAR-ON 아이콘.
-     * 아이콘 파일/프로젝트 설명 변경: 아래 ICON_PROJECTS에서 수정합니다.
-     * 클릭 후 학생 옆의 색상 조각 변경: 해당 프로젝트의 studentColors에서 수정합니다.ㅁ
+     * 아이콘 파일/프로젝트 설명 변경: designer-icon-data.js에서 수정합니다.
+     * 클릭 후 학생 옆의 색상 조각 변경: 해당 프로젝트의 studentColors에서 수정합니다.
      * "학생 ID": "SVG의 색상 코드" 형식이며, 이름/카드 순서는 바뀌지 않습니다.
      * 두 학생의 조각을 맞바꾸려면 두 색상 값을 서로 교환하세요.
      * 같은 SVG 안의 색상을 사용하고, 하나의 색상을 여러 학생에게 중복 지정하지 마세요.
@@ -18,153 +18,7 @@
     const iconBaseURL = new URL('../assets/images/project/test/icon/', scriptURL);
     // 디자이너 목록 HTML 기준 상세 페이지 경로입니다. 개별 주소는 designer-data.js의 href로 지정합니다.
     const DESIGNER_DETAIL_PATH = './profile/';
-    const ICON_PROJECTS = [
-        {
-            "projectId": "apuchika",
-            "file": "team-01-apuchika.svg",
-            "title": "아푸치카",
-            "topic": "아동 양치 교육",
-            "studentColors": {
-                "ahn-nagyeong": "#ccebf5", // 안나경
-                "youn-taegyun": "#ffce07", // 윤태균
-                "lee-nayeong": "#00aaff" // 이나영
-            }
-        },
-        {
-            "projectId": "omix",
-            "file": "team-02-ommix.svg",
-            "title": "OMIX",
-            "topic": "불교 홍보",
-            "studentColors": {
-                "noh-minyeong": "#c4272f", // 노민영
-                "song-seungbin": "#ffc5c8", // 송승빈
-                "ham-daeyeon": "#7f1616" // 함대연
-            }
-        },
-        {
-            "projectId": "phishing-ddook",
-            "file": "team-03-phishing-ttuk.svg",
-            "title": "피싱뚝!",
-            "topic": "보이스피싱 교육",
-            "studentColors": {
-                "kim-jiyoo-phishing-ddook": "#e5903a", // 김지유
-                "nam-nayoung": "#f2f070", // 남나영
-                "lee-goeun": "#eec35a" // 이고은
-            }
-        },
-        {
-            "projectId": "ilkko",
-            "file": "team-04-ilkko.svg",
-            "title": "읽:꼬",
-            "topic": "난독증 재택 훈련 서비스",
-            "studentColors": {
-                "seo-yeonwoo": "#f59000", // 서연우
-                "lim-jongwon": "#f6ffe3", // 임종원
-                "jo-eungyo": "#ffd834" // 조은교
-            }
-        },
-        {
-            "projectId": "curo",
-            "file": "team-05-kuro.svg",
-            "title": "CURO",
-            "topic": "당뇨 환자를 위한 바늘 친숙화 서비스",
-            "studentColors": {
-                "park-yuna": "#bdffbf", // 박윤아
-                "yoo-hyejin": "#8bff6c", // 유혜진
-                "ju-bomin": "#3f66b5" // 주보민
-            }
-        },
-        {
-            "projectId": "dadeullim",
-            "file": "team-06-dadeullim.svg",
-            "title": "다들림",
-            "topic": "청각장애인을 위한 운전 보조 서비스",
-            "studentColors": {
-                "kim-doyeon": "#4ccad1", // 김도연
-                "kim-sungeun": "#a8f0db", // 김성은
-                "yun-jiwon": "#3b82a6" // 윤지원
-            }
-        },
-        {
-            "projectId": "stylens",
-            "file": "team-07-style-lens.svg",
-            "title": "Stylens",
-            "topic": "시각장애인을 위한 스타일링 서비스",
-            "studentColors": {
-                "kim-dahyun": "#d33bff", // 김다현
-                "kim-hawon": "#e692ff" // 김하원
-            }
-        },
-        {
-            "projectId": "cheoma",
-            "file": "team-08-geuneuljabi.svg",
-            "title": "그늘잡이",
-            "topic": "한국 문화 소개",
-            "studentColors": {
-                "kim-minjae": "#b5b5b5", // 김민재
-                "jo-wooseong": "#ffffff" // 조우성
-            }
-        },
-        {
-            "projectId": "magmoa",
-            "file": "team-09-magmoa.svg",
-            "title": "마그모아",
-            "topic": "여행 서비스",
-            "studentColors": {
-                "son-yejin": "#536dea", // 손예진
-                "song-yujin": "#4df4ff" // 송유진
-            }
-        },
-        {
-            "projectId": "year-on",
-            "file": "team-10-ieoon.svg",
-            "title": "YEAR-ON",
-            "topic": "한국 문화 소개",
-            "studentColors": {
-                "kwon-minseong": "#4f00b4", // 권민성
-                "min-jiho": "#ededea" // 민지호
-            }
-        },
-        {
-            "projectId": "28",
-            "file": "team-11-byeolungwan.svg",
-            "title": "별운간",
-            "topic": "별자리 서비스",
-            "studentColors": {
-                "park-yoonji": "#065182", // 박윤지
-                "ju-yejin": "#d5c8ac" // 주예진
-            }
-        },
-        {
-            "projectId": "cocorang",
-            "file": "team-12-kokorang.svg",
-            "title": "COCO LANG",
-            "topic": "반려동물",
-            "studentColors": {
-                "kim-jiyou-cocorang": "#ffba79", // 김지유
-                "kim-jiyoon": "#ff7154" // 김지윤
-            }
-        },
-        {
-            "projectId": "efact",
-            "file": "team-13-effect.svg",
-            "title": "E.FACT",
-            "topic": "환경 보호",
-            "studentColors": {
-                "go-biju": "#50c4a6", // 고비주
-                "kim-hyejin": "#178466" // 김혜진
-            }
-        },
-        {
-            "projectId": "jikji",
-            "file": "team-14-jikji-jamboree.svg",
-            "title": "직지잼버리",
-            "topic": "문화 소개",
-            "studentColors": {
-                "kim-juyoun": "#fbe19f" // 김주연
-            }
-        }
-    ];
+    const ICON_PROJECTS = window.DESIGNER_ICON_PROJECTS || [];
 
     // wordScale: 결합 글자 크기. 1이 기본이며 현재는 0.88배입니다.
     // wordCenterY: 초기 글자의 화면 내 중심 높이. 0.5 = 화면 중앙, 작은 값 = 위쪽.
@@ -180,6 +34,7 @@
     const stage = document.getElementById("stage"), hint = document.getElementById("hint");
     const replayButton = document.getElementById("replay"), pauseButton = document.getElementById("pause");
     const scene = document.getElementById("scrollScene"), spreadHeading = document.getElementById("spreadHeading");
+    const scrollCue = document.getElementById("formationScrollCue");
     const spreadButton = document.getElementById("spreadToggle"), iconList = document.getElementById("iconList");
     const designerPanel = document.getElementById("designerPanel"), designerRows = document.getElementById("designerRows");
     const designerPanelTitle = document.getElementById("designerPanelTitle"), designerClose = document.getElementById("designerClose");
@@ -434,6 +289,15 @@
       stepRaf = requestAnimationFrame(advance);
     }
     function updateToolbar() {
+      if (scrollCue) {
+        // Ease in/out over a longer scroll interval, settling gently at both ends.
+        const cueTime = clamp(spread / .4, 0, 1);
+        const cueProgress = cueTime * cueTime * cueTime * (cueTime * (6 * cueTime - 15) + 10);
+        const cueOpacity = loaded && viewActive ? 1 - cueProgress : 0;
+        scrollCue.hidden = cueOpacity <= .001;
+        scrollCue.style.opacity = String(cueOpacity);
+        scrollCue.style.setProperty('--formation-scroll-offset', (motionReduced ? 0 : 64 * cueProgress) + 'px');
+      }
       const opacity = viewActive ? smooth(.12, .68, spread) : 1;
       const usable = !viewActive || spread > .3;
       toolbar.style.setProperty('--formation-toolbar', opacity);
@@ -536,33 +400,35 @@
       if (loaded && viewActive) { draw(); setHint(); }
     }
     function positionDetails() {
-      if (selectedTeam < 0) return;
-      const count = Math.max(fragments[selectedTeam].length, profiles[selectedTeam].members.length, 1), slot = spreadSlots[selectedTeam];
-      const panelWidth = Math.min(620, width - 16), narrow = width < 500;
-      const pieceSpace = narrow ? Math.min(76, panelWidth * .22) : 126;
-      const headingBottom = spreadHeading.offsetTop + spreadHeading.offsetHeight;
-      const rowGap = height < 300 ? 8 : 12;
-      const topBound = height < 260 ? 8 : headingBottom + 10;
-      const cardHeight = Math.max(40, Math.min(narrow ? 90 : 112, (height - topBound - 42 - rowGap * (count - 1)) / count));
-      const panelHeight = 34 + cardHeight * count + rowGap * (count - 1);
-      const left = clamp(slot.x - pieceSpace / 2, 8, width - panelWidth - 8);
-      const top = clamp(slot.y - panelHeight / 2, topBound, Math.max(topBound, height - panelHeight - 8));
-      const portrait = Math.min(cardHeight * .74, narrow ? 58 : 84);
-      Object.entries({ '--piece-space': pieceSpace, '--row-gap': rowGap, '--card-height': cardHeight,
-        '--card-padding': Math.max(7, cardHeight * .12), '--card-gap': narrow ? 9 : 16,
-        '--portrait-size': portrait, '--name-size': Math.min(narrow ? 16 : 22, cardHeight * .29),
-        '--en-size': Math.min(narrow ? 7 : 13, cardHeight * .17)
-      }).forEach(([key, value]) => designerPanel.style.setProperty(key, value + 'px'));
-      Object.assign(designerPanel.style, { left: left + 'px', top: top + 'px', width: panelWidth + 'px' });
+      if (selectedTeam < 0 || designerPanel.hidden || !viewActive) return;
+      // 크기와 간격은 CSS에서 관리하고, 표시된 실측값으로 좌표만 계산합니다.
+      const slot = spreadSlots[selectedTeam], panelBox = designerPanel.getBoundingClientRect();
+      if (!panelBox.width || !panelBox.height) return;
+      const style = getComputedStyle(designerPanel);
+      const edge = parseFloat(style.getPropertyValue('--panel-edge')) || 0;
+      const topBound = parseFloat(style.getPropertyValue('--panel-top-space')) || 0;
+      const pieceSpace = parseFloat(style.paddingLeft) || 0;
+      const left = clamp(slot.x - pieceSpace / 2, edge, Math.max(edge, width - panelBox.width - edge));
+      const top = clamp(slot.y - panelBox.height / 2, topBound, Math.max(topBound, height - panelBox.height - edge));
+      const anchors = [...designerRows.querySelectorAll('.formation-piece-anchor')].map(anchor => anchor.getBoundingClientRect());
       detailTargets[selectedTeam] = fragments[selectedTeam].map((_, i) => {
         const row = fragmentRows[selectedTeam][i];
+        const anchor = anchors[row];
         return {
-          x: left + (pieceSpace - 12) / 2, y: top + 34 + row * (cardHeight + rowGap) + cardHeight / 2,
-          size: Math.min(cardHeight * .86, pieceSpace - 18),
+          x: left + anchor.left - panelBox.left + anchor.width / 2,
+          y: top + anchor.top - panelBox.top + anchor.height / 2,
+          size: anchor.width,
           studentId: profiles[selectedTeam].members[row]?.id || null
         };
       });
+      Object.assign(designerPanel.style, { left: left + 'px', top: top + 'px' });
     }
+    // CSS 수정이나 이미지/폰트 로딩 후에도 카드 실측값과 캔버스 위치를 맞춥니다.
+    const detailsObserver = new ResizeObserver(() => {
+      if (!loaded || !viewActive || selectedTeam < 0 || designerPanel.hidden) return;
+      positionDetails();
+      draw();
+    });
     function syncDetailsInstantly() {
       detailProgress.forEach((_, team) => { detailProgress[team] = team === selectedTeam ? 1 : 0; });
     }
@@ -591,18 +457,31 @@
       designerPanelTitle.setAttribute('aria-hidden', 'true');
       designerPanel.removeAttribute('aria-labelledby');
       designerPanel.setAttribute('aria-label', '디자이너 정보');
+      detailsObserver.disconnect();
       designerRows.replaceChildren();
-      profile.members.forEach((member, i) => {
-        const card = createDesignerLink(member);
-        card.style.setProperty('--row', i);
-        designerRows.appendChild(card);
-      });
-      positionDetails();
+      const count = Math.max(fragments[team].length, profile.members.length, 1);
+      designerPanel.style.setProperty('--row-count', count);
+      for (let i = 0; i < count; i++) {
+        const row = document.createElement('div'); row.className = 'formation-row';
+        const anchor = document.createElement('span'); anchor.className = 'formation-piece-anchor';
+        anchor.setAttribute('aria-hidden', 'true'); row.appendChild(anchor);
+        if (profile.members[i]) {
+          const card = createDesignerLink(profile.members[i]);
+          card.style.setProperty('--row', i);
+          row.appendChild(card);
+        }
+        designerRows.appendChild(row);
+        detailsObserver.observe(row);
+        detailsObserver.observe(anchor);
+      }
+      detailsObserver.observe(designerPanel);
+      detailsObserver.observe(designerRows);
       designerPanel.hidden = false;
       designerPanel.inert = false; designerPanel.setAttribute('aria-hidden', 'false'); designerPanel.classList.add('is-open');
+      positionDetails();
       iconButtons.forEach((button, i) => button.setAttribute('aria-expanded', String(i === team)));
       if (immediate || motionReduced || paused) { syncDetailsInstantly(); draw(); } else wake(1100);
-      if (keyboard) designerRows.firstElementChild.focus({ preventScroll: true });
+      if (keyboard) designerRows.querySelector('.formation-person-card')?.focus({ preventScroll: true });
       setHint();
     }
     function shuffleGallery() {
@@ -699,11 +578,24 @@
       mctx.drawImage(maskImage, left, top, wordWidth, wordHeight);
       const pixels = mctx.getImageData(0, 0, mask.width, mask.height).data;
       const points = [], stepY = spacing * .88;
+      const filled = (x, y) => x >= 0 && y >= 0 && x < mask.width && y < mask.height && pixels[(y * mask.width + x) * 4 + 3] > 210;
+      const rieulInset = Math.max(1, Math.round(Math.min(spacing * .6, wordHeight * .024)));
       for (let row = 0, y = top; y < top + wordHeight; row++, y += stepY) {
         for (let x = left + (row % 2) * spacing / 2; x < left + wordWidth; x += spacing) {
           const tx = x + random(-.23, .23) * spacing, ty = y + random(-.23, .23) * spacing;
           const ix = Math.round(tx), iy = Math.round(ty);
-          if (ix >= 0 && iy >= 0 && ix < mask.width && iy < mask.height && pixels[(iy * mask.width + ix) * 4 + 3] > 210) points.push({ x: tx, y: ty });
+          if (!filled(ix, iy)) continue;
+          // 원본 마스크의 '결' 받침 ㄹ: 가로획 안쪽에 작은 조각을 배치해 획 사이를 비웁니다.
+          const sourceX = (tx - left) / wordWidth * word.width, sourceY = (ty - top) / wordHeight * word.height;
+          const isRieul = sourceX >= 90 && sourceX <= 440 && sourceY >= 264;
+          if (isRieul) {
+            let insideStroke = true;
+            for (let inset = 1; inset <= rieulInset; inset++) {
+              if (!filled(ix, iy - inset) || !filled(ix, iy + inset)) { insideStroke = false; break; }
+            }
+            if (!insideStroke) continue;
+          }
+          points.push({ x: tx, y: ty, sizeScale: isRieul ? .88 : 1 });
         }
       }
       // Even representation of all 14 icons without a repeating color pattern.
@@ -741,7 +633,7 @@
             dx: Math.cos(direction) * width * driftDistance, dy: Math.sin(direction) * height * driftDistance,
             curve: random(-.16, .16) * Math.min(width, height), nx: -Math.sin(direction), ny: Math.cos(direction),
             turn: random(-1.1, 1.1) },
-          angle, targetAngle: angle, spin: 0, size: spacing * SETTINGS.iconScale * random(.78, 1.2), sprite: piece, team };
+          angle, targetAngle: angle, spin: 0, size: spacing * SETTINGS.iconScale * random(.78, 1.2) * point.sizeScale, sprite: piece, team };
       });
       // Select exactly ONE existing instance of each SVG/color pair. The choice
       // stays fixed throughout scrolling in either direction.
@@ -778,6 +670,7 @@
       iconButtons.forEach((button, team) => {
         const base = spreadSlots[team], pose = galleryPoses[team];
         button.style.transform = 'translate(' + (pose.x - base.x) + 'px,' + (pose.y - base.y) + 'px) scale(' + pose.size / base.size + ')';
+        button.classList.toggle('is-hovered', hoverTarget(team) === 1);
       });
       const t = smooth(.08, 1, spread), fragmentOpacity = 1 - smooth(.88, 1, t);
       // Subtle independent motion around each fixed glyph anchor. It fades
@@ -1008,6 +901,9 @@
         const button = document.createElement('button'); button.type = 'button'; button.className = 'icon-hit';
         button.setAttribute('aria-label', profiles[team].title + ' 디자이너 보기');
         button.setAttribute('aria-expanded', 'false'); button.setAttribute('aria-controls', 'designerPanel'); button.hidden = !visibleTeams[team];
+        const teamName = document.createElement('span'); teamName.className = 'icon-team-name';
+        teamName.textContent = profiles[team].title; teamName.setAttribute('aria-hidden', 'true');
+        button.appendChild(teamName);
         button.addEventListener('pointerenter', event => {
           if (event.pointerType === 'touch') return;
           hoveredTeam = team; refreshGalleryHover();

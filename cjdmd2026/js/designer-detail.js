@@ -789,6 +789,11 @@
 
         fillProfile(designer);
 
+        const floatingBackground = window.DesignerFloatingBackground?.mount(
+            document.querySelector(".main"), designer
+        );
+        if (floatingBackground) renderCleanups.push(floatingBackground.destroy);
+
         const projectMap = new Map(
             window.PROJECTS
                 .filter(item => item && item.id != null)
