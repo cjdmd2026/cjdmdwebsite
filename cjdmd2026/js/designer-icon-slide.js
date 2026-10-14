@@ -31,6 +31,14 @@
     if (!canvas || !document.getElementById("scrollScene")) return;
     if (!Array.isArray(window.DESIGNERS)) { console.error("designer-data.js를 먼저 연결해 주세요."); return; }
     const ctx = canvas.getContext("2d");
+    // Blend assembled pieces and the original icon as one layer so the
+    // handoff preserves opacity, including where color groups overlap.
+    const assemblyCanvas = document.createElement('canvas');
+    const assemblyCtx = assemblyCanvas.getContext('2d');
+    // Unused pieces recede and fade together, preserving the word silhouette.
+    const backgroundCanvas = document.createElement('canvas');
+    const backgroundCtx = backgroundCanvas.getContext('2d');
+    const WORD_RETREAT = { depth: 1.2, blur: 8, fadeStart: .16, fadeEnd: .92 };
     const stage = document.getElementById("stage"), hint = document.getElementById("hint");
     const replayButton = document.getElementById("replay"), pauseButton = document.getElementById("pause");
     const scene = document.getElementById("scrollScene"), spreadHeading = document.getElementById("spreadHeading");
@@ -74,6 +82,7 @@
     const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
     const lerp = (a, b, t) => a + (b - a) * t;
     const smooth = (a, b, value) => { const t = clamp((value - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+    const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
     const idleActive = () => viewActive && !paused && !motionReduced && !document.hidden && spread < .16;
     const galleryIdleActive = () => (SETTINGS.galleryFloatX !== 0 || SETTINGS.galleryFloatY !== 0) && viewActive && !paused && !motionReduced && !document.hidden && spread > .86 && visibleTeams.some(Boolean) && selectedTeam < 0 && !detailProgress.some(value => value > 0);
     function hoverTarget(team) {
@@ -186,8 +195,9 @@
       return rows.map(row => row >= 0 ? row : freeRows[next++]);
     }
     // 한 번의 휠/스와이프로 글자와 아이콘 정렬 화면 사이를 이동합니다.
-    // duration: 이동 시간(ms), wheelThreshold: 휠 감도(px), swipeThreshold: 스와이프 거리(px).
-    const SCROLL_STEP = { duration: 850, wheelThreshold: 60, wheelIdle: 220, swipeThreshold: 42 };
+    // duration/returnDuration: 펼치기/글자로 돌아오기 시간(ms).
+    // wheelThreshold: 휠 감도(px), swipeThreshold: 스와이프 거리(px).
+    const SCROLL_STEP = { duration: 1100, returnDuration: 1500, wheelThreshold: 60, wheelIdle: 220, swipeThreshold: 42 };
     let stepRaf = 0, stepDestination = null;
     let wheelTotal = 0, wheelDirection = 0, lastWheelAt = 0, wheelConsumed = false;
     let touchGesture = null;
@@ -277,10 +287,11 @@
       }
       stepDestination = target;
       const started = performance.now();
+      const duration = expanded ? SCROLL_STEP.duration : SCROLL_STEP.returnDuration;
       function advance(now) {
         stepRaf = 0;
         if (!viewActive) { cancelStep(); return; }
-        const progress = clamp((now - started) / SCROLL_STEP.duration, 0, 1);
+        const progress = clamp((now - started) / duration, 0, 1);
         window.scrollTo({ top: lerp(from, destination(), smooth(0, 1, progress)), behavior: 'instant' });
         onScroll();
         if (progress < 1) stepRaf = requestAnimationFrame(advance);
@@ -619,20 +630,17 @@
       const dpr = Math.min(devicePixelRatio || 1, 2);
       canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      assemblyCanvas.width = canvas.width; assemblyCanvas.height = canvas.height;
+      assemblyCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      backgroundCanvas.width = canvas.width; backgroundCanvas.height = canvas.height;
+      backgroundCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
       positionSpreadSlots();
       particles = targetPoints().map((point, i) => {
         const angle = random(-.65, .65), team = i % sprites.length;
         const bank = fragments[team], piece = bank[Math.floor(i / sprites.length) % bank.length];
-        // Sample each trajectory once so reverse scrolling retraces the same
-        // path. Individual directions dissolve the word instead of scaling it.
-        const direction = random(0, Math.PI * 2), driftDistance = random(.24, .62);
         return { id: i, assembly: false, tx: point.x, ty: point.y, x: point.x, y: point.y, vx: 0, vy: 0,
           idle: { phaseX: random(0, Math.PI * 2), phaseY: random(0, Math.PI * 2), phaseTurn: random(0, Math.PI * 2),
             rate: random(.6, 1.05), amplitude: clamp(spacing * .14, .8, 2.6) * random(.65, 1), turn: random(.018, .045) },
-          departure: { delay: random(0, .09), speed: random(.82, 1.25), depth: random(2.2, 4.8),
-            dx: Math.cos(direction) * width * driftDistance, dy: Math.sin(direction) * height * driftDistance,
-            curve: random(-.16, .16) * Math.min(width, height), nx: -Math.sin(direction), ny: Math.cos(direction),
-            turn: random(-1.1, 1.1) },
           angle, targetAngle: angle, spin: 0, size: spacing * SETTINGS.iconScale * random(.78, 1.2) * point.sizeScale, sprite: piece, team };
       });
       // Select exactly ONE existing instance of each SVG/color pair. The choice
@@ -665,6 +673,8 @@
       if (canvas.style.transform !== wordTransform) canvas.style.transform = wordTransform;
       designerPanel.hidden = selectedTeam < 0 && !detailProgress.some(progress => progress > 0);
       ctx.clearRect(0, 0, width, height);
+      assemblyCtx.clearRect(0, 0, width, height);
+      backgroundCtx.clearRect(0, 0, width, height);
       const galleryPoses = spreadSlots.map((_, team) => galleryPose(team));
       // 투명 버튼도 실제로 그려진 아이콘의 위치와 크기를 따라갑니다.
       iconButtons.forEach((button, team) => {
@@ -672,22 +682,27 @@
         button.style.transform = 'translate(' + (pose.x - base.x) + 'px,' + (pose.y - base.y) + 'px) scale(' + pose.size / base.size + ')';
         button.classList.toggle('is-hovered', hoverTarget(team) === 1);
       });
-      const t = smooth(.08, 1, spread), fragmentOpacity = 1 - smooth(.88, 1, t);
+      // Ease into departure from the word, then keep the long ease-out landing.
+      const t = clamp((spread - .08) / .92, 0, 1);
+      const assemblyTravel = easeOutCubic(smooth(0, .9, t));
+      const iconOpacity = smooth(.9, 1, t), fragmentOpacity = 1 - iconOpacity;
       // Subtle independent motion around each fixed glyph anchor. It fades
       // out early in the scroll; the finished gallery stays at its fixed anchors.
       const idleWeight = motionReduced ? 0 : 1 - smooth(0, .16, spread);
-      // Foreground groups assemble while background objects scatter separately.
-      // No shared vanishing point or global transform is applied to the word.
+      // Use one perspective and fixed glyph anchors for the whole background.
+      // All values follow scroll progress so scrolling back restores the word.
+      const backgroundLock = smooth(0, .16, spread);
+      const backgroundScale = 1 / (1 + WORD_RETREAT.depth * smooth(0, 1, spread));
+      const backgroundOpacity = 1 - smooth(WORD_RETREAT.fadeStart, WORD_RETREAT.fadeEnd, spread);
+      const backgroundBlur = WORD_RETREAT.blur * smooth(.08, .85, spread);
       lastDraw = [];
       if (t < 1) for (const p of particles) {
-        const departure = p.departure;
-        const local = clamp((spread - departure.delay) / (1 - departure.delay), 0, 1);
-        const drift = smooth(0, 1, local * departure.speed);
-        const perspective = p.assembly ? 1 : 1 / (1 + Math.pow(local, 1.25) * departure.depth);
-        const opacity = p.assembly ? fragmentOpacity * lerp(1, visibleTeams[p.team] ? 1 : 0, t) : (1 - smooth(.08, 1, local)) * Math.pow(perspective, .35);
+        if (p.assembly && fragmentOpacity === 0) continue;
+        const perspective = p.assembly ? 1 : backgroundScale;
+        const opacity = p.assembly ? lerp(1, visibleTeams[p.team] ? 1 : 0, t) : backgroundOpacity;
         if (opacity < .001) continue;
         // Only the chosen color groups converge into their original icons.
-        const travel = p.assembly ? smooth(0, .86, t) : 0;
+        const travel = p.assembly ? assemblyTravel : 0;
         const slot = galleryPoses[p.team], piece = p.sprite;
         const finalX = slot.x + piece.offsetX * slot.size, finalY = slot.y + piece.offsetY * slot.size;
         const w = lerp(p.size * Math.min(1, piece.ratio), slot.size * piece.relativeWidth, travel) * perspective;
@@ -695,41 +710,59 @@
         const size = Math.max(w, h);
         const dx = finalX - p.tx, dy = finalY - p.ty, distance = Math.max(1, Math.hypot(dx, dy));
         const bend = Math.sin(travel * Math.PI) * Math.min(60, spacing * 2) * (p.team % 2 ? 1 : -1);
-        const margin = size * .74;
-        const arc = Math.sin(drift * Math.PI) * departure.curve;
         const idle = p.idle, phase = idleTime * idle.rate;
         const idleX = Math.sin(phase + idle.phaseX) * idle.amplitude * idleWeight;
         const idleY = Math.sin(phase * .83 + idle.phaseY) * idle.amplitude * .85 * idleWeight;
         const idleTurn = Math.sin(phase * .7 + idle.phaseTurn) * idle.turn * idleWeight;
-        const x = (p.assembly ? clamp(lerp(p.x, finalX, travel) - dy / distance * bend, margin, width - margin)
-          : p.x + departure.dx * drift + departure.nx * arc) + idleX;
-        const y = (p.assembly ? clamp(lerp(p.y, finalY, travel) + dx / distance * bend, margin, height - margin)
-          : p.y + departure.dy * drift + departure.ny * arc) + idleY;
-        const angle = (p.assembly ? p.angle * (1 - travel) : p.angle + departure.turn * drift) + idleTurn;
-        // Leaving objects may exit the canvas naturally; do not pile them up
-        // against its edges by clamping their positions.
-        if (!p.assembly && (x < -size || y < -size || x > width + size || y > height + size)) continue;
-        ctx.save(); ctx.globalAlpha = opacity; ctx.translate(x, y); ctx.rotate(angle);
-        ctx.drawImage(piece.image, -w / 2, -h / 2, w, h); ctx.restore();
-        lastDraw.push({ id: p.id, name: piece.name, color: piece.color, kind: "color-group", role: p.assembly ? "assembly" : "background", x, y, size, angle, opacity });
+        // The gallery already provides safe bounds. Clamping moving pieces
+        // separately would keep edge icons short of their final positions.
+        const x = p.assembly ? lerp(p.x, finalX, travel) - dy / distance * bend + idleX
+          : width / 2 + (lerp(p.x, p.tx, backgroundLock) + idleX - width / 2) * backgroundScale;
+        const y = p.assembly ? lerp(p.y, finalY, travel) + dx / distance * bend + idleY
+          : height / 2 + (lerp(p.y, p.ty, backgroundLock) + idleY - height / 2) * backgroundScale;
+        const angle = (p.assembly ? p.angle * (1 - travel) : lerp(p.angle, p.targetAngle, backgroundLock)) + idleTurn;
+        const particleCtx = p.assembly ? assemblyCtx : backgroundCtx;
+        particleCtx.save(); particleCtx.globalAlpha = p.assembly ? opacity : 1; particleCtx.translate(x, y); particleCtx.rotate(angle);
+        particleCtx.drawImage(piece.image, -w / 2, -h / 2, w, h); particleCtx.restore();
+        lastDraw.push({ id: p.id, name: piece.name, color: piece.color, kind: "color-group", role: p.assembly ? "assembly" : "background", x, y, size, angle, opacity: opacity * (p.assembly ? fragmentOpacity : 1) });
+      }
+      // Blur and fade the background as a single layer; keep the assembling
+      // icons sharp and preserve opacity where the background pieces overlap.
+      if (backgroundOpacity >= .001) {
+        ctx.save();
+        ctx.globalAlpha = backgroundOpacity;
+        ctx.filter = backgroundBlur > 0 ? 'blur(' + backgroundBlur + 'px)' : 'none';
+        ctx.drawImage(backgroundCanvas, 0, 0, width, height);
+        ctx.restore();
       }
       // Pieces converge to their own original local positions. Finish with the
       // original complete SVG image so all layer overlaps and edges are exact.
       // Swap only after every selected group is exactly aligned, avoiding a
       // second offset silhouette while the complete SVG becomes visible.
-      const iconOpacity = smooth(.88, 1, t);
-      if (iconOpacity >= .001) {
+      if (iconOpacity > 0) {
+        // Fade the composed pieces once, then add the original with the
+        // complementary weight. Source-over crossfades dip to 75% opacity
+        // halfway through and flash against the white page.
+        assemblyCtx.save();
+        assemblyCtx.globalCompositeOperation = 'destination-in';
+        assemblyCtx.globalAlpha = fragmentOpacity;
+        assemblyCtx.fillRect(0, 0, width, height);
+        assemblyCtx.globalCompositeOperation = 'lighter';
         const attention = Math.max(...detailProgress);
         sprites.forEach((icon, team) => {
           if (!visibleTeams[team]) return;
           const { x, y, size } = galleryPoses[team];
           const detail = detailProgress[team];
           const opacity = iconOpacity * (1 - smooth(0, .18, detail)) * lerp(1, .14, attention);
-          if (opacity < .001) return;
-          ctx.globalAlpha = opacity;
-          ctx.drawImage(icon.image, x - size / 2, y - size / 2, size, size);
+          if (opacity <= 0) return;
+          assemblyCtx.globalAlpha = opacity;
+          assemblyCtx.drawImage(icon.image, x - size / 2, y - size / 2, size, size);
           lastDraw.push({ name: icon.name, kind: "icon", team, x, y, size, angle: 0, opacity });
         });
+        assemblyCtx.restore();
+      }
+      ctx.drawImage(assemblyCanvas, 0, 0, width, height);
+      if (iconOpacity > 0) {
         // Reuse the same fill-color groups, moving the intact group beside its
         // member card. No subpath splitting or duplicate full icon is used.
         fragments.forEach((bank, team) => {
@@ -774,7 +807,10 @@
         galleryHover[team] = next;
         if (next !== target) hoverMoving = true;
       });
-      spread = lerp(spread, scrollTarget, 1 - Math.pow(.78, dt));
+      // A longer ease-out tail lets the pieces and background settle together
+      // when returning to the word, including direct upward scrolling.
+      const followDamping = scrollTarget < spread ? .88 : .78;
+      spread = lerp(spread, scrollTarget, 1 - Math.pow(followDamping, dt));
       if (Math.abs(spread - scrollTarget) < .0005) spread = scrollTarget;
       let detailMoving = false;
       detailProgress.forEach((progress, team) => {
@@ -884,7 +920,7 @@
       if (document.hidden) { cancelAnimationFrame(raf); raf = 0; pointer.active = false; } else wake();
     });
     async function init() {
-      if (!ctx) throw new Error("이 브라우저에서는 Canvas를 사용할 수 없습니다.");
+      if (!ctx || !assemblyCtx || !backgroundCtx) throw new Error("이 브라우저에서는 Canvas를 사용할 수 없습니다.");
       await Promise.all(source.map(async icon => {
         const response = await fetch(new URL(icon.file, iconBaseURL));
         if (!response.ok) throw new Error(icon.file + " 로딩 실패 (" + response.status + ")");

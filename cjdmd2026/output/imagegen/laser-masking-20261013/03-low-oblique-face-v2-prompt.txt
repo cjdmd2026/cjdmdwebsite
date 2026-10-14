@@ -1,0 +1,9 @@
+Tool: built-in image_gen (edit)
+Source: 03-low-oblique.png
+
+Use case: identity-preserve.
+Edit the supplied photograph, using it as the edit target. Keep the same adult female university student, same face identity, tied-back dark hair, dark navy sweatshirt, trousers, crouching posture, hands applying beige masking tape low on the wall, laser level and tripod, bright thin green laser cross, exhibition room, landscape 3:2 framing, wall textures, and natural documentary photographic look.
+
+Requested change only: show her face more clearly. Gently turn her head and slightly her upper torso about 25–30 degrees toward the camera compared with the source, and raise her chin just a little, so we see a natural three-quarter view of her face instead of a downturned near-profile. Her eyes, brow, nose, and both cheeks should be readable; tuck only the loose strands that obscure the near eye behind her ear. She remains absorbed in the masking work, with her gaze directed toward her working hand, not posing or looking directly into the lens. Preserve realistic neck, shoulder, arm, and hand anatomy.
+
+Allow only a very soft, believable bounce of existing ambient light onto her face so facial features can be read. Keep the student substantially in shadow, retain the dim installation-room atmosphere, and let the green projected laser line remain the strongest bright color accent. Do not brighten the entire image or add a spotlight. Keep the skin texture unretouched, restrained exposure, natural color and subtle ordinary camera noise. No makeup makeover, beauty retouching, HDR, cinematic color grade, artificial glow, smoke, extra people, changed outfit, labels or watermark. Preserve all other details as closely as possible.

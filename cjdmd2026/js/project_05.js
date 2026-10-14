@@ -159,13 +159,9 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
       float n2=fbm(domain+vec2(8.3,2.7)+vec2(-q*.52,q*.58));
       float axis=direction>0.?uv.y:1.-uv.y;
       float wave=(n1-.5)*.24+sin(uv.x*5.5+n2*2.6+q*1.8)*.038;
-      // Separate traveling edges: no full-frame opacity gate on the way out.
+      // One shared front keeps both projects visible around a short icon band.
       float front=mix(-.24,1.28,q)-axis+wave*amp;
-      float imageFront=mix(-.32,1.4,ease(.46,1.,t))-axis+wave*1.3*amp;
-      float incoming=ease(-.20,.20,imageFront);
-      // Overlap the longer reveal with the icon sweep for one continuous flow.
-      float release=ease(.58,1.,t);
-      float exitFront=mix(-.28,1.30,release)-axis+wave*sin(release*3.14159265);
+      float incoming=ease(-.035,.035,front);
       vec2 cells=resolution/vec2(cellSize);
       vec2 grid=uv*cells;
       vec2 cell=floor(grid);
@@ -183,8 +179,10 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
       float change=ease(.68,1.,fract(clock));
       float ink=mix(iconA.a,iconB.a,change);
       float grain=(region(cell/4.)-.5)*.025;
-      float becomeIcons=ease(-.22,.22,front+grain);
-      float becomeImage=ease(-.22,.22,exitFront+grain);
+      // The leading and trailing edges stay 14% of the viewport apart,
+      // with 3.5% feathering on each side instead of covering the whole slide.
+      float becomeIcons=ease(-.035,.035,front+.07+grain);
+      float becomeImage=ease(-.035,.035,front-.07+grain);
       float iconAmount=becomeIcons*(1.-becomeImage);
       // As in the text version, each cell takes its color from the scene below.
       vec3 detail=scene(uv,incoming);
@@ -620,7 +618,8 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
     job.elapsed += dt;
     const progress = Math.min(1, job.elapsed / duration);
     try {
-      if (!job.swapped && progress >= .38) {
+      // Capture the incoming controls before the narrow band reaches the viewport.
+      if (!job.swapped && progress >= .08) {
         job.swapped = true;
         const incoming = job.swap();
         overlay.dataset.phase = 'revealing';

@@ -1491,7 +1491,7 @@ html:has(.designer-page.slide-view) {
 .formation-name {
     display: block;
     font-size: var(--name-size);
-    font-weight: 700;
+    font-weight: 500;
     letter-spacing: -.045em;
     line-height: 1.3;
 }
