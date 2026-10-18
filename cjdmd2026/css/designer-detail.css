@@ -248,21 +248,14 @@ img {
 .main {
     min-height: 100vh;
     position: relative;
-}
-
-/* 사진·그라디언트 → 개인 아이콘 → 텍스트·버튼 순서로 쌓습니다. */
-.main.has-designer-background {
     isolation: isolate;
 }
 
-.has-designer-background .profile .image {
-    z-index: -2;
-}
-
+/* 개인 아이콘 → 사진과 실루엣 안의 그라디언트 → 텍스트·버튼 순서로 쌓습니다. */
 .designer-floating-background {
     position: absolute;
     inset: 0;
-    z-index: -1;
+    z-index: -2;
     overflow: hidden;
     pointer-events: none;
     mask-image: linear-gradient(to right,
@@ -336,30 +329,40 @@ img {
 
 .profile .image {
     position: relative;
+    z-index: -1;
 
     width: 100%;
     min-width: 0;
     height: auto;
     aspect-ratio: 3 / 4;
 
+    background-image: var(--portrait-image, none);
     background-size: cover;
     background-position: center bottom;
     background-repeat: no-repeat;
+
+    /* 사진과 흰 페이드를 함께 맨 아래 10%에서만 투명하게 만듭니다. */
+    mask-image: linear-gradient(to bottom, #000 90%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, #000 90%, transparent 100%);
 }
 
 .profile .image::after {
     content: "";
     position: absolute;
     inset: 0;
-
-    background-image: linear-gradient(
-        to bottom,
-        transparent 40%,
-        rgba(255, 255, 255, 1) 100%
-    );
-
-    border-radius: inherit;
     pointer-events: none;
+
+    /* 흰 페이드를 인물의 알파 영역 안에만 그립니다. */
+    background-image: linear-gradient(to bottom, transparent 40%, #fff 100%);
+    mask-image: var(--portrait-image, none);
+    mask-mode: alpha;
+    mask-size: cover;
+    mask-position: center bottom;
+    mask-repeat: no-repeat;
+    -webkit-mask-image: var(--portrait-image, none);
+    -webkit-mask-size: cover;
+    -webkit-mask-position: center bottom;
+    -webkit-mask-repeat: no-repeat;
 }
 
 .profile .text-wrap {
@@ -370,10 +373,16 @@ img {
     padding-right: 10rem;
 }
 
-.profile .text-wrap,
-.profile .text-wrap .name {
+.profile .text-wrap {
     display: flex;
     flex-direction: column;
+}
+
+.profile .text-wrap .name {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.75rem;
 }
 
 .profile .text-wrap .name h1 {

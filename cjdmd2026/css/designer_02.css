@@ -1715,3 +1715,73 @@ body.mobile-menu-open:has(.icon-slide-page) { overflow: hidden !important; }
 .icon-slide-page .formation-slide .interaction {
     display: none !important;
 }
+
+/* 보기 전환: 도구 영역은 유지하고 제목과 콘텐츠만 각각 전환합니다. */
+html:has(.icon-slide-page) {
+    scrollbar-gutter: stable;
+}
+
+.icon-slide-page .designer-heading .textbox {
+    position: relative;
+    min-width: 0;
+}
+
+/* 너비가 바뀌는 중에도 제목은 접지 않고, 글자 자체의 clip-path로만 드러냅니다. */
+.icon-slide-page .designer-heading__title {
+    flex-shrink: 0;
+    width: max-content;
+    white-space: nowrap;
+}
+
+.designer-title-caret {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 2px;
+    height: 1em;
+    z-index: 1;
+    background: #111;
+    transform: translateY(-50%);
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.icon-slide-page.is-view-transitioning .designer-title-caret {
+    visibility: visible;
+}
+
+.icon-slide-page.is-view-transitioning .designer-heading {
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+}
+
+@media (min-width: 760px) {
+    .icon-slide-page .designer-heading .textbox {
+        display: flex;
+        align-items: center;
+        min-height: 4.5rem;
+    }
+
+    .icon-slide-page:is(.slide-view, .grid-view) .designer-heading__top {
+        gap: 2rem;
+    }
+
+    .icon-slide-page:is(.slide-view, .grid-view) .search-bar,
+    .icon-slide-page:is(.slide-view, .grid-view) .search-bar input {
+        height: 45px;
+    }
+}
+
+@media (max-width: 759px) {
+    .icon-slide-page:is(.slide-view, .grid-view) .search-bar,
+    .icon-slide-page:is(.slide-view, .grid-view) .search-bar input {
+        height: 48px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .designer-title-caret {
+        display: none;
+    }
+}

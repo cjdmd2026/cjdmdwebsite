@@ -473,12 +473,11 @@
             return;
         }
 
-        portrait.style.backgroundImage = url
-            ? `url(${JSON.stringify(url)})`
-            : "none";
-
-        /* 크기와 위치는 CSS에서 조절 */
-        portrait.style.backgroundRepeat = "no-repeat";
+        // 사진과 그라디언트 마스크에 같은 이미지를 사용해 실루엣을 맞춥니다.
+        portrait.style.setProperty(
+            "--portrait-image",
+            url ? `url(${JSON.stringify(url)})` : "none"
+        );
 
         if (url) {
             portrait.setAttribute("role", "img");

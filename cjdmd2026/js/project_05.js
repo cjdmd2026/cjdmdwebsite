@@ -93,6 +93,10 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
   let iconAtlasLoad = null, atlasCount = 0, atlasGrid = [1, 1];
   let gl, program, buffer, atlas, uniforms;
   let job = null, frame = 0, generation = 0, completed = 0;
+  const scrollMotion = {
+    velocity: 0, rate: 1, targetRate: 1, direction: 0,
+    lastInput: null, lastUpdate: performance.now()
+  };
   const vertexSource = `
     attribute vec2 position;
     varying vec2 uv;
@@ -104,7 +108,7 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
     uniform sampler2D imageA, imageB, iconAtlas, foreground, nextForeground, controls, nextControls;
     uniform vec2 resolution, sizeA, sizeB, iconGrid;
     uniform vec4 sceneTint;
-    uniform float progress, direction, cellSize, codeTime, iconCount;
+    uniform float slideProgress, direction, cellSize, codeTime, iconCount;
     float random(vec2 p) {
       return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);
     }
@@ -134,14 +138,15 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
       vec2 tile=vec2(mod(index,iconGrid.x),iconGrid.y-1.-floor(index/iconGrid.x));
       return (tile+local)/iconGrid;
     }
-    vec3 scene(vec2 p, float incoming) {
+    vec3 scene(vec2 p, float incoming, vec2 copyMask) {
       vec3 a=texture2D(imageA,cover(p,sizeA)).rgb;
       vec4 content=texture2D(foreground,p);
       vec3 b=texture2D(imageB,cover(p,sizeB)).rgb;
       vec4 nextContent=texture2D(nextForeground,p);
-      float handoff=ease(.60,.84,progress);
-      float alpha=mix(content.a,nextContent.a,handoff);
-      vec3 premultiplied=mix(content.rgb*content.a,nextContent.rgb*nextContent.a,handoff);
+      // Erase copy at the band's leading edge and reveal it at the trailing edge.
+      // The two masks never overlap, so project copy is not crossfaded together.
+      float alpha=content.a*copyMask.x+nextContent.a*copyMask.y;
+      vec3 premultiplied=content.rgb*content.a*copyMask.x+nextContent.rgb*nextContent.a*copyMask.y;
       vec3 background=mix(mix(a,b,incoming),sceneTint.rgb,sceneTint.a);
       // Controls follow the scene, never the title's opacity/position animation.
       // Each glass snapshot already includes its backdrop and translucent fill.
@@ -151,15 +156,14 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
       return background*(1.-alpha)+premultiplied;
     }
     void main() {
-      float t=progress;
-      float q=ease(0.,.90,t);
+      float q=slideProgress;
       float amp=sin(q*3.14159265);
       vec2 domain=vec2(uv.x*resolution.x/resolution.y,uv.y)*3.1;
       float n1=fbm(domain+vec2(q*.72,-q*.48));
       float n2=fbm(domain+vec2(8.3,2.7)+vec2(-q*.52,q*.58));
       float axis=direction>0.?uv.y:1.-uv.y;
       float wave=(n1-.5)*.24+sin(uv.x*5.5+n2*2.6+q*1.8)*.038;
-      // One shared front keeps both projects visible around a short icon band.
+      // The image, copy, and icon band share the same moving boundary.
       float front=mix(-.24,1.28,q)-axis+wave*amp;
       float incoming=ease(-.035,.035,front);
       vec2 cells=resolution/vec2(cellSize);
@@ -167,7 +171,13 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
       vec2 cell=floor(grid);
       float seed=random(cell);
       vec2 center=(floor(grid)+.5)/cells;
-      vec3 color=scene(center,incoming);
+      float grain=(region(cell/4.)-.5)*.025;
+      // The leading and trailing edges stay 24% of the viewport apart,
+      // with 3.5% feathering on each side instead of covering the whole slide.
+      float becomeIcons=ease(-.035,.035,front+.12+grain);
+      float becomeImage=ease(-.035,.035,front-.12+grain);
+      vec2 copyMask=vec2(1.-becomeIcons,becomeImage);
+      vec3 color=scene(center,incoming,copyMask);
       // Keep the matrix alive throughout the automatic transition.
       float clock=codeTime*(2.4+seed*1.4)+seed*5.;
       float step=floor(clock);
@@ -178,16 +188,13 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
       vec4 iconB=texture2D(iconAtlas,iconUV(second,local));
       float change=ease(.68,1.,fract(clock));
       float ink=mix(iconA.a,iconB.a,change);
-      float grain=(region(cell/4.)-.5)*.025;
-      // The leading and trailing edges stay 14% of the viewport apart,
-      // with 3.5% feathering on each side instead of covering the whole slide.
-      float becomeIcons=ease(-.035,.035,front+.07+grain);
-      float becomeImage=ease(-.035,.035,front-.07+grain);
       float iconAmount=becomeIcons*(1.-becomeImage);
       // As in the text version, each cell takes its color from the scene below.
-      vec3 detail=scene(uv,incoming);
+      vec3 detail=scene(uv,incoming,copyMask);
       vec3 iconColor=min(color*1.35+.025,vec3(1.));
-      vec3 iconLayer=mix(vec3(1.),iconColor,ink);
+      // Only the white band is translucent; keep icons and copy masks intact.
+      vec3 bandBackground=mix(detail,vec3(1.),.75);
+      vec3 iconLayer=mix(bandBackground,iconColor,ink);
       gl_FragColor=vec4(mix(detail,iconLayer,iconAmount),1.);
     }
   `;
@@ -301,7 +308,7 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
     const position = gl.getAttribLocation(program, 'position');
     gl.enableVertexAttribArray(position);
     gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-    uniforms = Object.fromEntries(['imageA','imageB','iconAtlas','foreground','nextForeground','controls','nextControls','resolution','sizeA','sizeB','sceneTint','progress','direction','cellSize','codeTime','iconCount','iconGrid']
+    uniforms = Object.fromEntries(['imageA','imageB','iconAtlas','foreground','nextForeground','controls','nextControls','resolution','sizeA','sizeB','sceneTint','slideProgress','direction','cellSize','codeTime','iconCount','iconGrid']
       .map(name => [name, gl.getUniformLocation(program, name)]));
     atlas = texture(icons.sheet);
     atlasCount = icons.count;
@@ -475,46 +482,19 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
   textLayer.width = surface.width;
   textLayer.height = surface.height;
   textLayer.getContext('2d').drawImage(surface, 0, 0);
-  const decodeSvg = async svg => {
-    const url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(svg)], {type:'image/svg+xml'}));
-    try {
-      const image = new Image();
-      image.src = url;
-      await image.decode();
-      return image;
-    } finally { URL.revokeObjectURL(url); }
-  };
-  const icon = document.querySelector('.project-dial-item.is-active .project-dial-icon svg');
-  let iconCount = 0;
-  if (icon && (includeHidden || getComputedStyle(icon).visibility !== 'hidden')) {
-    const rect = icon.getBoundingClientRect();
-    if (rect.width && rect.height) {
-      const copy = icon.cloneNode(true);
-      copy.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-      copy.setAttribute('width', String(rect.width));
-      copy.setAttribute('height', String(rect.height));
-      const image = await decodeSvg(copy);
-      // Capture the complete icon alongside the title, with no fragment motion.
-      textLayer.getContext('2d').drawImage(image,
-        (rect.left-bounds.left)*ratio, (rect.top-bounds.top)*ratio,
-        rect.width*ratio, rect.height*ratio);
-      iconCount = 1;
-    }
-  }
+  // Icons live in a separate DOM dial above the transition canvas.
   const source = backgroundSource || getComputedStyle(target).backgroundImage.match(/^url\(["']?(.*?)["']?\)$/)?.[1];
   surface.controls = await captureControls(bounds, ratio, source);
-  surface.codeContent = {textRuns, iconCount, controlCount:surface.controls.controlCount};
-  const ease = (a, b, value) => {
-    const t = Math.max(0, Math.min(1, (value-a)/(b-a)));
-    return t*t*t*(t*(t*6-15)+10);
-  };
-  surface.renderCodeFrame = (progress, incoming, direction) => {
-    const copyPhase = incoming ? 1-ease(.66,.92,progress) : ease(.48,.70,progress);
+  surface.codeContent = {textRuns, iconCount:0, controlCount:surface.controls.controlCount};
+  surface.renderCodeFrame = (slideProgress, incoming, direction) => {
+    const copyPhase = incoming ? 1-slideProgress : slideProgress;
     ctx.save();
     ctx.setTransform(1,0,0,1,0,0);
     ctx.clearRect(0,0,surface.width,surface.height);
-    ctx.globalAlpha = 1-copyPhase;
-    ctx.drawImage(textLayer, (incoming?1:-1)*direction*72*ratio*copyPhase, 0);
+    // The shader masks copy at the moving band instead of fading the whole layer.
+    ctx.globalAlpha = 1;
+    // Move the title and description opposite the slide and icon dial.
+    ctx.drawImage(textLayer, 0, (incoming?-1:1)*direction*72*ratio*copyPhase);
     ctx.restore();
     surface.codeContent.copyMotion = copyPhase;
     return surface;
@@ -558,10 +538,13 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
   function paint(progress) {
     gl.useProgram(program);
     syncBounds();
-    // Reuse the cached title and complete icon throughout the code transition.
+    // One eased progress drives the slide front, copy motion, and spatial mask.
+    const t = Math.max(0, Math.min(1, progress / .90));
+    const slideProgress = t*t*t*(t*(t*6-15)+10);
+    // Reuse the cached copy throughout the code transition.
     for (const [source, value, incoming] of [[job.contentSource,job.content,false],[job.nextSource,job.nextContent,true]]) {
       if (!source?.renderCodeFrame || progress === job.paintedProgress) continue;
-      source.renderCodeFrame(progress,incoming,job.direction);
+      source.renderCodeFrame(slideProgress,incoming,job.direction);
       gl.bindTexture(gl.TEXTURE_2D,value);
       gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,gl.RGBA,gl.UNSIGNED_BYTE,source);
       overlay.dataset[incoming?'incomingMotion':'outgoingMotion']=source.codeContent.copyMotion.toFixed(3);
@@ -583,11 +566,12 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
     gl.uniform2f(uniforms.sizeA, job.from.naturalWidth, job.from.naturalHeight);
     gl.uniform2f(uniforms.sizeB, job.to.naturalWidth, job.to.naturalHeight);
     gl.uniform4fv(uniforms.sceneTint, job.sceneTint);
-    gl.uniform1f(uniforms.progress, progress);
+    gl.uniform1f(uniforms.slideProgress, slideProgress);
     gl.uniform1f(uniforms.codeTime, job.codeTime);
     gl.uniform1f(uniforms.direction, job.direction);
     gl.uniform1f(uniforms.cellSize, Math.max(8, Number(options.cellSize) || 12));
     gl.drawArrays(gl.TRIANGLES, 0, 6);
+    job.onProgress?.(slideProgress);
     overlay.dataset.progress = progress.toFixed(3);
   }
   function finish(success) {
@@ -613,10 +597,10 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
     if (job.preparing) { job.last=now; frame=requestAnimationFrame(tick); return; }
     const dt = Math.min(now - job.last, 48);
     job.last = now;
+    job.playbackRate = updatePlaybackRate(now);
     job.codeTime += dt / 1000;
-    const duration = Math.max(300, Number(options.durationMs) || 1400);
-    job.elapsed += dt;
-    const progress = Math.min(1, job.elapsed / duration);
+    job.elapsed += dt * job.playbackRate;
+    const progress = Math.min(1, job.elapsed / job.durationMs);
     try {
       // Capture the incoming controls before the narrow band reaches the viewport.
       if (!job.swapped && progress >= .08) {
@@ -668,7 +652,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
     const rgba = context.getImageData(0,0,1,1).data;
     return [rgba[0]/255,rgba[1]/255,rgba[2]/255,rgba[3]/255*Number(style.opacity)];
   }
-  async function transition({direction = 1, swap, from, to, target, foreground = null}) {
+  async function transition({direction = 1, swap, from, to, target, foreground = null, onProgress}) {
     if (job) return false;
     const current = ++generation;
     if (reduced.matches) { await swap(); return true; }
@@ -688,10 +672,12 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
       return withoutCanvas();
     }
     return new Promise(resolve => {
-      job = {direction: Math.sign(direction) || 1, swap, target, resolve,
-        codeTime: 0,
+      const now = performance.now();
+      job = {direction: Math.sign(direction) || 1, swap, target, resolve, onProgress,
+        codeTime: 0, playbackRate: updatePlaybackRate(now),
+        durationMs: Math.max(300, Number(options.durationMs) || 1400),
         sceneTint: readSceneTint(),
-        from: sources[0], to: sources[1], swapped: false, elapsed: 0, last: performance.now()};
+        from: sources[0], to: sources[1], swapped: false, elapsed: 0, last: now};
       try {
         job.a = texture(job.from);
         job.b = texture(job.to);
@@ -719,7 +705,37 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
       }
     });
   }
-  function cancel() { generation++; finish(false); }
+  function updateScrollSpeed(delta) {
+    if (!Number.isFinite(delta) || !delta) return;
+    const now = performance.now(), direction = Math.sign(delta);
+    const gap = scrollMotion.lastInput === null ? Infinity : now-scrollMotion.lastInput;
+    const fresh = gap > 400 || direction !== scrollMotion.direction;
+    const interval = fresh ? 100 : Math.max(4, gap);
+    const velocity = Math.min(4, Math.abs(delta)/interval);
+    const blend = 1-Math.exp(-interval/100);
+    scrollMotion.velocity = fresh ? velocity
+      : scrollMotion.velocity+(velocity-scrollMotion.velocity)*blend;
+    const intensity = Math.min(1, scrollMotion.velocity/2.4);
+    // 0.85–2.8x keeps the default transition around 0.5–1.65 seconds.
+    scrollMotion.targetRate = .85+1.95*intensity*intensity*(3-2*intensity);
+    scrollMotion.lastInput = now;
+    scrollMotion.direction = direction;
+  }
+  function updatePlaybackRate(now) {
+    const dt = Math.max(0, now-scrollMotion.lastUpdate);
+    const age = scrollMotion.lastInput === null ? Infinity : now-scrollMotion.lastInput;
+    // Ease back to normal after input stops; never freeze halfway through a slide.
+    const target = 1+(scrollMotion.targetRate-1)*Math.exp(-Math.max(0,age-120)/260);
+    const response = target > scrollMotion.rate ? 160 : 220;
+    scrollMotion.rate += (target-scrollMotion.rate)*(1-Math.exp(-dt/response));
+    scrollMotion.lastUpdate = now;
+    return scrollMotion.rate;
+  }
+  function cancel() {
+    generation++; finish(false);
+    Object.assign(scrollMotion, {velocity:0, rate:1, targetRate:1, direction:0,
+      lastInput:null, lastUpdate:performance.now()});
+  }
   canvas.addEventListener('webglcontextlost', event => {
     event.preventDefault();
     if (job && !job.swapped) job.swap();
@@ -734,7 +750,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
   });
   if (!reduced.matches) void prepareIconAtlas().catch(() => {});
   window.ProjectWave = window.ProjectASCII = Object.freeze({
-    ready: Promise.resolve(), prepare, captureForeground, transition, cancel,
+    ready: Promise.resolve(), prepare, captureForeground, transition, updateScrollSpeed, cancel,
     get state() { return {busy: !!job, phase: overlay.dataset.phase || 'idle', completed, progress: Number(overlay.dataset.progress || 0)}; }
   });
 })();
@@ -749,6 +765,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
         fluid: 50,          // 세로 전환에서 과한 출렁임을 줄임
         wheelThreshold: 90,  // 미세 휠 입력에 너무 민감하게 반응하지 않도록
         wheelGestureGap: 180, // 휠 입력이 끊긴 뒤 다음 제스처 허용
+        wheelRepeatDelay: 160, // 강한 연속 입력은 제스처가 끝나기 전에도 허용
         pixelRatio: 1.25,
         maxTextureSize: 1920,
         ...window.PROJECT_FLUID_OPTIONS
@@ -1112,8 +1129,9 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
             const settings={...PROJECT_FLUID_SETTINGS};
             const reduce=matchMedia('(prefers-reduced-motion: reduce)');
             let index=Math.max(0,cards.findIndex(c=>c.classList.contains('is-active')));
-            let engine=null,phase='idle',pending=null,request=0,disabled=false,disposed=false;
+            let engine=null,phase='idle',queuedDirection=null,request=0,disabled=false,disposed=false;
             let wheelTotal=0,lastWheel=0,searchFrame=0,wheelLocked=false,wheelDirection=0;
+            let lastWheelAmount=0,lastWheelNavigation=0;
             let wanted=null,wantedDirection=1,loading=false,prepared=null;
             let initial=true,stoppedLenis=null;
             const root=document.documentElement;
@@ -1131,7 +1149,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                 ? [...projectDialList.querySelectorAll('.project-dial-item[data-project-id]')]
                 : [];
 
-            // 선택된 프로젝트의 완성된 SVG만 제목 옆에 표시합니다.
+            // Icons form their own dial, independent of the title/description layer.
             const projectIconFiles={
                 'apuchika':'team-01-apuchika.svg',
                 'omix':'team-02-ommix.svg',
@@ -1149,13 +1167,23 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                 'jikji':'team-14-jikji-jamboree.svg'
             };
             const dialIcons=new Map();
+            const iconRail=document.createElement('div');
+            iconRail.className='project-icon-rail';
+            iconRail.setAttribute('aria-hidden','true');
+            const header=document.querySelector('.header');
+            const headerZ=parseInt(header?getComputedStyle(header).zIndex:'1000',10);
+            // Same stacking level as the wave, inserted later so icons stay above it.
+            iconRail.style.zIndex=String(Number.isFinite(headerZ)&&headerZ>1?headerZ-1:999);
+            document.body.append(iconRail);
+            let iconTransition=null;
             const iconLoads=projectDialItems.map(async item=>{
                 const projectId=String(item.dataset.projectId),file=projectIconFiles[projectId];
                 const title=item.querySelector('.project-dial-title');
                 if(!file||!title)return;
                 const slot=document.createElement('span');
                 slot.className='project-dial-icon';slot.setAttribute('aria-hidden','true');
-                title.after(slot);item.classList.add('has-project-icon');
+                slot.dataset.projectId=projectId;
+                iconRail.append(slot);item.classList.add('has-project-icon');
                 dialIcons.set(projectId,{item,slot});
                 try{
                     const response=await fetch(new URL(file,iconBaseUrl),{signal:events.signal});
@@ -1169,6 +1197,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                     icon.removeAttribute('role');icon.removeAttribute('aria-labelledby');
                     icon.setAttribute('aria-hidden','true');icon.setAttribute('focusable','false');
                     slot.replaceChildren(icon);
+                    slot.classList.add('is-icon-loaded');
                     item.classList.add('is-icon-loaded');
                 }catch(error){
                     if(error.name!=='AbortError')console.warn('[Project icons] '+file,error);
@@ -1235,35 +1264,60 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                 will-change:transform,opacity,filter;
             }
 
-            .project-dial.has-project-icons {
-                --project-dial-icon-size:clamp(20px,2.1vw,32px);
-                --project-dial-icon-gap: 1rem;
+            html[data-project-fluid-view="slide"] {
+                --project-dial-icon-size:clamp(3rem,5vw,5rem);
+                --project-icon-left:clamp(2rem,6vw,6rem);
+                --project-copy-left:calc(var(--project-icon-left) + var(--project-dial-icon-size) + 2rem);
                 --project-dial-title-duration:800ms;
             }
             .container:has(#slideview:not([hidden])) .project-dial.has-project-icons {
-                width:min(
-                    calc(36vw + var(--project-dial-icon-size) + var(--project-dial-icon-gap)),
-                    calc(100vw - 12rem)
-                );
+                left:var(--project-copy-left);
+                width:min(50vw,calc(100vw - var(--project-copy-left) - 3rem));
             }
-            .project-dial-item.has-project-icon {
-                gap:var(--project-dial-icon-gap);
+            .container:has(#slideview:not([hidden])) .project-dial-title {
+                font-size:var(--project-dial-icon-size);
+                white-space:nowrap;
+                text-align:left;
             }
-            .project-dial-icon {
+            html[data-project-fluid-view="slide"] .project-info {
+                left:var(--project-copy-left);
+                top:calc(50vh + var(--project-dial-icon-size) / 2 + 1.5rem);
+                width:min(50vw,calc(100vw - var(--project-copy-left) - 3rem));
+                text-align:left;
+            }
+            .project-icon-rail { display:none; }
+            html[data-project-fluid-view="slide"] .project-icon-rail {
                 display:block;
-                flex:0 0 var(--project-dial-icon-size);
+                position:fixed;
+                left:var(--project-icon-left);
+                top:calc(var(--header-height,70px) + 1rem);
+                bottom:2rem;
                 width:var(--project-dial-icon-size);
-                height:var(--project-dial-icon-size);
-                max-width:none;
-                transform:translateY(-1.25rem);
-                visibility:hidden;
+                overflow:hidden;
                 pointer-events:none;
             }
+            .project-icon-rail .project-dial-icon {
+                display:block;
+                position:absolute;
+                left:calc(50% - var(--project-rail-icon-size,0px) / 2);
+                top:0;
+                width:var(--project-rail-icon-size,0px);
+                height:var(--project-rail-icon-size,0px);
+                max-width:none;
+                visibility:hidden;
+                pointer-events:none;
+                transform-origin:center;
+                will-change:transform,opacity;
+            }
+            .project-icon-rail .project-dial-icon[hidden] { display:none; }
             .project-dial-icon svg { display:block; width:100%; height:100%; }
             .project-dial-icon svg,
             .project-dial-icon svg * { animation:none!important; transition:none!important; }
-            html[data-project-fluid-view="slide"] .project-dial-item.is-active.is-icon-loaded .project-dial-icon {
+            .project-icon-rail .project-dial-icon.is-icon-loaded {
                 visibility:visible;
+            }
+            @media (max-width:759px) {
+                html[data-project-fluid-view="slide"] .project-icon-rail { display:none; }
             }
             /* 제목의 자리와 행 높이를 유지해 다이얼이 흔들리지 않게 합니다. */
             html[data-project-fluid-view="slide"] .project-dial-title {
@@ -1273,15 +1327,11 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                 clip-path:inset(0 100% 0 0);
                 animation:none;
             }
-            html[data-project-fluid-view="slide"] .project-dial-item.is-active:not(.has-project-icon) .project-dial-title,
-            html[data-project-fluid-view="slide"] .project-dial-item.is-active.is-icon-loaded .project-dial-title {
+            html[data-project-fluid-view="slide"] .project-dial-item.is-active .project-dial-title {
                 visibility:visible;
                 opacity:1;
                 clip-path:inset(0 0 0 0);
                 animation:project-dial-title-reveal var(--project-dial-title-duration,800ms) cubic-bezier(.22,1,.36,1) both;
-            }
-            html[data-project-fluid-view="slide"] .project-dial-item.is-active.has-project-icon.is-icon-loaded .project-dial-title {
-                animation-delay:var(--project-dial-title-delay,0ms);
             }
             @keyframes project-dial-title-reveal {
                 from { clip-path:inset(0 100% 0 0); }
@@ -1309,8 +1359,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                 }
             }
             @media (prefers-reduced-motion:reduce) {
-                html[data-project-fluid-view="slide"] .project-dial-item.is-active:not(.has-project-icon) .project-dial-title,
-                html[data-project-fluid-view="slide"] .project-dial-item.is-active.has-project-icon.is-icon-loaded .project-dial-title {
+                html[data-project-fluid-view="slide"] .project-dial-item.is-active .project-dial-title {
                     animation:none;
                 }
                 html[data-project-fluid-view="slide"] .project-info,
@@ -1385,6 +1434,50 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
             // =========================================================
             const dialClamp=(value,min,max)=>Math.max(min,Math.min(max,value));
             const dialLerp=(a,b,t)=>a+(b-a)*t;
+
+            function syncIconRail(projectId){
+                const ids=visibleCards().map(card=>String(card.dataset.projectId))
+                    .filter(id=>dialIcons.has(id));
+                const from=ids.indexOf(iconTransition?.fromId);
+                const to=ids.indexOf(iconTransition?.toId);
+                const moving=iconTransition&&from>=0&&to>=0;
+                const active=ids.indexOf(String(projectId));
+                const progress=moving?dialClamp(iconTransition.progress,0,1):0;
+                const height=iconRail.clientHeight;
+                // 제목과 같은 화면 중앙에 현재 아이콘을 두고, 나머지는 위아래 공간에 맞춥니다.
+                const center=dialClamp(window.innerHeight/2-iconRail.getBoundingClientRect().top,0,height);
+                const size=Math.min(iconRail.clientWidth,2*Math.min(center,height-center));
+                iconRail.style.setProperty('--project-rail-icon-size',`${size.toFixed(2)}px`);
+                const layoutAt=(activeIndex,itemIndex)=>{
+                    if(activeIndex<0){
+                        const step=Math.min(height/Math.max(1,ids.length),size*.8);
+                        return {center:(height-(ids.length-1)*step)/2+itemIndex*step,
+                            size:Math.min(size*.46,step*.8),opacity:.4};
+                    }
+                    const offset=itemIndex-activeIndex;
+                    if(!offset)return {center,size,opacity:1};
+                    const above=offset<0;
+                    const count=above?activeIndex:ids.length-activeIndex-1;
+                    const space=Math.max(0,(above?center:height-center)-size/2);
+                    const gap=Math.min(12,size*.18,space);
+                    const step=Math.min(size*.8,(space-gap)/count);
+                    return {
+                        center:center+Math.sign(offset)*(size/2+gap+(Math.abs(offset)-.5)*step),
+                        size:Math.min(size*.46,step*.8),opacity:.4
+                    };
+                };
+                dialIcons.forEach(({slot},id)=>{
+                    const itemIndex=ids.indexOf(id);
+                    slot.hidden=itemIndex<0;
+                    if(slot.hidden)return;
+                    const before=layoutAt(moving?from:active,itemIndex);
+                    const after=moving?layoutAt(to,itemIndex):before;
+                    const scale=dialLerp(before.size,after.size,progress)/Math.max(1,size);
+                    const y=dialLerp(before.center,after.center,progress)-size/2;
+                    slot.style.transform=`translate3d(0,${y.toFixed(2)}px,0) scale(${scale.toFixed(4)})`;
+                    slot.style.opacity=dialLerp(before.opacity,after.opacity,progress).toFixed(3);
+                });
+            }
 
             // 빠르게 출발하고 마지막에서 천천히 안착하는 곡선.
             // CSS의 cubic-bezier(.22,1,.36,1)와 비슷한 인상입니다.
@@ -1504,6 +1597,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
             }
 
             function syncProjectDial(projectId,direction=0,instant=false){
+                syncIconRail(projectId);
                 if(!projectDial||!projectDialList||!projectDialItems.length)return;
 
                 const targetIndex=projectDialItems.findIndex(
@@ -1611,8 +1705,11 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                 window.ProjectWave.cancel();
                 root.classList.remove('project-wave-text-pending', 'project-wave-text-enter', 'project-wave-text-exit');
                 request++;
-                wanted=null;prepared=null;loading=false;phase='idle';pending=null;
+                wanted=null;prepared=null;loading=false;phase='idle';queuedDirection=null;
+                iconTransition=null;
+                syncIconRail(cards[index]?.dataset.projectId);
                 wheelTotal=0;lastWheel=0;wheelLocked=false;wheelDirection=0;
+                lastWheelAmount=0;lastWheelNavigation=0;
                 engine?.cancel();slideview.classList.remove('is-fluid-transitioning');
             }
             function jump(next,updateText=true){
@@ -1656,8 +1753,15 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                     if(current!==request||disposed||slideview.hidden||cards[next].hidden)return;
                     loading=false;
                     phase = 'animating';
+                    iconTransition={fromId:String(cards[index].dataset.projectId),
+                        toId:String(cards[next].dataset.projectId),progress:0};
                     const finished = await window.ProjectWave.transition({
                         direction,
+                        onProgress(progress){
+                            if(current!==request||disposed||slideview.hidden||!iconTransition)return;
+                            iconTransition.progress=progress;
+                            syncIconRail(cards[index]?.dataset.projectId);
+                        },
                         from: getSource(cards[index]),
                         to: getSource(cards[next]),
                         target: cards[index],
@@ -1695,13 +1799,18 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                         wanted = null;
                         phase = 'idle';
                         loading = false;
+                        iconTransition = null;
+                        syncIconRail(cards[index]?.dataset.projectId);
                         wheelTotal = 0;
+                        const queued = queuedDirection;
+                        queuedDirection = null;
                         warm();
+                        if (queued !== null) navigate(queued);
                     }
                 }
             }
             function navigate(direction){
-                if (phase !== 'idle') return;
+                if (disposed) return;
                 if(
                     root.classList.contains('project-intro-pending') ||
                     root.classList.contains('project-intro-running')
@@ -1710,7 +1819,16 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                 const list=visibleCards();if(!list.length||slideview.hidden)return;
                 const at=list.indexOf(cards[wanted??index]);
                 const next=at<0?list[0]:list[at+direction];
-                if(next)transitionTo(cards.indexOf(next),direction);
+                if(phase!=='idle'){
+                    // Keep only the latest requested step, never a long scroll backlog.
+                    queuedDirection=next?direction:null;
+                    if(next){
+                        loadImage(getSource(next)).catch(()=>{});
+                        window.ProjectASCII.prepare(getSource(next)).catch(()=>{});
+                    }
+                    return;
+                }
+                if(next)void transitionTo(cards.indexOf(next),direction);
             }
 // Resolve the real DOM underneath the canvas to the incoming texture's final pose.
 function captureAsciiContent(target, options = {}) {
@@ -1842,13 +1960,16 @@ function settleAsciiContent() {
             }
             function reconcileSearch(){
                 if(disposed)return;
+                queuedDirection=null;
                 const list=visibleCards();
                 if(!list.length){clearTransition();return;}
                 if(engine?.nodes.some(n=>[n.from,n.to].some(f=>!list.some(c=>c.dataset.projectId===f.id)))){jump(list.includes(cards[index])?index:cards.indexOf(list[0]));return;}
                 if(!list.includes(cards[index]))jump(cards.indexOf(list[0]));
-                else if(wanted!==null&&!list.includes(cards[wanted])){wanted=null;prepared=null;loading=false;request++;warm();}
+                else if(wanted!==null&&!list.includes(cards[wanted]))jump(index);
+                syncIconRail(cards[index]?.dataset.projectId);
             }
             listen(document,'project-search-change',event=>{
+                queuedDirection=null;
                 // The existing filter sets card.hidden and publishes visibleIds.
                 const raw=event.detail?.visibleIds;
                 if(Array.isArray(raw)){
@@ -1856,7 +1977,7 @@ function settleAsciiContent() {
                     const allowed=cards.filter(c=>ids.has(String(c.dataset.projectId)));
                     if(!allowed.length){clearTransition();return;}
                     if(!allowed.includes(cards[index]))jump(cards.indexOf(allowed[0]));
-                    else if(wanted!==null&&!allowed.includes(cards[wanted])){wanted=null;prepared=null;loading=false;request++;warm();}
+                    else if(wanted!==null&&!allowed.includes(cards[wanted]))jump(index);
                 }
                 cancelAnimationFrame(searchFrame);searchFrame=requestAnimationFrame(reconcileSearch);
             });
@@ -1875,26 +1996,34 @@ function settleAsciiContent() {
                 if(!delta)return;
                 const now=performance.now();
                 const direction=Math.sign(delta);
+                const unit=event.deltaMode===1?16:event.deltaMode===2?innerHeight:1;
+                const amount=Math.abs(delta*unit);
+                const threshold=wheelOption('wheelThreshold',90,1,500);
+                // Accept fresh flicks and sustained wheel input, but not a decaying tail.
+                const renewedPush=wheelLocked
+                    && now-lastWheelNavigation>=wheelOption('wheelRepeatDelay',160,80,600)
+                    && ((amount>=12&&amount>lastWheelAmount*1.5)
+                        || (amount>=threshold*.5&&amount>=lastWheelAmount*.98));
                 const newGesture=now-lastWheel>wheelOption('wheelGestureGap',180,80,1000)
-                    || direction!==wheelDirection;
+                    || direction!==wheelDirection || renewedPush;
                 if(newGesture){wheelTotal=0;wheelLocked=false;}
                 lastWheel=now;
                 wheelDirection=direction;
-                // Drop input during a transition, including its inertial tail.
-                // A new gesture after settling can trigger one full animation.
-                if(phase!=='idle'||loading||root.classList.contains('project-intro-pending')
+                lastWheelAmount=amount;
+                if(root.classList.contains('project-intro-pending')
                     ||root.classList.contains('project-intro-running')){
                     wheelTotal=0;wheelLocked=true;return;
                 }
+                // Locked/inertial events still adjust animation speed without adding slides.
+                window.ProjectWave.updateScrollSpeed(delta*unit);
                 if(wheelLocked)return;
-                const unit=event.deltaMode===1?16:event.deltaMode===2?innerHeight:1;
                 wheelTotal+=delta*unit;
-                const threshold=wheelOption('wheelThreshold',90,1,500);
                 if(Math.abs(wheelTotal)>=threshold){
                     wheelTotal=0;
                     navigate(direction);
                     // Set after navigate: reduced motion may synchronously reset state.
                     wheelLocked=true;
+                    lastWheelNavigation=now;
                     lastWheel=now;wheelDirection=direction;
                 }
             },{passive:false,capture:true});
@@ -1917,6 +2046,7 @@ function settleAsciiContent() {
             listen(document,'touchcancel',()=>{touch=null;},{passive:true});
             listen(window,'resize',()=>{
                 syncFluidSurfaceBounds(cards[wanted??index]||cards[index]);
+                syncIconRail(cards[index]?.dataset.projectId);
 
                 // 화면 크기가 바뀌어도 현재 이동 중인 위치를 유지한 채 중앙 재계산
                 if(dialPosition!==null)applyDialVisual(dialPosition);
@@ -1936,7 +2066,7 @@ function settleAsciiContent() {
                 changeView,
                 get state(){return {
                     view:slideview.hidden?'grid':'slide',phase,index,projectId:cards[index]?.dataset.projectId,
-                    pendingId:wanted===null?null:cards[wanted]?.dataset.projectId,loading,disabled,
+                    pendingId:wanted===null?null:cards[wanted]?.dataset.projectId,queuedDirection,loading,disabled,
                     textureCount:engine?.imageCache.size||0,loadingCount:engine?.imageLoads.size||0,
                     activeCount:engine?.nodes.length||0,wipes:engine?.state.wipes||[],
                     transitionCount:engine?.started||0,renderCount:engine?.renderCount||0,rgbEnvelope:engine?.energy||0
@@ -1950,6 +2080,7 @@ function settleAsciiContent() {
                         entry.slot.remove();
                     });
                     dialIcons.clear();
+                    iconRail.remove();
                     projectDial?.classList.remove('has-project-icons');
                     observer.disconnect();events.abort();engine?.destroy();engine=null;host.remove();style.remove();
                     if(stoppedLenis)stoppedLenis.start();

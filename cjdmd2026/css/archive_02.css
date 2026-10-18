@@ -550,6 +550,32 @@ img {
     
 }
 
+.history .card-wrap .history-card--unavailable {
+    position: relative;
+    cursor: default;
+}
+
+.history-card--unavailable::after {
+    content: "웹페이지 없음";
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    border-radius: inherit;
+    background: rgba(255, 255, 255, 0.75);
+    color: #666;
+    letter-spacing: 0.02em;
+    font-size: 0.875rem;
+    font-weight: 600;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.history-card--unavailable:is(:hover, :focus-visible)::after {
+    opacity: 1;
+}
+
 .history .card-wrap .history-item.is-history-visible {
     opacity: 1;
 

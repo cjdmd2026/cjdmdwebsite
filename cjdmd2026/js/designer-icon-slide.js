@@ -318,7 +318,7 @@
       emptyMessage.hidden = !viewActive || spread < .995 || visibleTeams.some(Boolean) || unmappedResults.length > 0;
       unmappedList.hidden = !viewActive || spread < .995 || unmappedResults.length === 0;
     }
-    function changeFormationView(view) {
+    function changeFormationView(view, keepToolbar = false) {
       const active = view === 'slide';
       if (window.DesignerReturnState?.restoring) { viewActive = active; updateToolbar(); return; }
       if (loaded && active === viewActive) { updateToolbar(); return; }
@@ -330,6 +330,8 @@
         window.scrollTo({ top: 0, behavior: 'instant' });
       } else {
         viewActive = true;
+        // 보기 버튼으로 돌아오면 제목과 검색창이 보이는 갤러리 위치를 유지합니다.
+        if (keepToolbar) savedProgress = 1;
         window.scrollTo({ top: scene.offsetTop + savedProgress * scrollRange(), behavior: 'instant' });
         if (loaded) { layout(); onScroll(); draw(); }
       }
@@ -879,7 +881,7 @@
     document.addEventListener('click', event => {
       if (!event.target.closest('.icon-hit, .formation-panel')) closeDetails();
     });
-    document.addEventListener('designer:viewchange', event => changeFormationView(event.detail.view));
+    document.addEventListener('designer:viewchange', event => changeFormationView(event.detail.view, event.detail.keepToolbar));
     document.addEventListener('designer-filter-change', event => applyDesignerFilter(event.detail));
     designerClose.addEventListener('click', () => closeDetails(true));
     document.addEventListener('keydown', event => {

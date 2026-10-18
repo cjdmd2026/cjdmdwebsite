@@ -306,9 +306,149 @@ document.addEventListener("DOMContentLoaded", () => {
     // View
     // =========================================================
 
-    function changeView(
-        selectedView
-    ) {
+    const heading = designerPage.querySelector(".designer-heading");
+    const titleBox = heading?.querySelector(".textbox");
+    const reducedViewMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const titleCaret = document.createElement("span");
+    titleCaret.className = "designer-title-caret";
+    titleCaret.setAttribute("aria-hidden", "true");
+    titleBox?.append(titleCaret);
+    let viewInitialized = false;
+    let viewTransition = null;
+    let queuedView = null;
+
+    function currentView() {
+        return designerPage.classList.contains("slide-view") ? "slide" : "grid";
+    }
+
+    function viewContents(view) {
+        const selectors = view === "slide"
+            ? ".formation-slide, .formation-scroll-cue"
+            : ".designer-filter, .designer-slider";
+        const elements = [...designerPage.querySelectorAll(selectors)];
+        if (view === "grid") elements.push(document.querySelector(".designer-grid-empty"));
+        return elements.filter(element => element && element.getClientRects().length &&
+            getComputedStyle(element).visibility !== "hidden");
+    }
+
+    function typingFrames(title, erase = false) {
+        const width = title.getBoundingClientRect().width;
+        const text = title.firstChild;
+        const edges = [0];
+        if (text?.nodeType === Node.TEXT_NODE) {
+            const range = document.createRange();
+            range.setStart(text, 0);
+            let offset = 0;
+            for (const character of text.textContent) {
+                offset += character.length;
+                range.setEnd(text, offset);
+                edges.push(Math.min(width, range.getBoundingClientRect().width));
+            }
+        } else {
+            edges.push(width);
+        }
+        edges[edges.length - 1] = width;
+        if (erase) edges.reverse();
+        titleCaret.style.height = getComputedStyle(title).fontSize;
+        return {
+            text: edges.map(edge => ({
+                clipPath: `inset(0 ${width - edge}px 0 0)`,
+                easing: "steps(1, end)"
+            })),
+            caret: edges.map(edge => ({
+                transform: `translate(${Math.max(0, edge - 2)}px, -50%)`,
+                easing: "steps(1, end)"
+            }))
+        };
+    }
+
+    async function transitionView(selectedView) {
+        const animations = [];
+        const contentState = new Map();
+        const originalWidth = titleBox.style.width;
+        const fromWidth = titleBox.getBoundingClientRect().width;
+        const play = (element, frames, duration, easing) => {
+            const animation = element.animate(frames, { duration, easing, fill: "both" });
+            animations.push(animation);
+            return animation.finished.catch(() => {});
+        };
+        const animateContent = (element, entering) => {
+            if (!contentState.has(element)) {
+                contentState.set(element, { inert: element.inert, origin: element.style.transformOrigin });
+            }
+            element.inert = true;
+            const rect = element.getBoundingClientRect();
+            // 긴 그리드도 현재 화면 중심을 향해 뒤로 물러나게 합니다.
+            element.style.transformOrigin = `50% ${Math.max(0, Math.min(rect.height, innerHeight / 2 - rect.top))}px`;
+            const front = { opacity: 1, filter: "blur(0px)", transform: "perspective(1200px) translateZ(0)" };
+            const back = { opacity: 0, filter: "blur(12px)", transform: "perspective(1200px) translateZ(-180px)" };
+            return play(element, entering ? [back, front] : [front, back], entering ? 460 : 320,
+                entering ? "cubic-bezier(.16, 1, .3, 1)" : "cubic-bezier(.4, 0, 1, 1)");
+        };
+
+        designerPage.classList.add("is-view-transitioning");
+        try {
+            // 얇은 커서가 글자 경계를 따라 왼쪽으로 이동하며 기존 제목을 지웁니다.
+            const oldTitle = titleBox.querySelector(`.designer-heading__title--${currentView()}`);
+            const erase = typingFrames(oldTitle, true);
+            await Promise.all([
+                play(oldTitle, erase.text, 320, "linear"),
+                play(titleCaret, erase.caret, 320, "linear"),
+                ...viewContents(currentView()).map(element => animateContent(element, false))
+            ]);
+
+            applyView(selectedView, { keepToolbar: true });
+            const toWidth = titleBox.getBoundingClientRect().width;
+            const newTitle = titleBox.querySelector(`.designer-heading__title--${selectedView}`);
+            const typing = typingFrames(newTitle);
+            titleBox.style.width = `${fromWidth}px`;
+
+            // 새 제목은 한 줄의 원래 너비를 유지한 채 글자 단위로 드러냅니다.
+            await Promise.all([
+                play(newTitle, typing.text, 460, "linear"),
+                play(titleCaret, typing.caret, 460, "linear"),
+                play(titleBox, [{ width: `${fromWidth}px` }, { width: `${toWidth}px` }],
+                    460, "cubic-bezier(.16, 1, .3, 1)"),
+                ...viewContents(selectedView).map(element => animateContent(element, true))
+            ]);
+        } finally {
+            animations.forEach(animation => animation.cancel());
+            titleBox.style.width = originalWidth;
+            titleCaret.style.height = "";
+            contentState.forEach((state, element) => {
+                element.inert = state.inert;
+                element.style.transformOrigin = state.origin;
+            });
+            designerPage.classList.remove("is-view-transitioning");
+        }
+    }
+
+    function changeView(selectedView) {
+        if (!["slide", "grid"].includes(selectedView)) return;
+        if (viewTransition) {
+            queuedView = selectedView;
+            return viewTransition;
+        }
+        const keepToolbar = viewInitialized && selectedView !== currentView() &&
+            !window.DesignerReturnState?.restoring;
+        const animate = keepToolbar && !reducedViewMotion.matches && titleBox &&
+            designerPage.classList.contains("icon-slide-page") &&
+            getComputedStyle(heading).visibility !== "hidden";
+        viewInitialized = true;
+        if (!animate) {
+            applyView(selectedView, { keepToolbar });
+            return;
+        }
+        viewTransition = transitionView(selectedView).finally(() => {
+            viewTransition = null;
+            const nextView = queuedView;
+            queuedView = null;
+            if (nextView && nextView !== currentView()) changeView(nextView);
+        });
+        return viewTransition;
+    }
+
+    function applyView(selectedView, { keepToolbar = false } = {}) {
         const isSlideView =
             selectedView === "slide";
 
@@ -363,6 +503,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 "designer:viewchange",
                 {
                     detail: {
+                        keepToolbar,
                         view:
                             isSlideView
                                 ? "slide"
