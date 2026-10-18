@@ -62,7 +62,7 @@ html[data-project-fluid-view="slide"].project-wave-text-exit :is(
 `;
     waveStyle.textContent += `
 html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
-  .project-dial-item.is-active .project-dial-title, .project-info,
+  .project-dial-item.is-active .project-dial-title,
   .title-section .project-title, .desktop-slide-description
 ) { animation:none !important; transform:none !important; clip-path:none !important; opacity:1 !important; }
 `;
@@ -437,7 +437,8 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
   ctx.scale(ratio, ratio);
   ctx.translate(-bounds.left, -bounds.top);
   let textRuns = 0;
-  const selectors = '.project-dial-item.is-active .project-dial-title, .project-info, .title-section .project-title, .desktop-slide-description';
+  // Keep the description in the DOM so it can reveal horizontally after the slide.
+  const selectors = '.project-dial-item.is-active .project-dial-title, .title-section .project-title, .desktop-slide-description';
   for (const element of document.querySelectorAll(selectors)) {
     if (!element.getClientRects().length) continue;
     const parentStyle = getComputedStyle(element);
@@ -493,7 +494,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
     ctx.clearRect(0,0,surface.width,surface.height);
     // The shader masks copy at the moving band instead of fading the whole layer.
     ctx.globalAlpha = 1;
-    // Move the title and description opposite the slide and icon dial.
+    // Move the title opposite the slide and icon dial.
     ctx.drawImage(textLayer, 0, (incoming?-1:1)*direction*72*ratio*copyPhase);
     ctx.restore();
     surface.codeContent.copyMotion = copyPhase;
@@ -652,7 +653,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
     const rgba = context.getImageData(0,0,1,1).data;
     return [rgba[0]/255,rgba[1]/255,rgba[2]/255,rgba[3]/255*Number(style.opacity)];
   }
-  async function transition({direction = 1, swap, from, to, target, foreground = null, onProgress}) {
+  async function transition({direction = 1, swap, from, to, target, foreground = null, onStart, onProgress}) {
     if (job) return false;
     const current = ++generation;
     if (reduced.matches) { await swap(); return true; }
@@ -697,6 +698,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
         overlay.dataset.phase = 'covering';
         overlay.classList.add('is-active');
         document.documentElement.classList.add('project-wave-running');
+        onStart?.();
         frame = requestAnimationFrame(tick);
       } catch (error) {
         console.warn('[ProjectASCII]', error);
@@ -1134,6 +1136,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
             let lastWheelAmount=0,lastWheelNavigation=0;
             let wanted=null,wantedDirection=1,loading=false,prepared=null;
             let initial=true,stoppedLenis=null;
+            let descriptionExit=null;
             const root=document.documentElement;
 
             // =========================================================
@@ -1687,6 +1690,54 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                     el.classList.add('is-typed');el.dataset.typing='false';el.dataset.typed='true';
                 });
             }
+            function cancelDescriptionExit(){
+                const exit=descriptionExit;
+                descriptionExit=null;
+                exit?.animation.cancel();
+                exit?.element.remove();
+            }
+            async function exitProjectDescription(){
+                clearWriterQueue();
+                cancelDescriptionExit();
+                const info=document.querySelector('.project-info');
+                if(!info)return;
+                const style=getComputedStyle(info);
+                if(reduce.matches||style.visibility==='hidden'||Number(style.opacity)===0){
+                    info.classList.remove('is-visible');
+                    return;
+                }
+                const from={opacity:style.opacity,transform:style.transform,clipPath:style.clipPath};
+                const bounds=info.getBoundingClientRect();
+                const offset=new DOMMatrixReadOnly(style.transform==='none'?undefined:style.transform);
+                // Keep the outgoing copy above the canvas while the real description updates.
+                const outgoing=info.cloneNode(true);
+                outgoing.className='project-info-exit';
+                outgoing.setAttribute('aria-hidden','true');
+                for(const property of style)outgoing.style.setProperty(property,style.getPropertyValue(property));
+                Object.assign(outgoing.style,{
+                    position:'fixed',left:`${bounds.left-offset.m41}px`,top:`${bounds.top-offset.m42}px`,
+                    right:'auto',bottom:'auto',margin:'0',pointerEvents:'none',
+                    zIndex:String(Number.isFinite(headerZ)&&headerZ>1?headerZ-1:999),
+                    // Preserve each text child's color instead of inheriting the parent's computed fill.
+                    webkitTextFillColor:'currentColor',
+                    animation:'none',transition:'none'
+                });
+                document.body.append(outgoing);
+                info.classList.remove('is-visible');
+                const animation=outgoing.animate([
+                    from,
+                    {opacity:0,transform:'translateX(-40px)',clipPath:from.clipPath}
+                ],{duration:260,easing:'cubic-bezier(.4,0,1,1)',fill:'forwards'});
+                animation.id='project-info-exit';
+                descriptionExit={animation,element:outgoing};
+                try{
+                    await animation.finished;
+                }catch{
+                    // View changes and reduced motion can cancel the exit.
+                }finally{
+                    if(descriptionExit?.animation===animation)cancelDescriptionExit();
+                }
+            }
             async function exitProjectCopy(){
                 root.classList.remove('project-wave-text-enter');
                 root.classList.add('project-wave-text-exit');
@@ -1701,6 +1752,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                 return results.every(Boolean);
             }
             function clearTransition(){
+                cancelDescriptionExit();
                 root.classList.remove('project-ascii-content-ready');
                 window.ProjectWave.cancel();
                 root.classList.remove('project-wave-text-pending', 'project-wave-text-enter', 'project-wave-text-exit');
@@ -1747,7 +1799,10 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                 loading = true;
                 phase = 'loading';
                 try {
-                    await Promise.all([window.ProjectWave.ready, loadImage(getSource(cards[next])), ...iconLoads]);
+                    await Promise.all([
+                        window.ProjectWave.ready,
+                        loadImage(getSource(cards[next])), ...iconLoads
+                    ]);
                     if (current !== request || disposed || slideview.hidden || cards[next].hidden) return;
                     const foreground=await captureAsciiContent(cards[index]);
                     if(current!==request||disposed||slideview.hidden||cards[next].hidden)return;
@@ -1757,6 +1812,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                         toId:String(cards[next].dataset.projectId),progress:0};
                     const finished = await window.ProjectWave.transition({
                         direction,
+                        onStart(){ void exitProjectDescription(); },
                         onProgress(progress){
                             if(current!==request||disposed||slideview.hidden||!iconTransition)return;
                             iconTransition.progress=progress;
@@ -1779,16 +1835,25 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                         }
                     });
                     if (!finished && current === request && !disposed && !slideview.hidden) {
+                        cancelDescriptionExit();
                         root.classList.remove('project-wave-text-pending','project-wave-text-exit','project-wave-text-enter');
                         markActive(index,true);
                         updateSlideInfo(cards[index].dataset.projectId,false);
                     }
                     if (finished && current === request && !disposed && !slideview.hidden) {
+                        cancelDescriptionExit();
+                        // Continuous scrolling only reveals the final project's description.
+                        if (queuedDirection !== null) {
+                            document.querySelector('.project-info')?.classList.remove('is-visible');
+                        }
+                        // Removing the pending state starts project-info-reveal last,
+                        // after the canvas transition and icon movement have finished.
                         root.classList.remove('project-wave-text-pending','project-wave-text-enter','project-wave-text-exit');
                         forceTextVisible();
                     }
                 } catch (error) {
                     if (current === request && !disposed) {
+                        cancelDescriptionExit();
                         root.classList.remove('project-wave-text-pending', 'project-wave-text-enter', 'project-wave-text-exit');
                         console.error('[Project wave transition]', error);
                         markActive(next, true, direction);
