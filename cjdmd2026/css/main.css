@@ -14,11 +14,14 @@
 
 /* =========================================================
    Main page
-   치수는 1920px 시안 기준 → vw 로 환산했습니다. (1vw = 19.2px)
+   치수는 1920px 시안 기준 → --u(1920 화면에서 19.2px) 단위로 환산했습니다.
    ========================================================= */
 
 /* ============================== Variables ============================== */
+/* --u : 1vw 와 같지만, 화면 높이가 낮으면(16:9보다 납작하면) 높이에 맞춰 줄어듦
+   → 각 섹션이 한 화면 안에 들어가도록 */
 :root {
+    --u: min(1vw, calc(100vh * 16 / 9 / 100));
     --color-black: #111;
     --color-white: #f2f2f2;
     --color-gray-100: #ddd;
@@ -35,8 +38,8 @@
 
     /* Main page */
     --poster-ratio: 1686 / 2387;          /* 포스터 가로/세로 비율 */
-    --hero-poster-height: min(58.2vh, 46vw);  /* 시안 628 / 1080 */
-    --section-title-size: clamp(1.5rem, 2.6vw, 3.4rem);   /* 시안 50px */
+    --hero-poster-height: min(58.2vh, calc(46 * var(--u)));  /* 시안 628 / 1080 */
+    --section-title-size: clamp(1.3rem, calc(1.75 * var(--u)), 2.4rem);   /* 34px */
 }
 
 [data-theme="light"] {
@@ -181,18 +184,19 @@ img { display: block; max-width: 100%; }
     font-size: var(--section-title-size);
     font-weight: 700;
     line-height: 1.2;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.02em;                 /* 교수진·유튜브: -2% */
 }
+.committee .section-title { letter-spacing: 0; }   /* 위원회: 0% */
 
 .pill-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 120px;
-    height: 50px;
+    width: clamp(96px, 6.3vw, 150px);     /* 시안 원본 121 × 50, 테두리 1px */
+    height: clamp(40px, 2.6vw, 62px);
     border: 1px solid currentColor;
     border-radius: 999px;
-    font-size: 1rem;
+    font-size: clamp(.9rem, .88vw, 1.25rem);   /* 17px SemiBold */
     font-weight: 600;
     cursor: pointer;
     transition: background-color .3s ease, color .3s ease, opacity .3s ease;
@@ -203,7 +207,7 @@ img { display: block; max-width: 100%; }
 /* 화살표 버튼 (arrow-icon 1.svg — 왼쪽 꺾쇠, 다음 버튼은 좌우 반전)
  * 시안의 작은 네모 칸(64×92)에 꺾쇠가 꽉 차게 들어갑니다. */
 .arrow-button {
-    --arrow-h: clamp(40px, 4.8vw, 110px);
+    --arrow-h: clamp(30px, calc(3 * var(--u)), 70px);
     position: absolute;
     z-index: 5;
     top: 50%;
@@ -273,7 +277,7 @@ img { display: block; max-width: 100%; }
     z-index: 3;
 }
 
-/* 포스터: 시안 x 380 (19.8vw), 세로 가운데 */
+/* 포스터: 시안 x 380 (calc(19.8 * var(--u))), 세로 가운데 */
 .hero-poster-col {
     position: absolute;
     left: 20.625vw;                      /* 시안 x 396 (포스터 443 × 629) */
@@ -322,7 +326,7 @@ img { display: block; max-width: 100%; }
 .hero-indicator button:last-child { background: #cccccc; }
 .hero-indicator button[aria-selected="true"] { width: 48px; }
 
-/* 설명: 시안 x 968 (50.4vw) */
+/* 설명: 시안 x 968 (calc(50.4 * var(--u))) */
 .hero-text {
     position: absolute;
     left: 50.4vw;
@@ -333,16 +337,18 @@ img { display: block; max-width: 100%; }
     pointer-events: var(--text-events, none);
 }
 .hero-text h2 {
-    font-size: clamp(1.8rem, 2.5vw, 3.2rem);   /* 시안 48px */
-    font-weight: 700;
-    line-height: 1.2;
+    font-size: clamp(1.6rem, 2.1875vw, 3rem);   /* 시안 원본 42px SemiBold (화면 높이와 무관하게 유지) */
+    font-weight: 600;
+    line-height: 1.33;
     letter-spacing: -0.02em;
     margin-bottom: 2.14vw;                 /* 시안 41px */
 }
 .hero-text p {
-    font-size: clamp(.95rem, 1.15vw, 1.5rem);  /* 시안 22px */
-    line-height: 1.75;
-    margin-bottom: 2.66vw;                 /* 시안 51px */
+    font-size: clamp(.9rem, 1.08vw, 1.5rem);  /* 시안 원본 약 21px Regular, 행간 180%, 자간 -2% */
+    font-weight: 400;
+    line-height: 1.8;
+    letter-spacing: -0.02em;
+    margin-bottom: 3vw;                    /* 시안 약 58px */
     word-break: keep-all;
     white-space: nowrap;
 }
@@ -361,26 +367,26 @@ img { display: block; max-width: 100%; }
 .hero-stage[data-theme="dark"] .hero-scroll-hint img { filter: none; }
 
 /* ============================== 02. Committee ============================== */
-.committee { padding-top: 16vw; }          /* 시안: 히어로 끝 → 제목 307px */
+.committee { padding-top: calc(16 * var(--u)); }          /* 시안: 히어로 끝 → 제목 307px */
 .committee > :not(.ambient) { position: relative; z-index: 1; }
 
 .committee-tabs {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: clamp(1.6rem, 2.2vw, 2.6rem);      /* 선택 탭 글자 크기가 바뀌어도 아래 사진이 움직이지 않도록 고정 */
+    height: clamp(1.6rem, calc(2.2 * var(--u)), 2.6rem);      /* 선택 탭 글자 크기가 바뀌어도 아래 사진이 움직이지 않도록 고정 */
     flex-wrap: wrap;
     row-gap: .6rem;
-    margin-top: 5.2vw;                     /* 제목 → 탭 120px (글자 기준) */
+    margin-top: calc(3.6 * var(--u));                     /* 제목 → 탭 */
 }
 
 .committee-tab {
     position: relative;
-    padding: .2em 2.4vw;
-    font-size: clamp(.75rem, 1.04vw, 1.4rem);    /* 시안 20px */
+    padding: .2em calc(2.4 * var(--u));
+    font-size: clamp(.72rem, calc(.9 * var(--u)), 1.2rem);     /* 17px Medium, #111 25% */
     font-weight: 500;
     line-height: 1;
-    color: #bdbdbd;
+    color: rgba(17, 17, 17, .25);
     transition: color .35s ease, font-size .35s ease;
 }
 .committee-tab + .committee-tab::before {
@@ -395,29 +401,29 @@ img { display: block; max-width: 100%; }
 }
 .committee-tab:hover { color: #777; }
 .committee-tab[aria-selected="true"] {
-    font-size: clamp(.9rem, 1.25vw, 1.65rem);    /* 시안 24px */
-    font-weight: 700;
+    font-size: clamp(.85rem, calc(1.05 * var(--u)), 1.4rem);    /* 20px SemiBold */
+    font-weight: 600;
     color: #111;
 }
 
 .committee-slider {
     position: relative;
-    width: 39.7vw;                          /* 시안 762 × 497 */
+    width: calc(39.7 * var(--u));                          /* 762 × 497 (원본 크기) */
     min-width: min(100%, 520px);
-    margin: 1.9vw auto 0;                   /* 탭 → 이미지 37px */
+    margin: calc(1.9 * var(--u)) auto 0;                   /* 탭 → 이미지 37px */
     aspect-ratio: 762 / 497;
     overflow: hidden;
     background: transparent;            /* 슬라이드 경계에 어두운 선이 비치지 않게 */
 }
 /* 안2(index2.html): 부서 사진 양옆 화살표 — 영상 화살표와 같은 모양·간격 */
-.committee-stage { position: relative; width: 39.7vw; min-width: min(100%, 520px); margin: 1.9vw auto 0; }
+.committee-stage { position: relative; width: calc(39.7 * var(--u)); min-width: min(100%, 520px); margin: calc(1.9 * var(--u)) auto 0; }
 .committee-stage .committee-slider { margin-top: 0; width: 100%; min-width: 0; }
 /* 위원회 화살표는 사진 크기에 맞춰 작고 연하게 */
-.committee-stage .arrow-button { --arrow-h: clamp(28px, 2.6vw, 56px); opacity: .45; }
+.committee-stage .arrow-button { --arrow-h: clamp(28px, calc(2.6 * var(--u)), 56px); opacity: .45; }
 .committee-stage .arrow-button:hover { opacity: .8; }
 .committee-stage .arrow-button.is-hidden { opacity: 0; }
-.committee-stage .arrow-button--prev { left: calc(-2.6vw); margin-left: calc(var(--arrow-h) * 64 / 92 / -2); }
-.committee-stage .arrow-button--next { left: calc(100% + 2.6vw); margin-left: calc(var(--arrow-h) * 64 / 92 / -2); }
+.committee-stage .arrow-button--prev { left: calc(-2.6 * var(--u)); margin-left: calc(var(--arrow-h) * 64 / 92 / -2); }
+.committee-stage .arrow-button--next { left: calc(100% + 2.6 * var(--u)); margin-left: calc(var(--arrow-h) * 64 / 92 / -2); }
 
 .committee-track { position: relative; height: 100%; will-change: transform; }
 .committee-slide {
@@ -434,44 +440,44 @@ img { display: block; max-width: 100%; }
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 1rem 3vw;
-    margin-top: 1.9vw;                      /* 이미지 → 아이콘 36px */
-    min-height: 4.5vw;
-    height: calc(clamp(13px, 1.15vw, 26px) + .8vw + clamp(.85rem, 1.15vw, 1.55rem) + 4px);   /* 한 줄 높이 고정 */
+    gap: 1rem calc(3 * var(--u));
+    margin-top: calc(1.9 * var(--u));                      /* 이미지 → 아이콘 36px */
+    min-height: calc(4.5 * var(--u));
+    height: calc(clamp(13px, calc(1.15 * var(--u)), 26px) + calc(.8 * var(--u)) + clamp(.85rem, calc(1.15 * var(--u)), 1.55rem) + 4px);   /* 한 줄 높이 고정 */
 }
 
 .committee-member {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: .8vw;
-    min-width: 3.4vw;
+    gap: calc(.8 * var(--u));
+    min-width: calc(3.4 * var(--u));
     opacity: 0;
     animation: member-in .45s ease forwards;     /* 제자리에서 페이드만 */
 }
 @keyframes member-in { to { opacity: 1; } }
 
 .committee-member__icon {
-    width: clamp(13px, 1.15vw, 26px);       /* 시안 22px */
-    height: clamp(13px, 1.15vw, 26px);
+    width: clamp(12px, calc(1 * var(--u)), 22px);
+    height: clamp(12px, calc(1 * var(--u)), 22px);
     color: #111;
     transition: color .3s ease;
 }
 .committee-member__icon svg { display: block; width: 100%; height: 100%; fill: currentColor; }
 .committee-member:hover .committee-member__icon { color: var(--member-color, #111); }
-.committee-member__name { font-size: clamp(.85rem, 1.15vw, 1.55rem); font-weight: 700; line-height: 1; }
+.committee-member__name { font-size: clamp(.8rem, calc(1.05 * var(--u)), 1.4rem); font-weight: 600; line-height: 1.4; }   /* 20px SemiBold */
 
 /* ============================== 03. Professor ==============================
  * 시안(1920) 기준: 가운데 카드 451 × 593, 좌우 카드는 원통 안쪽처럼 둘러섬
  * 화면 양끝으로 갈수록 하얗게 바래는 효과(.professor-fade)는 화면 기준 그라데이션 */
-.professor { padding-top: 23.05vw; }        /* 위원회 이름 → 제목 451px */
+.professor { padding-top: calc(23.05 * var(--u)); }        /* 위원회 이름 → 제목 451px */
 
 .professor-stage {
-    --card-w: clamp(220px, 23.5vw, 600px);
+    --card-w: clamp(200px, calc(21 * var(--u)), 460px);   /* 403px — 양 끝 카드가 화면 밖으로 잘리도록 */
     --card-h: calc(var(--card-w) * 593 / 451);
     position: relative;
-    margin-top: .6vw;
-    height: calc(var(--card-h) + 12vw);
+    margin-top: calc(.6 * var(--u));
+    height: calc(var(--card-h) + calc(12 * var(--u)));
     perspective: calc(var(--card-w) * 7.77);
     overflow: hidden;
     touch-action: pan-y;
@@ -483,7 +489,7 @@ img { display: block; max-width: 100%; }
 
 .professor-card {
     position: absolute;
-    top: 5.15vw;                              /* 제목 → 카드 120px (stage margin 포함) */
+    top: calc(5.15 * var(--u));                              /* 제목 → 카드 120px (stage margin 포함) */
     left: 50%;
     width: var(--card-w);
     height: var(--card-h);
@@ -494,7 +500,7 @@ img { display: block; max-width: 100%; }
     color: #fff;
     cursor: pointer;
     backface-visibility: hidden;
-    transition: transform .9s cubic-bezier(.6, 0, .2, 1), opacity .9s ease;
+    will-change: transform, opacity;   /* 위치·투명도는 main.js 가 매 프레임 직접 그림 */
 }
 
 /* 사진: 머리(카드 위 10%) ~ 팔짱(69%) */
@@ -545,7 +551,7 @@ img { display: block; max-width: 100%; }
 
 /* 옆 카드: 사진만 어둡게, 글자 숨김 */
 .professor-card:not(.is-active) .professor-card__photo img { filter: brightness(.36); }
-.professor-card:not(.is-active) .professor-card__info { opacity: 0; }
+.professor-card:not(.is-active) .professor-card__info { opacity: .35; }   /* 옆 카드도 글자 반투명하게 */
 
 .professor-fade {
     position: absolute;
@@ -561,13 +567,13 @@ img { display: block; max-width: 100%; }
 
 /* ============================== 04. Video ==============================
  * 시안: 가운데 1062 × 598, 옆 영상과 간격 142(사이에 화살표 64 × 92), 썸네일 306 × 172 */
-.video { padding-top: 14.85vw; padding-bottom: 9vw; }
+.video { padding-top: calc(14.85 * var(--u)); padding-bottom: calc(9 * var(--u)); }
 
 .video-stage {
-    --video-w: 55.3vw;
-    --video-gap: 7.4vw;
+    --video-w: calc(46 * var(--u));                        /* 883 × 497 */
+    --video-gap: calc(7.4 * var(--u));
     position: relative;
-    margin-top: 7.4vw;                      /* 제목 → 영상 151px (글자 기준) */
+    margin-top: calc(4.2 * var(--u));                      /* 제목 → 영상 */
     height: calc(var(--video-w) * 9 / 16);
     overflow: hidden;
 }
@@ -629,10 +635,10 @@ img { display: block; max-width: 100%; }
     transition: opacity .3s ease;
     display: flex;
     justify-content: space-between;
-    width: 55.3vw;
-    margin: 4.2vw auto 0;                    /* 영상 → 썸네일 80px */
+    width: var(--video-w, calc(46 * var(--u)));
+    margin: calc(2.6 * var(--u)) auto 0;                    /* 영상 → 썸네일 50px */
 }
-.video-thumbs li { width: 15.94vw; }
+.video-thumbs li { width: calc(13.4 * var(--u)); }
 .video-thumbs.is-fading { opacity: 0; }
 .video-thumb {
     position: relative;
@@ -668,8 +674,8 @@ img { display: block; max-width: 100%; }
 
 /* ============================== Tablet ============================== */
 @media (max-width: 1100px) {
-    .hero-poster-col { left: 8vw; }
-    .hero-text { left: calc(8vw + var(--hero-poster-height) * 1686 / 2387 + 6vw); width: auto; right: 4vw; }
+    .hero-poster-col { left: calc(8 * var(--u)); }
+    .hero-text { left: calc(calc(8 * var(--u)) + var(--hero-poster-height) * 1686 / 2387 + calc(6 * var(--u))); width: auto; right: calc(4 * var(--u)); }
     .hero-text p { white-space: normal; }
 }
 

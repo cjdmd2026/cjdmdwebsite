@@ -330,6 +330,7 @@
 
         const LAYOUT = {
             radius: 1.92,     // 원통 반지름 (카드 너비 배수)
+            edgeCut: .8,      // 양 끝 카드 중심 ~ 화면 가장자리 거리 (카드 너비 배수, 작을수록 더 많이 잘림)
             angle: 32.4,      // 카드 한 칸당 회전 각도(deg)
             depth: 1.17       // 앞으로 나오는 정도 보정
         };
@@ -360,55 +361,74 @@
             return li;
         });
 
-        // 카드 위치: ±2칸까지는 원통 배치, 그 밖은 화면 바깥(보이지 않음)
+        // 카드 위치: off(가운데 기준 칸 수, 소수 가능)에 따라 원통 위에 배치
+        //  ±2칸까지 보이고, 2~3칸 사이에서 원통을 따라 계속 돌아가며 사라짐
         function transformFor(off, cardW) {
-            const abs = Math.abs(off), sign = Math.sign(off);
-            if (abs <= 2) {
-                const R = cardW * LAYOUT.radius;
-                const phi = off * LAYOUT.angle * Math.PI / 180;
-                const x = R * Math.sin(phi);
-                const z = R * (1 - Math.cos(phi)) * LAYOUT.depth;
-                return `translate3d(${x.toFixed(1)}px, 0, ${z.toFixed(1)}px) rotateY(${(-off * LAYOUT.angle).toFixed(2)}deg)`;
-            }
-            const x = sign * (innerWidth / 2 + cardW * 1.5);
-            return `translate3d(${x.toFixed(1)}px, 0, 0) rotateY(${(-sign * LAYOUT.angle * 2).toFixed(2)}deg)`;
+            // 화면이 낮아 카드가 작아져도 양 끝 카드는 화면 가장자리에서 잘리도록 반지름을 넓힘
+            const edge = innerWidth / 2 - cardW * LAYOUT.edgeCut;
+            const R = Math.max(cardW * LAYOUT.radius, edge / Math.sin(2 * LAYOUT.angle * Math.PI / 180));
+            const phi = off * LAYOUT.angle * Math.PI / 180;
+            const x = R * Math.sin(phi);
+            const z = R * (1 - Math.cos(phi)) * LAYOUT.depth;
+            return `translate3d(${x.toFixed(1)}px, 0, ${z.toFixed(1)}px) rotateY(${(-off * LAYOUT.angle).toFixed(2)}deg)`;
         }
 
-        function layout(animate = true) {
+        // 회전 위치(pos)를 연속값으로 두고 매 프레임 그려서,
+        // 한 칸이든 두 칸이든 원통이 그대로 돌아가듯 자연스럽게 이동
+        let pos = active;            // 현재 회전 위치 (연속값)
+        let anim = null;
+        const wrap = v => { v = ((v % n) + n) % n; return v >= n / 2 ? v - n : v; };   // -n/2 ~ n/2
+
+        function render() {
             const cardW = cards[0].offsetWidth;
+            const current = ((Math.round(pos) % n) + n) % n;
             cards.forEach((card, i) => {
-                let off = i - active;
-                if (off > n / 2) off -= n;
-                if (off < -n / 2) off += n;
-                const prev = card.dataset.off === undefined ? off : Number(card.dataset.off);
-                if (Math.abs(off) === n / 2 && Math.sign(prev) === -Math.sign(off)) off = -off;   // 반대편 끝은 있던 쪽 유지
+                const off = wrap(i - pos);
                 const abs = Math.abs(off);
-
-                // 반대편으로 넘어오는 카드: 먼저 들어올 쪽 화면 바깥에 보이지 않게 둔 뒤 이동
-                if (animate && Math.abs(off - prev) > 1) {
-                    card.style.transition = "none";
-                    card.style.opacity = "0";
-                    card.style.transform = transformFor(Math.sign(off || 1) * 3, cardW);
-                    card.offsetHeight;
-                    card.style.transition = "";
-                } else if (!animate) {
-                    card.style.transition = "none";
-                }
-
+                const opacity = abs <= 2 ? 1 : Math.max(0, 3 - abs);   // 2~3칸: 서서히 사라짐
                 card.style.transform = transformFor(off, cardW);
-                card.style.zIndex = String(10 - abs);
-                card.style.opacity = abs >= 3 ? "0" : "1";
-                card.dataset.off = String(off);
-                card.classList.toggle("is-active", abs === 0);
-                card.setAttribute("aria-hidden", String(abs !== 0));
-                if (!animate) { card.offsetHeight; card.style.transition = ""; }
+                card.style.opacity = opacity.toFixed(3);
+                card.style.visibility = opacity <= 0 ? "hidden" : "";
+                card.style.zIndex = String(10 - Math.round(abs));
+                card.classList.toggle("is-active", i === current);
+                card.setAttribute("aria-hidden", String(i !== current));
             });
-            if (status) status.textContent = `${data[active].name} 교수 (${active + 1}/${n})`;
         }
+
+        // 시안 전환 곡선 cubic-bezier(.6, 0, .2, 1)
+        function ease(t) {
+            const x1 = .6, x2 = .2;
+            const bx = u => 3 * x1 * u * (1 - u) * (1 - u) + 3 * x2 * u * u * (1 - u) + u * u * u;
+            const by = u => 3 * u * u * (1 - u) + u * u * u;   // y1 = 0, y2 = 1
+            let lo = 0, hi = 1, u = t;
+            for (let k = 0; k < 24; k++) { u = (lo + hi) / 2; if (bx(u) < t) lo = u; else hi = u; }
+            return by(u);
+        }
+
+        function animateTo(target) {
+            const from = pos, dist = Math.abs(target - from);
+            if (dist < 1e-3) return;
+            const dur = 900 + (Math.max(1, dist) - 1) * 300;    // 한 칸 0.9초, 두 칸 1.2초
+            const t0 = performance.now();
+            if (anim) cancelAnimationFrame(anim);
+            const step = now => {
+                const t = Math.min(1, (now - t0) / dur);
+                pos = from + (target - from) * ease(t);
+                render();
+                if (t < 1) anim = requestAnimationFrame(step);
+                else { anim = null; pos = ((target % n) + n) % n; render(); }
+            };
+            anim = requestAnimationFrame(step);
+        }
+
+        function layout() { render(); }
 
         function setActive(i) {
-            active = (i + n) % n;
-            layout();
+            const next = ((i % n) + n) % n;
+            const target = pos + wrap(next - pos);   // 가까운 방향으로 회전
+            active = next;
+            if (status) status.textContent = `${data[active].name} 교수 (${active + 1}/${n})`;
+            animateTo(target);
         }
 
         let startX = null;
@@ -431,8 +451,9 @@
             if (e.key === "ArrowLeft") { e.preventDefault(); setActive(active - 1); }
         });
 
-        window.addEventListener("resize", () => layout(false));
-        layout(false);
+        window.addEventListener("resize", () => layout());
+        layout();
+        if (status) status.textContent = `${data[active].name} 교수 (${active + 1}/${n})`;
     })();
 
     /* =====================================================
@@ -511,8 +532,10 @@
             const w = parseFloat(style.getPropertyValue("--video-w")) || 0;
             const vw = innerWidth / 100;
             const cardW = cards[0].li.offsetWidth || w * vw;
-            const gapRaw = style.getPropertyValue("--video-gap").trim();
-            const gap = gapRaw.endsWith("vw") ? parseFloat(gapRaw) * vw : parseFloat(gapRaw) || 0;
+            // 간격(--video-gap)은 CSS calc 값이라, 화살표 위치로 실제 px 간격을 역산
+            let gap = 0;
+            const sr = stage.getBoundingClientRect(), pr = prevBtn?.getBoundingClientRect();
+            if (pr && pr.width) gap = Math.max(0, 2 * ((sr.left + sr.width / 2) - cardW / 2 - (pr.left + pr.width / 2)));
             const xFor = off => `translateX(${(off * (cardW + gap)).toFixed(1)}px)`;
             cards.forEach((card, i) => {
                 const off = offsetOf(i);
