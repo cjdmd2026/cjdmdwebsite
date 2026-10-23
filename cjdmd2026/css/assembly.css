@@ -1,0 +1,83 @@
+:root { color-scheme: dark; --paper: #eeeae2; --muted: #96908a; --accent: #b4c8a6; --background: #040000; }
+* { box-sizing: border-box; }
+html { background: var(--background); }
+body { margin: 0; color: var(--paper); font-family: "Pretendard Variable", "Pretendard", "Noto Sans KR", "Malgun Gothic", sans-serif; -webkit-font-smoothing: antialiased; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { font: inherit; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 8px; }
+.assembly { height: 140vh; height: 140svh; }
+.assembly__stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; isolation: isolate; }
+.masthead, .stage-footer { position: absolute; left: 4.4%; right: 4.4%; z-index: 3; display: flex; align-items: center; justify-content: space-between; }
+.masthead { top: 0; height: 98px; border-bottom: 1px solid #ffffff21; }
+.wordmark { display: flex; gap: 20px; align-items: center; color: var(--paper); text-decoration: none; font-size: 20px; font-weight: 750; letter-spacing: -.07em; }
+.wordmark span, .edition { color: var(--muted); font-size: 10px; font-weight: 400; letter-spacing: .1em; }
+.edition { margin-left: auto; margin-right: 46px; font-size: 11px; letter-spacing: -.02em; }
+.text-button { padding: 10px 0; border: 0; color: var(--paper); background: none; cursor: pointer; font-size: 12px; }
+.text-button span { margin-left: 16px; font-size: 17px; }
+.text-button:hover { color: var(--accent); }
+.text-button:disabled { cursor: wait; opacity: .4; }
+#assembly-canvas, .fallback { position: absolute; inset: 0; width: 100%; height: 100%; }
+.fallback { display: grid; place-items: center; padding: 110px 20px 80px; }
+.fallback[hidden] { display: none; }
+.fallback svg { height: 100%; max-width: 100%; }
+.introduction { position: absolute; z-index: 2; left: 4.4%; top: 34%; pointer-events: none; }
+.eyebrow { display: flex; gap: 9px; align-items: center; margin: 0 0 26px; font-family: ui-monospace, monospace; font-size: 9px; letter-spacing: .14em; color: var(--accent); }
+.status-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+h1 { margin: 0; font-size: clamp(27px, 3.1vw, 52px); font-weight: 500; line-height: 1.45; letter-spacing: -.065em; }
+.description { margin: 24px 0 0; color: var(--muted); font-size: 12px; line-height: 1.9; letter-spacing: -.02em; }
+.piece-counter { display: flex; gap: 10px; align-items: baseline; margin-top: 42px; font-family: ui-monospace, monospace; }
+.piece-counter strong { font-size: 27px; font-weight: 400; font-variant-numeric: tabular-nums; }
+.piece-counter > span { font-size: 9px; color: var(--muted); letter-spacing: .04em; }
+.progress { position: absolute; z-index: 2; right: 4.4%; top: 32%; display: flex; align-items: center; flex-direction: column; gap: 20px; }
+.progress__label { writing-mode: vertical-rl; color: var(--muted); font: 9px ui-monospace, monospace; letter-spacing: .2em; }
+.progress__track { width: 1px; height: 140px; background: #ffffff26; overflow: hidden; }
+.progress__track span { display: block; width: 100%; height: 100%; background: var(--accent); transform: scaleY(0); transform-origin: top; }
+.progress__number { min-width: 40px; text-align: center; font: 18px ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+.progress__number span { font-size: 9px; color: var(--muted); }
+.stage-footer { bottom: 28px; gap: 20px; }
+.stage-footer p { margin: 0; font-size: 10px; color: var(--muted); }
+.scroll-cue > span { display: inline-block; margin-right: 12px; color: var(--paper); font-size: 20px; }
+.stage-status { position: absolute; left: 62%; transform: translateX(-50%); white-space: nowrap; letter-spacing: .04em; }
+.stage-footer .text-button { font-size: 10px; }
+.bottom-line { position: absolute; bottom: 0; height: 2px; width: 100%; background: #ffffff0d; }
+.bottom-line span { display: block; height: 100%; width: 100%; background: var(--accent); transform: scaleX(0); transform-origin: left; }
+.assembly[data-state="complete"] .status-dot { box-shadow: 0 0 14px #b4c8a680; }
+.assembly[data-state="fallback"] .introduction, .assembly[data-state="fallback"] .progress { display: none; }
+.noscript-poster { display: block; height: 90svh; max-width: 100%; margin: auto; }
+.noscript-message { text-align: center; font-size: 13px; }
+@media (min-width: 1600px) { .introduction { left: 8%; } }
+@media (max-width: 760px) {
+  .masthead, .stage-footer { left: 6%; right: 6%; }
+  .masthead { height: 72px; }
+  .wordmark { font-size: 17px; gap: 12px; }
+  .wordmark span { font-size: 8px; }
+  .edition { display: none; }
+  .text-button { font-size: 10px; }
+  .text-button span { margin-left: 6px; }
+  .introduction { top: 102px; left: 6%; }
+  .eyebrow { font-size: 8px; margin-bottom: 11px; }
+  h1 { font-size: 25px; line-height: 1.4; }
+  .description { display: none; }
+  .piece-counter { margin-top: 13px; gap: 8px; }
+  .piece-counter strong { font-size: 17px; }
+  .piece-counter > span { font-size: 8px; }
+  .progress { right: 6%; top: 112px; gap: 10px; }
+  .progress__label { writing-mode: initial; font-size: 8px; }
+  .progress__track { height: 55px; }
+  .progress__number { font-size: 16px; }
+  .stage-footer { bottom: 20px; }
+  .stage-footer p { font-size: 9px; }
+  .stage-status { bottom: 44px; left: 50%; font-size: 8px !important; }
+  .scroll-cue > span { margin-right: 5px; font-size: 16px; }
+}
+@media (max-height: 520px) and (min-width: 761px) {
+  .masthead { height: 64px; }
+  .introduction { top: 26%; }
+  h1 { font-size: 27px; }
+  .description { margin-top: 10px; }
+  .piece-counter { margin-top: 12px; }
+  .progress { top: 26%; gap: 10px; }
+  .progress__track { height: 70px; }
+  .stage-footer { bottom: 12px; }
+}
+@media (prefers-reduced-motion: reduce) { .assembly { height: 100vh; height: 100svh; } }

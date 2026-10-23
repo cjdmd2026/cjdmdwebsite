@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유연한 결합: 청주대학교 디지털미디어디자인</title>
+    <link rel="stylesheet" href="../css/main.css?v=20261023-45">
+    <script>
+        if (sessionStorage.getItem('stamp-page-transition') === '1') {
+            document.documentElement.classList.add('page-transition-preload');
+        }
+        // 메인은 항상 맨 위(포스터 첫 화면)에서 시작합니다.
+        if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    </script>
+
+    <!-- Scripts:S -->
+    <!-- ?v= 는 브라우저가 예전 파일을 캐시해 두는 것을 막기 위한 버전 표시입니다. 파일을 고치면 숫자를 바꿔주세요. -->
+    <script src="../js/stamp-effect-transition.js" defer></script>
+    <script src="../js/page-transition.js" defer></script>
+    <script src="../js/student-mouse-effect.js?v=20261023-35" defer></script>
+
+    <script src="../js/designer-data.js" defer></script>
+    <script src="../js/main-data.js?v=20261023-35" defer></script>
+    <script src="../js/main-icon-fragments.js?v=20261023-35" defer></script>
+    <script src="../js/main-poster-sprites.js?v=20261023-35" defer></script>
+    <script src="../js/main-hero.js?v=20261023-44" defer></script>
+    <script src="../js/main.js?v=20261023-36" defer></script>
+
+    <script src="https://unpkg.com/lenis@1.3.15/dist/lenis.min.js"></script>
+    <script>
+    const lenis = new Lenis({
+        duration: 1.0,
+        smoothWheel: true,
+        wheelMultiplier: 0.75
+    });
+
+    function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+    </script>
+    <!-- Scripts:E -->
+</head>
+<!-- 메인 안2: 졸업 전시 위원회만 화살표 방식, 나머지는 index.html 과 동일 -->
+<body class="main-page">
+    <!-- Header:S -->
+    <header class="header is-intro-hidden">
+        <div class="container">
+            <!-- 로고 -->
+            <h1 class="logo"><a href="../main/" page-transition>유연한 결합</a></h1>
+
+            <!-- 네비게이션 -->
+            <nav class="nav" aria-label="주요 메뉴">
+                <ul>
+                    <li><a href="../project/" page-transition>프로젝트</a></li>
+                    <li><a href="../designer/" page-transition>디자이너</a></li>
+                    <li><a href="../archive/" page-transition>아카이브</a></li>
+                </ul>
+            </nav>
+
+            <!-- 모바일 메뉴 버튼 -->
+            <button class="menu-button" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="main-mobile-menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+        <nav id="main-mobile-menu" class="mobile-menu" aria-label="모바일 메뉴" hidden>
+            <ul>
+                <li><a href="../project/" page-transition>프로젝트</a></li>
+                <li><a href="../designer/" page-transition>디자이너</a></li>
+                <li><a href="../archive/" page-transition>아카이브</a></li>
+            </ul>
+            <p>청주대학교 디지털미디어디자인학과 · 2026</p>
+        </nav>
+    </header>
+    <!-- Header:E -->
+
+    <!-- Main:S -->
+    <main class="main">
+
+        <!-- ========== 01. Poster Hero ==========
+             스크롤 1번: 흩어진 아이콘 → '결합' 완성 → 포스터 그래픽으로 전환
+             스크롤 2번: 그래픽이 왼쪽 포스터 자리로 이동 + 설명 노출
+             정착 후: 기본 ↔ 다크 포스터 자동 전환 (main-hero.js) -->
+        <section class="hero" id="hero" aria-labelledby="heroTitle">
+            <div class="hero-stage" id="heroStage" data-theme="light" data-step="0">
+                <!-- 배경색 (포스터 전환 시 입자 느낌으로 닦이며 바뀜) -->
+                <canvas class="hero-bg" id="heroBg" aria-hidden="true"></canvas>
+
+                <!-- 배경 아이콘: 정착 후에만 보이며 오른쪽으로 천천히 흐름 (main.js) -->
+                <div class="ambient hero-ambient" data-ambient="hero" aria-hidden="true"></div>
+
+                <!-- 아이콘 → 결합 → 포스터 그래픽 -->
+                <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
+
+                <!-- 포스터 전환 입자 (기존 포스터가 입자로 흩어지며 오른쪽으로 날아감) -->
+                <canvas class="hero-fx" id="heroFx" aria-hidden="true"></canvas>
+
+                <div class="hero-layout">
+                    <div class="hero-poster-col">
+                        <!-- 포스터는 캔버스에 그립니다. 이미지·PDF 경로는 js/main-data.js 의 MAIN_POSTERS 에서 관리 -->
+                        <button class="hero-poster" id="heroPoster" type="button" aria-label="포스터 전환 (기본 / 다크)">
+                            <canvas class="hero-poster__canvas" id="heroPosterCanvas" aria-hidden="true"></canvas>
+                        </button>
+                        <div class="hero-indicator" id="heroIndicator" role="tablist" aria-label="포스터 선택">
+                            <button type="button" role="tab" data-index="0" aria-selected="true" aria-label="기본 포스터"></button>
+                            <button type="button" role="tab" data-index="1" aria-selected="false" aria-label="다크 포스터"></button>
+                        </div>
+                    </div>
+
+                    <div class="hero-text" id="heroText">
+                        <h2 id="heroTitle">다채로운 개성이<br>빚어낸 결합</h2>
+                        <p>
+                            우리는 각자만의 고유한 매력을 지닌 다채로운 개성들의 집합이다.<br>
+                            어울리지 않을 듯 어우러진 조화는,<br>
+                            어떤 환경에서도 유연하게 적응하는 우리의 방법이다.
+                        </p>
+                        <a class="pill-button" id="posterDownload" download aria-disabled="true">다운로드</a>
+                    </div>
+                </div>
+
+                <div class="hero-scroll-hint" id="heroHint" aria-hidden="true">
+                    <img src="../assets/images/icons/mouse-icon-animated.svg" alt="">
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== 02. 졸업 전시 위원회 (안2: 사진 양옆 화살표로 이동, 자동 전환 없음) ========== -->
+        <section class="committee section" id="committee" aria-labelledby="committeeTitle" data-mode="arrows">
+            <div class="ambient section-ambient" data-ambient="committee" aria-hidden="true"></div>
+            <h2 class="section-title" id="committeeTitle">졸업 전시 위원회</h2>
+
+            <div class="committee-tabs" id="committeeTabs" role="tablist" aria-label="위원회 부서"></div>
+
+            <div class="committee-stage">
+                <button class="arrow-button arrow-button--prev" id="committeePrev" type="button" aria-label="이전 부서">
+                    <img src="../assets/images/icons/arrow-icon%201.svg" alt="">
+                </button>
+                <div class="committee-slider" id="committeeSlider" aria-live="polite">
+                    <div class="committee-track" id="committeeTrack"></div>
+                </div>
+                <button class="arrow-button arrow-button--next" id="committeeNext" type="button" aria-label="다음 부서">
+                    <img src="../assets/images/icons/arrow-icon%201.svg" alt="">
+                </button>
+            </div>
+
+            <ul class="committee-members" id="committeeMembers" aria-label="부서 구성원"></ul>
+        </section>
+
+        <!-- ========== 03. 교수진 소개 ========== -->
+        <section class="professor section" id="professor" aria-labelledby="professorTitle">
+            <h2 class="section-title" id="professorTitle">교수진 소개</h2>
+            <div class="professor-stage" id="professorStage" aria-roledescription="carousel">
+                <ul class="professor-track" id="professorTrack"></ul>
+                <div class="professor-fade" aria-hidden="true"></div>
+                <!-- 카드 앞쪽, 양옆 사이드에 놓이는 아이콘 (위치는 main.js PROFESSOR_ICONS) -->
+                <div class="ambient professor-ambient" data-ambient="professor" aria-hidden="true"></div>
+            </div>
+            <p class="sr-only" id="professorStatus" aria-live="polite"></p>
+        </section>
+
+        <!-- ========== 04. 졸업 전시 유튜브 ========== -->
+        <section class="video section" id="video" aria-labelledby="videoTitle">
+            <h2 class="section-title" id="videoTitle">졸업 전시 유튜브</h2>
+
+            <div class="video-stage" id="videoStage">
+                <ul class="video-track" id="videoTrack"></ul>
+                <button class="arrow-button arrow-button--prev" id="videoPrev" type="button" aria-label="이전 영상">
+                    <img src="../assets/images/icons/arrow-icon%201.svg" alt="">
+                </button>
+                <button class="arrow-button arrow-button--next" id="videoNext" type="button" aria-label="다음 영상">
+                    <img src="../assets/images/icons/arrow-icon%201.svg" alt="">
+                </button>
+            </div>
+
+            <ul class="video-thumbs" id="videoThumbs" aria-label="다른 영상"></ul>
+        </section>
+    </main>
+    <!-- Main:E -->
+
+    <!-- Footer:S -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-info">
+                <h3>청주대학교 <br> 디지털미디어디자인학과</h3>
+                <p>&copy; 2026 Digital Media Design. All rights reserved.</p>
+            </div>
+            <div class="footer-icons">
+                <a href="https://www.instagram.com/cjudmd_2026" target="_blank" rel="noopener"><img class="icon" src="../assets/images/icons/instagram-icon.svg" alt="Instagram"></a>
+                <a href="https://youtube.com/channel/UC5275bIPKnUuTG0onFeFsLw" target="_blank" rel="noopener"><img class="icon" src="../assets/images/icons/youtube-icon.svg" alt="YouTube"></a>
+            </div>
+        </div>
+    </footer>
+    <!-- Footer:E -->
+</body>
+</html>
