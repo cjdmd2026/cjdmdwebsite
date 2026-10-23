@@ -1,0 +1,773 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
+@font-face {
+    font-family: 'Paperozi';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-5Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Paperozi';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-6SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-display: swap;
+}
+
+/* =========================================================
+   Main page
+   치수는 1920px 시안 기준 → vw 로 환산했습니다. (1vw = 19.2px)
+   ========================================================= */
+
+/* ============================== Variables ============================== */
+:root {
+    --color-black: #111;
+    --color-white: #f2f2f2;
+    --color-gray-100: #ddd;
+    --color-gray-300: #bbb;
+    --color-gray-500: #999;
+    --color-accent: #ff6f61;
+
+    --font-main: "pretendard", sans-serif;
+
+    --header-height: 70px;
+    --container-width: 1220px;
+
+    --transition-basic: 0.3s ease;
+
+    /* Main page */
+    --poster-ratio: 1686 / 2387;          /* 포스터 가로/세로 비율 */
+    --hero-poster-height: min(58.2vh, 46vw);  /* 시안 628 / 1080 */
+    --section-title-size: clamp(1.5rem, 2.6vw, 3.4rem);   /* 시안 50px */
+}
+
+[data-theme="light"] {
+    --color-black: #ffffff;
+    --color-black-75: rgba(255, 255, 255, 0.75);
+    --color-white: #111111;
+    --color-gray-100: #f5f5f5;
+    --color-gray-300: #dddddd;
+    --color-gray-500: #999999;
+}
+
+/* ============================== Reset ============================== */
+html { font-size: 16px; }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: var(--font-main);
+    color: var(--color-white);
+    background-color: var(--color-black);
+    line-height: 1.5;
+    overflow-x: clip;
+}
+
+html.page-transition-preload { background: #fff; }
+html.page-transition-preload body { visibility: hidden; opacity: 0; }
+
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+button { border: none; background: none; font: inherit; color: inherit; cursor: pointer; }
+img { display: block; max-width: 100%; }
+
+.container { margin: 0 auto; }
+.icon { filter: invert(0); }
+[data-theme="light"] .icon { filter: invert(1); }
+
+.sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+:focus-visible { outline: 2px solid #4f7cff; outline-offset: 3px; }
+
+/* ============================== Header ============================== */
+.header {
+    width: 100%;
+    height: var(--header-height);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.36);
+    backdrop-filter: blur(11.9px);
+    -webkit-backdrop-filter: blur(11.9px);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    transition: background-color .6s ease, border-color .6s ease, color .6s ease;
+}
+
+.header .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    width: var(--container-width);
+}
+
+.header .logo { font-size: 1.5rem; font-weight: bold; }
+
+.header .nav ul { display: flex; gap: 2rem; }
+
+.header .nav ul li {
+    font-size: 0.95rem;
+    font-weight: 500;
+    font-family: 'Paperozi', sans-serif;
+}
+
+.header .nav ul li a { opacity: 0.3; transition: opacity 0.3s ease; }
+.header .nav ul li a:hover { opacity: 1; font-weight: 600; }
+
+/* 히어로가 다크 포스터일 때 헤더 */
+.header.is-dark {
+    color: #fff;
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+.header.is-dark .nav ul li a { opacity: .55; }
+.header.is-dark .nav ul li a:hover { opacity: 1; }
+.header.is-dark .menu-button span { background: #fff; }
+
+.menu-button, .mobile-menu { display: none; }
+
+/* ============================== Ambient Icons ============================== */
+/* 학생 개인 조각 아이콘 (main.js AMBIENT 설정 — 위치·크기는 시안 기준 프리셋)
+ * .hero-ambient      : 포스터 정착 후 — 오른쪽으로 천천히 흐름
+ * .section-ambient   : 위원회 양옆 사이드 — 제자리에서 떠다님
+ * .professor-ambient : 교수진 카드 앞쪽, 양옆 사이드 */
+.ambient {
+    position: absolute;
+    pointer-events: none;
+    overflow: hidden;
+}
+.ambient__icon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    fill: currentColor;
+    will-change: transform;
+}
+
+.hero-ambient {
+    inset: 0;
+    z-index: 1;
+    opacity: var(--ambient-opacity, 0);
+}
+
+.section-ambient {
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    z-index: 0;
+}
+
+.professor-ambient {
+    inset: 0;
+    z-index: 30;          /* 카드와 페이드보다 앞 */
+}
+
+.main { position: relative; z-index: 1; }
+
+/* ============================== Common ============================== */
+.section {
+    position: relative;
+    width: 100%;
+}
+
+.section-title {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    font-size: var(--section-title-size);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.pill-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    height: 50px;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color .3s ease, color .3s ease, opacity .3s ease;
+}
+.pill-button:hover { background: var(--hero-fg, #111); color: var(--hero-bg, #fff); }
+.pill-button[aria-disabled="true"] { cursor: default; pointer-events: none; }   /* PDF 준비 중: 색은 그대로, 클릭만 막음 */
+
+/* 화살표 버튼 (arrow-icon 1.svg — 왼쪽 꺾쇠, 다음 버튼은 좌우 반전)
+ * 시안의 작은 네모 칸(64×92)에 꺾쇠가 꽉 차게 들어갑니다. */
+.arrow-button {
+    --arrow-h: clamp(40px, 4.8vw, 110px);
+    position: absolute;
+    z-index: 5;
+    top: 50%;
+    width: calc(var(--arrow-h) * 64 / 92);
+    height: var(--arrow-h);
+    transform: translateY(-50%);
+    transition: opacity .3s ease;
+}
+.arrow-button img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    /* 아이콘 원본에서 꺾쇠가 세로 약 40%를 차지 → 칸 높이에 맞게 확대 */
+    width: calc(var(--arrow-h) * 2.45);
+    height: calc(var(--arrow-h) * 2.45);
+    max-width: none;
+    transform: translate(-50%, -50%);
+    filter: invert(1);   /* 흰 선 → 검은 선 */
+    transition: transform .25s ease;
+}
+.arrow-button--next img { transform: translate(-50%, -50%) scaleX(-1); }
+.arrow-button:hover img { transform: translate(-50%, -50%) scale(.92); }
+.arrow-button--next:hover img { transform: translate(-50%, -50%) scaleX(-1) scale(.92); }
+.arrow-button.is-hidden { opacity: 0; pointer-events: none; }
+
+/* ============================== 01. Hero ============================== */
+.hero {
+    position: relative;
+    height: 100vh;
+    height: 100svh;
+}
+
+.hero-stage {
+    --hero-bg: #fff;
+    --hero-fg: #111;
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    color: var(--hero-fg);
+    transition: color var(--theme-color-dur, .9s) ease;
+}
+.hero-stage[data-theme="dark"] { --hero-bg: #000; --hero-fg: #fff; }
+
+.hero-bg,
+.hero-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+.hero-bg { z-index: 0; background: #fff; }
+.hero-canvas { z-index: 2; }
+.hero-stage.icons-front .hero-canvas { z-index: 5; }   /* 포스터가 나타나는 동안 결합은 포스터 위 */
+.hero-fx {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 4;              /* 포스터보다 앞 — 흩어지는 입자가 포스터 밖으로도 날아감 */
+    pointer-events: none;
+}
+
+.hero-layout {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+}
+
+/* 포스터: 시안 x 380 (19.8vw), 세로 가운데 */
+.hero-poster-col {
+    position: absolute;
+    left: 20.625vw;                      /* 시안 x 396 (포스터 443 × 629) */
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.hero-poster {
+    position: relative;
+    display: block;
+    height: var(--hero-poster-height);
+    aspect-ratio: var(--poster-ratio);
+    cursor: default;
+    pointer-events: none;           /* 포스터가 다 나타난 뒤에만 클릭 가능 */
+    border-radius: 4px;
+    overflow: hidden;
+    /* 시안 그림자 — 화이트: Y4 Blur50 #000 8% / 블랙: Y6 Blur50 #FFF 16% */
+    box-shadow: 0 4px 50px rgba(0, 0, 0, calc(var(--poster-shadow, 0) * .08));
+}
+.hero-stage[data-theme="dark"] .hero-poster {
+    box-shadow: 0 6px 50px rgba(255, 255, 255, calc(var(--poster-shadow, 0) * .16));
+}
+.hero-poster__canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero-stage.is-poster-ready .hero-poster { cursor: pointer; pointer-events: auto; }
+
+/* 포스터 아래 바+점 (시안: 높이 13, 바 48, 간격 17) */
+.hero-indicator {
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 30px);
+    transform: translateX(-50%);
+    display: flex;
+    gap: 17px;
+    align-items: center;
+    opacity: var(--text-opacity, 0);
+    pointer-events: var(--text-events, none);
+}
+.hero-indicator button {
+    width: 13px;
+    height: 13px;
+    border-radius: 999px;
+    transition: width .5s cubic-bezier(.6, 0, .2, 1);
+}
+/* 색은 위치 고정: 왼쪽 #7B7B7B / 오른쪽 #CCCCCC, 선택된 쪽이 길어짐 */
+.hero-indicator button:first-child { background: #7b7b7b; }
+.hero-indicator button:last-child { background: #cccccc; }
+.hero-indicator button[aria-selected="true"] { width: 48px; }
+
+/* 설명: 시안 x 968 (50.4vw) */
+.hero-text {
+    position: absolute;
+    left: 50.4vw;
+    top: calc(50% + 2.27vh);              /* 시안: 텍스트 묶음 중심이 화면 중앙보다 약간 아래 */
+    width: 40vw;
+    opacity: var(--text-opacity, 0);
+    transform: translate(calc((1 - var(--text-opacity, 0)) * 30px), -50%);
+    pointer-events: var(--text-events, none);
+}
+.hero-text h2 {
+    font-size: clamp(1.8rem, 2.5vw, 3.2rem);   /* 시안 48px */
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 2.14vw;                 /* 시안 41px */
+}
+.hero-text p {
+    font-size: clamp(.95rem, 1.15vw, 1.5rem);  /* 시안 22px */
+    line-height: 1.75;
+    margin-bottom: 2.66vw;                 /* 시안 51px */
+    word-break: keep-all;
+    white-space: nowrap;
+}
+
+.hero-scroll-hint {
+    position: absolute;
+    z-index: 3;
+    left: 50%;
+    bottom: 32px;
+    transform: translateX(-50%);
+    opacity: var(--hint-opacity, 1);
+    transition: opacity .4s ease;
+    pointer-events: none;
+}
+.hero-scroll-hint img { width: 34px; height: 34px; filter: invert(1); opacity: .5; }
+.hero-stage[data-theme="dark"] .hero-scroll-hint img { filter: none; }
+
+/* ============================== 02. Committee ============================== */
+.committee { padding-top: 16vw; }          /* 시안: 히어로 끝 → 제목 307px */
+.committee > :not(.ambient) { position: relative; z-index: 1; }
+
+.committee-tabs {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: clamp(1.6rem, 2.2vw, 2.6rem);      /* 선택 탭 글자 크기가 바뀌어도 아래 사진이 움직이지 않도록 고정 */
+    flex-wrap: wrap;
+    row-gap: .6rem;
+    margin-top: 5.2vw;                     /* 제목 → 탭 120px (글자 기준) */
+}
+
+.committee-tab {
+    position: relative;
+    padding: .2em 2.4vw;
+    font-size: clamp(.75rem, 1.04vw, 1.4rem);    /* 시안 20px */
+    font-weight: 500;
+    line-height: 1;
+    color: #bdbdbd;
+    transition: color .35s ease, font-size .35s ease;
+}
+.committee-tab + .committee-tab::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 1px;
+    height: 1em;
+    background: #c4c4c4;
+    transform: translateY(-50%);
+}
+.committee-tab:hover { color: #777; }
+.committee-tab[aria-selected="true"] {
+    font-size: clamp(.9rem, 1.25vw, 1.65rem);    /* 시안 24px */
+    font-weight: 700;
+    color: #111;
+}
+
+.committee-slider {
+    position: relative;
+    width: 39.7vw;                          /* 시안 762 × 497 */
+    min-width: min(100%, 520px);
+    margin: 1.9vw auto 0;                   /* 탭 → 이미지 37px */
+    aspect-ratio: 762 / 497;
+    overflow: hidden;
+    background: transparent;            /* 슬라이드 경계에 어두운 선이 비치지 않게 */
+}
+/* 안2(index2.html): 부서 사진 양옆 화살표 — 영상 화살표와 같은 모양·간격 */
+.committee-stage { position: relative; width: 39.7vw; min-width: min(100%, 520px); margin: 1.9vw auto 0; }
+.committee-stage .committee-slider { margin-top: 0; width: 100%; min-width: 0; }
+/* 위원회 화살표는 사진 크기에 맞춰 작고 연하게 */
+.committee-stage .arrow-button { --arrow-h: clamp(28px, 2.6vw, 56px); opacity: .45; }
+.committee-stage .arrow-button:hover { opacity: .8; }
+.committee-stage .arrow-button.is-hidden { opacity: 0; }
+.committee-stage .arrow-button--prev { left: calc(-2.6vw); margin-left: calc(var(--arrow-h) * 64 / 92 / -2); }
+.committee-stage .arrow-button--next { left: calc(100% + 2.6vw); margin-left: calc(var(--arrow-h) * 64 / 92 / -2); }
+
+.committee-track { position: relative; height: 100%; will-change: transform; }
+.committee-slide {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    backface-visibility: hidden;
+}
+.committee-slide img { width: 100%; height: 100%; object-fit: cover; user-select: none; }
+
+.committee-members {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem 3vw;
+    margin-top: 1.9vw;                      /* 이미지 → 아이콘 36px */
+    min-height: 4.5vw;
+    height: calc(clamp(13px, 1.15vw, 26px) + .8vw + clamp(.85rem, 1.15vw, 1.55rem) + 4px);   /* 한 줄 높이 고정 */
+}
+
+.committee-member {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .8vw;
+    min-width: 3.4vw;
+    opacity: 0;
+    animation: member-in .45s ease forwards;     /* 제자리에서 페이드만 */
+}
+@keyframes member-in { to { opacity: 1; } }
+
+.committee-member__icon {
+    width: clamp(13px, 1.15vw, 26px);       /* 시안 22px */
+    height: clamp(13px, 1.15vw, 26px);
+    color: #111;
+    transition: color .3s ease;
+}
+.committee-member__icon svg { display: block; width: 100%; height: 100%; fill: currentColor; }
+.committee-member:hover .committee-member__icon { color: var(--member-color, #111); }
+.committee-member__name { font-size: clamp(.85rem, 1.15vw, 1.55rem); font-weight: 700; line-height: 1; }
+
+/* ============================== 03. Professor ==============================
+ * 시안(1920) 기준: 가운데 카드 451 × 593, 좌우 카드는 원통 안쪽처럼 둘러섬
+ * 화면 양끝으로 갈수록 하얗게 바래는 효과(.professor-fade)는 화면 기준 그라데이션 */
+.professor { padding-top: 23.05vw; }        /* 위원회 이름 → 제목 451px */
+
+.professor-stage {
+    --card-w: clamp(220px, 23.5vw, 600px);
+    --card-h: calc(var(--card-w) * 593 / 451);
+    position: relative;
+    margin-top: .6vw;
+    height: calc(var(--card-h) + 12vw);
+    perspective: calc(var(--card-w) * 7.77);
+    overflow: hidden;
+    touch-action: pan-y;
+    user-select: none;
+}
+.professor-stage:focus-visible { outline-offset: -4px; }
+
+.professor-track { position: absolute; inset: 0; transform-style: preserve-3d; }
+
+.professor-card {
+    position: absolute;
+    top: 5.15vw;                              /* 제목 → 카드 120px (stage margin 포함) */
+    left: 50%;
+    width: var(--card-w);
+    height: var(--card-h);
+    margin-left: calc(var(--card-w) / -2);
+    border-radius: calc(var(--card-w) * .036);
+    overflow: hidden;
+    background: #121212;
+    color: #fff;
+    cursor: pointer;
+    backface-visibility: hidden;
+    transition: transform .9s cubic-bezier(.6, 0, .2, 1), opacity .9s ease;
+}
+
+/* 사진: 머리(카드 위 10%) ~ 팔짱(69%) */
+.professor-card__photo {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 5.5%;
+    height: 63.5%;
+    -webkit-mask-image: linear-gradient(to bottom, #000 84%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 84%, transparent 100%);
+}
+.professor-card__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    transition: filter .9s ease;
+}
+.professor-card__photo--empty {
+    display: grid;
+    place-items: center;
+    color: #3d3d3d;
+    font-size: calc(var(--card-w) * .036);
+}
+
+.professor-card__info { transition: opacity .5s ease; }
+.professor-card__info > * {
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    text-align: center;
+    transform: translateY(-50%);
+}
+/* 글자 (시안 피그마 값, 카드 너비 451 기준) */
+.professor-card__major { top: 74.2%; font-size: calc(var(--card-w) * 20 / 451); font-weight: 700; line-height: 1.2; }  /* Bold 20 */
+.professor-card__name { top: 82.5%; font-size: calc(var(--card-w) * 28 / 451); font-weight: 700; line-height: 1.2; }   /* Bold 28 */
+.professor-card__message {                                                                                             /* Medium 14, -5%, 50% */
+    top: 90.2%;
+    font-size: calc(var(--card-w) * 14 / 451);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.05em;
+    color: rgba(255, 255, 255, .5);
+    white-space: pre-line;
+    word-break: keep-all;
+}
+
+/* 옆 카드: 사진만 어둡게, 글자 숨김 */
+.professor-card:not(.is-active) .professor-card__photo img { filter: brightness(.36); }
+.professor-card:not(.is-active) .professor-card__info { opacity: 0; }
+
+.professor-fade {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    pointer-events: none;
+    background: linear-gradient(90deg,
+        rgba(255, 255, 255, .645) 0%,
+        rgba(255, 255, 255, 0) 26.6%,
+        rgba(255, 255, 255, 0) 73.9%,
+        rgba(255, 255, 255, .58) 100%);
+}
+
+/* ============================== 04. Video ==============================
+ * 시안: 가운데 1062 × 598, 옆 영상과 간격 142(사이에 화살표 64 × 92), 썸네일 306 × 172 */
+.video { padding-top: 14.85vw; padding-bottom: 9vw; }
+
+.video-stage {
+    --video-w: 55.3vw;
+    --video-gap: 7.4vw;
+    position: relative;
+    margin-top: 7.4vw;                      /* 제목 → 영상 151px (글자 기준) */
+    height: calc(var(--video-w) * 9 / 16);
+    overflow: hidden;
+}
+
+.video-track {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    height: 100%;
+}
+
+.video-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--video-w);
+    height: 100%;
+    margin-left: calc(var(--video-w) / -2);
+    border-radius: 6px;
+    overflow: hidden;
+    background: #111;
+    transition: transform .85s cubic-bezier(.65, 0, .25, 1);
+}
+.video-card iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+.video-poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.video-poster img { width: 100%; height: 100%; object-fit: cover; transition: filter .85s ease; }
+.video-poster__play {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 84px;
+    height: 84px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: rgba(0, 0, 0, .55);
+    display: grid;
+    place-items: center;
+    transition: transform .3s ease, background-color .3s ease, opacity .5s ease;
+}
+.video-poster__play img { width: 56px; height: 56px; }
+.video-poster:hover .video-poster__play { transform: translate(-50%, -50%) scale(1.08); background: rgba(0, 0, 0, .75); }
+
+/* 옆 영상: 회색 */
+.video-card:not(.is-active) { background: #8a8a8a; }
+.video-card:not(.is-active) .video-poster img { filter: grayscale(1) brightness(1.1) contrast(.55); opacity: .55; }
+.video-card:not(.is-active) .video-poster__play { opacity: 0; }
+
+.arrow-button--prev { left: calc(50% - var(--video-w) / 2 - var(--video-gap) / 2); margin-left: calc(var(--arrow-h) * 64 / 92 / -2); }
+.arrow-button--next { left: calc(50% + var(--video-w) / 2 + var(--video-gap) / 2); margin-left: calc(var(--arrow-h) * 64 / 92 / -2); }
+
+.video-thumbs {
+    transition: opacity .3s ease;
+    display: flex;
+    justify-content: space-between;
+    width: 55.3vw;
+    margin: 4.2vw auto 0;                    /* 영상 → 썸네일 80px */
+}
+.video-thumbs li { width: 15.94vw; }
+.video-thumbs.is-fading { opacity: 0; }
+.video-thumb {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 306 / 172;
+    border-radius: 4px;
+    background: #111;
+    overflow: hidden;
+}
+.video-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease, opacity .3s ease; opacity: .85; }
+.video-thumb:hover img { transform: scale(1.05); opacity: 1; }
+
+/* ============================== Footer ============================== */
+.footer {
+    position: relative;
+    z-index: 1;
+    background-color: var(--color-black);
+    padding: 20px 0;
+    border-top: 1px solid #eee;
+}
+.footer .container {
+    width: var(--container-width);
+    max-width: calc(100% - 40px);
+    display: flex;
+    justify-content: space-between;
+    margin: 1rem auto;
+}
+.footer-info h3 { line-height: 1.2; margin-bottom: .5rem; }
+.footer-info p { font-size: .5rem; }
+.footer-icons { display: flex; align-items: end; gap: 20px; }
+.footer-icons .icon { width: 2rem; height: 2rem; }
+
+/* ============================== Tablet ============================== */
+@media (max-width: 1100px) {
+    .hero-poster-col { left: 8vw; }
+    .hero-text { left: calc(8vw + var(--hero-poster-height) * 1686 / 2387 + 6vw); width: auto; right: 4vw; }
+    .hero-text p { white-space: normal; }
+}
+
+/* ============================== Mobile ============================== */
+@media (max-width: 759px) {
+    :root {
+        --mobile-pad: 20px;
+        --header-height: 56px;
+        --hero-poster-height: 44svh;
+        --section-title-size: 1.5rem;
+    }
+
+    .header { border: 0; }
+    .header .container { width: 100%; padding: 0 var(--mobile-pad); }
+    .header .logo { position: relative; z-index: 2; font-size: 17px; }
+    .header .nav { display: none; }
+
+    .menu-button {
+        position: relative; z-index: 2;
+        display: grid; width: 44px; height: 44px;
+        place-content: center; gap: 5px;
+    }
+    .menu-button span { display: block; width: 20px; height: 1.5px; background: #000; transition: transform .25s ease, opacity .2s ease; }
+    .menu-button[aria-expanded="true"] span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .menu-button[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+    .menu-button[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    .mobile-menu {
+        position: fixed; inset: 0; z-index: 1;
+        display: flex; flex-direction: column; justify-content: space-between;
+        padding: calc(var(--header-height) + 52px) var(--mobile-pad) calc(28px + env(safe-area-inset-bottom));
+        background: #fff; color: #000;
+        opacity: 0; transform: translateY(-8px);
+        transition: opacity .28s ease, transform .28s ease;
+    }
+    .mobile-menu[hidden] { display: none; }
+    .mobile-menu.is-open { opacity: 1; transform: translateY(0); }
+    .mobile-menu li { border-bottom: 1px solid #ebebed; }
+    .mobile-menu a { display: block; padding: 17px 0; font-size: 40px; font-weight: 700; line-height: 1.1; letter-spacing: -.035em; color: #b5b5ba; }
+    .mobile-menu p { font-size: 12px; color: #6b6b70; }
+    body.mobile-menu-open { overflow: hidden; }
+    .header.is-dark:has(.mobile-menu.is-open) .menu-button span { background: #000; }
+
+    .hero-poster-col { left: 50%; top: calc(var(--header-height) + 24px); transform: translateX(-50%); }
+    .hero-indicator { top: calc(100% + 14px); }
+    .hero-text {
+        left: var(--mobile-pad);
+        right: var(--mobile-pad);
+        top: auto;
+        bottom: 40px;
+        width: auto;
+        text-align: center;
+        transform: translateY(calc((1 - var(--text-opacity, 0)) * 20px));
+    }
+    .hero-text h2 { font-size: 1.5rem; margin-bottom: .8rem; }
+    .hero-text p { font-size: .82rem; margin-bottom: 1.2rem; white-space: normal; }
+    .hero-text p br { display: none; }
+    .pill-button { height: 42px; width: 104px; font-size: .9rem; }
+
+    .committee { padding-top: 100px; }
+    .committee-tabs {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        overflow-x: auto;
+        scrollbar-width: none;
+        margin-top: 1.6rem;
+        padding: 0 var(--mobile-pad);
+    }
+    .committee-tabs::-webkit-scrollbar { display: none; }
+    .committee-tab { flex: 0 0 auto; padding: .25rem 1rem; font-size: .8rem; }
+    .committee-tab[aria-selected="true"] { font-size: .95rem; }
+    .committee-slider { width: calc(100% - 2 * var(--mobile-pad)); min-width: 0; margin-top: 1rem; }
+    .committee-stage { width: calc(100% - 2 * var(--mobile-pad)); min-width: 0; margin-top: 1rem; }
+    .committee-stage .arrow-button--prev { left: 26px; }
+    .committee-stage .arrow-button--next { left: calc(100% - 26px); }
+    .committee-members { gap: 1rem 1.4rem; margin-top: 1.2rem; padding: 0 var(--mobile-pad); }
+    .committee-member { gap: .45rem; }
+
+    .professor { padding-top: 120px; }
+    .professor-stage { --card-w: 62vw; margin-top: 1.5rem; height: calc(var(--card-h) + 60px); }
+    .professor-card { top: 24px; }
+    .professor-ambient { display: none; }
+
+    .video { padding-top: 120px; padding-bottom: 80px; }
+    .video-stage { --video-w: calc(100vw - 2 * var(--mobile-pad)); --video-gap: 16px; margin-top: 1.5rem; }
+    .arrow-button { --arrow-h: 40px; }
+    .arrow-button img { filter: drop-shadow(0 0 6px rgba(0, 0, 0, .6)); }
+    .arrow-button--prev { left: calc(var(--mobile-pad) + 26px); }
+    .arrow-button--next { left: calc(100% - var(--mobile-pad) - 26px); }
+    .video-poster__play { width: 60px; height: 60px; }
+    .video-poster__play img { width: 40px; height: 40px; }
+    .video-thumbs { width: calc(100% - 2 * var(--mobile-pad)); margin-top: 1rem; gap: 10px; }
+    .video-thumbs li { width: auto; flex: 1; }
+
+    .footer .container { flex-direction: column; gap: 1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .committee-slide, .professor-card, .video-card { transition-duration: .01ms; }
+    .committee-member { animation: none; opacity: 1; }
+}
