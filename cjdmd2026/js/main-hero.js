@@ -800,9 +800,7 @@
             const revealDone = Promise.all([imgReady, new Promise(r => setTimeout(r, SETTINGS.move * .9))])
                 .then(() => tween("reveal", 1, SETTINGS.reveal, { ease: easeInOut }));
             await tween("move", 1, SETTINGS.move);
-            // 결합이 왼쪽으로 이동하면 바로 페이지 스크롤 허용
-            locked = false;
-            if (hasLenis()) lenis.start();
+            // 포스터 노출과 제스처가 끝날 때까지 잠금을 유지해 다음 영역으로 새지 않게 합니다.
             await revealDone;
             // 배경 아이콘은 포스터가 다 나타난 뒤에
             tween("ambient", 1, 900, { ease: easeOut });
@@ -845,6 +843,8 @@
         catch (e) { return false; }   // Lenis 로드 실패 시
     };
     let locked = false, releaseTimer = 0;
+    // 섹션 스크롤은 포스터 연출과 입력 잠금이 모두 끝난 뒤 시작합니다.
+    window.MainHeroCanScroll = () => step === 2 && !busy && !locked && !touchUsed;
     function lockPage() {
         clearTimeout(releaseTimer);
         if (!locked) { locked = true; if (hasLenis()) lenis.stop(); }

@@ -72,7 +72,7 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
 (() => {
   'use strict';
   const options = {
-    durationMs: 1400, cellSize: 12,
+    durationMs: 2100, cellSize: 12,
     ...window.PROJECT_ASCII_OPTIONS
   };
   const overlay = document.createElement('div');
@@ -108,7 +108,7 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
     uniform sampler2D imageA, imageB, iconAtlas, foreground, nextForeground, controls, nextControls;
     uniform vec2 resolution, sizeA, sizeB, iconGrid;
     uniform vec4 sceneTint;
-    uniform float slideProgress, direction, cellSize, codeTime, iconCount;
+    uniform float slideProgress, trailFade, direction, cellSize, codeTime, iconCount;
     float random(vec2 p) {
       return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);
     }
@@ -164,7 +164,7 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
       float axis=direction>0.?uv.y:1.-uv.y;
       float wave=(n1-.5)*.24+sin(uv.x*5.5+n2*2.6+q*1.8)*.038;
       // The image, copy, and icon band share the same moving boundary.
-      float front=mix(-.24,1.28,q)-axis+wave*amp;
+      float front=mix(-.24,1.30,q)-axis+wave*amp;
       float incoming=ease(-.035,.035,front);
       vec2 cells=resolution/vec2(cellSize);
       vec2 grid=uv*cells;
@@ -172,14 +172,13 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
       float seed=random(cell);
       vec2 center=(floor(grid)+.5)/cells;
       float grain=(region(cell/4.)-.5)*.025;
-      // The leading and trailing edges stay 24% of the viewport apart,
-      // with 3.5% feathering on each side instead of covering the whole slide.
+      // Keep the leading edge crisp, with a wider, softer trailing edge.
       float becomeIcons=ease(-.035,.035,front+.12+grain);
-      float becomeImage=ease(-.035,.035,front-.12+grain);
+      float becomeImage=ease(-.07,.09,front-.18+grain);
       vec2 copyMask=vec2(1.-becomeIcons,becomeImage);
       vec3 color=scene(center,incoming,copyMask);
       // Keep the matrix alive throughout the automatic transition.
-      float clock=codeTime*(2.4+seed*1.4)+seed*5.;
+      float clock=codeTime*(1.2+seed*.8)+seed*5.;
       float step=floor(clock);
       float first=floor(random(cell+vec2(step,step*.37))*iconCount);
       float second=floor(random(cell+vec2(step+1.,(step+1.)*.37))*iconCount);
@@ -192,10 +191,19 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
       // As in the text version, each cell takes its color from the scene below.
       vec3 detail=scene(uv,incoming,copyMask);
       vec3 iconColor=min(color*1.35+.025,vec3(1.));
-      // Only the white band is translucent; keep icons and copy masks intact.
+      // The white wash belongs only to the main band; the tail leaves individual icons.
       vec3 bandBackground=mix(detail,vec3(1.),.75);
       vec3 iconLayer=mix(bandBackground,iconColor,ink);
-      gl_FragColor=vec4(mix(detail,iconLayer,iconAmount),1.);
+      vec3 result=mix(detail,iconLayer,iconAmount);
+      // Uneven lifetimes leave a long, sparse trail over the incoming image.
+      float trailLength=.22+random(cell+vec2(17.3,9.1))*.48;
+      float trailDensity=ease(.28,.72,random(cell+vec2(4.7,23.6)));
+      float trail=ease(.10,.24,front)
+        *(1.-ease(.20,.24+trailLength,front));
+      float trailAmount=trail*trailDensity*(1.-iconAmount)*(1.-trailFade);
+      vec3 trailColor=mix(iconColor,vec3(1.),.76);
+      result=mix(result,trailColor,ink*trailAmount*.30);
+      gl_FragColor=vec4(result,1.);
     }
   `;
 
@@ -308,7 +316,7 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
     const position = gl.getAttribLocation(program, 'position');
     gl.enableVertexAttribArray(position);
     gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-    uniforms = Object.fromEntries(['imageA','imageB','iconAtlas','foreground','nextForeground','controls','nextControls','resolution','sizeA','sizeB','sceneTint','slideProgress','direction','cellSize','codeTime','iconCount','iconGrid']
+    uniforms = Object.fromEntries(['imageA','imageB','iconAtlas','foreground','nextForeground','controls','nextControls','resolution','sizeA','sizeB','sceneTint','slideProgress','trailFade','direction','cellSize','codeTime','iconCount','iconGrid']
       .map(name => [name, gl.getUniformLocation(program, name)]));
     atlas = texture(icons.sheet);
     atlasCount = icons.count;
@@ -539,9 +547,11 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
   function paint(progress) {
     gl.useProgram(program);
     syncBounds();
-    // One eased progress drives the slide front, copy motion, and spatial mask.
-    const t = Math.max(0, Math.min(1, progress / .90));
+    // Reveal the new scene first, then let the remaining pale icons dissipate.
+    const t = Math.max(0, Math.min(1, progress / .82));
     const slideProgress = t*t*t*(t*(t*6-15)+10);
+    const tail = Math.max(0, Math.min(1, (progress-.70)/.30));
+    const trailFade = tail*tail*(3-2*tail);
     // Reuse the cached copy throughout the code transition.
     for (const [source, value, incoming] of [[job.contentSource,job.content,false],[job.nextSource,job.nextContent,true]]) {
       if (!source?.renderCodeFrame || progress === job.paintedProgress) continue;
@@ -568,6 +578,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
     gl.uniform2f(uniforms.sizeB, job.to.naturalWidth, job.to.naturalHeight);
     gl.uniform4fv(uniforms.sceneTint, job.sceneTint);
     gl.uniform1f(uniforms.slideProgress, slideProgress);
+    gl.uniform1f(uniforms.trailFade, trailFade);
     gl.uniform1f(uniforms.codeTime, job.codeTime);
     gl.uniform1f(uniforms.direction, job.direction);
     gl.uniform1f(uniforms.cellSize, Math.max(8, Number(options.cellSize) || 12));
@@ -676,7 +687,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
       const now = performance.now();
       job = {direction: Math.sign(direction) || 1, swap, target, resolve, onProgress,
         codeTime: 0, playbackRate: updatePlaybackRate(now),
-        durationMs: Math.max(300, Number(options.durationMs) || 1400),
+        durationMs: Math.max(300, Number(options.durationMs) || 2100),
         sceneTint: readSceneTint(),
         from: sources[0], to: sources[1], swapped: false, elapsed: 0, last: now};
       try {
@@ -718,8 +729,8 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
     scrollMotion.velocity = fresh ? velocity
       : scrollMotion.velocity+(velocity-scrollMotion.velocity)*blend;
     const intensity = Math.min(1, scrollMotion.velocity/2.4);
-    // 0.85–2.8x keeps the default transition around 0.5–1.65 seconds.
-    scrollMotion.targetRate = .85+1.95*intensity*intensity*(3-2*intensity);
+    // Preserve the lingering tail even during fast wheel / trackpad gestures.
+    scrollMotion.targetRate = .85+.80*intensity*intensity*(3-2*intensity);
     scrollMotion.lastInput = now;
     scrollMotion.direction = direction;
   }

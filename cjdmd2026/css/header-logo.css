@@ -1,0 +1,15 @@
+/* 공통 헤더 로고: 원본 비율과 색상을 유지합니다. */
+.header .logo a {
+    display: flex;
+    align-items: center;
+}
+
+.header .logo img {
+    display: block;
+    width: 160px;
+    height: auto;
+}
+
+@media (max-width: 759px) {
+    .header .logo img { width: 124px; }
+}
