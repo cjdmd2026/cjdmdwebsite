@@ -620,8 +620,15 @@
             const results =
                 getResults();
 
+            if (designerPage.classList.contains("grid-view") && window.DesignerPage?.transitionGridResults) {
+                await window.DesignerPage.transitionGridResults(() => {
+                    if (token === filterTransitionToken) applyResults(results);
+                });
+                return;
+            }
+
             /*
-             * Grid에서는 바로 변경.
+             * Grid에서는 뷰 전환과 같은 후퇴·블러 연출 뒤에 결과를 교체합니다.
              * Slide에서는 현재 WebGL 카드가 먼저 아래로 툭 떨어진 뒤
              * 필터 결과를 렌더합니다.
              */

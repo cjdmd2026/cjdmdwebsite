@@ -228,7 +228,7 @@ body.mobile-menu-open .header {
     height: clamp(40px, 2.6vw, 62px);
     border: 1px solid currentColor;
     border-radius: 999px;
-    font-size: clamp(.9rem, .88vw, 1.25rem);   /* 17px SemiBold */
+    font-size: clamp(.5rem, .88vw, .875rem);   /* 17px SemiBold */
     font-weight: 600;
     cursor: pointer;
     transition: background-color .3s ease, color .3s ease, opacity .3s ease;
@@ -348,14 +348,14 @@ body.mobile-menu-open .header {
     pointer-events: var(--text-events, none);
 }
 .hero-indicator button {
-    width: 13px;
-    height: 13px;
+    width: 7px;
+    height: 7px;
     border-radius: 999px;
     transition: width .5s cubic-bezier(.6, 0, .2, 1);
 }
 /* 색은 위치 고정: 왼쪽 #7B7B7B / 오른쪽 #CCCCCC, 선택된 쪽이 길어짐 */
-.hero-indicator button:first-child { background: #7b7b7b; }
-.hero-indicator button:last-child { background: #cccccc; }
+.hero-indicator button:first-child { background: #444; }
+.hero-indicator button:last-child { background: #ddd; }
 .hero-indicator button[aria-selected="true"] { width: 48px; }
 
 /* 설명: 시안 x 968 (calc(50.4 * var(--u))) */
@@ -369,14 +369,14 @@ body.mobile-menu-open .header {
     pointer-events: var(--text-events, none);
 }
 .hero-text h2 {
-    font-size: clamp(1.6rem, 2.1875vw, 3rem);   /* 시안 원본 42px SemiBold (화면 높이와 무관하게 유지) */
+    font-size: clamp(1.6rem, 2.1875vw, 2.75rem);   /* 시안 원본 42px SemiBold (화면 높이와 무관하게 유지) */
     font-weight: 600;
     line-height: 1.33;
     letter-spacing: -0.02em;
     margin-bottom: 2.14vw;                 /* 시안 41px */
 }
 .hero-text p {
-    font-size: clamp(.875rem, 1.08vw, 1.25rem);  /* 시안 원본 약 21px Regular, 행간 180%, 자간 -2% */
+    font-size: clamp(.875rem, 1.08vw, 1rem);  /* 시안 원본 약 21px Regular, 행간 180%, 자간 -2% */
     font-weight: 400;
     line-height: 1.8;
     letter-spacing: -0.02em;
@@ -765,7 +765,7 @@ body.mobile-menu-open .header {
     .hero-text h2 { font-size: 1.5rem; margin-bottom: .8rem; }
     .hero-text p { font-size: .82rem; margin-bottom: 1.2rem; white-space: normal; }
     .hero-text p br { display: none; }
-    .pill-button { height: 42px; width: 104px; font-size: .9rem; }
+    .pill-button { height: 42px; width: 104px; font-size: .875rem; }
 
     .committee { padding-top: 100px; }
     .committee-tabs {

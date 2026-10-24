@@ -255,6 +255,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderDesigners(
         list = designers
     ) {
+        // 검색·목록 복원처럼 즉시 갱신되는 경우 진행 중인 필터 연출을 정리합니다.
+        if (gridTransition && !gridTransition.committing) cancelGridTransition();
         const fragment =
             document.createDocumentFragment();
 
@@ -316,6 +318,93 @@ document.addEventListener("DOMContentLoaded", () => {
     let viewInitialized = false;
     let viewTransition = null;
     let queuedView = null;
+    let gridTransition = null;
+
+    const depthFront = { opacity: 1, filter: "blur(0px)", transform: "perspective(1200px) translateZ(0)" };
+    const depthBack = { opacity: 0, filter: "blur(12px)", transform: "perspective(1200px) translateZ(-180px)" };
+
+    function animateDepth(element, entering, from = null) {
+        const rect = element.getBoundingClientRect();
+        // 긴 그리드도 현재 화면 중심을 향해 뒤로 물러나게 합니다.
+        element.style.transformOrigin = from?.transformOrigin ||
+            `50% ${Math.max(0, Math.min(rect.height, innerHeight / 2 - rect.top))}px`;
+        const start = from
+            ? { opacity: from.opacity, filter: from.filter, transform: from.transform }
+            : entering ? depthBack : depthFront;
+        return element.animate([start, entering ? depthFront : depthBack], {
+            duration: entering ? 460 : 320,
+            easing: entering ? "cubic-bezier(.16, 1, .3, 1)" : "cubic-bezier(.4, 0, 1, 1)",
+            fill: "both"
+        });
+    }
+
+    function gridContents() {
+        return [slider, document.querySelector(".designer-grid-empty")].filter(element =>
+            element && element.getClientRects().length && getComputedStyle(element).visibility !== "hidden");
+    }
+
+    function cancelGridTransition(commit = false) {
+        const previous = gridTransition;
+        if (!previous) return;
+        gridTransition = null;
+        previous.animations.forEach(animation => animation.cancel());
+        previous.states.forEach((state, element) => {
+            element.inert = state.inert;
+            element.style.transformOrigin = state.origin;
+        });
+        if (previous.busy === null) slider.removeAttribute("aria-busy");
+        else slider.setAttribute("aria-busy", previous.busy);
+        if (commit && !previous.committed) previous.update();
+    }
+
+    async function transitionGridResults(update) {
+        if (currentView() !== "grid" || viewTransition || reducedViewMotion.matches ||
+            window.DesignerReturnState?.restoring || typeof slider.animate !== "function") {
+            cancelGridTransition();
+            update();
+            return;
+        }
+        const interrupted = new Map();
+        if (gridTransition) {
+            gridContents().forEach(element => {
+                const style = getComputedStyle(element);
+                interrupted.set(element, {
+                    opacity: style.opacity, filter: style.filter, transform: style.transform,
+                    transformOrigin: style.transformOrigin
+                });
+            });
+        }
+        cancelGridTransition();
+        const transition = { update, animations: [], states: new Map(),
+            busy: slider.getAttribute("aria-busy"), committing: false, committed: false };
+        gridTransition = transition;
+        slider.setAttribute("aria-busy", "true");
+        const play = (element, entering) => {
+            if (!transition.states.has(element)) {
+                transition.states.set(element, { inert: element.inert, origin: element.style.transformOrigin });
+            }
+            element.inert = true;
+            const animation = animateDepth(element, entering, entering ? null : interrupted.get(element));
+            transition.animations.push(animation);
+            return animation.finished.catch(() => {});
+        };
+        try {
+            await Promise.all(gridContents().map(element => play(element, false)));
+            if (gridTransition !== transition) return;
+            // 기존 카드가 뒤로 사라진 뒤에만 새 결과로 교체합니다.
+            transition.committing = true;
+            update();
+            transition.committing = false;
+            transition.committed = true;
+            await Promise.all(gridContents().map(element => play(element, true)));
+        } finally {
+            if (gridTransition === transition) cancelGridTransition();
+        }
+    }
+
+    reducedViewMotion.addEventListener("change", () => {
+        if (reducedViewMotion.matches) cancelGridTransition(true);
+    });
 
     function currentView() {
         return designerPage.classList.contains("slide-view") ? "slide" : "grid";
@@ -377,13 +466,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 contentState.set(element, { inert: element.inert, origin: element.style.transformOrigin });
             }
             element.inert = true;
-            const rect = element.getBoundingClientRect();
-            // 긴 그리드도 현재 화면 중심을 향해 뒤로 물러나게 합니다.
-            element.style.transformOrigin = `50% ${Math.max(0, Math.min(rect.height, innerHeight / 2 - rect.top))}px`;
-            const front = { opacity: 1, filter: "blur(0px)", transform: "perspective(1200px) translateZ(0)" };
-            const back = { opacity: 0, filter: "blur(12px)", transform: "perspective(1200px) translateZ(-180px)" };
-            return play(element, entering ? [back, front] : [front, back], entering ? 460 : 320,
-                entering ? "cubic-bezier(.16, 1, .3, 1)" : "cubic-bezier(.4, 0, 1, 1)");
+            const animation = animateDepth(element, entering);
+            animations.push(animation);
+            return animation.finished.catch(() => {});
         };
 
         designerPage.classList.add("is-view-transitioning");
@@ -425,6 +510,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function changeView(selectedView) {
         if (!["slide", "grid"].includes(selectedView)) return;
+        cancelGridTransition(true);
         if (viewTransition) {
             queuedView = selectedView;
             return viewTransition;
@@ -552,6 +638,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.DesignerPage = {
         data: designers,
         render: renderDesigners,
+        transitionGridResults,
         changeView,
         getTrack: () => track
     };

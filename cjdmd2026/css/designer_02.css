@@ -1564,6 +1564,7 @@ html:has(.icon-slide-page.slide-view) { scrollbar-gutter: stable; }
 .icon-slide-page .view-button img { width: 40px; height: 40px; }
 .icon-slide-page .view-button span { display: none; }
 .icon-slide-page .search-bar input { padding-right: 18px; }
+.icon-slide-page.slide-view .search-bar { display: none; }
 .icon-slide-page.slide-view .designer-stage, .icon-slide-page.slide-view .designer-slider, .icon-slide-page.slide-view ~ .footer { display: none !important; }
 .formation-slide { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; padding-top: 24px; }
 .grid-view .formation-slide { display: none; }

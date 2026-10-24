@@ -836,8 +836,8 @@
 
     /* 페이지 스크롤 잠금
        - 포스터 단계(0·1)이거나 단계가 바뀌는 중에는 페이지가 절대 내려가지 않음
-       - 포스터 레이아웃(2)에 도착한 뒤 스크롤 입력이 0.6초 동안 멈춰야 페이지 스크롤이 풀림
-         → 한 번에 많이 스크롤해도 딱 포스터 레이아웃까지만 이동 */
+       - 포스터 레이아웃(2)에 도착한 뒤 0.6초 동안 관성을 흡수하고 잠금을 풉니다.
+         → 계속 휠을 돌려도 대기시간이 연장되지 않습니다. */
     const hasLenis = () => {
         try { return typeof lenis !== "undefined" && lenis && typeof lenis.stop === "function"; }
         catch (e) { return false; }   // Lenis 로드 실패 시
@@ -847,11 +847,13 @@
     window.MainHeroCanScroll = () => step === 2 && !busy && !locked && !touchUsed;
     function lockPage() {
         clearTimeout(releaseTimer);
+        releaseTimer = 0;
         if (!locked) { locked = true; if (hasLenis()) lenis.stop(); }
     }
     function scheduleUnlock() {
-        clearTimeout(releaseTimer);
+        if (releaseTimer || !locked) return;
         releaseTimer = setTimeout(() => {
+            releaseTimer = 0;
             if (step !== 2 || busy) return;
             locked = false;
             if (hasLenis()) lenis.start();
@@ -875,7 +877,7 @@
         if (!busy && wantsHero(dir) && Math.abs(e.deltaY) > 4) handleIntent(dir);
         clearTimeout(gestureTimer);
         gestureTimer = setTimeout(() => { gestureLock = false; }, 300);
-        if (step === 2 && !busy) scheduleUnlock();     // 입력이 계속 들어오면 잠금 유지
+        if (step === 2 && !busy) scheduleUnlock();
     }, { passive: false, capture: true });
 
     let touchY = null, touchUsed = false;
@@ -894,10 +896,12 @@
             handleIntent(dir);
         }
     }, { passive: false, capture: true });
-    window.addEventListener("touchend", () => {
-        touchY = null; gestureLock = false;
+    const endTouch = () => {
+        touchY = null; touchUsed = false; gestureLock = false;
         if (step === 2 && !busy) scheduleUnlock();
-    }, { passive: true, capture: true });
+    };
+    window.addEventListener("touchend", endTouch, { passive: true, capture: true });
+    window.addEventListener("touchcancel", endTouch, { passive: true, capture: true });
 
     window.addEventListener("keydown", e => {
         if (e.target.closest?.("input, textarea, [contenteditable]")) return;

@@ -222,7 +222,7 @@ img {
 body:has(#slideview:not([hidden])) .header {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    -webkit-backdrop-filter: none;  
     border: none;
 
     border-bottom: 1px solid rgba(255, 255, 255, 0.35);

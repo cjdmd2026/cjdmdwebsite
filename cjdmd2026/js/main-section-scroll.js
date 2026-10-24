@@ -105,7 +105,7 @@
         const direction = Math.sign(event.deltaY);
         if (moving || gestureHeld) {
             consume(event);
-            holdGesture();
+            // 대기 중 입력으로 잠금을 연장하면 연속 스크롤이 끝없이 막힙니다.
             return;
         }
         if (!ownsScroll(direction)) return;
