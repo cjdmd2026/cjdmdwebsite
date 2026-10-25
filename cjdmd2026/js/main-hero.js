@@ -23,6 +23,14 @@
         iconBlurFullSize: 8,     // 원본 기준: 가장 작은 아이콘은 최대 블러 유지
         iconBlurClearSize: 40,   // 이 크기까지 블러를 점진적으로 줄이고, 큰 아이콘은 선명하게
         iconBlurMax: 3.5,        // 원본 기준 최대 블러 반경 — 화면 크기에 맞춰 함께 축소
+        iconPushMinSize: 8,      // 원본 기준: 가장 작은 아이콘의 마우스 반응
+        iconPushFullSize: 40,    // 이 크기부터 기존 마우스 반응 강도 유지
+        iconPushMinStrength: .15,// 가장 작은 아이콘은 기존 힘의 15%만 적용
+        iconIdleFullSize: 8,     // 결합 상태에서 가장 작은 아이콘은 천천히 떠다님
+        iconIdleMaxSize: 24,     // 떠다니는 작은 아이콘의 크기에 따른 움직임 강도 기준
+        iconIdleDistance: 27,    // 원본 기준 이동 반경 — 화면에 맞춰 함께 축소
+        iconIdleIntro: 2,        // 결합 후 떠다니는 움직임이 서서히 시작되는 시간(초)
+        iconIdleStrokeFalloff: 48, // 획에서 멀어질수록 기존 이동 범위로 돌아오는 거리
         // 단계 전환 시간(ms)
         fly: 1500, graphicIn: 320, dissolve: 420,   // 모임 → (바로) 그래픽이 뒤에 깔림 → 아이콘 한 번에 사라짐
         move: 1250, reveal: 380,
@@ -134,22 +142,73 @@
     let smallFrame = { x: 0, y: 0, w: 1, h: 1 };
 
     function buildIcons() {
+        const pushStrength = size => lerp(SETTINGS.iconPushMinStrength, 1,
+            clamp((size - SETTINGS.iconPushMinSize) / (SETTINGS.iconPushFullSize - SETTINGS.iconPushMinSize)));
+        const idleStrength = size => 1 - clamp((size - SETTINGS.iconIdleFullSize) /
+            (SETTINGS.iconIdleMaxSize - SETTINGS.iconIdleFullSize));
         const blurLevel = size => {
             const t = clamp((SETTINGS.iconBlurClearSize - size) / (SETTINGS.iconBlurClearSize - SETTINGS.iconBlurFullSize));
             return t * t * (3 - 2 * t) * blurLayers.length;
         };
-        const make = set => (set?.s || []).map(([gx, gy, gw, gh, ax, ay, kind]) => ({
-            gx, gy, gw, gh, ax, ay,
-            whole: kind === 1,
-            blurLevel: blurLevel(Math.max(gw, gh)),
-            sx: rand(-.03, 1.03), sy: rand(-.03, 1.03),       // 흩어진 위치 (화면 비율)
-            delay: Math.random() * .4,
-            // 사라질 때 순서: 왼쪽→오른쪽 + 입자 노이즈
-            phase: Math.random() * Math.PI * 2,
-            px: 0, py: 0, pvx: 0, pvy: 0, spin: 0, angle: 0, awake: false,   // 마우스에 밀린 정도
-            speed: rand(.2, .55),
-            drift: rand(8, 26)
-        }));
+        function glyphMotionStrengths(set) {
+            // 확정 포스터(1130 × 1600)의 글자 획만 고정합니다.
+            // 주변 밀도나 큰 아이콘과의 거리에 관계없이 획 사이와 외곽은 떠다닙니다.
+            const strokes = [
+                { r: 40, p: [[320, 195], [610, 195], [610, 300], [585, 355], [480, 390], [320, 390]] }, // ㄱ
+                { r: 42, p: [[810, 190], [810, 400]] }, // ㅕ
+                { r: 38, p: [[710, 250], [810, 250]] },
+                { r: 38, p: [[710, 360], [810, 360]] },
+                { r: 40, p: [[330, 490], [810, 490], [810, 590], [330, 590], [330, 690], [810, 690]] }, // ㄹ
+                { r: 42, p: [[440, 810], [440, 835]] }, // ㅎ의 위쪽 획
+                { r: 40, p: [[310, 875], [590, 875]] },
+                { r: 50, p: [[795, 845], [795, 1170]] }, // ㅏ
+                { r: 40, p: [[795, 995], [850, 995]] },
+                { r: 54, p: [[355, 1230], [355, 1415]] }, // ㅂ
+                { r: 55, p: [[790, 1230], [790, 1415]] },
+                { r: 42, p: [[350, 1415], [810, 1415]] },
+                { r: 40, p: [[350, 1300], [810, 1300]] }
+            ];
+            const segments = strokes.flatMap(({ r, p }) => p.slice(1).map(([bx, by], i) => {
+                const [ax, ay] = p[i], dx = bx - ax, dy = by - ay;
+                return { ax, ay, dx, dy, lengthSquared: dx * dx + dy * dy, radius: r };
+            }));
+            return (set?.s || []).map(([x, y, w, h]) => {
+                const cx = (x + w / 2) * 1130 / set.w, cy = (y + h / 2) * 1600 / set.h;
+                let distance = Infinity;
+                for (const { ax, ay, dx, dy, lengthSquared, radius } of segments) {
+                    const t = clamp(((cx - ax) * dx + (cy - ay) * dy) / lengthSquared);
+                    distance = Math.min(distance, Math.hypot(cx - ax - t * dx, cy - ay - t * dy) - radius);
+                }
+                // ㅎ의 둥근 획: 안쪽 빈 공간은 고정 영역에서 제외합니다.
+                const outer = Math.hypot((cx - 460) / 165, (cy - 1060) / 130);
+                const inner = Math.hypot((cx - 460) / 90, (cy - 1060) / 60);
+                // 타원 경계까지의 거리는 짧은 반지름을 기준으로 근사합니다.
+                const ringDistance = outer > 1 ? (outer - 1) * 130 : inner < 1 ? (1 - inner) * 60 : 0;
+                distance = Math.min(distance, ringDistance);
+                if (distance <= 0) return 0;
+                // 획 경계에서는 거의 움직이지 않고, 거리에 따라 기존 진폭까지 부드럽게 커집니다.
+                const proximity = clamp(distance / SETTINGS.iconIdleStrokeFalloff);
+                return proximity * proximity * (3 - 2 * proximity);
+            });
+        }
+        const make = set => {
+            const sprites = set?.s || [];
+            const motionStrength = glyphMotionStrengths(set);
+            return sprites.map(([gx, gy, gw, gh, ax, ay, kind], index) => ({
+                gx, gy, gw, gh, ax, ay,
+                whole: kind === 1,
+                blurLevel: blurLevel(Math.max(gw, gh)),
+                pushStrength: pushStrength(Math.max(gw, gh)),
+                idleDrift: motionStrength[index] ? motionStrength[index] * idleStrength(Math.max(gw, gh)) * SETTINGS.iconIdleDistance * rand(.6, 1) : 0,
+                sx: rand(-.03, 1.03), sy: rand(-.03, 1.03),       // 흩어진 위치 (화면 비율)
+                delay: Math.random() * .4,
+                // 사라질 때 순서: 왼쪽→오른쪽 + 입자 노이즈
+                phase: Math.random() * Math.PI * 2,
+                px: 0, py: 0, pvx: 0, pvy: 0, spin: 0, angle: 0, awake: false,   // 마우스에 밀린 정도
+                speed: rand(.2, .55),
+                drift: rand(8, 26)
+            }));
+        };
         iconSets = { light: make(SETS.light), dark: make(SETS.dark) };
     }
 
@@ -651,7 +710,7 @@
             let dx = cx - x, dy = cy - y, d = Math.hypot(dx, dy);
             if (d >= PUSH.clickRadius) continue;
             if (d < .1) { dx = Math.cos(ic.phase); dy = Math.sin(ic.phase); d = 1; }
-            const f = Math.pow(1 - d / PUSH.clickRadius, 1.3) * PUSH.clickForce;
+            const f = Math.pow(1 - d / PUSH.clickRadius, 1.3) * PUSH.clickForce * ic.pushStrength;
             ic.pvx += dx / d * f; ic.pvy += dy / d * f;
             ic.awake = true;
             hasMovingIcons = true;
@@ -683,10 +742,11 @@
                 if (distanceSquared < radiusSquared) {
                     let d = Math.sqrt(distanceSquared);
                     if (d < .1) { dx = Math.cos(ic.phase); dy = Math.sin(ic.phase); d = 1; }
-                    const fall = Math.pow(1 - d / radius, 1.5), f = fall * (1.8 + Math.min(speed, 40) * .36 + (pointer.down ? 3 : 0)) * PUSH.strength;
-                    ic.pvx += dx / d * f + pointer.vx * fall * .17 * PUSH.strength;
-                    ic.pvy += dy / d * f + pointer.vy * fall * .17 * PUSH.strength;
-                    ic.spin += (pointer.vx * dy - pointer.vy * dx) * fall * .00004;
+                    const strength = PUSH.strength * ic.pushStrength;
+                    const fall = Math.pow(1 - d / radius, 1.5), f = fall * (1.8 + Math.min(speed, 40) * .36 + (pointer.down ? 3 : 0)) * strength;
+                    ic.pvx += dx / d * f + pointer.vx * fall * .17 * strength;
+                    ic.pvy += dy / d * f + pointer.vy * fall * .17 * strength;
+                    ic.spin += (pointer.vx * dy - pointer.vy * dx) * fall * .00004 * ic.pushStrength;
                     ic.awake = true;
                 }
             }
@@ -707,10 +767,12 @@
     }
     let lastIconTime = 0;
     let lastIconState = "";
+    let assembledTime = 0;
 
     function renderIcons(time) {
         const state = `${current}:${V.fly}:${V.graphic}:${V.dissolve}:${V.move}:${V.reveal}:${ready(atlasNow())}`;
-        const moving = V.fly < 1 && !reducedMotion.matches && V.dissolve < 1 && V.reveal < 1;
+        const idling = step === 1 && V.fly === 1 && V.move === 0;
+        const moving = (V.fly < 1 || idling) && !reducedMotion.matches && V.dissolve < 1 && V.reveal < 1;
         if (!moving && state === lastIconState) { lastIconTime = time; return; }
         lastIconState = state;
         ctx.clearRect(0, 0, W, H);
@@ -721,9 +783,13 @@
         const t = time / 1000;
         const dt = lastIconTime ? Math.min(.05, (time - lastIconTime) / 1000) : 0;
         lastIconTime = time;
+        if (V.fly === 0) assembledTime = 0;
+        else if (idling && !reducedMotion.matches) assembledTime += dt;
         if (dt && !reducedMotion.matches && V.fly < 1) stepPush(dt * 60);
         const motion = reducedMotion.matches ? 0 : 1;
         const move = easeInOut(clamp(V.move));
+        // 결합 직후에는 서서히 움직이고, 축소가 시작되면 현재 흔들림을 멈춰 원래 자리로 돌아갑니다.
+        const idleAmount = easeInOut(clamp(assembledTime / SETTINGS.iconIdleIntro)) * (1 - easeOut(clamp(V.move))) * motion;
         const frame = {
             x: lerp(bigFrame.x, smallFrame.x, move),
             y: lerp(bigFrame.y, smallFrame.y, move),
@@ -784,7 +850,9 @@
             const tx = frame.x + (gcx + (ic.gx - gcx) * fs + fx0) * kf;
             const ty = frame.y + (gcy + (ic.gy - gcy) * fsy + fy0) * kf;
             const ang = ic.angle * wob;
-            const x = lerp(sx, tx, a), y = lerp(sy, ty, a);
+            const drift = ic.idleDrift * kf * a * idleAmount;
+            const x = lerp(sx, tx, a) + Math.sin(assembledTime * ic.speed + ic.phase) * drift;
+            const y = lerp(sy, ty, a) + Math.cos(assembledTime * ic.speed * .81 + ic.phase) * drift;
             const margin = Math.abs(ang) > .002 ? Math.max(w, h) : 0;
             if (x + w + margin < 0 || y + h + margin < 0 || x - margin > W || y - margin > H) continue;
             // 크기별 연속값으로 두 강도를 섞고, 모일수록 한 레이어로 정리합니다.
@@ -847,10 +915,10 @@
             const revealDone = Promise.all([imgReady, new Promise(r => setTimeout(r, SETTINGS.move * .9))])
                 .then(() => tween("reveal", 1, SETTINGS.reveal, { ease: easeInOut }));
             await tween("move", 1, SETTINGS.move);
-            // 포스터 노출과 제스처가 끝날 때까지 잠금을 유지해 다음 영역으로 새지 않게 합니다.
+            // 포스터가 나타나는 동안만 잠금을 유지합니다.
             await revealDone;
-            // 배경 아이콘은 포스터가 다 나타난 뒤에
-            tween("ambient", 1, 900, { ease: easeOut });
+            // 포스터가 다 나타나면 배경 아이콘을 왼쪽부터 오른쪽으로 천천히 드러냅니다.
+            tween("ambient", 1, 1200, { ease: t => t });
             startAuto();
         } else if (prev === 2 && next === 1) {
             tween("text", 0, 400);
@@ -859,7 +927,7 @@
             await tween("move", 0, SETTINGS.move * .9);
         }
         busy = false;
-        if (step === 2) scheduleUnlock();
+        if (step === 2) unlockPage();
     }
 
     // 스크롤바·링크 등으로 아래로 내려간 경우: 정착 상태로 바로 맞춤
@@ -883,28 +951,21 @@
 
     /* 페이지 스크롤 잠금
        - 포스터 단계(0·1)이거나 단계가 바뀌는 중에는 페이지가 절대 내려가지 않음
-       - 포스터 레이아웃(2)에 도착한 뒤 0.6초 동안 관성을 흡수하고 잠금을 풉니다.
-         → 계속 휠을 돌려도 대기시간이 연장되지 않습니다. */
+       - 포스터 레이아웃(2)의 등장 애니메이션이 끝나면 즉시 잠금을 풉니다. */
     const hasLenis = () => {
         try { return typeof lenis !== "undefined" && lenis && typeof lenis.stop === "function"; }
         catch (e) { return false; }   // Lenis 로드 실패 시
     };
-    let locked = false, releaseTimer = 0;
+    let locked = false;
     // 섹션 스크롤은 포스터 연출과 입력 잠금이 모두 끝난 뒤 시작합니다.
     window.MainHeroCanScroll = () => step === 2 && !busy && !locked && !touchUsed;
     function lockPage() {
-        clearTimeout(releaseTimer);
-        releaseTimer = 0;
         if (!locked) { locked = true; if (hasLenis()) lenis.stop(); }
     }
-    function scheduleUnlock() {
-        if (releaseTimer || !locked) return;
-        releaseTimer = setTimeout(() => {
-            releaseTimer = 0;
-            if (step !== 2 || busy) return;
-            locked = false;
-            if (hasLenis()) lenis.start();
-        }, 600);
+    function unlockPage() {
+        if (!locked || step !== 2 || busy) return;
+        locked = false;
+        if (hasLenis()) lenis.start();
     }
 
     function handleIntent(dir) {
@@ -924,7 +985,7 @@
         if (!busy && wantsHero(dir) && Math.abs(e.deltaY) > 4) handleIntent(dir);
         clearTimeout(gestureTimer);
         gestureTimer = setTimeout(() => { gestureLock = false; }, 300);
-        if (step === 2 && !busy) scheduleUnlock();
+        if (step === 2 && !busy) unlockPage();
     }, { passive: false, capture: true });
 
     let touchY = null, touchUsed = false;
@@ -945,7 +1006,7 @@
     }, { passive: false, capture: true });
     const endTouch = () => {
         touchY = null; touchUsed = false; gestureLock = false;
-        if (step === 2 && !busy) scheduleUnlock();
+        if (step === 2 && !busy) unlockPage();
     };
     window.addEventListener("touchend", endTouch, { passive: true, capture: true });
     window.addEventListener("touchcancel", endTouch, { passive: true, capture: true });
@@ -1057,8 +1118,8 @@
         setCSS(stage, "--text-opacity", V.text.toFixed(3));
         setCSS(stage, "--text-events", V.text > .5 ? "auto" : "none");
         setCSS(stage, "--poster-shadow", clamp((V.move - .8) / .2).toFixed(3));
-        setCSS(stage, "--hint-opacity", step === 0 && !busy ? "1" : "0");
-        setCSS(heroAmbient, "--ambient-opacity", V.ambient.toFixed(3));
+        setCSS(stage, "--hint-opacity", step < 2 && !busy ? "1" : "0");
+        setCSS(heroAmbient, "--ambient-reveal", V.ambient.toFixed(3));
         // 결합 아이콘을 포스터 위에 두고, 포스터가 아래에서 완전히 나타난 뒤에 아이콘을 지움
         stage.classList.toggle("icons-front", V.move > 0 && V.reveal < 1);
         const posterReady = step === 2 && !busy && V.reveal >= 1;

@@ -48,7 +48,7 @@
             presets: [[72.8, 30.6, 2.14, 238], [58.3, 31.3, 1.93, 238], [12.2, 36.0, 2.19, 226], [48.9, 36.5, 2.03, 239], [75.9, 37.3, 2.6, 218], [93.7, 38.0, 2.24, 218], [70.6, 42.3, 2.24, 238], [8.6, 45.0, 2.34, 219], [47.2, 45.0, 1.67, 240], [3.2, 47.0, 1.88, 240], [71.8, 47.4, 2.24, 238], [13.3, 47.4, 2.03, 239], [71.1, 55.0, 2.03, 242], [10.6, 56.3, 2.08, 219], [47.3, 58.0, 2.24, 231], [96.1, 58.1, 1.88, 238], [7.9, 59.1, 1.88, 242], [88.7, 61.1, 1.93, 238], [13.4, 60.9, 1.61, 245], [81.3, 63.3, 2.14, 222], [62.1, 65.3, 1.98, 238], [74.3, 65.5, 2.08, 240], [93.5, 69.1, 1.82, 245], [10.5, 71.7, 2.45, 230], [72.7, 71.9, 2.14, 222], [49.0, 74.0, 2.24, 218], [30.0, 33.0, 2.0, 236], [36.0, 68.0, 2.2, 222]]
         },
         committee: {
-            colored: true,
+            colored: false,
             float: [8, 18],
             presets: [[83.4, 13.2, 1.46, 244], [92.4, 14.3, 2.08, 238], [10.9, 15.1, 2.08, 238], [18.1, 16.6, 1.35, 245], [77.9, 20.9, 1.46, 244], [13.4, 23.6, 1.46, 244], [6.7, 24.4, 2.03, 235], [92.9, 25.6, 1.67, 244], [12.5, 30.8, 2.03, 235], [19.3, 32.3, 2.4, 244], [7.4, 33.6, 2.08, 238], [94.0, 36.9, 2.08, 231], [8.9, 43.7, 2.19, 231], [98.2, 44.9, 1.51, 244], [13.6, 46.2, 1.67, 244], [10.9, 54.9, 1.93, 231], [95.6, 56.0, 3.12, 244], [89.0, 59.6, 1.61, 244], [81.6, 61.7, 1.98, 233], [15.1, 70.7, 1.82, 233], [90.1, 74.7, 2.08, 238], [9.9, 74.4, 1.46, 244], [80.1, 76.4, 1.61, 244], [4.5, 79.4, 2.29, 238], [13.8, 80.0, 1.82, 233], [18.1, 81.3, 1.88, 244], [86.2, 82.6, 1.41, 244], [7.7, 91.2, 1.67, 244]]
         },
@@ -134,16 +134,12 @@
             return flight.from + (flight.to - flight.from) * easeTravel(progress);
         }
         function startFlight(items, phase, time) {
-            const width = committeeState.width, height = committeeState.height;
-            const distanceToPortal = item => Math.hypot(
-                (item.x < .5 ? item.x : 1 - item.x) * width,
-                (item.y - .5) * height
-            );
+            const distanceToEdge = item => item.x < .5 ? item.x : 1 - item.x;
             [true, false].forEach(left => {
-                // 각 측면의 중앙에 가까운 아이콘부터 3개씩, 묶음 간 동작을 겹쳐 보냅니다.
+                // 화면 가장자리에 가까운 아이콘부터 3개씩, 묶음 간 동작을 겹쳐 보냅니다.
                 const side = items.filter(item => (item.x < .5) === left &&
                     !(phase === "exit" && item.flight?.to === 1));
-                side.sort((a, b) => distanceToPortal(a) - distanceToPortal(b));
+                side.sort((a, b) => distanceToEdge(a) - distanceToEdge(b));
                 side.forEach((item, order) => {
                     item.travel = travelAt(item, time);
                     item.flight = {
@@ -256,19 +252,13 @@
                     } else {
                         x += Math.sin(t * it.freq + it.phase) * it.amp * motion;
                     }
-                    let y = it.y * h + Math.cos(t * it.freq * .9 + it.phase) * it.amp * (it.ampVw ? 1.2 : .6) * motion;
-                    let rot = it.rot + t * (it.rotSpeed || 0) * motion;
-                    let iconScale = 1;
-                    // 양옆 중앙의 한 점으로 휘어져 모이며 작아지고, 입장할 때는 반대로 펼쳐집니다.
+                    const y = it.y * h + Math.cos(t * it.freq * .9 + it.phase) * it.amp * (it.ampVw ? 1.2 : .6) * motion;
+                    const rot = it.rot + t * (it.rotSpeed || 0) * motion;
+                    // 높이·크기·기울기를 유지한 채 각자의 위치에서 양옆으로 드나듭니다.
                     if (it.travel) {
-                        const side = it.x < .5 ? -1 : 1;
-                        const portalX = side < 0 ? -18 : w + 18;
-                        const p = it.travel, remaining = 1 - p;
-                        const controlX = x + (portalX - x) * .55;
-                        x = remaining * remaining * x + 2 * remaining * p * controlX + p * p * portalX;
-                        y = remaining * remaining * y + (1 - remaining * remaining) * h * .5;
-                        iconScale = 1 - .92 * Math.pow(p, 1.6);
-                        rot += side * 70 * p;
+                        const clearance = size + 24;
+                        const edgeX = it.x < .5 ? -clearance : w + clearance;
+                        x += (edgeX - x) * it.travel;
                     }
                     if (isHero && bg && !it.color) {
                         // 배경이 왼쪽 → 오른쪽으로 바뀌는 경계를 따라 아이콘 색도 함께 전환
@@ -287,7 +277,7 @@
                             it.lastTone = c;
                         }
                     }
-                    it.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -50%) rotate(${rot.toFixed(1)}deg) scale(${iconScale.toFixed(3)})`;
+                    it.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -50%) rotate(${rot.toFixed(1)}deg)`;
                 });
             });
         }
@@ -355,7 +345,7 @@
                 const svg = fragmentSVG(member.id);
                 if (svg) {
                     icon.append(svg);
-                    li.style.setProperty("--member-color", FRAGMENTS[member.id].color);
+                    li.style.setProperty("--member-color", DESIGNER_ICON_COLORS.get(member.id) || FRAGMENTS[member.id].color);
                 }
                 const name = document.createElement("span");
                 name.className = "committee-member__name";
