@@ -1715,7 +1715,8 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                     root.classList.remove('project-intro-pending');
                     return;
                 }
-                const entry={animations:[],pieces:[],fragmentSlots:[],inert:[...document.querySelectorAll('.header,.main,.footer')]
+                // Keep header navigation interactive as soon as its entrance reveals it.
+                const entry={animations:[],pieces:[],fragmentSlots:[],inert:[...document.querySelectorAll('.main,.footer')]
                     .map(element=>[element,element.inert])};
                 intro=entry;
                 phase='intro';
