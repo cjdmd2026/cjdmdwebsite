@@ -97,6 +97,29 @@
 
     }
 
+    // Rank slide destinations by relevance; title matches take priority over descriptive text.
+    function searchKey(value) {
+        return normalize(value).normalize('NFKC').replace(/[^\p{L}\p{N}]/gu, '');
+    }
+
+    function scoreProject(project, query) {
+        if (!project) return 0;
+        const terms = String(query).trim().split(/\s+/).map(searchKey).filter(Boolean);
+        if (!terms.length) return 0;
+        const fields = [
+            [project.title, 100],
+            ...(project.members || []).map(member => [member, 75]),
+            [project.topic, 55], [project.category, 40], [project.description, 25]
+        ].map(([value, weight]) => [searchKey(value), weight]);
+        const scores = terms.map(term => Math.max(0, ...fields.map(([text, weight]) =>
+            !text.includes(term) ? 0 : weight + (text === term ? 30 : text.startsWith(term) ? 20 : 10)
+        )));
+        if (scores.some(score => score === 0)) return 0;
+        const title = fields[0][0], fullQuery = searchKey(query);
+        return scores.reduce((sum, score) => sum + score, 0) / scores.length +
+            (title === fullQuery ? 40 : title.startsWith(fullQuery) ? 20 : 0);
+    }
+
 
 
     // =========================================================
@@ -111,10 +134,8 @@
             );
 
 
-        const searchInput =
-            document.querySelector(
-                ".search-bar input"
-            );
+        const searchInputs = [...document.querySelectorAll('.search-bar input')];
+        const searchInput = searchInputs[0];
 
 
         const gridCards =
@@ -445,8 +466,8 @@
             // =================================================
             // SLIDE
             //
-            // 카테고리 필터는 적용하지 않음
-            // 검색만 적용
+            // Modern slide search navigates the complete list instead of hiding its destination.
+            // Older project pages retain their original search filtering.
             // =================================================
 
             slideCards.forEach(
@@ -470,8 +491,7 @@
                         );
 
 
-                    card.hidden =
-                        !searchMatch;
+                    card.hidden = window.ProjectFluidSlide?.focusSearch ? false : !searchMatch;
 
                 }
             );
@@ -518,6 +538,13 @@
         // =====================================================
         // Filter 버튼
         // =====================================================
+
+        function applyFilterWithExit() {
+            if (window.ProjectViewTransition?.transitionGridResults) {
+                return window.ProjectViewTransition.transitionGridResults(applyResults);
+            }
+            applyResults();
+        }
 
         filterButtons.forEach(
             button => {
@@ -576,7 +603,7 @@
 
 
                         // 카드 필터 적용
-                        applyResults();
+                        void applyFilterWithExit();
 
                     }
 
@@ -643,7 +670,7 @@
                         allButton;
 
 
-                    applyResults();
+                    void applyFilterWithExit();
 
                 }
 
@@ -657,27 +684,53 @@
         // 검색
         // =====================================================
 
-        if (searchInput) {
-
-            searchInput.addEventListener(
-                "input",
-
-                event => {
-
-                    searchQuery =
-                        normalize(
-                            event.target.value
-                        );
-
-
-                    applyResults();
-
-                }
-
-            );
-
+        function navigateToSearch(immediate = false) {
+            if (!window.ProjectFluidSlide?.focusSearch) return;
+            if (document.documentElement.dataset.projectFluidView !== 'slide') {
+                window.ProjectFluidSlide.focusSearch(null);
+                return;
+            }
+            const query = searchInput?.value || '';
+            const current = Math.max(0, slideCards.findIndex(card => card.classList.contains('is-active')));
+            const ranked = slideCards.map((card, index) => ({
+                id: card.dataset.projectId,
+                score: scoreProject(getProject(card.dataset.projectId), query),
+                distance: Math.abs(index - current), index
+            })).filter(result => result.score > 0)
+                .sort((a, b) => b.score - a.score || a.distance - b.distance || a.index - b.index);
+            window.ProjectFluidSlide.focusSearch(ranked[0]?.id || null, { immediate });
         }
 
+        searchInputs.forEach(input => {
+            let composing = false;
+            const updateSearch = event => {
+                searchInputs.forEach(other => { if (other !== input) other.value = input.value; });
+                searchQuery = normalize(input.value);
+                window.ProjectViewTransition?.cancelGridResults();
+                applyResults();
+                if (composing || event?.isComposing) window.ProjectFluidSlide?.focusSearch(null);
+                else navigateToSearch();
+            };
+            input.addEventListener('compositionstart', () => {
+                composing = true;
+                window.ProjectFluidSlide?.focusSearch(null);
+            });
+            input.addEventListener('compositionend', event => {
+                composing = false;
+                updateSearch(event);
+            });
+            input.addEventListener('input', updateSearch);
+            input.addEventListener('keydown', event => {
+                if (composing || event.isComposing) return;
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    navigateToSearch(true);
+                } else if (event.key === 'Escape') {
+                    input.value = '';
+                    updateSearch();
+                }
+            });
+        });
 
 
         // =====================================================
@@ -718,6 +771,11 @@
         // =====================================================
         // Grid View로 전환할 때 Indicator 위치 다시 계산
         // =====================================================
+
+        document.addEventListener('project-view-change', event => {
+            if (event.detail?.view === 'grid') setIndicatorImmediately(currentButton);
+            navigateToSearch(true);
+        });
 
         const viewButtons =
             document.querySelectorAll(

@@ -1,7 +1,7 @@
 /* Project slide variant: scene-colored personal icon matrix dissolve (independent alternative to the white wave).
  * Replace the existing project controller script with this file (use defer).
- * Required existing files: project-data.js and assets/images/project/test/icon/*.svg.
- * CSS and overlay markup are inserted automatically. No HTML body or CSS edits.
+ * Required data: project-data.js, designer-data.js, designer-icon-data.js and assets/images/project/test/icon/*.svg.
+ * Transition overlays are inserted automatically. The entry gate/cover live in project/index.html and project_03.css.
  */
 (() => {
   "use strict";
@@ -14,6 +14,23 @@
       window.PROJECT_WAVE_OPTIONS?.iconBaseUrl || "../assets/images/project/test/icon/",
       document.baseURI
     );
+    // Keep each color's original viewBox, paths and group transforms so pieces reassemble exactly.
+    function splitIconColors(svg) {
+      const shapes = root => [...root.querySelectorAll('path,rect,circle,ellipse,polygon,polyline,line')]
+        .filter(node => !node.closest('defs,clipPath,mask'));
+      const colors = shapes(svg).map(element => {
+        for (let node = element; node; node = node.parentElement) {
+          const value = node.style?.fill || node.getAttribute('fill');
+          if (value) return value.trim().toLowerCase();
+        }
+        return '#000000';
+      });
+      return [...new Set(colors.filter(color => color !== 'none'))].map(color => {
+        const piece = svg.cloneNode(true);
+        shapes(piece).forEach((node, index) => { if (colors[index] !== color) node.remove(); });
+        return {color, svg: piece};
+      });
+    }
     const waveStyle = document.createElement("style");
     waveStyle.dataset.projectWaveStyle = "";
     waveStyle.textContent = `
@@ -26,8 +43,11 @@
 html.project-wave-running #slideview .card,
 html.project-wave-running .project-info { transition: none !important; }
 html[data-project-fluid-view="slide"].project-wave-text-pending :is(
-  .project-dial-title, .project-info, .title-section .project-title, .desktop-slide-description
-) { visibility: hidden !important; opacity: 0 !important; animation: none !important; }
+  .project-dial-title, .title-section .project-title, .desktop-slide-description
+),
+html[data-project-fluid-view="slide"].project-wave-text-pending:not(.project-intro-copy-ready):not(.project-wave-copy-ready) .project-info {
+  visibility: hidden !important; opacity: 0 !important; animation: none !important;
+}
 html[data-project-fluid-view="slide"].project-wave-text-enter :is(
   .project-dial-item.is-active .project-dial-title, .project-info,
   .title-section .project-title, .desktop-slide-description
@@ -105,10 +125,10 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
   const fragmentSource = `
     precision highp float;
     varying vec2 uv;
-    uniform sampler2D imageA, imageB, iconAtlas, foreground, nextForeground, controls, nextControls;
+    uniform sampler2D imageA, imageB, iconAtlas, foreground, nextForeground;
     uniform vec2 resolution, sizeA, sizeB, iconGrid;
     uniform vec4 sceneTint;
-    uniform float slideProgress, trailFade, direction, cellSize, codeTime, iconCount;
+    uniform float slideProgress, trailFade, direction, cellSize, codeTime, iconCount, fromBlank, toBlank;
     float random(vec2 p) {
       return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);
     }
@@ -147,12 +167,9 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
       // The two masks never overlap, so project copy is not crossfaded together.
       float alpha=content.a*copyMask.x+nextContent.a*copyMask.y;
       vec3 premultiplied=content.rgb*content.a*copyMask.x+nextContent.rgb*nextContent.a*copyMask.y;
-      vec3 background=mix(mix(a,b,incoming),sceneTint.rgb,sceneTint.a);
-      // Controls follow the scene, never the title's opacity/position animation.
-      // Each glass snapshot already includes its backdrop and translucent fill.
-      vec4 ui=texture2D(controls,p), nextUI=texture2D(nextControls,p);
-      float uiAlpha=mix(ui.a,nextUI.a,incoming);
-      background=background*(1.-uiAlpha)+mix(ui.rgb*ui.a,nextUI.rgb*nextUI.a,incoming);
+      // Keep the intro background untinted; subsequent slides share the usual scrim.
+      vec3 background=mix(mix(a,sceneTint.rgb,sceneTint.a*(1.-fromBlank)),
+        mix(b,sceneTint.rgb,sceneTint.a*(1.-toBlank)),incoming);
       return background*(1.-alpha)+premultiplied;
     }
     void main() {
@@ -164,7 +181,7 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
       float axis=direction>0.?uv.y:1.-uv.y;
       float wave=(n1-.5)*.24+sin(uv.x*5.5+n2*2.6+q*1.8)*.038;
       // The image, copy, and icon band share the same moving boundary.
-      float front=mix(-.24,1.30,q)-axis+wave*amp;
+      float front=mix(mix(-.24,-.12,fromBlank),1.30,q)-axis+wave*amp;
       float incoming=ease(-.035,.035,front);
       vec2 cells=resolution/vec2(cellSize);
       vec2 grid=uv*cells;
@@ -176,7 +193,6 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
       float becomeIcons=ease(-.035,.035,front+.12+grain);
       float becomeImage=ease(-.07,.09,front-.18+grain);
       vec2 copyMask=vec2(1.-becomeIcons,becomeImage);
-      vec3 color=scene(center,incoming,copyMask);
       // Keep the matrix alive throughout the automatic transition.
       float clock=codeTime*(1.2+seed*.8)+seed*5.;
       float step=floor(clock);
@@ -188,6 +204,14 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
       float change=ease(.68,1.,fract(clock));
       float ink=mix(iconA.a,iconB.a,change);
       float iconAmount=becomeIcons*(1.-becomeImage);
+      // Keep the matrix band and its uneven lingering tail together.
+      float trailLength=.22+random(cell+vec2(17.3,9.1))*.48;
+      float trailDensity=ease(.28,.72,random(cell+vec2(4.7,23.6)));
+      float trail=ease(.10,.24,front)
+        *(1.-ease(.20,.24+trailLength,front));
+      float trailAmount=trail*trailDensity*(1.-iconAmount)*(1.-trailFade);
+      // Image exits keep sampling the outgoing artwork as the icons dissolve into white.
+      vec3 color=scene(center,incoming*(1.-toBlank),copyMask);
       // As in the text version, each cell takes its color from the scene below.
       vec3 detail=scene(uv,incoming,copyMask);
       vec3 iconColor=min(color*1.35+.025,vec3(1.));
@@ -196,11 +220,6 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
       vec3 iconLayer=mix(bandBackground,iconColor,ink);
       vec3 result=mix(detail,iconLayer,iconAmount);
       // Uneven lifetimes leave a long, sparse trail over the incoming image.
-      float trailLength=.22+random(cell+vec2(17.3,9.1))*.48;
-      float trailDensity=ease(.28,.72,random(cell+vec2(4.7,23.6)));
-      float trail=ease(.10,.24,front)
-        *(1.-ease(.20,.24+trailLength,front));
-      float trailAmount=trail*trailDensity*(1.-iconAmount)*(1.-trailFade);
       vec3 trailColor=mix(iconColor,vec3(1.),.76);
       result=mix(result,trailColor,ink*trailAmount*.30);
       gl_FragColor=vec4(result,1.);
@@ -245,21 +264,9 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
           svg.querySelectorAll('style,animate,animateTransform,animateMotion,set').forEach(node => node.remove());
           svg.setAttribute('width', '64');
           svg.setAttribute('height', '64');
-          const selector = 'path,rect,circle,ellipse,polygon,polyline,line';
-          const shapes = root => [...root.querySelectorAll(selector)].filter(node => !node.closest('defs,clipPath,mask'));
-          const fill = element => {
-            for (let node = element; node; node = node.parentElement) {
-              const value = node.style?.fill || node.getAttribute('fill');
-              if (value) return value.trim().toLowerCase();
-            }
-            return '#000000';
-          };
-          const colors = shapes(svg).map(fill);
           // These groups match the personal assignments in designer-icon-data.js.
           // Preserve every path of one color, including disconnected components.
-          return Promise.all([...new Set(colors.filter(color => color !== 'none'))].map(async color => {
-            const personal = svg.cloneNode(true);
-            shapes(personal).forEach((node, index) => { if (colors[index] !== color) node.remove(); });
+          return Promise.all(splitIconColors(svg).map(async ({svg: personal}) => {
             const url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(personal)], {type: 'image/svg+xml'}));
             urls.push(url);
             const image = new Image();
@@ -316,7 +323,7 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
     const position = gl.getAttribLocation(program, 'position');
     gl.enableVertexAttribArray(position);
     gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-    uniforms = Object.fromEntries(['imageA','imageB','iconAtlas','foreground','nextForeground','controls','nextControls','resolution','sizeA','sizeB','sceneTint','slideProgress','trailFade','direction','cellSize','codeTime','iconCount','iconGrid']
+    uniforms = Object.fromEntries(['imageA','imageB','iconAtlas','foreground','nextForeground','resolution','sizeA','sizeB','sceneTint','slideProgress','trailFade','direction','cellSize','codeTime','iconCount','iconGrid','fromBlank','toBlank']
       .map(name => [name, gl.getUniformLocation(program, name)]));
     atlas = texture(icons.sheet);
     atlasCount = icons.count;
@@ -326,116 +333,17 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
     return true;
   }
 
-// Rasterize the glass controls separately so their alpha is applied only once.
-async function captureControls(bounds, ratio, backgroundSource) {
-  const surface = document.createElement('canvas');
-  surface.width = Math.max(1, Math.round(bounds.width * ratio));
-  surface.height = Math.max(1, Math.round(bounds.height * ratio));
-  surface.controlCount = 0;
-  const elements = [...document.querySelectorAll(
-    '.project-description .search-bar input, .project-description .view-button'
-  )].filter(element => {
-    const rect = element.getBoundingClientRect(), style = getComputedStyle(element);
-    return element.getClientRects().length && rect.width && rect.height &&
-      style.visibility === 'visible' && style.display !== 'none';
-  });
-  if (!elements.length) return surface;
-  const image = await prepare(backgroundSource);
-  const backdrop = document.createElement('canvas');
-  backdrop.width = surface.width;
-  backdrop.height = surface.height;
-  const background = backdrop.getContext('2d');
-  const scale = Math.max(bounds.width / image.naturalWidth, bounds.height / image.naturalHeight);
-  const width = image.naturalWidth * scale, height = image.naturalHeight * scale;
-  background.scale(ratio, ratio);
-  background.drawImage(image, (bounds.width-width)/2, (bounds.height-height)/2, width, height);
-  const tint = readSceneTint();
-  background.fillStyle = `rgba(${tint[0]*255},${tint[1]*255},${tint[2]*255},${tint[3]})`;
-  background.fillRect(0, 0, bounds.width, bounds.height);
-  const ctx = surface.getContext('2d');
-  ctx.scale(ratio, ratio);
-  const opacity = element => {
-    let value = 1;
-    for (let node = element; node instanceof Element; node = node.parentElement) {
-      value *= Number(getComputedStyle(node).opacity);
-    }
-    return value;
-  };
-  for (const element of elements) {
-    const rect = element.getBoundingClientRect(), style = getComputedStyle(element);
-    const x = rect.left-bounds.left, y = rect.top-bounds.top;
-    const patch = document.createElement('canvas');
-    patch.width = Math.ceil(rect.width*ratio);
-    patch.height = Math.ceil(rect.height*ratio);
-    const paint = patch.getContext('2d');
-    paint.scale(ratio, ratio);
-    const radius = Math.min(parseFloat(style.borderTopLeftRadius) || 0, rect.width/2, rect.height/2);
-    paint.beginPath();
-    paint.roundRect(0, 0, rect.width, rect.height, radius);
-    paint.clip();
-    const blur = Number((style.backdropFilter || style.webkitBackdropFilter || '').match(/blur\(([\d.]+)px\)/)?.[1]) || 0;
-    const padding = Math.ceil(blur*3);
-    paint.filter = blur ? `blur(${blur}px)` : 'none';
-    paint.drawImage(backdrop, (x-padding)*ratio, (y-padding)*ratio,
-      (rect.width+padding*2)*ratio, (rect.height+padding*2)*ratio,
-      -padding, -padding, rect.width+padding*2, rect.height+padding*2);
-    paint.filter = 'none';
-    paint.fillStyle = style.backgroundColor;
-    paint.fillRect(0, 0, rect.width, rect.height);
-    const border = parseFloat(style.borderTopWidth) || 0;
-    if (border && style.borderTopStyle !== 'none') {
-      paint.lineWidth = border;
-      paint.strokeStyle = style.borderTopColor;
-      paint.beginPath();
-      paint.roundRect(border/2, border/2, rect.width-border, rect.height-border, Math.max(0,radius-border/2));
-      paint.stroke();
-    }
-    if (element instanceof HTMLInputElement) {
-      const placeholder = getComputedStyle(element, '::placeholder');
-      const text = element.value || element.placeholder;
-      const left = (parseFloat(style.paddingLeft)||0)+border;
-      const right = (parseFloat(style.paddingRight)||0)+border;
-      paint.save();
-      paint.beginPath();
-      paint.rect(left, border, Math.max(0,rect.width-left-right), rect.height-border*2);
-      paint.clip();
-      paint.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
-      paint.textBaseline = 'alphabetic';
-      paint.fillStyle = element.value ? style.color : placeholder.color;
-      paint.globalAlpha = element.value ? 1 : Number(placeholder.opacity);
-      if ('letterSpacing' in paint) paint.letterSpacing = style.letterSpacing === 'normal' ? '0px' : style.letterSpacing;
-      const metrics = paint.measureText('Mg');
-      const ascent = metrics.fontBoundingBoxAscent ?? parseFloat(style.fontSize)*.8;
-      const descent = metrics.fontBoundingBoxDescent ?? parseFloat(style.fontSize)*.2;
-      paint.fillText(text, left-element.scrollLeft, (rect.height-ascent-descent)/2+ascent);
-      paint.restore();
-    }
-    const images = (element instanceof HTMLInputElement ? element.parentElement : element).querySelectorAll('img');
-    for (const icon of images) {
-      const iconStyle = getComputedStyle(icon), iconRect = icon.getBoundingClientRect();
-      if (!iconRect.width || !iconRect.height || iconStyle.visibility !== 'visible') continue;
-      await icon.decode();
-      paint.save();
-      paint.globalAlpha = Number(iconStyle.opacity);
-      paint.filter = iconStyle.filter;
-      paint.translate(iconRect.left-rect.left+iconRect.width/2, iconRect.top-rect.top+iconRect.height/2);
-      const matrix = new DOMMatrixReadOnly(iconStyle.transform === 'none' ? undefined : iconStyle.transform);
-      paint.rotate(Math.atan2(matrix.b, matrix.a));
-      const iconWidth = parseFloat(iconStyle.width), iconHeight = parseFloat(iconStyle.height);
-      paint.drawImage(icon, -iconWidth/2, -iconHeight/2, iconWidth, iconHeight);
-      paint.restore();
-    }
-    ctx.save();
-    ctx.globalAlpha = opacity(element);
-    ctx.drawImage(patch, 0, 0, rect.width*ratio, rect.height*ratio, x, y, rect.width, rect.height);
-    ctx.restore();
-    surface.controlCount++;
+  function waveTiming(progress, fromBlank = false) {
+    const t = Math.max(0, Math.min(1, progress / .82));
+    const tail = Math.max(0, Math.min(1, (progress-.70)/.30));
+    return {
+      slideProgress: fromBlank ? 1-Math.pow(1-t,3) : t*t*t*(t*(t*6-15)+10),
+      trailFade: tail*tail*(3-2*tail)
+    };
   }
-  return surface;
-}
 
-// Keep title motion independent from the captured search and view controls.
-async function captureForeground(target, {includeHidden = false, backgroundSource} = {}) {
+// Capture project titles only; search and view controls stay in their fixed DOM layer.
+async function captureForeground(target, {includeHidden = false} = {}) {
   const bounds = target.getBoundingClientRect();
   const ratio = Math.min(devicePixelRatio || 1, 1.5);
   const surface = document.createElement('canvas');
@@ -491,10 +399,8 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
   textLayer.width = surface.width;
   textLayer.height = surface.height;
   textLayer.getContext('2d').drawImage(surface, 0, 0);
-  // Icons live in a separate DOM dial above the transition canvas.
-  const source = backgroundSource || getComputedStyle(target).backgroundImage.match(/^url\(["']?(.*?)["']?\)$/)?.[1];
-  surface.controls = await captureControls(bounds, ratio, source);
-  surface.codeContent = {textRuns, iconCount:0, controlCount:surface.controls.controlCount};
+  // Icons and controls live in separate DOM layers above the transition canvas.
+  surface.codeContent = {textRuns, iconCount:0};
   surface.renderCodeFrame = (slideProgress, incoming, direction) => {
     const copyPhase = incoming ? 1-slideProgress : slideProgress;
     ctx.save();
@@ -533,7 +439,8 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
     Object.assign(overlay.style, {left: `${rect.left}px`, top: `${rect.top}px`, width: `${rect.width}px`, height: `${rect.height}px`});
     const header = document.querySelector('.header');
     const z = parseInt(header ? getComputedStyle(header).zIndex : '1000', 10);
-    overlay.style.zIndex = String(Number.isFinite(z) && z > 1 ? z - 1 : 999);
+    // Image-only exits sit above the background scrim, below all foreground UI.
+    overlay.style.zIndex = job.imageOnly ? '0' : String(Number.isFinite(z) && z > 1 ? z - 1 : 999);
     const ratio = Math.min(devicePixelRatio || 1, 1.5);
     const width = Math.max(1, Math.round(rect.width * ratio));
     const height = Math.max(1, Math.round(rect.height * ratio));
@@ -548,10 +455,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
     gl.useProgram(program);
     syncBounds();
     // Reveal the new scene first, then let the remaining pale icons dissipate.
-    const t = Math.max(0, Math.min(1, progress / .82));
-    const slideProgress = t*t*t*(t*(t*6-15)+10);
-    const tail = Math.max(0, Math.min(1, (progress-.70)/.30));
-    const trailFade = tail*tail*(3-2*tail);
+    const {slideProgress, trailFade} = waveTiming(progress, job.fromBlank && !job.imageOnly);
     // Reuse the cached copy throughout the code transition.
     for (const [source, value, incoming] of [[job.contentSource,job.content,false],[job.nextSource,job.nextContent,true]]) {
       if (!source?.renderCodeFrame || progress === job.paintedProgress) continue;
@@ -561,7 +465,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
       overlay.dataset[incoming?'incomingMotion':'outgoingMotion']=source.codeContent.copyMotion.toFixed(3);
     }
     job.paintedProgress=progress;
-    [job.a, job.b, atlas, job.content, job.nextContent, job.controls, job.nextControls].forEach((value, index) => {
+    [job.a, job.b, atlas, job.content, job.nextContent].forEach((value, index) => {
       gl.activeTexture(gl.TEXTURE0 + index);
       gl.bindTexture(gl.TEXTURE_2D, value);
     });
@@ -572,18 +476,18 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
     gl.uniform2f(uniforms.iconGrid, atlasGrid[0], atlasGrid[1]);
     gl.uniform1i(uniforms.foreground, 3);
     gl.uniform1i(uniforms.nextForeground, 4);
-    gl.uniform1i(uniforms.controls, 5);
-    gl.uniform1i(uniforms.nextControls, 6);
     gl.uniform2f(uniforms.sizeA, job.from.naturalWidth, job.from.naturalHeight);
     gl.uniform2f(uniforms.sizeB, job.to.naturalWidth, job.to.naturalHeight);
     gl.uniform4fv(uniforms.sceneTint, job.sceneTint);
+    gl.uniform1f(uniforms.fromBlank, job.fromBlank ? 1 : 0);
+    gl.uniform1f(uniforms.toBlank, job.toBlank ? 1 : 0);
     gl.uniform1f(uniforms.slideProgress, slideProgress);
     gl.uniform1f(uniforms.trailFade, trailFade);
     gl.uniform1f(uniforms.codeTime, job.codeTime);
     gl.uniform1f(uniforms.direction, job.direction);
     gl.uniform1f(uniforms.cellSize, Math.max(8, Number(options.cellSize) || 12));
     gl.drawArrays(gl.TRIANGLES, 0, 6);
-    job.onProgress?.(slideProgress);
+    job.onProgress?.(slideProgress, progress);
     overlay.dataset.progress = progress.toFixed(3);
   }
   function finish(success) {
@@ -599,8 +503,6 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
     gl?.deleteTexture(previous.b);
     gl?.deleteTexture(previous.content);
     gl?.deleteTexture(previous.nextContent);
-    gl?.deleteTexture(previous.controls);
-    gl?.deleteTexture(previous.nextControls);
     if (success) completed++;
     previous.resolve(success);
   }
@@ -614,7 +516,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
     job.elapsed += dt * job.playbackRate;
     const progress = Math.min(1, job.elapsed / job.durationMs);
     try {
-      // Capture the incoming controls before the narrow band reaches the viewport.
+      // Capture the incoming title before the narrow band reaches the viewport.
       if (!job.swapped && progress >= .08) {
         job.swapped = true;
         const incoming = job.swap();
@@ -627,13 +529,10 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
             if(content) {
               gl.deleteTexture(active.nextContent);
               active.nextContent=texture(content);
-              gl.deleteTexture(active.nextControls);
-              active.nextControls=texture(content.controls || document.createElement('canvas'));
               active.nextSource=content;
               active.paintedProgress=null;
               overlay.dataset.incomingText=String(content.codeContent?.textRuns || 0);
               overlay.dataset.incomingIcons=String(content.codeContent?.iconCount || 0);
-              overlay.dataset.incomingControls=String(content.codeContent?.controlCount || 0);
             }
             active.preparing=false;
             active.last=performance.now();
@@ -664,7 +563,13 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
     const rgba = context.getImageData(0,0,1,1).data;
     return [rgba[0]/255,rgba[1]/255,rgba[2]/255,rgba[3]/255*Number(style.opacity)];
   }
-  async function transition({direction = 1, swap, from, to, target, foreground = null, onStart, onProgress}) {
+  async function prepareTransition(from, to) {
+    const sources = await Promise.all([prepare(from), prepare(to), prepareIconAtlas()]);
+    initGL(sources[2]);
+    return sources;
+  }
+  async function transition({direction = 1, swap, from, to, target, foreground = null, fromBlank = false,
+    toBlank = false, imageOnly = false, sceneTint = null, durationMs = options.durationMs, prepared = null, onStart, onProgress}) {
     if (job) return false;
     const current = ++generation;
     if (reduced.matches) { await swap(); return true; }
@@ -675,7 +580,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
     }
     let sources;
     try {
-      sources = await Promise.all([prepare(from), prepare(to), prepareIconAtlas()]);
+      sources = prepared || await prepareTransition(from, to);
       if (current !== generation) return false;
       if (!initGL(sources[2])) return withoutCanvas();
     } catch (error) {
@@ -687,8 +592,8 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
       const now = performance.now();
       job = {direction: Math.sign(direction) || 1, swap, target, resolve, onProgress,
         codeTime: 0, playbackRate: updatePlaybackRate(now),
-        durationMs: Math.max(300, Number(options.durationMs) || 2100),
-        sceneTint: readSceneTint(),
+        durationMs: Math.max(300, Number(durationMs) || 2100),
+        sceneTint: sceneTint || readSceneTint(), fromBlank, toBlank, imageOnly,
         from: sources[0], to: sources[1], swapped: false, elapsed: 0, last: now};
       try {
         job.a = texture(job.from);
@@ -697,14 +602,12 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
         job.content = texture(content);
         job.contentSource = content;
         job.nextContent = texture(document.createElement('canvas'));
-        job.controls = texture(content.controls || document.createElement('canvas'));
-        job.nextControls = texture(content.controls || document.createElement('canvas'));
         overlay.dataset.incomingText = '0';
         overlay.dataset.incomingIcons = '0';
-        overlay.dataset.incomingControls = '0';
         overlay.dataset.foregroundText = String(content.codeContent?.textRuns || 0);
         overlay.dataset.foregroundIcons = String(content.codeContent?.iconCount || 0);
-        overlay.dataset.foregroundControls = String(content.codeContent?.controlCount || 0);
+        overlay.dataset.scope = imageOnly ? 'image' : 'scene';
+        overlay.dataset.imagePhase = imageOnly ? (fromBlank ? 'entering' : 'leaving') : '';
         paint(0);
         overlay.dataset.phase = 'covering';
         overlay.classList.add('is-active');
@@ -717,6 +620,17 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
         finish(true);
       }
     });
+  }
+  function transitionImage({source, target, entering = false, onStart, onProgress}) {
+    const blank = document.createElement('canvas');
+    blank.width = blank.height = 1;
+    const context = blank.getContext('2d');
+    context.fillStyle = '#fff';
+    context.fillRect(0,0,1,1);
+    const white = blank.toDataURL();
+    return transition({from:entering?white:source,to:entering?source:white,target,onStart,onProgress,
+      fromBlank:entering,toBlank:!entering,imageOnly:true,sceneTint:readSceneTint(),
+      direction:entering?-1:1,durationMs:1000,swap(){}});
   }
   function updateScrollSpeed(delta) {
     if (!Number.isFinite(delta) || !delta) return;
@@ -763,7 +677,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
   });
   if (!reduced.matches) void prepareIconAtlas().catch(() => {});
   window.ProjectWave = window.ProjectASCII = Object.freeze({
-    ready: Promise.resolve(), prepare, captureForeground, transition, updateScrollSpeed, cancel,
+    ready: Promise.resolve(), prepare, prepareTransition, captureForeground, transition, transitionImage, updateScrollSpeed, cancel,
     get state() { return {busy: !!job, phase: overlay.dataset.phase || 'idle', completed, progress: Number(overlay.dataset.progress || 0)}; }
   });
 })();
@@ -1147,9 +1061,10 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
             let lastWheelAmount=0,lastWheelNavigation=0;
             let wanted=null,wantedDirection=1,loading=false,prepared=null;
             let initial=true,stoppedLenis=null;
+            let searchTarget=null,searchTimer=0;
             let descriptionExit=null;
             const root=document.documentElement;
-
+            let intro=null;
             // =========================================================
             // Project Dial
             // ---------------------------------------------------------
@@ -1260,7 +1175,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
 
             #slideview.is-fluid-transitioning .card img { visibility:hidden; }
             #slideview .card[data-fluid-instant] { transition:none!important; }
-            html[data-project-fluid-view="slide"],html[data-project-fluid-view="slide"] body { overflow:hidden; }
+            html[data-project-fluid-view="slide"] body { overflow:hidden; }
 
             /*
              * Dial은 JS가 매 프레임 위치/농도/크기를 연속 보간합니다.
@@ -1459,7 +1374,8 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                 const progress=moving?dialClamp(iconTransition.progress,0,1):0;
                 const height=iconRail.clientHeight;
                 // 제목과 같은 화면 중앙에 현재 아이콘을 두고, 나머지는 위아래 공간에 맞춥니다.
-                const center=dialClamp(window.innerHeight/2-iconRail.getBoundingClientRect().top,0,height);
+                // Fixed layout coordinates stay stable while the view transition scales the rail.
+                const center=dialClamp(window.innerHeight/2-iconRail.offsetTop,0,height);
                 const size=Math.min(iconRail.clientWidth,2*Math.min(center,height-center));
                 iconRail.style.setProperty('--project-rail-icon-size',`${size.toFixed(2)}px`);
                 const layoutAt=(activeIndex,itemIndex)=>{
@@ -1529,8 +1445,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
             function applyDialVisual(position){
                 if(!projectDial||!projectDialList||!projectDialItems.length)return;
 
-                const dialRect=projectDial.getBoundingClientRect();
-                const centerInsideDial=window.innerHeight/2-dialRect.top;
+                const centerInsideDial=window.innerHeight/2-projectDial.offsetTop;
                 const itemCenter=getDialItemCenterAt(position);
 
                 projectDialList.style.transform=
@@ -1762,11 +1677,302 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                 const results=await Promise.all(animations.map(animation=>animation.finished.then(()=>true,()=>false)));
                 return results.every(Boolean);
             }
+            function clearEntryPieces(entry){
+                entry.pieces.forEach(({element,label})=>{element.remove();label?.remove();});
+                entry.pieces=[];
+                entry.fragmentSlots.forEach(slot=>slot.classList.remove('is-entry-fragmented'));
+                entry.fragmentSlots=[];
+            }
+            function finishIntro(cancel=false){
+                const entry=intro;
+                if(!entry)return;
+                intro=null;
+                clearTimeout(entry.timeout);
+                entry.observer?.disconnect();
+                entry.release?.();
+                clearEntryPieces(entry);
+                entry.labels?.remove();
+                entry.animations.forEach(animation=>animation.cancel());
+                entry.inert.forEach(([element,value])=>{element.inert=value;});
+                if(cancel)window.ProjectWave.cancel();
+                root.classList.remove('project-intro-pending','project-intro-running','project-intro-aligned','project-intro-copy-ready',
+                    'project-wave-text-pending');
+                delete iconRail.dataset.entryPhase;
+                phase='idle';
+                wheelTotal=0;wheelLocked=false;lastWheel=0;
+                syncIconRail(cards[index]?.dataset.projectId);
+                if(!disposed&&!slideview.hidden){
+                    // Keep the description's earlier reveal running through the wave's final tail.
+                    if(cancel||!entry.copyRevealed)updateSlideInfo(cards[index].dataset.projectId,false);
+                    forceTextVisible();
+                    flushSearchFocus();
+                }
+            }
+            async function playEntryIntro(){
+                clearTimeout(window.projectIntroFallback);
+                if(!root.classList.contains('project-intro-pending'))return;
+                if(reduce.matches||innerWidth<760||slideview.hidden){
+                    root.classList.remove('project-intro-pending');
+                    return;
+                }
+                const entry={animations:[],pieces:[],fragmentSlots:[],inert:[...document.querySelectorAll('.header,.main,.footer')]
+                    .map(element=>[element,element.inert])};
+                intro=entry;
+                phase='intro';
+                entry.inert.forEach(([element])=>{element.inert=true;});
+                // Failed assets or a suspended animation must never leave a blank, locked page.
+                entry.timeout=setTimeout(()=>{if(intro===entry)finishIntro(true);},12000);
+                const play=(element,frames,options)=>{
+                    const animation=element.animate(frames,{fill:'both',...options});
+                    entry.animations.push(animation);
+                    return animation;
+                };
+                const designers=new Map((window.DESIGNERS||[]).map(designer=>[designer.id,designer.nameKo]));
+                const owners=new Map((window.DESIGNER_ICON_PROJECTS||[]).map(project=>[
+                    String(project.projectId),new Map(Object.entries(project.studentColors||{})
+                        .map(([id,color])=>[color.trim().toLowerCase(),{id,name:designers.get(id)}]))
+                ]));
+                try{
+                    const introBackground=document.createElement('canvas');
+                    introBackground.width=innerWidth;
+                    introBackground.height=innerHeight;
+                    const paint=introBackground.getContext('2d');
+                    // Match the CSS cover so the first slide continues without a background flash.
+                    const gradient=paint.createLinearGradient(0,0,0,introBackground.height);
+                    gradient.addColorStop(0,'#f4f4f4');
+                    gradient.addColorStop(.5,'#fff');
+                    gradient.addColorStop(1,'#f4f4f4');
+                    paint.fillStyle=gradient;
+                    paint.fillRect(0,0,introBackground.width,introBackground.height);
+                    const from=introBackground.toDataURL(),to=getSource(cards[index]);
+                    // Decode both scenes and compile the shader before any icon motion starts.
+                    const [prepared]=await Promise.all([
+                        window.ProjectWave.prepareTransition(from,to),...iconLoads,document.fonts.ready,
+                        document.fonts.load('600 12px "Pretendard Variable"',projectDialItems
+                            .map(item=>getProjectById(item.dataset.projectId)?.title||'').concat([...designers.values()])
+                            .join(' ')).catch(()=>[])
+                    ]);
+                    if(intro!==entry)return;
+                    // A navigation wave may still cover this page. Begin only when it has left.
+                    await new Promise(resolve=>{
+                        const check=()=>{
+                            if(!root.classList.contains('page-transition-preload')
+                                &&!document.querySelector('.page-transition-layer')){
+                                entry.observer.disconnect();resolve();
+                            }
+                        };
+                        entry.release=resolve;
+                        entry.observer=new MutationObserver(check);
+                        entry.observer.observe(document.body,{childList:true});
+                        entry.observer.observe(root,{attributes:true,attributeFilter:['class']});
+                        check();
+                    });
+                    if(intro!==entry)return;
+                    syncIconRail(cards[index].dataset.projectId);
+                    updateSlideInfo(cards[index].dataset.projectId,false);
+                    forceTextVisible();settleAsciiContent();
+                    const incoming=await captureAsciiContent(cards[index],{includeHidden:true});
+                    if(intro!==entry)return;
+                    const bounds=iconRail.getBoundingClientRect();
+                    const size=parseFloat(iconRail.style.getPropertyValue('--project-rail-icon-size'));
+                    if(!size)return;
+                    const originX=innerWidth/2-(bounds.left+bounds.width/2);
+                    const originY=innerHeight/2-bounds.top-size/2;
+                    const slots=visibleCards().map(card=>dialIcons.get(String(card.dataset.projectId))?.slot)
+                        .filter(slot=>slot?.classList.contains('is-icon-loaded')&&!slot.hidden);
+                    // Fit every project into one centered row, including smaller desktop widths.
+                    const rowWidth=innerWidth-2*Math.max(24,innerWidth*.05);
+                    const pitch=Math.min(104,rowWidth/Math.max(1,slots.length));
+                    const iconSize=Math.min(72,pitch*.72,Math.max(48,innerHeight*.085));
+                    const scale=iconSize/size;
+                    entry.labels=document.createElement('div');
+                    entry.labels.className='project-entry-labels';
+                    entry.labels.setAttribute('aria-hidden','true');
+                    entry.labels.style.zIndex=iconRail.style.zIndex;
+                    entry.labels.style.setProperty('--project-entry-label-size',`${Math.min(12,Math.max(9,pitch*.18))}px`);
+                    document.body.append(entry.labels);
+                    const poses=slots.map((slot,i)=>{
+                        const x=originX+(i-(slots.length-1)/2)*pitch;
+                        const y=originY;
+                        const pose={slot,transform:slot.style.transform,opacity:slot.style.opacity,
+                            assembled:`translate3d(${x}px,${y}px,0) scale(${scale})`,
+                            centerX:innerWidth/2+x-originX,centerY:innerHeight/2+y-originY};
+                        // Hold the real slot at its assembly position while its individual colors travel.
+                        play(slot,[{transform:pose.assembled,opacity:1}],{duration:1});
+                        slot.classList.add('is-entry-fragmented');
+                        entry.fragmentSlots.push(slot);
+                        splitIconColors(slot.querySelector('svg')).forEach(({color,svg},colorIndex)=>{
+                            const element=document.createElement('span');
+                            element.className='project-entry-piece';
+                            element.dataset.color=color;
+                            element.setAttribute('aria-hidden','true');
+                            element.append(svg);slot.append(element);
+                            const owner=owners.get(slot.dataset.projectId)?.get(color);
+                            let label;
+                            if(owner?.name){
+                                element.dataset.designerId=owner.id;
+                                label=document.createElement('span');
+                                label.className='project-entry-label project-entry-designer';
+                                label.dataset.designerId=owner.id;
+                                label.textContent=owner.name;
+                                entry.labels.append(label);
+                            }
+                            entry.pieces.push({element,svg,label,pose,group:i,colorIndex});
+                        });
+                        return pose;
+                    });
+                    const scatterDepth=Math.min(140,Math.min(innerWidth,innerHeight)*.18);
+                    const edgePops=entry.pieces.map((piece,i)=>{
+                        const side=i%4;
+                        const count=Math.ceil((entry.pieces.length-side)/4);
+                        const pieceScale=.72+Math.random()*.5;
+                        // Jitter within each edge segment, then vary its depth so pieces do not form a row.
+                        const along=(Math.floor(i/4)+.15+Math.random()*.7)/count;
+                        const margin=Math.max(48,iconSize*pieceScale*.85+22);
+                        const depth=margin+Math.random()*scatterDepth;
+                        const horizontal=margin+along*(innerWidth-2*margin);
+                        const vertical=margin+along*(innerHeight-2*margin);
+                        const [edgeX,edgeY]=[
+                            [horizontal,depth],[innerWidth-depth,vertical],
+                            [innerWidth-horizontal,innerHeight-depth],[depth,innerHeight-vertical]
+                        ][side];
+                        // Offsets are local to the scaled slot, while the edge positions are viewport pixels.
+                        const dx=(edgeX-piece.pose.centerX)/scale,dy=(edgeY-piece.pose.centerY)/scale;
+                        const rotation=-24+Math.random()*48;
+                        const position=`translate3d(${dx}px,${dy}px,0) rotate(${rotation}deg)`;
+                        piece.edge=`${position} scale(${pieceScale})`;
+                        piece.element.dataset.edge=['top','right','bottom','left'][side];
+                        if(piece.label){
+                            // Use the same viewport destination as the piece. SVG screen matrices can omit
+                            // the animated HTML ancestors' 3D transforms and report the left rail instead.
+                            const box=piece.svg.getBBox(),viewBox=piece.svg.viewBox.baseVal;
+                            const pixelsPerUnit=iconSize*pieceScale/Math.max(viewBox.width,viewBox.height);
+                            const radians=rotation*Math.PI/180,cos=Math.cos(radians),sin=Math.sin(radians);
+                            // Rotate the bottom-center anchor and its caption together, keeping a 6px gap.
+                            const localX=(box.x+box.width/2-viewBox.x-viewBox.width/2)*pixelsPerUnit;
+                            const localY=(box.y+box.height-viewBox.y-viewBox.height/2)*pixelsPerUnit+6;
+                            piece.label.style.left=`${edgeX+localX*cos-localY*sin}px`;
+                            piece.label.style.top=`${edgeY+localX*sin+localY*cos}px`;
+                        }
+                        const delay=Math.random()*360+i*2;
+                        const animation=play(piece.element,[
+                            {transform:`${position} scale(0)`,opacity:0},
+                            {transform:`${position} scale(${pieceScale*1.16})`,opacity:1,offset:.6},
+                            {transform:piece.edge,opacity:1}
+                        ],{duration:460,delay,easing:'cubic-bezier(.22,1,.36,1)'});
+                        animation.id='project-entry-edge-pop';
+                        if(piece.label){
+                            play(piece.label,[
+                                {opacity:0,transform:`translate(-50%,0) rotate(${rotation}deg) translateY(6px)`},
+                                {opacity:1,transform:`translate(-50%,0) rotate(${rotation}deg)`}
+                            ],{duration:300,delay:delay+100,easing:'cubic-bezier(.22,1,.36,1)'});
+                        }
+                        return animation.finished;
+                    });
+                    iconRail.dataset.entryPhase='edge-pop';
+                    root.classList.replace('project-intro-pending','project-intro-running');
+                    await Promise.all(edgePops);
+                    if(intro!==entry)return;
+                    const labels=poses.map(pose=>{
+                        const label=document.createElement('span');
+                        label.className='project-entry-label';
+                        label.textContent=getProjectById(pose.slot.dataset.projectId)?.title||'';
+                        Object.assign(label.style,{
+                            left:`${pose.centerX}px`,top:`${pose.centerY+iconSize/2+12}px`,width:`${pitch-4}px`
+                        });
+                        entry.labels.append(label);
+                        return label;
+                    });
+                    iconRail.dataset.entryPhase='assemble';
+                    let assembledCount=0;
+                    // Reveal each name as its own colors finish joining, overlapping the next icon's arrival.
+                    await Promise.all(poses.map(async (pose,group)=>{
+                        await Promise.all(entry.pieces.filter(piece=>piece.pose===pose).map(piece=>{
+                            const delay=piece.group*55+piece.colorIndex*16;
+                            if(piece.label){
+                                play(piece.label,[{opacity:1},{opacity:0}],
+                                    {duration:180,delay,easing:'ease-out',fill:'forwards'});
+                            }
+                            const animation=play(piece.element,[
+                                {transform:piece.edge,opacity:1},
+                                {transform:'translate3d(0,0,0) rotate(0deg) scale(1)',opacity:1}
+                            ],{duration:620,delay,
+                                easing:'cubic-bezier(.65,0,.2,1)'});
+                            animation.id='project-entry-assemble';
+                            return animation.finished;
+                        }));
+                        if(intro!==entry)return;
+                        if(++assembledCount===poses.length){
+                            // At zero local offset every color has the exact original SVG geometry.
+                            clearEntryPieces(entry);
+                            iconRail.dataset.entryPhase='labels';
+                        }
+                        const label=labels[group];
+                        // Continue into alignment as soon as the final name fades in, without a hold.
+                        const animation=play(label,[
+                            {opacity:0,transform:'translate(-50%,6px)'},
+                            {opacity:1,transform:'translate(-50%,0px)'}
+                        ],{duration:180,easing:'cubic-bezier(.22,1,.36,1)'});
+                        animation.id='project-entry-label-in';
+                        await animation.finished;
+                    }));
+                    if(intro!==entry)return;
+                    iconRail.dataset.entryPhase='align';
+                    labels.forEach(label=>{
+                        const animation=play(label,[
+                            {opacity:1,transform:'translate(-50%,0px)'},
+                            {opacity:0,transform:'translate(-50%,-4px)'}
+                        ],{duration:180,easing:'ease-out'});
+                        animation.id='project-entry-label-out';
+                    });
+                    const alignment=Promise.all(poses.map(({slot,assembled,transform,opacity},i)=>{
+                        const animation=play(slot,[{transform:assembled,opacity:1},{transform,opacity}],
+                            {duration:760,delay:i*18,easing:'cubic-bezier(.65,0,.2,1)'});
+                        animation.id='project-entry-align';
+                        return animation.finished;
+                    })).then(()=>{
+                        if(intro!==entry)return;
+                        entry.labels.remove();
+                        entry.labels=null;
+                        entry.animations.forEach(animation=>animation.cancel());
+                        entry.animations=[];
+                        // Keep the rail unclipped until every icon reaches its left-hand position.
+                        root.classList.add('project-intro-aligned');
+                        iconRail.dataset.entryPhase='reveal';
+                    });
+                    // Let the icons lead by 400ms, then overlap the prepared project wave.
+                    const reveal=new Promise(resolve=>setTimeout(resolve,400)).then(()=>{
+                        if(intro!==entry)return;
+                        return window.ProjectWave.transition({
+                            from,to,prepared,target:cards[index],fromBlank:true,
+                            onProgress(progress){
+                                if(intro!==entry||entry.copyRevealed||progress<.72)return;
+                                // Follow the title as it clears the central band, rather than waiting for the full wave.
+                                entry.copyRevealed=true;
+                                root.classList.add('project-intro-copy-ready');
+                            },
+                            swap(){
+                                if(intro!==entry)return;
+                                root.classList.add('project-wave-text-pending');
+                                return Promise.resolve(incoming);
+                            }
+                        });
+                    });
+                    await Promise.all([alignment,reveal]);
+                }catch(error){
+                    if(intro===entry)console.warn('[Project entry] Showing the project without the intro.',error);
+                }finally{
+                    if(intro===entry)finishIntro();
+                }
+            }
             function clearTransition(){
+                cancelSearchFocus();
+                window.ProjectViewTransition?.cancel();
+                finishIntro(true);
                 cancelDescriptionExit();
                 root.classList.remove('project-ascii-content-ready');
                 window.ProjectWave.cancel();
-                root.classList.remove('project-wave-text-pending', 'project-wave-text-enter', 'project-wave-text-exit');
+                root.classList.remove('project-wave-text-pending', 'project-wave-text-enter', 'project-wave-text-exit', 'project-wave-copy-ready');
                 request++;
                 wanted=null;prepared=null;loading=false;phase='idle';queuedDirection=null;
                 iconTransition=null;
@@ -1802,7 +2008,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                 }
             }
             async function transitionTo(next, direction = 1) {
-                if (disposed || slideview.hidden || !cards[next] || cards[next].hidden) return;
+                if (disposed || window.ProjectViewTransition?.busy || slideview.hidden || !cards[next] || cards[next].hidden) return;
                 if (next === index || phase !== 'idle') return;
                 if (reduce.matches) { jump(next); return; }
                 const current = ++request;
@@ -1824,10 +2030,14 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                     const finished = await window.ProjectWave.transition({
                         direction,
                         onStart(){ void exitProjectDescription(); },
-                        onProgress(progress){
+                        onProgress(progress, timelineProgress){
                             if(current!==request||disposed||slideview.hidden||!iconTransition)return;
                             iconTransition.progress=progress;
                             syncIconRail(cards[index]?.dataset.projectId);
+                            // Start the 700ms description reveal during the final fifth of the wave.
+                            if(timelineProgress>=.8&&queuedDirection===null){
+                                root.classList.add('project-wave-copy-ready');
+                            }
                         },
                         from: getSource(cards[index]),
                         to: getSource(cards[next]),
@@ -1835,7 +2045,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                         foreground,
                         swap() {
                             root.classList.add('project-wave-text-pending');
-                            root.classList.remove('project-wave-text-enter', 'project-wave-text-exit');
+                            root.classList.remove('project-wave-text-enter', 'project-wave-text-exit', 'project-wave-copy-ready');
                             root.style.setProperty('--project-wave-copy-offset', `${direction * 14}px`);
                             markActive(next, true, direction);
                             updateSlideInfo(cards[next].dataset.projectId, false);
@@ -1857,8 +2067,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                         if (queuedDirection !== null) {
                             document.querySelector('.project-info')?.classList.remove('is-visible');
                         }
-                        // Removing the pending state starts project-info-reveal last,
-                        // after the canvas transition and icon movement have finished.
+                        // Preserve the reveal already in progress when the canvas finishes.
                         root.classList.remove('project-wave-text-pending','project-wave-text-enter','project-wave-text-exit');
                         forceTextVisible();
                     }
@@ -1872,6 +2081,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                     }
                 } finally {
                     if (current === request) {
+                        root.classList.remove('project-wave-copy-ready');
                         wanted = null;
                         phase = 'idle';
                         loading = false;
@@ -1881,12 +2091,15 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                         const queued = queuedDirection;
                         queuedDirection = null;
                         warm();
-                        if (queued !== null) navigate(queued);
+                        if (searchTarget !== null) {
+                            if (!searchTimer) flushSearchFocus();
+                        } else if (queued !== null) navigate(queued);
                     }
                 }
             }
             function navigate(direction){
-                if (disposed) return;
+                if (disposed || window.ProjectViewTransition?.busy) return;
+                cancelSearchFocus();
                 if(
                     root.classList.contains('project-intro-pending') ||
                     root.classList.contains('project-intro-running')
@@ -1899,6 +2112,7 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                     // Keep only the latest requested step, never a long scroll backlog.
                     queuedDirection=next?direction:null;
                     if(next){
+                        root.classList.remove('project-wave-copy-ready');
                         loadImage(getSource(next)).catch(()=>{});
                         window.ProjectASCII.prepare(getSource(next)).catch(()=>{});
                     }
@@ -1906,9 +2120,34 @@ async function captureForeground(target, {includeHidden = false, backgroundSourc
                 }
                 if(next)void transitionTo(cards.indexOf(next),direction);
             }
+
+            function cancelSearchFocus(){
+                clearTimeout(searchTimer);
+                searchTimer=0;
+                searchTarget=null;
+            }
+            function flushSearchFocus(){
+                if(searchTarget===null||searchTimer||disposed||slideview.hidden)return;
+                if(phase!=='idle'||window.ProjectViewTransition?.busy
+                    ||root.classList.contains('project-intro-pending')
+                    ||root.classList.contains('project-intro-running'))return;
+                const next=searchTarget;
+                searchTarget=null;
+                if(next!==index&&!cards[next].hidden)void transitionTo(next,next<index?-1:1);
+            }
+            function focusSearch(projectId,{immediate=false}={}){
+                cancelSearchFocus();
+                queuedDirection=null;
+                if(projectId===null||disposed||slideview.hidden)return;
+                const next=cards.findIndex(card=>String(card.dataset.projectId)===String(projectId));
+                if(next<0||cards[next].hidden)return;
+                searchTarget=next;
+                if(immediate)flushSearchFocus();
+                else searchTimer=setTimeout(()=>{searchTimer=0;flushSearchFocus();},250);
+            }
 // Resolve the real DOM underneath the canvas to the incoming texture's final pose.
 function captureAsciiContent(target, options = {}) {
-    return window.ProjectASCII.captureForeground(target,{...options,backgroundSource:getSource(target)});
+    return window.ProjectASCII.captureForeground(target,options);
 }
 
 function settleAsciiContent() {
@@ -1920,12 +2159,46 @@ function settleAsciiContent() {
                 // The supplied HTML declares `const lenis` at window scope (not window.lenis).
                 try{return typeof lenis!=='undefined'?lenis:window.lenis;}catch{return window.lenis;}
             }
-            function changeView(view){
+            async function changeView(view){
                 if(view!=='grid'&&view!=='slide')return;
+                if(disposed)return;
+                if(innerWidth<760){
+                    clearTransition();
+                    applyView('grid');
+                    return;
+                }
+                if(window.ProjectViewTransition?.busy)return;
+                if(!initial&&root.dataset.projectFluidView===view)return;
+                clearTransition();
+                if(initial||reduce.matches||!window.ProjectViewTransition){
+                    applyView(view);
+                    return;
+                }
+                const focusedButton=document.activeElement?.closest('.view-button');
+                const scrolling=currentLenis();
+                const stopScrolling=()=>{
+                    if(scrolling&&!scrolling.isStopped){
+                        scrolling.stop();
+                        stoppedLenis=scrolling;
+                    }
+                };
+                stopScrolling();
+                await window.ProjectViewTransition.run({
+                    getSlideImage(){return {source:getSource(cards[index]),target:cards[index]};},
+                    swap(){applyView(view);stopScrolling();}
+                });
+                if(disposed)return;
+                if(slideview.hidden&&stoppedLenis){stoppedLenis.start();stoppedLenis=null;}
+                flushSearchFocus();
+                if(focusedButton){
+                    const scope=slideview.hidden?'.title-section':'.project-warp';
+                    document.querySelector(`${scope} .view-button:not([hidden])`)?.focus({preventScroll:true});
+                }
+            }
+            function applyView(view){
 
                 const wasSlide=!slideview.hidden;
 
-                clearTransition();
                 clearWriterQueue();
 
                 slideview.hidden=view!=='slide';
@@ -2001,7 +2274,7 @@ function settleAsciiContent() {
 
                     updateSlideInfo(
                         cards[index].dataset.projectId,
-                        true
+                        !window.ProjectViewTransition?.busy
                     );
 
                     if(!initial){
@@ -2029,6 +2302,7 @@ function settleAsciiContent() {
                 }
 
                 initial=false;
+                document.dispatchEvent(new CustomEvent('project-view-change',{detail:{view}}));
 
                 if(view==='slide'){
                     queueMicrotask(warm);
@@ -2121,6 +2395,7 @@ function settleAsciiContent() {
             },{passive:true});
             listen(document,'touchcancel',()=>{touch=null;},{passive:true});
             listen(window,'resize',()=>{
+                finishIntro(true);
                 syncFluidSurfaceBounds(cards[wanted??index]||cards[index]);
                 syncIconRail(cards[index]?.dataset.projectId);
 
@@ -2134,9 +2409,11 @@ function settleAsciiContent() {
                     jump(next);
                 }else warm();
             });
+            listen(window,'pagehide',()=>finishIntro(true));
             markActive(index,true);changeView('slide');
             window.ProjectFluidSlide={
                 next:()=>navigate(1),prev:()=>navigate(-1),
+                focusSearch,
                 goTo(projectId){const next=cards.findIndex(c=>String(c.dataset.projectId)===String(projectId));if(next>=0)void transitionTo(next,next<index?-1:1);},
                 setOptions(options){Object.assign(settings,options);engine?.setOptions(options);if(engine&&!slideview.hidden)engine.resize();},
                 changeView,
@@ -2164,6 +2441,7 @@ function settleAsciiContent() {
                     delete window.ProjectFluidSlide;
                 }
             };
+            void playEntryIntro();
         }
         if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initProjectPage,{once:true});
         else initProjectPage();

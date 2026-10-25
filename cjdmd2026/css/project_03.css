@@ -1,4 +1,15 @@
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
+
+/* View switching reveals the full copy together with its depth fade. */
+html.project-view-transitioning[data-project-fluid-view="slide"] :is(
+    .project-dial-item.is-active .project-dial-title, .project-info
+) {
+    animation: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    clip-path: none;
+}
 @font-face {
     font-family: 'Paperozi';
     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-1Thin.woff2') format('woff2');
@@ -163,6 +174,71 @@ html.page-transition-preload body {
     visibility: hidden;
     opacity: 0;
 }
+
+/* First visit: color pieces assemble over a softly shaded cover before the slide reveal. */
+html:is(.project-intro-pending, .project-intro-running) body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 998;
+    background: linear-gradient(to bottom, #f4f4f4 0%, #fff 50%, #f4f4f4 100%);
+    pointer-events: auto;
+}
+html:is(.project-intro-pending, .project-intro-running):not(.project-intro-copy-ready) .header {
+    transform: translateY(calc(-100% - 1px));
+    pointer-events: none;
+}
+html:is(.project-intro-pending, .project-intro-running):not(.project-intro-copy-ready) .project-warp {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: none;
+}
+html.project-intro-pending .project-icon-rail {
+    opacity: 0;
+}
+html[data-project-fluid-view="slide"].project-intro-running:not(.project-intro-aligned) .project-icon-rail {
+    overflow: visible;
+}
+.project-dial-icon.is-entry-fragmented > svg {
+    display: none;
+}
+.project-entry-piece {
+    position: absolute;
+    inset: 0;
+    display: block;
+    transform-origin: center;
+    will-change: transform, opacity;
+    pointer-events: none;
+}
+.project-entry-labels {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+}
+.project-entry-label {
+    position: absolute;
+    color: #333;
+    font-family: "Pretendard Variable", "Pretendard", sans-serif;
+    font-size: var(--project-entry-label-size, 12px);
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: -.015em;
+    text-align: center;
+    overflow-wrap: anywhere;
+    opacity: 0;
+    transform: translate(-50%, 6px);
+    will-change: transform, opacity;
+}
+.project-entry-designer {
+    font-size: 12px;
+    white-space: nowrap;
+    transform-origin: 50% 0;
+}
+/* The description follows the title while the remaining wave is still playing. */
+html:is(.project-intro-copy-ready, .project-wave-copy-ready) .container:has(#slideview:not([hidden])) .project-description {
+    z-index: 1000;
+}
 /* ============================== Common ============================== */
 a {
     color: inherit;
@@ -210,6 +286,7 @@ img {
     top: 0;
     left: 0;
     z-index: 1000;
+    transition: transform .4s cubic-bezier(.22, 1, .36, 1);
 
     /*background-color: var(--color-black-75);*/
 
@@ -217,6 +294,10 @@ img {
     backdrop-filter: blur(11.9px);
     -webkit-backdrop-filter: blur(11.9px);
     border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .header { transition: none; }
 }
 
 body:has(#slideview:not([hidden])) .header {
@@ -272,11 +353,11 @@ body:has(#slideview:not([hidden])) .header .logo {
 
 
 body:has(#slideview:not([hidden])) .header .nav ul li {
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, 1);
 }
 
 .header .nav ul li a {
-    opacity: 0.3;
+    opacity: 0.5;
     transition: opacity 0.3s ease;
 }
 
@@ -580,7 +661,8 @@ body:has(#slideview:not([hidden])) .header .nav ul li {
 /* ============================== Project Description Layer ============================== */
 
 /* Grid View에서는 레이어 자체를 제거 */
-.project-description {
+.project-description,
+.project-warp {
     display: none;
 }
 
@@ -599,8 +681,8 @@ body:has(#slideview:not([hidden])) .header .nav ul li {
     pointer-events: none;
 }
 
-.container:has(#slideview:not([hidden])) .project-warp {
-    position: absolute;
+html[data-project-fluid-view="slide"] .project-warp {
+    position: fixed;
 
     right: 6rem;
     top: 15%;
@@ -610,7 +692,12 @@ body:has(#slideview:not([hidden])) .header .nav ul li {
 
     gap: 0.75rem;
 
-    z-index: 20;
+    z-index: 1001;
+    isolation: isolate;
+    transform: translateZ(0);
+    opacity: 1;
+    visibility: visible;
+    transition: opacity .4s cubic-bezier(.22, 1, .36, 1);
 
     pointer-events: auto;
 }
@@ -646,9 +733,11 @@ body:has(#slideview:not([hidden])) .header .nav ul li {
 }
 
 
+html[data-project-fluid-view="slide"] { overflow-x: hidden; overflow-y: scroll; }
+
 /* ============================== Slide View Controls ============================== */
 
-.project-description .view-buttons {
+.project-warp .view-buttons {
     position: static;
 
     right: 6vw;
@@ -660,8 +749,8 @@ body:has(#slideview:not([hidden])) .header .nav ul li {
 }
 
 /* Slide 전용 검색창: 기본은 45px 원형 */
-.container:has(#slideview:not([hidden]))
-.project-description .search-bar {
+html[data-project-fluid-view="slide"]
+.project-warp .search-bar {
     position: relative;
 
     width: 45px;
@@ -674,16 +763,16 @@ body:has(#slideview:not([hidden])) .header .nav ul li {
         width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.container:has(#slideview:not([hidden]))
-.project-description .search-bar input {
+html[data-project-fluid-view="slide"]
+.project-warp .search-bar input {
     padding: 0;
 
     cursor: pointer;
 }
 
 /* 원형 상태에서는 검색 아이콘을 정확히 중앙에 */
-.container:has(#slideview:not([hidden]))
-.project-description .search-bar img {
+html[data-project-fluid-view="slide"]
+.project-warp .search-bar img {
     left: 50%;
 
     transform: translate(-50%, -50%);
@@ -693,37 +782,37 @@ body:has(#slideview:not([hidden])) .header .nav ul li {
         transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* 포커스 시 확장 */
-.container:has(#slideview:not([hidden]))
-.project-description .search-bar:focus-within {
+/* 포커스 중이거나 검색어가 있으면 확장 유지 */
+html[data-project-fluid-view="slide"]
+.project-warp .search-bar:is(:focus-within, :has(input:not(:placeholder-shown))) {
     width: 260px;
 }
 
-.container:has(#slideview:not([hidden]))
-.project-description .search-bar:focus-within input {
+html[data-project-fluid-view="slide"]
+.project-warp .search-bar:is(:focus-within, :has(input:not(:placeholder-shown))) input {
     padding: 0 1rem 0 3rem;
 
     cursor: text;
 }
 
-.container:has(#slideview:not([hidden]))
-.project-description .search-bar:focus-within img {
+html[data-project-fluid-view="slide"]
+.project-warp .search-bar:is(:focus-within, :has(input:not(:placeholder-shown))) img {
     left: 1rem;
 
     transform: translate(0, -50%);
 }
 
 /* 원형일 때 placeholder 숨김 */
-.container:has(#slideview:not([hidden]))
-.project-description .search-bar input::placeholder {
+html[data-project-fluid-view="slide"]
+.project-warp .search-bar input::placeholder {
     color: transparent;
 
     transition: color 0.2s ease;
 }
 
 /* 확장된 뒤 placeholder 표시 */
-.container:has(#slideview:not([hidden]))
-.project-description .search-bar:focus-within input::placeholder {
+html[data-project-fluid-view="slide"]
+.project-warp .search-bar:is(:focus-within, :has(input:not(:placeholder-shown))) input::placeholder {
     color: rgba(0, 0, 0, 0.55);
 
     transition-delay: 0.15s;
@@ -993,8 +1082,8 @@ body:has(#slideview:not([hidden])) .footer {
     display: block;
 }
 
-.container:has(#slideview:not([hidden])) .search-bar input:focus {
-    border-color: var(--color-black);
+html[data-project-fluid-view="slide"] .project-warp .search-bar input:focus {
+    border-color: #fff;
 }
 
 /* ==============================
@@ -1356,6 +1445,7 @@ body:has(#slideview:not([hidden])) .footer {
 
     .project-dial,
     .project-description,
+    .project-warp,
     .gradient,
     #slideview { display: none !important; }
     .container .grid-view { display: flex !important; flex-direction: column; gap: 0; margin: 18px 0 64px; }

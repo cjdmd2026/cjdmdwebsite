@@ -20,6 +20,9 @@
         bgDelay: 150,            // 배경 시작: 포스터 전환이 1/3쯤 남았을 때 (포스터 전환 중반부터 함께)
         bgWipe: 720,             // 배경 닦이는 시간(ms) — 포스터보다 조금 느리게
         bigFrameHeight: 0.92,    // '결합' 크게 보일 때 그래픽 높이 (화면 높이 대비)
+        iconBlurFullSize: 8,     // 원본 기준: 가장 작은 아이콘은 최대 블러 유지
+        iconBlurClearSize: 40,   // 이 크기까지 블러를 점진적으로 줄이고, 큰 아이콘은 선명하게
+        iconBlurMax: 3.5,        // 원본 기준 최대 블러 반경 — 화면 크기에 맞춰 함께 축소
         // 단계 전환 시간(ms)
         fly: 1500, graphicIn: 320, dissolve: 420,   // 모임 → (바로) 그래픽이 뒤에 깔림 → 아이콘 한 번에 사라짐
         move: 1250, reveal: 380,
@@ -39,6 +42,17 @@
     if (!hero || !stage || !canvas || !posterButton || !posterCanvas || !bgCanvas) return;
 
     const ctx = canvas.getContext("2d");
+    // 인접한 블러 레이어를 크기별 비율로 섞어 강도가 경계 없이 이어지게 합니다.
+    // 필터는 레이어에만 적용해 수천 개 아이콘의 개별 필터 연산을 피합니다.
+    const blurLayers = Array.from({ length: 4 }, (_, i) => {
+        const layerCanvas = document.createElement("canvas");
+        layerCanvas.id = `heroSoftCanvas${i + 1}`;
+        layerCanvas.className = canvas.className;
+        layerCanvas.setAttribute("aria-hidden", "true");
+        return { canvas: layerCanvas, ctx: layerCanvas.getContext("2d"), strength: (i + 1) / 4, alpha: 1 };
+    });
+    // 강하게 흐린 작은 아이콘이 뒤에, 선명한 큰 아이콘이 앞에 놓입니다.
+    for (const layer of [...blurLayers].reverse()) canvas.before(layer.canvas);
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
     const posters = window.MAIN_POSTERS || [
         { theme: "light", image: "", pdf: "", background: "#fff" },
@@ -120,9 +134,14 @@
     let smallFrame = { x: 0, y: 0, w: 1, h: 1 };
 
     function buildIcons() {
+        const blurLevel = size => {
+            const t = clamp((SETTINGS.iconBlurClearSize - size) / (SETTINGS.iconBlurClearSize - SETTINGS.iconBlurFullSize));
+            return t * t * (3 - 2 * t) * blurLayers.length;
+        };
         const make = set => (set?.s || []).map(([gx, gy, gw, gh, ax, ay, kind]) => ({
             gx, gy, gw, gh, ax, ay,
             whole: kind === 1,
+            blurLevel: blurLevel(Math.max(gw, gh)),
             sx: rand(-.03, 1.03), sy: rand(-.03, 1.03),       // 흩어진 위치 (화면 비율)
             delay: Math.random() * .4,
             // 사라질 때 순서: 왼쪽→오른쪽 + 입자 노이즈
@@ -154,6 +173,10 @@
         H = Math.max(1, rect.height);
         DPR = Math.min(window.devicePixelRatio || 1, 2);
         sizeCanvas(canvas, ctx, W, H);
+        for (const layer of blurLayers) {
+            sizeCanvas(layer.canvas, layer.ctx, W, H);
+            layer.ctx.imageSmoothingQuality = "high";
+        }
         bgWipe.resize(W, H, DPR);
         ctx.imageSmoothingQuality = "high";
 
@@ -691,6 +714,10 @@
         if (!moving && state === lastIconState) { lastIconTime = time; return; }
         lastIconState = state;
         ctx.clearRect(0, 0, W, H);
+        for (const layer of blurLayers) {
+            layer.ctx.clearRect(0, 0, W, H);
+            layer.alpha = 1;
+        }
         const t = time / 1000;
         const dt = lastIconTime ? Math.min(.05, (time - lastIconTime) / 1000) : 0;
         lastIconTime = time;
@@ -731,6 +758,13 @@
         const icons = iconsNow();
         const scattered = V.fly === 0;
         const settled = V.fly === 1;
+        // 모이는 동안 초점이 돌아오고, 결합이 완성되면 원래 캔버스에 선명하게 그립니다.
+        const blur = SETTINGS.iconBlurMax * k * (1 - easeInOut(clamp(V.fly)));
+        for (const layer of blurLayers) {
+            const radius = blur * layer.strength;
+            const filter = radius > .001 ? `blur(${radius.toFixed(3)}px)` : "none";
+            if (layer.canvas.style.filter !== filter) layer.canvas.style.filter = filter;
+        }
         const hide = 1 - V.reveal;
         let lastAlpha = 1;
         for (let i = 0; i < icons.length; i++) {
@@ -749,19 +783,32 @@
             sx += ic.px * wob; sy += ic.py * wob;      // 모일수록 밀린 효과는 사라짐
             const tx = frame.x + (gcx + (ic.gx - gcx) * fs + fx0) * kf;
             const ty = frame.y + (gcy + (ic.gy - gcy) * fsy + fy0) * kf;
-            if (alpha !== lastAlpha) { ctx.globalAlpha = alpha; lastAlpha = alpha; }
             const ang = ic.angle * wob;
             const x = lerp(sx, tx, a), y = lerp(sy, ty, a);
             const margin = Math.abs(ang) > .002 ? Math.max(w, h) : 0;
             if (x + w + margin < 0 || y + h + margin < 0 || x - margin > W || y - margin > H) continue;
-            if (Math.abs(ang) > .002) {
-                const dx = x + w / 2, dy = y + h / 2;
-                ctx.save(); ctx.translate(dx, dy); ctx.rotate(ang);
-                ctx.drawImage(atlas, ic.ax, ic.ay, ic.gw, ic.gh, -w / 2, -h / 2, w, h);
-                ctx.restore();
-            } else ctx.drawImage(atlas, ic.ax, ic.ay, ic.gw, ic.gh, x, y, w, h);
+            // 크기별 연속값으로 두 강도를 섞고, 모일수록 한 레이어로 정리합니다.
+            const level = settled ? 0 : ic.blurLevel;
+            const lower = Math.floor(level), blend = (level - lower) * (1 - a);
+            const passes = blend > 0 ? 2 : 1;
+            for (let pass = 0; pass < passes; pass++) {
+                const index = lower + pass;
+                const layer = index > 0 ? blurLayers[index - 1] : null;
+                const drawCtx = layer ? layer.ctx : ctx;
+                const opacity = alpha * (pass === 0 ? 1 - blend : blend);
+                if (layer) {
+                    if (opacity !== layer.alpha) { drawCtx.globalAlpha = opacity; layer.alpha = opacity; }
+                } else if (opacity !== lastAlpha) { ctx.globalAlpha = opacity; lastAlpha = opacity; }
+                if (Math.abs(ang) > .002) {
+                    const dx = x + w / 2, dy = y + h / 2;
+                    drawCtx.save(); drawCtx.translate(dx, dy); drawCtx.rotate(ang);
+                    drawCtx.drawImage(atlas, ic.ax, ic.ay, ic.gw, ic.gh, -w / 2, -h / 2, w, h);
+                    drawCtx.restore();
+                } else drawCtx.drawImage(atlas, ic.ax, ic.ay, ic.gw, ic.gh, x, y, w, h);
+            }
         }
         ctx.globalAlpha = 1;
+        for (const layer of blurLayers) layer.ctx.globalAlpha = 1;
     }
 
     /* =====================================================

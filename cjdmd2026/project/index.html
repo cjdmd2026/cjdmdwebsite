@@ -4,10 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>유연한 결합: 청주대학교 디지털미디어디자인</title>
-    <link rel="stylesheet" href="../css/project_03.css">
+    <link rel="stylesheet" href="../css/project_03.css?v=20261025-27">
     <link rel="stylesheet" href="../css/mobile-common.css">
     <link rel="stylesheet" href="../css/header-logo.css?v=20261024-1">
     <script>
+        // Gate the first paint so the initial project never flashes before the intro.
+        if (matchMedia('(min-width: 760px) and (prefers-reduced-motion: no-preference)').matches) {
+            document.documentElement.classList.add('project-intro-pending');
+            window.projectIntroFallback = setTimeout(() => {
+                document.documentElement.classList.remove('project-intro-pending');
+            }, 10000);
+        }
         if (sessionStorage.getItem('stamp-page-transition') === '1') {
             document.documentElement.classList.add('page-transition-preload');
         }
@@ -19,8 +26,11 @@
     <script src="../js/project-grid-motion.js" defer></script>
 
     <script src="../js/project-data.js" defer></script>
-    <script src="../js/project_05.js?v=20261024-1" defer></script>
-    <script src="../js/project-filter.js" defer></script>
+    <script src="../js/designer-data.js" defer></script>
+    <script src="../js/designer-icon-data.js" defer></script>
+    <script src="../js/project-view-transition.js?v=20261025-16" defer></script>
+    <script src="../js/project_05.js?v=20261025-32" defer></script>
+    <script src="../js/project-filter.js?v=20261025-3" defer></script>
     <script src="../js/page-transition.js" defer></script>
 
     <!--<script src="../js/thread-crosshair-mask.js" defer></script> -->
@@ -178,17 +188,6 @@
             </div>
 
             <div class="project-description">
-                <div class="project-warp">
-                    <div class="search-bar">
-                        <img src="../assets/images/icons/search-icon.svg" class="icon">
-                        <input type="text" placeholder="프로젝트를 검색해주세요">
-                    </div>
-                    <div class="view-buttons">
-                        <button class="view-button" type="button" data-view="slide"><img src="../assets/images/icons/side-scroll-icon.svg" class="icon"></button>
-                        <button class="view-button is-active" type="button" data-view="grid" hidden><img src="../assets/images/icons/grid-scroll-icon.svg" class="icon"></button>
-                    </div>
-                </div>
-
                 <div class="project-visual">
                     <div class="project-info">
                         <div class="project-info-block">
@@ -438,6 +437,18 @@
         </div>
     </main>
     <!-- Main:E -->
+
+    <!-- Keep slide controls outside every animated project/content layer. -->
+    <div class="project-warp">
+        <div class="search-bar">
+            <img src="../assets/images/icons/search-icon.svg" class="icon">
+            <input type="text" placeholder="프로젝트를 검색해주세요">
+        </div>
+        <div class="view-buttons">
+            <button class="view-button" type="button" data-view="slide"><img src="../assets/images/icons/side-scroll-icon.svg" class="icon"></button>
+            <button class="view-button is-active" type="button" data-view="grid" hidden><img src="../assets/images/icons/grid-scroll-icon.svg" class="icon"></button>
+        </div>
+    </div>
 
     <div class="mobile-sheet-scrim" hidden></div>
     <section class="mobile-project-sheet" role="dialog" aria-modal="true" aria-labelledby="mobile-sheet-title-03" tabindex="-1" hidden>

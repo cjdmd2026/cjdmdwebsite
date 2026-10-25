@@ -8,7 +8,7 @@
    3. 교수진 소개 (원통형 3D 슬라이더)
    4. 졸업 전시 유튜브 (화살표 → 사라짐 → 영상들이 이동 → 화살표 다시 나타남)
    5. 모바일 메뉴
-   데이터: main-data.js / designer-data.js / main-icon-fragments.js
+   데이터: main-data.js / designer-data.js / designer-icon-data.js / main-icon-fragments.js
    ========================================================= */
 (() => {
     "use strict";
@@ -17,6 +17,10 @@
     const scriptURL = document.currentScript?.src || document.baseURI;
     const FRAGMENTS = window.MAIN_ICON_FRAGMENTS || {};
     const FRAGMENT_IDS = Object.keys(FRAGMENTS);
+    // 개인 조각의 배정과 색은 디자이너 페이지와 같은 데이터를 사용합니다.
+    // SVG 도형은 main-icon-fragments.js에 추출된 개인 조각을 재사용합니다.
+    const DESIGNER_ICON_COLORS = new Map((window.DESIGNER_ICON_PROJECTS || [])
+        .flatMap(project => Object.entries(project.studentColors || {})));
     const SVG_NS = "http://www.w3.org/2000/svg";
     const rand = (a, b) => a + Math.random() * (b - a);
     const wait = ms => new Promise(r => setTimeout(r, reducedMotion.matches ? 0 : ms));
@@ -39,10 +43,12 @@
     ===================================================== */
     const AMBIENT = {
         hero: {
+            colored: true,
             flow: [10, 22],   // 오른쪽으로 흐르는 속도(px/s, 1920 기준)
             presets: [[72.8, 30.6, 2.14, 238], [58.3, 31.3, 1.93, 238], [12.2, 36.0, 2.19, 226], [48.9, 36.5, 2.03, 239], [75.9, 37.3, 2.6, 218], [93.7, 38.0, 2.24, 218], [70.6, 42.3, 2.24, 238], [8.6, 45.0, 2.34, 219], [47.2, 45.0, 1.67, 240], [3.2, 47.0, 1.88, 240], [71.8, 47.4, 2.24, 238], [13.3, 47.4, 2.03, 239], [71.1, 55.0, 2.03, 242], [10.6, 56.3, 2.08, 219], [47.3, 58.0, 2.24, 231], [96.1, 58.1, 1.88, 238], [7.9, 59.1, 1.88, 242], [88.7, 61.1, 1.93, 238], [13.4, 60.9, 1.61, 245], [81.3, 63.3, 2.14, 222], [62.1, 65.3, 1.98, 238], [74.3, 65.5, 2.08, 240], [93.5, 69.1, 1.82, 245], [10.5, 71.7, 2.45, 230], [72.7, 71.9, 2.14, 222], [49.0, 74.0, 2.24, 218], [30.0, 33.0, 2.0, 236], [36.0, 68.0, 2.2, 222]]
         },
         committee: {
+            colored: true,
             float: [8, 18],
             presets: [[83.4, 13.2, 1.46, 244], [92.4, 14.3, 2.08, 238], [10.9, 15.1, 2.08, 238], [18.1, 16.6, 1.35, 245], [77.9, 20.9, 1.46, 244], [13.4, 23.6, 1.46, 244], [6.7, 24.4, 2.03, 235], [92.9, 25.6, 1.67, 244], [12.5, 30.8, 2.03, 235], [19.3, 32.3, 2.4, 244], [7.4, 33.6, 2.08, 238], [94.0, 36.9, 2.08, 231], [8.9, 43.7, 2.19, 231], [98.2, 44.9, 1.51, 244], [13.6, 46.2, 1.67, 244], [10.9, 54.9, 1.93, 231], [95.6, 56.0, 3.12, 244], [89.0, 59.6, 1.61, 244], [81.6, 61.7, 1.98, 233], [15.1, 70.7, 1.82, 233], [90.1, 74.7, 2.08, 238], [9.9, 74.4, 1.46, 244], [80.1, 76.4, 1.61, 244], [4.5, 79.4, 2.29, 238], [13.8, 80.0, 1.82, 233], [18.1, 81.3, 1.88, 244], [86.2, 82.6, 1.41, 244], [7.7, 91.2, 1.67, 244]]
         },
@@ -59,23 +65,27 @@
         }
     };
 
+    let updateCommitteeAmbient = () => {};
     (function ambient() {
         const layers = [...document.querySelectorAll("[data-ambient]")];
         if (!layers.length || !FRAGMENT_IDS.length) return;
         let fragIndex = 0;
 
-        const states = layers.map(layer => {
-            const cfg = AMBIENT[layer.dataset.ambient];
-            if (!cfg) return null;
-            const items = cfg.presets.map(([x, y, size, tone, ampVw]) => {
-                const el = fragmentSVG(FRAGMENT_IDS[(fragIndex++ * 5) % FRAGMENT_IDS.length]);
+        function makeItems(layer, cfg, memberIds = null) {
+            if (memberIds && !memberIds.length) return [];
+            return cfg.presets.map(([x, y, size, tone, ampVw], i) => {
+                const id = memberIds ? memberIds[i % memberIds.length]
+                    : FRAGMENT_IDS[(fragIndex++ * 5) % FRAGMENT_IDS.length];
+                const color = cfg.colored ? (memberIds ? DESIGNER_ICON_COLORS.get(id) : FRAGMENTS[id].color) : null;
+                const el = fragmentSVG(id);
                 el.classList.add("ambient__icon");
-                el.style.color = `rgb(${tone}, ${tone}, ${tone})`;
+                el.dataset.designerId = id;
+                el.style.color = color || `rgb(${tone}, ${tone}, ${tone})`;
                 const darkTone = Math.min(255, 255 - tone + 40);   // 검은 배경일 때 색
                 if (tone >= 236 && tone < 250) el.style.filter = `blur(${rand(1, 2.2).toFixed(1)}px)`;
                 layer.append(el);
                 return {
-                    el, x: x / 100, y: y / 100, size, tone, darkTone,
+                    el, x: x / 100, y: y / 100, size, tone, darkTone, color, travel: 0,
                     speed: cfg.flow ? rand(cfg.flow[0], cfg.flow[1]) : 0,
                     amp: cfg.float ? rand(cfg.float[0], cfg.float[1]) : rand(2, 5),
                     ampVw: ampVw || 0,
@@ -83,22 +93,127 @@
                     rot: rand(-8, 8), rotSpeed: ampVw ? rand(-14, 14) : 0
                 };
             });
+        }
+
+        const states = layers.map(layer => {
+            const cfg = AMBIENT[layer.dataset.ambient];
+            if (!cfg) return null;
+            const items = layer.dataset.ambient === "committee" ? [] : makeItems(layer, cfg);
             return { layer, items, active: true, width: 0, height: 0 };
         }).filter(Boolean);
 
-        function measureAmbient() {
+        function sizeItems(items) {
             const unit = innerWidth / 100;
+            items.forEach(it => {
+                it.sizePx = Math.max(12, it.size * unit);
+                it.el.style.width = it.el.style.height = `${it.sizePx.toFixed(1)}px`;
+            });
+        }
+        function measureAmbient() {
             // 크기를 먼저 읽고 스타일을 나중에 써서 레이아웃 재계산이 반복되지 않게 합니다.
             states.forEach(state => {
                 state.width = state.layer.clientWidth;
                 state.height = state.layer.clientHeight;
             });
-            states.forEach(({ items }) => items.forEach(it => {
-                it.sizePx = Math.max(12, it.size * unit);
-                it.el.style.width = it.el.style.height = `${it.sizePx.toFixed(1)}px`;
-            }));
+            states.forEach(({ items }) => sizeItems(items));
         }
         measureAmbient();
+
+        const committeeState = states.find(state => state.layer.dataset.ambient === "committee");
+        const COMMITTEE_MOTION = { exit: 700, enter: 1000, waveSize: 3, waveDelay: 140, withinWave: 24 };
+        const clamp01 = value => Math.max(0, Math.min(1, value));
+        // 강한 ease-in-out: 출발과 도착은 천천히, 중간 구간에는 속도를 붙입니다.
+        const easeTravel = value => value < .5
+            ? 8 * Math.pow(value, 4)
+            : 1 - Math.pow(-2 * value + 2, 4) / 2;
+
+        function travelAt(item, time) {
+            const flight = item.flight;
+            if (!flight) return item.travel;
+            const progress = clamp01((time - flight.start) / flight.duration);
+            return flight.from + (flight.to - flight.from) * easeTravel(progress);
+        }
+        function startFlight(items, phase, time) {
+            const width = committeeState.width, height = committeeState.height;
+            const distanceToPortal = item => Math.hypot(
+                (item.x < .5 ? item.x : 1 - item.x) * width,
+                (item.y - .5) * height
+            );
+            [true, false].forEach(left => {
+                // 각 측면의 중앙에 가까운 아이콘부터 3개씩, 묶음 간 동작을 겹쳐 보냅니다.
+                const side = items.filter(item => (item.x < .5) === left &&
+                    !(phase === "exit" && item.flight?.to === 1));
+                side.sort((a, b) => distanceToPortal(a) - distanceToPortal(b));
+                side.forEach((item, order) => {
+                    item.travel = travelAt(item, time);
+                    item.flight = {
+                        from: item.travel, to: phase === "exit" ? 1 : 0,
+                        start: time + Math.floor(order / COMMITTEE_MOTION.waveSize) * COMMITTEE_MOTION.waveDelay
+                            + (order % COMMITTEE_MOTION.waveSize) * COMMITTEE_MOTION.withinWave,
+                        duration: COMMITTEE_MOTION[phase]
+                    };
+                });
+            });
+        }
+        function makeCommitteeItems(state, entering, time) {
+            const items = makeItems(state.layer, AMBIENT.committee, state.memberIds);
+            sizeItems(items);
+            items.forEach(item => {
+                item.travel = entering ? 1 : 0;
+                item.el.dataset.department = state.departmentId;
+            });
+            if (entering) startFlight(items, "enter", time);
+            return items;
+        }
+        function replaceCommitteeItems(state) {
+            state.items.forEach(item => item.el.remove());
+            state.items = makeCommitteeItems(state, false);
+            state.layer.dataset.department = state.departmentId;
+        }
+        updateCommitteeAmbient = dept => {
+            const state = committeeState;
+            if (!state || state.departmentId === dept.id) return;
+            state.departmentId = dept.id;
+            state.memberIds = [...new Set(dept.members.map(member => member.id))]
+                .filter(id => DESIGNER_ICON_COLORS.has(id) && FRAGMENTS[id]);
+            if (!state.items.length || reducedMotion.matches || !state.active || document.hidden) {
+                replaceCommitteeItems(state);
+                return;
+            }
+            const time = performance.now();
+            // 아직 화면 밖에 있는 이전 아이콘은 제거하고, 보이는 아이콘은 현재 위치에서 퇴장합니다.
+            state.items = state.items.filter(item => {
+                if (item.flight && travelAt(item, time) >= 1) {
+                    item.el.remove();
+                    return false;
+                }
+                return true;
+            });
+            startFlight(state.items, "exit", time);
+            // 퇴장을 기다리지 않고 같은 시각에 새 부서의 입장을 시작합니다.
+            state.items.push(...makeCommitteeItems(state, true, time));
+            state.layer.dataset.department = state.departmentId;
+        };
+        function stepCommittee(state, time) {
+            if (!state.items.some(item => item.flight)) return;
+            if (reducedMotion.matches) {
+                replaceCommitteeItems(state);
+                return;
+            }
+            state.items = state.items.filter(item => {
+                const flight = item.flight;
+                if (!flight) return true;
+                item.travel = travelAt(item, time);
+                if (time < flight.start + flight.duration) return true;
+                if (flight.to === 1) {
+                    item.el.remove();
+                    return false;
+                }
+                item.travel = 0;
+                item.flight = null;
+                return true;
+            });
+        }
         if ("ResizeObserver" in window) {
             const ro = new ResizeObserver(measureAmbient);
             states.forEach(({ layer }) => ro.observe(layer));
@@ -121,11 +236,13 @@
             const unit = innerWidth / 100;
             const scale = innerWidth / 1920;
             const bg = window.MainHeroBg ? window.MainHeroBg() : null;
-            states.forEach(({ layer, items, active, width: w, height: h }) => {
+            states.forEach(state => {
+                const { layer, active, width: w, height: h } = state;
                 if (!active) return;
+                if (state === committeeState) stepCommittee(state, time);
                 const isHero = layer.dataset.ambient === "hero";
                 if (isHero && bg?.ambient <= 0) return;
-                items.forEach(it => {
+                state.items.forEach(it => {
                     const size = it.sizePx;
                     let x = it.x * w;
                     if (it.speed) {
@@ -139,9 +256,21 @@
                     } else {
                         x += Math.sin(t * it.freq + it.phase) * it.amp * motion;
                     }
-                    const y = it.y * h + Math.cos(t * it.freq * .9 + it.phase) * it.amp * (it.ampVw ? 1.2 : .6) * motion;
-                    const rot = it.rot + t * (it.rotSpeed || 0) * motion;
-                    if (isHero && bg) {
+                    let y = it.y * h + Math.cos(t * it.freq * .9 + it.phase) * it.amp * (it.ampVw ? 1.2 : .6) * motion;
+                    let rot = it.rot + t * (it.rotSpeed || 0) * motion;
+                    let iconScale = 1;
+                    // 양옆 중앙의 한 점으로 휘어져 모이며 작아지고, 입장할 때는 반대로 펼쳐집니다.
+                    if (it.travel) {
+                        const side = it.x < .5 ? -1 : 1;
+                        const portalX = side < 0 ? -18 : w + 18;
+                        const p = it.travel, remaining = 1 - p;
+                        const controlX = x + (portalX - x) * .55;
+                        x = remaining * remaining * x + 2 * remaining * p * controlX + p * p * portalX;
+                        y = remaining * remaining * y + (1 - remaining * remaining) * h * .5;
+                        iconScale = 1 - .92 * Math.pow(p, 1.6);
+                        rot += side * 70 * p;
+                    }
+                    if (isHero && bg && !it.color) {
                         // 배경이 왼쪽 → 오른쪽으로 바뀌는 경계를 따라 아이콘 색도 함께 전환
                         let m;
                         if (bg.t >= 1) m = 1;
@@ -158,7 +287,7 @@
                             it.lastTone = c;
                         }
                     }
-                    it.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -50%) rotate(${rot.toFixed(1)}deg)`;
+                    it.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -50%) rotate(${rot.toFixed(1)}deg) scale(${iconScale.toFixed(3)})`;
                 });
             });
         }
@@ -194,6 +323,7 @@
             tab.setAttribute("role", "tab");
             tab.setAttribute("aria-controls", "committeeSlider");
             tab.textContent = dept.label;
+            tab.style.setProperty("--tab-label-length", String(Array.from(dept.label).length));
             tab.addEventListener("click", () => goTo(i));
             tabsEl.append(tab);
 
@@ -284,6 +414,7 @@
                 tab.tabIndex = t === index ? 0 : -1;
             });
             slider.setAttribute("aria-labelledby", tabs[index].id);
+            updateCommitteeAmbient(data[index]);
             renderMembers(data[index]);
             const tab = tabs[index];
             if (tabsEl.scrollWidth > tabsEl.clientWidth) {

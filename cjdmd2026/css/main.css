@@ -413,11 +413,18 @@ body.mobile-menu-open .header {
 }
 
 .committee-tab {
+    --tab-font-size: clamp(.72rem, calc(.9 * var(--u)), 1.2rem);
+    --tab-selected-font-size: clamp(.85rem, calc(1.05 * var(--u)), 1.4rem);
+    --tab-padding-x: calc(2.4 * var(--u));
     position: relative;
-    padding: .2em calc(2.4 * var(--u));
-    font-size: clamp(.72rem, calc(.9 * var(--u)), 1.2rem);     /* 17px Medium, #111 25% */
+    flex: 0 0 auto;
+    /* 이름을 복제하지 않고, 한글 한 글자당 선택 크기 1em의 공간을 확보합니다. */
+    width: calc(var(--tab-label-length) * var(--tab-selected-font-size) + 2 * var(--tab-padding-x));
+    padding: .2em var(--tab-padding-x);
+    font-size: var(--tab-font-size);     /* 17px Medium, #111 25% */
     font-weight: 500;
     line-height: 1;
+    white-space: nowrap;
     color: rgba(17, 17, 17, .25);
     transition: color .35s ease, font-size .35s ease;
 }
@@ -433,7 +440,7 @@ body.mobile-menu-open .header {
 }
 .committee-tab:hover { color: #777; }
 .committee-tab[aria-selected="true"] {
-    font-size: clamp(.85rem, calc(1.05 * var(--u)), 1.4rem);    /* 20px SemiBold */
+    font-size: var(--tab-selected-font-size);    /* 20px SemiBold */
     font-weight: 600;
     color: #111;
 }
@@ -777,8 +784,12 @@ body.mobile-menu-open .header {
         padding: 0 var(--mobile-pad);
     }
     .committee-tabs::-webkit-scrollbar { display: none; }
-    .committee-tab { flex: 0 0 auto; padding: .25rem 1rem; font-size: .8rem; }
-    .committee-tab[aria-selected="true"] { font-size: .95rem; }
+    .committee-tab {
+        --tab-font-size: .8rem;
+        --tab-selected-font-size: .95rem;
+        --tab-padding-x: 1rem;
+        padding: .25rem var(--tab-padding-x);
+    }
     .committee-slider { width: calc(100% - 2 * var(--mobile-pad)); min-width: 0; margin-top: 1rem; }
     .committee-stage { width: calc(100% - 2 * var(--mobile-pad)); min-width: 0; margin-top: 1rem; }
     .committee-stage .arrow-button--prev { left: 26px; }
