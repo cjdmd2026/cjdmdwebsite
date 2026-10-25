@@ -23,6 +23,8 @@
         iconBlurFullSize: 8,     // 원본 기준: 가장 작은 아이콘은 최대 블러 유지
         iconBlurClearSize: 40,   // 이 크기까지 블러를 점진적으로 줄이고, 큰 아이콘은 선명하게
         iconBlurMax: 3.5,        // 원본 기준 최대 블러 반경 — 화면 크기에 맞춰 함께 축소
+        iconBlurLayers: 6,      // 약한 블러부터 강한 블러까지, 인접 단계를 섞어 연속적으로 표현
+        iconBlurFalloff: 3,     // 중간 크기도 최대 강도에 몰리지 않도록 크기에 따라 빠르게 완화
         iconPushMinSize: 8,      // 원본 기준: 가장 작은 아이콘의 마우스 반응
         iconPushFullSize: 40,    // 이 크기부터 기존 마우스 반응 강도 유지
         iconPushMinStrength: .15,// 가장 작은 아이콘은 기존 힘의 15%만 적용
@@ -52,12 +54,15 @@
     const ctx = canvas.getContext("2d");
     // 인접한 블러 레이어를 크기별 비율로 섞어 강도가 경계 없이 이어지게 합니다.
     // 필터는 레이어에만 적용해 수천 개 아이콘의 개별 필터 연산을 피합니다.
-    const blurLayers = Array.from({ length: 4 }, (_, i) => {
-        const layerCanvas = document.createElement("canvas");
+    const blurLayers = Array.from({ length: SETTINGS.iconBlurLayers }, (_, i) => {
+        let layerCanvas = document.createElement("canvas");
+        const batch = window.createHeroSpriteBatch?.(layerCanvas) || null;
+        // WebGL 초기화가 중간에 실패한 캔버스도 새 2D 캔버스로 안전하게 대체합니다.
+        if (!batch) layerCanvas = document.createElement("canvas");
         layerCanvas.id = `heroSoftCanvas${i + 1}`;
         layerCanvas.className = canvas.className;
         layerCanvas.setAttribute("aria-hidden", "true");
-        return { canvas: layerCanvas, ctx: layerCanvas.getContext("2d"), strength: (i + 1) / 4, alpha: 1 };
+        return { canvas: layerCanvas, batch, ctx: batch ? null : layerCanvas.getContext("2d"), strength: (i + 1) / SETTINGS.iconBlurLayers, alpha: 1, dirty: false };
     });
     // 강하게 흐린 작은 아이콘이 뒤에, 선명한 큰 아이콘이 앞에 놓입니다.
     for (const layer of [...blurLayers].reverse()) canvas.before(layer.canvas);
@@ -138,6 +143,10 @@
     let stageLeft = 0, stageTop = 0, headerHeight = 70;
     let iconSets = { light: [], dark: [] };
     const iconsNow = () => iconSets[themeOf()]?.length ? iconSets[themeOf()] : iconSets.light;
+    const iconPhysics = new WeakMap();
+    const pointerCellSize = 128;
+    const settledCache = { canvas: document.createElement("canvas"), key: "", floating: [] };
+    settledCache.ctx = settledCache.canvas.getContext("2d");
     let bigFrame = { x: 0, y: 0, w: 1, h: 1 };
     let smallFrame = { x: 0, y: 0, w: 1, h: 1 };
 
@@ -148,7 +157,8 @@
             (SETTINGS.iconIdleMaxSize - SETTINGS.iconIdleFullSize));
         const blurLevel = size => {
             const t = clamp((SETTINGS.iconBlurClearSize - size) / (SETTINGS.iconBlurClearSize - SETTINGS.iconBlurFullSize));
-            return t * t * (3 - 2 * t) * blurLayers.length;
+            // 원본 8px 이하: 최대 / 13px: 약 60% / 18px: 약 32% / 24px: 약 13%.
+            return Math.pow(t, SETTINGS.iconBlurFalloff) * blurLayers.length;
         };
         function glyphMotionStrengths(set) {
             // 확정 포스터(1130 × 1600)의 글자 획만 고정합니다.
@@ -210,16 +220,72 @@
             }));
         };
         iconSets = { light: make(SETS.light), dark: make(SETS.dark) };
+        measureIcons();
     }
 
-    function sizeCanvas(c, context, w, h) {
-        const width = Math.max(1, Math.round(w * DPR));
-        const height = Math.max(1, Math.round(h * DPR));
+    function sizeCanvas(c, context, w, h, pixelRatio = DPR) {
+        const width = Math.max(1, Math.round(w * pixelRatio));
+        const height = Math.max(1, Math.round(h * pixelRatio));
         if (c.width !== width || c.height !== height) {
             c.width = width;
             c.height = height;
         }
-        context.setTransform(DPR, 0, 0, DPR, 0, 0);
+        context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    }
+
+    function measureIcons() {
+        const k = bigFrame.h / SPRITES.h;
+        for (const icons of Object.values(iconSets)) {
+            const grid = new Map(), awake = new Set();
+            for (const ic of icons) {
+                ic.sw = ic.gw * k;
+                ic.sh = ic.gh * k;
+                ic.left = ic.sx * W - ic.sw / 2;
+                ic.top = ic.sy * H - ic.sh / 2;
+                ic.tx = bigFrame.x + ic.gx * k;
+                ic.ty = bigFrame.y + ic.gy * k;
+                // 회전·부유를 포함한 최대 영역이 화면 밖이면 삼각함수 계산 전 제외합니다.
+                ic.reach = ic.drift + Math.max(ic.sw, ic.sh);
+                const cell = `${Math.floor(ic.sx * W / pointerCellSize)}:${Math.floor(ic.sy * H / pointerCellSize)}`;
+                if (!grid.has(cell)) grid.set(cell, []);
+                grid.get(cell).push(ic);
+                if (ic.awake) awake.add(ic);
+            }
+            iconPhysics.set(icons, { grid, awake });
+        }
+        settledCache.key = "";
+    }
+
+    function nearbyIcons(x1, y1, x2, y2, radius) {
+        const physics = iconPhysics.get(iconsNow());
+        // 이미 밀려난 아이콘은 격자 밖으로 나가도 원래 자리로 돌아올 때까지 갱신합니다.
+        const candidates = new Set(physics.awake);
+        const left = Math.floor((Math.min(x1, x2) - radius) / pointerCellSize);
+        const right = Math.floor((Math.max(x1, x2) + radius) / pointerCellSize);
+        const top = Math.floor((Math.min(y1, y2) - radius) / pointerCellSize);
+        const bottom = Math.floor((Math.max(y1, y2) + radius) / pointerCellSize);
+        for (let y = top; y <= bottom; y++) for (let x = left; x <= right; x++) {
+            const cell = physics.grid.get(`${x}:${y}`);
+            if (cell) for (const ic of cell) candidates.add(ic);
+        }
+        return candidates;
+    }
+
+    function paintSettledCache(atlas, icons) {
+        const key = `${themeOf()}:${W}:${H}:${DPR}`;
+        if (settledCache.key !== key) {
+            const c = settledCache.ctx;
+            sizeCanvas(settledCache.canvas, c, W, H);
+            c.clearRect(0, 0, W, H);
+            c.imageSmoothingQuality = "high";
+            settledCache.floating = [];
+            for (const ic of icons) {
+                if (ic.idleDrift) settledCache.floating.push(ic);
+                else c.drawImage(atlas, ic.ax, ic.ay, ic.gw, ic.gh, ic.tx, ic.ty, ic.sw, ic.sh);
+            }
+            settledCache.key = key;
+        }
+        ctx.drawImage(settledCache.canvas, 0, 0, W, H);
     }
 
     let posterW = 1, posterH = 1;
@@ -233,8 +299,13 @@
         DPR = Math.min(window.devicePixelRatio || 1, 2);
         sizeCanvas(canvas, ctx, W, H);
         for (const layer of blurLayers) {
-            sizeCanvas(layer.canvas, layer.ctx, W, H);
-            layer.ctx.imageSmoothingQuality = "high";
+            // 이미 흐린 작은 아이콘에 고해상도 화면 전체 버퍼를 중복해서 쓰지 않습니다.
+            if (layer.batch) layer.batch.resize(W, H, Math.min(DPR, 1));
+            else {
+                sizeCanvas(layer.canvas, layer.ctx, W, H, Math.min(DPR, 1));
+                layer.ctx.imageSmoothingQuality = "high";
+            }
+            layer.dirty = true;
         }
         bgWipe.resize(W, H, DPR);
         ctx.imageSmoothingQuality = "high";
@@ -244,6 +315,7 @@
         let fw = fh * ratio;
         if (fw > W * 0.95) { fw = W * 0.95; fh = fw / ratio; }
         bigFrame = { x: (W - fw) / 2, y: (H - fh) / 2, w: fw, h: fh };
+        measureIcons();
 
         const p = posterButton.getBoundingClientRect();
         smallFrame = { x: p.left - rect.left, y: p.top - rect.top, w: p.width, h: p.height };
@@ -676,7 +748,6 @@
        - 클릭하면 주변 아이콘이 퍼짐 / 시간이 지나면 원래 자리로 천천히 돌아감 */
     // 메인 포스터용으로 조정: 부드럽게 밀리고, 살짝 출렁이며 천천히 제자리로 돌아옴
     const PUSH = { radius: 110, clickRadius: 200, clickForce: 9, strength: .32, decay: .9, home: .006, max: 14 };
-    let hasMovingIcons = false;
     let pointerNearHeader = false;
     function syncHeaderVisibility() {
         if (!header) return;
@@ -705,7 +776,8 @@
         if (step !== 0) return;
         const [x, y] = toStage(e);
         pointer.down = true;
-        for (const ic of iconsNow()) {
+        const { awake } = iconPhysics.get(iconsNow());
+        for (const ic of nearbyIcons(x, y, x, y, PUSH.clickRadius)) {
             const cx = ic.sx * W + ic.px, cy = ic.sy * H + ic.py;
             let dx = cx - x, dy = cy - y, d = Math.hypot(dx, dy);
             if (d >= PUSH.clickRadius) continue;
@@ -713,7 +785,7 @@
             const f = Math.pow(1 - d / PUSH.clickRadius, 1.3) * PUSH.clickForce * ic.pushStrength;
             ic.pvx += dx / d * f; ic.pvy += dy / d * f;
             ic.awake = true;
-            hasMovingIcons = true;
+            awake.add(ic);
         }
     }, { passive: true });
     window.addEventListener("pointerup", () => { pointer.down = false; }, { passive: true });
@@ -725,15 +797,16 @@
 
     function stepPush(dtFrames) {
         const canPush = pointer.active && step === 0;
-        if (!canPush && !hasMovingIcons) return;
-        hasMovingIcons = false;
+        const { awake } = iconPhysics.get(iconsNow());
+        if (!canPush && !awake.size) return;
         const speed = Math.hypot(pointer.vx, pointer.vy);
         const radius = Math.min(PUSH.radius, W * .2) + Math.min(speed, 30);
         const radiusSquared = radius * radius;
         const dec = Math.pow(PUSH.decay, dtFrames);
         const spinDec = Math.pow(.954, dtFrames);
         const sx = pointer.x - pointer.oldX, sy = pointer.y - pointer.oldY, seg = sx * sx + sy * sy;
-        for (const ic of iconsNow()) {
+        const candidates = canPush ? nearbyIcons(pointer.oldX, pointer.oldY, pointer.x, pointer.y, radius) : awake;
+        for (const ic of candidates) {
             const cx = ic.sx * W + ic.px, cy = ic.sy * H + ic.py;
             if (canPush) {
                 const t = seg ? clamp(((cx - pointer.oldX) * sx + (cy - pointer.oldY) * sy) / seg, 0, 1) : 1;
@@ -748,6 +821,7 @@
                     ic.pvy += dy / d * f + pointer.vy * fall * .17 * strength;
                     ic.spin += (pointer.vx * dy - pointer.vy * dx) * fall * .00004 * ic.pushStrength;
                     ic.awake = true;
+                    awake.add(ic);
                 }
             }
             if (!ic.awake) continue;
@@ -759,8 +833,8 @@
             if (Math.abs(ic.px) + Math.abs(ic.py) < .02 && Math.abs(ic.pvx) + Math.abs(ic.pvy) + Math.abs(ic.spin) < .002) {
                 ic.px = ic.py = ic.pvx = ic.pvy = ic.spin = 0;
                 ic.awake = false;
+                awake.delete(ic);
             }
-            if (ic.awake) hasMovingIcons = true;
         }
         pointer.oldX = pointer.x; pointer.oldY = pointer.y;
         pointer.vx *= .65; pointer.vy *= .65;
@@ -768,6 +842,18 @@
     let lastIconTime = 0;
     let lastIconState = "";
     let assembledTime = 0;
+
+    function useCanvasFallback(layer) {
+        layer.batch.dispose();
+        layer.batch = null;
+        const replacement = layer.canvas.cloneNode(false);
+        layer.canvas.replaceWith(replacement);
+        layer.canvas = replacement;
+        layer.ctx = replacement.getContext("2d");
+        sizeCanvas(replacement, layer.ctx, W, H, Math.min(DPR, 1));
+        layer.ctx.imageSmoothingQuality = "high";
+        lastIconState = "";
+    }
 
     function renderIcons(time) {
         const state = `${current}:${V.fly}:${V.graphic}:${V.dissolve}:${V.move}:${V.reveal}:${ready(atlasNow())}`;
@@ -777,7 +863,11 @@
         lastIconState = state;
         ctx.clearRect(0, 0, W, H);
         for (const layer of blurLayers) {
-            layer.ctx.clearRect(0, 0, W, H);
+            if (layer.dirty) {
+                if (layer.batch) layer.batch.clear();
+                else layer.ctx.clearRect(0, 0, W, H);
+            }
+            layer.dirty = false;
             layer.alpha = 1;
         }
         const t = time / 1000;
@@ -821,9 +911,15 @@
         const k = bigFrame.h / SPRITES.h;          // 흩어진 상태의 크기
         const kf = frame.h / SPRITES.h;            // 모인 상태(포스터 자리로 이동 포함)의 크기
         const fade = 1 - V.dissolve;                         // 그래픽이 깔린 뒤 아이콘 전체가 한 번에 사라짐
-        const icons = iconsNow();
+        let icons = iconsNow();
         const scattered = V.fly === 0;
         const settled = V.fly === 1;
+        // 글자 획은 정지 이미지로 재사용하고 외곽의 움직이는 아이콘만 매 프레임 그립니다.
+        // 축소·역방향 전환에서는 원래 개별 아이콘 렌더링으로 돌아갑니다.
+        if (idling && V.dissolve === 0 && V.reveal === 0 && V.graphic === 0) {
+            paintSettledCache(atlas, icons);
+            icons = settledCache.floating;
+        }
         // 모이는 동안 초점이 돌아오고, 결합이 완성되면 원래 캔버스에 선명하게 그립니다.
         const blur = SETTINGS.iconBlurMax * k * (1 - easeInOut(clamp(V.fly)));
         for (const layer of blurLayers) {
@@ -835,24 +931,33 @@
         let lastAlpha = 1;
         for (let i = 0; i < icons.length; i++) {
             const ic = icons[i];
+            if (scattered) {
+                const left = ic.left + ic.px, top = ic.top + ic.py, reach = ic.reach;
+                if (left + ic.sw + reach < 0 || top + ic.sh + reach < 0 || left - reach > W || top - reach > H) continue;
+            }
             const a = scattered ? 0 : settled ? 1 : easeInOut(clamp(V.fly * 1.4 - ic.delay));
             // 포스터에 같은 '결합'이 같은 자리에 있으므로, 아이콘은 포스터가 다 나타날 때까지 그대로 두었다가
             // 완전히 덮인 순간 지움 → 보는 사람에게는 주변 글자·선만 새로 나타나는 것처럼 보임
             const alpha = (ic.whole ? 1 : a) * fade * hide;
             if (alpha <= 0.01) continue;
 
-            const ws = ic.gw * k, hs = ic.gh * k;
+            const ws = ic.sw, hs = ic.sh;
             const w = lerp(ws, ic.gw * kf * fs, a), h = lerp(hs, ic.gh * kf * fsy, a);
             const wob = (1 - a) * motion;
-            let sx = ic.sx * W + Math.sin(t * ic.speed + ic.phase) * ic.drift * wob - ws / 2;
-            let sy = ic.sy * H + Math.cos(t * ic.speed * .8 + ic.phase) * ic.drift * wob - hs / 2;
-            sx += ic.px * wob; sy += ic.py * wob;      // 모일수록 밀린 효과는 사라짐
             const tx = frame.x + (gcx + (ic.gx - gcx) * fs + fx0) * kf;
             const ty = frame.y + (gcy + (ic.gy - gcy) * fsy + fy0) * kf;
             const ang = ic.angle * wob;
             const drift = ic.idleDrift * kf * a * idleAmount;
-            const x = lerp(sx, tx, a) + Math.sin(assembledTime * ic.speed + ic.phase) * drift;
-            const y = lerp(sy, ty, a) + Math.cos(assembledTime * ic.speed * .81 + ic.phase) * drift;
+            let x = tx, y = ty;
+            if (!settled) {
+                const sx = ic.left + (wob ? (Math.sin(t * ic.speed + ic.phase) * ic.drift + ic.px) * wob : 0);
+                const sy = ic.top + (wob ? (Math.cos(t * ic.speed * .8 + ic.phase) * ic.drift + ic.py) * wob : 0);
+                x = lerp(sx, tx, a); y = lerp(sy, ty, a);
+            }
+            if (drift) {
+                x += Math.sin(assembledTime * ic.speed + ic.phase) * drift;
+                y += Math.cos(assembledTime * ic.speed * .81 + ic.phase) * drift;
+            }
             const margin = Math.abs(ang) > .002 ? Math.max(w, h) : 0;
             if (x + w + margin < 0 || y + h + margin < 0 || x - margin > W || y - margin > H) continue;
             // 크기별 연속값으로 두 강도를 섞고, 모일수록 한 레이어로 정리합니다.
@@ -865,6 +970,11 @@
                 const drawCtx = layer ? layer.ctx : ctx;
                 const opacity = alpha * (pass === 0 ? 1 - blend : blend);
                 if (layer) {
+                    layer.dirty = true;
+                    if (layer.batch) {
+                        layer.batch.add(ic, x, y, w, h, ang, opacity);
+                        continue;
+                    }
                     if (opacity !== layer.alpha) { drawCtx.globalAlpha = opacity; layer.alpha = opacity; }
                 } else if (opacity !== lastAlpha) { ctx.globalAlpha = opacity; lastAlpha = opacity; }
                 if (Math.abs(ang) > .002) {
@@ -876,7 +986,13 @@
             }
         }
         ctx.globalAlpha = 1;
-        for (const layer of blurLayers) layer.ctx.globalAlpha = 1;
+        for (const layer of blurLayers) {
+            if (layer.batch) {
+                if (layer.dirty && !layer.batch.flush(atlas)) useCanvasFallback(layer);
+            } else layer.ctx.globalAlpha = 1;
+            const visibility = layer.dirty ? "" : "hidden";
+            if (layer.canvas.style.visibility !== visibility) layer.canvas.style.visibility = visibility;
+        }
     }
 
     /* =====================================================
