@@ -649,7 +649,7 @@ body:has(#slideview:not([hidden])) .header .nav ul li {
 }
 
 .container:has(#slideview:not([hidden])) .project-dial-title {
-    font-family: 'KboDiamondGothic', var(--font-main);
+    font-family: 'pretendard', var(--font-main);
     font-size: 5rem;
     font-weight: 800;
     line-height: 1;
