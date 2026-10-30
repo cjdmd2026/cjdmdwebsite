@@ -77,6 +77,8 @@
 
     function setMenu(open) {
         if (!menuButton || !menu) return;
+        if (!open && document.documentElement.classList.contains('page-transition-menu-hold')) return;
+        menu.inert = !open;
         menuButton.setAttribute("aria-expanded", String(open));
         menuButton.setAttribute("aria-label", open ? "메뉴 닫기" : "메뉴 열기");
         document.body.classList.toggle("mobile-menu-open", open);

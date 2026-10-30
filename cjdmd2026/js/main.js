@@ -749,6 +749,8 @@
         if (!button || !menu) return;
         let timer = 0;
         function set(open) {
+            if (!open && document.documentElement.classList.contains('page-transition-menu-hold')) return;
+            menu.inert = !open;
             clearTimeout(timer);
             button.setAttribute("aria-expanded", String(open));
             button.setAttribute("aria-label", open ? "메뉴 닫기" : "메뉴 열기");

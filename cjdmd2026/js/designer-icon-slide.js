@@ -684,16 +684,19 @@
     }
     function layout(initial = false) {
       if (!viewActive) return;
+      // 보기 전환의 perspective/translateZ가 적용된 시각적 크기를 좌표계로 저장하지 않습니다.
+      // 캔버스와 투명 버튼은 같은 CSS 레이아웃 크기를 기준으로 배치합니다.
+      const nextWidth = stage.clientWidth, nextHeight = stage.clientHeight;
+      if (nextWidth < 1 || nextHeight < 1) return;
       const box = stage.getBoundingClientRect();
-      if (box.width < 1 || box.height < 1) return;
       const nextWordShiftY = innerHeight * SETTINGS.wordCenterY - (box.top + box.height / 2);
       const wordPositionChanged = Math.abs(nextWordShiftY - wordShiftY) > .1;
       wordShiftY = nextWordShiftY;
-      if (!initial && Math.abs(width - box.width) < .5 && Math.abs(height - box.height) < .5) {
+      if (!initial && width === nextWidth && height === nextHeight) {
         if (wordPositionChanged) draw();
         return;
       }
-      width = box.width; height = box.height;
+      width = nextWidth; height = nextHeight;
       const dpr = Math.min(devicePixelRatio || 1, 2);
       canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);

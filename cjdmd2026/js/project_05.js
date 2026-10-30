@@ -1758,6 +1758,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                     await new Promise(resolve=>{
                         const check=()=>{
                             if(!root.classList.contains('page-transition-preload')
+                                &&!root.classList.contains('page-transition-active')
                                 &&!document.querySelector('.page-transition-layer')){
                                 entry.observer.disconnect();resolve();
                             }

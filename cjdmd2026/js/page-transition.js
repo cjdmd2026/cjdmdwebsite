@@ -1,910 +1,431 @@
 (() => {
-    "use strict";
+    'use strict';
 
+    const root = document.documentElement;
+    const STORAGE_KEY = 'stamp-page-transition';
+    const DURATION = 1100;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    const mobile = matchMedia('(max-width: 759px)');
+    const atlasURL = new URL('../assets/images/page-transition-atlas.json', document.currentScript.src);
+    const nativeNavigation = 'onpagereveal' in window && 'onpageswap' in window;
+    let spritesPromise, scene = null, leaving = false, arriving = false, contentShown = false;
+    let exitBlur = null;
+    let heldMenu = null;
+    let navigationTimer = 0, arrivalTimer = 0;
+    const domReady = document.readyState === 'loading'
+        ? new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve, {once: true}))
+        : Promise.resolve();
 
-    /* ========================================
-       기본 설정
-    ======================================== */
-
-    const LINK_SELECTOR =
-        "[page-transition]";
-
-    /*
-     * 기존 코드와 동일한 키 유지.
-     * 기존 HTML의 preload 체크 코드와도 호환됨.
-     */
-    const STORAGE_KEY =
-        "stamp-page-transition";
-
-
-    // Match project_04: one soft, continuous edge travels from left to right.
-    const WAVE_DURATION_MS = 1100;
-    const WAVE_PRIMARY_AMPLITUDE = .075;
-    const WAVE_SECONDARY_AMPLITUDE = .034;
-    const WAVE_EXTENT = WAVE_PRIMARY_AMPLITUDE + WAVE_SECONDARY_AMPLITUDE;
-    const IN_BLUR_PX = 12;
-    const ICON_SCALE = 1.25;
-    const SVG_NS = 'http://www.w3.org/2000/svg';
-
-    const TRANSITION_COLOR =
-        "#fff";
-
-    const TRANSITION_Z_INDEX =
-        999999;
-
-
-    // Resolve assets from this script so nested profile pages use the same icons.
-    const ICON_BASE_URL = new URL(
-        '../assets/images/project/test/icon/',
-        document.currentScript?.src || document.baseURI
-    );
-    const ICON_FILES = [
-        'team-09-magmoa.svg', 'team-10-ieoon.svg', 'team-11-byeolungwan.svg',
-        'team-12-kokorang.svg', 'team-13-effect.svg', 'team-14-jikji-jamboree.svg',
-        'team-01-apuchika.svg', 'team-02-ommix.svg', 'team-03-phishing-ttuk.svg',
-        'team-04-ilkko.svg', 'team-05-kuro.svg', 'team-06-dadeullim.svg',
-        'team-07-style-lens.svg', 'team-08-geuneuljabi.svg'
-    ];
-    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-    let waveFrame = 0, waveJob = null;
-    let fragmentLoad = null;
-    let spriteLoad = null;
-
-    let isTransitioning =
-        false;
-
-    let activeLayer =
-        null;
-
-
-
-    /* ========================================
-       Style
-    ======================================== */
-
-    const style =
-        document.createElement(
-            "style"
-        );
-
-
+    const style = document.createElement('style');
     style.textContent = `
-
-        html.page-transition-preload { background: #fff; }
-        html.page-transition-preload body { opacity: 0; }
-
+        @view-transition { navigation: auto; }
+        html.page-transition-pending::after {
+            content: ''; position: fixed; inset: 0; z-index: 999999; background: #fff;
+        }
         .page-transition-layer {
-            position: fixed;
-            inset: 0;
-            width: 100%;
-            height: 100dvh;
-            overflow: hidden;
-            z-index: ${TRANSITION_Z_INDEX};
-            pointer-events: auto;
-            contain: layout paint style;
-            isolation: isolate;
+            position: fixed; inset: 0; width: 100%; height: 100dvh;
+            z-index: 999999; pointer-events: auto; overflow: hidden;
+            contain: layout paint style; isolation: isolate;
         }
-        .page-transition-blur,
-        .page-transition-surface,
-        .page-transition-icons {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
+        .page-transition-icons, .page-transition-cover {
+            position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;
         }
-        .page-transition-blur {
-            -webkit-backdrop-filter: blur(var(--page-transition-blur, 0px));
-            backdrop-filter: blur(var(--page-transition-blur, 0px));
-        }
-        .page-transition-surface { display: block; fill: ${TRANSITION_COLOR}; }
         .page-transition-icons { display: block; }
-        @media (prefers-reduced-motion: reduce) {
-            .page-transition-icons,
-            .page-transition-blur { display: none; }
+        .page-transition-cover { background: #fff; }
+        html.page-transition-menu-hold .mobile-menu {
+            background: #fff; opacity: 1; transform: none; transition: none;
         }
-
-        /* ==============================
-           페이지 콘텐츠 Fade Up
-        ============================== */
-
+        html.page-transition-native::view-transition { pointer-events: auto; }
+        html.page-transition-native::view-transition-group(root) {
+            animation: page-transition-hold 8s linear both; z-index: 0;
+        }
+        html.page-transition-native::view-transition-image-pair(root) { isolation: isolate; }
+        html.page-transition-native::view-transition-old(root),
+        html.page-transition-native::view-transition-new(root) {
+            animation: none; mix-blend-mode: normal; opacity: 1;
+        }
+        html.page-transition-native::view-transition-new(root) {
+            clip-path: var(--page-transition-clip, inset(0 100% 0 0));
+        }
+        html.page-transition-native::view-transition-old(root) {
+            filter: blur(var(--page-transition-blur, 0px));
+        }
+        html.page-transition-native::view-transition-group(page-swarm) {
+            animation: none; z-index: 1;
+        }
+        html.page-transition-native::view-transition-old(page-swarm) { display: none; }
+        html.page-transition-native::view-transition-new(page-swarm) {
+            animation: none; mix-blend-mode: normal; opacity: 1;
+        }
+        @keyframes page-transition-hold { from { opacity: 1; } to { opacity: 1; } }
         .page-enter-up {
-            opacity: 0;
-
-            transform:
-                translateY(20px);
-
-            transition:
-                opacity
-                700ms
-                ease,
-
-                transform
-                700ms
-                cubic-bezier(.22, 1, .36, 1);
+            opacity: 0; transform: translateY(20px);
+            transition: opacity 700ms ease, transform 700ms cubic-bezier(.22,1,.36,1);
         }
-
-
-        .page-enter-up.is-show {
-            opacity: 1;
-
-            transform:
-                translateY(0);
+        .page-enter-up.is-show { opacity: 1; transform: translateY(0); }
+        @media (prefers-reduced-motion: reduce) {
+            @view-transition { navigation: none; }
+            .page-enter-up { animation-duration: 1ms !important; transition-duration: 1ms !important; }
         }
-
-
-        /* ==============================
-           접근성
-        ============================== */
-
-        @media (
-            prefers-reduced-motion:
-            reduce
-        ) {
-
-            .page-enter-up {
-
-                animation-duration:
-                    1ms !important;
-
-                transition-duration:
-                    1ms !important;
-            }
-
-        }
-
     `;
+    document.head.appendChild(style);
 
-
-    document.head.appendChild(
-        style
-    );
-
-
-
-    /* ========================================
-       공통 유틸
-    ======================================== */
-
-    function makeIconFragment(source, shape) {
-        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('viewBox', source.getAttribute('viewBox') || '0 0 268 268');
-        svg.setAttribute('aria-hidden', 'true');
-        svg.setAttribute('focusable', 'false');
-        const chain = [];
-        for (let node = shape; node && node !== source; node = node.parentElement) chain.unshift(node);
-        let parent = svg;
-        chain.forEach((node, index) => {
-            const clone = node.cloneNode(index === chain.length - 1);
-            clone.removeAttribute('id');
-            parent.appendChild(clone);
-            parent = clone;
-        });
-        return svg;
+    function readArrival() {
+        try {
+            const value = JSON.parse(sessionStorage.getItem(STORAGE_KEY));
+            return value?.version === 2 && value.href === location.href && Date.now() - value.time < 15000;
+        } catch { return false; }
     }
-
-    function loadIconFragments() {
-        if (reducedMotion.matches) return Promise.resolve([]);
-        if (!fragmentLoad) {
-            fragmentLoad = Promise.allSettled(ICON_FILES.map(async file => {
-                const controller = new AbortController();
-                const timeout = setTimeout(() => controller.abort(), 3000);
-                try {
-                    const response = await fetch(new URL(file, ICON_BASE_URL), {signal: controller.signal});
-                    if (!response.ok) throw new Error('Icon '+response.status+' '+file);
-                    const xml = new DOMParser().parseFromString(await response.text(), 'image/svg+xml');
-                    if (xml.querySelector('parsererror')) throw new Error('Invalid icon '+file);
-                    return [...xml.querySelectorAll('path,polygon,polyline,rect,circle,ellipse,line')]
-                        .filter(shape => !shape.closest('defs,clipPath,mask'))
-                        .map(shape => makeIconFragment(xml.documentElement, shape));
-                } finally { clearTimeout(timeout); }
-            })).then(results => {
-                const failed = results.filter(result => result.status === 'rejected');
-                if (failed.length) console.warn('[Page transition] Some icons could not load; continuing with available icons.');
-                return results.flatMap(result => result.status === 'fulfilled' ? result.value : []);
-            });
-        }
-        return fragmentLoad;
+    function clearArrival() {
+        try { sessionStorage.removeItem(STORAGE_KEY); } catch { /* Storage may be blocked. */ }
     }
-
-    function loadIconSprites() {
-        if (reducedMotion.matches) return Promise.resolve([]);
-        if (!spriteLoad) spriteLoad = loadIconFragments().then(fragments => {
-            if (!fragments.length) return [];
-            // Rasterize the unique SVG pieces once, then reuse one small atlas.
-            // No per-piece DOM transforms or SVG rasterization during the wave.
-            const cell = Math.ceil(156 * ICON_SCALE * Math.min(window.devicePixelRatio || 1, 1.5));
-            const columns = Math.ceil(Math.sqrt(fragments.length));
-            const rows = Math.ceil(fragments.length / columns);
-            const svg = document.createElementNS(SVG_NS, 'svg');
-            svg.setAttribute('width', columns * cell);
-            svg.setAttribute('height', rows * cell);
-            fragments.forEach((fragment, index) => {
-                const tile = fragment.cloneNode(true);
-                tile.setAttribute('x', (index % columns) * cell);
-                tile.setAttribute('y', Math.floor(index / columns) * cell);
-                tile.setAttribute('width', cell);
-                tile.setAttribute('height', cell);
-                svg.appendChild(tile);
-            });
-            const url = URL.createObjectURL(new Blob(
-                [new XMLSerializer().serializeToString(svg)], {type: 'image/svg+xml'}
-            ));
-            return new Promise(resolve => {
-                const image = new Image();
-                const finish = sprites => {
-                    clearTimeout(timeout);
-                    image.onload = image.onerror = null;
-                    URL.revokeObjectURL(url);
-                    resolve(sprites);
-                };
-                const timeout = setTimeout(() => finish([]), 3000);
-                image.onerror = () => finish([]);
-                image.onload = () => {
-                    const atlas = document.createElement('canvas');
-                    atlas.width = columns * cell;
-                    atlas.height = rows * cell;
-                    const context = atlas.getContext('2d');
-                    if (!context) { finish([]); return; }
-                    context.drawImage(image, 0, 0);
-                    const pixels = context.getImageData(0, 0, atlas.width, atlas.height).data;
-                    finish(fragments.map((_, index) => {
-                        const x = (index % columns) * cell;
-                        const y = Math.floor(index / columns) * cell;
-                        // Sample once so the leading pair has a readable silhouette.
-                        let filled = 0;
-                        for (let row = 0; row < 16; row++) {
-                            for (let column = 0; column < 16; column++) {
-                                const px = x + Math.floor((column + .5) * cell / 16);
-                                const py = y + Math.floor((row + .5) * cell / 16);
-                                if (pixels[(py * atlas.width + px) * 4 + 3] > 32) filled++;
-                            }
-                        }
-                        return {atlas, x, y, size: cell, coverage: filled / 256};
-                    }));
-                };
-                image.src = url;
-            });
-        }).catch(error => {
-            console.warn('[Page transition] Icon sprites unavailable; continuing with the white wave.', error);
-            return [];
-        });
-        return spriteLoad;
-    }
-
-    function setTransitionActive(active) {
-        const root = document.documentElement;
+    function setActive(active) {
         if (root.classList.contains('page-transition-active') === active) return;
         root.classList.toggle('page-transition-active', active);
         document.dispatchEvent(new CustomEvent('page-transition:change', {detail: {active}}));
     }
+    function bounded(promise, timeout) {
+        return new Promise(resolve => {
+            const timer = setTimeout(resolve, timeout);
+            Promise.resolve(promise).then(value => { clearTimeout(timer); resolve(value); }, () => {
+                clearTimeout(timer); resolve();
+            });
+        });
+    }
+    function loadSprites() {
+        if (!spritesPromise) spritesPromise = (async () => {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 2400);
+            let sheet;
+            try {
+                const response = await fetch(atlasURL, {signal: controller.signal});
+                if (!response.ok) throw new Error('Atlas response: ' + response.status);
+                sheet = await response.json();
+            } finally { clearTimeout(timeout); }
+            const image = new Image();
+            image.src = sheet.source;
+            await image.decode();
+            const atlas = document.createElement('canvas');
+            atlas.width = image.naturalWidth; atlas.height = image.naturalHeight;
+            const ctx = atlas.getContext('2d');
+            if (!ctx) return [];
+            ctx.drawImage(image, 0, 0);
+            return Array.from({length: sheet.count}, (_, i) => ({atlas,
+                x: i % sheet.columns * sheet.cell, y: Math.floor(i / sheet.columns) * sheet.cell, size: sheet.cell}));
+        })().catch(error => {
+            console.warn('[Page transition] Icon atlas unavailable.', error);
+            return [];
+        });
+        return bounded(spritesPromise, 2500).then(sprites => sprites || []);
+    }
 
-    function createLayer(mode) {
-        removeLayer(false);
+    function resize(current) {
+        const width = Math.max(1, current.layer.clientWidth), height = Math.max(1, current.layer.clientHeight);
+        const vertical = mobile.matches;
+        const iconSize = Math.min(156, Math.max(76, width * .1)) * 1.25;
+        const spread = Math.min(150, width * .19, iconSize * .88), drift = Math.min(16, iconSize * .1);
+        const tailLength = Math.min(480, width * .6);
+        const margin = width * .109 + spread + drift + iconSize * Math.SQRT1_2 + 16;
+        current.size = {width, height, vertical, travelLength: vertical ? height : width,
+            crossLength: vertical ? width : height,
+            iconSize, spread, drift, tailLength, startMargin: margin, endMargin: margin + tailLength};
+        current.layer.dataset.direction = vertical ? 'top-to-bottom' : 'left-to-right';
+        root.dataset.pageTransitionDirection = current.layer.dataset.direction;
+        current.ratio = Math.min(devicePixelRatio || 1, 1.5);
+        current.canvas.width = Math.ceil(width * current.ratio);
+        current.canvas.height = Math.ceil(height * current.ratio);
+        paint(current, current.progress || 0);
+    }
+    function waveEdge(size, cross, base, time) {
+        return base + Math.sin(cross / size.crossLength * Math.PI * 3.2 + time * .004) * size.width * .075
+            + Math.sin(cross / size.crossLength * Math.PI * 7.4 - time * .006) * size.width * .034;
+    }
+    function position(current, particle, time) {
+        const {crossLength, vertical, spread, drift, tailLength} = current.size, depth = particle.depth;
+        const lane = .5 + (particle.lane - .5) * (1 - depth * .12);
+        const cross = lane * crossLength + Math.sin(time * .0018 + particle.seed * 12) * crossLength * (particle.trailing ? .016 : .035) + particle.offsetY;
+        const along = waveEdge(current.size, cross, 0, time) * (1 - depth * .78) - depth * tailLength
+            + particle.scatter * spread * (1 - depth * .7) + Math.sin(time * .003 + particle.seed * 20) * drift;
+        // Swap movement axes on mobile while keeping each icon upright.
+        return vertical ? {x: cross, y: along} : {x: along, y: cross};
+    }
+    function makeParticles(current, sprites) {
+        const compact = current.size.vertical, bodyCount = compact ? 48 : 80, tailCount = compact ? 34 : 56;
+        current.particles = Array.from({length: bodyCount + tailCount}, (_, i) => {
+            const trailing = i >= bodyCount;
+            const depth = trailing ? .075 + Math.pow((i - bodyCount + .5) / tailCount, 1.2) * .925
+                : Math.pow((i + .5) / bodyCount, 1.5) * .075;
+            const band = (((i * 37) % bodyCount + .5) / bodyCount) * 2 - 1;
+            return {
+                sprite: sprites[i % sprites.length], trailing, depth, lane: (i * .61803398875) % 1,
+                seed: ((i * 9301 + 49297) % 233280) / 233280,
+                scatter: trailing ? ((i * .754877666) % 1) * 2 - 1 : Math.sign(band) * Math.pow(Math.abs(band), 1.45),
+                scale: trailing ? (.40 + ((i * 11) % 17) / 100) * (1 - depth * .12) : .52 + ((i * 17) % 35) / 100,
+                opacity: 1 - depth * .18,
+                angle: trailing ? ((i * 23) % 24) - 12 : ((i * 23) % 60) - 30,
+                offsetY: trailing ? ((i * 43) % 24) - 12 : ((i * 43) % 70) - 35,
+                spin: (((i * 31) % 21) - 10) * .096
+            };
+        });
+        // Resolve spacing once, across several moments of the motion; no frame-time collision simulation.
+        const times = [0, 275, 550, 825, 1100];
+        const placed = current.particles.slice(0, bodyCount).map(p => ({scale: p.scale, weight: .35, samples: times.map(t => position(current, p, t))}));
+        for (const particle of current.particles.slice(bodyCount)) {
+            const originalLane = particle.lane;
+            let bestLane = originalLane, bestPenalty = Infinity, bestSamples;
+            for (let candidate = 0; candidate < 20; candidate++) {
+                particle.lane = candidate === 0 ? originalLane : .04 + .92 * ((originalLane + candidate * .61803398875) % 1);
+                const samples = times.map(t => position(current, particle, t));
+                let penalty = 0;
+                for (const other of placed) {
+                    const spacing = current.size.iconSize * (particle.scale + other.scale) * (.48 + particle.depth * .08);
+                    for (let i = 0; i < samples.length; i++) {
+                        const dx = samples[i].x - other.samples[i].x, dy = samples[i].y - other.samples[i].y;
+                        const overlap = Math.max(0, 1 - (dx * dx + dy * dy) / (spacing * spacing));
+                        penalty += overlap * overlap * other.weight;
+                    }
+                }
+                if (penalty < bestPenalty) { bestPenalty = penalty; bestLane = particle.lane; bestSamples = samples; }
+                if (penalty === 0) break;
+            }
+            particle.lane = bestLane;
+            placed.push({scale: particle.scale, weight: 1, samples: bestSamples});
+        }
+        current.canvas.dataset.pieces = String(bodyCount + tailCount);
+        current.canvas.dataset.tailPieces = String(tailCount);
+    }
+    function paint(current, value) {
+        current.progress = value;
+        const size = current.size, travel = value * value, time = travel * DURATION;
+        const base = -size.startMargin + (size.travelLength + size.startMargin + size.endMargin) * travel;
+        const edge = Array.from({length: 65}, (_, i) => {
+            const cross = size.crossLength * i / 64;
+            const along = waveEdge(size, cross, base, time);
+            return size.vertical ? cross.toFixed(2) + 'px ' + along.toFixed(2) + 'px'
+                : along.toFixed(2) + 'px ' + cross.toFixed(2) + 'px';
+        }).join(',');
+        if (current.transition) {
+            root.style.setProperty('--page-transition-clip', 'polygon(0 0,' + edge + (size.vertical ? ',100% 0)' : ',0 100%)'));
+            root.style.setProperty('--page-transition-blur', (12 * value * value * (3 - 2 * value)).toFixed(2) + 'px');
+        }
+        else current.cover.style.clipPath = (size.vertical ? 'polygon(0 100%,' : 'polygon(100% 0,') + edge + ',100% 100%)';
+        current.layer.dataset.phase = value === 1 ? 'complete' : base < size.travelLength * .3 ? 'entering' : base < size.travelLength * .7 ? 'crossing' : 'leaving';
+        root.dataset.pageTransitionState = current.layer.dataset.phase;
+        const ctx = current.ctx, ratio = current.ratio;
+        if (!ctx) return;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, current.canvas.width, current.canvas.height);
+        for (const particle of current.particles) {
+            const point = position(current, particle, time);
+            const x = point.x + (size.vertical ? 0 : base), y = point.y + (size.vertical ? base : 0);
+            if (x < -size.iconSize || x > size.width + size.iconSize || y < -size.iconSize || y > size.height + size.iconSize) continue;
+            const angle = (particle.angle + particle.spin * time / 1000) * Math.PI / 180, scale = particle.scale * ratio;
+            ctx.setTransform(Math.cos(angle) * scale, Math.sin(angle) * scale, -Math.sin(angle) * scale, Math.cos(angle) * scale, x * ratio, y * ratio);
+            ctx.globalAlpha = particle.opacity;
+            const sprite = particle.sprite;
+            ctx.drawImage(sprite.atlas, sprite.x, sprite.y, sprite.size, sprite.size, -size.iconSize / 2, -size.iconSize / 2, size.iconSize, size.iconSize);
+        }
+        ctx.globalAlpha = 1;
+    }
+    function createScene(transition) {
         const layer = document.createElement('div');
         layer.className = 'page-transition-layer';
-        layer.dataset.mode = mode;
         layer.setAttribute('aria-hidden', 'true');
-        // On arrival the whole page remains white while the SVG assets load.
-        if (mode === 'out') layer.style.background = TRANSITION_COLOR;
-        // Blur only the outgoing page, beneath the sharp wave and icon canvas.
-        const blur = mode === 'in' && !reducedMotion.matches ? document.createElement('div') : null;
-        if (blur) {
-            blur.className = 'page-transition-blur';
-            layer.appendChild(blur);
-        }
-        const surface = document.createElementNS(SVG_NS, 'svg');
-        surface.classList.add('page-transition-surface');
-        surface.setAttribute('preserveAspectRatio', 'none');
-        const path = document.createElementNS(SVG_NS, 'path');
-        surface.appendChild(path);
-        const icons = document.createElement('canvas');
-        icons.className = 'page-transition-icons';
-        layer.append(surface, icons);
+        layer.dataset.mode = transition ? 'single-native' : 'single-fallback';
+        root.dataset.pageTransitionMode = layer.dataset.mode;
+        const canvas = document.createElement('canvas');
+        canvas.className = 'page-transition-icons';
+        const cover = transition ? null : document.createElement('div');
+        if (transition) canvas.style.viewTransitionName = 'page-swarm';
+        else { cover.className = 'page-transition-cover'; layer.appendChild(cover); }
+        layer.appendChild(canvas);
         document.body.appendChild(layer);
-        activeLayer = layer;
-        const scene = {layer, surface, path, icons, blur, mode, particles: [], context: icons.getContext('2d')};
-        scene.resize = () => resizeWave(scene);
-        resizeWave(scene);
-        window.addEventListener('resize', scene.resize, {passive: true});
-        layer.waveScene = scene;
-        setTransitionActive(true);
-        return scene;
+        root.classList.remove('page-transition-pending');
+        const current = {layer, canvas, cover, transition, particles: [], ctx: canvas.getContext('2d'), frame: 0, timeout: 0};
+        current.resize = () => resize(current);
+        scene = current;
+        resize(current);
+        window.addEventListener('resize', current.resize, {passive: true});
+        return current;
     }
-
-    function createWaveIcons(scene, sprites) {
-        if (reducedMotion.matches || !sprites.length || !scene.context) return;
-        const count = scene.size.width < 640 ? 56 : 96;
-        const scouts = [];
-        if (scene.mode === 'in') {
-            const readable = sprites.filter(sprite => sprite.coverage >= .1);
-            const pool = (readable.length >= 2 ? readable : sprites).slice();
-            for (let index = 0; index < 2; index++) {
-                scouts.push(pool.length ? pool.splice(Math.floor(Math.random() * pool.length), 1)[0] : scouts[0]);
-            }
+    function cleanup() {
+        const current = scene;
+        scene = null;
+        if (current) {
+            cancelAnimationFrame(current.frame); clearTimeout(current.timeout);
+            window.removeEventListener('resize', current.resize);
+            current.transition?.skipTransition();
+            current.layer.remove();
         }
-        scene.particles = Array.from({length: count}, (_, index) => {
-            // A dense center with gradually fewer pieces toward either side.
-            // Shuffle the evenly sampled positions so they do not form rows.
-            const spread = (((index * 37) % count + .5) / count) * 2 - 1;
-            const scout = scene.mode === 'in' && index < 2 ? index : -1;
-            return {
-                sprite: scout >= 0 ? scouts[scout] : sprites[index % sprites.length],
-                scout,
-                lane: scout >= 0 ? .32 + scout * .34 : (index * .61803398875) % 1,
-                seed: ((index * 9301 + 49297) % 233280) / 233280,
-                band: Math.sign(spread) * Math.pow(Math.abs(spread), 1.45),
-                offsetY: ((index * 43) % 70) - 35,
-                scale: scout >= 0 ? .94 : .52 + ((index * 17) % 46) / 100,
-                angle: ((index * 23) % 90) - 45,
-                spin: (((index * 31) % 21) - 10) * .096
-            };
+        clearTimeout(navigationTimer); clearTimeout(arrivalTimer);
+        exitBlur?.cancel(); exitBlur = null;
+        root.classList.remove('page-transition-native', 'page-transition-preload', 'page-transition-pending', 'page-transition-menu-hold');
+        root.style.removeProperty('--page-transition-clip');
+        root.style.removeProperty('--page-transition-blur');
+        arriving = leaving = false;
+        setActive(false);
+    }
+    function showPageContent() {
+        if (contentShown) return;
+        contentShown = true;
+        let index = 0;
+        document.querySelectorAll('[typewriter-effect][typewriter-trigger="manual"]').forEach(el => {
+            if (el.offsetParent !== null && window.TypewriterEffect) setTimeout(() => window.TypewriterEffect.play(el), index++ * 180);
         });
-        scene.icons.dataset.pieces = String(count);
-    }
-
-    function resizeWave(scene) {
-        const width = Math.max(1, scene.layer.clientWidth);
-        const height = Math.max(1, scene.layer.clientHeight);
-        const baseIconSize = Math.min(156, Math.max(76, width * .1));
-        const iconSize = baseIconSize * ICON_SCALE;
-        const iconSpread = Math.min(120, width * .17, iconSize * .78);
-        const iconDrift = Math.min(16, iconSize * .1);
-        // Keep even the outermost rotated pieces offscreen at both endpoints.
-        const margin = width * WAVE_EXTENT + Math.max(baseIconSize + 72,
-            iconSpread + iconDrift + iconSize * Math.SQRT1_2 + 8);
-        scene.size = {width, height, iconSize, iconSpread, iconDrift, margin};
-        scene.pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
-        scene.icons.width = Math.ceil(width * scene.pixelRatio);
-        scene.icons.height = Math.ceil(height * scene.pixelRatio);
-        scene.surface.setAttribute('viewBox', '0 0 '+width+' '+height);
-        if (scene.progress !== undefined) paintWave(scene, scene.progress, scene.time);
-    }
-
-    function waveX(y, base, size, time) {
-        // Deeper overlapping waves retain project_04's flowing edge.
-        return base
-            + Math.sin(y / size.height * Math.PI * 3.2 + time * .004) * size.width * WAVE_PRIMARY_AMPLITUDE
-            + Math.sin(y / size.height * Math.PI * 7.4 - time * .006) * size.width * WAVE_SECONDARY_AMPLITUDE;
-    }
-
-    function paintWave(scene, progress, time) {
-        const size = scene.size;
-        scene.progress = progress;
-        scene.time = time;
-        if (scene.blur) {
-            const elapsed = Math.max(0, Math.min(1, time / WAVE_DURATION_MS));
-            const blurProgress = elapsed * elapsed * (3 - 2 * elapsed);
-            scene.blur.style.setProperty('--page-transition-blur', (IN_BLUR_PX * blurProgress).toFixed(2) + 'px');
-        }
-        // The edge, all fragments and the leading pair share one eased clock.
-        const motionTime = scene.mode === 'in' ? progress * WAVE_DURATION_MS : time;
-        const base = -size.margin + (size.width + size.margin * 2) * progress;
-        const phase = progress === 1 ? 'complete'
-            : scene.mode === 'in' && time >= 180 && time < 300 ? 'scouting'
-            : base < size.width * .3 ? 'entering'
-            : base < size.width * .7 ? 'crossing' : 'leaving';
-        if (scene.layer.dataset.phase !== phase) scene.layer.dataset.phase = phase;
-        const step = size.height / 32;
-        const points = Array.from({length: 33}, (_, index) => {
-            const y = index * step;
-            const slope = Math.cos(y / size.height * Math.PI * 3.2 + motionTime * .004) * size.width * WAVE_PRIMARY_AMPLITUDE * Math.PI * 3.2 / size.height
-                + Math.cos(y / size.height * Math.PI * 7.4 - motionTime * .006) * size.width * WAVE_SECONDARY_AMPLITUDE * Math.PI * 7.4 / size.height;
-            return {x: waveX(y, base, size, motionTime), y, slope};
+        document.querySelectorAll('.page-enter-up').forEach((el, i) => {
+            if (el.offsetParent !== null) setTimeout(() => el.classList.add('is-show'), 100 + i * 100);
         });
-        // Cubic segments share their tangents: the edge is one smooth line.
-        let d = 'M '+points[0].x.toFixed(2)+' 0';
-        for (let index = 1; index < points.length; index++) {
-            const a = points[index-1], b = points[index];
-            d += ' C '+(a.x+a.slope*step/3).toFixed(2)+' '+(a.y+step/3).toFixed(2)
-                +' '+(b.x-b.slope*step/3).toFixed(2)+' '+(b.y-step/3).toFixed(2)
-                +' '+b.x.toFixed(2)+' '+b.y.toFixed(2);
-        }
-        // The leading edge covers the old page; the trailing edge reveals the new one.
-        const side = scene.mode === 'in' ? -size.margin : size.width + size.margin;
-        scene.path.setAttribute('d', d+' L '+side+' '+size.height+' L '+side+' 0 Z');
-        const context = scene.context, ratio = scene.pixelRatio;
-        if (!context) return;
-        context.setTransform(1, 0, 0, 1, 0, 0);
-        context.clearRect(0, 0, scene.icons.width, scene.icons.height);
-        for (const particle of scene.particles) {
-            const y = particle.lane * size.height + Math.sin(motionTime * .0018 + particle.seed * 12) * size.height * .035 + particle.offsetY;
-            const band = particle.band * size.iconSpread
-                + Math.sin(motionTime * .003 + particle.seed * 20) * size.iconDrift;
-            let x = waveX(y, base, size, motionTime) + band;
-            if (particle.scout >= 0) {
-                const startY = particle.lane * size.height
-                    + Math.sin(particle.seed * 12) * size.height * .035 + particle.offsetY;
-                const startX = waveX(startY, -size.margin, size, 0)
-                    + particle.band * size.iconSpread + Math.sin(particle.seed * 20) * size.iconDrift;
-                const offscreen = size.iconSize * particle.scale * Math.SQRT1_2 + 12 + particle.scout * 28;
-                const lead = Math.max(0, -offscreen - startX);
-                // Only their spacing differs: ease it back into the same wave.
-                const advance = Math.min(1, progress / .08);
-                const headStart = size.iconSize * .55 * advance * (2 - advance);
-                const join = Math.max(0, Math.min(1, (progress - .06) / .5));
-                x += (lead + headStart) * (1 - join * join * (3 - 2 * join));
+    }
+    async function contentReady() {
+        await domReady;
+        const visibleImages = [...document.images].filter(image => {
+            const rect = image.getBoundingClientRect();
+            return rect.width && rect.height && rect.bottom > 0 && rect.top < innerHeight;
+        }).slice(0, 12);
+        await bounded(Promise.allSettled([...visibleImages.map(image => image.decode()), document.fonts?.ready]), 1200);
+    }
+    async function run(current) {
+        // The native old-page snapshot stays visible while the new page and atlas become ready.
+        current.timeout = setTimeout(() => { if (scene === current) { cleanup(); showPageContent(); } }, 5000);
+        try {
+            const [sprites] = await Promise.all([loadSprites(), contentReady(), current.transition?.ready]);
+            if (scene !== current) return;
+            if (reduced.matches || !sprites.length || !current.ctx) {
+                root.dataset.pageTransitionState = reduced.matches ? 'reduced-motion' : !sprites.length ? 'no-sprites' : 'no-canvas';
+                cleanup(); showPageContent(); return;
             }
-            if (x < -size.iconSize || x > size.width + size.iconSize ||
-                y < -size.iconSize || y > size.height + size.iconSize) continue;
-            const angle = (particle.angle + particle.spin * motionTime / 1000) * Math.PI / 180;
-            const scale = particle.scale * ratio;
-            const cos = Math.cos(angle) * scale, sin = Math.sin(angle) * scale;
-            context.setTransform(cos, sin, -sin, cos, x * ratio, y * ratio);
-            const sprite = particle.sprite;
-            context.drawImage(sprite.atlas, sprite.x, sprite.y, sprite.size, sprite.size,
-                -size.iconSize / 2, -size.iconSize / 2, size.iconSize, size.iconSize);
-        }
-    }
-
-    function finishWave(success) {
-        cancelAnimationFrame(waveFrame);
-        waveFrame = 0;
-        const current = waveJob;
-        waveJob = null;
-        current?.resolve(success);
-    }
-
-    function removeLayer(resumeBackground = true) {
-        finishWave(false);
-        if (activeLayer) window.removeEventListener('resize', activeLayer.waveScene.resize);
-        activeLayer?.remove();
-        activeLayer = null;
-        if (resumeBackground) setTransitionActive(false);
-    }
-
-    function animateWave(scene) {
-        if (activeLayer !== scene.layer) return Promise.resolve(false);
-        const size = scene.size;
-        const revealing = scene.mode === 'out';
-        // IN starts with every piece outside the viewport. OUT starts at the
-        // edge to keep the white handoff short.
-        const waveExtent = size.width * WAVE_EXTENT + 2;
-        const from = revealing
-            ? Math.max(0, (size.margin - waveExtent) / (size.width + size.margin * 2))
-            : 0;
-        // One accelerating IN includes the leading pair. OUT keeps its shorter
-        // travel, taking about half a second.
-        const duration = revealing ? WAVE_DURATION_MS * (1 - from) / 2 : WAVE_DURATION_MS;
-        const timeOffset = revealing ? WAVE_DURATION_MS : 0;
-        if (reducedMotion.matches) {
-            paintWave(scene, 1, timeOffset);
-            return Promise.resolve(true);
-        }
-        paintWave(scene, from, timeOffset);
-        return new Promise(resolve => {
-            const job = {scene, resolve, started: performance.now(), duration, timeOffset};
-            waveJob = job;
+            makeParticles(current, sprites);
+            showPageContent();
+            const start = performance.now();
             const tick = now => {
-                if (waveJob !== job) return;
-                const elapsed = Math.max(0, now-job.started);
-                const fraction = Math.min(1, elapsed/job.duration);
-                const travel = revealing ? fraction : fraction * fraction;
-                const progress = from + (1 - from) * travel;
-                paintWave(scene, progress, job.timeOffset+elapsed);
-                if (fraction === 1) {
-                    scene.layer.dataset.phase = 'complete';
-                    finishWave(true);
-                    return;
-                }
-                waveFrame = requestAnimationFrame(tick);
+                if (scene !== current) return;
+                const progress = Math.min(1, (now - start) / DURATION);
+                paint(current, progress);
+                if (progress === 1) { cleanup(); return; }
+                current.frame = requestAnimationFrame(tick);
             };
-            waveFrame = requestAnimationFrame(tick);
-        });
+            current.frame = requestAnimationFrame(tick);
+        } catch (error) {
+            if (scene === current) {
+                root.dataset.pageTransitionState = 'skipped';
+                console.warn('[Page transition] Single pass skipped.', error);
+                cleanup(); showPageContent();
+            }
+        }
     }
 
-    reducedMotion.addEventListener('change', () => {
-        if (!reducedMotion.matches || !waveJob) return;
-        const {scene, duration, timeOffset} = waveJob;
-        paintWave(scene, 1, timeOffset+duration);
-        finishWave(true);
+    // This script is parser-blocking in the head: pagereveal must be registered before first paint.
+    window.addEventListener('pagereveal', event => {
+        const transition = event.viewTransition;
+        clearTimeout(arrivalTimer);
+        if (!transition) { void domReady.then(fallbackArrival); return; }
+        if (scene) cleanup();
+        if (reduced.matches || !document.body) {
+            transition.skipTransition(); cleanup(); clearArrival();
+            void domReady.then(showPageContent);
+            return;
+        }
+        clearTimeout(arrivalTimer);
+        arriving = true;
+        clearArrival();
+        root.classList.remove('page-transition-preload', 'page-transition-pending');
+        root.classList.add('page-transition-native');
+        root.style.setProperty('--page-transition-clip', 'inset(0 100% 0 0)');
+        setActive(true);
+        const current = createScene(transition);
+        transition.finished.finally(() => { if (scene === current) { cleanup(); showPageContent(); } });
+        void run(current);
+    });
+    window.addEventListener('pageswap', event => {
+        const traverse = event.activation?.navigationType === 'traverse';
+        if (reduced.matches || (!leaving && !traverse)) event.viewTransition?.skipTransition();
+        // The BFCache must retain an interactive page, not an outgoing busy state.
+        clearTimeout(navigationTimer);
+        leaving = false;
+        setActive(false);
+    });
+    window.addEventListener('pageshow', event => {
+        if (event.persisted) {
+            // Only reset the outgoing menu after returning from the BFCache.
+            // Closing it in pageswap/pagehide can change the captured old page.
+            if (heldMenu) {
+                heldMenu.classList.remove('is-open');
+                heldMenu.hidden = true;
+                heldMenu.inert = true;
+                document.body.classList.remove('mobile-menu-open');
+                const button = document.querySelector('.menu-button');
+                button?.setAttribute('aria-expanded', 'false');
+                button?.setAttribute('aria-label', '메뉴 열기');
+                heldMenu = null;
+            }
+            cleanup(); clearArrival();
+        }
+    });
+    window.addEventListener('pagehide', () => {
+        if (scene || exitBlur) cleanup();
+        clearTimeout(navigationTimer);
+    });
+    reduced.addEventListener('change', () => {
+        if (reduced.matches && scene) { cleanup(); showPageContent(); }
     });
 
-    function isModifiedClick(
-        event
-    ) {
-
-        return (
-            event.metaKey
-            ||
-            event.ctrlKey
-            ||
-            event.shiftKey
-            ||
-            event.altKey
-        );
-
-    }
-
-
-
-    // One continuous left-to-right wave, split only by the document navigation.
-    async function playIn() {
-        const scene = createLayer('in');
-        const fragments = await loadIconSprites();
-        if (activeLayer !== scene.layer) return false;
-        createWaveIcons(scene, fragments);
-        const completed = await animateWave(scene);
-        if (completed && activeLayer === scene.layer) {
-            scene.layer.style.background = TRANSITION_COLOR;
-            scene.blur?.remove();
-            scene.icons.width = 0;
-        }
-        return completed;
-    }
-
-    async function playOut() {
-        const scene = createLayer('out');
-        const fragments = await loadIconSprites();
-        if (activeLayer !== scene.layer) return;
-        createWaveIcons(scene, fragments);
-        // Paint the first visible edge before releasing the preload cover.
-        const animation = animateWave(scene);
-        scene.layer.style.background = '';
-        document.documentElement.classList.remove('page-transition-preload');
-        await animation;
-        if (activeLayer === scene.layer) removeLayer();
-    }
-
-
-    /* ========================================
-       현재 페이지 퇴장
-    ======================================== */
-
-    async function leavePage(
-        href
-    ) {
-
-        if (
-            isTransitioning
-        ) {
+    async function handleLinkClick(event) {
+        const link = event.target.closest?.('[page-transition]');
+        if (!link?.href || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey
+            || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+        const url = new URL(link.href, location.href);
+        if (url.origin !== location.origin || !/^https?:$/.test(url.protocol)) return;
+        if (url.pathname === location.pathname && url.search === location.search) {
+            if (url.hash === location.hash) event.preventDefault();
             return;
         }
-
-
-        isTransitioning =
-            true;
-
-
-        // Fetch only the chosen destination while the current page is covered.
-        const prefetch = document.createElement('link');
-        prefetch.rel = 'prefetch';
-        prefetch.as = 'document';
-        prefetch.href = href;
-        document.head.appendChild(prefetch);
-
-        try { if (!await playIn()) return; }
-        catch (error) { console.warn('[Page transition] Cover animation skipped.', error); }
-        finally { prefetch.remove(); }
-
-
-        /*
-         * 다음 페이지에
-         * 전환 상태 전달
-         */
-        try { sessionStorage.setItem(STORAGE_KEY, '1'); }
-        catch { /* Navigation still works when storage is unavailable. */ }
-
-
-        window.location.href =
-            href;
-
-    }
-
-
-
-    /* ========================================
-       NAV 클릭
-    ======================================== */
-
-    function handleLinkClick(
-        event
-    ) {
-
-        const link = event.target.closest?.(LINK_SELECTOR);
-        if (!link || link.hasAttribute('download')) return;
-
-
-        /*
-         * 새 탭 / modifier click은
-         * 브라우저 기본 동작 유지
-         */
-        if (
-            event.defaultPrevented
-            ||
-            event.button !== 0
-            ||
-            isModifiedClick(
-                event
-            )
-        ) {
-
-            return;
-
-        }
-
-
-        const href =
-            link.href;
-
-
-        if (!href) {
-            return;
-        }
-
-
-        const target =
-            link.getAttribute(
-                "target"
-            );
-
-
-        if (
-            target
-            &&
-            target !==
-                "_self"
-        ) {
-
-            return;
-
-        }
-
-
-        const url =
-            new URL(
-                href,
-                window.location.href
-            );
-
-
-        /*
-         * 외부 링크 제외
-         */
-        if (
-            url.origin
-            !==
-            window.location.origin
-        ) {
-
-            return;
-
-        }
-
-
-        /*
-         * 현재 페이지 링크 제외
-         */
-        if (
-            url.href
-            ===
-            window.location.href
-        ) {
-
-            event.preventDefault();
-
-            return;
-
-        }
-
-
         event.preventDefault();
-
-
-        leavePage(
-            url.href
-        );
-
-    }
-
-
-
-    /* ========================================
-       새 페이지 진입
-    ======================================== */
-
-    async function enterPage() {
-        const shouldEnter = sessionStorage.getItem(STORAGE_KEY) === '1';
-        if (!shouldEnter) {
-            document.documentElement.classList.remove('page-transition-preload');
-            showPageContent();
-            return;
+        if (leaving || arriving) return;
+        leaving = true;
+        const menu = mobile.matches ? link.closest('.mobile-menu') : null;
+        if (menu && !menu.hidden) {
+            heldMenu = menu;
+            root.classList.add('page-transition-menu-hold');
+            menu.classList.add('is-open');
         }
-        sessionStorage.removeItem(STORAGE_KEY);
-        isTransitioning = true;
-        try { await playOut(); }
-        catch (error) {
-            console.warn('[Page transition] Reveal animation skipped.', error);
-            removeLayer();
-            document.documentElement.classList.remove('page-transition-preload');
+        setActive(true);
+        if (!reduced.matches) {
+            try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify({version: 2, href: url.href, time: Date.now()})); } catch { /* Native transitions do not require storage. */ }
         }
-        showPageContent();
-        isTransitioning = false;
+        // Navigate immediately. The browser keeps the old document until the new one is ready.
+        // No outgoing cover pass, DOM replacement, or re-execution of page scripts is needed.
+        navigationTimer = setTimeout(() => { cleanup(); clearArrival(); }, 12000);
+        if (!nativeNavigation && !reduced.matches && document.body.animate) {
+            exitBlur = document.body.animate([{filter: 'blur(0px)'}, {filter: 'blur(12px)'}], {duration: 200, fill: 'both'});
+            await exitBlur.finished.catch(() => {});
+        }
+        location.assign(url.href);
     }
+    // Menu link handlers otherwise start their close/fade before document bubbling.
+    // Claim only menu navigation early; other links retain their existing order.
+    document.addEventListener('click', event => {
+        if (event.target.closest?.('.mobile-menu [page-transition]')) void handleLinkClick(event);
+    }, true);
+    document.addEventListener('click', handleLinkClick);
 
-    /* ========================================
-       페이지 콘텐츠 등장
-       기존 로직 유지
-    ======================================== */
-
-    function showPageContent() {
-
-
-        /* ==============================
-           Manual Typewriter
-        ============================== */
-
-        const typewriters =
-            document.querySelectorAll(
-                '[typewriter-effect][typewriter-trigger="manual"]'
-            );
-
-
-        let typewriterIndex =
-            0;
-
-
-        typewriters.forEach(
-            el => {
-
-
-                /*
-                 * display:none 등
-                 * 현재 화면에 보이지 않는 요소 제외
-                 */
-                if (
-                    el.offsetParent
-                    ===
-                    null
-                ) {
-
-                    return;
-
-                }
-
-
-                if (
-                    !window.TypewriterEffect
-                ) {
-
-                    return;
-
-                }
-
-
-                window.setTimeout(
-                    () => {
-
-                        window
-                            .TypewriterEffect
-                            .play(
-                                el
-                            );
-
-                    },
-
-                    typewriterIndex
-                    *
-                    180
-                );
-
-
-                typewriterIndex++;
-
-            }
-        );
-
-
-
-        /* ==============================
-           .page-enter-up
-        ============================== */
-
-        const enterElements =
-            document.querySelectorAll(
-                ".page-enter-up"
-            );
-
-
-        enterElements.forEach(
-            (
-                el,
-                index
-            ) => {
-
-
-                if (
-                    el.offsetParent
-                    ===
-                    null
-                ) {
-
-                    return;
-
-                }
-
-
-                window.setTimeout(
-                    () => {
-
-                        el.classList.add(
-                            "is-show"
-                        );
-
-                    },
-
-                    100
-                    +
-                    index
-                    *
-                    100
-                );
-
-            }
-        );
-
+    const expectedArrival = readArrival();
+    root.classList.remove('page-transition-preload');
+    if (expectedArrival && !reduced.matches) {
+        arriving = true; setActive(true); root.classList.add('page-transition-pending');
     }
-
-
-
-    /* ========================================
-       Boot
-    ======================================== */
-
-    function boot() {
-
-
-        /* --------------------------------
-           page-transition 링크 등록
-        -------------------------------- */
-
-        // Delegation also covers project/profile links rendered after boot.
-        document.addEventListener('click', handleLinkClick);
-        void loadIconSprites();
-        window.addEventListener('pageshow', event => {
-            if (!event.persisted) return;
-            removeLayer();
-            isTransitioning = false;
-            document.documentElement.classList.remove('page-transition-preload');
-            showPageContent();
-        });
-
-
-        /* --------------------------------
-           페이지 진입 처리
-        -------------------------------- */
-
-        enterPage();
-
+    if (!reduced.matches) void loadSprites();
+    function fallbackArrival() {
+        if (scene) return;
+        if (arriving && !reduced.matches) {
+            clearArrival();
+            void run(createScene(null));
+        } else { clearArrival(); cleanup(); showPageContent(); }
     }
-
-
-
-    /* ========================================
-       실행
-    ======================================== */
-
-    if (
-        document.readyState
-        ===
-        "loading"
-    ) {
-
-        document.addEventListener(
-            "DOMContentLoaded",
-            boot,
-            {
-                once:
-                    true
-            }
-        );
-
-    }
-
-    else {
-
-        boot();
-
-    }
-
+    domReady.then(() => {
+        // pagereveal normally owns the native path. A skipped/unsupported transition
+        // falls back to one incoming swarm, never the former cover + reveal pair.
+        if (scene) return;
+        if (!nativeNavigation || !expectedArrival) fallbackArrival();
+        else arrivalTimer = setTimeout(fallbackArrival, 1000);
+    });
 })();
