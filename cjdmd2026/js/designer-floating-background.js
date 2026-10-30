@@ -145,7 +145,8 @@
 
         function canMove() {
             return !signal.aborted && pageActive && !document.hidden &&
-                !reducedMotion.matches && host.isConnected;
+                !reducedMotion.matches && host.isConnected &&
+                !document.documentElement.classList.contains('page-transition-active');
         }
 
         function tick(time) {
@@ -229,6 +230,7 @@
                 listen(window, "resize", resize, { passive: true });
                 listen(window, "scroll", () => { if (reducedMotion.matches) paint(); }, { passive: true });
                 listen(document, "visibilitychange", syncMotion);
+                listen(document, "page-transition:change", syncMotion);
                 listen(reducedMotion, "change", syncMotion);
                 listen(window, "pagehide", () => { pageActive = false; syncMotion(); });
                 listen(window, "pageshow", () => { pageActive = true; syncMotion(); });

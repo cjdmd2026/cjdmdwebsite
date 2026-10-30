@@ -891,13 +891,13 @@
       updateToolbar();
     }
     function wake(duration = 2600) {
-      if (!viewActive || paused || motionReduced || document.hidden || !loaded || window.DesignerReturnState?.restoring) return;
+      if (!viewActive || paused || motionReduced || document.hidden || !loaded || window.DesignerReturnState?.restoring || document.documentElement.classList.contains('page-transition-active')) return;
       until = Math.max(until, performance.now() + duration);
       if (!raf) { previousTime = 0; raf = requestAnimationFrame(frame); }
     }
     function frame(now) {
       raf = 0;
-      if (!viewActive || paused || motionReduced || document.hidden || window.DesignerReturnState?.restoring) return;
+      if (!viewActive || paused || motionReduced || document.hidden || window.DesignerReturnState?.restoring || document.documentElement.classList.contains('page-transition-active')) return;
       const dt = previousTime ? clamp((now - previousTime) / 16.667, .25, 2) : 1;
       previousTime = now;
       if (spread < .16) idleTime += dt / 60;
@@ -999,6 +999,10 @@
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) { cancelAnimationFrame(raf); raf = 0; } else wake();
     });
+    document.addEventListener('page-transition:change', event => {
+      if (event.detail.active) { cancelAnimationFrame(raf); raf = 0; previousTime = 0; }
+      else wake();
+    });
     async function init() {
       if (!ctx || !assemblyCtx || !backgroundCtx) throw new Error("이 브라우저에서는 Canvas를 사용할 수 없습니다.");
       await Promise.all(source.map(async icon => {
@@ -1071,7 +1075,8 @@
       }) });
       window.DesignerReturnState?.registerGallery({ capture: captureReturnGallery, restore: restoreReturnGallery, resume: () => wake() });
     }
-    init().catch((error) => {
+    // Let the page wipe wait for the first still frame instead of competing with SVG preparation.
+    window.DesignerFormationReady = init().catch((error) => {
       cancelAnimationFrame(raf); raf = 0; stage.classList.remove("ready"); ctx?.clearRect(0, 0, width, height);
       loaded = false;
       toolbar.inert = false; toolbar.setAttribute('aria-hidden', 'false');

@@ -1594,8 +1594,8 @@ html:has(.icon-slide-page.slide-view) { scrollbar-gutter: stable; }
 }
 .formation-slide .stage { position: relative; width: 100%; flex: 1; min-height: 0; container: formation-stage / size; }
 .formation-slide canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; }
-.formation-slide .fallback { position: absolute; inset: 0; display: grid; place-items: center; font-size: clamp(120px, 30vw, 480px); font-weight: 900; letter-spacing: -.07em; }
-.formation-slide .ready .fallback, .formation-slide .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* Keep the accessible title without displaying fallback text during loading. */
+.formation-slide .fallback, .formation-slide .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .formation-slide .spread-heading { display: none; }
 .formation-slide .interaction { flex: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-top: 15px; min-height: 48px; }
 .formation-slide .hint { color: #888; font-size: 11px; line-height: 1.6; }
@@ -1624,7 +1624,9 @@ body.mobile-menu-open:has(.icon-slide-page) { overflow: hidden !important; }
   .icon-slide-page.slide-view .designer-heading { padding: 0; gap: 14px; }
   .icon-slide-page.slide-view .designer-heading h2 { font-size: clamp(27px, 7.5vw, 34px); }
   .icon-slide-page.slide-view .designer-heading__top { gap: 12px; }
-  .icon-slide-page .mobile-view-toggle { display: flex; }
+  .icon-slide-page .mobile-view-toggle,
+  .icon-slide-page .formation-slide,
+  .icon-slide-page .formation-scroll-cue { display: none !important; }
   .icon-slide-page.slide-view .search-bar, .icon-slide-page.slide-view .search-bar input { height: 44px; }
   .formation-slide { padding-top: 14px; }
   .formation-slide .interaction { flex-direction: column; align-items: stretch; gap: 3px; padding-top: 9px; }

@@ -61,6 +61,7 @@ const THREE=module.exports;
   const MARK = 'data-pgm-hidden';
   const entries = new Map(), disposers=[];
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const mobile=window.matchMedia('(max-width: 759px)');
   let grid,renderer,scene,camera,geometry,style,observer,intersection,resizeObserver;
   let raf=0,dirty=true,destroyed=false,failed=false,enabled=true,lastTime=0,lastY=window.scrollY;
   let width=0,height=0,renderCount=0;
@@ -145,11 +146,11 @@ const THREE=module.exports;
   `;
   const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
   function listen(target,type,fn,options){target.addEventListener(type,fn,options);disposers.push(()=>target.removeEventListener(type,fn,options));}
-  function wake(){if(!raf&&!destroyed&&!failed&&!document.hidden){raf=requestAnimationFrame(frame);}}
+  function wake(){if(!raf&&!destroyed&&!failed&&!mobile.matches&&!document.hidden&&!document.documentElement.classList.contains('page-transition-active')){raf=requestAnimationFrame(frame);}}
   function refresh(){
     dirty=true;
     // 뷰를 바꾸는 즉시 원본을 복원합니다. 다음 렌더 프레임까지 잔상이 남지 않습니다.
-    if(grid&&(!enabled||reduced.matches||!gridVisible())){restore();resetPhysics();cancelAnimationFrame(raf);raf=0;return;}
+    if(grid&&(!enabled||mobile.matches||reduced.matches||!gridVisible())){restore();resetPhysics();cancelAnimationFrame(raf);raf=0;return;}
     wake();
   }
   function resetPhysics(){line.position=line.velocity=0;for(const c of channels)c.position=c.velocity=0;shared.uBend.value=0;shared.uRGB.value.set(0,0,0);lastY=window.scrollY;lastTime=0;}
@@ -291,8 +292,8 @@ const THREE=module.exports;
   }
   function frame(time){
     raf=0;
-    if(destroyed||failed)return;
-    if(!enabled||reduced.matches||OPTIONS.strength===0||!gridVisible()){restore();resetPhysics();return;}
+    if(destroyed||failed||document.documentElement.classList.contains('page-transition-active'))return;
+    if(!enabled||mobile.matches||reduced.matches||OPTIONS.strength===0||!gridVisible()){restore();resetPhysics();return;}
     try{
       if(dirty)reconcile();
       const dt=lastTime?clamp((time-lastTime)/1000,1/240,1/30):1/60;lastTime=time;
@@ -343,7 +344,14 @@ const THREE=module.exports;
     listen(window,'scroll',wake,{passive:true});listen(window,'resize',()=>{resetPhysics();refresh();},{passive:true});
     listen(grid,'load',refresh,true);
     listen(document,'visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(raf);raf=0;restore();resetPhysics();}else refresh();});
+    listen(document,'page-transition:change',event=>{
+      if(event.detail.active){cancelAnimationFrame(raf);raf=0;lastTime=0;}
+      else{resetPhysics();refresh();}
+    });
     listen(reduced,'change',()=>{restore();resetPhysics();refresh();});
+    // Mobile card captions stay in the DOM; keep their images there too.
+    // Restore immediately on resize, and allow the effect again on desktop.
+    listen(mobile,'change',()=>{restore();resetPhysics();refresh();});
     refresh();
   }
   function destroy(){

@@ -1,8 +1,7 @@
 (() => {
     "use strict";
 
-    // 기존 designer-mobile-02.js를 이 파일로 전체 교체합니다.
-    // 모바일에서도 HTML의 slide-view를 유지하고, 사용자가 누른 보기만 변경합니다.
+    // 모바일은 그리드 전용입니다. 보기 제한은 DesignerPage에서 관리합니다.
     const page = document.querySelector(".designer-page");
     if (!page || page.dataset.mobileControlsReady === "true") return;
     page.dataset.mobileControlsReady = "true";

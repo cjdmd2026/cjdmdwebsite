@@ -8,9 +8,13 @@
     const input = page.querySelector('.search-bar input');
     const buttons = [...page.querySelectorAll('.designer-filter__button[data-initial]')];
     const navigation = performance.getEntriesByType('navigation')[0];
+    const mobile = window.matchMedia('(max-width: 759px)');
+    const availableState = value => value && mobile.matches && value.view === 'slide'
+        ? { ...value, view: 'grid', scrollX: 0, scrollY: 0, gallery: null }
+        : value;
     const read = () => {
         const value = history.state?.[KEY];
-        return value?.version === 1 && value.path === entryPath && ['slide', 'grid'].includes(value.view) ? value : null;
+        return value?.version === 1 && value.path === entryPath && ['slide', 'grid'].includes(value.view) ? availableState(value) : null;
     };
     let pending = navigation?.type === 'back_forward' ? read() : null;
     let restoring = !!pending, listReady = false, gallery = null, applying = false;
@@ -63,7 +67,7 @@
     function restore() {
         if (!restoring || !pending || applying || !listReady || !gallery || !pageShown) return;
         applying = true;
-        const state = pending;
+        const state = availableState(pending);
         try {
             window.DesignerPage.changeView(state.view);
             if (input) {
@@ -311,6 +315,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const heading = designerPage.querySelector(".designer-heading");
     const titleBox = heading?.querySelector(".textbox");
     const reducedViewMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const mobileView = window.matchMedia("(max-width: 759px)");
     const titleCaret = document.createElement("span");
     titleCaret.className = "designer-title-caret";
     titleCaret.setAttribute("aria-hidden", "true");
@@ -482,6 +487,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 ...viewContents(currentView()).map(element => animateContent(element, false))
             ]);
 
+            // A desktop transition may still be running when the viewport becomes mobile.
+            if (mobileView.matches) selectedView = "grid";
             applyView(selectedView, { keepToolbar: true });
             const toWidth = titleBox.getBoundingClientRect().width;
             const newTitle = titleBox.querySelector(`.designer-heading__title--${selectedView}`);
@@ -510,6 +517,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function changeView(selectedView) {
         if (!["slide", "grid"].includes(selectedView)) return;
+        if (mobileView.matches) selectedView = "grid";
         cancelGridTransition(true);
         if (viewTransition) {
             queuedView = selectedView;
@@ -517,7 +525,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         const keepToolbar = viewInitialized && selectedView !== currentView() &&
             !window.DesignerReturnState?.restoring;
-        const animate = keepToolbar && !reducedViewMotion.matches && titleBox &&
+        const animate = keepToolbar && !mobileView.matches && !reducedViewMotion.matches && titleBox &&
             designerPage.classList.contains("icon-slide-page") &&
             getComputedStyle(heading).visibility !== "hidden";
         viewInitialized = true;
@@ -535,6 +543,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function applyView(selectedView, { keepToolbar = false } = {}) {
+        if (mobileView.matches) selectedView = "grid";
         const isSlideView =
             selectedView === "slide";
 
@@ -642,6 +651,9 @@ document.addEventListener("DOMContentLoaded", () => {
         changeView,
         getTrack: () => track
     };
+    mobileView.addEventListener("change", event => {
+        if (event.matches) changeView("grid");
+    });
 
     // =========================================================
     // Start

@@ -45,10 +45,10 @@
             animation: none; mix-blend-mode: normal; opacity: 1;
         }
         html.page-transition-native::view-transition-new(root) {
-            clip-path: var(--page-transition-clip, inset(0 100% 0 0));
+            clip-path: inset(0 100% 0 0);
         }
         html.page-transition-native::view-transition-old(root) {
-            filter: blur(var(--page-transition-blur, 0px));
+            filter: blur(0px);
         }
         html.page-transition-native::view-transition-group(page-swarm) {
             animation: none; z-index: 1;
@@ -69,6 +69,8 @@
         }
     `;
     document.head.appendChild(style);
+    const clipStyle = [...style.sheet.cssRules].find(rule => rule.selectorText === 'html.page-transition-native::view-transition-new(root)')?.style || document.createElement('div').style;
+    const blurStyle = [...style.sheet.cssRules].find(rule => rule.selectorText === 'html.page-transition-native::view-transition-old(root)')?.style || document.createElement('div').style;
 
     function readArrival() {
         try {
@@ -106,12 +108,14 @@
             image.src = sheet.source;
             await image.decode();
             const atlas = document.createElement('canvas');
-            atlas.width = image.naturalWidth; atlas.height = image.naturalHeight;
+            // Mobile icons never need the desktop atlas's 256px source cells.
+            const cell = mobile.matches ? Math.min(128, sheet.cell) : sheet.cell;
+            atlas.width = sheet.columns * cell; atlas.height = Math.ceil(sheet.count / sheet.columns) * cell;
             const ctx = atlas.getContext('2d');
             if (!ctx) return [];
-            ctx.drawImage(image, 0, 0);
+            ctx.drawImage(image, 0, 0, atlas.width, atlas.height);
             return Array.from({length: sheet.count}, (_, i) => ({atlas,
-                x: i % sheet.columns * sheet.cell, y: Math.floor(i / sheet.columns) * sheet.cell, size: sheet.cell}));
+                x: i % sheet.columns * cell, y: Math.floor(i / sheet.columns) * cell, size: cell}));
         })().catch(error => {
             console.warn('[Page transition] Icon atlas unavailable.', error);
             return [];
@@ -131,9 +135,10 @@
             iconSize, spread, drift, tailLength, startMargin: margin, endMargin: margin + tailLength};
         current.layer.dataset.direction = vertical ? 'top-to-bottom' : 'left-to-right';
         root.dataset.pageTransitionDirection = current.layer.dataset.direction;
-        current.ratio = Math.min(devicePixelRatio || 1, 1.5);
+        current.ratio = Math.min(devicePixelRatio || 1, vertical ? 1.25 : 1.5);
         current.canvas.width = Math.ceil(width * current.ratio);
         current.canvas.height = Math.ceil(height * current.ratio);
+        if (current.start !== undefined) animateSurface(current);
         paint(current, current.progress || 0);
     }
     function waveEdge(size, cross, base, time) {
@@ -177,12 +182,14 @@
                 particle.lane = candidate === 0 ? originalLane : .04 + .92 * ((originalLane + candidate * .61803398875) % 1);
                 const samples = times.map(t => position(current, particle, t));
                 let penalty = 0;
-                for (const other of placed) {
+                comparisons: for (const other of placed) {
                     const spacing = current.size.iconSize * (particle.scale + other.scale) * (.48 + particle.depth * .08);
                     for (let i = 0; i < samples.length; i++) {
                         const dx = samples[i].x - other.samples[i].x, dy = samples[i].y - other.samples[i].y;
                         const overlap = Math.max(0, 1 - (dx * dx + dy * dy) / (spacing * spacing));
                         penalty += overlap * overlap * other.weight;
+                        // All penalties are positive: a worse candidate cannot recover.
+                        if (penalty >= bestPenalty) break comparisons;
                     }
                 }
                 if (penalty < bestPenalty) { bestPenalty = penalty; bestLane = particle.lane; bestSamples = samples; }
@@ -194,8 +201,7 @@
         current.canvas.dataset.pieces = String(bodyCount + tailCount);
         current.canvas.dataset.tailPieces = String(tailCount);
     }
-    function paint(current, value) {
-        current.progress = value;
+    function clipPath(current, value) {
         const size = current.size, travel = value * value, time = travel * DURATION;
         const base = -size.startMargin + (size.travelLength + size.startMargin + size.endMargin) * travel;
         const edge = Array.from({length: 65}, (_, i) => {
@@ -204,13 +210,46 @@
             return size.vertical ? cross.toFixed(2) + 'px ' + along.toFixed(2) + 'px'
                 : along.toFixed(2) + 'px ' + cross.toFixed(2) + 'px';
         }).join(',');
-        if (current.transition) {
-            root.style.setProperty('--page-transition-clip', 'polygon(0 0,' + edge + (size.vertical ? ',100% 0)' : ',0 100%)'));
-            root.style.setProperty('--page-transition-blur', (12 * value * value * (3 - 2 * value)).toFixed(2) + 'px');
+        return current.transition ? 'polygon(0 0,' + edge + (size.vertical ? ',100% 0)' : ',0 100%)')
+            : (size.vertical ? 'polygon(0 100%,' : 'polygon(100% 0,') + edge + ',100% 100%)';
+    }
+    function animateSurface(current) {
+        current.animations?.forEach(animation => animation.cancel());
+        current.animations = [];
+        try {
+            // Prepare the wave once. Never mutate inherited root styles on every frame.
+            const keyframes = Array.from({length: 49}, (_, i) => ({offset: i / 48, clipPath: clipPath(current, i / 48)}));
+            current.animations.push((current.transition ? root : current.cover).animate(keyframes, {
+                duration: DURATION, fill: 'both', easing: 'linear',
+                ...(current.transition ? {pseudoElement: '::view-transition-new(root)'} : {})
+            }));
+            if (current.transition) current.animations.push(root.animate([
+                {filter: 'blur(0px)'}, {filter: 'blur(12px)'}
+            ], {duration: DURATION, fill: 'both', easing: 'cubic-bezier(.333333,0,.666667,1)',
+                pseudoElement: '::view-transition-old(root)'}));
+            // The canvas and browser-owned effects use the same document timeline.
+            current.animations.forEach(animation => { animation.startTime = current.start; });
+        } catch {
+            current.animations.forEach(animation => animation.cancel());
+            current.animations = [];
         }
-        else current.cover.style.clipPath = (size.vertical ? 'polygon(0 100%,' : 'polygon(100% 0,') + edge + ',100% 100%)';
-        current.layer.dataset.phase = value === 1 ? 'complete' : base < size.travelLength * .3 ? 'entering' : base < size.travelLength * .7 ? 'crossing' : 'leaving';
-        root.dataset.pageTransitionState = current.layer.dataset.phase;
+    }
+    function paint(current, value) {
+        current.progress = value;
+        const size = current.size, travel = value * value, time = travel * DURATION;
+        const base = -size.startMargin + (size.travelLength + size.startMargin + size.endMargin) * travel;
+        if (!current.animations?.length) {
+            if (current.transition) {
+                clipStyle.clipPath = clipPath(current, value);
+                blurStyle.filter = 'blur(' + (12 * value * value * (3 - 2 * value)).toFixed(2) + 'px)';
+            } else current.cover.style.clipPath = clipPath(current, value);
+        }
+        const phase = value === 1 ? 'complete' : base < size.travelLength * .3 ? 'entering' : base < size.travelLength * .7 ? 'crossing' : 'leaving';
+        if (current.phase !== phase) {
+            current.phase = phase;
+            current.layer.dataset.phase = phase;
+            root.dataset.pageTransitionState = phase;
+        }
         const ctx = current.ctx, ratio = current.ratio;
         if (!ctx) return;
         ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -254,14 +293,15 @@
         if (current) {
             cancelAnimationFrame(current.frame); clearTimeout(current.timeout);
             window.removeEventListener('resize', current.resize);
+            current.animations?.forEach(animation => animation.cancel());
             current.transition?.skipTransition();
             current.layer.remove();
         }
         clearTimeout(navigationTimer); clearTimeout(arrivalTimer);
         exitBlur?.cancel(); exitBlur = null;
         root.classList.remove('page-transition-native', 'page-transition-preload', 'page-transition-pending', 'page-transition-menu-hold');
-        root.style.removeProperty('--page-transition-clip');
-        root.style.removeProperty('--page-transition-blur');
+        clipStyle.clipPath = 'inset(0 100% 0 0)';
+        blurStyle.filter = 'blur(0px)';
         arriving = leaving = false;
         setActive(false);
     }
@@ -282,26 +322,56 @@
             const rect = image.getBoundingClientRect();
             return rect.width && rect.height && rect.bottom > 0 && rect.top < innerHeight;
         }).slice(0, 12);
-        await bounded(Promise.allSettled([...visibleImages.map(image => image.decode()), document.fonts?.ready]), 1200);
+        await bounded(Promise.allSettled([...visibleImages.map(image => image.decode()), document.fonts?.ready,
+            window.DesignerFormationReady]), 1600);
     }
     async function run(current) {
         // The native old-page snapshot stays visible while the new page and atlas become ready.
         current.timeout = setTimeout(() => { if (scene === current) { cleanup(); showPageContent(); } }, 5000);
         try {
+            const waitingAt = performance.now();
             const [sprites] = await Promise.all([loadSprites(), contentReady(), current.transition?.ready]);
             if (scene !== current) return;
             if (reduced.matches || !sprites.length || !current.ctx) {
                 root.dataset.pageTransitionState = reduced.matches ? 'reduced-motion' : !sprites.length ? 'no-sprites' : 'no-canvas';
                 cleanup(); showPageContent(); return;
             }
+            const preparingAt = performance.now();
             makeParticles(current, sprites);
             showPageContent();
-            const start = performance.now();
+            current.start = performance.now();
+            animateSurface(current);
+            const preparedAt = performance.now();
+            current.animations.forEach(animation => { animation.pause(); animation.currentTime = 0; });
+            // Commit the first page/canvas frame before starting the movement clock.
+            await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+            if (scene !== current) return;
+            const start = current.start = performance.now();
+            current.animations.forEach(animation => { animation.play(); animation.startTime = start; });
+            const intervals = [], drawing = [];
+            let previous = start;
             const tick = now => {
                 if (scene !== current) return;
-                const progress = Math.min(1, (now - start) / DURATION);
+                intervals.push(now - previous); previous = now;
+                const progress = Math.max(0, Math.min(1, (now - start) / DURATION));
+                const drawingAt = performance.now();
                 paint(current, progress);
-                if (progress === 1) { cleanup(); return; }
+                drawing.push(performance.now() - drawingAt);
+                if (progress === 1) {
+                    const sorted = intervals.slice().sort((a,b) => a-b);
+                    root.dataset.pageTransitionPerf = JSON.stringify({
+                        frames: intervals.length, over32ms: intervals.filter(ms => ms > 32).length,
+                        slowFrames: intervals.flatMap((ms, index) => ms > 32 ? [{index, ms: Math.round(ms)}] : []),
+                        maxFrameMs: Math.round(Math.max(...intervals)), p95FrameMs: Math.round(sorted[Math.floor(sorted.length * .95)]),
+                        prepareMs: +(preparedAt - preparingAt).toFixed(2), waitMs: Math.round(preparingAt - waitingAt),
+                        warmupMs: Math.round(start - preparedAt),
+                        surfaceAnimation: current.animations.length ? 'browser' : 'frame',
+                        meanDrawMs: +(drawing.reduce((a,b) => a+b,0) / drawing.length).toFixed(2),
+                        canvasPixels: current.canvas.width * current.canvas.height,
+                        atlasPixels: sprites[0].atlas.width * sprites[0].atlas.height
+                    });
+                    cleanup(); return;
+                }
                 current.frame = requestAnimationFrame(tick);
             };
             current.frame = requestAnimationFrame(tick);
@@ -330,7 +400,7 @@
         clearArrival();
         root.classList.remove('page-transition-preload', 'page-transition-pending');
         root.classList.add('page-transition-native');
-        root.style.setProperty('--page-transition-clip', 'inset(0 100% 0 0)');
+        clipStyle.clipPath = 'inset(0 100% 0 0)';
         setActive(true);
         const current = createScene(transition);
         transition.finished.finally(() => { if (scene === current) { cleanup(); showPageContent(); } });
