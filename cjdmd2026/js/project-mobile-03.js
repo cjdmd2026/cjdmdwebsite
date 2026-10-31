@@ -28,6 +28,8 @@
             grid.hidden = false;
             const slide = document.querySelector("#slideview");
             if (slide) slide.hidden = true;
+            document.documentElement.dataset.projectFluidView = 'grid';
+            document.documentElement.classList.remove('project-intro-pending');
         }
     }
 
@@ -36,6 +38,17 @@
         cards.forEach(card => {
             const project = projectFor(card);
             if (!project) return;
+            // Mobile cards work independently of the desktop slide/WebGL controller.
+            card.dataset.category = project.category || '';
+            for (const [selector, value] of [
+                ['.card-category', project.category],
+                ['.card-title', project.title],
+                ['.card-members', (project.members || []).join(' / ')],
+                ['.card-description', project.description]
+            ]) {
+                const field = card.querySelector(selector);
+                if (field) field.textContent = value || '';
+            }
             card.tabIndex = 0;
             card.setAttribute("role", "button");
             card.setAttribute("aria-label", `${project.title} 프로젝트 상세 보기`);

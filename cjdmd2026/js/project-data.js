@@ -62,7 +62,7 @@ window.PROJECTS = [
         topic: "아동 양치 교육",
         description: "아동이 즐거운 경험을 통해 올바른 양치 방법과 습관을 익힐 수 있도록 돕는 교육 서비스입니다.",
         image: "../assets/images/project/test/project_2.png",
-        slideImage: "../assets/images/project/test/wide/project_2.png",
+        slideImage: "../assets/images/project/test/wide/project_2.jpg",
         slideOrder: 2,
         courseCards: {
             interactive: {

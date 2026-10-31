@@ -322,8 +322,12 @@
             const rect = image.getBoundingClientRect();
             return rect.width && rect.height && rect.bottom > 0 && rect.top < innerHeight;
         }).slice(0, 12);
+        // Hidden desktop galleries must never delay a mobile page transition.
+        const desktopReady = matchMedia('(min-width: 760px)').matches
+            ? window.DesktopFeaturesReady || window.DesignerFormationReady
+            : null;
         await bounded(Promise.allSettled([...visibleImages.map(image => image.decode()), document.fonts?.ready,
-            window.DesignerFormationReady]), 1600);
+            desktopReady]), 1600);
     }
     async function run(current) {
         // The native old-page snapshot stays visible while the new page and atlas become ready.

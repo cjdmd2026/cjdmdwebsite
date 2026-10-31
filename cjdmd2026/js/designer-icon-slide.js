@@ -22,11 +22,11 @@
 
     // wordScale: 포스터 SVG 전체 크기. 원본의 주변 조각과 여백도 포함합니다.
     // wordCenterY: 초기 글자의 화면 내 중심 높이. 0.5 = 화면 중앙, 작은 값 = 위쪽.
-    // gallerySpreadX/Y: 펼쳐진 아이콘의 가로/세로 간격. 작을수록 중앙에 모입니다.
+    // gallerySpreadX/Y: 중심 주변에 흩어진 아이콘 무리의 가로/세로 범위입니다.
     // galleryMobileSpreadX/Y: 750px 미만 화면의 간격. 아이콘 크기와 랜덤 순서는 유지합니다.
-    // galleryGap/galleryMobileGap: 확대된 아이콘 사이의 최소 여백(px). 좁은 화면에서는 가능한 범위로 조정합니다.
-    // galleryFloatX/Y: 떠다니는 최대 거리(px). 현재 0으로 고정. galleryHoverScale: 호버 배율.
-    const SETTINGS = { galleryFloatX: 0, galleryFloatY: 0, galleryFloatSpeed: .75, galleryHoverScale: 1, galleryGap: 32, galleryMobileGap: 18, gallerySpreadX: 1, gallerySpreadY: .8, galleryMobileSpreadX: 1, galleryMobileSpreadY: .86, wordScale: .98, wordCenterY: .5, spring: .024, damping: .82 };
+    // galleryGap/galleryMobileGap: 배치 시 목표 여백(px). galleryMinGap은 가까운 아이콘 사이에 확보할 최소 여백입니다.
+    // galleryIconScale: 기본 아이콘 크기 배율. galleryFloatX/Y: 떠다니는 최대 거리(px). galleryHoverScale: 호버 배율.
+    const SETTINGS = { galleryFloatX: 0, galleryFloatY: 0, galleryFloatSpeed: .75, galleryHoverScale: 1, galleryIconScale: 1.1, galleryGap: 70, galleryMobileGap: 18, galleryMinGap: 70, gallerySpreadX: .8, gallerySpreadY: 1, galleryMobileSpreadX: .88, galleryMobileSpreadY: .86, wordScale: .98, wordCenterY: .5, spring: .024, damping: .82 };
     const canvas = document.getElementById("formation");
     if (!canvas || !document.getElementById("scrollScene")) return;
     if (!Array.isArray(window.DESIGNERS)) { console.error("designer-data.js를 먼저 연결해 주세요."); return; }
@@ -34,16 +34,45 @@
     // Compose the moving personal pieces in the same layer as the finished team icon.
     const assemblyCanvas = document.createElement('canvas');
     const assemblyCtx = assemblyCanvas.getContext('2d');
-    // The poster recedes separately from the personal SVG pieces embedded in it.
-    const backgroundCanvas = document.createElement('canvas');
-    const backgroundCtx = backgroundCanvas.getContext('2d');
+    // 회색 장식도 글자를 구성하던 원본 조각이 확대되어 남는 자리입니다.
+    const GALLERY_AMBIENT = { maxPerSide: 18, clusterGap: 18, pieceGap: 36, topCount: 3, topGap: 24,
+      sourceMinSize: 100, candidatesPerShape: 1, rasterSize: 96, floatX: 3, floatY: 5, floatSpeed: .55 };
+    const HIDDEN_ORIGIN = { size: 32, focusX: .45, focusY: .5 };
+    // 첫 구성 아이콘은 남고, 같은 팀의 나머지 조각은 한 번에 함께 들어옵니다.
+    // start만 확대 진행률이며, 나머지 결합 시간은 스크롤과 독립적인 밀리초입니다.
+    const TEAM_ENTRY = { start: .67, duration: 1500, teamStagger: 400,
+      durationJitter: 140, handoffDuration: 160, margin: 32, startScale: 2.6 };
+    // 블러는 작은 비트맵으로 한 번만 만들고, 이동 중에는 이미지만 섞습니다.
+    const TEAM_ENTRY_BLUR = { size: 192, padding: 30, radii: [4, 10] };
+    const teamEntryBlendCanvas = document.createElement('canvas');
+    teamEntryBlendCanvas.width = teamEntryBlendCanvas.height = TEAM_ENTRY_BLUR.size + TEAM_ENTRY_BLUR.padding * 2;
+    const teamEntryBlendCtx = teamEntryBlendCanvas.getContext('2d');
+    // 회전한 조각은 작은 캔버스에 먼저 합성해 겹치는 색이 밝아지지 않게 합니다.
+    const TEAM_HOVER = { degrees: 3, size: 384, padding: 24 };
+    const teamHoverCanvas = document.createElement('canvas');
+    teamHoverCanvas.width = teamHoverCanvas.height = TEAM_HOVER.size + TEAM_HOVER.padding * 2;
+    const teamHoverCtx = teamHoverCanvas.getContext('2d');
     const floatCanvas = document.createElement('canvas');
     let floatBatch = window.createHeroSpriteBatch?.(floatCanvas) || null;
-    const WORD_RETREAT = { depth: 1.2, blur: 8, fadeStart: .16, fadeEnd: .92 };
+    // 한 GPU 배치를 재사용하고 블러는 묶음별로 한 번만 적용합니다.
+    const FLOAT_BLUR = { radii: [0, 5, 14], startRatio: 1.35, fullRatio: 4 };
+    const floatPasses = FLOAT_BLUR.radii.map(radius => ({ radius, items: [] }));
+    let floatFallbackCanvas, floatFallbackCtx;
+    // 같은 카메라가 앞으로 이동합니다. 원래 큰 조각일수록 가까워서 먼저 화면을 지나갑니다.
+    const WORD_APPROACH = { zoom: 8, end: 1, handoffStart: .9, clearEnd: 1, nearFade: .025, nearClip: .008 };
+    // 원본 SVG 크기별 깊이 기준입니다. 기준 사이도 보간해 중간 크기가 같은 층으로 뭉치지 않습니다.
+    const ICON_DEPTH_STOPS = [[8, 1], [14, 1.008], [22, 1.025], [32, 1.055],
+      [48, 1.115], [72, 1.22], [120, 1.4], [320, 1.8]];
+    let cameraZoom = WORD_APPROACH.zoom;
+    let cameraFocus = { x: 0, y: 0 };
     // main-hero.js와 같은 이동 거리(1130 단위 기준), 속도, 2초 진입 곡선.
-    const WORD_FLOAT = { referenceWidth: 1130, distance: 27, intro: 2, minSpeed: .2, maxSpeed: .55 };
+    const WORD_FLOAT = { referenceWidth: 1130, distance: 27, intro: 2, minSpeed: .2, maxSpeed: .55,
+      zoomDrift: 1.2, maxTravel: 36 };
     // 화면 여백에 더하는 아이콘: 면적에 맞춰 개수를 조절하고 중앙 글자는 비워 둡니다.
     const FLOAT_FIELD = { areaPerIcon: 400, maxCount: 1600, minSize: 3, sizeRange: 9, maxDrift: 22 };
+    // 확대 중 빈 여백을 지나가는 장식입니다. 마지막 갤러리에는 남지 않습니다.
+    const PASSING_FIELD = { layers: 7, areaPerIcon: 36000, maxPerLayer: 48,
+      minSize: 48, maxSize: 100, fadeStart: 180, fadeEnd: 320, blurStrength: .5 };
     const stage = document.getElementById("stage"), hint = document.getElementById("hint");
     const replayButton = document.getElementById("replay"), pauseButton = document.getElementById("pause");
     const scene = document.getElementById("scrollScene"), spreadHeading = document.getElementById("spreadHeading");
@@ -60,36 +89,57 @@
     const toolbar = document.querySelector('.designer-heading');
     const source = ICON_PROJECTS.map(project => ({ ...project, name: project.title, svg: "" }));
     // 포스터에 흩어진 개인 SVG를 팀 ID와 색상으로 찾아 같은 팀끼리 결합합니다.
-    const word = { src: new URL('../assets/images/designer/gyeolhap-word.svg?v=20261029-10', scriptURL).href };
+    const word = { src: new URL('../assets/images/designer/gyeolhap-word.svg?v=20261030-all-glyphs', scriptURL).href };
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
     let motionReduced = reducedMotion.matches;
-    let sprites = [], fragments = [], fragmentRows = [], particles = [], floatingField = [], wordArtwork, wordLayout;
+    let sprites = [], fragments = [], fragmentRows = [], hoverLayers = [], particles = [], floatingField = [], wordArtwork, wordLayout;
     let width = 0, height = 0, spacing = 20;
+    let ambientViewportWidth = 0, ambientStageLeft = 0;
+    let ambientSlots = [], ambientParticles = [];
+    let renderBounds = { left: 0, top: 0, width: 0, height: 0 }, zoomFloating = [], restFloating = [];
     let paused = false, raf = 0, previousTime = 0, until = 0, loaded = false;
     let spread = 0, scrollTarget = 0, spreadSlots = [], lastDraw = [];
+    let teamEntryTime = 0, teamEntryFinish = 0, teamEntryLastSpread = 0;
+    let teamEntryReversing = false, teamEntryInitialized = false;
     let galleryOrder = source.map((_, team) => team);
-    let galleryOffsets = source.map(() => ({ x: 0, y: 0 }));
+    let galleryOffsets = [];
     let galleryShuffleArmed = true, galleryRevision = 0;
     let idleTime = 0, galleryTime = 0;
     let hoveredTeam = -1, focusedTeam = -1;
     const galleryHover = source.map(() => 0), detailOrigins = source.map(() => null);
+    const detailMotions = source.map(() => null);
+    let detailPanelOrigin = null;
     let wordShiftY = 0;
     let selectedTeam = -1;
     let viewActive = scene.classList.contains("slide-view"), savedProgress = 0;
     // 아이콘 갤러리는 그리드의 초성·검색 선택과 무관하게 전체 프로젝트를 표시합니다.
     const visibleTeams = source.map(() => true);
-    toolbar.inert = true;
-    toolbar.setAttribute('aria-hidden', 'true');
+    toolbar.inert = viewActive;
+    toolbar.setAttribute('aria-hidden', String(viewActive));
     const detailProgress = source.map(() => 0), detailTargets = source.map(() => []), iconButtons = [];
     const random = (min, max) => min + Math.random() * (max - min);
     const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
     const lerp = (a, b, t) => a + (b - a) * t;
     const smooth = (a, b, value) => { const t = clamp((value - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
-    const idleActive = () => viewActive && !paused && !motionReduced && !document.hidden && spread < .16
-      && wordArtwork?.floating.length > 0;
-    const galleryIdleActive = () => (SETTINGS.galleryFloatX !== 0 || SETTINGS.galleryFloatY !== 0) && viewActive && !paused && !motionReduced && !document.hidden && spread > .86 && visibleTeams.some(Boolean) && selectedTeam < 0 && !detailProgress.some(value => value > 0);
+    // 회색 장식의 시간도 처음부터 이어서 확대·도착·복귀 사이에 움직임이 멈추지 않게 합니다.
+    const idleActive = () => viewActive && !paused && !motionReduced && !document.hidden && spread < 1 && wordArtwork?.floating.length > 0;
+    const galleryIdleActive = () => viewActive && !paused && !motionReduced && !document.hidden &&
+      selectedTeam < 0 && !detailProgress.some(value => value > 0) &&
+      ((spread > .86 && (SETTINGS.galleryFloatX !== 0 || SETTINGS.galleryFloatY !== 0) && visibleTeams.some(Boolean)) ||
+        ((GALLERY_AMBIENT.floatX !== 0 || GALLERY_AMBIENT.floatY !== 0) && ambientParticles.length > 0));
+    const teamEntryComplete = () => teamEntryTime >= teamEntryFinish + TEAM_ENTRY.handoffDuration;
+    const teamEntryActive = () => teamEntryReversing ? teamEntryTime > 0 : spread > TEAM_ENTRY.start && !teamEntryComplete();
+    const currentCameraScale = () => Math.pow(cameraZoom, smooth(0, WORD_APPROACH.end, clamp(spread, 0, 1)));
+    function teamInteractive(team, pose = null) {
+      if (!loaded || !viewActive || !visibleTeams[team] || !spreadSlots[team] || spread <= .01) return false;
+      pose ||= galleryCameraPose(galleryPose(team), currentCameraScale());
+      const y = pose.y + wordRenderOffset(spread), radius = pose.size / 2;
+      // 글자 속에 숨은 점 크기일 때만 제외하고, 식별되는 순간부터 선택할 수 있습니다.
+      return pose.size >= 20 && pose.x + radius > renderBounds.left && pose.x - radius < renderBounds.left + renderBounds.width &&
+        y + radius > renderBounds.viewportTop && y - radius < renderBounds.viewportTop + innerHeight;
+    }
     function hoverTarget(team) {
-      return viewActive && spread >= .995 && scrollTarget >= .995 && selectedTeam < 0 && visibleTeams[team] && (hoveredTeam === team || focusedTeam === team) ? 1 : 0;
+      return teamInteractive(team) && selectedTeam < 0 && (hoveredTeam === team || focusedTeam === team) ? 1 : 0;
     }
     function refreshGalleryHover() {
       if (paused || motionReduced) {
@@ -110,7 +160,8 @@
       const y = slot.y + Math.sin(phase + team * 1.61803) * SETTINGS.galleryFloatY * amplitude * weight;
       const size = slot.size * lerp(1, SETTINGS.galleryHoverScale, galleryHover[team]);
       const origin = detailOrigins[team], locked = origin ? smooth(0, .2, detailProgress[team]) : 0;
-      return { x: lerp(x, origin?.x ?? x, locked), y: lerp(y, origin?.y ?? y, locked), size: lerp(size, origin?.size ?? size, locked) };
+      return { x: lerp(x, origin?.x ?? x, locked), y: lerp(y, origin?.y ?? y, locked),
+        size: lerp(size, origin?.size ?? size, locked) };
     }
     const loadImage = (src) => new Promise((resolve, reject) => {
       const image = new Image();
@@ -118,6 +169,30 @@
       image.onerror = () => reject(new Error("이미지를 불러올 수 없습니다."));
       image.src = src;
     });
+    function collectAmbientGlyphs(root) {
+      const byShape = new Map();
+      const selector = 'path,rect,circle,ellipse,polygon,polyline,line';
+      for (const node of root.querySelectorAll('[data-formation-glyph]')) {
+        const [, , w, h] = node.getAttribute('data-formation-glyph').split(' ').map(Number);
+        const size = Math.max(w, h);
+        if (size < GALLERY_AMBIENT.sourceMinSize || Math.min(w, h) / size < .75) continue;
+        const members = node.matches(selector) ? [node] : [...node.querySelectorAll(selector)];
+        const shapes = new Set(members.map(member => member.getAttribute('class')));
+        // 이 원본의 cls-N은 개인 아이콘 유형입니다. 여러 유형이 결합된 묶음은 제외합니다.
+        if (shapes.size !== 1) continue;
+        const shape = [...shapes][0];
+        if (!/^cls-\d+$/.test(shape) || shape === 'cls-34') continue;
+        if (!byShape.has(shape)) byShape.set(shape, []);
+        byShape.get(shape).push({ node, size });
+      }
+      const candidates = new Map();
+      // 유형별로 완전한 원본 하나만 골라 중앙에 작게 숨기고, 확대용 해상도는 유지합니다.
+      for (const [shape, items] of byShape) {
+        items.sort((a, b) => b.size - a.size).slice(0, GALLERY_AMBIENT.candidatesPerShape)
+          .forEach(item => candidates.set(item.node, shape));
+      }
+      return candidates;
+    }
     async function loadWordArtwork() {
       const response = await fetch(word.src);
       if (!response.ok) throw new Error('결합 SVG 로딩 실패 (' + response.status + ')');
@@ -135,6 +210,7 @@
       if (marked.length !== fragmentCount || embedded.size !== fragmentCount) {
         throw new Error('결합 SVG에는 개인별 색상 조각이 정확히 하나씩 있어야 합니다.');
       }
+      const ambientGlyphs = collectAmbientGlyphs(root);
       // SVG는 한 번만 래스터화하고, 프레임마다 원본 path를 다시 그리지 않습니다.
       async function rasterize(svg, pixelWidth, pixelHeight, asImage = false) {
         svg.setAttribute('width', pixelWidth); svg.setAttribute('height', pixelHeight);
@@ -154,29 +230,35 @@
         if (![x, y, w, h].every(Number.isFinite) || w <= 0 || h <= 0) {
           throw new Error(icon.projectId + ' 개인 아이콘의 시작 위치가 올바르지 않습니다.');
         }
-        // 학생 상세에 쓰는 실제 색상 조각을 그대로 이동시켜 도착할 때 팀 모양을 완성합니다.
-        node.remove();
+        // 원래 글자의 밀도를 유지합니다. 중앙의 작은 팀 모양과 함께 같은 카메라로 확대합니다.
+        node.setAttribute('data-formation-glyph', [x, y, w, h, 0].join(' '));
+        node.removeAttribute('data-formation-team'); node.removeAttribute('data-formation-color');
         return { x, y, width: w, height: h, projectId: icon.projectId, color: piece.color,
           studentId: profiles[team].members[fragmentRows[team][index]]?.id || null, sprite: piece };
       }));
-      // 획 사이와 바깥의 작은 아이콘은 한 장의 atlas에 모읍니다.
-      // data-formation-float = 원본 bounds + 획과의 거리/크기에 따른 움직임 강도.
-      const rasterWidth = 2400, rasterHeight = Math.round(rasterWidth * sourceHeight / sourceWidth);
+      // 획 안팎의 모든 아이콘을 한 장의 atlas에 모읍니다. bounds는 제작 시 미리 계산합니다.
+      // 정지 화면은 배치가 정해진 뒤 같은 atlas로 한 번만 캐시합니다.
+      const rasterWidth = 2400;
       const atlas = root.cloneNode(false), atlasWidth = 2048, rasterScale = rasterWidth / sourceWidth;
       if (defs) atlas.appendChild(defs.cloneNode(true));
       let tileX = 0, tileY = 0, rowHeight = 0;
-      const floating = [...root.querySelectorAll('[data-formation-float]')].map(node => {
-        const [x, y, w, h, strength] = node.getAttribute('data-formation-float').split(' ').map(Number);
-        const tileWidth = Math.ceil(w * rasterScale) + 4, tileHeight = Math.ceil(h * rasterScale) + 4;
+      const floating = [...root.querySelectorAll('[data-formation-float], [data-formation-glyph]')].map(node => {
+        const glyph = node.hasAttribute('data-formation-glyph');
+        const [x, y, w, h, strength] = node.getAttribute(glyph ? 'data-formation-glyph' : 'data-formation-float').split(' ').map(Number);
+        const ambientShape = ambientGlyphs.get(node) || null;
+        const ambientCandidate = ambientShape !== null;
+        // 처음에는 작게 숨겨져 있어도, 남을 조각만 최종 크기에 맞춰 선명하게 저장합니다.
+        const tileScale = ambientCandidate ? Math.max(rasterScale, GALLERY_AMBIENT.rasterSize / Math.max(w, h)) : rasterScale;
+        const tileWidth = Math.ceil(w * tileScale) + 4, tileHeight = Math.ceil(h * tileScale) + 4;
         if (tileX + tileWidth > atlasWidth) { tileX = 0; tileY += rowHeight; rowHeight = 0; }
-        const bounds = { x: x - 2 / rasterScale, y: y - 2 / rasterScale,
-          width: tileWidth / rasterScale, height: tileHeight / rasterScale };
+        const bounds = { x: x - 2 / tileScale, y: y - 2 / tileScale,
+          width: tileWidth / tileScale, height: tileHeight / tileScale };
         const tile = doc.createElementNS(root.namespaceURI, 'svg');
         tile.setAttribute('x', tileX); tile.setAttribute('y', tileY);
         tile.setAttribute('width', tileWidth); tile.setAttribute('height', tileHeight);
         tile.setAttribute('viewBox', [bounds.x, bounds.y, bounds.width, bounds.height].join(' '));
         tile.appendChild(node); atlas.appendChild(tile);
-        const piece = { ...bounds, ax: tileX, ay: tileY, gw: tileWidth, gh: tileHeight,
+        const piece = { ...bounds, visualSize: Math.max(w, h), glyph, ambientCandidate, ambientShape, ax: tileX, ay: tileY, gw: tileWidth, gh: tileHeight,
           phase: random(0, Math.PI * 2), speed: random(WORD_FLOAT.minSpeed, WORD_FLOAT.maxSpeed),
           drift: strength * WORD_FLOAT.distance * sourceWidth / WORD_FLOAT.referenceWidth * random(.6, 1) };
         tileX += tileWidth; rowHeight = Math.max(rowHeight, tileHeight);
@@ -184,9 +266,10 @@
       });
       const atlasHeight = Math.max(1, tileY + rowHeight);
       atlas.setAttribute('viewBox', [0, 0, atlasWidth, atlasHeight].join(' '));
-      const [background, floatAtlas] = await Promise.all([
-        rasterize(root, rasterWidth, rasterHeight), rasterize(atlas, atlasWidth, atlasHeight, true)
-      ]);
+      const floatAtlas = await rasterize(atlas, atlasWidth, atlasHeight);
+      // 캐시를 만들 때도 거대한 SVG를 다시 해석하지 않고 이미 그린 비트맵만 잘라 씁니다.
+      floatAtlas.naturalWidth = atlasWidth; floatAtlas.naturalHeight = atlasHeight;
+      const background = document.createElement('canvas');
       return { background, anchors, floatAtlas, floating, originX, originY, width: sourceWidth, height: sourceHeight };
     }
     async function loadWholeIcons() {
@@ -234,7 +317,72 @@
       const all = (await Promise.all(jobs)).flat();
       const banks = source.map((_, team) => all.filter(piece => piece.team === team));
       if (banks.some(bank => bank.length === 0)) throw new Error("아이콘 조각을 만들 수 없습니다.");
+      for (const bank of banks) for (const piece of bank.slice(1)) {
+        piece.entryBlur = TEAM_ENTRY_BLUR.radii.map(radius => {
+          const image = document.createElement('canvas');
+          image.width = image.height = teamEntryBlendCanvas.width;
+          const context = image.getContext('2d');
+          context.filter = `blur(${radius}px)`;
+          context.drawImage(piece.image, TEAM_ENTRY_BLUR.padding, TEAM_ENTRY_BLUR.padding, TEAM_ENTRY_BLUR.size, TEAM_ENTRY_BLUR.size);
+          return image;
+        });
+      }
       return banks;
+    }
+    function drawTeamHover(context, icon, team, x, y, size) {
+      const amount = galleryHover[team];
+      if (amount === 0 || !teamHoverCtx) {
+        context.drawImage(icon.image, x - size / 2, y - size / 2, size, size);
+        return;
+      }
+      const extent = teamHoverCanvas.width;
+      teamHoverCtx.clearRect(0, 0, extent, extent);
+      for (const piece of hoverLayers[team]) {
+        teamHoverCtx.save();
+        teamHoverCtx.translate(extent / 2, extent / 2);
+        teamHoverCtx.rotate(piece.hoverAngle * amount);
+        teamHoverCtx.drawImage(piece.image, -TEAM_HOVER.size / 2, -TEAM_HOVER.size / 2, TEAM_HOVER.size, TEAM_HOVER.size);
+        teamHoverCtx.restore();
+      }
+      const paddedSize = size * extent / TEAM_HOVER.size;
+      context.drawImage(teamHoverCanvas, x - paddedSize / 2, y - paddedSize / 2, paddedSize, paddedSize);
+    }
+    function drawTeamEntryPiece(context, piece, width, height, blur = 0, colorAmount = 1) {
+      if ((blur <= .001 && colorAmount >= 1) || !teamEntryBlendCtx) {
+        context.drawImage(piece.image, -width / 2, -height / 2, width, height);
+        return;
+      }
+      // 고정 조각도 같은 색상 합성을 사용하되 불필요한 블러 캐시는 만들지 않습니다.
+      const level = piece.entryBlur ? clamp(blur, 0, TEAM_ENTRY_BLUR.radii.length) : 0;
+      const low = Math.floor(level), high = Math.ceil(level), mix = level - low;
+      const pad = TEAM_ENTRY_BLUR.padding, size = TEAM_ENTRY_BLUR.size;
+      const extent = teamEntryBlendCanvas.width;
+      const drawLevel = (level) => {
+        if (level === 0) teamEntryBlendCtx.drawImage(piece.image, pad, pad, size, size);
+        else teamEntryBlendCtx.drawImage(piece.entryBlur[level - 1], 0, 0);
+      };
+      teamEntryBlendCtx.clearRect(0, 0, extent, extent);
+      teamEntryBlendCtx.globalCompositeOperation = 'source-over';
+      teamEntryBlendCtx.globalAlpha = 1 - mix;
+      drawLevel(low);
+      if (mix > 0) {
+        // 합산 보간으로 선명도만 바꾸고 아이콘의 불투명도는 유지합니다.
+        teamEntryBlendCtx.globalCompositeOperation = 'lighter';
+        teamEntryBlendCtx.globalAlpha = mix;
+        drawLevel(high);
+      }
+      teamEntryBlendCtx.globalAlpha = 1;
+      if (colorAmount < 1) {
+        // 기존 합성 비트맵의 알파를 유지해 회색에서 원래 색으로 안착 직전에 전환합니다.
+        teamEntryBlendCtx.globalCompositeOperation = 'source-atop';
+        teamEntryBlendCtx.globalAlpha = 1 - colorAmount;
+        teamEntryBlendCtx.fillStyle = '#dedede';
+        teamEntryBlendCtx.fillRect(0, 0, extent, extent);
+        teamEntryBlendCtx.globalAlpha = 1;
+      }
+      teamEntryBlendCtx.globalCompositeOperation = 'source-over';
+      context.drawImage(teamEntryBlendCanvas, -width * extent / size / 2, -height * extent / size / 2,
+        width * extent / size, height * extent / size);
     }
     // 색상 그룹의 SVG 그리기 순서는 그대로 두고, 도착할 학생 행만 지정합니다.
     function resolveFragmentRows(bank, profile) {
@@ -269,11 +417,9 @@
       return rows.map(row => row >= 0 ? row : freeRows[next++]);
     }
     // 한 번의 휠/스와이프로 글자와 아이콘 정렬 화면 사이를 이동합니다.
-    // duration/returnDuration: 펼치기/글자로 돌아오기 시간(ms).
-    // 이미지 가까이에서는 천천히, 떨어진 뒤에는 빠르게 이동하는 비대칭 속도 곡선입니다.
+    // duration/returnDuration: 펼치기/글자로 돌아오기 시간(ms). 결합 시간과 분리합니다.
     // wheelThreshold: 휠 감도(px), swipeThreshold: 스와이프 거리(px).
-    const SCROLL_STEP = { duration: 1850, returnDuration: 2100, wheelThreshold: 60, wheelIdle: 220, swipeThreshold: 42 };
-    const wordDepartureProgress = t => t * t * t * (4 - 3 * t);
+    const SCROLL_STEP = { duration: 3600, returnDuration: 2900, wheelThreshold: 60, wheelIdle: 220, swipeThreshold: 42 };
     let stepRaf = 0, stepDestination = null;
     let wheelTotal = 0, wheelDirection = 0, lastWheelAt = 0, wheelConsumed = false;
     let touchGesture = null;
@@ -340,21 +486,21 @@
     function readScroll() { return clamp((scrollY - scene.offsetTop) / scrollRange(), 0, 1); }
     function onScroll() {
       if (!viewActive || window.DesignerReturnState?.restoring) return;
+      const previousTarget = scrollTarget;
       scrollTarget = readScroll();
-      if (scrollTarget < .995) resetGalleryHover();
       if (!loaded) return;
-      if (scrollTarget <= .001) galleryShuffleArmed = true;
-      else if (galleryShuffleArmed) { shuffleGallery(); positionSpreadSlots(); }
-      if (scrollTarget < .995) closeDetails(false, true);
-      // Explicit scrolling remains usable with motion paused or reduced.
-      if (paused || motionReduced) { spread = scrollTarget; settle(); draw(); }
+      // 확대 전부터 같은 자리에 있던 아이콘이므로 스크롤 도중 배치를 바꾸지 않습니다.
+      if (scrollTarget < previousTarget - .0001) closeDetails();
+      // 자동 스크롤은 이미 보간하므로 화면에 추가 지연을 걸지 않습니다.
+      if (stepDestination !== null) spread = scrollTarget;
+      if (paused || motionReduced) { spread = scrollTarget; snapTeamEntry(spread); settle(); draw(); }
       else wake(650);
       setHint();
     }
     function scrollToState(expanded) {
       if (!viewActive) return;
       cancelStep();
-      if (!expanded) closeDetails(false, true);
+      if (!expanded) closeDetails();
       const target = expanded ? 1 : 0;
       const destination = () => scene.offsetTop + target * scrollRange();
       const from = scrollY;
@@ -368,8 +514,8 @@
         stepRaf = 0;
         if (!viewActive) { cancelStep(); return; }
         const progress = clamp((now - started) / duration, 0, 1);
-        // 돌아올 때는 같은 곡선을 뒤집어 이미지에 들어가는 마지막 순간에 시간을 배분합니다.
-        const pacedProgress = expanded ? wordDepartureProgress(progress) : 1 - wordDepartureProgress(1 - progress);
+        // 확대는 원래 속도로 끝내고, 남은 결합은 별도 시간으로 계속 재생합니다.
+        const pacedProgress = smooth(0, 1, progress);
         window.scrollTo({ top: lerp(from, destination(), pacedProgress), behavior: 'instant' });
         onScroll();
         if (progress < 1) stepRaf = requestAnimationFrame(advance);
@@ -387,8 +533,8 @@
         scrollCue.style.opacity = String(cueOpacity);
         scrollCue.style.setProperty('--formation-scroll-offset', (motionReduced ? 0 : 64 * cueProgress) + 'px');
       }
-      const opacity = viewActive ? smooth(.12, .68, spread) : 1;
-      const usable = !viewActive || spread > .3;
+      const opacity = viewActive ? smooth(.48, .86, spread) : 1;
+      const usable = !viewActive || spread > .72;
       toolbar.style.setProperty('--formation-toolbar', opacity);
       toolbar.classList.toggle('is-revealed', opacity > .001);
       toolbar.inert = !usable; toolbar.setAttribute('aria-hidden', String(!usable));
@@ -408,6 +554,7 @@
         viewActive = true;
         // 보기 버튼으로 돌아오면 제목과 보기 전환 버튼이 보이는 갤러리 위치를 유지합니다.
         if (keepToolbar) savedProgress = 1;
+        snapTeamEntry(savedProgress);
         window.scrollTo({ top: scene.offsetTop + savedProgress * scrollRange(), behavior: 'instant' });
         if (loaded) { layout(); onScroll(); draw(); }
       }
@@ -416,6 +563,7 @@
     function captureReturnGallery() {
       if (!loaded) return null;
       return {
+        layout: 'centered-scatter-v3',
         order: galleryOrder.map(team => source[team].projectId),
         offsets: galleryOffsets.map(({ x, y }) => ({ x, y })),
         progress: viewActive ? (stepDestination ?? scrollTarget) : savedProgress,
@@ -428,20 +576,20 @@
       viewActive = view === 'slide';
       const progress = Number.isFinite(state?.progress) ? clamp(state.progress, 0, 1) : 0;
       savedProgress = progress;
+      snapTeamEntry(progress);
       const indexes = new Map(source.map((project, team) => [project.projectId, team]));
       if (Array.isArray(state?.order) && state.order.length === source.length && new Set(state.order).size === source.length && state.order.every(id => indexes.has(id))) {
         galleryOrder = state.order.map(id => indexes.get(id));
-        galleryOffsets = galleryOrder.map((_, slot) => ({
-          x: Number.isFinite(state.offsets?.[slot]?.x) ? clamp(state.offsets[slot].x, -.1, .1) : 0,
-          y: Number.isFinite(state.offsets?.[slot]?.y) ? clamp(state.offsets[slot].y, -.14, .14) : 0
-        }));
+        galleryOffsets = state.layout === 'centered-scatter-v3' && state.offsets?.length === source.length &&
+          state.offsets.every(point => Number.isFinite(point.x) && Number.isFinite(point.y) && Math.abs(point.x) <= 1 && Math.abs(point.y) <= 1)
+          ? state.offsets.map(({ x, y }) => ({ x, y })) : [];
         galleryOrder.forEach(team => iconList.appendChild(iconButtons[team].parentElement));
       }
       galleryRevision = Number.isInteger(state?.revision) ? Math.max(0, state.revision) : 0;
       galleryShuffleArmed = state?.shuffleArmed ?? progress <= .001;
       paused = !!state?.paused;
       galleryTime = Number.isFinite(state?.floatTime) ? Math.max(0, state.floatTime) : 0;
-      hoveredTeam = focusedTeam = -1; galleryHover.fill(0); detailOrigins.fill(null);
+      hoveredTeam = focusedTeam = -1; galleryHover.fill(0); detailOrigins.fill(null); detailMotions.fill(null); detailPanelOrigin = null;
       selectedTeam = -1; detailProgress.fill(0);
       designerPanel.classList.remove('is-open'); designerPanel.hidden = true; designerPanel.inert = true;
       designerPanel.setAttribute('aria-hidden', 'true');
@@ -472,7 +620,7 @@
     function positionDetails() {
       if (selectedTeam < 0 || designerPanel.hidden || !viewActive) return;
       // 크기와 간격은 CSS에서 관리하고, 표시된 실측값으로 좌표만 계산합니다.
-      const slot = spreadSlots[selectedTeam], panelBox = designerPanel.getBoundingClientRect();
+      const slot = detailPanelOrigin || spreadSlots[selectedTeam], panelBox = designerPanel.getBoundingClientRect();
       if (!panelBox.width || !panelBox.height) return;
       const style = getComputedStyle(designerPanel);
       const edge = parseFloat(style.getPropertyValue('--panel-edge')) || 0;
@@ -502,9 +650,39 @@
     function syncDetailsInstantly() {
       detailProgress.forEach((_, team) => { detailProgress[team] = team === selectedTeam ? 1 : 0; });
     }
+    function entryDetailPose(team, index, slot, scale) {
+      const piece = fragments[team][index];
+      const entry = teamEntryPose({ team, sprite: piece }, slot, scale, teamEntryTime);
+      const pose = entry || fragmentCameraPose(piece, slot, scale);
+      return { ...pose, y: pose.y + wordRenderOffset(spread), opacity: entry ? (entry.opacity ?? 1) : 0,
+        blur: pose.blur || 0, colorAmount: pose.colorAmount ?? 1, angle: piece.hoverAngle * galleryHover[team] };
+    }
+    function detailPiecePose(team, index, slot, scale) {
+      const entry = entryDetailPose(team, index, slot, scale), motion = detailMotions[team];
+      if (!motion || detailProgress[team] <= 0) return entry;
+      const opening = team === selectedTeam, target = detailTargets[team][index];
+      const destination = opening && target
+        ? { x: target.x, y: target.y, width: target.size, height: target.size, opacity: 1, blur: 0, colorAmount: 1, angle: 0 }
+        : entry;
+      const progress = opening
+        ? (detailProgress[team] - motion.start) / Math.max(.0001, 1 - motion.start)
+        : (motion.start - detailProgress[team]) / Math.max(.0001, motion.start);
+      const travel = smooth(0, 1, progress), origin = motion.pieces[index];
+      return Object.fromEntries(['x', 'y', 'width', 'height', 'opacity', 'blur', 'colorAmount', 'angle']
+        .map(key => [key, lerp(origin[key], destination[key], travel)]));
+    }
+    function captureDetailMotion(team) {
+      const slot = galleryPose(team), scale = currentCameraScale();
+      const pieces = fragments[team].map((_, index) => detailPiecePose(team, index, slot, scale));
+      detailMotions[team] = { start: detailProgress[team], pieces };
+    }
     function closeDetails(restoreFocus = false, immediate = false) {
       const previous = selectedTeam;
-      if (previous < 0 && !detailProgress.some(progress => progress > 0)) return;
+      if (previous < 0) {
+        if (immediate) syncDetailsInstantly();
+        return;
+      }
+      captureDetailMotion(previous);
       selectedTeam = -1;
       designerPanel.classList.remove('is-open'); designerPanel.inert = true;
       designerPanel.setAttribute('aria-hidden', 'true');
@@ -518,9 +696,13 @@
       if (loaded) setHint();
     }
     function openDetails(team, keyboard = false, immediate = false) {
-      if (!viewActive || !visibleTeams[team] || spread < .995 || scrollTarget < .995) return;
+      if (!teamInteractive(team)) return;
       if (selectedTeam === team) { closeDetails(); return; }
+      if (selectedTeam >= 0) closeDetails();
+      captureDetailMotion(team);
       detailOrigins[team] = galleryPose(team);
+      detailPanelOrigin = galleryCameraPose(detailOrigins[team], currentCameraScale());
+      detailPanelOrigin.y += wordRenderOffset(spread);
       selectedTeam = team; resetGalleryHover();
       const profile = profiles[team];
       designerPanelTitle.textContent = '';
@@ -560,72 +742,85 @@
         const j = Math.floor(Math.random() * (i + 1));
         [next[i], next[j]] = [next[j], next[i]];
       }
-      // 우연히 같은 순서가 나오더라도 새로 내려올 때는 다른 배치를 보여줍니다.
+      // 첫 장면을 만들 때 한 번만 순서를 정합니다.
       if (next.length > 1 && next.every((team, i) => team === previous[i])) next.push(next.shift());
       galleryOrder = next;
-      galleryOffsets = next.map(() => ({ x: random(-.1, .1), y: random(-.14, .14) }));
+      galleryOffsets = [];
       galleryShuffleArmed = false; galleryRevision++;
       // 화면의 순서와 키보드 탐색 순서만 바꾸고 학생/색상 연결은 유지합니다.
       galleryOrder.forEach(team => iconList.appendChild(iconButtons[team].parentElement));
     }
     function makeSpreadSlots() {
-      // 화면 양옆의 여백까지 활용해 펼치되 아이콘 크기와 최소 간격은 유지합니다.
+      // 줄/열이나 양 끝 고정점 없이, 중심 주변에서 서로 떨어진 무작위 위치를 고릅니다.
       const headingBottom = spreadHeading.offsetTop + spreadHeading.offsetHeight;
       const top = Math.min(height * .3, headingBottom + Math.min(26, height * .045));
       const bottom = Math.max(10, Math.min(30, height * .045));
       const availableHeight = Math.max(40, height - top - bottom);
-      let rows;
-      if (width / availableHeight > 3.4) rows = [7, 7];
-      else if (width >= 750) rows = [5, 4, 5];
-      else if (width >= 500) rows = [4, 3, 4, 3];
-      else rows = [3, 3, 3, 3, 2];
-      const rowHeight = availableHeight / rows.length, columnWidth = width * .94 / Math.max(...rows);
-      const size = Math.max(12, Math.min(112, columnWidth * .55, rowHeight * .65));
+      // 기존 아이콘 크기 기준만 유지합니다. 실제 위치에는 행/열을 사용하지 않습니다.
+      const rowCount = width / availableHeight > 3.4 ? 2 : width >= 750 ? 3 : width >= 500 ? 4 : 5;
+      const rowHeight = availableHeight / rowCount, columnWidth = width * .94 / Math.ceil(source.length / rowCount);
+      const size = Math.max(12, Math.min(112, columnWidth * .55, rowHeight * .65) * SETTINGS.galleryIconScale);
       const compactX = width < 750 ? SETTINGS.galleryMobileSpreadX : SETTINGS.gallerySpreadX;
       const compactY = width < 750 ? SETTINGS.galleryMobileSpreadY : SETTINGS.gallerySpreadY;
-      // 좌우 편차를 확보하고 상하 편차는 아래에서 주변 아이콘과의 간격에 맞춰 조정합니다.
-      const sidePadding = Math.max(8, width * .01);
-      // 호버 확대와 클릭 영역까지 포함해 각 아이콘 사이에 여백을 확보합니다.
       const safeSize = Math.max(44, size) * SETTINGS.galleryHoverScale;
-      const requestedGap = width < 750 ? SETTINGS.galleryMobileGap : SETTINGS.galleryGap;
-      const availableGapX = (width - sidePadding * 2 - safeSize * Math.max(...rows)) / Math.max(1, Math.max(...rows) - 1);
-      const availableGapY = (availableHeight - safeSize * rows.length) / Math.max(1, rows.length - 1);
-      const gap = Math.max(0, Math.min(requestedGap, availableGapX, availableGapY));
-      const safeGap = safeSize + gap;
-      // 각 줄의 양 끝을 호버 확대까지 포함한 안전 여백에 맞춥니다.
-      const horizontalRoom = width - sidePadding * 2 - Math.max(44, size) * SETTINGS.galleryHoverScale;
-      const maxCellHeight = Math.max(1, (availableHeight - safeSize) / Math.max(1, rows.length - 1));
-      const cellHeight = Math.min(maxCellHeight, Math.max(rowHeight * compactY, safeGap));
-      const galleryTop = top + (availableHeight - cellHeight * rows.length) / 2;
-      // 떠다니는 거리와 호버 확대까지 확보하고 좁은 화면에서는 위치 편차만 줄입니다.
-      const floatFactor = Math.min(1, size / 100);
-     const slots = [];
-      rows.forEach((columns, row) => {
-        // 아이콘이 적은 줄도 같은 좌우 폭을 사용하도록 줄마다 간격을 계산합니다.
-        const maxCellWidth = Math.max(1, horizontalRoom / Math.max(1, columns - 1));
-        const cellWidth = Math.min(maxCellWidth, Math.max(maxCellWidth * compactX, safeGap));
-        const jitterRoomX = clamp((cellWidth - safeGap - 2 * SETTINGS.galleryFloatX * floatFactor) / (cellWidth * .2), 0, 1);
-        for (let col = 0; col < columns; col++) {
-          const i = slots.length;
-          const offset = galleryOffsets[i];
-          // 양 끝은 고정하고 안쪽 아이콘에만 가로 편차를 주어 좌우 공간을 충분히 사용합니다.
-          const offsetX = col === 0 || col === columns - 1 ? 0 : offset.x * cellWidth * jitterRoomX;
-          slots.push({ x: width / 2 + (col - (columns - 1) / 2) * cellWidth + offsetX,
-            y: galleryTop + (row + .5) * cellHeight, size });
+      const requestedGap = Math.max(SETTINGS.galleryMinGap, width < 750 ? SETTINGS.galleryMobileGap : SETTINGS.galleryGap);
+      const radiusX = Math.max(1, width - safeSize - 16) * .5 * compactX;
+      const radiusY = Math.max(1, availableHeight - safeSize - 16) * .5 * compactY;
+      const distance = (a, b) => Math.max(Math.abs(a.x - b.x) * radiusX, Math.abs(a.y - b.y) * radiusY);
+      if (galleryOffsets.length !== source.length) {
+        galleryOffsets = [];
+        // 둥근 영역의 모서리 쪽도 활용하되, 개별 아이콘을 경계에 맞춰 정렬하지 않습니다.
+        const randomPoint = () => {
+          let point;
+          do { point = { x: random(-1, 1), y: random(-1, 1) }; }
+          while (point.x ** 4 + point.y ** 4 > 1);
+          return point;
+        };
+        const nearestDistance = (point, skip = -1) => galleryOffsets.reduce((nearest, other, i) =>
+          i === skip ? nearest : Math.min(nearest, distance(point, other)), Infinity);
+        for (let i = 0; i < source.length; i++) {
+          let best, bestDistance = -1;
+          for (let attempt = 0; attempt < 96; attempt++) {
+            const point = randomPoint();
+            const clearance = nearestDistance(point);
+            if (clearance > bestDistance) { best = point; bestDistance = clearance; }
+            if (clearance >= safeSize + requestedGap) break;
+          }
+          galleryOffsets.push(best);
         }
-      });
-      // 각 아이콘의 높이 차이를 3배로 늘리되, 확대된 클릭 영역끼리 겹치지 않게 제한합니다.
-      const verticalJitter = cellHeight * .42;
-      slots.forEach((slot, i) => {
-        let minY = Math.max(top + safeSize / 2, slot.y - verticalJitter);
-        let maxY = Math.min(height - bottom - safeSize / 2, slot.y + verticalJitter);
-        slots.forEach(other => {
-          if (other === slot || Math.abs(other.x - slot.x) >= safeGap) return;
-          if (other.y < slot.y) minY = Math.max(minY, other.y + safeGap);
-          else maxY = Math.min(maxY, other.y - safeGap);
-        });
-        if (minY <= maxY) slot.y = clamp(slot.y + galleryOffsets[i].y * cellHeight * 3, minY, maxY);
-      });
+        // 새 배치를 만들 때만 가까운 아이콘을 빈 공간으로 옮겨 크기 축소를 최소화합니다.
+        // 스크롤 프레임과 화면 크기 변경에서는 저장된 좌표를 그대로 사용합니다.
+        for (let pass = 0; pass < 12; pass++) {
+          let crowded = false;
+          galleryOffsets.forEach((point, i) => {
+            let best = point, bestDistance = nearestDistance(point, i);
+            if (bestDistance >= safeSize + requestedGap) return;
+            crowded = true;
+            for (let attempt = 0; attempt < 256; attempt++) {
+              const candidate = randomPoint(), clearance = nearestDistance(candidate, i);
+              if (clearance > bestDistance) { best = candidate; bestDistance = clearance; }
+              if (bestDistance >= safeSize + requestedGap) break;
+            }
+            galleryOffsets[i] = best;
+          });
+          if (!crowded) break;
+        }
+      }
+      // 무리 전체를 중심에 옮깁니다. 개별 아이콘을 좌우 경계에 붙이거나 잘라 맞추지 않습니다.
+      const xs = galleryOffsets.map(point => point.x), ys = galleryOffsets.map(point => point.y);
+      const centerX = (Math.min(...xs) + Math.max(...xs)) / 2;
+      const centerY = (Math.min(...ys) + Math.max(...ys)) / 2;
+      let clearance = Infinity;
+      galleryOffsets.forEach((point, i) => galleryOffsets.slice(i + 1).forEach(other => {
+        clearance = Math.min(clearance, distance(point, other));
+      }));
+      // 좁은 화면에서도 서로 가려지지 않도록 필요한 경우에만 크기를 조금 줄입니다.
+      const iconSize = Math.max(12, Math.min(size, (clearance - SETTINGS.galleryMinGap) / SETTINGS.galleryHoverScale));
+      const slots = galleryOffsets.map(point => ({
+        x: width / 2 + (point.x - centerX) * radiusX,
+        y: top + availableHeight / 2 + (point.y - centerY) * radiusY,
+        size: iconSize
+      }));
       const byTeam = [];
       galleryOrder.forEach((team, slot) => { byTeam[team] = slots[slot]; });
       return byTeam;
@@ -636,7 +831,230 @@
         const slot = spreadSlots[team], hitSize = Math.max(44, slot.size);
         Object.assign(button.style, { left: slot.x - hitSize / 2 + 'px', top: slot.y - hitSize / 2 + 'px', width: hitSize + 'px', height: hitSize + 'px' });
       });
+      layoutGalleryAmbient();
       positionDetails();
+      if (particles.length) { updateCameraZoom(); layoutZoomFloating(); }
+    }
+    function updateCameraZoom() {
+      const wordScale = wordLayout.width / wordArtwork.width;
+      // 팀 아이콘을 더 가까이 두어 확대 중 일찍 커지고 넓게 펼쳐지도록 합니다.
+      cameraZoom = Math.max(WORD_APPROACH.zoom, spreadSlots[0].size / (HIDDEN_ORIGIN.size * wordScale));
+      cameraFocus = { x: wordLayout.left + wordLayout.width * HIDDEN_ORIGIN.focusX,
+        y: wordLayout.top + wordLayout.height * HIDDEN_ORIGIN.focusY };
+      for (const p of particles) {
+        const pose = fragmentCameraPose(p.sprite, spreadSlots[p.team], 1);
+        p.x = p.tx = pose.x;
+        p.y = p.ty = pose.y;
+        p.wordWidth = pose.width;
+        p.wordHeight = pose.height;
+        p.size = Math.max(p.wordWidth, p.wordHeight);
+      }
+    }
+    function projectScenePoint(x, y, scale) {
+      const travel = (scale - 1) / (cameraZoom - 1);
+      return { x: x + (x - cameraFocus.x) * (scale - 1) + (width / 2 - cameraFocus.x) * travel,
+        y: y + (y - cameraFocus.y) * (scale - 1) + (height / 2 - cameraFocus.y) * travel };
+    }
+    function wordRenderOffset(timeline) {
+      return Math.round(wordShiftY * (1 - smooth(0, .65, timeline)) * 100) / 100;
+    }
+    function galleryCameraPose(slot, scale) {
+      const x = cameraFocus.x + (slot.x - width / 2) / cameraZoom;
+      const y = cameraFocus.y + (slot.y - height / 2) / cameraZoom;
+      const pose = projectScenePoint(x, y, scale), size = slot.size * scale / cameraZoom;
+      return { x: pose.x, y: pose.y, size };
+    }
+    function fragmentCameraPose(piece, slot, scale) {
+      const pose = galleryCameraPose(slot, scale);
+      // 기준 구성 아이콘과 합류를 마친 조각이 공유하는 위치와 크기입니다.
+      return { x: pose.x + piece.offsetX * pose.size,
+        y: pose.y + piece.offsetY * pose.size,
+        width: pose.size * piece.relativeWidth, height: pose.size * piece.relativeHeight };
+    }
+    function teamEntryTiming(team, index) {
+      if (index <= 0) return { start: 0, duration: 0, end: 0 };
+      const variation = (Math.sin(team * 12.9898) + 1) / 2;
+      // 팀 사이의 시차는 유지하되, 2·3번째 조각은 출발과 안착 시간을 공유합니다.
+      const arrivalVariation = (Math.sin(team * 17.173 + 7.619) + 1) / 2;
+      const start = variation * TEAM_ENTRY.teamStagger;
+      const duration = TEAM_ENTRY.duration + arrivalVariation * TEAM_ENTRY.durationJitter;
+      return { start, duration, end: start + duration };
+    }
+    function snapTeamEntry(progress) {
+      teamEntryTime = smooth(TEAM_ENTRY.start, 1, progress) * (teamEntryFinish + TEAM_ENTRY.handoffDuration);
+      teamEntryLastSpread = progress;
+      teamEntryReversing = false;
+      teamEntryInitialized = true;
+    }
+    function advanceTeamEntry(elapsed) {
+      if (spread < teamEntryLastSpread - .000001) {
+        teamEntryReversing = true;
+      } else if (spread > teamEntryLastSpread + .000001) teamEntryReversing = false;
+      // 축소 스크롤에 압축하지 않고, 들어올 때와 같은 시간으로 현재 위치부터 되감습니다.
+      if (teamEntryReversing) teamEntryTime = Math.max(0, teamEntryTime - elapsed);
+      else if (spread <= TEAM_ENTRY.start) teamEntryTime = 0;
+      else teamEntryTime = Math.min(teamEntryFinish + TEAM_ENTRY.handoffDuration, teamEntryTime + elapsed);
+      teamEntryLastSpread = spread;
+    }
+    function teamEntryPose(particle, slot, scale, elapsed) {
+      const piece = particle.sprite, index = fragments[particle.team].indexOf(piece);
+      const target = fragmentCameraPose(piece, slot, scale);
+      if (index <= 0) {
+        // 고정 조각도 합류하는 조각과 같은 시점에 회색에서 원래 색으로 바뀝니다.
+        const { start, duration } = teamEntryTiming(particle.team, 1);
+        const colorAmount = smooth(.7, 1, clamp((elapsed - start) / duration, 0, 1));
+        return { ...target, colorAmount };
+      }
+      const pieceVariation = (Math.sin(particle.team * 17.173 + index * 7.619) + 1) / 2;
+      const { start, duration, end } = teamEntryTiming(particle.team, index);
+      if (elapsed < start) return null;
+      if (elapsed >= end) return target;
+      // 나가는 경로 전체를 같은 카메라 안에 놓아 위치와 크기가 함께 축소됩니다.
+      const pathTarget = teamEntryReversing ? fragmentCameraPose(piece, slot, cameraZoom) : target;
+      const t = clamp((elapsed - start) / duration, 0, 1);
+      // 화면 안으로는 바로 진입하고, 마지막 남은 거리만 길게 감속합니다.
+      const join = 1 - (1 - t) ** 3;
+      const depthScale = 1 + (TEAM_ENTRY.startScale - 1) * (1 - t) ** 2;
+      const blur = TEAM_ENTRY_BLUR.radii.length * (1 - smooth(.05, .7, t));
+      const colorAmount = smooth(.7, 1, t);
+      const left = renderBounds.left, right = left + renderBounds.width;
+      const top = renderBounds.viewportTop, bottom = top + innerHeight;
+      const horizontal = Math.min(slot.x - left, right - slot.x);
+      const vertical = Math.min(slot.y - top, bottom - slot.y);
+      // 같은 팀의 다음 조각은 다른 방향에서 들어오되 가까운 화면 끝을 사용합니다.
+      const fromSide = index % 2 === 1 ? horizontal <= vertical : horizontal > vertical;
+      // 커진 아이콘의 블러 가장자리까지 화면 밖에서 출발하도록 여유를 확보합니다.
+      const padding = slot.size * Math.max(piece.relativeWidth, piece.relativeHeight) * TEAM_ENTRY.startScale *
+        (.5 + TEAM_ENTRY_BLUR.padding / TEAM_ENTRY_BLUR.size) + TEAM_ENTRY.margin;
+      // 시작점을 옆으로도 충분히 벌려 수평·수직 대신 대각선으로 접근합니다.
+      const diagonal = .22 + pieceVariation * .14;
+      const offsetX = (slot.x < (left + right) / 2 ? 1 : -1) * renderBounds.width * diagonal;
+      const offsetY = (slot.y < (top + bottom) / 2 ? 1 : -1) * innerHeight * diagonal;
+      const x = fromSide ? (slot.x - left < right - slot.x ? left - padding : right + padding)
+        : clamp(slot.x + offsetX, left + padding, right - padding);
+      const y = fromSide ? clamp(slot.y + offsetY, top + padding, bottom - padding)
+        : (slot.y - top < bottom - slot.y ? top - padding : bottom + padding);
+      const dx = pathTarget.x - x, dy = pathTarget.y - y, distance = Math.hypot(dx, dy) || 1;
+      const bend = clamp(distance * (.16 + pieceVariation * .1), 40, 180) * (pieceVariation < .5 ? -1 : 1);
+      const bendX = -dy / distance * bend, bendY = dx / distance * bend;
+      const c1x = x + dx * .32 + bendX, c1y = y + dy * .32 + bendY;
+      const c2x = x + dx * .78 + bendX * .4, c2y = y + dy * .78 + bendY * .4;
+      const remaining = 1 - join;
+      let flightX = remaining ** 3 * x + 3 * remaining ** 2 * join * c1x + 3 * remaining * join ** 2 * c2x + join ** 3 * pathTarget.x;
+      let flightY = remaining ** 3 * y + 3 * remaining ** 2 * join * c1y + 3 * remaining * join ** 2 * c2y + join ** 3 * pathTarget.y;
+      if (teamEntryReversing) {
+        const cameraRatio = scale / cameraZoom;
+        flightX = target.x + (flightX - pathTarget.x) * cameraRatio;
+        flightY = target.y + (flightY - pathTarget.y) * cameraRatio;
+      }
+      return { x: flightX, y: flightY, width: target.width * depthScale, height: target.height * depthScale,
+        blur, colorAmount, opacity: teamEntryReversing ? smooth(0, .2, t) : 1 };
+    }
+    function approachDepthRate(sourceSize) {
+      // 가장 작은 조각만 팀 아이콘의 깊이(1)에 남고, 나머지는 크기마다 다른 속도로 지나갑니다.
+      if (sourceSize <= ICON_DEPTH_STOPS[0][0]) return ICON_DEPTH_STOPS[0][1];
+      for (let i = 1; i < ICON_DEPTH_STOPS.length; i++) {
+        const [size, rate] = ICON_DEPTH_STOPS[i];
+        if (sourceSize > size) continue;
+        const [previousSize, previousRate] = ICON_DEPTH_STOPS[i - 1];
+        const amount = Math.log(sourceSize / previousSize) / Math.log(size / previousSize);
+        return lerp(previousRate, rate, amount);
+      }
+      return ICON_DEPTH_STOPS[ICON_DEPTH_STOPS.length - 1][1];
+    }
+    function layoutGalleryAmbient() {
+      ambientSlots = [];
+      if (!width || !height) return;
+      const stageBox = stage.getBoundingClientRect();
+      const referenceSize = spreadSlots[0]?.size || 0;
+      const topExtra = Math.ceil(referenceSize + GALLERY_AMBIENT.topGap + 18);
+      ambientViewportWidth = document.documentElement.clientWidth;
+      ambientStageLeft = stageBox.left;
+      if (!spreadSlots.length) return;
+      // 같은 갤러리로 돌아오거나 크기만 바뀔 때 장식이 매번 뒤섞이지 않게 합니다.
+      let seed = galleryOrder.reduce((value, team) => (Math.imul(value, 31) + team + 1) >>> 0, galleryRevision + 7);
+      const next = () => ((seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296);
+      const clusterLeft = ambientStageLeft + Math.min(...spreadSlots.map(slot => slot.x - slot.size * SETTINGS.galleryHoverScale / 2));
+      const clusterRight = ambientStageLeft + Math.max(...spreadSlots.map(slot => slot.x + slot.size * SETTINGS.galleryHoverScale / 2));
+      const clusterTop = Math.min(...spreadSlots.map(slot => slot.y - slot.size * SETTINGS.galleryHoverScale / 2));
+      // 팀 아이콘 무리의 전체 가로 폭을 비우고, 좌우 바깥 여백에만 그립니다.
+      const bands = [
+        { left: 0, right: Math.max(0, clusterLeft - GALLERY_AMBIENT.clusterGap), outer: 0 },
+        { left: Math.min(ambientViewportWidth, clusterRight + GALLERY_AMBIENT.clusterGap), right: ambientViewportWidth, outer: ambientViewportWidth }
+      ];
+      const placed = [];
+      // 무리 아래쪽 양옆의 빈 포켓도 채우되, 팀 아이콘과 이름 아래 여백을 확보합니다.
+      for (let side = 0; side < 2; side++) {
+        const size = referenceSize, radius = size / 2;
+        const targetX = side === 0 ? clusterLeft + radius : clusterRight - radius;
+        const targetY = height - radius - 8;
+        let point, bestDistance = Infinity;
+        for (let row = 0; row < 7; row++) for (let column = -12; column <= 12; column++) {
+          const candidate = { x: targetX + column * size / 8, y: targetY - row * size / 10, radius };
+          if (candidate.x - radius < 8 || candidate.x + radius > ambientViewportWidth - 8) continue;
+          const clearsTeams = spreadSlots.every(slot => {
+            const teamX = ambientStageLeft + slot.x, teamRadius = slot.size * SETTINGS.galleryHoverScale / 2;
+            return Math.abs(candidate.x - teamX) >= radius + teamRadius + GALLERY_AMBIENT.pieceGap ||
+              candidate.y - radius >= slot.y + teamRadius + GALLERY_AMBIENT.pieceGap + 24;
+          });
+          const clearsPieces = placed.every(other => Math.max(Math.abs(candidate.x - other.x), Math.abs(candidate.y - other.y)) -
+            radius - other.radius >= GALLERY_AMBIENT.pieceGap);
+          if (!clearsTeams || !clearsPieces) continue;
+          const distance = (candidate.x - targetX) ** 2 + (candidate.y - targetY) ** 2;
+          if (distance < bestDistance) { point = candidate; bestDistance = distance; }
+        }
+        if (!point) continue;
+        placed.push(point);
+        ambientSlots.push({ x: point.x - ambientStageLeft, y: point.y, size, opacity: .7, priority: side });
+      }
+      bands.forEach((band, side) => {
+        const bandWidth = band.right - band.left;
+        if (bandWidth < referenceSize * .65) return;
+        const edgeTeam = spreadSlots.reduce((edge, slot) => (side === 0 ? slot.x < edge.x : slot.x > edge.x) ? slot : edge);
+        const count = Math.min(GALLERY_AMBIENT.maxPerSide,
+          Math.max(3, Math.round(bandWidth * height / (referenceSize + GALLERY_AMBIENT.pieceGap) ** 2 * .8)));
+        for (let i = 0; i < count; i++) {
+          const size = referenceSize, radius = size / 2;
+          // 먼저 가장 바깥 팀 바로 옆을 채우고, 나머지는 화면 끝까지 이어집니다.
+          const minX = side === 0 ? -size * .18 : band.left + radius;
+          const maxX = side === 0 ? band.right - radius : ambientViewportWidth + size * .18;
+          if (minX > maxX) continue;
+          let point;
+          for (let attempt = 0; attempt < 180; attempt++) {
+            const inward = Math.pow(next(), .65);
+            const x = i === 0 ? (side === 0 ? maxX : minX) : i === 1 ? band.outer :
+              lerp(minX, maxX, side === 0 ? inward : 1 - inward);
+            const y = i === 0 && attempt === 0 ? clamp(edgeTeam.y, radius + 8, height - radius - 8) :
+              radius + 8 + next() * Math.max(0, height - size - 16);
+            const candidate = { x, y, radius };
+            const clear = placed.every(other => Math.max(Math.abs(candidate.x - other.x),
+              Math.abs(candidate.y - other.y)) - radius - other.radius >= GALLERY_AMBIENT.pieceGap);
+            if (clear) { point = candidate; break; }
+          }
+          if (!point) continue;
+          placed.push(point);
+          ambientSlots.push({ x: point.x - ambientStageLeft, y: point.y, size, opacity: lerp(.5, .9, next()), priority: 5 + i * 2 + side });
+        }
+      });
+      // 무리 위로 세 조각만 살짝 더 내밀고, 제목과 보기 버튼 영역은 비워 둡니다.
+      const titleBoxes = [...toolbar.querySelectorAll('.textbox, .view-buttons')].map(element => element.getBoundingClientRect());
+      for (let i = 0; i < GALLERY_AMBIENT.topCount; i++) {
+        const size = referenceSize, radius = size / 2;
+        for (let attempt = 0; attempt < 24; attempt++) {
+          const ratio = [.25, .55, .82][i] + (next() - .5) * .07;
+          const point = { x: lerp(clusterLeft, clusterRight, ratio),
+            y: clusterTop - GALLERY_AMBIENT.topGap - radius - next() * 18, radius };
+          if (point.y - radius < -topExtra || point.x - radius < 8 || point.x + radius > ambientViewportWidth - 8) continue;
+          const clearsTitle = titleBoxes.every(box => point.x + radius + 18 <= box.left || point.x - radius - 18 >= box.right ||
+            stageBox.top + point.y + radius + 18 <= box.top || stageBox.top + point.y - radius - 18 >= box.bottom);
+          const clearsPieces = placed.every(other => Math.max(Math.abs(point.x - other.x), Math.abs(point.y - other.y)) -
+            radius - other.radius >= GALLERY_AMBIENT.pieceGap);
+          if (!clearsTitle || !clearsPieces) continue;
+          placed.push(point);
+          ambientSlots.push({ x: point.x - ambientStageLeft, y: point.y, size, opacity: lerp(.5, .75, next()), priority: 2 + i });
+          break;
+        }
+      }
     }
     function targetPoints() {
       const wordWidth = Math.min(width * .98, Math.max(45, height - 24) * wordArtwork.width / wordArtwork.height, 1250) * SETTINGS.wordScale;
@@ -644,16 +1062,15 @@
       const left = (width - wordWidth) / 2, top = (height - wordHeight) / 2;
       wordLayout = { left, top, width: wordWidth, height: wordHeight };
       spacing = Math.max(8.5, wordWidth / 56);
-      const scale = wordWidth / wordArtwork.width;
-      return wordArtwork.anchors.map(anchor => ({
-        x: left + (anchor.x + anchor.width / 2 - wordArtwork.originX) * scale,
-        y: top + (anchor.y + anchor.height / 2 - wordArtwork.originY) * scale,
-        width: anchor.width * scale, height: anchor.height * scale,
-        sprite: anchor.sprite, studentId: anchor.studentId
-      }));
+      updateCameraZoom();
+      return wordArtwork.anchors.map(anchor => {
+        const pose = fragmentCameraPose(anchor.sprite, spreadSlots[anchor.sprite.team], 1);
+        return { x: pose.x, y: pose.y, width: pose.width, height: pose.height,
+          sprite: anchor.sprite, studentId: anchor.studentId };
+      });
     }
     function layoutFloatingField() {
-      const pool = wordArtwork.floating.filter(piece => Math.max(piece.width, piece.height) >= 45);
+      const pool = wordArtwork.floating.filter(piece => !piece.glyph && Math.max(piece.width, piece.height) >= 45);
       floatingField = [];
       if (!pool.length) return;
       const count = Math.min(FLOAT_FIELD.maxCount, Math.ceil(width * height / FLOAT_FIELD.areaPerIcon));
@@ -682,6 +1099,128 @@
           drift: Math.min(random(8, FLOAT_FIELD.maxDrift), Math.max(0, edgeDistance - size)) });
       }
     }
+    function sizeRenderLayers(box) {
+      // 확대되는 조각이 컨테이너 경계가 아닌 실제 화면 가장자리로 빠져나가도록 합니다.
+      const dpr = Math.min(devicePixelRatio || 1, 2), padding = Math.abs(wordShiftY);
+      renderBounds = { left: -box.left, top: -box.top - padding, viewportTop: -box.top, dpr,
+        width: document.documentElement.clientWidth, height: innerHeight + padding * 2 };
+      Object.assign(canvas.style, { left: renderBounds.left + 'px', top: -box.top + 'px',
+        width: renderBounds.width + 'px', height: innerHeight + 'px', transform: 'none' });
+      canvas.width = Math.round(renderBounds.width * dpr); canvas.height = Math.round(innerHeight * dpr);
+      // 넓게 흩어진 팀 조각도 무대의 사각 경계에 잘리지 않도록 화면 전체를 사용합니다.
+      assemblyCanvas.width = canvas.width; assemblyCanvas.height = canvas.height;
+      assemblyCtx.setTransform(dpr, 0, 0, dpr, -renderBounds.left * dpr, -renderBounds.viewportTop * dpr);
+      floatBatch?.resize(renderBounds.width, innerHeight, dpr);
+    }
+    function retainAmbientGlyphs(originals) {
+      const used = new Set(), usedShapes = new Set();
+      const candidates = originals.filter(item => item.piece.ambientCandidate);
+      ambientParticles = [];
+      // 고유 형태가 부족한 큰 화면에서도 위·아래와 좌우를 고르게 채우고 복제하지 않습니다.
+      for (const slot of [...ambientSlots].sort((a, b) => a.priority - b.priority)) {
+        let selected, bestScore = Infinity;
+        for (const item of candidates) {
+          if (usedShapes.has(item.piece.ambientShape)) continue;
+          const sourceX = cameraFocus.x + (slot.x - width / 2) / cameraZoom;
+          const sourceY = cameraFocus.y + (slot.y - height / 2) / cameraZoom;
+          const score = (item.x - sourceX) ** 2 + (item.y - sourceY) ** 2;
+          if (score < bestScore) { selected = item; bestScore = score; }
+        }
+        if (!selected) continue;
+        used.add(selected);
+        usedShapes.add(selected.piece.ambientShape);
+        ambientParticles.push({ ...selected, target: slot });
+      }
+      return used;
+    }
+    function ambientPose(item, cameraScale) {
+      const pose = galleryCameraPose(item.target, cameraScale);
+      const sourceSize = Math.max(item.width, item.height);
+      // 같은 공간에서 떠다니는 움직임도 아이콘과 함께 확대합니다. 도착 후 따로 시작하지 않습니다.
+      const floatWeight = motionReduced ? 0 : cameraScale / cameraZoom;
+      const phase = galleryTime * GALLERY_AMBIENT.floatSpeed * (.8 + item.speed);
+      return { x: pose.x + Math.sin(phase * .83 + item.phase) * GALLERY_AMBIENT.floatX * floatWeight,
+        y: pose.y + Math.sin(phase + item.phase * 1.37) * GALLERY_AMBIENT.floatY * floatWeight,
+        width: pose.size * item.width / sourceSize,
+        height: pose.size * item.height / sourceSize,
+        opacity: lerp(1, item.target.opacity, (cameraScale - 1) / (cameraZoom - 1)) };
+    }
+    function layoutPassingField(originals) {
+      const pool = originals.filter(item => item.piece.ambientCandidate);
+      if (!pool.length) return [];
+      const viewportWidth = renderBounds.width, viewportHeight = innerHeight;
+      const budget = Math.min(PASSING_FIELD.maxPerLayer, Math.max(18,
+        Math.round(viewportWidth * viewportHeight / PASSING_FIELD.areaPerIcon)));
+      const columns = Math.min(budget, Math.ceil(Math.sqrt(budget * viewportWidth / viewportHeight)));
+      const rows = Math.max(1, Math.floor(budget / columns)), result = [];
+      let seed = galleryOrder.reduce((value, team) => (Math.imul(value, 31) + team + 1) >>> 0, galleryRevision + 83);
+      const next = () => ((seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296);
+      for (let layer = 0; layer < PASSING_FIELD.layers; layer++) {
+        // 각 깊이는 서로 다른 시점에 카메라를 지나갑니다. 끝에서는 모두 화면 밖으로 나갑니다.
+        const passProgress = lerp(.62, .995, (layer + .5) / PASSING_FIELD.layers);
+        const passScale = Math.pow(cameraZoom, passProgress);
+        const depthRate = 1 / (1 - 1 / passScale);
+        const referenceScale = Math.pow(cameraZoom, passProgress - .08);
+        const itemScale = 1 / (1 - (1 - 1 / referenceScale) * depthRate);
+        const focus = projectScenePoint(cameraFocus.x, cameraFocus.y, itemScale);
+        for (let row = 0; row < rows; row++) for (let column = 0; column < columns; column++) {
+          const piece = pool[(layer * 11 + (row * columns + column) * 7) % pool.length].piece;
+          const targetX = renderBounds.left + (column + lerp(.15, .85, next())) / columns * viewportWidth;
+          const targetY = renderBounds.viewportTop + (row + lerp(.15, .85, next())) / rows * viewportHeight;
+          const size = lerp(PASSING_FIELD.minSize, PASSING_FIELD.maxSize, next());
+          const ratio = size / itemScale / Math.max(piece.width, piece.height);
+          // 중간 화면의 고른 분포를 원래 깊이로 역투영해, 새로 튀어나오지 않고 계속 확대되게 합니다.
+          result.push({ piece, x: cameraFocus.x + (targetX - focus.x) / itemScale,
+            y: cameraFocus.y + (targetY - focus.y) / itemScale,
+            width: piece.width * ratio, height: piece.height * ratio, depthRate, zoomOnly: true,
+            opacity: lerp(.4, .7, next()), phase: next() * Math.PI * 2, speed: lerp(.2, .4, next()), drift: 0 });
+        }
+      }
+      return result;
+    }
+    function layoutZoomFloating() {
+      const scale = wordLayout.width / wordArtwork.width;
+      const originals = wordArtwork.floating.map(piece => ({ piece,
+        x: wordLayout.left + (piece.x + piece.width / 2 - wordArtwork.originX) * scale,
+        y: wordLayout.top + (piece.y + piece.height / 2 - wordArtwork.originY) * scale,
+        width: piece.width * scale, height: piece.height * scale,
+        phase: piece.phase, speed: piece.speed, drift: piece.drift * scale, opacity: 1
+      }));
+      retainAmbientGlyphs(originals);
+      // 작은 갤러리 주위도 원본 조각으로 채웁니다. 빈 사각 영역을 만들지 않습니다.
+      zoomFloating = originals.concat(floatingField, layoutPassingField(originals)).map(item => {
+        const right = renderBounds.left + renderBounds.width, bottom = renderBounds.top + renderBounds.height;
+        const visualSize = Math.max(item.width, item.height) * item.piece.visualSize / Math.max(item.piece.width, item.piece.height);
+        const depthRate = item.depthRate ?? approachDepthRate(visualSize / scale);
+        const motionDrift = Math.max(item.drift, Math.min(WORD_FLOAT.zoomDrift, visualSize * .12));
+        const unit = projectScenePoint(item.x, item.y, 2);
+        const vx = unit.x - item.x, vy = unit.y - item.y;
+        // 떠다니는 최대 폭까지 포함해 화면을 벗어나는 배율을 미리 구하고 이후에는 그리지 않습니다.
+        // 가장 작은 조각이 최종 깊이에 도착하기 전에 근접 한계로 잘리지 않게 합니다.
+        const exits = [item.zoomOnly ? PASSING_FIELD.fadeEnd / Math.max(item.width, item.height) :
+          Math.max(1 / WORD_APPROACH.nearClip, cameraZoom + 1)];
+        const rightSpeed = vx - motionDrift - item.width / 2;
+        const leftSpeed = vx + motionDrift + item.width / 2;
+        const bottomSpeed = vy - motionDrift - item.height / 2;
+        const topSpeed = vy + motionDrift + item.height / 2;
+        if (rightSpeed > 0) exits.push((right + 2 - item.x + vx) / rightSpeed);
+        if (leftSpeed < 0) exits.push((renderBounds.left - 2 - item.x + vx) / leftSpeed);
+        if (bottomSpeed > 0) exits.push((bottom + 2 - item.y + vy) / bottomSpeed);
+        if (topSpeed < 0) exits.push((renderBounds.top - 2 - item.y + vy) / topSpeed);
+        const exitScale = Math.max(1, Math.min(...exits));
+        return { ...item, vx, vy, depthRate, motionDrift, exitAt: (1 - 1 / exitScale) / depthRate };
+      }).sort((a, b) => b.exitAt - a.exitAt);
+      restFloating = zoomFloating.filter(item => !item.piece.glyph && !item.zoomOnly);
+      const cache = wordArtwork.background, dpr = renderBounds.dpr;
+      cache.width = Math.round(width * dpr); cache.height = Math.round(height * dpr);
+      const cacheCtx = cache.getContext('2d');
+      cacheCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      for (const item of zoomFloating) if (item.piece.glyph && !item.zoomOnly) {
+        const piece = item.piece;
+        cacheCtx.drawImage(wordArtwork.floatAtlas, piece.ax, piece.ay, piece.gw, piece.gh,
+          item.x - item.width / 2, item.y - item.height / 2, item.width, item.height);
+      }
+    }
     function layout(initial = false) {
       if (!viewActive) return;
       // 보기 전환의 perspective/translateZ가 적용된 시각적 크기를 좌표계로 저장하지 않습니다.
@@ -693,18 +1232,13 @@
       const wordPositionChanged = Math.abs(nextWordShiftY - wordShiftY) > .1;
       wordShiftY = nextWordShiftY;
       if (!initial && width === nextWidth && height === nextHeight) {
-        if (wordPositionChanged) draw();
+        if (wordPositionChanged || ambientViewportWidth !== document.documentElement.clientWidth || Math.abs(ambientStageLeft - box.left) > .1) {
+          sizeRenderLayers(box); layoutGalleryAmbient(); layoutZoomFloating(); draw();
+        }
         return;
       }
       width = nextWidth; height = nextHeight;
-      const dpr = Math.min(devicePixelRatio || 1, 2);
-      canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      assemblyCanvas.width = canvas.width; assemblyCanvas.height = canvas.height;
-      assemblyCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      backgroundCanvas.width = canvas.width; backgroundCanvas.height = canvas.height;
-      backgroundCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      floatBatch?.resize(width, height, dpr);
+      sizeRenderLayers(box);
       positionSpreadSlots();
       particles = targetPoints().map((point, i) => {
         const piece = point.sprite, team = piece.team;
@@ -715,8 +1249,11 @@
           wordWidth: point.width, wordHeight: point.height, sprite: piece, team, studentId: point.studentId };
       });
       particles.sort((a, b) => Number(a.assembly) - Number(b.assembly) || a.sprite.layer - b.sprite.layer);
+      updateCameraZoom();
       layoutFloatingField();
+      layoutZoomFloating();
       scrollTarget = readScroll(); spread = scrollTarget;
+      if (!teamEntryInitialized) snapTeamEntry(spread);
       settle(); draw();
       setHint();
     }
@@ -726,122 +1263,160 @@
     function draw() {
       if (!loaded || !viewActive || !width || !height) return;
       // 검색 영역이 비어 있는 첫 화면은 글자를 화면 중앙에 놓습니다.
-      // 캔버스를 이동하므로 작은 화면에서도 글자 조각이 위쪽에서 잘리지 않습니다.
-      // 스크롤 중에는 원래 좌표로 돌아가 정렬된 아이콘/정보 카드 위치를 유지합니다.
-      const wordOffset = Math.round(wordShiftY * (1 - smooth(0, .65, spread)) * 100) / 100;
-      const wordTransform = 'translateY(' + wordOffset + 'px)';
-      if (canvas.style.transform !== wordTransform) canvas.style.transform = wordTransform;
+      // 화면 크기의 캔버스 안에서 좌표만 이동해 확대 중에도 페이지 높이는 유지합니다.
+      const wordOffset = wordRenderOffset(spread);
       designerPanel.hidden = selectedTeam < 0 && !detailProgress.some(progress => progress > 0);
-      ctx.clearRect(0, 0, width, height);
-      assemblyCtx.clearRect(0, 0, width, height);
-      backgroundCtx.clearRect(0, 0, width, height);
+      const bounds = renderBounds;
+      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.setTransform(bounds.dpr, 0, 0, bounds.dpr, -bounds.left * bounds.dpr, (-bounds.viewportTop + wordOffset) * bounds.dpr);
+      assemblyCtx.clearRect(bounds.left, bounds.viewportTop, bounds.width, innerHeight);
       const galleryPoses = spreadSlots.map((_, team) => galleryPose(team));
+      const t = clamp(spread, 0, 1);
+      const cameraScale = currentCameraScale();
       // 투명 버튼도 실제로 그려진 아이콘의 위치와 크기를 따라갑니다.
+      let interactiveCount = 0;
       iconButtons.forEach((button, team) => {
-        const base = spreadSlots[team], pose = galleryPoses[team];
-        button.style.transform = 'translate(' + (pose.x - base.x) + 'px,' + (pose.y - base.y) + 'px) scale(' + pose.size / base.size + ')';
+        const base = spreadSlots[team], pose = galleryCameraPose(galleryPoses[team], cameraScale);
+        const interactive = teamInteractive(team, pose);
+        button.hidden = !interactive;
+        if (interactive) interactiveCount++;
+        const hitScale = Math.max(24, pose.size) / Math.max(44, base.size);
+        button.style.transform = 'translate(' + (pose.x - base.x) + 'px,' + (pose.y + wordOffset - base.y) + 'px) scale(' + hitScale + ')';
         button.classList.toggle('is-hovered', hoverTarget(team) === 1);
       });
-      // 출발·도착 모두 천천히 움직여 글자에서 빠지고 다시 끼워지는 과정을 보여줍니다.
-      const t = clamp((spread - .02) / .98, 0, 1);
-      const assemblyTravel = smooth(0, .92, t);
-      const iconOpacity = smooth(.92, 1, t), fragmentOpacity = 1 - iconOpacity;
-      // Subtle independent motion around each fixed glyph anchor. It fades
-      // out early in the scroll; the finished gallery stays at its fixed anchors.
-      const idleWeight = motionReduced ? 0 : 1 - smooth(0, .16, spread);
-      // Use one perspective and fixed glyph anchors for the whole background.
-      // All values follow scroll progress so scrolling back restores the word.
-      const backgroundLock = smooth(0, .16, spread);
-      const backgroundScale = 1 / (1 + WORD_RETREAT.depth * smooth(0, 1, spread));
-      const backgroundOpacity = 1 - smooth(WORD_RETREAT.fadeStart, WORD_RETREAT.fadeEnd, spread);
-      const backgroundBlur = WORD_RETREAT.blur * smooth(.08, .85, spread);
+      iconList.hidden = interactiveCount === 0;
+      // 기준 팀 아이콘과 회색 장식을 같은 카메라로 확대합니다.
+      const approach = (cameraScale - 1) / (cameraZoom - 1);
+      const cameraTravel = 1 - 1 / cameraScale;
+      // 확대가 끝나도 조각은 계속 이동하며, 모두 안착한 뒤 같은 위치의 원본 SVG로 넘깁니다.
+      const iconOpacity = smooth(teamEntryFinish, teamEntryFinish + TEAM_ENTRY.handoffDuration, teamEntryTime), fragmentOpacity = 1 - iconOpacity;
+      const attention = Math.max(...detailProgress);
       lastDraw = [];
-      if (backgroundOpacity >= .001) {
-        backgroundCtx.drawImage(wordArtwork.background,
-          width / 2 + (wordLayout.left - width / 2) * backgroundScale,
-          height / 2 + (wordLayout.top - height / 2) * backgroundScale,
-          wordLayout.width * backgroundScale, wordLayout.height * backgroundScale);
+      // 움직임이 시작되면 통짜 글자 이미지를 쓰지 않고, 모든 획을 개별 아이콘으로 그립니다.
+      if (approach === 0) ctx.drawImage(wordArtwork.background, 0, 0, width, height);
+      if (t < 1 || ambientParticles.length) {
+        const visibleTop = bounds.viewportTop - wordOffset, visibleBottom = visibleTop + innerHeight;
+        const ambientVisibility = 1 - smooth(0, .25, Math.max(...detailProgress));
+        // 지나가는 작은 조각도 확대가 마무리되는 동안 함께 사라집니다.
+        const departingOpacity = 1 - smooth(WORD_APPROACH.handoffStart, WORD_APPROACH.clearEnd, t);
         const intro = clamp(idleTime / WORD_FLOAT.intro, 0, 1);
-        const amount = (intro < .5 ? 4 * intro ** 3 : 1 - (-2 * intro + 2) ** 3 / 2) * idleWeight;
-        const scale = wordLayout.width / wordArtwork.width * backgroundScale;
-        const left = width / 2 + (wordLayout.left - width / 2) * backgroundScale;
-        const top = height / 2 + (wordLayout.top - height / 2) * backgroundScale;
-        // main의 GPU 일괄 그리기를 재사용합니다. 미지원/컨텍스트 손실 시 2D로 복원합니다.
-        const paintFloating = () => {
-          floatBatch?.clear();
-          for (const item of floatingField) {
-            const piece = item.piece, phase = idleTime * item.speed;
-            const dx = Math.sin(phase + item.phase) * item.drift * amount;
-            const dy = Math.cos(phase * .81 + item.phase) * item.drift * amount;
-            const w = item.width * backgroundScale, h = item.height * backgroundScale;
-            const x = width / 2 + (item.x + dx - width / 2) * backgroundScale - w / 2;
-            const y = height / 2 + (item.y + dy - height / 2) * backgroundScale - h / 2;
-            if (floatBatch) floatBatch.add(piece, x, y, w, h, 0, item.opacity);
+        const idleAmount = motionReduced ? 0 : intro < .5 ? 4 * intro ** 3 : 1 - (-2 * intro + 2) ** 3 / 2;
+        const zoomMotion = smooth(0, .16, t);
+        const passingOpacity = smooth(.24, .34, t);
+        floatPasses.forEach(pass => { pass.items.length = 0; });
+        for (const item of approach === 0 ? restFloating : zoomFloating) {
+          if (cameraTravel >= item.exitAt || departingOpacity === 0) break;
+          if (item.zoomOnly && passingOpacity === 0) continue;
+          // 원근 투영: 모두 동시에 움직이되 가까운(큰) 아이콘일수록 더 빠르게 커집니다.
+          const distance = 1 - cameraTravel * item.depthRate;
+          const itemScale = 1 / distance;
+          const w = item.width * itemScale, h = item.height * itemScale;
+          let x = item.x + item.vx * (itemScale - 1) - w / 2;
+          let y = item.y + item.vy * (itemScale - 1) - h / 2;
+          // 확대 중에도 계속 떠다니되 가까워진 아이콘의 흔들림은 화면 기준 36px 이내로 제한합니다.
+          const phase = idleTime * item.speed;
+          const baseDrift = lerp(item.drift, item.motionDrift, zoomMotion) * idleAmount;
+          const drift = baseDrift * itemScale / (1 + baseDrift * (itemScale - 1) / WORD_FLOAT.maxTravel);
+          x += Math.sin(phase + item.phase) * drift;
+          y += Math.cos(phase * .81 + item.phase) * drift;
+          if (x + w < bounds.left || x > bounds.left + bounds.width ||
+              y + h < visibleTop || y > visibleBottom) continue;
+          item.drawX = x - bounds.left; item.drawY = y - visibleTop;
+          item.drawWidth = w; item.drawHeight = h;
+          // 초점도 마지막 팀 아이콘의 깊이를 따릅니다. 그 앞을 지나가는 조각만 흐려집니다.
+          const focusRatio = itemScale / cameraScale;
+          const nearOpacity = item.zoomOnly ? 1 - smooth(PASSING_FIELD.fadeStart, PASSING_FIELD.fadeEnd, Math.max(w, h)) :
+            lerp(1, smooth(WORD_APPROACH.nearClip, WORD_APPROACH.nearFade, distance),
+              smooth(1, FLOAT_BLUR.startRatio, focusRatio));
+          item.drawOpacity = item.opacity * departingOpacity * nearOpacity * (item.zoomOnly ? passingOpacity : 1);
+          // 지나가는 더미는 기존 0~5px 블러 배치만 사용해 형태를 선명하게 유지합니다.
+          const blurLevel = smooth(FLOAT_BLUR.startRatio, FLOAT_BLUR.fullRatio, focusRatio) *
+            (floatPasses.length - 1) * (item.zoomOnly ? PASSING_FIELD.blurStrength : 1);
+          item.blurLow = Math.floor(blurLevel); item.blurMix = blurLevel - item.blurLow;
+          floatPasses[item.blurLow].items.push(item);
+          if (item.blurMix > 0) floatPasses[item.blurLow + 1].items.push(item);
+        }
+        const paintPass = (pass, index) => {
+          if (floatBatch) floatBatch.clear();
+          else {
+            if (!floatFallbackCanvas) {
+              floatFallbackCanvas = document.createElement('canvas');
+              floatFallbackCtx = floatFallbackCanvas.getContext('2d');
+            }
+            if (floatFallbackCanvas.width !== canvas.width) floatFallbackCanvas.width = canvas.width;
+            if (floatFallbackCanvas.height !== canvas.height) floatFallbackCanvas.height = canvas.height;
+            floatFallbackCtx.setTransform(1, 0, 0, 1, 0, 0);
+            floatFallbackCtx.clearRect(0, 0, canvas.width, canvas.height);
+            floatFallbackCtx.setTransform(bounds.dpr, 0, 0, bounds.dpr, 0, 0);
+          }
+          for (const item of pass.items) {
+            const piece = item.piece;
+            const opacity = item.drawOpacity * (index === item.blurLow ? 1 - item.blurMix : item.blurMix);
+            if (floatBatch) floatBatch.add(piece, item.drawX, item.drawY, item.drawWidth, item.drawHeight, 0, opacity);
             else {
-              backgroundCtx.globalAlpha = item.opacity;
-              backgroundCtx.drawImage(wordArtwork.floatAtlas, piece.ax, piece.ay, piece.gw, piece.gh, x, y, w, h);
+              floatFallbackCtx.globalAlpha = opacity;
+              floatFallbackCtx.drawImage(wordArtwork.floatAtlas, piece.ax, piece.ay, piece.gw, piece.gh,
+                item.drawX, item.drawY, item.drawWidth, item.drawHeight);
             }
           }
-          backgroundCtx.globalAlpha = 1;
-          for (const piece of wordArtwork.floating) {
-            const phase = idleTime * piece.speed;
-            const dx = Math.sin(phase + piece.phase) * piece.drift * amount;
-            const dy = Math.cos(phase * .81 + piece.phase) * piece.drift * amount;
-            const x = left + (piece.x - wordArtwork.originX + dx) * scale;
-            const y = top + (piece.y - wordArtwork.originY + dy) * scale;
-            const w = piece.width * scale, h = piece.height * scale;
-            if (floatBatch) floatBatch.add(piece, x, y, w, h, 0, 1);
-            else backgroundCtx.drawImage(wordArtwork.floatAtlas, piece.ax, piece.ay, piece.gw, piece.gh, x, y, w, h);
-          }
         };
-        paintFloating();
-        if (floatBatch) {
-          if (floatBatch.flush(wordArtwork.floatAtlas)) backgroundCtx.drawImage(floatCanvas, 0, 0, width, height);
-          else { floatBatch.dispose(); floatBatch = null; paintFloating(); }
+        for (let index = 0; index < floatPasses.length; index++) {
+          const pass = floatPasses[index];
+          if (!pass.items.length) continue;
+          paintPass(pass, index);
+          if (floatBatch && !floatBatch.flush(wordArtwork.floatAtlas)) {
+            floatBatch.dispose(); floatBatch = null; paintPass(pass, index);
+          }
+          ctx.save();
+          // 인접한 블러 단계를 더해 섞으면 전환 중 아이콘의 불투명도가 줄지 않습니다.
+          if (index > 0) ctx.globalCompositeOperation = 'lighter';
+          ctx.filter = pass.radius ? `blur(${pass.radius * bounds.dpr}px)` : 'none';
+          ctx.drawImage(floatBatch ? floatCanvas : floatFallbackCanvas, bounds.left, visibleTop, bounds.width, innerHeight);
+          ctx.restore();
+        }
+        // 화면에 남는 회색 아이콘은 가까이 지나가는 장식과 분리해 선명하게 그립니다.
+        if (ambientVisibility > 0) for (const item of ambientParticles) {
+          const pose = ambientPose(item, cameraScale), piece = item.piece;
+          const x = pose.x - pose.width / 2, y = pose.y - pose.height / 2;
+          if (x + pose.width < bounds.left || x > bounds.left + bounds.width ||
+              y + pose.height < visibleTop || y > visibleBottom) continue;
+          ctx.globalAlpha = pose.opacity * ambientVisibility;
+          ctx.drawImage(wordArtwork.floatAtlas, piece.ax, piece.ay, piece.gw, piece.gh, x, y, pose.width, pose.height);
+        }
+        ctx.globalAlpha = 1;
+        // 조각 전체를 한 번 합성해 회색으로 바꿉니다. 추가 SVG·픽셀 처리·개별 필터는 사용하지 않습니다.
+        const grayAmount = smooth(0, .32, t);
+        if (grayAmount > 0) {
+          ctx.save();
+          ctx.globalCompositeOperation = 'source-atop';
+          ctx.globalAlpha = grayAmount;
+          ctx.fillStyle = '#dedede';
+          ctx.fillRect(bounds.left, visibleTop, bounds.width, innerHeight);
+          ctx.restore();
         }
       }
-      if (t < 1) for (const p of particles) {
-        if (p.assembly && fragmentOpacity === 0) continue;
-        const perspective = p.assembly ? 1 : backgroundScale;
-        const opacity = p.assembly ? lerp(1, visibleTeams[p.team] ? 1 : 0, t) : backgroundOpacity;
+      if (fragmentOpacity > 0) for (const p of particles) {
+        if (fragmentOpacity === 0) continue;
+        const opacity = lerp(1, visibleTeams[p.team] ? 1 : 0, t) *
+          (1 - smooth(0, .18, detailProgress[p.team])) * lerp(1, .14, attention);
         if (opacity < .001) continue;
-        // Separate personal pieces converge on the same viewBox to complete their team SVG.
-        const travel = p.assembly ? assemblyTravel : 0;
         const slot = galleryPoses[p.team], piece = p.sprite;
-        const finalX = slot.x + piece.offsetX * slot.size, finalY = slot.y + piece.offsetY * slot.size;
-        const w = lerp(p.wordWidth, slot.size * piece.relativeWidth, travel) * perspective;
-        const h = lerp(p.wordHeight, slot.size * piece.relativeHeight, travel) * perspective;
-        const size = Math.max(w, h);
-        const dx = finalX - p.tx, dy = finalY - p.ty, distance = Math.max(1, Math.hypot(dx, dy));
-        const bend = Math.sin(travel * Math.PI) * Math.min(60, spacing * 2) * (p.team % 2 ? 1 : -1);
-        const idle = p.idle, phase = idleTime * idle.rate;
-        const idleX = Math.sin(phase + idle.phaseX) * idle.amplitude * idleWeight;
-        const idleY = Math.sin(phase * .83 + idle.phaseY) * idle.amplitude * .85 * idleWeight;
-        const idleTurn = Math.sin(phase * .7 + idle.phaseTurn) * idle.turn * idleWeight;
-        // The gallery already provides safe bounds. Clamping moving pieces
-        // separately would keep edge icons short of their final positions.
-        const x = p.assembly ? lerp(p.x, finalX, travel) - dy / distance * bend + idleX
-          : width / 2 + (lerp(p.x, p.tx, backgroundLock) + idleX - width / 2) * backgroundScale;
-        const y = p.assembly ? lerp(p.y, finalY, travel) + dx / distance * bend + idleY
-          : height / 2 + (lerp(p.y, p.ty, backgroundLock) + idleY - height / 2) * backgroundScale;
-        const angle = (p.assembly ? p.angle * (1 - travel) : lerp(p.angle, p.targetAngle, backgroundLock)) + idleTurn;
-        const particleCtx = p.assembly ? assemblyCtx : backgroundCtx;
-        particleCtx.save(); particleCtx.globalAlpha = p.assembly ? opacity : 1; particleCtx.translate(x, y); particleCtx.rotate(angle);
-        // 각 개인의 색과 도형을 유지한 채 같은 팀의 조각끼리 정확히 포개집니다.
-        particleCtx.drawImage(piece.image, -w / 2, -h / 2, w, h);
-        particleCtx.restore();
-        lastDraw.push({ id: p.id, name: piece.name, color: piece.color, kind: "color-group", role: "assembly", team: p.team, studentId: p.studentId, x, y, size, angle, opacity: opacity * fragmentOpacity });
+        const pose = teamEntryPose(p, slot, cameraScale, teamEntryTime);
+        if (!pose) continue;
+        const pieceOpacity = opacity * (pose.opacity ?? 1);
+        if (pieceOpacity < .001) continue;
+        const w = pose.width, h = pose.height;
+        const x = pose.x, y = pose.y, angle = piece.hoverAngle * galleryHover[p.team];
+        const halo = pose.blur > .001 ? TEAM_ENTRY_BLUR.padding / TEAM_ENTRY_BLUR.size : 0;
+        if (x + w * (.5 + halo) < bounds.left || x - w * (.5 + halo) > bounds.left + bounds.width ||
+            y + h * (.5 + halo) < bounds.viewportTop - wordOffset || y - h * (.5 + halo) > bounds.viewportTop + innerHeight - wordOffset) continue;
+        assemblyCtx.save(); assemblyCtx.globalAlpha = pieceOpacity; assemblyCtx.translate(x, y); assemblyCtx.rotate(angle);
+        drawTeamEntryPiece(assemblyCtx, piece, w, h, pose.blur, pose.colorAmount);
+        assemblyCtx.restore();
+        lastDraw.push({ id: p.id, name: piece.name, color: piece.color, kind: "color-group", role: "assembly",
+          team: p.team, studentId: p.studentId, x, y, size: Math.max(w, h), angle, opacity: pieceOpacity * fragmentOpacity });
       }
-      // Blur and fade the background as a single layer; keep the assembling
-      // icons sharp and preserve opacity where the background pieces overlap.
-      if (backgroundOpacity >= .001) {
-        ctx.save();
-        ctx.globalAlpha = backgroundOpacity;
-        ctx.filter = backgroundBlur > 0 ? 'blur(' + backgroundBlur + 'px)' : 'none';
-        ctx.drawImage(backgroundCanvas, 0, 0, width, height);
-        ctx.restore();
-      }
-      // Hand off only after every personal piece has assembled into the complete team SVG.
+      // Hand off at the same projected position and size after the pieces settle.
       if (iconOpacity > 0) {
         // Fade the composed pieces once, then add the original with the
         // complementary weight. Source-over crossfades dip to 75% opacity
@@ -849,37 +1424,42 @@
         assemblyCtx.save();
         assemblyCtx.globalCompositeOperation = 'destination-in';
         assemblyCtx.globalAlpha = fragmentOpacity;
-        assemblyCtx.fillRect(0, 0, width, height);
+        assemblyCtx.fillRect(bounds.left, bounds.viewportTop, bounds.width, innerHeight);
         assemblyCtx.globalCompositeOperation = 'lighter';
-        const attention = Math.max(...detailProgress);
         sprites.forEach((icon, team) => {
           if (!visibleTeams[team]) return;
-          const { x, y, size } = galleryPoses[team];
+          const { x, y, size } = galleryCameraPose(galleryPoses[team], cameraScale);
           const detail = detailProgress[team];
           const opacity = iconOpacity * (1 - smooth(0, .18, detail)) * lerp(1, .14, attention);
           if (opacity <= 0) return;
           assemblyCtx.globalAlpha = opacity;
-          assemblyCtx.drawImage(icon.image, x - size / 2, y - size / 2, size, size);
+          drawTeamHover(assemblyCtx, icon, team, x, y, size);
           lastDraw.push({ name: icon.name, kind: "icon", team, x, y, size, angle: 0, opacity });
         });
         assemblyCtx.restore();
       }
-      ctx.drawImage(assemblyCanvas, 0, 0, width, height);
-      if (iconOpacity > 0) {
+      ctx.drawImage(assemblyCanvas, bounds.left, bounds.viewportTop, bounds.width, innerHeight);
+      if (attention > 0) {
         // Reuse the same fill-color groups, moving the intact group beside its
         // member card. No subpath splitting or duplicate full icon is used.
         fragments.forEach((bank, team) => {
           const detail = detailProgress[team];
           if (detail < .001 || !detailTargets[team].length) return;
-          const slot = galleryPoses[team], travel = smooth(0, 1, detail);
-          const opacity = iconOpacity * smooth(0, .18, detail);
+          const slot = galleryPoses[team];
+          // 상세 아이콘은 전체 결합 완료를 기다리지 않고 현재 조각 위치에서 출발합니다.
+          ctx.save();
+          ctx.setTransform(bounds.dpr, 0, 0, bounds.dpr, -bounds.left * bounds.dpr, -bounds.viewportTop * bounds.dpr);
           bank.forEach((piece, i) => {
             const target = detailTargets[team][i];
-            const x = lerp(slot.x, target.x, travel), y = lerp(slot.y, target.y, travel);
-            const size = lerp(slot.size, target.size, travel);
-            ctx.globalAlpha = opacity; ctx.drawImage(piece.image, x - size / 2, y - size / 2, size, size);
-            lastDraw.push({ name: piece.name, color: piece.color, kind: 'color-group', role: 'detail', team, studentId: target.studentId, x, y, size, angle: 0, opacity });
+            const pose = detailPiecePose(team, i, slot, cameraScale);
+            const { x, y, width: w, height: h, angle } = pose;
+            const opacity = smooth(0, .18, detail) * pose.opacity;
+            if (opacity <= .001) return;
+            ctx.save(); ctx.globalAlpha = opacity; ctx.translate(x, y); ctx.rotate(angle);
+            drawTeamEntryPiece(ctx, piece, w, h, pose.blur, pose.colorAmount); ctx.restore();
+            lastDraw.push({ name: piece.name, color: piece.color, kind: 'color-group', role: 'detail', team, studentId: target.studentId, x, y, size: Math.max(w, h), angle, opacity });
           });
+          ctx.restore();
         });
         ctx.globalAlpha = 1;
       }
@@ -887,7 +1467,6 @@
       spreadHeading.style.opacity = String(titleOpacity);
       spreadHeading.style.transform = "translateY(" + (1 - titleOpacity) * 12 + "px)";
       spreadHeading.setAttribute("aria-hidden", String(spread < .95));
-      iconList.hidden = spread < .995 || scrollTarget < .995;
       updateToolbar();
     }
     function wake(duration = 2600) {
@@ -899,8 +1478,9 @@
       raf = 0;
       if (!viewActive || paused || motionReduced || document.hidden || window.DesignerReturnState?.restoring || document.documentElement.classList.contains('page-transition-active')) return;
       const dt = previousTime ? clamp((now - previousTime) / 16.667, .25, 2) : 1;
+      const entryElapsed = previousTime ? clamp(now - previousTime, 0, 50) : 0;
       previousTime = now;
-      if (spread < .16) idleTime += dt / 60;
+      if (idleActive()) idleTime += dt / 60;
       if (galleryIdleActive()) galleryTime += dt / 60;
       let hoverMoving = false;
       galleryHover.forEach((value, team) => {
@@ -915,6 +1495,7 @@
       const followDamping = scrollTarget < spread ? .88 : .78;
       spread = lerp(spread, scrollTarget, 1 - Math.pow(followDamping, dt));
       if (Math.abs(spread - scrollTarget) < .0005) spread = scrollTarget;
+      advanceTeamEntry(entryElapsed);
       let detailMoving = false;
       detailProgress.forEach((progress, team) => {
         const target = team === selectedTeam ? 1 : 0;
@@ -923,33 +1504,16 @@
         detailProgress[team] = next;
         if (next !== target) detailMoving = true;
       });
-      let motion = 0;
-      if (spread < 1 || scrollTarget < 1) for (const p of particles) {
-        p.vx += (p.tx - p.x) * SETTINGS.spring * dt; p.vy += (p.ty - p.y) * SETTINGS.spring * dt;
-        const damping = SETTINGS.damping ** dt;
-        p.vx *= damping; p.vy *= damping; p.x += p.vx * dt; p.y += p.vy * dt;
-        p.spin += (p.targetAngle - p.angle) * .023 * dt; p.spin *= .8 ** dt; p.angle += p.spin * dt;
-        const margin = p.size * .74;
-        p.x = clamp(p.x, margin, width - margin); p.y = clamp(p.y, margin, height - margin);
-        motion = Math.max(motion, Math.abs(p.tx - p.x) + Math.abs(p.ty - p.y), Math.abs(p.angle - p.targetAngle));
-      }
       draw();
       setHint();
-      if (idleActive() || galleryIdleActive() || hoverMoving || now < until || motion > .12 || spread !== scrollTarget || detailMoving) raf = requestAnimationFrame(frame);
+      if (idleActive() || galleryIdleActive() || teamEntryActive() || hoverMoving || spread !== scrollTarget || detailMoving) raf = requestAnimationFrame(frame);
       else { settle(); draw(); }
     }
     function scatter() {
-      if (readScroll() > .001) { scrollToState(false); return; }
-      if (paused || motionReduced) { settle(); draw(); return; }
-      for (const p of particles) {
-        const margin = p.size;
-        p.x = random(margin, width - margin); p.y = random(margin, height - margin);
-        p.vx = random(-4, 4); p.vy = random(-4, 4); p.angle = random(-Math.PI, Math.PI); p.spin = random(-.06, .06);
-      }
-      wake(2700);
+      scrollToState(readScroll() <= .001);
     }
     function setHint() {
-      const message = selectedTeam >= 0 ? "빈 곳을 누르면 아이콘이 다시 모입니다." : spread > .995 ? "아이콘을 누르면 디자이너를 볼 수 있습니다." : scrollTarget > .01 ? "33명의 개인 아이콘이 모여 14개의 팀 아이콘이 됩니다." : "아래로 스크롤하면 개인 아이콘이 팀별로 모입니다.";
+      const message = selectedTeam >= 0 ? "빈 곳을 누르면 아이콘이 다시 모입니다." : !iconList.hidden ? "아이콘을 누르면 디자이너를 볼 수 있습니다." : scrollTarget > .01 ? "33명의 개인 아이콘이 모여 14개의 팀 아이콘이 됩니다." : "아래로 스크롤하면 개인 아이콘이 팀별로 모입니다.";
       if (hint.textContent !== message) hint.textContent = message;
       spreadButton.disabled = false;
       spreadButton.setAttribute("aria-pressed", String(scrollTarget > .5));
@@ -986,14 +1550,14 @@
     pauseButton.addEventListener("click", () => {
       paused = !paused;
       if (paused && stepDestination !== null) scrollToState(stepDestination === 1);
-      if (paused) { cancelAnimationFrame(raf); raf = 0; spread = scrollTarget; syncDetailsInstantly(); settle(); draw(); } else wake();
+      if (paused) { cancelAnimationFrame(raf); raf = 0; spread = scrollTarget; snapTeamEntry(spread); syncDetailsInstantly(); settle(); draw(); } else wake();
       setHint();
     });
     reducedMotion.addEventListener("change", (event) => {
       motionReduced = event.matches;
       galleryHover.forEach((_, team) => { galleryHover[team] = hoverTarget(team); });
       if (motionReduced && stepDestination !== null) scrollToState(stepDestination === 1);
-      if (motionReduced) { cancelAnimationFrame(raf); raf = 0; spread = scrollTarget; syncDetailsInstantly(); settle(); draw(); } else wake();
+      if (motionReduced) { cancelAnimationFrame(raf); raf = 0; spread = scrollTarget; snapTeamEntry(spread); syncDetailsInstantly(); settle(); draw(); } else wake();
       setHint();
     });
     document.addEventListener("visibilitychange", () => {
@@ -1004,7 +1568,7 @@
       else wake();
     });
     async function init() {
-      if (!ctx || !assemblyCtx || !backgroundCtx) throw new Error("이 브라우저에서는 Canvas를 사용할 수 없습니다.");
+      if (!ctx || !assemblyCtx) throw new Error("이 브라우저에서는 Canvas를 사용할 수 없습니다.");
       await Promise.all(source.map(async icon => {
         const response = await fetch(new URL(icon.file, iconBaseURL));
         if (!response.ok) throw new Error(icon.file + " 로딩 실패 (" + response.status + ")");
@@ -1015,6 +1579,15 @@
         }
       }));
       [sprites, fragments] = await Promise.all([loadWholeIcons(), loadFragments()]);
+      hoverLayers = fragments.map(bank => {
+        bank.forEach((piece, index) => {
+          // 1개: +3도, 2개: +3/-3도, 3개: +3/0/-3도.
+          piece.hoverAngle = TEAM_HOVER.degrees * (bank.length === 1 ? 1 : 1 - 2 * index / (bank.length - 1)) * Math.PI / 180;
+        });
+        return [...bank].sort((a, b) => a.layer - b.layer);
+      });
+      // 한 조각인 팀도 색상 전환을 마친 뒤 완성 아이콘으로 넘깁니다.
+      teamEntryFinish = Math.max(0, ...fragments.map((_, team) => teamEntryTiming(team, 1).end));
       fragmentRows = fragments.map((bank, team) => resolveFragmentRows(bank, profiles[team]));
       wordArtwork = await loadWordArtwork();
       for (const [team, icon] of source.entries()) {
@@ -1042,7 +1615,7 @@
       }
       loaded = true;
       if (!window.DesignerReturnState?.restoring) {
-        if (readScroll() > .001) shuffleGallery();
+        shuffleGallery();
         layout(true);
       }
       stage.classList.add("ready"); setHint();

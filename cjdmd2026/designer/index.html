@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>유연한 결합: 청주대학교 디지털미디어디자인</title>
-    <link rel="stylesheet" href="../css/designer_02.css?v=20261030-mobile-grid">
+    <link rel="stylesheet" href="../css/designer_02.css?v=20261030-ambient-sides">
     <link rel="stylesheet" href="../css/mobile-common.css">
     <link rel="stylesheet" href="../css/header-logo.css?v=20261024-1">
     <script>
@@ -14,33 +14,19 @@
     </script>    
 
     <!-- Scripts:S -->
-    <script src="../js/stamp-effect-transition.js" defer></script>
-    <script src="../js/typewriter-effect.js" defer></script>
     <script src="../js/designer-data.js" defer></script>
-    <script src="../js/designer-icon-data.js" defer></script>
-    <script src="../js/designer_02.js?v=20261030-mobile-grid" defer></script>
+    <script src="../js/designer_02.js?v=20261030-mobile-load" defer></script>
     <script src="../js/designer-filter.js?v=20261024-1" defer></script>
 
-    <script src="../js/main-hero-sprite-batch.js?v=20261029-1" defer></script>
-    <script src="../js/designer-icon-slide.js?v=20261030-perf-1" defer></script>
+    <!-- 모바일에서는 슬라이드 코드, SVG, 캔버스를 준비하지 않습니다. -->
+    <script type="text/plain" data-desktop-src="../js/designer-icon-data.js"></script>
+    <script type="text/plain" data-desktop-src="../js/main-hero-sprite-batch.js?v=20261029-1"></script>
+    <script type="text/plain" data-desktop-src="../js/designer-icon-slide.js?v=20261031-team-anchor-color"></script>
+    <script src="../js/desktop-features.js?v=20261030-1" defer></script>
 
-    <script src="../js/page-transition.js?v=20261030-perf-1"></script>
+    <script src="../js/page-transition.js?v=20261030-mobile-load"></script>
     <!--<script src="../js/thread-crosshair-mask.js" defer></script> -->
-
-    <script>
-    const lenis = new Lenis({
-        duration: 1.0,  
-        smoothWheel: true,
-        wheelMultiplier: 1.25
-    });
-
-    function raf(time) {
-        lenis.raf(time);
-        requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
-    </script>
+    <script src="../js/student-mouse-effect.js" defer></script>
 
     <!-- 아이콘 슬라이드는 브라우저 기본 세로 스크롤을 사용합니다. -->
     <!-- Scripts:E -->

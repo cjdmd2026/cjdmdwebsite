@@ -65,9 +65,11 @@
         catch (_) { /* 기록을 저장할 수 없어도 링크 이동은 유지합니다. */ }
     }
     function restore() {
-        if (!restoring || !pending || applying || !listReady || !gallery || !pageShown) return;
-        applying = true;
+        if (!restoring || !pending || applying || !listReady || !pageShown) return;
         const state = availableState(pending);
+        // Mobile grid returns do not load or wait for the desktop gallery.
+        if (state.view === 'slide' && !gallery) return;
+        applying = true;
         try {
             window.DesignerPage.changeView(state.view);
             if (input) {
@@ -75,7 +77,7 @@
                 input.dispatchEvent(new Event('input', { bubbles: true }));
             }
             window.DesignerFilter?.apply();
-            gallery.restore(state.gallery, state.view);
+            gallery?.restore(state.gallery, state.view);
             if (state.view === 'grid') {
                 window.scrollTo({ top: Number.isFinite(state.scrollY) ? state.scrollY : 0, left: Number.isFinite(state.scrollX) ? state.scrollX : 0, behavior: 'instant' });
             }
@@ -91,7 +93,7 @@
                 const card = [...page.querySelectorAll(selector)].find(card => card.dataset.designerId === focusId);
                 card?.focus({ preventScroll: true });
             }
-            gallery.resume?.();
+            gallery?.resume?.();
         });
     }
     window.DesignerReturnState = {

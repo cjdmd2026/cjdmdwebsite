@@ -23,35 +23,21 @@
     <!-- Scripts:S -->
     <!--<script src="../js/stamp-effect-transition.js" defer></script> -->
     <script src="../js/typewriter-effect.js" defer></script>
-    <script src="../js/project-grid-motion.js?v=20261030-mobile-2" defer></script>
-
     <script src="../js/project-data.js" defer></script>
-    <script src="../js/designer-data.js" defer></script>
-    <script src="../js/designer-icon-data.js" defer></script>
     <script src="../js/project-view-transition.js?v=20261025-16" defer></script>
-    <script src="../js/project_05.js?v=20261030-34" defer></script>
     <script src="../js/project-filter.js?v=20261025-3" defer></script>
-    <script src="../js/page-transition.js?v=20261030-perf-1"></script>
+    <script src="../js/page-transition.js?v=20261030-mobile-load"></script>
 
     <!--<script src="../js/thread-crosshair-mask.js" defer></script> -->
-    <script src="../js/student-mouse-effect.js" defer></script>
-
-    <script src="https://unpkg.com/lenis@1.3.15/dist/lenis.min.js"></script>
-
-    <script>
-    const lenis = new Lenis({
-        duration: 1.0,  
-        smoothWheel: true,
-        wheelMultiplier: 1.25
-    });
-
-    function raf(time) {
-        lenis.raf(time);
-        requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
-    </script>
+    <!-- PC 전용 효과는 모바일에서 다운로드·초기화하지 않습니다. -->
+    <script type="text/plain" data-desktop-src="../js/designer-data.js"></script>
+    <script type="text/plain" data-desktop-src="../js/designer-icon-data.js"></script>
+    <script type="text/plain" data-desktop-src="../js/project-grid-motion.js?v=20261030-mobile-2"></script>
+    <script type="text/plain" data-desktop-src="../js/project_05.js?v=20261031-grid-scroll"></script>
+    <script type="text/plain" data-desktop-src="../js/student-mouse-effect.js"></script>
+    <script type="text/plain" data-desktop-src="https://unpkg.com/lenis@1.3.15/dist/lenis.min.js"></script>
+    <script type="text/plain" data-desktop-src="../js/desktop-smooth-scroll.js?v=20261030-1"></script>
+    <script src="../js/desktop-features.js?v=20261030-1" defer></script>
     <!-- <script src="../js/stamp-effect.js" defer></script> -->
     <!-- Scripts:E -->
 
@@ -477,6 +463,6 @@
         </div>
     </footer>
     <!-- Footer:E -->
-    <script src="../js/project-mobile-03.js?v=20261030-menu-1" defer></script>
+    <script src="../js/project-mobile-03.js?v=20261030-mobile-load" defer></script>
 </body>
 </html>

@@ -368,7 +368,7 @@ window.DESIGNERS = [
         id: "ahn-nagyeong",
         nameKo: "안나경",
         nameEn: "AHN NAGYEONG",
-        sentence: "",
+        sentence: "졸업전시를 준비하면서 힘든 일도, 어려운 일도 많았지만 시간이 지난 지금 떠올려보면 다 즐거운 추억이었던 것 같습니다. 앞으로는 졸업전시보다 더 어렵고 힘든 일도 많겠죠… 이번 전시를 무사히 마친 것처럼 앞으로 있을 일도 잘 헤쳐 나갈 수 있을 거라 믿습니다. 수고하셨습니다. 파이팅!",
         initial: "ㅇ",
         projectIds: ["apuchika"],
         teamName: "아푸치카",

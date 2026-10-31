@@ -13,9 +13,11 @@
     const hasLenis = () => typeof lenis !== "undefined" && lenis;
     const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
     let points = [];
-    let moving = false, gestureHeld = false, gestureTimer = 0;
+    let moving = false, queuedDirection = 0, wheelOwned = false;
+    const wheelIntent = window.MainScrollInput.createWheelTracker();
     let touch = null, touchUsed = false;
     let resizeFrame = 0;
+    main.dataset.sectionScrollState = 'idle';
 
     function measure() {
         const headerHeight = header?.offsetHeight || 0;
@@ -50,11 +52,13 @@
             .filter((point, i, all) => !i || point.y - all[i - 1].y > 2);
     }
 
-    function holdGesture() {
-        gestureHeld = true;
-        clearTimeout(gestureTimer);
-        gestureTimer = setTimeout(() => { gestureHeld = false; }, 320);
+    function requestMove(direction) {
+        if (moving) { queuedDirection = direction; return true; }
+        if (!ownsScroll(direction)) return false;
+        move(direction);
+        return true;
     }
+    window.MainSectionScroll = { request: requestMove };
 
     function move(direction) {
         measure();
@@ -67,6 +71,7 @@
         const duration = reducedMotion.matches ? 0 : 850;
         const started = performance.now();
         moving = true;
+        main.dataset.sectionScrollState = 'moving';
         if (hasLenis()) lenis.stop();
 
         function frame(now) {
@@ -76,8 +81,15 @@
                 requestAnimationFrame(frame);
             } else {
                 moving = false;
-                holdGesture();
+                main.dataset.sectionScrollState = 'idle';
                 if (hasLenis()) lenis.start();
+                // Keep one new gesture received during travel, without replaying its momentum.
+                const next = queuedDirection;
+                queuedDirection = 0;
+                if (next && !document.body.classList.contains('mobile-menu-open') &&
+                    !document.documentElement.classList.contains('page-transition-active')) {
+                    if (!requestMove(next)) window.MainHeroScroll?.(next);
+                }
             }
         }
         requestAnimationFrame(frame);
@@ -101,18 +113,15 @@
     }
 
     window.addEventListener("wheel", event => {
-        if (ignore(event) || Math.abs(event.deltaX) >= Math.abs(event.deltaY)) return;
-        const direction = Math.sign(event.deltaY);
-        if (moving || gestureHeld) {
-            consume(event);
-            // 대기 중 입력으로 잠금을 연장하면 연속 스크롤이 끝없이 막힙니다.
-            return;
-        }
-        if (!ownsScroll(direction)) return;
+        if (ignore(event)) return;
+        const intent = wheelIntent(event);
+        if (!intent) return;
+        if (intent.fresh) wheelOwned = false;
+        // Retain ownership of the tail when returning to the hero, so it cannot rewind the poster.
+        if (!moving && !wheelOwned && !ownsScroll(intent.direction)) return;
+        wheelOwned = true;
         consume(event);
-        if (Math.abs(event.deltaY) < 4) return;
-        holdGesture();
-        move(direction);
+        if (intent.trigger) requestMove(intent.direction);
     }, { passive: false, capture: true });
 
     window.addEventListener("touchstart", event => {
@@ -129,12 +138,11 @@
         // 위원회 탭·교수진 등 가로 조작은 그대로 통과시킵니다.
         if (Math.abs(dx) >= Math.abs(dy)) return;
         const direction = Math.sign(dy);
-        if (moving || gestureHeld) { consume(event); return; }
-        if (!ownsScroll(direction)) return;
+        if (!moving && !ownsScroll(direction)) return;
         consume(event);
         if (Math.abs(dy) < 36) return;
         touchUsed = true;
-        move(direction);
+        requestMove(direction);
     }, { passive: false, capture: true });
 
     const endTouch = () => { touch = null; touchUsed = false; };
@@ -148,10 +156,9 @@
             : ["ArrowUp", "PageUp"].includes(event.key) ? -1
             : event.key === " " ? (event.shiftKey ? -1 : 1) : 0;
         if (!direction) return;
-        if (moving || gestureHeld) { consume(event); return; }
-        if (!ownsScroll(direction)) return;
+        if (!moving && !ownsScroll(direction)) return;
         consume(event);
-        if (!event.repeat) move(direction);
+        if (!event.repeat) requestMove(direction);
     }, { capture: true });
 
     function resize() {

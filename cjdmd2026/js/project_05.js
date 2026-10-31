@@ -2161,6 +2161,13 @@ function settleAsciiContent() {
                 // The supplied HTML declares `const lenis` at window scope (not window.lenis).
                 try{return typeof lenis!=='undefined'?lenis:window.lenis;}catch{return window.lenis;}
             }
+            function resumeGridScroll(){
+                // Lenis가 슬라이드 초기화 뒤에 로드되면 stoppedLenis에 기록되지 않습니다.
+                // 그리드에서는 현재 인스턴스까지 확인해 슬라이드의 스크롤 잠금을 해제합니다.
+                const scrolling=currentLenis() || stoppedLenis;
+                scrolling?.start();
+                stoppedLenis=null;
+            }
             async function changeView(view){
                 if(view!=='grid'&&view!=='slide')return;
                 if(disposed)return;
@@ -2190,7 +2197,7 @@ function settleAsciiContent() {
                     swap(){applyView(view);stopScrolling();}
                 });
                 if(disposed)return;
-                if(slideview.hidden&&stoppedLenis){stoppedLenis.start();stoppedLenis=null;}
+                if(slideview.hidden)resumeGridScroll();
                 flushSearchFocus();
                 if(focusedButton){
                     const scope=slideview.hidden?'.title-section':'.project-warp';
@@ -2230,10 +2237,7 @@ function settleAsciiContent() {
 
                     showGridTitle();
 
-                    if(stoppedLenis){
-                        stoppedLenis.start();
-                        stoppedLenis=null;
-                    }
+                    resumeGridScroll();
                 }else{
                     const l=currentLenis();
 

@@ -1000,12 +1000,14 @@
     ===================================================== */
     let step = 0;           // 현재 목표 단계
     let busy = false;       // 단계 애니메이션 중
+    let pendingIntent = 0;
 
     async function goStep(next) {
         next = clamp(next, 0, 2);
         if (next === step || busy) return;
         lockPage();
         busy = true;
+        stage.dataset.motion = 'moving';
         const prev = step;
         step = next;
         stage.dataset.step = String(step);
@@ -1043,13 +1045,17 @@
             await tween("move", 0, SETTINGS.move * .9);
         }
         busy = false;
+        stage.dataset.motion = 'idle';
         if (step === 2) unlockPage();
+        flushIntent();
     }
 
     // 스크롤바·링크 등으로 아래로 내려간 경우: 정착 상태로 바로 맞춤
     function jumpToSettled() {
         if (step === 2 && !busy) return;
         busy = false;
+        pendingIntent = 0;
+        stage.dataset.motion = 'idle';
         step = 2;
         stage.dataset.step = "2";
         const g = hasGraphic() ? 1 : 0;
@@ -1063,7 +1069,7 @@
     /* ---------- 입력: 휠 / 터치 / 키보드 ---------- */
     const atTop = () => window.scrollY <= 2;
     const wantsHero = dir => atTop() && ((dir > 0 && step < 2) || (dir < 0 && step > 0));
-    let gestureLock = false, gestureTimer = 0;
+    const wheelIntent = window.MainScrollInput.createWheelTracker();
 
     /* 페이지 스크롤 잠금
        - 포스터 단계(0·1)이거나 단계가 바뀌는 중에는 페이지가 절대 내려가지 않음
@@ -1085,29 +1091,40 @@
     }
 
     function handleIntent(dir) {
-        // 계속 스크롤하고 있어도 다음 단계로 진행 (결합 → 왼쪽 이동 → 페이지 스크롤)
-        if (busy || (gestureLock && dir < 0)) return;
-        gestureLock = true;      // 한 번의 스크롤 제스처(관성 포함)에 한 단계만
-        goStep(step + dir);
+        if (busy) { pendingIntent = dir; return; }
+        if (wantsHero(dir)) void goStep(step + dir);
+        else if (dir > 0 && step === 2) window.MainSectionScroll?.request(dir);
+    }
+    window.MainHeroScroll = handleIntent;
+    function flushIntent() {
+        if (!pendingIntent || busy || (pendingIntent > 0 && step === 2 && touchUsed)) return;
+        const dir = pendingIntent;
+        pendingIntent = 0;
+        if (!document.body.classList.contains('mobile-menu-open') &&
+            !document.documentElement.classList.contains('page-transition-active')) handleIntent(dir);
     }
 
     window.addEventListener("wheel", e => {
-        const dir = Math.sign(e.deltaY);
-        if (!dir) return;
+        if (e.defaultPrevented || e.target.closest?.("input, textarea, select, [contenteditable]") ||
+            document.body.classList.contains('mobile-menu-open') ||
+            document.documentElement.classList.contains('page-transition-active')) return;
+        const intent = wheelIntent(e);
+        if (!intent) return;
+        const dir = intent.direction;
         const hero = atTop() && (locked || wantsHero(dir));
         if (!hero) return;
         e.preventDefault();
         e.stopImmediatePropagation();   // Lenis 스크롤 막기
-        if (!busy && wantsHero(dir) && Math.abs(e.deltaY) > 4) handleIntent(dir);
-        clearTimeout(gestureTimer);
-        gestureTimer = setTimeout(() => { gestureLock = false; }, 300);
+        if (intent.trigger) handleIntent(dir);
         if (step === 2 && !busy) unlockPage();
     }, { passive: false, capture: true });
 
     let touchY = null, touchUsed = false;
     window.addEventListener("touchstart", e => { touchY = e.touches[0].clientY; touchUsed = false; }, { passive: true, capture: true });
     window.addEventListener("touchmove", e => {
-        if (touchY === null) return;
+        if (touchY === null || e.touches.length !== 1 ||
+            document.body.classList.contains('mobile-menu-open') ||
+            document.documentElement.classList.contains('page-transition-active')) return;
         const dy = touchY - e.touches[0].clientY;
         const dir = Math.sign(dy);
         const holding = atTop() && (locked || busy || touchUsed);
@@ -1116,27 +1133,28 @@
         e.stopImmediatePropagation();
         if (!touchUsed && Math.abs(dy) > 36) {
             touchUsed = true;
-            gestureLock = false;
             handleIntent(dir);
         }
     }, { passive: false, capture: true });
     const endTouch = () => {
-        touchY = null; touchUsed = false; gestureLock = false;
+        touchY = null; touchUsed = false;
         if (step === 2 && !busy) unlockPage();
+        flushIntent();
     };
     window.addEventListener("touchend", endTouch, { passive: true, capture: true });
     window.addEventListener("touchcancel", endTouch, { passive: true, capture: true });
 
     window.addEventListener("keydown", e => {
-        if (e.target.closest?.("input, textarea, [contenteditable]")) return;
+        if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey ||
+            e.target.closest?.("input, textarea, select, [contenteditable]") ||
+            document.body.classList.contains('mobile-menu-open') ||
+            document.documentElement.classList.contains('page-transition-active')) return;
         const down = ["ArrowDown", "PageDown", " "].includes(e.key);
         const up = ["ArrowUp", "PageUp"].includes(e.key);
         const dir = down ? 1 : up ? -1 : 0;
-        if (!dir || !wantsHero(dir)) return;
+        if (!dir || !atTop() || (!busy && !wantsHero(dir))) return;
         e.preventDefault();
-        gestureLock = false;
-        handleIntent(dir);
-        gestureLock = false;
+        if (!e.repeat) handleIntent(dir);
     }, { capture: true });
 
     window.addEventListener("scroll", () => {
