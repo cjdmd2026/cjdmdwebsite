@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
+import { BlobNotFoundError, BlobAccessError } from '@vercel/blob';
 import { folderSelection, validateFiles, sameManifest, folderLimits } from '../submit/files.mjs';
 import { validateFolderSubmission, signTicket, readTicket, SubmissionError } from '../server/policy.mjs';
 import { readVerifiedContent, confirmFile, finalizeFolder, folderFile } from '../server/folder.mjs';
@@ -56,6 +57,22 @@ test('server checks actual bytes and SHA-256, including truncated or oversized c
   await assert.rejects(read('hii'), { status: 422 });
   await assert.rejects(read('hi', 3), { status: 422 });
 });
+test('an unuploaded file is pending with the real Blob SDK error, while access errors still fail', async () => {
+  const state = { mode: 'folder', phase: 'awaiting_upload', files };
+  const ports = {
+    read: async () => null,
+    write: async () => assert.fail('An absent file must not be marked verified'),
+    readContent: (pathname, file) => readVerifiedContent(pathname, file, {
+      headBlob: async () => { throw new BlobNotFoundError(); },
+      getBlob: async () => assert.fail('An absent file must not be downloaded'),
+    }),
+    remove: async () => assert.fail('An absent file must not be deleted'),
+  };
+  assert.deepEqual(await confirmFile(submission, state, 0, ports), { uploaded: false });
+  const denied = new BlobAccessError();
+  await assert.rejects(confirmFile(submission, state, 0, { ...ports, readContent: async () => { throw denied; } }), error => error === denied);
+});
+
 test('verified files survive retries; corrupt upload is removed without marking it complete', async () => {
   const markers = new Map(); let reads = 0, removed = 0;
   const state = { mode: 'folder', phase: 'awaiting_upload', files };

@@ -1,11 +1,11 @@
-import { list } from '@vercel/blob';
+import { list, BlobPreconditionFailedError } from '@vercel/blob';
 import { readJson, writeJson, readState, writeState, del } from './storage.mjs';
 import { SubmissionError } from './policy.mjs';
 
 const slotPath = 'submission-control/active.json';
 export const idleTimeoutMs = 30 * 60 * 1000;
 const tokenLifetimeMs = 10 * 60 * 1000;
-const conflict = error => error.name === 'BlobPreconditionFailedError' || /already exists/i.test(error.message);
+const conflict = error => error instanceof BlobPreconditionFailedError || /already exists/i.test(error.message);
 const expiredMessage = '30분 동안 진행이 없어 임시 파일을 정리했습니다. 폴더를 선택해 새로 제출해주세요.';
 
 // A single durable, conditional-write lease works across all Vercel instances.

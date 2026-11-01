@@ -1,4 +1,4 @@
-import { get, put, del, head } from '@vercel/blob';
+import { get, put, del, head, BlobPreconditionFailedError } from '@vercel/blob';
 import { createHmac } from 'node:crypto';
 import { SubmissionError } from './policy.mjs';
 
@@ -18,7 +18,7 @@ export async function takeLock(id) {
   if (lock && Date.now() - lock.data.at < 330000) return null;
   try { return await writeJson(pathname, { at: Date.now() }, lock ? { ifMatch: lock.etag } : {}); }
   catch (error) {
-    if (error.name === 'BlobPreconditionFailedError' || /already exists/i.test(error.message)) return null;
+    if (error instanceof BlobPreconditionFailedError || /already exists/i.test(error.message)) return null;
     throw error;
   }
 }
@@ -32,7 +32,7 @@ export async function limitSubmissions(ip) {
     const item = await readJson(pathname);
     if ((item?.data.count || 0) >= 100) throw new SubmissionError('한 시간 동안 제출할 수 있는 횟수를 초과했습니다. 잠시 후 다시 시도해주세요.', 429);
     try { await writeJson(pathname, { count: (item?.data.count || 0) + 1 }, item ? { ifMatch: item.etag } : {}); return; }
-    catch (error) { if (error.name !== 'BlobPreconditionFailedError' && !/already exists/i.test(error.message)) throw error; }
+    catch (error) { if (!(error instanceof BlobPreconditionFailedError) && !/already exists/i.test(error.message)) throw error; }
   }
   throw new SubmissionError('요청이 겹쳤습니다. 잠시 후 다시 시도해주세요.', 429);
 }

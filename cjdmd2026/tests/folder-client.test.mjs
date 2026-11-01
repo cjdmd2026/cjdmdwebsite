@@ -19,7 +19,7 @@ function element() {
 }
 function services() {
   const store = new Map(), uploaded = new Set(), counts = new Map();
-  return { store, uploaded, counts, files: [], siteFiles: [], treeSha: null, deletions: [], phase: 'awaiting_upload', failOnce: true, finalizations: 0, admission: { busy: false }, preparations: 0, cancellations: 0,
+  return { store, uploaded, counts, confirmations: [], files: [], siteFiles: [], treeSha: null, deletions: [], phase: 'awaiting_upload', failOnce: true, finalizations: 0, admission: { busy: false }, preparations: 0, cancellations: 0,
     async fetch(url, options = {}) {
       const action = new URL(url, 'http://localhost').searchParams.get('action');
       const body = JSON.parse(options.body || '{}'); let data;
@@ -30,7 +30,11 @@ function services() {
         if (this.admission.busy) return Response.json({ error: '다른 팀이 제출 중입니다.' }, { status: 423 });
         this.files = body.files; this.deletions = body.deletions; this.baseTreeSha = body.baseTreeSha; data = { id: 'sample', pathname: 'submissions/sample/files/', ticket: 'test-only', expires: Date.now() + 86400000 };
       }
-      else if (action === 'confirm-file') data = { uploaded: uploaded.has(body.index) };
+      else if (action === 'confirm-file') {
+        this.confirmations.push(body.index);
+        if (this.confirmResponse) return this.confirmResponse();
+        data = { uploaded: uploaded.has(body.index) };
+      }
       else if (action === 'status') data = { id: 'sample', teamId: 'ilkko', slug: 'ilkko', mode: 'folder', phase: this.phase, merged: this.merged, message: this.message, files: this.files, deletions: this.deletions, baseTreeSha: this.baseTreeSha, uploaded: [...uploaded] };
       else if (action === 'finalize') { assert.equal(uploaded.size, this.files.length); this.finalizations++; this.phase = 'submitted'; data = { accepted: true }; }
       else if (action === 'cancel') { this.cancellations++; data = { cancelled: true }; }
@@ -84,6 +88,41 @@ test('client retries only failed files and requires explicit final confirmation 
   assert.equal(server.finalizations, 1);
   assert.match(ui.get('status-title').textContent, /제출이 완료/);
 });
+test('a server error stops a 922-file batch after one check and the same receipt can resume', async () => {
+  const server = services(), ui = await controller(server);
+  const files = [sampleFiles()[0], ...Array.from({ length: 921 }, (_, i) => {
+    const file = new File(['image'], `${i}.webp`);
+    Object.defineProperty(file, 'webkitRelativePath', { value: `website/images/${i}.webp` }); return file;
+  })];
+  await select(ui, files);
+  server.confirmResponse = () => Response.json({ error: '확인 서버 오류' }, { status: 500 });
+  await ui.event('upload-button', 'click');
+  assert.deepEqual(server.confirmations, [0]);
+  assert.equal(server.uploaded.size, 0); assert.equal(server.preparations, 1);
+  assert.match(ui.get('form-error').textContent, /남은 파일의 업로드를 멈췄습니다/);
+  assert.equal(server.store.size, 1); assert.equal(server.finalizations, 0);
+  server.confirmResponse = null; server.failOnce = false;
+  await ui.event('upload-button', 'click');
+  assert.equal(server.uploaded.size, 922); assert.equal(server.preparations, 1);
+  assert.equal(server.finalizations, 0);
+});
+
+test('rate limits, non-JSON server errors and connection loss pause without failing subsequent files', async () => {
+  for (const response of [
+    () => Response.json({ error: '잠시 후 다시 시도해주세요.' }, { status: 429 }),
+    () => new Response('<html>Bad Gateway</html>', { status: 502 }),
+    () => { throw new TypeError('Failed to fetch'); },
+  ]) {
+    const server = services(), ui = await controller(server); await select(ui);
+    server.confirmResponse = response;
+    await ui.event('upload-button', 'click');
+    assert.deepEqual(server.confirmations, [0]);
+    assert.equal(server.counts.size, 0); assert.equal(server.store.size, 1);
+    assert.equal(server.finalizations, 0);
+    assert.match(ui.get('form-error').textContent, /남은 파일의 업로드를 멈췄습니다/);
+  }
+});
+
 test('reload restores uploaded files, rejects edited folders, and resumes only the missing file', async () => {
   const server = services(), first = await controller(server);
   await select(first); await first.event('upload-button', 'click');

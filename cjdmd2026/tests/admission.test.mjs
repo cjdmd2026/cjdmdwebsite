@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
+import { BlobPreconditionFailedError } from '@vercel/blob';
 import { createAdmission, idleTimeoutMs } from '../server/admission.mjs';
 
 const receipt = teamId => ({ id: randomUUID(), teamId });
@@ -13,7 +14,7 @@ function fixture() {
     write: async (key, data, options = {}) => {
       const existing = records.get(key);
       if (options.ifMatch ? existing?.etag !== options.ifMatch : Boolean(existing)) {
-        const error = new Error('already exists'); error.name = 'BlobPreconditionFailedError'; throw error;
+        throw new BlobPreconditionFailedError();
       }
       const etag = String(++version); records.set(key, { data: structuredClone(data), etag }); return { pathname: key, etag };
     },

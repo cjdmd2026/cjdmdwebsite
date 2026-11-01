@@ -235,14 +235,17 @@ async function chooseFolder(files, kind = 'site') {
 async function api(action, options = {}) {
   const headers = { ...options.headers };
   if (options.body) headers['Content-Type'] = 'application/json';
-  const response = await fetch(`/api/submission?action=${action}`, { ...options, headers, cache: 'no-store', signal: AbortSignal.timeout(action === 'confirm-file' ? 120000 : 30000) });
+  let response;
+  try { response = await fetch(`/api/submission?action=${action}`, { ...options, headers, cache: 'no-store', signal: AbortSignal.timeout(action === 'confirm-file' ? 120000 : 30000) }); }
+  catch { const error = new Error('제출 서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.'); error.status = 0; throw error; }
   let data;
-  try { data = await response.json(); } catch { throw new Error('제출 서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.'); }
+  try { data = await response.json(); } catch { const error = new Error('제출 서버 응답을 확인할 수 없습니다. 잠시 후 다시 시도해주세요.'); error.status = response.ok ? 502 : response.status; throw error; }
   if (!response.ok) { const error = new Error(data.error || '요청을 처리하지 못했습니다.'); error.status = response.status; throw error; }
   return data;
 }
 const post = (action, body = {}) => api(action, { method: 'POST', headers: receipt ? authorization() : {}, body: JSON.stringify(body) });
 const confirmFile = index => post('confirm-file', { index });
+const shouldPauseUpload = error => error.status === 0 || error.status >= 500 || [401, 403, 410, 423, 429].includes(error.status);
 function uploadSummary() {
   const done = entries.filter(entry => entry.state === 'uploaded').length;
   const failed = entries.filter(entry => entry.state === 'failed').length;
@@ -289,10 +292,13 @@ async function uploadFiles() {
       } catch (error) {
         // Storage may have received the file even if the browser lost the response.
         let recovered = false;
-        if (!paused) { try { recovered = (await confirmFile(index)).uploaded; } catch { /* Retry this file later. */ } }
+        if (!paused && !shouldPauseUpload(error)) {
+          try { recovered = (await confirmFile(index)).uploaded; }
+          catch (confirmationError) { if (shouldPauseUpload(confirmationError)) error = confirmationError; }
+        }
         entry.state = recovered ? 'uploaded' : paused ? 'pending' : 'failed';
         entry.error = recovered || paused ? '' : error.message?.startsWith('Vercel Blob') ? '전송에 실패했습니다. 네트워크 상태를 확인한 뒤 다시 업로드해주세요.' : error.message;
-        if ([401, 410, 423, 503].includes(error.status)) { paused = true; showError(error.message); }
+        if (!recovered && shouldPauseUpload(error)) { paused = true; showError(`${error.message}\n남은 파일의 업로드를 멈췄습니다. 접수 상태를 확인한 뒤 다시 시도해주세요.`); }
       } finally { controller = null; updateRow(index); }
     }
     uploadSummary();

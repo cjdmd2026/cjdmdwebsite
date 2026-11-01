@@ -137,7 +137,7 @@ export async function handleRequest(request) {
     }
     return json({ error: '요청한 기능을 찾을 수 없습니다.' }, 404);
   } catch (error) {
-    if (!(error instanceof SubmissionError)) console.error('Submission API failed', { errorType: error.name });
+    if (!(error instanceof SubmissionError)) console.error('Submission API failed', { action: new URL(request.url).searchParams.get('action'), errorType: error.constructor?.name || error.name, status: error.status });
     return json({ error: error instanceof SubmissionError ? error.message : '요청을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.' }, error.status || 500);
   }
 }
