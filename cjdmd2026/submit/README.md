@@ -41,7 +41,24 @@ GitHub 토큰을 `VITE_`, `NEXT_PUBLIC_` 등 브라우저에 공개되는 환경
 
 ## 팀과 경로
 
-기존 `js/project-data.js`의 팀 이름·팀원·ID를 함께 사용합니다. `server/teams.mjs`에서 경로를 정하며, 숫자 ID `28`인 별운관만 `byeolungwan`으로 연결합니다. 현재 14팀이 등록되어 있습니다. 변경 후 다시 빌드하세요.
+기존 `js/project-data.js`의 팀 이름·팀원·ID를 함께 사용합니다. 프로젝트 ID는 유지하고, `server/teams.mjs`에서 아래 확정된 공개 경로로 연결합니다. 제출 화면, GitHub 저장 폴더, PR 안내, 정적 빌드가 동일한 경로 설정을 사용합니다. 변경 후 다시 빌드하세요.
+
+| 팀 | 공개 경로 / 사이트 루트 아래 저장 폴더 |
+|---|---|
+| 읽:꼬 | `/ilkko/` |
+| CURO | `/curo/` |
+| 아푸치카 | `/apuchika/` |
+| COCO LANG | `/coco-lang/` |
+| 다들림 | `/dadeullim/` |
+| 피싱뚝! | `/phishing-ddook/` |
+| OMIX | `/omix/` |
+| E.FACT | `/e-fact/` |
+| Stylens | `/stylens/` |
+| 직지잼버리 | `/jigjijaembeoli/` |
+| 마그모아 | `/magmoa/` |
+| 그늘잡이 | `/geuneuljab-i/` |
+| YEAR-ON | `/year-on/` |
+| 별운관 | `/byeol-ungwan/` |
 
 - 읽:꼬 → GitHub `cjdmd2026/ilkko/` → `/ilkko/`
 - 새 제출은 해당 팀 폴더 전체를 교체하는 PR입니다. 수정본에 빠진 이전 파일은 PR에서 삭제로 표시됩니다.
