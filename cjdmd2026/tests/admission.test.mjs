@@ -49,6 +49,17 @@ test('ownership is required for tokens and activity extends only a live lease', 
   assert.equal((await f.gate.availability()).busy, false);
 });
 
+test('four concurrent upload token requests share one lease without losing ownership or extending expired receipts', async () => {
+  const f = fixture(), a = receipt('ilkko'); await f.gate.claim(a);
+  const tokens = await Promise.all(Array.from({ length: 4 }, () => f.otherInstance().touch(a, { issueToken: true })));
+  assert.ok(tokens.every(slot => slot.id === a.id && slot.teamId === a.teamId));
+  assert.equal(new Set(tokens.map(slot => slot.tokenExpiresAt)).size, 1);
+  await assert.rejects(f.gate.claim(receipt('curo')), { status: 423 });
+  f.advance(36 * 60 * 1000);
+  const expired = await Promise.allSettled(Array.from({ length: 4 }, () => f.otherInstance().touch(a, { issueToken: true })));
+  assert.ok(expired.every(result => result.status === 'rejected' && result.reason.status === 410));
+});
+
 test('expired uploads are removed before the next team enters; old workers cannot release the new slot', async () => {
   const f = fixture(), a = receipt('ilkko'), b = receipt('curo');
   await f.gate.claim(a); f.states.set(a.id, { phase: 'awaiting_upload' });

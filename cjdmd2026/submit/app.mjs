@@ -10,7 +10,14 @@ const input = byId('folder-files');
 const status = byId('submission-status');
 const receiptKey = 'dmd2026-folder-receipt';
 let entries = [], folderName = '', receipt = null, enabled = false, busy = false;
-let stage = 'draft', polling = false, paused = false, controller;
+let stage = 'draft', polling = false, paused = false;
+const uploadConcurrency = 4;
+const uploadControllers = new Set();
+function pauseUploads() {
+  paused = true;
+  for (const controller of uploadControllers) controller.abort();
+  byId('pause-upload').disabled = true;
+}
 let admissionState = { busy: false }, refreshing = false, heartbeatPending = false;
 let siteFiles = [], siteTreeSha = null, treeLoaded = false, directory = '', deletions = new Set(), draftFolders = new Set(), pendingRemoval = null;
 let managerButtons = [];
@@ -236,15 +243,16 @@ async function api(action, options = {}) {
   const headers = { ...options.headers };
   if (options.body) headers['Content-Type'] = 'application/json';
   let response;
-  try { response = await fetch(`/api/submission?action=${action}`, { ...options, headers, cache: 'no-store', signal: AbortSignal.timeout(action === 'confirm-file' ? 120000 : 30000) }); }
+  const timeout = AbortSignal.timeout(action === 'confirm-file' ? 120000 : 30000);
+  try { response = await fetch(`/api/submission?action=${action}`, { ...options, headers, cache: 'no-store', signal: options.signal ? AbortSignal.any([options.signal, timeout]) : timeout }); }
   catch { const error = new Error('제출 서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.'); error.status = 0; throw error; }
   let data;
   try { data = await response.json(); } catch { const error = new Error('제출 서버 응답을 확인할 수 없습니다. 잠시 후 다시 시도해주세요.'); error.status = response.ok ? 502 : response.status; throw error; }
   if (!response.ok) { const error = new Error(data.error || '요청을 처리하지 못했습니다.'); error.status = response.status; throw error; }
   return data;
 }
-const post = (action, body = {}) => api(action, { method: 'POST', headers: receipt ? authorization() : {}, body: JSON.stringify(body) });
-const confirmFile = index => post('confirm-file', { index });
+const post = (action, body = {}, signal) => api(action, { method: 'POST', headers: receipt ? authorization() : {}, body: JSON.stringify(body), signal });
+const confirmFile = (index, signal) => post('confirm-file', { index }, signal);
 const shouldPauseUpload = error => error.status === 0 || error.status >= 500 || [401, 403, 410, 423, 429].includes(error.status);
 function uploadSummary() {
   const done = entries.filter(entry => entry.state === 'uploaded').length;
@@ -255,6 +263,9 @@ async function prepareReceipt() {
   if (receipt) return;
   const prepared = await api('prepare', { method: 'POST', body: JSON.stringify({ teamId: selectedTeam().id, files: manifest(), deletions: [...deletions], baseTreeSha: siteTreeSha }) });
   saveReceipt({ ...prepared, teamId: selectedTeam().id, folderName });
+  // Only a newly created receipt is known to have no previously uploaded files.
+  // Restored receipts and every attempted file always reconcile before retrying.
+  for (const entry of entries) entry.needsCheck = false;
   admissionState = { busy: true, teamId: selectedTeam().id }; renderAdmission();
 }
 async function uploadFiles() {
@@ -264,27 +275,37 @@ async function uploadFiles() {
   showStatus('업로드를 준비하고 있어요.', '파일 목록을 확인합니다.', 0); status.focus();
   try {
     await prepareReceipt();
-    for (let index = 0; index < entries.length; index++) {
-      if (paused) break;
-      const entry = entries[index]; if (entry.state === 'uploaded' || !entry.file) continue;
+    const activeBytes = new Map();
+    const totalBytes = entries.reduce((sum, entry) => sum + entry.size, 0);
+    function renderUploadProgress() {
+      if (paused) return;
+      const done = entries.filter(entry => entry.state === 'uploaded');
+      const bytes = done.reduce((sum, entry) => sum + entry.size, 0) + [...activeBytes.values()].reduce((sum, loaded) => sum + loaded, 0);
+      const progress = totalBytes ? bytes / totalBytes * 100 : 0;
+      showStatus('파일을 올리고 있어요.', `${done.length} / ${entries.length}개 완료 · ${activeBytes.size}개 처리 중\n이 창을 열어두세요.`, Math.min(allUploaded() ? 100 : 99, progress));
+    }
+    async function transferFile(index) {
+      const entry = entries[index];
+      const controller = new AbortController();
+      uploadControllers.add(controller); activeBytes.set(index, 0);
       entry.error = ''; entry.state = 'verifying'; updateRow(index);
       try {
-        // Reconcile a lost success response before uploading the same file again.
-        let confirmed = await confirmFile(index);
+        // Fresh files avoid an empty lookup; retries recover lost success responses.
+        let confirmed = entry.needsCheck === false ? { uploaded: false } : await confirmFile(index, controller.signal);
         if (!confirmed.uploaded && !paused) {
-          controller = new AbortController(); entry.state = 'uploading'; updateRow(index);
+          entry.needsCheck = true; entry.state = 'uploading'; updateRow(index);
           await upload(`${receipt.pathname}${index}`, entry.file, {
             access: 'private', contentType: 'application/octet-stream', handleUploadUrl: '/api/submission?action=upload',
             clientPayload: JSON.stringify({ ticket: receipt.ticket, index }), multipart: entry.size > 8 * 1024 ** 2,
             abortSignal: controller.signal,
             onUploadProgress: ({ percentage, loaded }) => {
+              if (paused || controller.signal.aborted) return;
               entry.progress = percentage; updateRow(index);
-              const doneBytes = entries.filter(item => item.state === 'uploaded').reduce((sum, item) => sum + item.size, 0);
-              const totalBytes = entries.reduce((sum, item) => sum + item.size, 0);
-              showStatus('파일을 하나씩 올리고 있어요.', `${entry.path}\n${entries.filter(item => item.state === 'uploaded').length} / ${entries.length}개 완료 · 이 창을 열어두세요.`, Math.min(100, (doneBytes + loaded) / totalBytes * 100));
+              activeBytes.set(index, Math.max(0, Math.min(entry.size, loaded)));
+              renderUploadProgress();
             },
           });
-          entry.state = 'verifying'; updateRow(index); confirmed = await confirmFile(index);
+          if (!paused) { entry.state = 'verifying'; updateRow(index); confirmed = await confirmFile(index, controller.signal); }
         }
         if (confirmed.uploaded) entry.state = 'uploaded';
         else if (paused) entry.state = 'pending';
@@ -293,14 +314,26 @@ async function uploadFiles() {
         // Storage may have received the file even if the browser lost the response.
         let recovered = false;
         if (!paused && !shouldPauseUpload(error)) {
-          try { recovered = (await confirmFile(index)).uploaded; }
+          try { recovered = (await confirmFile(index, controller.signal)).uploaded; }
           catch (confirmationError) { if (shouldPauseUpload(confirmationError)) error = confirmationError; }
         }
         entry.state = recovered ? 'uploaded' : paused ? 'pending' : 'failed';
         entry.error = recovered || paused ? '' : error.message?.startsWith('Vercel Blob') ? '전송에 실패했습니다. 네트워크 상태를 확인한 뒤 다시 업로드해주세요.' : error.message;
-        if (!recovered && shouldPauseUpload(error)) { paused = true; showError(`${error.message}\n남은 파일의 업로드를 멈췄습니다. 접수 상태를 확인한 뒤 다시 시도해주세요.`); }
-      } finally { controller = null; updateRow(index); }
+        if (!recovered && !paused && shouldPauseUpload(error)) { pauseUploads(); showError(`${error.message}\n남은 파일의 업로드를 멈췄습니다. 접수 상태를 확인한 뒤 다시 시도해주세요.`); }
+      } finally { uploadControllers.delete(controller); activeBytes.delete(index); updateRow(index); renderUploadProgress(); }
     }
+    let nextIndex = 0;
+    async function worker() {
+      while (!paused && nextIndex < entries.length) {
+        const index = nextIndex++;
+        if (entries[index].state === 'uploaded' || !entries[index].file) continue;
+        await transferFile(index);
+      }
+    }
+    // Keep controls locked until all in-flight requests have settled after a pause.
+    const workers = await Promise.allSettled(Array.from({ length: Math.min(uploadConcurrency, entries.length) }, worker));
+    const failure = workers.find(result => result.status === 'rejected');
+    if (failure) throw failure.reason;
     uploadSummary();
   } catch (error) { showError(error.message || '업로드를 시작하지 못했습니다.'); if (error.status === 423) await refreshAdmission(); }
   finally { byId('pause-upload').hidden = true; setBusy(false); }
@@ -374,7 +407,7 @@ byId('confirm-delete').addEventListener('click', () => {
 });
 byId('remove-file').addEventListener('click', () => { entries = []; folderName = ''; input.value = ''; clearError(); renderFiles(); });
 byId('upload-button').addEventListener('click', uploadFiles);
-byId('pause-upload').addEventListener('click', () => { paused = true; controller?.abort(); byId('pause-upload').disabled = true; });
+byId('pause-upload').addEventListener('click', pauseUploads);
 byId('retry-status').addEventListener('click', pollStatus);
 byId('refresh-admission').addEventListener('click', refreshAdmission);
 byId('submission-form').addEventListener('submit', async event => {
@@ -419,7 +452,7 @@ setInterval(async () => {
   if (receipt && busy && !heartbeatPending) {
     heartbeatPending = true;
     try { await post('heartbeat'); }
-    catch (error) { if (error.status === 410) { paused = true; controller?.abort(); showError(error.message); } }
+    catch (error) { if (error.status === 410) { pauseUploads(); showError(error.message); } }
     finally { heartbeatPending = false; }
   } else if (!receipt || stage === 'done') await refreshAdmission();
 }, 60_000);

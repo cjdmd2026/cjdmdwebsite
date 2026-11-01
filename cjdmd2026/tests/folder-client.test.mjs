@@ -32,7 +32,7 @@ function services() {
       }
       else if (action === 'confirm-file') {
         this.confirmations.push(body.index);
-        if (this.confirmResponse) return this.confirmResponse();
+        if (this.confirmResponse) return this.confirmResponse(body.index, options);
         data = { uploaded: uploaded.has(body.index) };
       }
       else if (action === 'status') data = { id: 'sample', teamId: 'ilkko', slug: 'ilkko', mode: 'folder', phase: this.phase, merged: this.merged, message: this.message, files: this.files, deletions: this.deletions, baseTreeSha: this.baseTreeSha, uploaded: [...uploaded] };
@@ -43,8 +43,11 @@ function services() {
     },
     async upload(path, file, options) {
       const index = Number(path.split('/').pop()); counts.set(index, (counts.get(index) || 0) + 1);
+      if (this.uploadHook) await this.uploadHook(index, file, options);
+      if (options.abortSignal.aborted) throw new Error('Upload aborted');
       if (this.failOnce && index === 0) { this.failOnce = false; throw new Error('simulated network failure'); }
       uploaded.add(index); options.onUploadProgress({ percentage: 100, loaded: file.size });
+      if (this.loseResponse && index === 0) { this.loseResponse = false; throw new Error('Lost upload response'); }
     },
   };
 }
@@ -88,22 +91,25 @@ test('client retries only failed files and requires explicit final confirmation 
   assert.equal(server.finalizations, 1);
   assert.match(ui.get('status-title').textContent, /제출이 완료/);
 });
-test('a server error stops a 922-file batch after one check and the same receipt can resume', async () => {
+test('a server error stops a 922-file batch within the in-flight group and the same receipt can resume', async () => {
   const server = services(), ui = await controller(server);
   const files = [sampleFiles()[0], ...Array.from({ length: 921 }, (_, i) => {
     const file = new File(['image'], `${i}.webp`);
     Object.defineProperty(file, 'webkitRelativePath', { value: `website/images/${i}.webp` }); return file;
   })];
   await select(ui, files);
+  server.failOnce = false;
   server.confirmResponse = () => Response.json({ error: '확인 서버 오류' }, { status: 500 });
   await ui.event('upload-button', 'click');
-  assert.deepEqual(server.confirmations, [0]);
-  assert.equal(server.uploaded.size, 0); assert.equal(server.preparations, 1);
+  assert.ok(server.confirmations.length <= 4);
+  assert.equal(server.counts.size, 4);
+  assert.equal(server.preparations, 1);
   assert.match(ui.get('form-error').textContent, /남은 파일의 업로드를 멈췄습니다/);
   assert.equal(server.store.size, 1); assert.equal(server.finalizations, 0);
   server.confirmResponse = null; server.failOnce = false;
   await ui.event('upload-button', 'click');
   assert.equal(server.uploaded.size, 922); assert.equal(server.preparations, 1);
+  assert.ok([...server.counts.values()].every(count => count === 1));
   assert.equal(server.finalizations, 0);
 });
 
@@ -113,14 +119,93 @@ test('rate limits, non-JSON server errors and connection loss pause without fail
     () => new Response('<html>Bad Gateway</html>', { status: 502 }),
     () => { throw new TypeError('Failed to fetch'); },
   ]) {
-    const server = services(), ui = await controller(server); await select(ui);
+    const server = services(), ui = await controller(server); server.failOnce = false; await select(ui);
     server.confirmResponse = response;
     await ui.event('upload-button', 'click');
-    assert.deepEqual(server.confirmations, [0]);
-    assert.equal(server.counts.size, 0); assert.equal(server.store.size, 1);
+    assert.ok(server.confirmations.length <= 2);
+    assert.equal(server.counts.size, 2); assert.equal(server.store.size, 1);
     assert.equal(server.finalizations, 0);
     assert.match(ui.get('form-error').textContent, /남은 파일의 업로드를 멈췄습니다/);
   }
+});
+
+function deferred() {
+  let resolve, reject;
+  const promise = new Promise((yes, no) => { resolve = yes; reject = no; });
+  return { promise, resolve, reject };
+}
+function manyFiles(count = 12) {
+  return Array.from({ length: count }, (_, i) => {
+    const path = i === 0 ? 'index.html' : `images/${i}.svg`;
+    const file = new File(['1234567890'], path.split('/').pop());
+    Object.defineProperty(file, 'webkitRelativePath', { value: `website/${path}` }); return file;
+  });
+}
+
+test('four files overlap, progress sums all transfers, and fresh uploads need only one verification each', async () => {
+  const server = services(), ui = await controller(server); server.failOnce = false;
+  await select(ui, manyFiles());
+  const firstGroup = deferred(), release = deferred();
+  let active = 0, peak = 0;
+  server.uploadHook = async (_, file, options) => {
+    active++; peak = Math.max(peak, active);
+    options.onUploadProgress({ percentage: 50, loaded: file.size / 2 });
+    if (active === 4) firstGroup.resolve();
+    await release.promise;
+    active--;
+  };
+  const uploading = ui.event('upload-button', 'click'); await firstGroup.promise;
+  assert.equal(server.counts.size, 4); assert.equal(peak, 4);
+  assert.ok(Math.abs(ui.get('upload-progress').value - (20 / 120 * 100)) < 0.001);
+  assert.equal(ui.get('upload-button').disabled, true); assert.equal(ui.get('submit-button').disabled, true);
+  release.resolve(); await uploading;
+  assert.equal(peak, 4); assert.equal(active, 0); assert.equal(server.uploaded.size, 12);
+  assert.equal(server.confirmations.length, 12); assert.equal(new Set(server.confirmations).size, 12);
+  assert.equal(ui.get('upload-progress').value, 100); assert.equal(server.finalizations, 0);
+});
+
+test('pause aborts every active upload, starts no queued file and retries on the same receipt', async () => {
+  const server = services(), ui = await controller(server); server.failOnce = false;
+  await select(ui, manyFiles());
+  const started = deferred(); let active = 0, aborted = 0;
+  server.uploadHook = (_, file, options) => new Promise((resolve, reject) => {
+    active++; if (active === 4) started.resolve();
+    options.abortSignal.addEventListener('abort', () => { active--; aborted++; reject(new Error('Stopped')); }, { once: true });
+  });
+  const uploading = ui.event('upload-button', 'click'); await started.promise;
+  await ui.event('pause-upload', 'click'); await uploading;
+  assert.equal(aborted, 4); assert.equal(active, 0); assert.equal(server.counts.size, 4);
+  assert.equal(server.finalizations, 0); assert.equal(server.confirmations.length, 0);
+  server.uploadHook = null;
+  await ui.event('upload-button', 'click');
+  assert.equal(server.preparations, 1); assert.equal(server.uploaded.size, 12);
+  assert.equal(server.confirmations.length, 16); // Four uncertain files reconcile; fresh queued files do not.
+});
+
+test('pause also aborts concurrent verification requests and recovers stored files without uploading twice', async () => {
+  const server = services(), ui = await controller(server); server.failOnce = false;
+  await select(ui, manyFiles());
+  const started = deferred(); let active = 0, aborted = 0;
+  server.confirmResponse = (_, options) => new Promise((resolve, reject) => {
+    active++; if (active === 4) started.resolve();
+    options.signal.addEventListener('abort', () => { active--; aborted++; reject(new Error('Stopped')); }, { once: true });
+  });
+  const uploading = ui.event('upload-button', 'click'); await started.promise;
+  assert.equal(ui.get('submit-button').disabled, true);
+  await ui.event('pause-upload', 'click'); await uploading;
+  assert.equal(aborted, 4); assert.equal(active, 0); assert.equal(server.counts.size, 4);
+  server.confirmResponse = null;
+  await ui.event('upload-button', 'click');
+  assert.equal(server.uploaded.size, 12); assert.equal(server.preparations, 1);
+  assert.ok([...server.counts.values()].every(count => count === 1));
+});
+
+test('a lost successful upload response is verified without uploading the file twice', async () => {
+  const server = services(), ui = await controller(server); server.failOnce = false; server.loseResponse = true;
+  await select(ui); await ui.event('upload-button', 'click');
+  assert.equal(server.uploaded.size, 2); assert.ok([...server.counts.values()].every(count => count === 1));
+  assert.match(ui.get('file-count').textContent, /2 \/ 2/);
+  assert.equal(server.finalizations, 0);
 });
 
 test('reload restores uploaded files, rejects edited folders, and resumes only the missing file', async () => {
