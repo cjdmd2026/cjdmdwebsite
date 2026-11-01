@@ -58,13 +58,15 @@ const THREE=module.exports;
   for (const [key,lo,hi] of [['strength',0,3],['bendDepth',0,80],['rgbShiftPx',0,3],['rgbMaxSeparationPx',0,4],['pixelRatio',1,2],['maxTextureSize',256,2048]]) {
     OPTIONS[key] = Number.isFinite(Number(OPTIONS[key])) ? Math.max(lo,Math.min(hi,Number(OPTIONS[key]))) : lo;
   }
-  const MARK = 'data-pgm-hidden';
+  const MARK = 'data-pgm-hidden', SCROLLING = 'data-pgm-scrolling';
   const entries = new Map(), disposers=[];
+  const layoutAnimations = new Map();
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
-  const mobile=window.matchMedia('(max-width: 759px)');
+  const mobile=window.matchMedia('(width < 760px)');
   let grid,renderer,scene,camera,geometry,style,observer,intersection,resizeObserver;
   let raf=0,dirty=true,destroyed=false,failed=false,enabled=true,lastTime=0,lastY=window.scrollY;
   let width=0,height=0,renderCount=0;
+  let layoutVersion=0,visibilityVersion=-1,visibleGrid=false,viewportDirty=true,scrollTimer=0;
   const line={position:0,velocity:0};
   const channels=[
     {position:0,velocity:0,spring:145,damping:18,gain:1},
@@ -133,13 +135,19 @@ const THREE=module.exports;
       if(mask<.001)discard;
       vec2 uv=vImageUV*uUvScale+uUvOffset;
       vec2 shift=(dFdx(uv)*.28735+dFdy(uv)*.95783)*uPixelRatio;
-      vec4 color=readImage(uv);
+      vec4 color;
       if(max(max(abs(uRGB.r),abs(uRGB.g)),abs(uRGB.b))>.00001){
         vec4 r=readImage(uv+shift*uRGB.r);
         vec4 g=readImage(uv+shift*uRGB.g);
         vec4 b=readImage(uv+shift*uRGB.b);
-        color.rgb=vec3(mix(color.r,r.r,r.a),mix(color.g,g.g,g.a),mix(color.b,b.b,b.a));
-      }
+        // Opaque card backgrounds make every sample opaque: the fourth lookup
+        // contributes nothing to the RGB mix. Keep it for transparent hosts.
+        if(uBackgroundAlpha>=1.0)color=vec4(r.r,g.g,b.b,1.0);
+        else{
+          color=readImage(uv);
+          color.rgb=vec3(mix(color.r,r.r,r.a),mix(color.g,g.g,g.a),mix(color.b,b.b,b.a));
+        }
+      }else color=readImage(uv);
       gl_FragColor=vec4(color.rgb,color.a*mask);
       #include <colorspace_fragment>
     }
@@ -148,16 +156,39 @@ const THREE=module.exports;
   function listen(target,type,fn,options){target.addEventListener(type,fn,options);disposers.push(()=>target.removeEventListener(type,fn,options));}
   function wake(){if(!raf&&!destroyed&&!failed&&!mobile.matches&&!document.hidden&&!document.documentElement.classList.contains('page-transition-active')){raf=requestAnimationFrame(frame);}}
   function refresh(){
-    dirty=true;
+    dirty=true;invalidateLayout();viewportDirty=true;
     // 뷰를 바꾸는 즉시 원본을 복원합니다. 다음 렌더 프레임까지 잔상이 남지 않습니다.
-    if(grid&&(!enabled||mobile.matches||reduced.matches||!gridVisible())){restore();resetPhysics();cancelAnimationFrame(raf);raf=0;return;}
+    if(grid&&(!enabled||mobile.matches||reduced.matches||!gridVisible())){restore();resetPhysics();cancelAnimationFrame(raf);raf=0;if(mobile.matches||!gridVisible())resumeHover();return;}
     wake();
   }
   function resetPhysics(){line.position=line.velocity=0;for(const c of channels)c.position=c.velocity=0;shared.uBend.value=0;shared.uRGB.value.set(0,0,0);lastY=window.scrollY;lastTime=0;}
-  function restore(){for(const entry of entries.values())entry.host.removeAttribute(MARK);if(renderer)renderer.domElement.style.display='none';}
+  function hideOriginal(entry,hidden){
+    if(entry.hidden===hidden)return;
+    entry.hidden=hidden;
+    if(hidden)entry.host.setAttribute(MARK,'');else entry.host.removeAttribute(MARK);
+  }
+  function restore(){for(const entry of entries.values())hideOriginal(entry,false);if(renderer&&renderer.domElement.style.display!=='none')renderer.domElement.style.display='none';}
+  function invalidateLayout(){layoutVersion++;}
+  function resumeHover(){
+    clearTimeout(scrollTimer);scrollTimer=0;
+    if(grid?.hasAttribute(SCROLLING)){grid.removeAttribute(SCROLLING);invalidateLayout();wake();}
+  }
+  function onScroll(){
+    if(!mobile.matches&&gridVisible()){
+      if(!grid.hasAttribute(SCROLLING)){grid.setAttribute(SCROLLING,'');invalidateLayout();}
+      clearTimeout(scrollTimer);
+      scrollTimer=setTimeout(resumeHover,80);
+    }
+    wake();
+  }
   function gridVisible(){
-    if(!grid||!grid.isConnected||grid.closest('[hidden]')||!grid.getClientRects().length)return false;
-    const cs=getComputedStyle(grid);return cs.display!=='none'&&cs.visibility==='visible';
+    if(!grid||!grid.isConnected||grid.closest('[hidden]'))return false;
+    if(visibilityVersion!==layoutVersion){
+      visibilityVersion=layoutVersion;
+      const cs=getComputedStyle(grid);
+      visibleGrid=!!grid.getClientRects().length&&cs.display!=='none'&&cs.visibility==='visible';
+    }
+    return visibleGrid;
   }
   function fail(error){failed=true;restore();cancelAnimationFrame(raf);raf=0;console.warn('[ProjectGridMotion] 효과를 중지하고 원본 이미지를 표시합니다.',error);}
   function setupRenderer(){
@@ -171,12 +202,16 @@ const THREE=module.exports;
       Object.assign(c.style,{position:'fixed',inset:'0',width:'100%',height:'100%',zIndex:String(OPTIONS.zIndex),pointerEvents:'none',display:'none',background:'transparent'});
       document.body.appendChild(c);
       scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(40,1,.1,10000);
-      geometry=new THREE.PlaneGeometry(1,1,16,28);
+      // Bending depends only on Y; every horizontal strip is planar.
+      // Extra X subdivisions do not change its shape or texture mapping.
+      geometry=new THREE.PlaneGeometry(1,1,1,28);
       listen(c,'webglcontextlost',e=>{e.preventDefault();fail('WebGL context lost');});
       return true;
     }catch(error){fail(error);return false;}
   }
   function resizeViewport(){
+    if(!viewportDirty)return;
+    viewportDirty=false;
     const w=document.documentElement.clientWidth,h=window.innerHeight;
     const dpr=Math.min(window.devicePixelRatio||1,OPTIONS.pixelRatio);
     if(w===width&&h===height&&dpr===shared.uPixelRatio.value)return;
@@ -192,19 +227,19 @@ const THREE=module.exports;
     return {url:raw,cs,child:match?null:child};
   }
   function discardEntry(entry){
-    entry.version++;entry.host.removeAttribute(MARK);entry.texture?.dispose();
+    entry.version++;hideOriginal(entry,false);entry.texture?.dispose();
     if(entry.mesh){scene?.remove(entry.mesh);entry.mesh.material.dispose();}
     intersection?.unobserve(entry.host);resizeObserver?.unobserve(entry.host);
   }
   function reconcile(){
     dirty=false;
     // 원래 배경을 복원한 뒤, 프로젝트 JS가 지정한 실제 URL을 읽습니다.
-    for(const e of entries.values())e.host.removeAttribute(MARK);
+    for(const e of entries.values())hideOriginal(e,false);
     const hosts=new Set(grid.querySelectorAll(OPTIONS.images));
     for(const [host,entry] of entries){if(!hosts.has(host)){discardEntry(entry);entries.delete(host);}}
     for(const host of hosts){
       let e=entries.get(host);
-      if(!e){e={host,card:host.closest('.card'),version:0,url:'',texture:null,mesh:null,near:!intersection,pending:false,broken:false};entries.set(host,e);intersection?.observe(host);resizeObserver?.observe(host);}
+      if(!e){e={host,card:host.closest('.card'),version:0,url:'',texture:null,mesh:null,near:!intersection,pending:false,broken:false,hidden:false,layout:null,animations:new Set()};entries.set(host,e);intersection?.observe(host);resizeObserver?.observe(host);}
       const source=imageSource(host);e.child=source.child;
       if(e.background!==source.cs.backgroundColor&&e.mesh){
         const [color,alpha]=colorAndAlpha(source.cs.backgroundColor);
@@ -231,10 +266,10 @@ const THREE=module.exports;
         canvas.getContext('2d').drawImage(image,0,0,canvas.width,canvas.height);
         const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
         texture.anisotropy=Math.min(4,renderer?.capabilities.getMaxAnisotropy()||1);
-        e.texture=texture;e.pending=false;wake();
+        e.texture=texture;e.pending=false;e.layout=null;wake();
       }catch(error){e.pending=false;e.broken=true;console.warn('[ProjectGridMotion] 이미지 효과 생략:',e.url,error);}
     };
-    image.onerror=()=>{if(version!==e.version)return;e.pending=false;e.broken=true;e.host.removeAttribute(MARK);console.warn('[ProjectGridMotion] 이미지를 읽지 못해 원본을 유지합니다. 경로/CORS 또는 Live Server 실행을 확인하세요:',e.url);};
+    image.onerror=()=>{if(version!==e.version)return;e.pending=false;e.broken=true;hideOriginal(e,false);console.warn('[ProjectGridMotion] 이미지를 읽지 못해 원본을 유지합니다. 경로/CORS 또는 Live Server 실행을 확인하세요:',e.url);};
     image.src=e.url;
   }
   function radii(cs,w,h){
@@ -275,6 +310,41 @@ const THREE=module.exports;
     const material=new THREE.ShaderMaterial({uniforms,vertexShader,fragmentShader,transparent:true,depthTest:false,depthWrite:false,side:THREE.DoubleSide,toneMapped:false,extensions:{derivatives:true}});
     e.mesh=new THREE.Mesh(geometry,material);e.mesh.frustumCulled=false;scene.add(e.mesh);return e.mesh;
   }
+  function trackLayoutAnimation(event){
+    const target=event.target;
+    if(!(target instanceof Element))return;
+    const starting=event.type==='transitionrun'||event.type==='animationstart';
+    const key=event.propertyName||event.animationName;
+    for(const e of entries.values()){
+      if(target!==e.host&&target!==e.card&&target!==e.child)continue;
+      const token=(target===e.card?'card:':target===e.host?'image:':'child:')+key;
+      if(starting)e.animations.add(token);else e.animations.delete(token);
+      e.layout=null;wake();return;
+    }
+    // A fading/moving grid ancestor must still use its current geometry.
+    if(target.contains(grid)){
+      let active=layoutAnimations.get(target);
+      if(starting){if(!active)layoutAnimations.set(target,active=new Set());active.add(key);}
+      else if(active){active.delete(key);if(!active.size)layoutAnimations.delete(target);}
+      invalidateLayout();wake();
+    }
+  }
+  function measure(e,readStyle,x,y){
+    const rect=e.host.getBoundingClientRect(),cardRect=e.card.getBoundingClientRect();
+    const cs=readStyle(e.host),cardStyle=readStyle(e.card);
+    let solid=rect.width>=1&&rect.height>=1&&!e.host.closest('[hidden]');
+    for(let node=e.host;solid&&node&&node!==document.documentElement;node=node.parentElement){
+      const st=readStyle(node);
+      if(st.visibility!=='visible'||Number(st.opacity)<.999||st.display==='none')solid=false;
+    }
+    // Cache document coordinates, never live CSSStyleDeclaration objects.
+    // Scrolling then only needs to subtract the current scroll offset.
+    e.layout={version:layoutVersion,solid,left:rect.left+x,top:rect.top+y,width:rect.width,height:rect.height,
+      cardLeft:cardRect.left+x,cardTop:cardRect.top+y,cardWidth:cardRect.width,cardHeight:cardRect.height,
+      radius:radii(cs,rect.width,rect.height),clipRadius:radii(cardStyle,cardRect.width,cardRect.height),
+      fit:solid?placement(e,cs,rect.width,rect.height):[1,1,0,0]};
+    return e.layout;
+  }
   function stepSpring(state,goal,stiffness,damping,dt){
     const n=Math.ceil(dt*120),h=dt/n;
     for(let k=0;k<n;k++){state.velocity+=((goal-state.position)*stiffness-state.velocity*damping)*h;state.position+=state.velocity*h;}
@@ -292,41 +362,43 @@ const THREE=module.exports;
   }
   function frame(time){
     raf=0;
-    if(destroyed||failed||document.documentElement.classList.contains('page-transition-active'))return;
+    if(destroyed||failed||document.hidden||document.documentElement.classList.contains('page-transition-active'))return;
     if(!enabled||mobile.matches||reduced.matches||OPTIONS.strength===0||!gridVisible()){restore();resetPhysics();return;}
     try{
       if(dirty)reconcile();
       const dt=lastTime?clamp((time-lastTime)/1000,1/240,1/30):1/60;lastTime=time;
-      const y=window.scrollY,delta=y-lastY;lastY=y;
+      const x=window.scrollX,y=window.scrollY,delta=y-lastY;lastY=y;
       const moving=updatePhysics(dt,delta);
       if(!setupRenderer())return;resizeViewport();
       for(const e of entries.values())if(e.near&&!e.texture)loadTexture(e);
       if(!moving){restore();lastTime=0;return;}
-      // 레이아웃을 모아서 읽은 뒤, 마지막에 숨김 속성을 적용합니다.
+      // Read only invalidated/animating cards; scroll alone reuses their layout.
       const styles=new Map(),readStyle=el=>{if(!styles.has(el))styles.set(el,getComputedStyle(el));return styles.get(el);};
       const snapshots=[];
       for(const e of entries.values()){
         if(e.mesh)e.mesh.visible=false;
         if(!e.texture||!e.near||!e.host.isConnected||e.host.closest('[hidden]'))continue;
-        const rect=e.host.getBoundingClientRect();
-        if(rect.width<1||rect.height<1||rect.bottom<0||rect.top>height||rect.right<0||rect.left>width)continue;
-        const cs=readStyle(e.host),cardRect=e.card.getBoundingClientRect(),cardStyle=readStyle(e.card);
-        let solid=true;
-        // 페이드/페이지 전환 중에는 원본 DOM이 자체 애니메이션을 그대로 처리합니다.
-        for(let node=e.host;node&&node!==document.documentElement;node=node.parentElement){const st=readStyle(node);if(st.visibility!=='visible'||Number(st.opacity)<.999||st.display==='none'){solid=false;break;}}
-        if(!solid)continue;
-        snapshots.push({e,rect,cs,cardRect,cardStyle});
+        const changed=!e.layout||e.layout.version!==layoutVersion||e.animations.size||layoutAnimations.size;
+        const layout=changed?measure(e,readStyle,x,y):e.layout;
+        const left=layout.left-x,top=layout.top-y;
+        if(!layout.solid||top+layout.height<0||top>height||left+layout.width<0||left>width)continue;
+        snapshots.push({e,layout,left,top});
       }
-      for(const {e,rect,cs,cardRect,cardStyle} of snapshots){
+      for(const {e,layout,left,top} of snapshots){
         const mesh=meshFor(e),u=mesh.material.uniforms;mesh.visible=true;
-        u.uSize.value.set(rect.width,rect.height);u.uCenter.value.set(rect.left+rect.width/2-width/2,height/2-rect.top-rect.height/2);
-        u.uRadius.value.set(...radii(cs,rect.width,rect.height));u.uClip.value.set(cardRect.left,cardRect.top,cardRect.width,cardRect.height);u.uClipRadius.value.set(...radii(cardStyle,cardRect.width,cardRect.height));
-        const fit=placement(e,cs,rect.width,rect.height);u.uUvScale.value.set(fit[0],fit[1]);u.uUvOffset.value.set(fit[2],fit[3]);
+        u.uCenter.value.set(left+layout.width/2-width/2,height/2-top-layout.height/2);
+        u.uClip.value.set(layout.cardLeft-x,layout.cardTop-y,layout.cardWidth,layout.cardHeight);
+        if(e.meshLayout!==layout){
+          u.uSize.value.set(layout.width,layout.height);u.uRadius.value.set(...layout.radius);u.uClipRadius.value.set(...layout.clipRadius);
+          const fit=layout.fit;u.uUvScale.value.set(fit[0],fit[1]);u.uUvOffset.value.set(fit[2],fit[3]);
+          e.meshLayout=layout;
+        }
       }
       // 렌더링 성공 후에만 원본 배경을 숨깁니다. 실패 시 원본을 유지합니다.
-      renderer.domElement.style.display='block';renderer.render(scene,camera);if(failed)return;renderCount++;
+      if(renderer.domElement.style.display!=='block')renderer.domElement.style.display='block';
+      renderer.render(scene,camera);if(failed)return;renderCount++;
       const visible=new Set(snapshots.map(s=>s.e));
-      for(const e of entries.values()){if(visible.has(e))e.host.setAttribute(MARK,'');else e.host.removeAttribute(MARK);}
+      for(const e of entries.values())hideOriginal(e,visible.has(e));
       wake();
     }catch(error){fail(error);}
   }
@@ -336,16 +408,21 @@ const THREE=module.exports;
     style=document.createElement('style');style.setAttribute('data-project-grid-motion-style','');
     style.textContent=`${OPTIONS.root} .card-image[${MARK}]{background-image:none!important;background-color:transparent!important;} ${OPTIONS.root} .card-image[${MARK}] img{opacity:0!important;}`;
     document.head.appendChild(style);
-    if('IntersectionObserver' in window)intersection=new IntersectionObserver(records=>{for(const r of records){const e=entries.get(r.target);if(e)e.near=r.isIntersecting;}wake();},{rootMargin:'450px 0px'});
-    resizeObserver=new ResizeObserver(()=>wake());resizeObserver.observe(grid);
+    if('IntersectionObserver' in window)intersection=new IntersectionObserver(records=>{for(const r of records){const e=entries.get(r.target);if(e){e.near=r.isIntersecting;if(e.near)e.layout=null;}}wake();},{rootMargin:'450px 0px'});
+    resizeObserver=new ResizeObserver(records=>{
+      for(const r of records){if(r.target===grid){invalidateLayout();viewportDirty=true;}else{const e=entries.get(r.target);if(e)e.layout=null;}}
+      wake();
+    });resizeObserver.observe(grid);
     observer=new MutationObserver(refresh);
     observer.observe(grid,{subtree:true,childList:true,attributes:true,attributeFilter:['class','style','hidden','src','srcset']});
     for(let node=grid.parentElement;node;node=node.parentElement)observer.observe(node,{attributes:true,attributeFilter:['class','style','hidden','data-theme']});
-    listen(window,'scroll',wake,{passive:true});listen(window,'resize',()=>{resetPhysics();refresh();},{passive:true});
+    listen(window,'scroll',onScroll,{passive:true});listen(window,'resize',()=>{resetPhysics();refresh();},{passive:true});
+    for(const type of ['transitionrun','transitionend','transitioncancel','animationstart','animationend','animationcancel'])listen(document,type,trackLayoutAnimation,true);
+    document.fonts?.ready.then(()=>{if(!destroyed){invalidateLayout();wake();}});
     listen(grid,'load',refresh,true);
-    listen(document,'visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(raf);raf=0;restore();resetPhysics();}else refresh();});
+    listen(document,'visibilitychange',()=>{if(document.hidden){resumeHover();cancelAnimationFrame(raf);raf=0;restore();resetPhysics();}else refresh();});
     listen(document,'page-transition:change',event=>{
-      if(event.detail.active){cancelAnimationFrame(raf);raf=0;lastTime=0;}
+      if(event.detail.active){resumeHover();cancelAnimationFrame(raf);raf=0;lastTime=0;}
       else{resetPhysics();refresh();}
     });
     listen(reduced,'change',()=>{restore();resetPhysics();refresh();});
@@ -355,7 +432,7 @@ const THREE=module.exports;
     refresh();
   }
   function destroy(){
-    destroyed=true;cancelAnimationFrame(raf);raf=0;restore();
+    destroyed=true;resumeHover();cancelAnimationFrame(raf);raf=0;restore();layoutAnimations.clear();
     observer?.disconnect();intersection?.disconnect();resizeObserver?.disconnect();
     for(const dispose of disposers)dispose();for(const e of entries.values())discardEntry(e);entries.clear();
     geometry?.dispose();renderer?.dispose();renderer?.domElement.remove();style?.remove();

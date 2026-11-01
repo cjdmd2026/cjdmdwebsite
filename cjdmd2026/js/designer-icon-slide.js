@@ -483,7 +483,15 @@
       if (!event.repeat) stepInDirection(direction);
     }
     function scrollRange() { return Math.max(1, scene.offsetHeight - innerHeight); }
-    function readScroll() { return clamp((scrollY - scene.offsetTop) / scrollRange(), 0, 1); }
+    function readScroll() {
+      const range = scrollRange(), position = scrollY - scene.offsetTop;
+      // offsetHeight is rounded to whole CSS pixels, but scrollY can be fractional.
+      // Treat the final/initial pixel as the endpoint, including after a view restore.
+      const tolerance = Math.min(1, range / 2);
+      if (position <= tolerance) return 0;
+      if (position >= range - tolerance) return 1;
+      return clamp(position / range, 0, 1);
+    }
     function onScroll() {
       if (!viewActive || window.DesignerReturnState?.restoring) return;
       const previousTarget = scrollTarget;
@@ -554,9 +562,13 @@
         viewActive = true;
         // 보기 버튼으로 돌아오면 제목과 보기 전환 버튼이 보이는 갤러리 위치를 유지합니다.
         if (keepToolbar) savedProgress = 1;
-        snapTeamEntry(savedProgress);
         window.scrollTo({ top: scene.offsetTop + savedProgress * scrollRange(), behavior: 'instant' });
-        if (loaded) { layout(); onScroll(); draw(); }
+        if (loaded) layout();
+        // Restore the timeline and its direction baseline from the same actual
+        // scroll position. Do not ease toward it from the previous view's spread.
+        spread = scrollTarget = readScroll();
+        if (loaded) { snapTeamEntry(spread); settle(); onScroll(); draw(); }
+        else teamEntryInitialized = false;
       }
       updateToolbar();
     }
@@ -576,7 +588,6 @@
       viewActive = view === 'slide';
       const progress = Number.isFinite(state?.progress) ? clamp(state.progress, 0, 1) : 0;
       savedProgress = progress;
-      snapTeamEntry(progress);
       const indexes = new Map(source.map((project, team) => [project.projectId, team]));
       if (Array.isArray(state?.order) && state.order.length === source.length && new Set(state.order).size === source.length && state.order.every(id => indexes.has(id))) {
         galleryOrder = state.order.map(id => indexes.get(id));
@@ -596,10 +607,11 @@
       iconButtons.forEach(button => button.setAttribute('aria-expanded', 'false'));
       if (viewActive) {
         window.scrollTo({ top: scene.offsetTop + progress * scrollRange(), behavior: 'instant' });
-        layout(); positionSpreadSlots(); spread = scrollTarget = readScroll(); settle(); draw();
+        layout(); positionSpreadSlots(); spread = scrollTarget = readScroll();
+        snapTeamEntry(spread); settle(); draw();
         const team = indexes.get(state?.selectedProject);
         if (progress >= .995 && team !== undefined && visibleTeams[team]) openDetails(team, false, true);
-      }
+      } else snapTeamEntry(progress);
       updateToolbar(); setHint();
     }
     function createDesignerLink(member) {

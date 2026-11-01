@@ -1259,7 +1259,7 @@ html[data-project-fluid-view="slide"] .project-warp .search-bar input:focus {
    Hover
 ============================== */
 
-.container .grid-view .content .card:hover {
+.container .grid-view:where(:not([data-pgm-scrolling])) .content .card:hover {
     transform: translateY(-0.35rem);
 
     border-radius: 18px;
@@ -1271,7 +1271,7 @@ html[data-project-fluid-view="slide"] .project-warp .search-bar input:focus {
 
 
 /* 이미지 먼저 축소 */
-.container .grid-view .content .card:hover .card-image {
+.container .grid-view:where(:not([data-pgm-scrolling])) .content .card:hover .card-image {
     top: 48%;
 
     left: 1rem;
@@ -1283,7 +1283,7 @@ html[data-project-fluid-view="slide"] .project-warp .search-bar input:focus {
 
 
 /* 1. Category */
-.container .grid-view .content .card:hover .card-category {
+.container .grid-view:where(:not([data-pgm-scrolling])) .content .card:hover .card-category {
     opacity: 1;
 
     transform: scale(1);
@@ -1293,7 +1293,7 @@ html[data-project-fluid-view="slide"] .project-warp .search-bar input:focus {
 
 
 /* 2. Members */
-.container .grid-view .content .card:hover .card-members {
+.container .grid-view:where(:not([data-pgm-scrolling])) .content .card:hover .card-members {
     opacity: 1;
 
     transform: translateX(0);
@@ -1303,7 +1303,7 @@ html[data-project-fluid-view="slide"] .project-warp .search-bar input:focus {
 
 
 /* 3. Title */
-.container .grid-view .content .card:hover .card-title {
+.container .grid-view:where(:not([data-pgm-scrolling])) .content .card:hover .card-title {
     opacity: 1;
 
     transform: translateY(0);
@@ -1313,7 +1313,7 @@ html[data-project-fluid-view="slide"] .project-warp .search-bar input:focus {
 
 
 /* 4. Description */
-.container .grid-view .content .card:hover .card-description {
+.container .grid-view:where(:not([data-pgm-scrolling])) .content .card:hover .card-description {
     opacity: 1;
 
     transform: translateY(0);
@@ -1328,6 +1328,11 @@ html[data-project-fluid-view="slide"] .project-warp .search-bar input:focus {
 .container .grid-view .content .card:not(:hover) .card-title,
 .container .grid-view .content .card:not(:hover) .card-description {
     transition-delay: 0.5s;
+}
+
+/* Pause hover while scrolling, without blocking card links or keyboard input. */
+.container .grid-view[data-pgm-scrolling] .content .card :is(.card-category, .card-members, .card-title, .card-description) {
+    transition-delay: 0s;
 }
 
 
