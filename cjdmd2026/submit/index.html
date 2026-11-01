@@ -7,14 +7,23 @@
   <meta name="theme-color" content="#f6f5f2">
   <title>웹사이트 제출 · 유연한 결합</title>
   <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="../css/header-logo.css?v=20261024-1">
   <script type="module" src="./app.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#submission-form">제출 양식으로 바로가기</a>
-  <header class="site-header">
-    <a class="brand" href="../" aria-label="유연한 결합 전시 사이트"><img src="../assets/images/icons/logo_wv.svg" width="163" height="32" alt="유연한 결합"></a>
-    <span class="header-caption">청주대학교 디지털미디어디자인<br>2026 졸업전시회</span>
-    <a class="back-link" href="../">전시 사이트 <span aria-hidden="true">↗</span></a>
+  <header class="header submission-header">
+    <div class="container">
+      <div class="logo"><a href="../" aria-label="유연한 결합 전시 사이트"><img src="../assets/images/icons/logo_wv.svg" width="160" height="31" alt="유연한 결합"></a></div>
+      <nav class="nav" aria-label="주요 메뉴">
+        <ul><li><a href="../project/">프로젝트</a></li><li><a href="../designer/">디자이너</a></li><li><a href="../archive/">아카이브</a></li></ul>
+      </nav>
+      <button class="menu-button" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="submit-mobile-menu"><span></span><span></span><span></span></button>
+    </div>
+    <nav id="submit-mobile-menu" class="mobile-menu" aria-label="모바일 메뉴" hidden inert>
+      <ul><li><a href="../project/">프로젝트</a></li><li><a href="../designer/">디자이너</a></li><li><a href="../archive/">아카이브</a></li></ul>
+      <p>청주대학교 디지털미디어디자인학과 · 2026</p>
+    </nav>
   </header>
   <main class="page-shell">
     <div class="page-grid">

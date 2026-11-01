@@ -5,6 +5,12 @@
   font-weight: 600;
   font-display: swap;
 }
+@font-face {
+  font-family: Paperlogy;
+  src: url(https://cdn.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-5Medium.woff2) format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
 :root {
   --ink:#181818;
   --muted:#75716d;
@@ -27,6 +33,7 @@
 }
 body {
   margin: 0;
+  padding-top: 70px;
   line-height: 1.6;
 }
 button,
@@ -94,45 +101,40 @@ fieldset {
   background: var(--ink);
   color: white;
   padding: 12px;
-  z-index: 10;
+  z-index: 1010;
 }
 .skip-link:focus {
   top: 10px;
 }
-.site-header {
-  height: 102px;
-  max-width: 1440px;
-  padding: 0 64px;
-  margin: auto;
-  display: flex;
-  align-items: center;
-  gap: 32px;
-  border-bottom: 1px solid var(--line);
-}
-.brand {
-  display: flex;
-}
-.brand img {
-  filter: brightness(0);
-  width: 163px;
-  height: auto;
-}
-.header-caption {
-  border-left: 1px solid var(--line);
-  padding-left: 26px;
-  font-size: 11px;
-  line-height: 1.7;
-  color: #5d5955;
-}
-.back-link {
-  margin-left: auto;
-  display: flex;
-  gap: 18px;
-  align-items: center;
-  font-size: 13px;
-}
-.back-link span {
-  font-size: 20px;
+/* Same dimensions, navigation, typography and glass surface as the main header. */
+.submission-header { position: fixed; inset: 0 0 auto; height: 70px; z-index: 1000; color: #111; line-height: 1.5; }
+.submission-header::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: rgba(255,255,255,.36); backdrop-filter: blur(11.9px); -webkit-backdrop-filter: blur(11.9px); border: 1px solid rgba(255,255,255,.35); }
+.submission-header .container { width: min(1220px, calc(100% - 40px)); height: 100%; margin: auto; display: flex; align-items: center; justify-content: space-between; }
+.submission-header .logo { position: relative; z-index: 2; }
+.submission-header .logo img { filter: brightness(0); }
+.submission-header ul { list-style: none; margin: 0; padding: 0; }
+.submission-header .nav ul { display: flex; gap: 2rem; }
+.submission-header .nav li { font: 500 .95rem/1.5 Paperlogy, sans-serif; }
+.submission-header .nav a { opacity: .3; transition: opacity .3s ease; }
+.submission-header .nav a:hover, .submission-header .nav a:focus-visible { opacity: 1; font-weight: 600; }
+.submission-header .menu-button, .submission-header .mobile-menu { display: none; }
+@media (max-width: 759px) {
+  body { padding-top: 56px; }
+  .submission-header { height: 56px; }
+  .submission-header::before { border: 0; }
+  .submission-header .container { width: 100%; padding: 0 20px; }
+  .submission-header .nav { display: none; }
+  .submission-header .menu-button { position: relative; z-index: 2; display: grid; place-content: center; gap: 5px; width: 44px; height: 44px; padding: 0; border: 0; background: none; }
+  .submission-header .menu-button span { display: block; width: 20px; height: 1.5px; background: #000; transition: transform .25s ease, opacity .2s ease; }
+  .submission-header .menu-button[aria-expanded="true"] span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .submission-header .menu-button[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .submission-header .menu-button[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+  .submission-header .mobile-menu { position: fixed; inset: 0; z-index: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 108px 20px calc(28px + env(safe-area-inset-bottom)); background: #fff; color: #000; overflow-y: auto; }
+  .submission-header .mobile-menu li { border-bottom: 1px solid #ebebed; }
+  .submission-header .mobile-menu a { display: block; padding: 17px 0; font-size: 40px; font-weight: 700; line-height: 1.1; letter-spacing: -.035em; color: #b5b5ba; }
+  .submission-header .mobile-menu a:hover, .submission-header .mobile-menu a:focus-visible { color: #111; }
+  .submission-header .mobile-menu p { font-size: 12px; color: #6b6b70; }
+  body.mobile-menu-open { overflow: hidden; }
 }
 .page-shell {
   max-width: 1240px;
@@ -656,9 +658,6 @@ progress::-webkit-progress-value {
   }
 }
 @media (max-width: 1100px) {
-  .site-header {
-    padding: 0 36px;
-  }
   .page-shell {
     padding: 40px 36px 60px;
   }
@@ -683,21 +682,6 @@ progress::-webkit-progress-value {
   }
 }
 @media (max-width: 720px) {
-  .site-header {
-    height: 76px;
-    padding: 0 22px;
-    gap: 12px;
-  }
-  .brand img {
-    width: 132px;
-  }
-  .header-caption {
-    display: none;
-  }
-  .back-link {
-    font-size: 11px;
-    gap: 10px;
-  }
   .page-shell {
     padding: 31px 22px 44px;
   }
