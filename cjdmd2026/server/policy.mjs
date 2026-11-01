@@ -1,13 +1,14 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { findTeam } from './teams.mjs';
 import { validateFiles, folderLimits } from '../submit/files.mjs';
+import { r2Configuration } from './r2.mjs';
 
 export const limits = Object.freeze({ zipBytes: 200 * 1024 ** 2, ...folderLimits });
 export class SubmissionError extends Error {
   constructor(message, status = 400) { super(message); this.status = status; }
 }
 export function configuration(env = process.env) {
-  const missing = ['BLOB_READ_WRITE_TOKEN', 'SUBMISSION_SIGNING_SECRET', 'SUBMISSION_GITHUB_TOKEN'].filter(key => !env[key]);
+  const missing = [...r2Configuration(env).missing, ...['SUBMISSION_SIGNING_SECRET', 'SUBMISSION_GITHUB_TOKEN'].filter(key => !env[key])];
   if (env.SUBMISSION_SIGNING_SECRET && env.SUBMISSION_SIGNING_SECRET.length < 32) missing.push('SUBMISSION_SIGNING_SECRET_LENGTH');
   const repository = env.SUBMISSION_GITHUB_REPOSITORY || 'cjdmd2026/cjdmdwebsite';
   const sitePath = env.SUBMISSION_SITE_PATH ?? 'cjdmd2026';

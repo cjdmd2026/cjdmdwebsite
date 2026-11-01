@@ -1,11 +1,11 @@
 import { randomUUID } from 'node:crypto';
 import { waitUntil, ipAddress } from '@vercel/functions';
-import { handleUpload } from '@vercel/blob/client';
+import { issueUpload, readUploadTicket } from '../server/upload.mjs';
 import { checkBotId } from 'botid/server';
-import { configuration, validateFolderSubmission, signTicket, readTicket, assertOrigin, limits, SubmissionError } from '../server/policy.mjs';
+import { configuration, validateFolderSubmission, signTicket, assertOrigin, limits, SubmissionError } from '../server/policy.mjs';
 import { readState, writeState, limitSubmissions, takeLock, releaseLock } from '../server/storage.mjs';
 import { processSubmission } from '../server/process.mjs';
-import { filePath, folderFile, assertUploading, uploadedFiles, confirmFile, finalizeFolder } from '../server/folder.mjs';
+import { uploadedFiles, confirmFile, finalizeFolder } from '../server/folder.mjs';
 import { admission } from '../server/admission.mjs';
 import { githubClient } from '../server/github.mjs';
 import { siteSnapshot, checkSiteChanges } from '../server/site.mjs';
@@ -29,7 +29,7 @@ async function smallJson(request) {
   } catch (error) { if (error instanceof SubmissionError) throw error; throw new SubmissionError('요청 내용을 읽을 수 없습니다.'); }
 }
 function ticketFromRequest(request) {
-  return readTicket(request.headers.get('authorization')?.replace(/^Bearer /, ''));
+  return readUploadTicket(request.headers.get('authorization')?.replace(/^Bearer /, ''));
 }
 export async function handleRequest(request) {
   try {
@@ -62,27 +62,8 @@ export async function handleRequest(request) {
     }
     if (request.method !== 'POST') return json({ error: '지원하지 않는 요청입니다.' }, 405);
     const body = await smallJson(request);
-    if (action === 'upload') {
-      // Vercel's callback has no browser Origin. Its signature is verified by the SDK.
-      if (body.type !== 'blob.upload-completed') assertOrigin(request);
-      const result = await handleUpload({ body, request,
-        onBeforeGenerateToken: async (pathname, clientPayload) => {
-          let payload;
-          try { payload = JSON.parse(clientPayload); } catch { throw new SubmissionError('올바르지 않은 업로드 요청입니다.', 403); }
-          const submission = readTicket(payload?.ticket);
-          const state = await readState(submission.id);
-          assertUploading(state);
-          const file = folderFile(state, payload.index);
-          if (pathname !== filePath(submission.id, payload.index)) throw new SubmissionError('올바르지 않은 업로드 위치입니다.', 403);
-          const slot = await admission.touch(submission, { issueToken: true });
-          return { allowedContentTypes: ['application/octet-stream'], maximumSizeInBytes: Math.max(1, file.size), addRandomSuffix: false, allowOverwrite: false, validUntil: Math.min(submission.expires, slot.tokenExpiresAt) };
-        },
-        // Uploaded files are verified separately. A callback never submits a folder.
-        onUploadCompleted: async () => {},
-      });
-      return json(result);
-    }
     assertOrigin(request);
+    if (action === 'upload-url') return json(await issueUpload(ticketFromRequest(request), body.index));
     if (action === 'prepare') {
       const verification = await checkBotId({ advancedOptions: { checkLevel: 'basic', headers: Object.fromEntries(request.headers) }, developmentOptions: { isDevelopment: !process.env.VERCEL && process.env.NODE_ENV !== 'production' } });
       if (verification.isBot) throw new SubmissionError('브라우저 확인에 실패했습니다. 페이지를 새로고침한 후 다시 시도해주세요.', 403);
@@ -90,9 +71,9 @@ export async function handleRequest(request) {
       await limitSubmissions(ipAddress(request) || 'local');
       checkSiteChanges(await siteSnapshot(fields.teamId, githubClient(), config), fields);
       const id = randomUUID();
-      const submission = { mode: 'folder', teamId: fields.teamId, slug: fields.slug, id, pathname: `submissions/${id}/files/`, expires: Date.now() + 24 * 60 * 60 * 1000 };
+      const submission = { storage: 'r2', mode: 'folder', teamId: fields.teamId, slug: fields.slug, id, pathname: `submissions/${id}/files/`, expires: Date.now() + 24 * 60 * 60 * 1000 };
       await admission.claim(submission, fields.totalBytes);
-      try { await writeState(id, { ...fields, phase: 'awaiting_upload', createdAt: Date.now() }); }
+      try { await writeState(id, { ...fields, storage: 'r2', phase: 'awaiting_upload', createdAt: Date.now() }); }
       catch (error) { await admission.finish(submission).catch(() => {}); throw error; }
       return json({ ticket: signTicket(submission), pathname: submission.pathname, id, expires: submission.expires });
     }
@@ -131,7 +112,7 @@ export async function handleRequest(request) {
       if (!state) throw new SubmissionError('접수 기록을 찾을 수 없습니다.', 404);
       if (state.mode === 'folder' && state.phase === 'awaiting_upload') throw new SubmissionError('모든 파일을 업로드한 뒤 제출 완료를 눌러주세요.', 409);
       await admission.touch(submission);
-      // The server reads only the fixed, signed private Blob pathname. No client URL is fetched.
+      // The server reads only the fixed private R2 pathname. No client URL is fetched.
       waitUntil(processSubmission(submission));
       return json({ accepted: true }, 202);
     }

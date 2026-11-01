@@ -7,7 +7,7 @@ import { folderSelection, validateFiles, applyFileChanges, ignoredFile } from '.
 import { teams } from '../server/teams.mjs';
 
 // Exercise the actual controller against a minimal DOM and in-memory services.
-// These tests neither drive a browser nor contact Blob/GitHub.
+// These tests neither drive a browser nor contact R2/GitHub.
 const html = await readFile(new URL('../submit/index.html', import.meta.url), 'utf8');
 const source = (await readFile(new URL('../submit/app.mjs', import.meta.url), 'utf8')).replace(/^import .*;\r?\n/gm, '').replace(/initialize\(\);\s*$/, 'this.ready = initialize();');
 function element() {
@@ -30,6 +30,7 @@ function services() {
         if (this.admission.busy) return Response.json({ error: '다른 팀이 제출 중입니다.' }, { status: 423 });
         this.files = body.files; this.deletions = body.deletions; this.baseTreeSha = body.baseTreeSha; data = { id: 'sample', pathname: 'submissions/sample/files/', ticket: 'test-only', expires: Date.now() + 86400000 };
       }
+      else if (action === 'upload-url') data = { url: 'https://r2.test/files/' + body.index, headers: { 'Content-Type': 'application/octet-stream', 'If-None-Match': '*' } };
       else if (action === 'confirm-file') {
         this.confirmations.push(body.index);
         if (this.confirmResponse) return this.confirmResponse(body.index, options);
@@ -335,4 +336,38 @@ test('discarding an edit reloads current files without uploading or deleting any
   assert.equal(ui.get('submit-button').disabled, true);
   assert.ok(ui.get('directory-list').children.some(row => row.children[0].textContent === 'newer.svg'));
   assert.equal(server.preparations, 0); assert.equal(server.cancellations, 0); assert.equal(server.finalizations, 0);
+});
+
+
+test('a legacy Blob receipt stays preserved while a new R2 receipt can upload', async () => {
+  const server = services(); server.failOnce = false;
+  const legacy = JSON.stringify({ ticket: 'old-blob-ticket', id: 'old', expires: Date.now() + 86400000 });
+  server.store.set('dmd2026-folder-receipt', legacy);
+  const ui = await controller(server);
+  assert.match(ui.get('form-error').textContent, /저장소가 변경/);
+  await select(ui); await ui.event('upload-button', 'click');
+  assert.equal(server.store.get('dmd2026-folder-receipt'), legacy);
+  assert.equal(JSON.parse(server.store.get('dmd2026-folder-receipt-r2')).ticket, 'test-only');
+  assert.equal(server.uploaded.size, 2); assert.equal(server.finalizations, 0);
+});
+
+test('a signing service failure pauses before sending file bytes and retries the existing receipt', async () => {
+  const server = services(); server.failOnce = false;
+  const originalFetch = server.fetch.bind(server); let unavailable = true, requests = 0;
+  server.fetch = async (url, options) => {
+    if (new URL(url, 'http://localhost').searchParams.get('action') === 'upload-url') {
+      requests++;
+      assert.equal(options.headers.Authorization, 'Bearer test-only');
+      assert.deepEqual(Object.keys(JSON.parse(options.body)), ['index']);
+      if (unavailable) return Response.json({ error: '저장소 연결 오류' }, { status: 503 });
+    }
+    return originalFetch(url, options);
+  };
+  const ui = await controller(server); await select(ui, manyFiles());
+  await ui.event('upload-button', 'click');
+  assert.ok(requests <= 4); assert.equal(server.counts.size, 0);
+  assert.match(ui.get('form-error').textContent, /남은 파일의 업로드를 멈췄습니다/);
+  unavailable = false; await ui.event('upload-button', 'click');
+  assert.equal(server.preparations, 1); assert.equal(server.uploaded.size, 12);
+  assert.equal(server.finalizations, 0);
 });

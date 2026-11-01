@@ -1,11 +1,11 @@
-import { list, BlobPreconditionFailedError } from '@vercel/blob';
+import { list, StorageConflictError } from './r2.mjs';
 import { readJson, writeJson, readState, writeState, del } from './storage.mjs';
 import { SubmissionError } from './policy.mjs';
 
 const slotPath = 'submission-control/active.json';
 export const idleTimeoutMs = 30 * 60 * 1000;
 const tokenLifetimeMs = 10 * 60 * 1000;
-const conflict = error => error instanceof BlobPreconditionFailedError || /already exists/i.test(error.message);
+const conflict = error => error instanceof StorageConflictError;
 const expiredMessage = '30분 동안 진행이 없어 임시 파일을 정리했습니다. 폴더를 선택해 새로 제출해주세요.';
 
 // A single durable, conditional-write lease works across all Vercel instances.
@@ -89,7 +89,7 @@ export function createAdmission({ read = readJson, write = writeJson, remove = d
       const previous = await read(slotPath), slot = previous?.data;
       // A delayed worker must never release another receipt's slot.
       if (!slot || slot.id !== submission.id || slot.phase !== 'active') return;
-      // Blob client tokens cannot be revoked. Keep the slot until issued tokens
+      // Signed upload URLs cannot be revoked. Keep the slot until issued URLs
       // expire, plus a short drain period, before cleanup and the next admission.
       const data = { ...slot, phase: 'draining', expiresAt: slot.tokenExpiresAt ? Math.max(now(), slot.tokenExpiresAt + 2 * 60 * 1000) : now() };
       try { await replace(previous, data); await sweep(); return; }

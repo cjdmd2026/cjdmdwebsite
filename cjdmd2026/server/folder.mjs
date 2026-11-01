@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { get, head, list, BlobNotFoundError } from '@vercel/blob';
+import { get, head, list, StorageNotFoundError } from './r2.mjs';
 import { readJson, writeJson, readState, writeState, takeLock, releaseLock, del } from './storage.mjs';
 import { SubmissionError } from './policy.mjs';
 
@@ -51,8 +51,7 @@ export async function confirmFile(submission, state, index, { read = readJson, w
   let content;
   try { content = await readContent(pathname, file); }
   catch (error) {
-    // Blob SDK subclasses retain name === 'Error'; identify the actual class.
-    if (error instanceof BlobNotFoundError || error.status === 404) return { uploaded: false };
+    if (error instanceof StorageNotFoundError || error.status === 404) return { uploaded: false };
     if (error.status === 422) { await remove(pathname); return { uploaded: false, message: error.message }; }
     throw error;
   }

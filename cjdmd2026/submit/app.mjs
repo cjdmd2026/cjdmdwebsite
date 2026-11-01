@@ -1,4 +1,4 @@
-import { upload } from '@vercel/blob/client';
+import { upload } from './upload.mjs';
 import { initBotId } from 'botid/client/core';
 import { folderSelection, validateFiles, applyFileChanges, ignoredFile } from './files.mjs';
 import './header.mjs';
@@ -8,7 +8,7 @@ const byId = id => document.getElementById(id);
 const teamSelect = byId('team');
 const input = byId('folder-files');
 const status = byId('submission-status');
-const receiptKey = 'dmd2026-folder-receipt';
+const receiptKey = 'dmd2026-folder-receipt-r2';
 let entries = [], folderName = '', receipt = null, enabled = false, busy = false;
 let stage = 'draft', polling = false, paused = false;
 const uploadConcurrency = 4;
@@ -294,9 +294,10 @@ async function uploadFiles() {
         let confirmed = entry.needsCheck === false ? { uploaded: false } : await confirmFile(index, controller.signal);
         if (!confirmed.uploaded && !paused) {
           entry.needsCheck = true; entry.state = 'uploading'; updateRow(index);
-          await upload(`${receipt.pathname}${index}`, entry.file, {
-            access: 'private', contentType: 'application/octet-stream', handleUploadUrl: '/api/submission?action=upload',
-            clientPayload: JSON.stringify({ ticket: receipt.ticket, index }), multipart: entry.size > 8 * 1024 ** 2,
+          const destination = await post('upload-url', { index }, controller.signal);
+          if (paused) { entry.state = 'pending'; return; }
+          await upload(destination.url, entry.file, {
+            headers: destination.headers,
             abortSignal: controller.signal,
             onUploadProgress: ({ percentage, loaded }) => {
               if (paused || controller.signal.aborted) return;
@@ -318,7 +319,7 @@ async function uploadFiles() {
           catch (confirmationError) { if (shouldPauseUpload(confirmationError)) error = confirmationError; }
         }
         entry.state = recovered ? 'uploaded' : paused ? 'pending' : 'failed';
-        entry.error = recovered || paused ? '' : error.message?.startsWith('Vercel Blob') ? '전송에 실패했습니다. 네트워크 상태를 확인한 뒤 다시 업로드해주세요.' : error.message;
+        entry.error = recovered || paused ? '' : error.message;
         if (!recovered && !paused && shouldPauseUpload(error)) { pauseUploads(); showError(`${error.message}\n남은 파일의 업로드를 멈췄습니다. 접수 상태를 확인한 뒤 다시 시도해주세요.`); }
       } finally { uploadControllers.delete(controller); activeBytes.delete(index); updateRow(index); renderUploadProgress(); }
     }
@@ -427,7 +428,7 @@ byId('new-submission').addEventListener('click', async () => {
   setBusy(true);
   if (receipt) {
     try { await post('cancel'); }
-    catch (error) { if (error.status !== 401) { showError(error.message); setBusy(false); return; } }
+    catch (error) { if (![401, 410].includes(error.status)) { showError(error.message); setBusy(false); return; } }
   }
   saveReceipt(null); entries = []; folderName = ''; input.value = ''; stage = 'draft';
   deletions = new Set(); draftFolders = new Set(); pendingRemoval = null; byId('delete-confirmation').hidden = true;
@@ -441,6 +442,7 @@ async function initialize() {
   if (!('webkitdirectory' in input)) { enabled = false; byId('service-notice').textContent = '폴더 선택을 지원하는 PC의 최신 브라우저에서 제출해주세요.'; byId('service-notice').hidden = false; }
   try {
     const saved = JSON.parse(localStorage.getItem(receiptKey));
+    if (!saved && localStorage.getItem('dmd2026-folder-receipt')) showError('저장소가 변경되었습니다. 이전에 완료하지 못한 업로드는 폴더를 다시 선택해 제출해주세요. 이미 반영된 사이트 파일은 그대로 유지됩니다.');
     if (saved?.ticket && saved?.id && saved.expires > Date.now()) {
       if (enabled) { receipt = saved; folderName = saved.folderName; teamSelect.value = saved.teamId; renderTeam(); await loadTree(); stage = 'processing'; setBusy(true); await pollStatus(); }
     } else if (saved) { saveReceipt(null); showError('이전 업로드의 24시간 유효기간이 지났습니다. 폴더를 선택해 새로 제출해주세요.'); }

@@ -11,12 +11,15 @@
     "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {
-    "@vercel/blob": "^2.8.2",
+    "@aws-sdk/client-s3": "^3.1161.0",
+    "@aws-sdk/s3-request-presigner": "^3.1161.0",
     "@vercel/functions": "^3.10.5",
     "botid": "^1.5.12",
     "yauzl": "^3.4.0"
   },
-  "overrides": { "zod": "^4.6.6" },
+  "overrides": {
+    "zod": "^4.6.6"
+  },
   "devDependencies": {
     "esbuild": "^0.28.2",
     "yazl": "^3.3.1"
