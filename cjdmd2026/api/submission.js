@@ -39,17 +39,17 @@ export async function handleRequest(request) {
       const submission = ticketFromRequest(request);
       const state = await readState(submission.id);
       if (!state) throw new SubmissionError('접수 기록을 찾을 수 없습니다.', 404);
-      if (['submitted', 'failed', 'cancelled'].includes(state.phase)) await admission.finish(submission);
-      if (!['submitted', 'failed', 'cancelled'].includes(state.phase)) {
+      if (['submitted', 'merge_failed', 'failed', 'cancelled'].includes(state.phase)) await admission.finish(submission);
+      if (!['submitted', 'merge_failed', 'failed', 'cancelled'].includes(state.phase)) {
         try { await admission.touch(submission); }
         catch (error) {
           if (error.status !== 410) throw error;
           return json({ id: submission.id, teamId: submission.teamId, phase: 'failed', message: error.message });
         }
       }
-      const stale = ['validating', 'saving'].includes(state.phase) && Date.now() - state.updatedAt > 350000;
+      const stale = ['validating', 'saving', 'merging'].includes(state.phase) && Date.now() - state.updatedAt > 350000;
       const folder = state.mode === 'folder' && state.phase === 'awaiting_upload' ? { files: state.files, uploaded: await uploadedFiles(submission.id) } : {};
-      return json({ ...folder, mode: state.mode, id: submission.id, teamId: submission.teamId, slug: submission.slug, phase: stale ? 'paused' : state.phase, resumeAfter: state.resumeAfter, totalFiles: state.totalFiles, completedFiles: state.completedFiles, pullNumber: state.pullNumber, message: state.message });
+      return json({ ...folder, mode: state.mode, id: submission.id, teamId: submission.teamId, slug: submission.slug, phase: stale ? 'paused' : state.phase, resumeAfter: state.resumeAfter, totalFiles: state.totalFiles, completedFiles: state.completedFiles, pullNumber: state.pullNumber, merged: state.merged === true, message: state.message });
     }
     if (request.method !== 'POST') return json({ error: '지원하지 않는 요청입니다.' }, 405);
     const body = await smallJson(request);
@@ -96,7 +96,7 @@ export async function handleRequest(request) {
       if (!held) throw new SubmissionError('제출을 처리하고 있습니다. 잠시 후 다시 시도해주세요.', 409);
       try {
         const state = await readState(submission.id);
-        if (state && !['awaiting_upload', 'failed', 'cancelled', 'submitted'].includes(state.phase)) throw new SubmissionError('최종 제출을 처리하고 있습니다. 처리 완료 후 새 제출을 시작해주세요.', 409);
+        if (state && !['awaiting_upload', 'failed', 'cancelled', 'submitted', 'merge_failed'].includes(state.phase)) throw new SubmissionError('최종 제출을 처리하고 있습니다. 처리 완료 후 새 제출을 시작해주세요.', 409);
         if (state?.phase === 'awaiting_upload') await writeState(submission.id, { ...state, phase: 'cancelled', message: '새 제출을 시작해 이전 접수를 취소했습니다.' });
         await admission.finish(submission);
       } finally { await releaseLock(held); }

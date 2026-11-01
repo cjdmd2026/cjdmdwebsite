@@ -209,15 +209,16 @@ async function pollStatus() {
         entries = result.files.map((file, i) => ({ ...file, file: entries[i]?.sha256 === file.sha256 && entries[i]?.path === file.path ? entries[i].file : undefined, state: uploaded.has(i) ? 'uploaded' : 'pending' }));
         stage = 'draft'; setBusy(false); renderFiles(); renderAdmission(); uploadSummary(); return;
       }
-      if (['submitted', 'failed', 'cancelled'].includes(result.phase)) {
+      if (['submitted', 'merge_failed', 'failed', 'cancelled'].includes(result.phase)) {
         stage = 'done'; setBusy(false); const success = result.phase === 'submitted';
         status.classList.toggle('is-complete', success);
         byId('status-kicker').textContent = success ? 'SUCCESSFULLY SUBMITTED' : 'SUBMISSION NEEDS ATTENTION';
-        showStatus(success ? '제출이 완료되었습니다.' : '파일을 확인해주세요.', success ? `${teams.find(team => team.id === result.teamId)?.name || ''} 팀의 웹사이트가 접수되었습니다. 담당자 확인 후 공개됩니다.\n\n접수 번호  ${result.id.slice(0, 8)}\n연결될 주소  dmd2026.com/${result.slug}/` : `${result.message || '제출 처리에 실패했습니다.'}\n접수 번호  ${result.id.slice(0, 8)}`, 100);
-        byId('upload-progress').hidden = !success; byId('progress-label').textContent = success ? '접수 완료' : '제출 미완료'; await refreshAdmission(); return;
+        const delivery = result.merged ? '웹사이트 파일 저장이 완료되었습니다. 배포가 끝나면 아래 주소에서 확인할 수 있어요. 반영까지 몇 분 걸릴 수 있습니다.' : '웹사이트가 접수되었습니다. 이 접수는 자동 반영 전 방식으로 처리되어 담당자의 확인이 필요합니다.';
+        showStatus(success ? '제출이 완료되었습니다.' : result.phase === 'merge_failed' ? '접수 완료 · 자동 반영 확인 필요' : '파일을 확인해주세요.', success ? `${teams.find(team => team.id === result.teamId)?.name || ''} 팀의 ${delivery}\n\n접수 번호  ${result.id.slice(0, 8)}\n연결될 주소  dmd2026.com/${result.slug}/` : `${result.message || '제출 처리에 실패했습니다.'}\n접수 번호  ${result.id.slice(0, 8)}`, 100);
+        byId('upload-progress').hidden = !success; byId('progress-label').textContent = success ? result.merged ? '저장 완료 · 배포 대기' : '접수 완료' : result.phase === 'merge_failed' ? '자동 반영 확인 필요' : '제출 미완료'; await refreshAdmission(); return;
       }
       stage = 'processing'; setBusy(true);
-      showStatus('웹사이트를 전달하고 있어요.', `파일 ${result.completedFiles || 0} / ${result.totalFiles || '…'}개 처리 중\n접수 번호  ${result.id.slice(0, 8)}`);
+      showStatus(result.phase === 'merging' ? '웹사이트에 자동 반영하고 있어요.' : '웹사이트를 전달하고 있어요.', `파일 ${result.completedFiles || 0} / ${result.totalFiles || '…'}개 처리 중\n접수 번호  ${result.id.slice(0, 8)}`);
       if (result.phase === 'queued' || (result.phase === 'paused' && (!result.resumeAfter || result.resumeAfter <= Date.now()))) await post('process');
       await new Promise(resolve => setTimeout(resolve, 5000));
     }

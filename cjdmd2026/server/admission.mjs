@@ -24,7 +24,7 @@ export function createAdmission({ read = readJson, write = writeJson, remove = d
     catch (error) { if (conflict(error)) return read(slotPath); throw error; }
     // Close the old receipt before deleting anything. A crashed cleanup is retried.
     const state = await readSubmission(slot.id);
-    if (state && !['submitted', 'failed', 'cancelled'].includes(state.phase)) {
+    if (state && !['submitted', 'merge_failed', 'failed', 'cancelled'].includes(state.phase)) {
       await writeSubmission(slot.id, { ...state, phase: 'failed', message: expiredMessage });
     }
     // Only temporary data belonging to this receipt is eligible for removal.

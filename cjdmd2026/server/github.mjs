@@ -73,8 +73,53 @@ export async function submitToGithub(submission, archive, { github = githubClien
     `- 반영 후 주소: https://dmd2026.com/${team.slug}/`,
     `- 접수 번호: \`${submission.id}\``,
     `- 파일: ${archive.files.length}개 / ${(archive.bytes / 1024 ** 2).toFixed(1)} MiB`, '',
-    '이 제출은 팀 목록에서 선택해 접수했으며 제출자의 소속을 인증하지 않습니다. 팀과 파일을 확인한 후 병합해주세요.',
+    '이 제출은 팀 목록에서 선택해 접수했으며 제출자의 소속을 인증하지 않습니다. 서버가 팀 폴더와 변경 내용을 검증한 뒤 자동 병합합니다.',
     '팀 폴더는 제출한 전체 파일로 교체됩니다. 이전 제출에만 있던 파일은 삭제됩니다.',
   ].join('\n');
   return github('/pulls', { title: `[웹사이트 제출] ${team.name}`, head: branch, base: config.branch, body, maintainer_can_modify: true });
+}
+
+export async function mergeSubmission(submission, savedPull, { github = githubClient(), config = configuration() } = {}) {
+  const team = findTeam(submission.teamId);
+  const target = `${targetPath(team.id, config.sitePath)}/`;
+  const branch = `submissions/${team.slug}/${submission.id}`;
+  const problem = message => new SubmissionError(`${message} 파일은 PR #${savedPull.number}에 보관되어 있습니다. 담당자에게 접수 번호를 알려주세요.`, 409);
+  if (!Number.isSafeInteger(savedPull.number) || !/^[a-f0-9]{40}$/.test(savedPull.head?.sha || '')) throw problem('병합할 제출 정보를 확인하지 못했습니다.');
+  const pull = await github(`/pulls/${savedPull.number}`);
+  if (pull.head?.ref !== branch || pull.base?.ref !== config.branch || pull.head?.repo?.full_name !== config.repository || pull.base?.repo?.full_name !== config.repository || pull.head?.sha !== savedPull.head.sha) {
+    throw problem('접수 이후 제출 브랜치가 변경되어 자동 반영을 중단했습니다.');
+  }
+  // A lost response after a successful merge must not create a second PR/commit.
+  if (pull.merged) return { merged: true, sha: pull.merge_commit_sha };
+  if (pull.state !== 'open' || pull.draft) throw problem('제출 PR이 닫혀 있거나 임시 상태여서 자동 반영하지 못했습니다.');
+  if (pull.mergeable === null) {
+    const error = new SubmissionError('저장소가 자동 반영 가능 여부를 확인하고 있습니다.', 503);
+    error.retryAfterMs = 15000;
+    throw error;
+  }
+  if (!pull.mergeable) throw problem('기존 파일과 충돌해 자동 반영하지 못했습니다.');
+  // GitHub returns at most 3,000 changed files. Never merge an incomplete audit.
+  if (!Number.isSafeInteger(pull.changed_files) || pull.changed_files < 1 || pull.changed_files > 3000) throw problem('변경 파일 목록을 모두 확인하지 못했습니다.');
+  let checked = 0;
+  for (let page = 1; checked < pull.changed_files; page++) {
+    const files = await github(`/pulls/${pull.number}/files?per_page=100&page=${page}`);
+    if (!files.length) throw problem('변경 파일 목록을 모두 확인하지 못했습니다.');
+    for (const file of files) {
+      if (!file.filename?.startsWith(target) || (file.previous_filename && !file.previous_filename.startsWith(target))) throw problem('선택한 팀 폴더 밖의 변경이 있어 자동 반영을 중단했습니다.');
+    }
+    checked += files.length;
+  }
+  if (checked !== pull.changed_files) throw problem('확인 중 제출 내용이 변경되었습니다.');
+  const repository = await github('');
+  const method = repository.allow_squash_merge ? 'squash' : repository.allow_merge_commit ? 'merge' : repository.allow_rebase_merge ? 'rebase' : null;
+  if (!method) throw problem('저장소에서 허용된 병합 방식을 확인하지 못했습니다.');
+  try {
+    const result = await github(`/pulls/${pull.number}/merge`, { sha: savedPull.head.sha, merge_method: method }, 'PUT');
+    if (!result.merged) throw problem('저장소가 자동 병합을 완료하지 못했습니다.');
+    return result;
+  } catch (error) {
+    if (error.githubStatus === 403 && !error.retryAfterMs) throw problem('저장소 권한 또는 보호 규칙 때문에 자동 반영하지 못했습니다.');
+    if ([405, 409, 422].includes(error.githubStatus)) throw problem('저장소 보호 규칙, 충돌 또는 제출 변경으로 자동 반영하지 못했습니다.');
+    throw error;
+  }
 }

@@ -30,7 +30,7 @@ function services() {
         this.files = body.files; data = { id: 'sample', pathname: 'submissions/sample/files/', ticket: 'test-only', expires: Date.now() + 86400000 };
       }
       else if (action === 'confirm-file') data = { uploaded: uploaded.has(body.index) };
-      else if (action === 'status') data = { id: 'sample', teamId: 'ilkko', slug: 'ilkko', mode: 'folder', phase: this.phase, files: this.files, uploaded: [...uploaded] };
+      else if (action === 'status') data = { id: 'sample', teamId: 'ilkko', slug: 'ilkko', mode: 'folder', phase: this.phase, merged: this.merged, message: this.message, files: this.files, uploaded: [...uploaded] };
       else if (action === 'finalize') { assert.equal(uploaded.size, this.files.length); this.finalizations++; this.phase = 'submitted'; data = { accepted: true }; }
       else if (action === 'cancel') { this.cancellations++; data = { cancelled: true }; }
       else throw new Error(`Unexpected action ${action}`);
@@ -126,4 +126,23 @@ test('starting a replacement submission cancels the previous receipt before forg
   await ui.event('new-submission', 'click');
   assert.equal(server.cancellations, 1); assert.equal(server.store.size, 0);
   assert.equal(ui.get('team').disabled, false);
+});
+
+test('merged submissions show deployment pending without claiming the live site is already updated', async () => {
+  const server = services(), ui = await controller(server); await select(ui);
+  server.failOnce = false; server.merged = true;
+  await ui.event('upload-button', 'click'); ui.get('confirm').checked = true; await ui.event('confirm', 'change');
+  await ui.event('submission-form', 'submit');
+  assert.match(ui.get('status-description').textContent, /배포가 끝나면/);
+  assert.equal(ui.get('progress-label').textContent, '저장 완료 · 배포 대기');
+});
+
+test('a restored merge failure shows the preserved receipt without resubmitting', async () => {
+  const server = services(), first = await controller(server); await select(first);
+  await first.event('upload-button', 'click');
+  server.phase = 'merge_failed'; server.message = 'PR #12에 보관되어 있습니다. 담당자에게 접수 번호를 알려주세요.';
+  const next = await controller(server);
+  assert.equal(next.get('status-title').textContent, '접수 완료 · 자동 반영 확인 필요');
+  assert.match(next.get('status-description').textContent, /PR #12/);
+  assert.equal(next.get('new-submission').hidden, false); assert.equal(server.finalizations, 0);
 });
