@@ -2,6 +2,7 @@ import { readSiteArchive } from './archive.mjs';
 import { configuration, SubmissionError } from './policy.mjs';
 import { submitToGithub, githubClient } from './github.mjs';
 import { readState, writeState, takeLock, releaseLock, readArchive, del } from './storage.mjs';
+import { folderArchive, filePath } from './folder.mjs';
 
 export async function processSubmission(submission) {
   const lock = await takeLock(submission.id);
@@ -10,10 +11,11 @@ export async function processSubmission(submission) {
   try {
     state = await readState(submission.id);
     if (!state || state.phase === 'submitted' || state.phase === 'failed' || state.resumeAfter > Date.now()) return;
+    if (state.mode === 'folder' && (state.phase === 'awaiting_upload' || !state.finalizedAt)) return;
     state = { ...state, phase: 'validating', attempts: (state.attempts || 0) + 1 };
     if (state.attempts > 8) throw new SubmissionError('처리가 지연되고 있습니다. 접수 번호를 담당자에게 알려주세요.');
     await writeState(submission.id, state);
-    const archive = await readSiteArchive(await readArchive(submission));
+    const archive = state.mode === 'folder' ? await folderArchive(submission, state) : await readSiteArchive(await readArchive(submission));
     state = { ...state, phase: 'saving', totalFiles: archive.files.length, totalBytes: archive.bytes };
     await writeState(submission.id, state);
     const config = configuration();
@@ -23,7 +25,8 @@ export async function processSubmission(submission) {
       await writeState(submission.id, state);
     } });
     await writeState(submission.id, { ...state, phase: 'submitted', pullNumber: pull.number, pullUrl: pull.html_url, checkpoint: undefined, message: undefined });
-    await del(submission.pathname).catch(() => {});
+    const uploaded = state.mode === 'folder' ? state.files.map((_, index) => filePath(submission.id, index)) : submission.pathname;
+    await del(uploaded).catch(() => {});
   } catch (error) {
     if (!state) return;
     const transient = (error.status >= 500 && (!error.githubStatus || error.githubStatus >= 500 || error.retryAfterMs)) || error.name === 'TimeoutError' || error.name === 'AbortError';

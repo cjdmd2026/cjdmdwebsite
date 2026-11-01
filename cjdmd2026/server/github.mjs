@@ -46,10 +46,13 @@ export async function submitToGithub(submission, archive, { github = githubClien
     const tree = [];
     let done = 0;
     for (const file of archive.files) {
-      const expectedSha = createHash('sha1').update(`blob ${file.content.length}\0`).update(file.content).digest('hex');
+      let content = file.content;
+      const expectedSha = file.gitSha || createHash('sha1').update(`blob ${content.length}\0`).update(content).digest('hex');
       let sha = expectedSha;
       if (!known.has(sha)) {
-        const blob = await github('/git/blobs', { content: file.content.toString('base64'), encoding: 'base64' });
+        content ??= await file.load();
+        if (file.gitSha && createHash('sha1').update(`blob ${content.length}\0`).update(content).digest('hex') !== file.gitSha) throw new SubmissionError('파일 검증에 실패했습니다. 다시 제출해주세요.');
+        const blob = await github('/git/blobs', { content: content.toString('base64'), encoding: 'base64' });
         sha = blob.sha;
         known.add(sha);
       }

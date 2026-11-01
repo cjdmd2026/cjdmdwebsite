@@ -1,7 +1,8 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { findTeam } from './teams.mjs';
+import { validateFiles, folderLimits } from '../submit/files.mjs';
 
-export const limits = Object.freeze({ zipBytes: 200 * 1024 ** 2, fileBytes: 95 * 1024 ** 2, totalBytes: 500 * 1024 ** 2, files: 500 });
+export const limits = Object.freeze({ zipBytes: 200 * 1024 ** 2, ...folderLimits });
 export class SubmissionError extends Error {
   constructor(message, status = 400) { super(message); this.status = status; }
 }
@@ -23,6 +24,14 @@ export function validateSubmission(value) {
   if (!Number.isSafeInteger(value.fileSize) || value.fileSize < 22 || value.fileSize > limits.zipBytes) throw new SubmissionError('ZIP 파일은 최대 200 MiB까지 제출할 수 있습니다.');
   return { teamId: team.id, slug: team.slug, fileName: value.fileName.replace(/[\r\n\x00-\x1f]/g, ''), fileSize: value.fileSize };
 }
+export function validateFolderSubmission(value) {
+  const team = findTeam(value?.teamId);
+  if (!team) throw new SubmissionError('목록에서 제출할 팀을 선택해주세요.');
+  try {
+    const checked = validateFiles(value.files);
+    return { mode: 'folder', teamId: team.id, slug: team.slug, files: checked.files, totalBytes: checked.bytes, totalFiles: checked.files.length };
+  } catch (error) { throw new SubmissionError(error.message); }
+}
 export function signTicket(payload, secret = process.env.SUBMISSION_SIGNING_SECRET) {
   const data = Buffer.from(JSON.stringify(payload)).toString('base64url');
   return `${data}.${createHmac('sha256', secret).update(data).digest('base64url')}`;
@@ -39,7 +48,8 @@ export function readTicket(ticket, secret = process.env.SUBMISSION_SIGNING_SECRE
     const payload = JSON.parse(Buffer.from(data, 'base64url').toString());
     if (!/^[a-f0-9-]{36}$/.test(payload.id) || !findTeam(payload.teamId) || !Number.isFinite(payload.expires) || payload.expires < now) throw new Error();
     const team = findTeam(payload.teamId);
-    if (payload.pathname !== `submissions/${payload.id}/site.zip` || payload.slug !== team.slug) throw new Error();
+    const pathname = payload.mode === 'folder' ? `submissions/${payload.id}/files/` : `submissions/${payload.id}/site.zip`;
+    if (payload.pathname !== pathname || payload.slug !== team.slug) throw new Error();
     return payload;
   } catch { throw new SubmissionError('제출 확인 정보가 만료되었거나 올바르지 않습니다. 다시 제출해주세요.', 401); }
 }
