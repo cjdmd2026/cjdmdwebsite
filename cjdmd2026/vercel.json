@@ -1,0 +1,26 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "npm run build",
+  "outputDirectory": "public-dist",
+  "functions": {
+    "api/submission.js": {
+      "maxDuration": 300,
+      "includeFiles": "js/project-data.js"
+    }
+  },
+  "redirects": [
+    { "source": "/submit", "destination": "/submit/", "permanent": false }
+  ],
+  "headers": [
+    {
+      "source": "/submit/:path*",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "same-origin" },
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
+    }
+  ]
+}

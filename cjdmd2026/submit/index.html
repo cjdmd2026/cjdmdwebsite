@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#f6f5f2">
+  <title>웹사이트 제출 · 유연한 결합</title>
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#submission-form">제출 양식으로 바로가기</a>
+  <header class="site-header">
+    <a class="brand" href="../main/" aria-label="유연한 결합 전시 사이트"><img src="../assets/images/icons/logo_wv.svg" width="163" height="32" alt="유연한 결합"></a>
+    <span class="header-caption">청주대학교 디지털미디어디자인<br>2026 졸업전시회</span>
+    <a class="back-link" href="../main/">전시 사이트 <span aria-hidden="true">↗</span></a>
+  </header>
+  <main class="page-shell">
+    <div class="page-title"><span class="eyebrow"><span class="live-dot"></span> PROJECT SUBMISSION</span><span class="edition">2026 — 06TH EXHIBITION</span></div>
+    <div class="page-grid">
+      <aside class="introduction">
+        <h1>웹사이트<br><span>제출하기</span><span class="title-dot">.</span></h1>
+        <p class="intro-text">완성한 작업이 전시와 연결되는 순간.<br>우리 팀을 선택하고 웹사이트 파일을 올려주세요.</p>
+        <div class="connection-art" aria-hidden="true">
+          <svg viewBox="0 0 360 240" fill="none"><path d="M8 164H78Q100 164 100 142V92Q100 72 120 72H170" stroke="#c5c2bc" stroke-width="1.5"/><path d="M235 166H288Q310 166 310 144V86H355" stroke="#c5c2bc" stroke-width="1.5"/><circle cx="8" cy="164" r="4" fill="#171717"/><circle cx="355" cy="86" r="4" fill="#ff6f61"/><rect x="116" y="42" width="113" height="113" rx="23" fill="#ff6f61" transform="rotate(-13 116 42)"/><rect x="176" y="83" width="113" height="113" rx="23" stroke="#171717" stroke-width="2" transform="rotate(13 176 83)"/><path d="M165 100H215M190 75V125" stroke="#fff" stroke-width="2"/><circle cx="218" cy="153" r="15" stroke="#171717" stroke-width="2"/><path d="M102 219H263" stroke="#d7d4cd"/><text x="104" y="237" font-size="9" letter-spacing="3" fill="#77736c">YOUR WORK, CONNECTED.</text></svg>
+        </div>
+        <div class="guide">
+          <span class="micro-label">BEFORE YOU SUBMIT</span>
+          <ul><li>첫 화면 파일은 <code>index.html</code></li><li>이미지·CSS·JS를 포함한 ZIP 파일</li><li>압축 파일 200 MiB · 최대 500개 파일</li></ul>
+          <details><summary>파일 준비 방법 자세히 보기 <span aria-hidden="true">+</span></summary><div class="guide-detail"><p>웹사이트 폴더를 ZIP으로 압축해주세요. ZIP 이름은 자유롭게 정할 수 있습니다. 폴더 안의 첫 화면은 소문자 <code>index.html</code>이어야 합니다.</p><pre>우리팀.zip
+└─ 웹사이트 폴더/
+   ├─ index.html
+   ├─ css/
+   ├─ js/
+   └─ images/</pre><p>이미지와 CSS 경로는 <code>./images/photo.jpg</code>처럼 상대경로를 사용해주세요. React·Vite 프로젝트는 빌드한 결과물을 압축해주세요.</p><p>압축 해제 후 총 500 MiB, 개별 파일은 95 MiB까지 가능합니다. <code>node_modules</code>, <code>.git</code>, 환경변수 파일과 디자인 원본은 제외해주세요.</p></div></details>
+        </div>
+        <p class="review-note"><span aria-hidden="true">↳</span> 제출한 웹사이트는 담당자 확인 후 공개됩니다.</p>
+      </aside>
+      <section class="submission-panel" aria-label="웹사이트 제출 양식">
+        <div id="service-notice" class="service-notice" role="status" hidden></div>
+        <form id="submission-form">
+          <fieldset id="form-fields">
+            <section class="form-section">
+              <div class="step-heading"><span class="step-number">01</span><label for="team">우리 팀 선택</label><span class="required-mark">필수</span></div>
+              <div class="select-wrap"><select id="team" name="team" required aria-describedby="team-help"><option value="">제출할 팀을 선택해주세요</option></select><span aria-hidden="true">⌄</span></div>
+              <p id="team-help" class="field-help">팀을 선택하면 웹사이트 주소가 자동으로 연결됩니다.</p>
+              <div id="team-preview" class="team-preview" hidden><div><span class="micro-label">SELECTED TEAM</span><strong id="team-name"></strong><p id="team-members"></p></div><div class="destination"><span>연결될 주소</span><p id="team-url"></p></div></div>
+            </section>
+            <section class="form-section upload-section">
+              <div class="step-heading"><span class="step-number">02</span><label for="zip-file">웹사이트 파일</label><span class="file-format">.ZIP</span></div>
+              <div id="drop-zone" class="drop-zone">
+                <svg class="upload-icon" width="42" height="42" viewBox="0 0 42 42" fill="none" aria-hidden="true"><path d="M21 27V7M13 15L21 7L29 15M8 25V34H34V25" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <strong>ZIP 파일을 여기에 놓아주세요</strong><p>또는 아래 버튼으로 파일을 선택하세요.</p>
+                <button id="choose-file" class="choose-file" type="button">파일 선택 <span aria-hidden="true">+</span></button>
+                <span class="upload-limit">ZIP · 최대 200 MiB</span>
+                <input id="zip-file" name="file" type="file" accept=".zip,application/zip,application/x-zip-compressed" class="visually-hidden" aria-describedby="file-help">
+              </div>
+              <div id="file-preview" class="file-preview" hidden><span class="zip-icon" aria-hidden="true">ZIP</span><div class="file-description"><strong id="file-name"></strong><span id="file-size"></span></div><button id="remove-file" type="button" aria-label="선택한 파일 제거">×</button></div>
+              <p id="file-help" class="field-help">팀 폴더 안에 필요한 파일을 모두 포함해주세요.</p>
+            </section>
+            <div class="form-bottom"><label class="confirmation"><input id="confirm" type="checkbox" required><span>선택한 팀과 제출 파일을 확인했습니다.</span></label><button id="submit-button" class="submit-button" type="submit" disabled><span>제출하기</span><span aria-hidden="true">↗</span></button><p class="submit-help">업로드가 끝날 때까지 이 창을 열어두세요.</p></div>
+          </fieldset>
+        </form>
+        <div id="form-error" class="form-error" role="alert" tabindex="-1" hidden></div>
+        <section id="submission-status" class="submission-status" role="status" aria-live="polite" tabindex="-1" hidden><span id="status-kicker" class="micro-label">SUBMITTING YOUR WORK</span><h2 id="status-title">파일을 업로드하고 있어요.</h2><p id="status-description"></p><progress id="upload-progress" max="100" value="0" aria-label="파일 업로드 진행률"></progress><span id="progress-label" class="progress-label">0%</span><button id="retry-status" class="text-button" type="button" hidden>처리 상태 다시 확인</button><button id="new-submission" class="text-button" type="button" hidden>다른 파일 제출하기 <span aria-hidden="true">↗</span></button></section>
+        <noscript><p class="form-error">제출하려면 브라우저의 JavaScript를 활성화해주세요.</p></noscript>
+      </section>
+    </div>
+  </main>
+  <footer class="site-footer"><span>유연한 결합 — FLEXIBLE CONNECTION</span><span>© 2026 CJU DIGITAL MEDIA DESIGN</span></footer>
+</body>
+</html>
