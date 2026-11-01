@@ -3,9 +3,10 @@ import { waitUntil, ipAddress } from '@vercel/functions';
 import { handleUpload } from '@vercel/blob/client';
 import { checkBotId } from 'botid/server';
 import { configuration, validateFolderSubmission, signTicket, readTicket, assertOrigin, limits, SubmissionError } from '../server/policy.mjs';
-import { readState, writeState, limitSubmissions } from '../server/storage.mjs';
+import { readState, writeState, limitSubmissions, takeLock, releaseLock } from '../server/storage.mjs';
 import { processSubmission } from '../server/process.mjs';
 import { filePath, folderFile, assertUploading, uploadedFiles, confirmFile, finalizeFolder } from '../server/folder.mjs';
+import { admission } from '../server/admission.mjs';
 
 const json = (body, status = 200) => Response.json(body, { status, headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
 async function smallJson(request) {
@@ -32,12 +33,20 @@ export async function handleRequest(request) {
     const url = new URL(request.url);
     const action = url.searchParams.get('action') || 'config';
     const config = configuration();
-    if (request.method === 'GET' && action === 'config') return json({ enabled: config.enabled, limits });
+    if (request.method === 'GET' && action === 'config') return json({ enabled: config.enabled, limits, admission: config.enabled ? await admission.availability() : { busy: false } });
     if (!config.enabled) return json({ error: '제출 기능을 준비하고 있습니다. 담당자의 안내 후 다시 방문해주세요.' }, 503);
     if (request.method === 'GET' && action === 'status') {
       const submission = ticketFromRequest(request);
       const state = await readState(submission.id);
       if (!state) throw new SubmissionError('접수 기록을 찾을 수 없습니다.', 404);
+      if (['submitted', 'failed', 'cancelled'].includes(state.phase)) await admission.finish(submission);
+      if (!['submitted', 'failed', 'cancelled'].includes(state.phase)) {
+        try { await admission.touch(submission); }
+        catch (error) {
+          if (error.status !== 410) throw error;
+          return json({ id: submission.id, teamId: submission.teamId, phase: 'failed', message: error.message });
+        }
+      }
       const stale = ['validating', 'saving'].includes(state.phase) && Date.now() - state.updatedAt > 350000;
       const folder = state.mode === 'folder' && state.phase === 'awaiting_upload' ? { files: state.files, uploaded: await uploadedFiles(submission.id) } : {};
       return json({ ...folder, mode: state.mode, id: submission.id, teamId: submission.teamId, slug: submission.slug, phase: stale ? 'paused' : state.phase, resumeAfter: state.resumeAfter, totalFiles: state.totalFiles, completedFiles: state.completedFiles, pullNumber: state.pullNumber, message: state.message });
@@ -56,7 +65,8 @@ export async function handleRequest(request) {
           assertUploading(state);
           const file = folderFile(state, payload.index);
           if (pathname !== filePath(submission.id, payload.index)) throw new SubmissionError('올바르지 않은 업로드 위치입니다.', 403);
-          return { allowedContentTypes: ['application/octet-stream'], maximumSizeInBytes: Math.max(1, file.size), addRandomSuffix: false, allowOverwrite: false, validUntil: Math.min(submission.expires, Date.now() + 60 * 60 * 1000) };
+          const slot = await admission.touch(submission, { issueToken: true });
+          return { allowedContentTypes: ['application/octet-stream'], maximumSizeInBytes: Math.max(1, file.size), addRandomSuffix: false, allowOverwrite: false, validUntil: Math.min(submission.expires, slot.tokenExpiresAt) };
         },
         // Uploaded files are verified separately. A callback never submits a folder.
         onUploadCompleted: async () => {},
@@ -71,16 +81,36 @@ export async function handleRequest(request) {
       await limitSubmissions(ipAddress(request) || 'local');
       const id = randomUUID();
       const submission = { mode: 'folder', teamId: fields.teamId, slug: fields.slug, id, pathname: `submissions/${id}/files/`, expires: Date.now() + 24 * 60 * 60 * 1000 };
-      await writeState(id, { ...fields, phase: 'awaiting_upload', createdAt: Date.now() });
+      await admission.claim(submission, fields.totalBytes);
+      try { await writeState(id, { ...fields, phase: 'awaiting_upload', createdAt: Date.now() }); }
+      catch (error) { await admission.finish(submission).catch(() => {}); throw error; }
       return json({ ticket: signTicket(submission), pathname: submission.pathname, id, expires: submission.expires });
+    }
+    if (action === 'heartbeat') {
+      const slot = await admission.touch(ticketFromRequest(request));
+      return json({ expiresAt: slot.expiresAt });
+    }
+    if (action === 'cancel') {
+      const submission = ticketFromRequest(request);
+      const held = await takeLock(submission.id);
+      if (!held) throw new SubmissionError('제출을 처리하고 있습니다. 잠시 후 다시 시도해주세요.', 409);
+      try {
+        const state = await readState(submission.id);
+        if (state && !['awaiting_upload', 'failed', 'cancelled', 'submitted'].includes(state.phase)) throw new SubmissionError('최종 제출을 처리하고 있습니다. 처리 완료 후 새 제출을 시작해주세요.', 409);
+        if (state?.phase === 'awaiting_upload') await writeState(submission.id, { ...state, phase: 'cancelled', message: '새 제출을 시작해 이전 접수를 취소했습니다.' });
+        await admission.finish(submission);
+      } finally { await releaseLock(held); }
+      return json({ cancelled: true });
     }
     if (action === 'confirm-file') {
       const submission = ticketFromRequest(request);
+      await admission.touch(submission);
       const state = await readState(submission.id);
       return json(await confirmFile(submission, state, body.index));
     }
     if (action === 'finalize') {
       const submission = ticketFromRequest(request);
+      await admission.touch(submission);
       const state = await finalizeFolder(submission);
       if (['queued', 'paused'].includes(state.phase)) waitUntil(processSubmission(submission));
       return json({ accepted: true }, 202);
@@ -90,6 +120,7 @@ export async function handleRequest(request) {
       const state = await readState(submission.id);
       if (!state) throw new SubmissionError('접수 기록을 찾을 수 없습니다.', 404);
       if (state.mode === 'folder' && state.phase === 'awaiting_upload') throw new SubmissionError('모든 파일을 업로드한 뒤 제출 완료를 눌러주세요.', 409);
+      await admission.touch(submission);
       // The server reads only the fixed, signed private Blob pathname. No client URL is fetched.
       waitUntil(processSubmission(submission));
       return json({ accepted: true }, 202);

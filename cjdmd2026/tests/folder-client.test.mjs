@@ -19,15 +19,20 @@ function element() {
 }
 function services() {
   const store = new Map(), uploaded = new Set(), counts = new Map();
-  return { store, uploaded, counts, files: [], phase: 'awaiting_upload', failOnce: true, finalizations: 0,
+  return { store, uploaded, counts, files: [], phase: 'awaiting_upload', failOnce: true, finalizations: 0, admission: { busy: false }, preparations: 0, cancellations: 0,
     async fetch(url, options = {}) {
       const action = new URL(url, 'http://localhost').searchParams.get('action');
       const body = JSON.parse(options.body || '{}'); let data;
-      if (action === 'config') data = { enabled: true };
-      else if (action === 'prepare') { this.files = body.files; data = { id: 'sample', pathname: 'submissions/sample/files/', ticket: 'test-only', expires: Date.now() + 86400000 }; }
+      if (action === 'config') data = { enabled: true, admission: this.admission };
+      else if (action === 'prepare') {
+        this.preparations++;
+        if (this.admission.busy) return Response.json({ error: '다른 팀이 제출 중입니다.' }, { status: 423 });
+        this.files = body.files; data = { id: 'sample', pathname: 'submissions/sample/files/', ticket: 'test-only', expires: Date.now() + 86400000 };
+      }
       else if (action === 'confirm-file') data = { uploaded: uploaded.has(body.index) };
       else if (action === 'status') data = { id: 'sample', teamId: 'ilkko', slug: 'ilkko', mode: 'folder', phase: this.phase, files: this.files, uploaded: [...uploaded] };
       else if (action === 'finalize') { assert.equal(uploaded.size, this.files.length); this.finalizations++; this.phase = 'submitted'; data = { accepted: true }; }
+      else if (action === 'cancel') { this.cancellations++; data = { cancelled: true }; }
       else throw new Error(`Unexpected action ${action}`);
       return Response.json(data);
     },
@@ -46,7 +51,7 @@ async function controller(server) {
     document: { getElementById: get, createElement: element }, window: { addEventListener() {} },
     localStorage: { getItem: key => server.store.get(key) || null, setItem: (key, value) => server.store.set(key, value), removeItem: key => server.store.delete(key) },
     __TEAMS__: teams, Option: function () {}, initBotId() {}, folderSelection, sameManifest,
-    crypto: webcrypto, AbortController, AbortSignal, setTimeout, fetch: server.fetch.bind(server), upload: server.upload.bind(server),
+    crypto: webcrypto, AbortController, AbortSignal, setTimeout, setInterval() {}, fetch: server.fetch.bind(server), upload: server.upload.bind(server),
   });
   vm.runInContext(source, context); await context.ready;
   return { context, get, async event(id, name) { await get(id).listeners[name]({ preventDefault() {} }); } };
@@ -92,4 +97,33 @@ test('reload restores uploaded files, rejects edited folders, and resumes only t
   await select(next); await next.event('upload-button', 'click');
   assert.deepEqual([...server.counts], [[0, 2], [1, 1]]);
   assert.equal(server.finalizations, 0);
+});
+
+test('a waiting team can prepare files but cannot upload until the occupied slot clears', async () => {
+  const server = services(); server.admission = { busy: true, teamId: 'curo' };
+  const ui = await controller(server); await select(ui);
+  assert.equal(ui.get('upload-button').disabled, true);
+  assert.match(ui.get('admission-message').textContent, /제출 중/);
+  await ui.event('upload-button', 'click'); assert.equal(server.preparations, 0);
+  server.admission = { busy: false };
+  await ui.event('refresh-admission', 'click');
+  assert.equal(ui.get('upload-button').disabled, false);
+});
+
+test('a simultaneous prepare rejection preserves the folder and refreshes the waiting message', async () => {
+  const server = services(), ui = await controller(server); await select(ui);
+  server.admission = { busy: true, teamId: 'curo' };
+  await ui.event('upload-button', 'click');
+  assert.equal(server.uploaded.size, 0); assert.equal(server.store.size, 0);
+  assert.equal(ui.get('upload-button').disabled, true);
+  assert.match(ui.get('file-size').textContent, /2개/);
+  assert.match(ui.get('form-error').textContent, /다른 팀/);
+});
+
+test('starting a replacement submission cancels the previous receipt before forgetting it', async () => {
+  const server = services(), ui = await controller(server); await select(ui);
+  await ui.event('upload-button', 'click');
+  await ui.event('new-submission', 'click');
+  assert.equal(server.cancellations, 1); assert.equal(server.store.size, 0);
+  assert.equal(ui.get('team').disabled, false);
 });

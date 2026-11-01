@@ -43,12 +43,13 @@
 ├─ index.html
 ├─ css/
 ├─ js/
-└─ images/</pre><p>이미지와 CSS 경로는 <code>./images/photo.jpg</code>처럼 상대경로를 사용해주세요. React·Vite 프로젝트는 빌드한 <code>dist</code> 폴더를 선택해주세요.</p><p>전체 500 MiB, 개별 파일은 95 MiB까지 가능합니다. 큰 영상은 용량을 줄이거나 외부 링크로 연결해주세요. <code>node_modules</code>, <code>.git</code>, 환경변수 파일과 디자인 원본은 제외해주세요.</p><p>업로드가 끊겨도 24시간 안에 같은 브라우저에서 같은 폴더를 다시 선택하면 완료된 파일은 건너뜁니다. 파일 내용을 수정했다면 새 제출을 시작해주세요.</p></div></details>
+└─ images/</pre><p>이미지와 CSS 경로는 <code>./images/photo.jpg</code>처럼 상대경로를 사용해주세요. React·Vite 프로젝트는 빌드한 <code>dist</code> 폴더를 선택해주세요.</p><p>전체 500 MiB, 개별 파일은 95 MiB까지 가능합니다. 큰 영상은 용량을 줄이거나 외부 링크로 연결해주세요. <code>node_modules</code>, <code>.git</code>, 환경변수 파일과 디자인 원본은 제외해주세요.</p><p>한 번에 한 팀씩 제출합니다. 업로드가 끊겨도 30분 안에 같은 브라우저에서 같은 폴더를 다시 선택하면 완료된 파일은 건너뜁니다. 30분 이상 진행이 없으면 다음 접수 전에 임시 파일이 정리됩니다. 파일 내용을 수정했다면 새 제출을 시작해주세요.</p></div></details>
         </div>
         <p class="review-note"><span aria-hidden="true">↳</span> 제출한 웹사이트는 담당자 확인 후 공개됩니다.</p>
       </aside>
       <section class="submission-panel" aria-label="웹사이트 제출 양식">
         <div id="service-notice" class="service-notice" role="status" hidden></div>
+        <div id="admission-notice" class="service-notice" role="status" hidden><p id="admission-message"></p><button id="refresh-admission" class="text-button" type="button" hidden>제출 가능 여부 다시 확인 ↻</button></div>
         <form id="submission-form">
           <fieldset id="form-fields">
             <section class="form-section">
