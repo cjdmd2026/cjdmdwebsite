@@ -18,6 +18,6 @@ for (const entry of await readdir(root, { withFileTypes: true })) {
   }
 }
 await mkdir(path.join(output, 'submit'), { recursive: true });
-for (const file of ['index.html', 'style.css']) await cp(path.join(root, 'submit', file), path.join(output, 'submit', file));
+for (const file of ['index.html', 'style.css', 'countdown.mjs']) await cp(path.join(root, 'submit', file), path.join(output, 'submit', file));
 await build({ entryPoints: [path.join(root, 'submit', 'app.mjs')], outfile: path.join(output, 'submit', 'app.js'), bundle: true, format: 'esm', platform: 'browser', target: ['es2022'], minify: true, define: { __TEAMS__: JSON.stringify(teams), __LIMITS__: JSON.stringify(limits) } });
 console.log('Built public-dist/ (existing exhibition + /submit/). Server files and secrets are excluded.');

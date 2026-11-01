@@ -2,7 +2,6 @@ import { upload } from '@vercel/blob/client';
 import { initBotId } from 'botid/client/core';
 import { folderSelection, sameManifest } from './files.mjs';
 import './header.mjs';
-import './countdown.mjs';
 
 const teams = __TEAMS__;
 const byId = id => document.getElementById(id);
