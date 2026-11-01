@@ -108,7 +108,7 @@ fieldset {
 }
 /* Same dimensions, navigation, typography and glass surface as the main header. */
 .submission-header { position: fixed; inset: 0 0 auto; height: 70px; z-index: 1000; color: #111; line-height: 1.5; }
-.submission-header::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: rgba(255,255,255,.36); backdrop-filter: blur(11.9px); -webkit-backdrop-filter: blur(11.9px); border: 1px solid rgba(255,255,255,.35); }
+.submission-header::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: rgba(255, 246, 240, 0.36); backdrop-filter: blur(11.9px); -webkit-backdrop-filter: blur(11.9px); border: 1px solid rgba(255,255,255,.35); }
 .submission-header .container { width: min(1220px, calc(100% - 40px)); height: 100%; margin: auto; display: flex; align-items: center; justify-content: space-between; }
 .submission-header .logo { position: relative; z-index: 2; }
 .submission-header .logo img { filter: brightness(0); }
@@ -200,14 +200,47 @@ h1 > span:not(.title-dot) {
   color: #605c57;
   word-break: keep-all;
 }
-.connection-art {
-  margin: 12px 0 10px;
-  max-width: 340px;
+.submission-countdown {
+  max-width: 350px;
+  margin: 14px 0 28px;
 }
-.connection-art svg {
-  display: block;
+.countdown-stage {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  padding: 32px 22px;
+  overflow: hidden;
+}
+.submission-countdown .d-day {
+  --dday-matter-width: 100%;
+  --dday-matter-height: 130px;
   width: 100%;
-  height: auto;
+  height: 130px;
+  display: grid;
+  place-items: center;
+  font: 900 80px/1 "Arial Black", Pretendard, sans-serif;
+  letter-spacing: -4px;
+}
+.submission-countdown figcaption {
+  text-align: center;
+  font-size: 11px;
+  color: #605c57;
+}
+.countdown-date {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  gap: 7px;
+  margin-top: 5px;
+  font-size: 12px;
+  letter-spacing: .4px;
+  font-variant-numeric: tabular-nums;
+}
+.countdown-date > span {
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0;
 }
 .guide {
   border-top: 1px solid var(--line);
@@ -710,8 +743,8 @@ progress::-webkit-progress-value {
     font-size: 12px;
     margin-top: 15px;
   }
-  .connection-art {
-    display: none;
+  .submission-countdown {
+    margin: 8px auto 20px;
   }
   .guide {
     max-width: none;
