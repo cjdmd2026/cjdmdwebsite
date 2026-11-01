@@ -44,10 +44,16 @@ export function readTicket(ticket, secret = process.env.SUBMISSION_SIGNING_SECRE
   } catch { throw new SubmissionError('제출 확인 정보가 만료되었거나 올바르지 않습니다. 다시 제출해주세요.', 401); }
 }
 export function assertOrigin(request, env = process.env) {
-  const allowed = new Set([env.SUBMISSION_ORIGIN || 'https://dmd2026.com']);
+  const origin = env.SUBMISSION_ORIGIN || 'https://dmd2026.com';
+  const allowed = new Set([origin]);
+  // The production domain currently redirects the apex to www.
+  if (origin === 'https://dmd2026.com' || origin === 'https://www.dmd2026.com') {
+    allowed.add('https://dmd2026.com');
+    allowed.add('https://www.dmd2026.com');
+  }
   if (env.VERCEL_URL) allowed.add(`https://${env.VERCEL_URL}`);
   if (env.VERCEL_BRANCH_URL) allowed.add(`https://${env.VERCEL_BRANCH_URL}`);
-  if (!env.VERCEL && env.NODE_ENV !== 'production') allowed.add('http://localhost:4173');
+  if (!env.VERCEL && env.NODE_ENV !== 'production') { allowed.add('http://localhost:4173'); allowed.add('http://127.0.0.1:4173'); }
   if (!allowed.has(request.headers.get('origin'))) throw new SubmissionError('제출 페이지에서 다시 시도해주세요.', 403);
 }
 export function targetPath(teamId, sitePath) {

@@ -48,6 +48,8 @@ test('tickets cannot be changed, expired or reused for another team folder', () 
 test('only the configured site and exact preview origins are accepted', () => {
   const request = origin => new Request('https://dmd2026.com/api/submission', { headers: origin ? { origin } : {} });
   assert.doesNotThrow(() => assertOrigin(request('https://dmd2026.com'), { VERCEL: '1' }));
+  assert.doesNotThrow(() => assertOrigin(request('https://www.dmd2026.com'), { VERCEL: '1' }));
+  assert.throws(() => assertOrigin(request('https://www.dmd2026.com.evil.test'), { VERCEL: '1' }));
   assert.throws(() => assertOrigin(request('https://dmd2026.com.evil.test'), { VERCEL: '1' }));
   assert.throws(() => assertOrigin(request(null), { VERCEL: '1' }));
 });
