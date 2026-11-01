@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import { readFile } from 'node:fs/promises';
 import { webcrypto } from 'node:crypto';
-import { folderSelection, sameManifest } from '../submit/files.mjs';
+import { folderSelection, validateFiles, applyFileChanges, ignoredFile } from '../submit/files.mjs';
 import { teams } from '../server/teams.mjs';
 
 // Exercise the actual controller against a minimal DOM and in-memory services.
@@ -12,25 +12,26 @@ const html = await readFile(new URL('../submit/index.html', import.meta.url), 'u
 const source = (await readFile(new URL('../submit/app.mjs', import.meta.url), 'utf8')).replace(/^import .*;\r?\n/gm, '').replace(/initialize\(\);\s*$/, 'this.ready = initialize();');
 function element() {
   return { hidden: false, disabled: false, checked: false, value: '', textContent: '', dataset: {}, children: [], firstChild: { textContent: '' }, listeners: {},
-    classList: { toggle() {}, remove() {} }, add() {}, focus() {}, removeAttribute() {},
+    classList: { toggle() {}, remove() {} }, add() {}, focus() {}, removeAttribute() {}, setAttribute(name, value) { this[name] = value; },
     append(...items) { this.children.push(...items); }, replaceChildren() { this.children = []; },
     addEventListener(name, handler) { this.listeners[name] = handler; },
   };
 }
 function services() {
   const store = new Map(), uploaded = new Set(), counts = new Map();
-  return { store, uploaded, counts, files: [], phase: 'awaiting_upload', failOnce: true, finalizations: 0, admission: { busy: false }, preparations: 0, cancellations: 0,
+  return { store, uploaded, counts, files: [], siteFiles: [], treeSha: null, deletions: [], phase: 'awaiting_upload', failOnce: true, finalizations: 0, admission: { busy: false }, preparations: 0, cancellations: 0,
     async fetch(url, options = {}) {
       const action = new URL(url, 'http://localhost').searchParams.get('action');
       const body = JSON.parse(options.body || '{}'); let data;
       if (action === 'config') data = { enabled: true, admission: this.admission };
+      else if (action === 'tree') data = { treeSha: this.treeSha, files: this.siteFiles };
       else if (action === 'prepare') {
         this.preparations++;
         if (this.admission.busy) return Response.json({ error: '다른 팀이 제출 중입니다.' }, { status: 423 });
-        this.files = body.files; data = { id: 'sample', pathname: 'submissions/sample/files/', ticket: 'test-only', expires: Date.now() + 86400000 };
+        this.files = body.files; this.deletions = body.deletions; this.baseTreeSha = body.baseTreeSha; data = { id: 'sample', pathname: 'submissions/sample/files/', ticket: 'test-only', expires: Date.now() + 86400000 };
       }
       else if (action === 'confirm-file') data = { uploaded: uploaded.has(body.index) };
-      else if (action === 'status') data = { id: 'sample', teamId: 'ilkko', slug: 'ilkko', mode: 'folder', phase: this.phase, merged: this.merged, message: this.message, files: this.files, uploaded: [...uploaded] };
+      else if (action === 'status') data = { id: 'sample', teamId: 'ilkko', slug: 'ilkko', mode: 'folder', phase: this.phase, merged: this.merged, message: this.message, files: this.files, deletions: this.deletions, baseTreeSha: this.baseTreeSha, uploaded: [...uploaded] };
       else if (action === 'finalize') { assert.equal(uploaded.size, this.files.length); this.finalizations++; this.phase = 'submitted'; data = { accepted: true }; }
       else if (action === 'cancel') { this.cancellations++; data = { cancelled: true }; }
       else throw new Error(`Unexpected action ${action}`);
@@ -50,7 +51,7 @@ async function controller(server) {
   const context = vm.createContext({
     document: { getElementById: get, createElement: element }, window: { addEventListener() {} },
     localStorage: { getItem: key => server.store.get(key) || null, setItem: (key, value) => server.store.set(key, value), removeItem: key => server.store.delete(key) },
-    __TEAMS__: teams, Option: function () {}, initBotId() {}, folderSelection, sameManifest,
+    __TEAMS__: teams, Option: function () {}, initBotId() {}, folderSelection, validateFiles, applyFileChanges, ignoredFile,
     crypto: webcrypto, AbortController, AbortSignal, setTimeout, setInterval() {}, fetch: server.fetch.bind(server), upload: server.upload.bind(server),
   });
   vm.runInContext(source, context); await context.ready;
@@ -145,4 +146,69 @@ test('a restored merge failure shows the preserved receipt without resubmitting'
   assert.equal(next.get('status-title').textContent, '접수 완료 · 자동 반영 확인 필요');
   assert.match(next.get('status-description').textContent, /PR #12/);
   assert.equal(next.get('new-submission').hidden, false); assert.equal(server.finalizations, 0);
+});
+
+test('file manager navigates folders and stages new files at the current path without deleting old files', async () => {
+  const server = services(); server.siteFiles = [{ path: 'index.html', size: 2 }, { path: 'images/old.svg', size: 6 }];
+  const ui = await controller(server); ui.get('team').value = 'ilkko'; await ui.event('team', 'change');
+  const folderRow = ui.get('directory-list').children.find(row => row.children[0].textContent.includes('images'));
+  await folderRow.children[0].listeners.click();
+  ui.get('single-files').files = [new File(['<svg/>'], 'new.svg')]; await ui.event('single-files', 'change');
+  server.failOnce = false; await ui.event('upload-button', 'click');
+  assert.deepEqual(server.files.map(file => file.path), ['images/new.svg']);
+  assert.deepEqual(server.deletions, []);
+  assert.match(ui.get('site-usage').textContent, /3개/);
+});
+
+test('folder deletion is staged, can be undone, and only applies after explicit confirmation', async () => {
+  const server = services(); server.siteFiles = [{ path: 'index.html', size: 2 }, { path: 'images/old.svg', size: 6 }];
+  const ui = await controller(server); ui.get('team').value = 'ilkko'; await ui.event('team', 'change');
+  const requestDelete = async () => {
+    const row = ui.get('directory-list').children.find(row => row.children[0].textContent.includes('images'));
+    await row.children[2].listeners.click(); await ui.event('confirm-delete', 'click');
+  };
+  await requestDelete(); assert.equal(server.preparations, 0); assert.equal(server.finalizations, 0);
+  await ui.get('deletion-list').children[0].children[1].listeners.click();
+  assert.equal(ui.get('deletion-panel').hidden, true);
+  await requestDelete(); ui.get('confirm').checked = true; await ui.event('confirm', 'change');
+  assert.equal(ui.get('submit-button').disabled, false);
+  await ui.event('submission-form', 'submit');
+  assert.deepEqual(server.deletions, ['images/old.svg']); assert.equal(server.files.length, 0); assert.equal(server.finalizations, 1);
+});
+
+test('new folders accept files and an index deletion blocks final reflection', async () => {
+  const server = services(); server.siteFiles = [{ path: 'index.html', size: 2 }];
+  const ui = await controller(server); ui.get('team').value = 'ilkko'; await ui.event('team', 'change');
+  ui.get('folder-name').value = 'assets'; await ui.event('create-folder', 'click');
+  ui.get('single-files').files = [new File(['x'], 'new.svg')]; await ui.event('single-files', 'change');
+  assert.equal(ui.get('file-list').children[0].children[0].textContent, 'assets/new.svg');
+  await ui.get('folder-breadcrumbs').children[0].listeners.click();
+  const index = ui.get('directory-list').children.find(row => row.children[0].textContent === 'index.html');
+  await index.children[2].listeners.click(); await ui.event('confirm-delete', 'click');
+  assert.equal(ui.get('upload-button').disabled, true); assert.match(ui.get('change-warning').textContent, /index.html/);
+});
+
+test('switching teams clears an unconfirmed deletion instead of applying it to the next team', async () => {
+  const server = services(); server.siteFiles = [{ path: 'index.html', size: 2 }, { path: 'old.svg', size: 2 }];
+  const ui = await controller(server); ui.get('team').value = 'ilkko'; await ui.event('team', 'change');
+  const row = ui.get('directory-list').children.find(row => row.children[0].textContent === 'old.svg');
+  await row.children[2].listeners.click();
+  assert.equal(ui.get('delete-confirmation').hidden, false);
+  ui.get('team').value = 'curo'; await ui.event('team', 'change');
+  assert.equal(ui.get('delete-confirmation').hidden, true);
+  await ui.event('confirm-delete', 'click');
+  assert.equal(ui.get('deletion-panel').hidden, true);
+  assert.equal(ui.get('submit-button').disabled, true);
+});
+
+test('discarding an edit reloads current files without uploading or deleting anything', async () => {
+  const server = services(); server.siteFiles = [{ path: 'index.html', size: 2 }];
+  const ui = await controller(server); await select(ui);
+  assert.equal(ui.get('discard-changes').disabled, false);
+  server.siteFiles.push({ path: 'newer.svg', size: 2 });
+  await ui.event('discard-changes', 'click');
+  assert.equal(ui.get('file-preview').hidden, true);
+  assert.equal(ui.get('submit-button').disabled, true);
+  assert.ok(ui.get('directory-list').children.some(row => row.children[0].textContent === 'newer.svg'));
+  assert.equal(server.preparations, 0); assert.equal(server.cancellations, 0); assert.equal(server.finalizations, 0);
 });

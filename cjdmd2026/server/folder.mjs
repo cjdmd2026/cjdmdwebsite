@@ -81,8 +81,8 @@ export async function folderArchive(submission, state) {
     const file = state.files[index];
     const verified = (await readJson(markerPath(submission.id, index)))?.data;
     if (!verified || verified.sha256 !== file.sha256 || verified.size !== file.size || !/^[a-f0-9]{40}$/.test(verified.gitSha)) throw new SubmissionError('파일 검증 기록이 없습니다. 담당자에게 접수 번호를 알려주세요.');
-    files[index] = { path: file.path, gitSha: verified.gitSha, load: () => readVerifiedContent(filePath(submission.id, index), file) };
+    files[index] = { path: file.path, size: file.size, gitSha: verified.gitSha, load: () => readVerifiedContent(filePath(submission.id, index), file) };
   }
   for (let i = 0; i < files.length; i += 8) await Promise.all(Array.from({ length: Math.min(8, files.length - i) }, (_, offset) => prepare(i + offset)));
-  return { files, bytes: state.totalBytes };
+  return { files, bytes: state.totalBytes, deletions: state.deletions || [], baseTreeSha: state.baseTreeSha };
 }

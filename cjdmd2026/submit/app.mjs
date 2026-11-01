@@ -1,6 +1,6 @@
 import { upload } from '@vercel/blob/client';
 import { initBotId } from 'botid/client/core';
-import { folderSelection, sameManifest } from './files.mjs';
+import { folderSelection, validateFiles, applyFileChanges, ignoredFile } from './files.mjs';
 import './header.mjs';
 
 const teams = __TEAMS__;
@@ -12,9 +12,12 @@ const receiptKey = 'dmd2026-folder-receipt';
 let entries = [], folderName = '', receipt = null, enabled = false, busy = false;
 let stage = 'draft', polling = false, paused = false, controller;
 let admissionState = { busy: false }, refreshing = false, heartbeatPending = false;
+let siteFiles = [], siteTreeSha = null, treeLoaded = false, directory = '', deletions = new Set(), draftFolders = new Set(), pendingRemoval = null;
+let managerButtons = [];
 const rows = new Map();
 const selectedTeam = () => teams.find(team => team.id === teamSelect.value);
-const allUploaded = () => entries.length > 0 && entries.every(entry => entry.state === 'uploaded');
+const allUploaded = () => entries.every(entry => entry.state === 'uploaded');
+const hasChanges = () => entries.length > 0 || deletions.size > 0;
 const sizeLabel = bytes => bytes < 1024 ** 2 ? `${(bytes / 1024).toFixed(1)} KiB` : `${(bytes / 1024 ** 2).toFixed(1)} MiB`;
 const manifest = () => entries.map(({ path, size, sha256 }) => ({ path, size, sha256 }));
 const authorization = () => ({ Authorization: `Bearer ${receipt.ticket}` });
@@ -27,11 +30,94 @@ function controls() {
   byId('remove-file').hidden = Boolean(receipt);
   const pending = entries.filter(entry => entry.state !== 'uploaded');
   const waiting = admissionState.busy && !receipt;
-  byId('upload-button').disabled = !enabled || waiting || busy || stage !== 'draft' || !selectedTeam() || !pending.length || pending.some(entry => !entry.file);
-  byId('upload-button').textContent = waiting ? '다른 팀 제출 완료 후 업로드 가능' : allUploaded() ? '모든 파일 업로드 완료' : entries.some(entry => entry.state === 'failed') ? '실패한 파일 다시 업로드 ↑' : receipt ? '남은 파일 이어서 업로드 ↑' : '업로드 시작 ↑';
-  byId('submit-button').disabled = !enabled || busy || stage !== 'draft' || !receipt || !allUploaded() || !byId('confirm').checked;
+  let invalid = '';
+  if (treeLoaded && hasChanges()) { try { applyFileChanges(siteFiles, entries, [...deletions]); } catch (error) { invalid = error.message; } }
+  if (entries.length + deletions.size > 2000) invalid = '한 번에 변경할 파일은 최대 2,000개입니다. 변경을 나눠서 반영해주세요.';
+  byId('change-warning').textContent = invalid; byId('change-warning').hidden = !invalid;
+  byId('upload-button').disabled = !enabled || !treeLoaded || Boolean(invalid) || waiting || busy || stage !== 'draft' || !selectedTeam() || !pending.some(entry => entry.file);
+  byId('upload-button').textContent = waiting ? '다른 팀 제출 완료 후 업로드 가능' : !entries.length && deletions.size ? '삭제만 변경할 때는 바로 반영할 수 있어요' : entries.length && allUploaded() ? '모든 파일 업로드 완료' : entries.some(entry => entry.state === 'failed') ? '실패한 파일 다시 업로드 ↑' : receipt ? '남은 파일 이어서 업로드 ↑' : '업로드 시작 ↑';
+  byId('submit-button').disabled = !enabled || !treeLoaded || Boolean(invalid) || waiting || busy || stage !== 'draft' || !hasChanges() || !allUploaded() || !byId('confirm').checked;
   byId('new-submission').hidden = !receipt || busy;
-  byId('new-submission').textContent = stage === 'draft' && receipt ? '업로드 취소 · 새 제출 시작 ↗' : '새 제출 시작 ↗';
+  byId('new-submission').textContent = stage === 'draft' && receipt ? '업로드 취소 · 다시 편집 ↗' : '이 팀 파일 계속 편집 ↗';
+  for (const id of ['choose-file', 'choose-files', 'choose-folder']) byId(id).disabled = !treeLoaded || busy || stage !== 'draft';
+  for (const id of ['new-folder', 'create-folder', 'confirm-delete']) byId(id).disabled = !treeLoaded || busy || stage !== 'draft' || Boolean(receipt);
+  byId('refresh-tree').disabled = busy || stage !== 'draft' || Boolean(receipt) || hasChanges();
+  byId('discard-changes').disabled = busy || stage !== 'draft' || Boolean(receipt) || (!hasChanges() && !draftFolders.size);
+  for (const { button, editing } of managerButtons) button.disabled = !treeLoaded || busy || stage !== 'draft' || (editing && Boolean(receipt));
+}
+
+function managerButton(text, action, editing = false) {
+  const button = document.createElement('button'); button.type = 'button'; button.textContent = text;
+  button.addEventListener('click', action); managerButtons.push({ button, editing }); return button;
+}
+function plannedFiles() {
+  const map = new Map(siteFiles.filter(file => !deletions.has(file.path)).map(file => [file.path, { ...file, change: '' }]));
+  for (const file of entries) map.set(file.path, { ...file, change: siteFiles.some(old => old.path === file.path) ? '교체 예정' : '추가 예정' });
+  return [...map.values()];
+}
+function renderManager() {
+  managerButtons = [];
+  const breadcrumb = byId('folder-breadcrumbs'); breadcrumb.replaceChildren();
+  breadcrumb.append(managerButton(selectedTeam()?.name || '팀 폴더', () => { directory = ''; renderManager(); }));
+  let prefix = '';
+  for (const part of directory.split('/').filter(Boolean)) {
+    prefix += `${part}/`; const destination = prefix;
+    const separator = document.createElement('span'); separator.textContent = ' / '; breadcrumb.append(separator, managerButton(part, () => { directory = destination; renderManager(); }));
+  }
+  const files = plannedFiles(), visible = new Map();
+  for (const file of files) {
+    if (!file.path.startsWith(directory)) continue;
+    const relative = file.path.slice(directory.length), slash = relative.indexOf('/');
+    if (slash >= 0) { const name = relative.slice(0, slash); visible.set(`${name}/`, { path: `${directory}${name}/`, name, folder: true }); }
+    else visible.set(relative, { ...file, name: relative, folder: false });
+  }
+  for (const folder of draftFolders) {
+    if (folder.startsWith(directory) && folder !== directory) {
+      const name = folder.slice(directory.length).split('/')[0]; visible.set(`${name}/`, { path: `${directory}${name}/`, name, folder: true });
+    }
+  }
+  const list = byId('directory-list'); list.replaceChildren();
+  for (const item of [...visible.values()].sort((a, b) => Number(b.folder) - Number(a.folder) || a.name.localeCompare(b.name, 'ko'))) {
+    const row = document.createElement('li'); row.className = 'directory-row';
+    const name = item.folder ? managerButton(`▱ ${item.name}`, () => { directory = item.path; renderManager(); }) : document.createElement('span');
+    if (!item.folder) name.textContent = item.name;
+    name.className = 'directory-name';
+    const detail = document.createElement('span'); detail.className = 'directory-detail'; detail.textContent = item.folder ? '폴더' : item.change || sizeLabel(item.size);
+    const remove = managerButton('삭제', () => {
+      pendingRemoval = item;
+      const count = files.filter(file => item.folder ? file.path.startsWith(item.path) : file.path === item.path).length;
+      byId('delete-description').textContent = `${item.path} · ${count}개 파일을 삭제 예정에 추가합니다. ‘변경사항 반영’ 전에는 실제 파일이 삭제되지 않습니다.`;
+      byId('delete-confirmation').hidden = false;
+    }, true);
+    remove.className = 'directory-delete'; remove.setAttribute('aria-label', `${item.path} 삭제`);
+    row.append(name, detail, remove); list.append(row);
+  }
+  byId('tree-message').hidden = treeLoaded && visible.size > 0;
+  if (treeLoaded) byId('tree-message').textContent = '이 폴더에 파일이 없습니다. 파일을 추가해주세요.';
+  byId('site-usage').textContent = `반영 후 ${files.length.toLocaleString()}개 · ${sizeLabel(files.reduce((sum, file) => sum + file.size, 0))} / 500 MiB`;
+  const added = entries.filter(file => !siteFiles.some(old => old.path === file.path)).length;
+  byId('change-summary').textContent = hasChanges() ? `추가 ${added}개 · 교체 ${entries.length - added}개 · 삭제 ${deletions.size}개` : '아직 변경한 파일이 없습니다.';
+  byId('deletion-panel').hidden = !deletions.size; byId('deletion-list').replaceChildren();
+  for (const path of deletions) {
+    const row = document.createElement('li'), label = document.createElement('span'); label.textContent = path;
+    row.append(label, managerButton('삭제 취소', () => { deletions.delete(path); byId('confirm').checked = false; renderManager(); }, true)); byId('deletion-list').append(row);
+  }
+  controls();
+}
+async function loadTree() {
+  const team = selectedTeam();
+  treeLoaded = false; siteFiles = []; siteTreeSha = null; entries = []; deletions = new Set(); draftFolders = new Set(); directory = ''; pendingRemoval = null;
+  byId('delete-confirmation').hidden = true; byId('folder-create').hidden = true; byId('folder-name').value = ''; byId('confirm').checked = false;
+  renderFiles();
+  if (!team) { byId('tree-message').textContent = '팀을 선택하면 저장된 폴더와 파일이 표시됩니다.'; return; }
+  treeLoaded = false; byId('tree-message').hidden = false; byId('tree-message').textContent = '저장된 파일을 불러오는 중입니다.';
+  setBusy(true);
+  try {
+    const snapshot = await api(`tree&teamId=${encodeURIComponent(team.id)}`);
+    siteFiles = snapshot.files; siteTreeSha = snapshot.treeSha; treeLoaded = true;
+    renderFiles(); renderManager();
+  } catch (error) { byId('tree-message').textContent = '파일 목록을 불러오지 못했습니다.'; showError(error.message); }
+  finally { setBusy(false); byId('refresh-tree').disabled = Boolean(receipt) || stage !== 'draft'; }
 }
 function renderAdmission() {
   byId('admission-notice').hidden = !enabled;
@@ -94,9 +180,9 @@ function updateRow(index) {
 }
 function renderFiles() {
   byId('file-preview').hidden = !entries.length; byId('file-list-panel').hidden = !entries.length;
-  byId('file-name').textContent = folderName || '이전 제출 폴더';
+  byId('file-name').textContent = '이번에 추가·교체할 파일';
   byId('file-size').textContent = `${entries.length}개 파일 · ${sizeLabel(entries.reduce((sum, entry) => sum + entry.size, 0))}`;
-  byId('choose-file').firstChild.textContent = receipt ? '같은 폴더 다시 선택 ' : entries.length ? '폴더 변경 ' : '폴더 선택 ';
+  byId('choose-file').firstChild.textContent = receipt ? '사이트 폴더 다시 선택 ' : '사이트 폴더 가져오기 ';
   byId('file-list').replaceChildren(); rows.clear();
   entries.forEach((entry, index) => {
     const li = document.createElement('li'); li.className = 'file-row';
@@ -107,28 +193,44 @@ function renderFiles() {
     li.append(path, size, state, error); byId('file-list').append(li);
     rows.set(index, { li, state, error }); updateRow(index);
   });
-  controls();
+  renderManager();
 }
-async function chooseFolder(files) {
-  if (busy || !files.length || stage !== 'draft') return;
+async function chooseFolder(files, kind = 'site') {
+  if (busy || !treeLoaded || !files.length || stage !== 'draft') return;
   clearError(); setBusy(true);
   try {
-    const selected = folderSelection(files);
+    let selected;
+    if (kind === 'files') {
+      const picks = Array.from(files).map(file => ({ path: directory + file.name, size: file.size, file })).filter(file => !ignoredFile(file.path));
+      const checked = validateFiles(picks, { hashes: false, requireIndex: false });
+      selected = { name: directory || '팀 폴더', files: checked.files.map((file, i) => ({ ...file, file: picks[i].file })) };
+    } else selected = folderSelection(files, { prefix: kind === 'folder' ? directory : '', keepRoot: kind === 'folder', requireIndex: false });
     for (let i = 0; i < selected.files.length; i++) {
       const entry = selected.files[i];
       showStatus('폴더를 확인하고 있어요.', `${entry.path}\n파일 ${i + 1} / ${selected.files.length}개 확인 중`, i / selected.files.length * 100);
       const digest = await crypto.subtle.digest('SHA-256', await entry.file.arrayBuffer());
       entry.sha256 = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
     }
-    if (receipt && !sameManifest(selected.files, manifest())) throw new Error('이전 업로드와 파일 내용이 다릅니다. 원래 폴더를 선택하거나 ‘새 제출 시작’을 눌러 수정본을 제출해주세요.');
-    entries = selected.files.map((entry, i) => ({ ...entry, state: receipt && entries[i]?.state === 'uploaded' ? 'uploaded' : 'pending' }));
+    if (receipt) {
+      const original = new Map(entries.map(file => [file.path, file]));
+      if (selected.files.some(file => !original.has(file.path) || original.get(file.path).size !== file.size || original.get(file.path).sha256 !== file.sha256)) throw new Error('이전 업로드와 파일 내용이 다릅니다. 원래 파일을 선택하거나 업로드를 취소한 뒤 다시 편집해주세요.');
+      const picked = new Map(selected.files.map(file => [file.path, file]));
+      entries = entries.map(file => picked.has(file.path) ? { ...file, file: picked.get(file.path).file } : file);
+    } else {
+      const next = new Map(entries.map(file => [file.path, file]));
+      for (const file of selected.files) next.set(file.path, { ...file, state: 'pending' });
+      const nextDeletes = new Set(deletions); for (const file of selected.files) nextDeletes.delete(file.path);
+      applyFileChanges(siteFiles, [...next.values()], [...nextDeletes], { requireIndex: false });
+      if (next.size + nextDeletes.size > 2000) throw new Error('한 번에 변경할 파일은 최대 2,000개입니다. 변경을 나눠서 반영해주세요.');
+      entries = [...next.values()].sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0); deletions = nextDeletes;
+    }
     folderName = selected.name; byId('confirm').checked = false; renderFiles();
     if (receipt) uploadSummary(); else status.hidden = true;
   } catch (error) {
     if (receipt) uploadSummary(); else status.hidden = true;
     showError(error.message || '폴더를 읽지 못했습니다. 다시 선택해주세요.');
   }
-  finally { input.value = ''; setBusy(false); }
+  finally { input.value = ''; byId('nested-folder-files').value = ''; byId('single-files').value = ''; setBusy(false); }
 }
 async function api(action, options = {}) {
   const headers = { ...options.headers };
@@ -144,7 +246,13 @@ const confirmFile = index => post('confirm-file', { index });
 function uploadSummary() {
   const done = entries.filter(entry => entry.state === 'uploaded').length;
   const failed = entries.filter(entry => entry.state === 'failed').length;
-  showStatus(allUploaded() ? '업로드 완료, 마지막 확인만 남았어요.' : '남은 파일을 이어서 올려주세요.', allUploaded() ? '팀과 전체 파일을 확인한 뒤 ‘제출 완료’를 눌러주세요. 아직 최종 제출 전입니다. 30분 이상 진행이 없으면 임시 파일이 정리됩니다.' : `${done} / ${entries.length}개 완료${failed ? ` · ${failed}개 실패` : ''}\n완료된 파일은 다시 올리지 않습니다. 중단 후 30분 안에 같은 브라우저에서 같은 폴더를 다시 선택해주세요.`, done / entries.length * 100);
+  showStatus(allUploaded() ? '업로드 완료, 마지막 확인만 남았어요.' : '남은 파일을 이어서 올려주세요.', allUploaded() ? '추가·교체·삭제 목록을 확인한 뒤 ‘변경사항 반영’을 눌러주세요. 아직 사이트에 반영되지 않았습니다. 30분 이상 진행이 없으면 임시 파일이 정리됩니다.' : `${done} / ${entries.length}개 완료${failed ? ` · ${failed}개 실패` : ''}\n완료된 파일은 다시 올리지 않습니다. 중단 후 30분 안에 같은 브라우저에서 남은 파일을 같은 위치에 다시 선택해주세요.`, entries.length ? done / entries.length * 100 : 100);
+}
+async function prepareReceipt() {
+  if (receipt) return;
+  const prepared = await api('prepare', { method: 'POST', body: JSON.stringify({ teamId: selectedTeam().id, files: manifest(), deletions: [...deletions], baseTreeSha: siteTreeSha }) });
+  saveReceipt({ ...prepared, teamId: selectedTeam().id, folderName });
+  admissionState = { busy: true, teamId: selectedTeam().id }; renderAdmission();
 }
 async function uploadFiles() {
   if (byId('upload-button').disabled) return;
@@ -152,14 +260,10 @@ async function uploadFiles() {
   byId('pause-upload').hidden = false; byId('pause-upload').disabled = false; byId('retry-status').hidden = true;
   showStatus('업로드를 준비하고 있어요.', '파일 목록을 확인합니다.', 0); status.focus();
   try {
-    if (!receipt) {
-      const prepared = await api('prepare', { method: 'POST', body: JSON.stringify({ teamId: selectedTeam().id, files: manifest() }) });
-      saveReceipt({ ...prepared, teamId: selectedTeam().id, folderName });
-      admissionState = { busy: true, teamId: selectedTeam().id }; renderAdmission();
-    }
+    await prepareReceipt();
     for (let index = 0; index < entries.length; index++) {
       if (paused) break;
-      const entry = entries[index]; if (entry.state === 'uploaded') continue;
+      const entry = entries[index]; if (entry.state === 'uploaded' || !entry.file) continue;
       entry.error = ''; entry.state = 'verifying'; updateRow(index);
       try {
         // Reconcile a lost success response before uploading the same file again.
@@ -207,15 +311,16 @@ async function pollStatus() {
       if (result.phase === 'awaiting_upload' && result.mode === 'folder') {
         const uploaded = new Set(result.uploaded);
         entries = result.files.map((file, i) => ({ ...file, file: entries[i]?.sha256 === file.sha256 && entries[i]?.path === file.path ? entries[i].file : undefined, state: uploaded.has(i) ? 'uploaded' : 'pending' }));
+        deletions = new Set(result.deletions || []); siteTreeSha = result.baseTreeSha ?? siteTreeSha;
         stage = 'draft'; setBusy(false); renderFiles(); renderAdmission(); uploadSummary(); return;
       }
       if (['submitted', 'merge_failed', 'failed', 'cancelled'].includes(result.phase)) {
         stage = 'done'; setBusy(false); const success = result.phase === 'submitted';
         status.classList.toggle('is-complete', success);
         byId('status-kicker').textContent = success ? 'SUCCESSFULLY SUBMITTED' : 'SUBMISSION NEEDS ATTENTION';
-        const delivery = result.merged ? '웹사이트 파일 저장이 완료되었습니다. 배포가 끝나면 아래 주소에서 확인할 수 있어요. 반영까지 몇 분 걸릴 수 있습니다.' : '웹사이트가 접수되었습니다. 이 접수는 자동 반영 전 방식으로 처리되어 담당자의 확인이 필요합니다.';
+        const delivery = result.unchanged ? '파일이 현재 저장된 내용과 같아 기존 웹사이트를 유지합니다.' : result.merged ? '웹사이트 파일 저장이 완료되었습니다. 배포가 끝나면 아래 주소에서 확인할 수 있어요. 반영까지 몇 분 걸릴 수 있습니다.' : '웹사이트가 접수되었습니다. 이 접수는 자동 반영 전 방식으로 처리되어 담당자의 확인이 필요합니다.';
         showStatus(success ? '제출이 완료되었습니다.' : result.phase === 'merge_failed' ? '접수 완료 · 자동 반영 확인 필요' : '파일을 확인해주세요.', success ? `${teams.find(team => team.id === result.teamId)?.name || ''} 팀의 ${delivery}\n\n접수 번호  ${result.id.slice(0, 8)}\n연결될 주소  dmd2026.com/${result.slug}/` : `${result.message || '제출 처리에 실패했습니다.'}\n접수 번호  ${result.id.slice(0, 8)}`, 100);
-        byId('upload-progress').hidden = !success; byId('progress-label').textContent = success ? result.merged ? '저장 완료 · 배포 대기' : '접수 완료' : result.phase === 'merge_failed' ? '자동 반영 확인 필요' : '제출 미완료'; await refreshAdmission(); return;
+        byId('upload-progress').hidden = !success; byId('progress-label').textContent = success ? result.unchanged ? '변경 없음' : result.merged ? '저장 완료 · 배포 대기' : '접수 완료' : result.phase === 'merge_failed' ? '자동 반영 확인 필요' : '제출 미완료'; await refreshAdmission(); return;
       }
       stage = 'processing'; setBusy(true);
       showStatus(result.phase === 'merging' ? '웹사이트에 자동 반영하고 있어요.' : '웹사이트를 전달하고 있어요.', `파일 ${result.completedFiles || 0} / ${result.totalFiles || '…'}개 처리 중\n접수 번호  ${result.id.slice(0, 8)}`);
@@ -227,10 +332,40 @@ async function pollStatus() {
     setBusy(false); showStatus('접수 상태를 다시 확인해주세요.', `${error.message}\n접수 번호  ${receipt?.id?.slice(0, 8) || ''}`); byId('retry-status').hidden = false;
   } finally { polling = false; controls(); }
 }
-teamSelect.addEventListener('change', renderTeam);
+teamSelect.addEventListener('change', async () => { renderTeam(); if (!receipt) { clearError(); await loadTree(); } });
 byId('confirm').addEventListener('change', controls);
 byId('choose-file').addEventListener('click', () => input.click());
 input.addEventListener('change', () => chooseFolder(input.files));
+byId('choose-files').addEventListener('click', () => byId('single-files').click());
+byId('choose-folder').addEventListener('click', () => byId('nested-folder-files').click());
+byId('single-files').addEventListener('change', () => chooseFolder(byId('single-files').files, 'files'));
+byId('nested-folder-files').addEventListener('change', () => chooseFolder(byId('nested-folder-files').files, 'folder'));
+byId('refresh-tree').addEventListener('click', async () => { if (!receipt && !hasChanges()) { clearError(); await loadTree(); } });
+byId('discard-changes').addEventListener('click', async () => { if (!busy && !receipt && stage === 'draft') { clearError(); await loadTree(); } });
+byId('new-folder').addEventListener('click', () => { byId('folder-create').hidden = false; byId('folder-name').focus(); });
+byId('folder-name').addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); byId('create-folder').click(); } });
+byId('cancel-folder').addEventListener('click', () => { byId('folder-create').hidden = true; byId('folder-name').value = ''; });
+byId('create-folder').addEventListener('click', () => {
+  if (busy || receipt || stage !== 'draft') return;
+  try {
+    const name = byId('folder-name').value.trim().normalize('NFC');
+    if (!name || name.includes('/')) throw new Error('폴더 이름 하나를 입력해주세요.');
+    const path = `${directory}${name}/`;
+    validateFiles([{ path: `${path}placeholder.txt`, size: 0 }], { hashes: false, requireIndex: false });
+    const lower = path.toLowerCase();
+    if (plannedFiles().some(file => file.path.toLowerCase() === lower.slice(0, -1) || file.path.toLowerCase().startsWith(lower)) || [...draftFolders].some(folder => folder.toLowerCase() === lower)) throw new Error('같은 이름의 파일 또는 폴더가 있습니다.');
+    draftFolders.add(path); directory = path; byId('folder-create').hidden = true; byId('folder-name').value = ''; clearError(); renderManager();
+  } catch (error) { showError(error.message); }
+});
+byId('cancel-delete').addEventListener('click', () => { pendingRemoval = null; byId('delete-confirmation').hidden = true; });
+byId('confirm-delete').addEventListener('click', () => {
+  if (!pendingRemoval || busy || receipt || stage !== 'draft') return;
+  const selected = pendingRemoval, matches = path => selected.folder ? path.startsWith(selected.path) : path === selected.path;
+  for (const file of siteFiles) if (matches(file.path)) deletions.add(file.path);
+  entries = entries.filter(file => !matches(file.path));
+  draftFolders = new Set([...draftFolders].filter(path => !matches(path)));
+  pendingRemoval = null; byId('delete-confirmation').hidden = true; byId('confirm').checked = false; renderFiles();
+});
 byId('remove-file').addEventListener('click', () => { entries = []; folderName = ''; input.value = ''; clearError(); renderFiles(); });
 byId('upload-button').addEventListener('click', uploadFiles);
 byId('pause-upload').addEventListener('click', () => { paused = true; controller?.abort(); byId('pause-upload').disabled = true; });
@@ -240,7 +375,11 @@ byId('submission-form').addEventListener('submit', async event => {
   event.preventDefault(); if (byId('submit-button').disabled) return;
   clearError(); stage = 'processing'; setBusy(true);
   showStatus('최종 제출을 확인하고 있어요.', '모든 파일의 업로드를 확인합니다.'); status.focus();
-  try { await post('finalize'); } catch (error) { showError(error.message); }
+  try { await prepareReceipt(); await post('finalize'); }
+  catch (error) {
+    showError(error.message);
+    if (!receipt) { stage = 'draft'; setBusy(false); status.hidden = true; if (error.status === 423) await refreshAdmission(); return; }
+  }
   // Reconcile a lost finalize response from durable state, never assume success.
   await pollStatus();
 });
@@ -252,9 +391,10 @@ byId('new-submission').addEventListener('click', async () => {
     catch (error) { if (error.status !== 401) { showError(error.message); setBusy(false); return; } }
   }
   saveReceipt(null); entries = []; folderName = ''; input.value = ''; stage = 'draft';
+  deletions = new Set(); draftFolders = new Set(); pendingRemoval = null; byId('delete-confirmation').hidden = true;
   status.hidden = true; status.classList.remove('is-complete');
   byId('status-kicker').textContent = 'SUBMITTING YOUR WORK'; byId('retry-status').hidden = true;
-  byId('confirm').checked = false; clearError(); setBusy(false); renderFiles(); await refreshAdmission(); teamSelect.focus();
+  byId('confirm').checked = false; clearError(); setBusy(false); renderFiles(); await refreshAdmission(); await loadTree(); teamSelect.focus();
 });
 window.addEventListener('beforeunload', event => { if (busy && stage === 'draft') { event.preventDefault(); event.returnValue = ''; } });
 async function initialize() {
@@ -263,10 +403,10 @@ async function initialize() {
   try {
     const saved = JSON.parse(localStorage.getItem(receiptKey));
     if (saved?.ticket && saved?.id && saved.expires > Date.now()) {
-      if (enabled) { receipt = saved; folderName = saved.folderName; teamSelect.value = saved.teamId; renderTeam(); stage = 'processing'; setBusy(true); await pollStatus(); }
+      if (enabled) { receipt = saved; folderName = saved.folderName; teamSelect.value = saved.teamId; renderTeam(); await loadTree(); stage = 'processing'; setBusy(true); await pollStatus(); }
     } else if (saved) { saveReceipt(null); showError('이전 업로드의 24시간 유효기간이 지났습니다. 폴더를 선택해 새로 제출해주세요.'); }
   } catch { /* Browser storage is optional. */ }
-  controls();
+  renderManager();
 }
 setInterval(async () => {
   if (document.hidden) return;

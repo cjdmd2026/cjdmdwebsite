@@ -18,7 +18,7 @@ test('folder selection preserves nested paths, removes only the selected root an
 });
 test('folder manifests accept projects above the former ZIP cap but enforce individual and total limits', () => {
   const big = [files[0], ...Array.from({ length: 4 }, (_, i) => ({ path: `video${i}.mp4`, size: 70 * 1024 ** 2, sha256: hash('video') }))];
-  assert.equal(validateFolderSubmission({ teamId: 'ilkko', files: big }).totalFiles, 5);
+  assert.equal(validateFolderSubmission({ teamId: 'ilkko', files: big, baseTreeSha: null }).totalFiles, 5);
   assert.throws(() => validateFiles([...files, { path: 'huge.mp4', size: folderLimits.fileBytes + 1, sha256: hash('x') }]));
   assert.throws(() => validateFiles(big, { policy: { ...folderLimits, totalBytes: 200 } }));
   assert.throws(() => validateFiles(files, { policy: { ...folderLimits, files: 1 } }));

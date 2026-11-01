@@ -28,8 +28,13 @@ export function validateFolderSubmission(value) {
   const team = findTeam(value?.teamId);
   if (!team) throw new SubmissionError('목록에서 제출할 팀을 선택해주세요.');
   try {
-    const checked = validateFiles(value.files);
-    return { mode: 'folder', teamId: team.id, slug: team.slug, files: checked.files, totalBytes: checked.bytes, totalFiles: checked.files.length };
+    const checked = validateFiles(value.files, { requireIndex: false, allowEmpty: true });
+    const deletions = value.deletions || [];
+    if (!Array.isArray(deletions) || deletions.some(path => typeof path !== 'string' || path.length > 240) || new Set(deletions).size !== deletions.length || checked.files.length + deletions.length > limits.files) throw new Error('한 번에 변경할 파일은 최대 2,000개입니다. 변경을 나눠서 반영해주세요.');
+    if (!checked.files.length && !deletions.length) throw new Error('추가하거나 삭제할 파일을 선택해주세요.');
+    if (checked.files.some(file => deletions.includes(file.path))) throw new Error('같은 파일을 추가와 삭제에 동시에 지정할 수 없습니다.');
+    if (value.baseTreeSha !== null && !/^[a-f0-9]{40}$/.test(value.baseTreeSha || '')) throw new Error('팀 파일 목록을 불러온 뒤 다시 시도해주세요.');
+    return { mode: 'folder', teamId: team.id, slug: team.slug, files: checked.files, deletions, baseTreeSha: value.baseTreeSha, totalBytes: checked.bytes, totalFiles: checked.files.length };
   } catch (error) { throw new SubmissionError(error.message); }
 }
 export function signTicket(payload, secret = process.env.SUBMISSION_SIGNING_SECRET) {

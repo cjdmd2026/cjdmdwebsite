@@ -31,6 +31,31 @@
 * {
   box-sizing: border-box;
 }
+.file-manager { margin: 24px 0 12px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #fff; }
+.manager-top, .manager-toolbar, .manager-footer { display: flex; align-items: center; gap: 10px; padding: 12px 16px; flex-wrap: wrap; }
+.manager-top { justify-content: space-between; background: #f5f5f3; border-bottom: 1px solid var(--line); }
+.manager-top nav { display: flex; flex-wrap: wrap; gap: 4px; overflow-wrap: anywhere; }
+.manager-top nav button { border: 0; background: transparent; padding: 2px; color: var(--ink); }
+.manager-toolbar button, .manager-inline button, .manager-confirm button { background: #fff; border: 1px solid var(--line); border-radius: 4px; padding: 7px 12px; font-size: 12px; }
+.manager-toolbar button:disabled, .manager-top button:disabled { opacity: .45; }
+.manager-inline { padding: 0 16px 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12px; }
+.manager-inline input { min-width: 100px; width: 150px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 3px; }
+.manager-empty { text-align: center; color: var(--muted); padding: 32px 12px; font-size: 13px; }
+.directory-list, .deletion-list { list-style: none; margin: 0; padding: 0; max-height: 320px; overflow: auto; }
+.directory-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 12px; min-height: 44px; padding: 8px 16px; border-top: 1px solid #efeeeb; font-size: 13px; }
+.directory-name { min-width: 0; overflow-wrap: anywhere; text-align: left; }
+button.directory-name { background: none; border: 0; padding: 0; font-weight: 600; color: var(--ink); }
+.directory-detail { color: var(--muted); font-size: 11px; }
+.directory-delete { border: 0; background: transparent; padding: 4px; color: #8b4a42; font-size: 11px; }
+.directory-delete:disabled { opacity: .4; }
+.manager-footer { justify-content: space-between; border-top: 1px solid var(--line); font-size: 11px; color: var(--muted); }
+.manager-confirm { padding: 16px; border: 1px solid #c69891; border-radius: 6px; background: #fff8f6; margin: 12px 0; font-size: 13px; overflow-wrap: anywhere; }
+.manager-confirm p { margin: 0 0 10px; }
+.manager-confirm div { display: flex; gap: 8px; }
+.deletion-list li { display: flex; gap: 10px; justify-content: space-between; padding: 8px 12px; font-size: 12px; }
+.deletion-list li span { overflow-wrap: anywhere; min-width: 0; }
+.deletion-list button { flex: 0 0 auto; background: none; border: 0; text-decoration: underline; color: var(--muted); font-size: 11px; }
+@media (max-width: 600px) { .manager-top, .manager-toolbar, .manager-footer, .directory-row { padding-left: 10px; padding-right: 10px; } .directory-row { gap: 8px; } .directory-detail { max-width: 64px; } }
 body {
   margin: 0;
   padding-top: 70px;

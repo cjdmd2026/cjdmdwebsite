@@ -7,6 +7,9 @@ import { readState, writeState, limitSubmissions, takeLock, releaseLock } from '
 import { processSubmission } from '../server/process.mjs';
 import { filePath, folderFile, assertUploading, uploadedFiles, confirmFile, finalizeFolder } from '../server/folder.mjs';
 import { admission } from '../server/admission.mjs';
+import { githubClient } from '../server/github.mjs';
+import { siteSnapshot, checkSiteChanges } from '../server/site.mjs';
+import { findTeam } from '../server/teams.mjs';
 
 const json = (body, status = 200) => Response.json(body, { status, headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
 async function smallJson(request) {
@@ -19,7 +22,7 @@ async function smallJson(request) {
       const { value, done } = await reader.read();
       if (done) break;
       bytes += value.length;
-      if (bytes > 512 * 1024) { await reader.cancel(); throw new SubmissionError('요청 크기가 너무 큽니다.', 413); }
+      if (bytes > 2 * 1024 ** 2) { await reader.cancel(); throw new SubmissionError('요청 크기가 너무 큽니다.', 413); }
       chunks.push(Buffer.from(value));
     }
     return JSON.parse(Buffer.concat(chunks).toString());
@@ -35,6 +38,12 @@ export async function handleRequest(request) {
     const config = configuration();
     if (request.method === 'GET' && action === 'config') return json({ enabled: config.enabled, limits, admission: config.enabled ? await admission.availability() : { busy: false } });
     if (!config.enabled) return json({ error: '제출 기능을 준비하고 있습니다. 담당자의 안내 후 다시 방문해주세요.' }, 503);
+    if (request.method === 'GET' && action === 'tree') {
+      const team = findTeam(url.searchParams.get('teamId'));
+      if (!team) throw new SubmissionError('목록에서 팀을 선택해주세요.');
+      const snapshot = await siteSnapshot(team.id, githubClient(), config);
+      return json({ treeSha: snapshot.treeSha, files: snapshot.files.map(({ path, size }) => ({ path, size })) });
+    }
     if (request.method === 'GET' && action === 'status') {
       const submission = ticketFromRequest(request);
       const state = await readState(submission.id);
@@ -48,8 +57,8 @@ export async function handleRequest(request) {
         }
       }
       const stale = ['validating', 'saving', 'merging'].includes(state.phase) && Date.now() - state.updatedAt > 350000;
-      const folder = state.mode === 'folder' && state.phase === 'awaiting_upload' ? { files: state.files, uploaded: await uploadedFiles(submission.id) } : {};
-      return json({ ...folder, mode: state.mode, id: submission.id, teamId: submission.teamId, slug: submission.slug, phase: stale ? 'paused' : state.phase, resumeAfter: state.resumeAfter, totalFiles: state.totalFiles, completedFiles: state.completedFiles, pullNumber: state.pullNumber, merged: state.merged === true, message: state.message });
+      const folder = state.mode === 'folder' && state.phase === 'awaiting_upload' ? { files: state.files, deletions: state.deletions || [], baseTreeSha: state.baseTreeSha, uploaded: await uploadedFiles(submission.id) } : {};
+      return json({ ...folder, mode: state.mode, id: submission.id, teamId: submission.teamId, slug: submission.slug, phase: stale ? 'paused' : state.phase, resumeAfter: state.resumeAfter, totalFiles: state.totalFiles, completedFiles: state.completedFiles, pullNumber: state.pullNumber, merged: state.merged === true, unchanged: state.unchanged === true, message: state.message });
     }
     if (request.method !== 'POST') return json({ error: '지원하지 않는 요청입니다.' }, 405);
     const body = await smallJson(request);
@@ -79,6 +88,7 @@ export async function handleRequest(request) {
       if (verification.isBot) throw new SubmissionError('브라우저 확인에 실패했습니다. 페이지를 새로고침한 후 다시 시도해주세요.', 403);
       const fields = validateFolderSubmission(body);
       await limitSubmissions(ipAddress(request) || 'local');
+      checkSiteChanges(await siteSnapshot(fields.teamId, githubClient(), config), fields);
       const id = randomUUID();
       const submission = { mode: 'folder', teamId: fields.teamId, slug: fields.slug, id, pathname: `submissions/${id}/files/`, expires: Date.now() + 24 * 60 * 60 * 1000 };
       await admission.claim(submission, fields.totalBytes);

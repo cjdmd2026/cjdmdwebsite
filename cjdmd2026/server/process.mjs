@@ -29,10 +29,15 @@ export function createProcessor({ read = readState, write = writeState, lockSubm
           await write(submission.id, state);
           await gate.touch(submission);
         } });
+        if (pull.unchanged) {
+          await write(submission.id, { ...state, phase: 'submitted', merged: true, unchanged: true, checkpoint: undefined, message: undefined });
+          await gate.finish(submission).catch(() => {});
+          return;
+        }
         state = { ...state, phase: 'merging', pullNumber: pull.number, pullUrl: pull.html_url, pullHeadSha: pull.head?.sha, checkpoint: undefined };
         await write(submission.id, state);
       }
-      const merged = await merge(submission, { number: state.pullNumber, head: { sha: state.pullHeadSha } }, { github, config });
+      const merged = await merge(submission, { number: state.pullNumber, head: { sha: state.pullHeadSha }, ...(state.baseTreeSha !== undefined ? { baseTreeSha: state.baseTreeSha } : {}) }, { github, config });
       await write(submission.id, { ...state, phase: 'submitted', merged: true, mergeCommit: merged.sha, mergedAt: Date.now(), resumeAfter: undefined, message: undefined });
       // Cleanup is retried by availability/status requests if storage is unavailable.
       await gate.finish(submission).catch(() => {});

@@ -38,14 +38,14 @@
         </figure>
         <div class="guide">
           <span class="micro-label">BEFORE YOU SUBMIT</span>
-          <ul><li>첫 화면 파일은 <code>index.html</code></li><li>압축 없이 웹사이트 폴더 선택</li><li>전체 500 MiB · 최대 500개 파일</li></ul>
+          <ul><li>첫 화면 파일은 <code>index.html</code></li><li>폴더 안에서 파일 추가 · 교체 · 삭제</li><li>기존 파일 포함 500 MiB · 최대 2,000개</li></ul>
           <details><summary>파일 준비 방법 자세히 보기 <span aria-hidden="true">+</span></summary><div class="guide-detail"><p>index.html이 바로 안에 있는 웹사이트 폴더를 선택해주세요. 하위 폴더와 파일이 함께 업로드됩니다.</p><pre>웹사이트 폴더/ ← 이 폴더 선택
 ├─ index.html
 ├─ css/
 ├─ js/
 └─ images/</pre><p>이미지와 CSS 경로는 <code>./images/photo.jpg</code>처럼 상대경로를 사용해주세요. React·Vite 프로젝트는 빌드한 <code>dist</code> 폴더를 선택해주세요.</p><p>전체 500 MiB, 개별 파일은 95 MiB까지 가능합니다. 큰 영상은 용량을 줄이거나 외부 링크로 연결해주세요. <code>node_modules</code>, <code>.git</code>, 환경변수 파일과 디자인 원본은 제외해주세요.</p><p>한 번에 한 팀씩 제출합니다. 업로드가 끊겨도 30분 안에 같은 브라우저에서 같은 폴더를 다시 선택하면 완료된 파일은 건너뜁니다. 30분 이상 진행이 없으면 다음 접수 전에 임시 파일이 정리됩니다. 파일 내용을 수정했다면 새 제출을 시작해주세요.</p></div></details>
         </div>
-        <p class="review-note"><span aria-hidden="true">↳</span> 제출 완료 후 웹사이트에 자동 반영됩니다.<br>배포까지 몇 분 걸릴 수 있습니다.</p>
+        <p class="review-note"><span aria-hidden="true">↳</span> ‘변경사항 반영’을 누르면 자동 배포됩니다.<br>반영까지 몇 분 걸릴 수 있습니다.</p>
       </aside>
       <section class="submission-panel" aria-label="웹사이트 제출 양식">
         <div id="service-notice" class="service-notice" role="status" hidden></div>
@@ -59,20 +59,31 @@
               <div id="team-preview" class="team-preview" hidden><div><span class="micro-label">SELECTED TEAM</span><strong id="team-name"></strong><p id="team-members"></p></div><div class="destination"><span>연결될 주소</span><p id="team-url"></p></div></div>
             </section>
             <section class="form-section upload-section">
-              <div class="step-heading"><span class="step-number">02</span><label for="folder-files">웹사이트 폴더</label><span class="file-format">FOLDER</span></div>
-              <div id="drop-zone" class="drop-zone">
-                <svg class="upload-icon" width="42" height="42" viewBox="0 0 42 42" fill="none" aria-hidden="true"><path d="M21 27V7M13 15L21 7L29 15M8 25V34H34V25" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <strong>폴더 그대로, 압축 없이.</strong><p>index.html이 들어 있는 폴더를 선택하세요.</p>
-                <button id="choose-file" class="choose-file" type="button">폴더 선택 <span aria-hidden="true">+</span></button>
-                <span class="upload-limit">전체 500 MiB · 파일당 95 MiB</span>
-                <input id="folder-files" name="files" type="file" webkitdirectory multiple class="visually-hidden" aria-describedby="file-help">
+              <div class="step-heading"><span class="step-number">02</span><span>웹사이트 파일 관리</span><span class="file-format">FILES</span></div>
+              <p class="field-help">여러 번 나눠 반영해도 기존 파일은 남아요. 같은 경로의 파일만 교체됩니다.</p>
+              <div class="file-manager" id="file-manager">
+                <div class="manager-top"><nav id="folder-breadcrumbs" aria-label="현재 폴더"></nav><button id="refresh-tree" class="text-button" type="button">새로고침 ↻</button></div>
+                <div class="manager-toolbar"><button id="choose-files" type="button">파일 추가 ↑</button><button id="choose-folder" type="button">폴더 추가 +</button><button id="new-folder" type="button">새 폴더</button><button id="discard-changes" type="button">편집 취소</button></div>
+                <div id="folder-create" class="manager-inline" hidden><label for="folder-name">폴더 이름</label><input id="folder-name" type="text" maxlength="80" placeholder="예: images"><button id="create-folder" type="button">만들기</button><button id="cancel-folder" type="button">취소</button></div>
+                <p id="tree-message" class="manager-empty" role="status">팀을 선택하면 저장된 폴더와 파일이 표시됩니다.</p>
+                <ul id="directory-list" class="directory-list" aria-label="현재 폴더의 파일"></ul>
+                <div class="manager-footer"><span id="site-usage">합계 0개 · 0 MiB / 500 MiB</span><span>최대 2,000개</span></div>
               </div>
+              <div id="delete-confirmation" class="manager-confirm" hidden><p id="delete-description"></p><div><button id="confirm-delete" type="button">삭제 예정에 추가</button><button id="cancel-delete" type="button">취소</button></div></div>
+              <p class="field-help">빈 폴더는 파일을 넣어야 저장됩니다. 삭제는 아래 ‘변경사항 반영’을 눌러야 적용됩니다.</p>
+              <button id="choose-file" class="choose-file" type="button">사이트 폴더 가져오기 <span aria-hidden="true">+</span></button>
+              <p class="field-help">index.html이 들어 있는 폴더를 선택하면 팀의 최상위 폴더에 추가합니다.</p>
+              <input id="folder-files" name="files" type="file" webkitdirectory multiple class="visually-hidden" aria-label="사이트 폴더 가져오기">
+              <input id="nested-folder-files" type="file" webkitdirectory multiple class="visually-hidden" aria-label="현재 위치에 폴더 추가">
+              <input id="single-files" type="file" multiple class="visually-hidden" aria-label="현재 폴더에 파일 추가">
               <div id="file-preview" class="file-preview" hidden><span class="zip-icon" aria-hidden="true">DIR</span><div class="file-description"><strong id="file-name"></strong><span id="file-size"></span></div><button id="remove-file" type="button" aria-label="선택한 폴더 제거">×</button></div>
               <div id="file-list-panel" class="file-list-panel" hidden><div class="file-list-heading"><span>제출할 파일</span><span id="file-count" aria-live="polite"></span></div><ul id="file-list" class="file-list" aria-label="파일별 업로드 상태"></ul></div>
-              <p id="file-help" class="field-help">폴더 구조를 유지해 파일을 하나씩 올립니다. 실패한 파일만 다시 올릴 수 있어요.</p>
+              <div id="deletion-panel" class="file-list-panel" hidden><div class="file-list-heading"><span>삭제 예정 · 아직 반영되지 않았어요</span></div><ul id="deletion-list" class="deletion-list" aria-label="삭제할 파일"></ul></div>
+              <p id="change-warning" class="form-error" role="status" hidden></p>
+              <p id="file-help" class="field-help">추가·교체할 파일만 업로드합니다. 전체 500 MiB · 파일당 95 MiB. 업로드를 시작하면 이번 변경 목록이 고정됩니다.</p>
               <button id="upload-button" class="upload-button" type="button" disabled>업로드 시작 <span aria-hidden="true">↑</span></button>
             </section>
-            <div class="form-bottom"><div class="step-heading"><span class="step-number">03</span><span>최종 제출</span></div><label class="confirmation"><input id="confirm" type="checkbox" required><span>선택한 팀과 전체 파일을 확인했습니다. 기존 사이트는 이 파일 전체로 교체됩니다.</span></label><button id="submit-button" class="submit-button" type="submit" disabled><span>제출 완료</span><span aria-hidden="true">↗</span></button><p class="submit-help">모든 파일을 올린 뒤 제출 완료를 눌러주세요.<br>업로드만으로는 접수되지 않습니다.</p></div>
+            <div class="form-bottom"><div class="step-heading"><span class="step-number">03</span><span>변경사항 반영</span></div><p id="change-summary" class="field-help">아직 변경한 파일이 없습니다.</p><label class="confirmation"><input id="confirm" type="checkbox" required><span>선택한 팀과 추가·교체·삭제할 파일을 확인했습니다. 이 변경사항을 웹사이트에 반영합니다.</span></label><button id="submit-button" class="submit-button" type="submit" disabled><span>변경사항 반영</span><span aria-hidden="true">↗</span></button><p class="submit-help">기존 파일은 유지하고 선택한 변경만 반영합니다.<br>반영 후에도 파일을 계속 추가할 수 있어요.</p></div>
           </fieldset>
         </form>
         <div id="form-error" class="form-error" role="alert" tabindex="-1" hidden></div>

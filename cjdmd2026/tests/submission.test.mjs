@@ -144,7 +144,7 @@ test('resumed processing skips already uploaded Git blobs', async () => {
 test('folder processing loads files individually and skips storage downloads for checkpointed files', async () => {
   const sha = createHash('sha1').update('blob 2\0').update('hi').digest('hex');
   let loads = 0;
-  const folder = { files: [{ path: 'index.html', gitSha: sha, load: async () => { loads++; return Buffer.from('hi'); } }], bytes: 2 };
+  const folder = { files: [{ path: 'index.html', size: 2, gitSha: sha, load: async () => { loads++; return Buffer.from('hi'); } }], bytes: 2 };
   await submitToGithub(submission, folder, { ...mockGithub(), config, checkpoint: [sha] });
   assert.equal(loads, 0);
   await submitToGithub(submission, folder, { ...mockGithub(), config });

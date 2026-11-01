@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { configuration, targetPath, SubmissionError } from './policy.mjs';
 import { findTeam } from './teams.mjs';
+import { siteSnapshot, checkSiteChanges } from './site.mjs';
 
 export function githubClient(token = process.env.SUBMISSION_GITHUB_TOKEN, repository = configuration().repository, fetcher = fetch, deadline = Infinity) {
   return async function github(path, body, method = body ? 'POST' : 'GET') {
@@ -37,13 +38,12 @@ export async function submitToGithub(submission, archive, { github = githubClien
   let branchExists = false;
   try { await github(`/git/ref/heads/${branch}`); branchExists = true; } catch (error) { if (error.githubStatus !== 404) throw error; }
   if (!branchExists) {
-    const base = await github(`/git/ref/heads/${config.branch}`);
-    const commit = await github(`/git/commits/${base.object.sha}`);
-    // Reuse unchanged Git blobs; all new content is confined to one team subtree.
-    const original = await github(`/git/trees/${commit.tree.sha}?recursive=1`);
-    const known = new Set([...checkpoint, ...(original.truncated ? [] : original.tree.filter(item => item.type === 'blob').map(item => item.sha))]);
+    const snapshot = await siteSnapshot(team.id, github, config);
+    const combined = checkSiteChanges(snapshot, { files: archive.files.map(file => ({ ...file, size: file.size ?? file.content?.length })), deletions: archive.deletions || [], baseTreeSha: archive.baseTreeSha });
+    // Start from the current team files, retaining everything not explicitly removed.
+    const known = new Set([...checkpoint, ...snapshot.files.map(item => item.sha)]);
     const saved = new Set(checkpoint);
-    const tree = [];
+    const tree = new Map(combined.files.map(file => [file.path, { path: file.path, mode: file.mode || '100644', type: 'blob', sha: file.sha }]));
     let done = 0;
     for (const file of archive.files) {
       let content = file.content;
@@ -56,15 +56,15 @@ export async function submitToGithub(submission, archive, { github = githubClien
         sha = blob.sha;
         known.add(sha);
       }
-      tree.push({ path: file.path, mode: '100644', type: 'blob', sha });
+      tree.set(file.path, { path: file.path, mode: '100644', type: 'blob', sha });
       saved.add(sha);
       done++;
       if (done === 1 || done % 10 === 0 || done === archive.files.length) await onProgress(done, archive.files.length, [...saved]);
     }
-    // A new subtree replaces only this team's contents (including removed files).
-    const siteTree = await github('/git/trees', { tree });
-    const rootTree = await github('/git/trees', { base_tree: commit.tree.sha, tree: [{ path: target, mode: '040000', type: 'tree', sha: siteTree.sha }] });
-    const next = await github('/git/commits', { message: `[웹사이트 제출] ${team.name} (${submission.id.slice(0, 8)})`, tree: rootTree.sha, parents: [base.object.sha] });
+    const siteTree = await github('/git/trees', { tree: [...tree.values()] });
+    if (siteTree.sha === snapshot.treeSha) return { unchanged: true };
+    const rootTree = await github('/git/trees', { base_tree: snapshot.rootTree, tree: [{ path: target, mode: '040000', type: 'tree', sha: siteTree.sha }] });
+    const next = await github('/git/commits', { message: `[웹사이트 제출] ${team.name} (${submission.id.slice(0, 8)})`, tree: rootTree.sha, parents: [snapshot.baseCommit] });
     await github('/git/refs', { ref: `refs/heads/${branch}`, sha: next.sha });
   }
   const body = [
@@ -72,9 +72,10 @@ export async function submitToGithub(submission, archive, { github = githubClien
     `- 대상 폴더: \`${target}/\``,
     `- 반영 후 주소: https://dmd2026.com/${team.slug}/`,
     `- 접수 번호: \`${submission.id}\``,
-    `- 파일: ${archive.files.length}개 / ${(archive.bytes / 1024 ** 2).toFixed(1)} MiB`, '',
+    `- 추가·교체: ${archive.files.length}개 / ${(archive.bytes / 1024 ** 2).toFixed(1)} MiB`,
+    `- 명시적 삭제: ${(archive.deletions || []).length}개`, '',
     '이 제출은 팀 목록에서 선택해 접수했으며 제출자의 소속을 인증하지 않습니다. 서버가 팀 폴더와 변경 내용을 검증한 뒤 자동 병합합니다.',
-    '팀 폴더는 제출한 전체 파일로 교체됩니다. 이전 제출에만 있던 파일은 삭제됩니다.',
+    '기존 파일은 유지하며 같은 경로의 파일만 교체합니다. 삭제 목록에서 직접 선택한 파일만 제거합니다.',
   ].join('\n');
   return github('/pulls', { title: `[웹사이트 제출] ${team.name}`, head: branch, base: config.branch, body, maintainer_can_modify: true });
 }
@@ -91,6 +92,7 @@ export async function mergeSubmission(submission, savedPull, { github = githubCl
   }
   // A lost response after a successful merge must not create a second PR/commit.
   if (pull.merged) return { merged: true, sha: pull.merge_commit_sha };
+  if (savedPull.baseTreeSha !== undefined && (await siteSnapshot(team.id, github, config)).treeSha !== savedPull.baseTreeSha) throw problem('제출 중 팀 폴더가 변경되어 최신 파일을 보호하기 위해 자동 반영을 중단했습니다.');
   if (pull.state !== 'open' || pull.draft) throw problem('제출 PR이 닫혀 있거나 임시 상태여서 자동 반영하지 못했습니다.');
   if (pull.mergeable === null) {
     const error = new SubmissionError('저장소가 자동 반영 가능 여부를 확인하고 있습니다.', 503);
