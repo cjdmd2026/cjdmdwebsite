@@ -1,0 +1,150 @@
+/* The desktop archive retains its staged introduction and hover interaction. */
+.archive-mobile,
+.menu-button,
+.mobile-menu {
+    display: none;
+}
+
+.archive-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+@media (min-width: 760px) and (max-width: 1279px) {
+    :root { --container-width: calc(100% - 64px); }
+    .archive-wrap { width: 100%; }
+    .history .card-wrap { gap: 12px; }
+    .history-item { flex: 1 1 0; min-width: 0; }
+    .history .card-wrap .history-card { width: 100%; height: auto; aspect-ratio: 1; }
+    .history-meta { flex-wrap: wrap; gap: 8px; }
+    .history-keyword { white-space: normal; }
+    .hero .explanation.has-students:not(.is-history-section) { padding-left: 0; }
+    .hero .explanation.has-students { grid-template-columns: 1fr 3fr; gap: 24px; }
+    .hero .explanation.has-students > .student { grid-column: 2; justify-self: end; }
+    .hero .explanation p br { display: none; }
+    .archive-wrap { grid-auto-rows: clamp(36px, 5.6vw, 72px); gap: 16px; }
+}
+
+@media (width < 760px) {
+    :root {
+        --mobile-pad: 20px;
+        --header-height: 56px;
+        --container-width: 100%;
+    }
+
+    html, body { width: 100%; overflow-x: clip; }
+    html { scroll-behavior: auto; }
+    body { background: #fff; color: #111; }
+    html:has(body.mobile-menu-open), body.mobile-menu-open { overflow: hidden; }
+    .hero, #cjdmd-floating-outline-background { display: none; }
+
+    .header {
+        height: var(--header-height);
+        background: rgba(255, 255, 255, .9);
+        border: 0;
+        border-bottom: 1px solid transparent;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+    .header.is-scrolled { border-bottom-color: #ebebed; }
+    .header .container { width: 100%; padding: 0 var(--mobile-pad); }
+    .header .logo { position: relative; z-index: 2; line-height: 1; }
+    .header .logo img { width: 124px; }
+    .header .nav { display: none; }
+    .menu-button {
+        position: relative;
+        z-index: 2;
+        display: grid;
+        width: 44px;
+        height: 44px;
+        place-content: center;
+        gap: 5px;
+    }
+    .menu-button span {
+        display: block;
+        width: 20px;
+        height: 1.5px;
+        background: #000;
+        transition: transform .25s ease, opacity .2s ease;
+    }
+    .menu-button[aria-expanded="true"] span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .menu-button[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+    .menu-button[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+    body.mobile-menu-open .header { background: #fff; backdrop-filter: none; -webkit-backdrop-filter: none; }
+    .mobile-menu {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 32px;
+        height: 100vh;
+        height: 100dvh;
+        overflow-y: auto;
+        padding: calc(var(--header-height) + 52px) var(--mobile-pad) calc(28px + env(safe-area-inset-bottom));
+        background: #fff;
+    }
+    .mobile-menu li { border-bottom: 1px solid #ebebed; }
+    .mobile-menu a { display: block; padding: 17px 0; font-size: 40px; font-weight: 700; line-height: 1.1; letter-spacing: -.035em; color: #b5b5ba; }
+    .mobile-menu a[aria-current="page"] { color: #000; }
+    .mobile-menu p { font-size: 12px; color: #6b6b70; }
+
+    .main .container { width: 100%; padding: 0 var(--mobile-pad); }
+    .archive-mobile { display: block; padding-top: calc(var(--header-height) + 28px); }
+    .archive-section-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+    .archive-section-heading h2 { font-size: 26px; font-weight: 700; letter-spacing: -.045em; line-height: 1.3; }
+    .archive-section-description { margin-top: 14px; font-size: 14px; line-height: 1.7; color: #777; word-break: keep-all; }
+    .archive-year-tabs { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); margin: 26px 0 20px; border-bottom: 1px solid #ddd; }
+    .archive-year-tab { position: relative; min-height: 48px; padding: 10px 0; color: #888; font-size: 14px; font-variant-numeric: tabular-nums; }
+    .archive-year-tab[aria-selected="true"] { color: #111; font-weight: 700; }
+    .archive-year-tab[aria-selected="true"]::after { content: ''; position: absolute; right: 0; bottom: -1px; left: 0; height: 2px; background: #111; }
+    .archive-exhibition:focus { outline: none; }
+    .archive-exhibition:focus-visible, .archive-mobile :is(button, a, summary):focus-visible, .menu-button:focus-visible, .mobile-menu a:focus-visible { outline: 2px solid #111; outline-offset: 4px; }
+    .archive-exhibition-cover { width: 100%; aspect-ratio: 1; border-radius: 5px; background: #f2f2f2 center / cover no-repeat; touch-action: pan-y pinch-zoom; }
+    .archive-exhibition-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: flex-start; gap: 10px; margin-top: 22px; }
+    .archive-exhibition-heading h3 { font-size: 26px; font-weight: 700; letter-spacing: -.04em; }
+    .archive-exhibition-year { flex-shrink: 0; color: #777; font-size: 13px; }
+    .archive-exhibition-description { margin-top: 12px; font-size: 14px; line-height: 1.85; color: #666; word-break: keep-all; overflow-wrap: break-word; }
+    .archive-exhibition-link { display: flex; align-items: center; justify-content: space-between; min-height: 48px; margin-top: 20px; border-bottom: 1px solid #111; font-size: 14px; font-weight: 600; }
+    .archive-exhibition-link > span[aria-hidden] { font-size: 20px; }
+    .archive-exhibition-status { margin-top: 20px; color: #777; font-size: 13px; }
+    .archive-students { margin-top: 24px; border-bottom: 1px solid #e5e5e5; }
+    .archive-students summary { display: flex; align-items: center; min-height: 48px; gap: 8px; font-size: 14px; cursor: pointer; list-style: none; }
+    .archive-students summary::-webkit-details-marker { display: none; }
+    .archive-students summary::after { content: '+'; margin-left: auto; font-size: 22px; font-weight: 300; }
+    .archive-students[open] summary::after { content: '−'; }
+    .archive-student-count { color: #888; font-size: 12px; }
+    .archive-students .student { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 8px; padding: 16px 0 24px; font-size: 13px; color: #666; }
+    .archive-photos-heading { margin: 64px 0 24px; }
+
+    /* Keep the editorial rhythm with full-width photographs and paired details. */
+    .archive-wrap { width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: auto; gap: 12px; margin: 0 0 64px; }
+    .archive-wrap .archive-box { grid-column: auto; grid-row: auto; height: auto; aspect-ratio: 1; opacity: 1; transform: none; transition: none; will-change: auto; }
+    .archive-wrap :is(.card01, .card15, .card21) { grid-column: 1 / -1; aspect-ratio: 4 / 3; }
+    .archive-wrap .card14 { grid-column: 1 / -1; aspect-ratio: 16 / 9; }
+    .archive-wrap :is(.card03, .card09, .card16, .card17) { display: none; }
+    .archive-wrap .card18 { grid-column: 1 / -1; aspect-ratio: 16 / 10; }
+    .footer { border-top: 1px solid #ebebed; padding: 28px var(--mobile-pad) calc(28px + env(safe-area-inset-bottom)); }
+    .footer .container { width: 100%; gap: 24px; flex-wrap: wrap; }
+    .footer .container .footer-info h3 { font-size: 14px; line-height: 1.45; }
+    .footer .container .footer-info p { font-size: 10px; color: #777; }
+    .footer .container .footer-icons { gap: 8px; }
+    .footer-icons a { display: grid; place-items: center; width: 44px; height: 44px; }
+    .footer .container .footer-icons .icon { width: 26px; height: 26px; }
+}
+
+@media (600px <= width < 760px) {
+    :root { --mobile-pad: 32px; }
+    .archive-exhibition-cover { width: 70%; margin-inline: auto; }
+    .archive-students .student { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .menu-button span { transition: none; }
+}

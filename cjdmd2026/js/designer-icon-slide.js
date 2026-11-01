@@ -48,7 +48,7 @@
     teamEntryBlendCanvas.width = teamEntryBlendCanvas.height = TEAM_ENTRY_BLUR.size + TEAM_ENTRY_BLUR.padding * 2;
     const teamEntryBlendCtx = teamEntryBlendCanvas.getContext('2d');
     // 회전한 조각은 작은 캔버스에 먼저 합성해 겹치는 색이 밝아지지 않게 합니다.
-    const TEAM_HOVER = { degrees: 3, size: 384, padding: 24 };
+    const TEAM_HOVER = { degrees: 5, size: 384, padding: 24 };
     const teamHoverCanvas = document.createElement('canvas');
     teamHoverCanvas.width = teamHoverCanvas.height = TEAM_HOVER.size + TEAM_HOVER.padding * 2;
     const teamHoverCtx = teamHoverCanvas.getContext('2d');

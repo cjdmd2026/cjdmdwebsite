@@ -1,44 +1,45 @@
-// 참여 학생 이름을 연도별 배열에 입력하세요. 예: ["이름1", "이름2"]
-const STUDENTS_BY_YEAR = {
-    "2021": ["김수연", "김해지", "김현주", "김현주", "김홍비", "남현정", "유채은", "이수", "이정민", "이현지", "임나영", "전보경", "조수빈", "조해지"],
-    "2022": ["곽은지", "김남주", "김보연", "김보영", "김하나", "도민지", "박진슬", "박혜빈", "방미선", "방지우", "심지영", "안신영", "염윤지", "오예록", "오주희", "윤가영", "이유진", "이지은", "이효영", "조예림", "최서영", "하주희", "홍주연", "황수영"],    "2023": ["강서윤", "금윤서", "김민지", "김민채", "김윤아", "김윤희", "김정우", "김준호", "김혜인", "민서하", "백선혜", "변민섭", "신유진", "안성준", "안현정", "오소영", "윤선민", "이규민", "이서현", "이수민", "이시윤", "이지민", "이지선", "이지은", "이채은", "이현수", "임경용", "임지원", "장소희", "정주연", "조수아", "차은지", "최지수", "하예원", "하지원", "황인소"],
-    "2024": ["김건우", "김나현", "김동경", "김무경", "김미성", "김채린", "김희진", "박동현", "박소이", "소수화", "손성민", "손유진", "양시원", "윤동혁", "이강현", "이다결", "이상훈", "이지민", "정이봄", "정진서", "조상윤", "최빛나", "홍유리", "홍자현"],
-    "2025": ["강유림", "고현희", "곽초은", "권용우", "김도희", "김루나", "김민정", "김보미", "김선정", "김윤주", "김지수", "김현지", "김현진", "나원호", "노채린", "민유진", "박기연", "박미소", "박서희", "박순후", "박지수", "반상우", "백진주", "서동현", "손예진", "양윤보", "오우진", "오효진", "왕뢰이저", "유은비", "윤정원", "이새연", "이소현", "이연우", "이주연", "이채민", "이채현", "이현서", "임희원", "정예원", "정유민", "조범규", "조서영", "조예리", "최서윤", "최희선", "황서진", "황지원"],
-    "2026": ["고비주", "권민성", "김다현", "김도연", "김민재", "김성은", "김주연", "김지유", "김지유", "김지윤", "김하원", "김혜진", "남나영", "노민영", "민지호", "박윤아", "박윤지", "서연우", "손예진", "송승빈", "송유진", "안나경", "유혜진", "윤지원", "윤태균", "이고은", "이나영", "임종원", "조우성", "조은교", "주보민", "주예진", "함대연"]
-};
+const archiveDesktop = matchMedia('(min-width: 760px)');
+const archiveReducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
-const DEFAULT_STUDENT_YEAR = "2026";
-
-function renderStudents(container, year) {
-    if (!container) return;
-    const entries = STUDENTS_BY_YEAR[year];
-    const names = Array.isArray(entries)
-        ? entries.filter(name => typeof name === "string" && name.trim()).map(name => name.trim())
-        : [];
-    const fragment = document.createDocumentFragment();
-    names.forEach(name => {
-        const item = document.createElement("span");
-        item.className = "student-name";
-        item.setAttribute("role", "listitem");
-        item.textContent = name;
-        fragment.append(item);
-    });
-    container.replaceChildren(fragment);
-    container.setAttribute("role", "list");
-    container.setAttribute("aria-label", year ? `${year}년 참여 학생` : "참여 학생");
-    container.dataset.year = year || "";
-    container.hidden = names.length === 0;
-    container.closest(".explanation")?.classList.toggle("has-students", names.length > 0);
-}
-
-document.addEventListener("DOMContentLoaded", () => {
+function initArchiveDesktop() {
     initHistoryExplanation();
     initTwoStepScroll();
-    // Scroll-linked movement is handled by initExplanationArchiveFade().
     initArchiveCardReveal();
     initHistoryCardReveal();
     initExplanationArchiveFade();
-});
+
+    let frame = 0;
+    function tick(time) {
+        if (!archiveDesktop.matches || document.hidden || !window.lenis) { frame = 0; return; }
+        window.lenis.raf(time);
+        frame = requestAnimationFrame(tick);
+    }
+    function syncScroll() {
+        cancelAnimationFrame(frame);
+        frame = 0;
+        if (!archiveDesktop.matches || archiveReducedMotion.matches) {
+            window.lenis?.destroy();
+            window.lenis = null;
+            return;
+        }
+        if (window.Lenis && !window.lenis) {
+            window.lenis = new Lenis({ duration: 1, smoothWheel: true, wheelMultiplier: 0.75 });
+        }
+        if (!document.hidden && window.lenis) frame = requestAnimationFrame(tick);
+    }
+    archiveDesktop.addEventListener('change', syncScroll);
+    archiveReducedMotion.addEventListener('change', syncScroll);
+    document.addEventListener('visibilitychange', syncScroll);
+    window.addEventListener('pageshow', syncScroll);
+    window.addEventListener('pagehide', () => cancelAnimationFrame(frame));
+    syncScroll();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initArchiveDesktop, { once: true });
+} else {
+    initArchiveDesktop();
+}
 
 
 /* =========================================================
@@ -358,956 +359,165 @@ function initSmoothStickyExplanation() {
 ========================================================= */
 
 function initHistoryExplanation() {
+    const explanation = document.querySelector('.hero .explanation');
+    const title = explanation?.querySelector('h2');
+    const description = explanation?.querySelector('p');
+    const studentList = explanation?.querySelector('.student');
+    const cardWrap = document.querySelector('.history .card-wrap');
+    const cards = [...document.querySelectorAll('.history .history-card')];
+    if (!explanation || !title || !description || !cardWrap || !cards.length) return;
 
-    const explanation =
-        document.querySelector(
-            ".hero .explanation"
-        );
+    const defaultContent = {
+        title: title.innerHTML,
+        description: description.innerHTML,
+        year: DEFAULT_STUDENT_YEAR,
+        history: false
+    };
+    const historyContent = {
+        title: '디미디의 흔적',
+        description: `서로 다른 시선과 고민이 모여 만들어진 지난 전시의 기록을 돌아봅니다.
+            <br>각자의 방식으로 쌓아온 시간과 결과들은 해마다 새로운 모습으로 이어졌고,
+            <br>그 안에는 우리 학과가 지나온 다양한 순간들이 담겨 있습니다.`,
+        year: null,
+        history: true
+    };
+    const contentByCard = new Map(cards.map(card => [card, {
+        title: card.dataset.title || defaultContent.title,
+        description: card.dataset.description || defaultContent.description,
+        year: card.dataset.year?.trim() || card.closest('.history-item').querySelector('.history-year')?.textContent.trim() || null,
+        history: true
+    }]));
+    const titleMask = document.createElement('div');
+    titleMask.className = 'history-title-mask';
+    title.before(titleMask);
+    titleMask.append(title);
 
-    const title =
-        explanation?.querySelector(
-            "h2"
-        );
+    const animations = new Set();
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    let current = null;
+    let historyActive = false;
+    let pointerCard = null;
+    let focusedCard = null;
 
-    const description =
-        explanation?.querySelector(
-            "p"
-        );
-
-    const historyCards =
-        document.querySelectorAll(
-            ".history .history-card"
-        );
-
-    const studentList = explanation?.querySelector(".student");
-
-    function getStudentYear(card) {
-        return card.dataset.year?.trim() ||
-            card.closest(".history-item")?.querySelector(".history-year")?.textContent.trim() || null;
+    function cancelAnimations() {
+        animations.forEach(animation => animation.cancel());
+        animations.clear();
     }
 
-
-    if (
-        !explanation ||
-        !title ||
-        !description ||
-        historyCards.length === 0
-    ) {
-        return;
-    }
-
-
-    /* =====================================================
-       기본 문구 저장
-    ===================================================== */
-
-    const defaultTitle =
-        title.innerHTML;
-
-    const defaultDescription =
-        description.innerHTML;
-
-
-    /*
-     * history-card 구간에 들어왔을 때 사용할 기본 문구
-     */
-    const historySectionTitle =
-        "디미디의 흔적";
-
-    const historySectionDescription =
-        `서로 다른 시선과 고민이 모여 만들어진 지난 전시의 기록을 돌아봅니다.
-        <br>
-        각자의 방식으로 쌓아온 시간과 결과들은 해마다 새로운 모습으로 이어졌고,
-        <br>
-        그 안에는 우리 학과가 지나온 다양한 순간들이 담겨 있습니다.`;
-
-
-    /* =====================================================
-       제목용 Clip Mask 생성
-    ===================================================== */
-
-    const titleMask =
-        document.createElement(
-            "div"
-        );
-
-    titleMask.className =
-        "history-title-mask";
-
-
-    title.parentNode.insertBefore(
-        titleMask,
-        title
-    );
-
-    titleMask.appendChild(
-        title
-    );
-
-
-    /* =====================================================
-       Style
-       - animation 관련 스타일은 archive_02.css에서 관리
-       - JS는 DOM wrapper와 class 상태만 제어
-    ===================================================== */
-
-
-    /* =====================================================
-       Animation Config
-    ===================================================== */
-
-    const LEAVE_DURATION =
-        140;
-
-    const ENTER_DURATION =
-        260;
-
-    const LINE_STAGGER =
-        65;
-
-
-    let isAnimating =
-        false;
-
-    let pendingTitle =
-        null;
-
-    let pendingDescription =
-        null;
-
-    let pendingHistoryMode =
-        null;
-
-    let pendingStudentYear = null;
-    let currentStudentYear = DEFAULT_STUDENT_YEAR;
-    let studentAnimation = null;
-    renderStudents(studentList, currentStudentYear);
-
-
-    let currentTitle =
-        defaultTitle;
-
-    let currentDescription =
-        defaultDescription;
-
-
-    /*
-     * history 구간 상태
-     */
-    let isHistorySectionActive =
-        false;
-
-    let hoveredHistoryCard =
-        null;
-
-
-    /* =====================================================
-       Description을 <br> 기준으로
-       line-mask > line 구조로 생성
-    ===================================================== */
-
-    function renderDescriptionLines(
-        html
-    ) {
-
-        const lines =
-            html.split(
-                /<br\s*\/?>/gi
-            );
-
-
-        description.innerHTML =
-            "";
-
-
-        lines.forEach(
-            lineHtml => {
-
-                const mask =
-                    document.createElement(
-                        "span"
-                    );
-
-                mask.className =
-                    "history-description-line-mask";
-
-
-                const line =
-                    document.createElement(
-                        "span"
-                    );
-
-                line.className =
-                    "history-description-line";
-
-
-                /*
-                 * &emsp; 등 HTML 유지
-                 */
-                line.innerHTML =
-                    lineHtml.trim();
-
-
-                mask.appendChild(
-                    line
-                );
-
-                description.appendChild(
-                    mask
-                );
-
-            }
-        );
-
-    }
-
-
-    renderDescriptionLines(
-        defaultDescription
-    );
-
-
-    function getDescriptionLines() {
-
-        return Array.from(
-            description.querySelectorAll(
-                ".history-description-line"
-            )
-        );
-
-    }
-
-
-    /* =====================================================
-       Animation Helper
-    ===================================================== */
-
-    function animateElement(
-        element,
-        keyframes,
-        options
-    ) {
-
-        return element
-            .animate(
-                keyframes,
-                options
-            )
-            .finished
-            .catch(
-                () => {}
-            );
-
-    }
-
-
-    /* =====================================================
-       Leave
-       h2 → line1 → line2 → line3...
-    ===================================================== */
-
-    async function playLeave() {
-
-        const lines =
-            getDescriptionLines();
-
-
-        const animations =
-            [];
-
-        animations.push(animateStudents(1, 0, LEAVE_DURATION));
-
-
-        /*
-         * 제목:
-         * titleMask 밖으로 내려가며 사라짐.
-         */
-        animations.push(
-            animateElement(
-                title,
-                [
-                    {
-                        transform:
-                            "translate3d(0, 0, 0)"
-                    },
-
-                    {
-                        transform:
-                            "translate3d(0, 110%, 0)"
-                    }
-                ],
-                {
-                    duration:
-                        LEAVE_DURATION,
-
-                    delay:
-                        0,
-
-                    easing:
-                        "cubic-bezier(.55, 0, .35, 1)",
-
-                    fill:
-                        "forwards"
-                }
-            )
-        );
-
-
-        /*
-         * 각 줄:
-         * 자기 mask 아래로 내려가자마자 잘림.
-         */
-        lines.forEach(
-            (
-                line,
-                index
-            ) => {
-
-                animations.push(
-                    animateElement(
-                        line,
-                        [
-                            {
-                                transform:
-                                    "translate3d(0, 0, 0)"
-                            },
-
-                            {
-                                transform:
-                                    "translate3d(0, 110%, 0)"
-                            }
-                        ],
-                        {
-                            duration:
-                                LEAVE_DURATION,
-
-                            delay:
-                                (
-                                    index +
-                                    1
-                                ) *
-                                LINE_STAGGER,
-
-                            easing:
-                                "cubic-bezier(.55, 0, .35, 1)",
-
-                            fill:
-                                "forwards"
-                        }
-                    )
-                );
-
-            }
-        );
-
-
-        await Promise.all(
-            animations
-        );
-
-    }
-
-
-    /* =====================================================
-       Enter
-       새 h2 → line1 → line2 → line3...
-    ===================================================== */
-
-    async function playEnter() {
-
-        const lines =
-            getDescriptionLines();
-
-
-        /*
-         * 모두 자기 mask 아래쪽에서 대기.
-         * 그래서 화면에는 보이지 않음.
-         */
-        title.style.transform =
-            "translate3d(0, 110%, 0)";
-
-
-        lines.forEach(
-            line => {
-
-                line.style.transform =
-                    "translate3d(0, 110%, 0)";
-
-            }
-        );
-
-
-        void explanation.offsetWidth;
-
-
-        const animations =
-            [];
-
-        animations.push(animateStudents(0, 1, ENTER_DURATION));
-
-
-        animations.push(
-            animateElement(
-                title,
-                [
-                    {
-                        transform:
-                            "translate3d(0, 110%, 0)"
-                    },
-
-                    {
-                        transform:
-                            "translate3d(0, 0, 0)"
-                    }
-                ],
-                {
-                    duration:
-                        ENTER_DURATION,
-
-                    delay:
-                        0,
-
-                    easing:
-                        "cubic-bezier(.18, .76, .22, 1)",
-
-                    fill:
-                        "forwards"
-                }
-            )
-        );
-
-
-        lines.forEach(
-            (
-                line,
-                index
-            ) => {
-
-                animations.push(
-                    animateElement(
-                        line,
-                        [
-                            {
-                                transform:
-                                    "translate3d(0, 110%, 0)"
-                            },
-
-                            {
-                                transform:
-                                    "translate3d(0, 0, 0)"
-                            }
-                        ],
-                        {
-                            duration:
-                                ENTER_DURATION,
-
-                            delay:
-                                (
-                                    index +
-                                    1
-                                ) *
-                                LINE_STAGGER,
-
-                            easing:
-                                "cubic-bezier(.18, .76, .22, 1)",
-
-                            fill:
-                                "forwards"
-                        }
-                    )
-                );
-
-            }
-        );
-
-
-        await Promise.all(
-            animations
-        );
-
-
-        /*
-         * 최종 상태 정리
-         */
-        title.style.transform =
-            "translate3d(0, 0, 0)";
-
-
-        lines.forEach(
-            line => {
-
-                line.style.transform =
-                    "translate3d(0, 0, 0)";
-
-            }
-        );
-
-    }
-
-
-    /* =====================================================
-       Content Update
-    ===================================================== */
-
-    function animateStudents(from, to, duration) {
-        if (!studentList || studentList.hidden) return Promise.resolve();
-        studentAnimation?.cancel();
-        studentAnimation = studentList.animate([{ opacity: from }, { opacity: to }], {
-            duration,
-            easing: "ease-out",
-            fill: "forwards"
+    function animate(element, keyframes, delay = 0) {
+        // The underlying DOM already contains the final state. Cancellation reveals
+        // the latest content immediately, including when reduced motion is enabled.
+        const animation = element.animate(keyframes, {
+            duration: 420,
+            delay,
+            easing: 'cubic-bezier(.18, .76, .22, 1)',
+            fill: 'backwards'
         });
-        return studentAnimation.finished.catch(() => {});
+        animations.add(animation);
+        const release = () => {
+            animations.delete(animation);
+            animation.cancel();
+        };
+        animation.finished.then(release, () => animations.delete(animation));
     }
 
-    function setContent(
-        nextTitle,
-        nextDescription,
-        nextStudentYear
-    ) {
-
-        title.innerHTML =
-            nextTitle;
-
-
-        renderDescriptionLines(
-            nextDescription
-        );
-
-        renderStudents(studentList, nextStudentYear);
-        currentStudentYear = nextStudentYear;
-
-
-        currentTitle =
-            nextTitle;
-
-        currentDescription =
-            nextDescription;
-
+    function renderDescription(html) {
+        const fragment = document.createDocumentFragment();
+        const lines = html.split(/<br\s*\/?>/gi).map(line => line.trim()).filter(Boolean);
+        const elements = lines.map(html => {
+            const mask = document.createElement('span');
+            mask.className = 'history-description-line-mask';
+            const line = document.createElement('span');
+            line.className = 'history-description-line';
+            line.innerHTML = html;
+            mask.append(line);
+            fragment.append(mask);
+            return line;
+        });
+        description.replaceChildren(fragment);
+        return elements;
     }
 
+    function showContent(next, motion = true) {
+        if (current && Object.keys(next).every(key => current[key] === next[key])) return;
+        cancelAnimations();
+        const yearChanged = !current || current.year !== next.year;
+        explanation.classList.toggle('is-history-section', next.history);
+        title.innerHTML = next.title;
+        const lines = renderDescription(next.description);
+        if (yearChanged) renderStudents(studentList, next.year);
+        current = next;
+        if (!motion || reducedMotion.matches || !archiveDesktop.matches || document.hidden) return;
 
-    /* =====================================================
-       Change
-    ===================================================== */
-
-    async function changeExplanation(
-        nextTitle,
-        nextDescription,
-        nextHistoryMode = null,
-        nextStudentYear = DEFAULT_STUDENT_YEAR
-    ) {
-
-        nextTitle =
-            nextTitle ||
-            defaultTitle;
-
-        nextDescription =
-            nextDescription ||
-            defaultDescription;
-
-
-        if (
-            nextTitle === currentTitle &&
-            nextDescription === currentDescription &&
-            nextStudentYear === currentStudentYear &&
-            (nextHistoryMode === null || nextHistoryMode === explanation.classList.contains("is-history-section")) &&
-            !isAnimating
-        ) {
-            return;
+        // Restart a short entrance for the newest selection instead of queuing
+        // another leave/enter sequence behind an obsolete card.
+        const slide = [{ transform: 'translate3d(0, 100%, 0)' }, { transform: 'translate3d(0, 0, 0)' }];
+        animate(title, slide);
+        lines.forEach((line, index) => animate(line, slide, (index + 1) * 40));
+        if (studentList && !studentList.hidden) {
+            animate(studentList, [{ opacity: 0 }, { opacity: 1 }]);
         }
-
-
-        if (
-            isAnimating
-        ) {
-
-            pendingTitle =
-                nextTitle;
-
-            pendingDescription =
-                nextDescription;
-
-            pendingHistoryMode =
-                nextHistoryMode;
-
-            pendingStudentYear = nextStudentYear;
-
-            return;
-
-        }
-
-
-        isAnimating =
-            true;
-
-
-        await playLeave();
-
-        // 텍스트가 가려진 동안 도착한 요청은 최신 카드로 바로 교체한다.
-        if (pendingTitle !== null) {
-            nextTitle = pendingTitle;
-            nextDescription = pendingDescription;
-            nextHistoryMode = pendingHistoryMode;
-            nextStudentYear = pendingStudentYear;
-            pendingTitle = null;
-            pendingDescription = null;
-            pendingHistoryMode = null;
-            pendingStudentYear = null;
-        }
-
-
-        /*
-         * 기존 텍스트가 완전히 아래로 내려가
-         * 마스크 밖에서 보이지 않는 순간에만
-         * history 모드의 글자 크기를 즉시 변경.
-         *
-         * transition이 없기 때문에
-         * 사용자는 크기가 바뀌는 장면을 보지 못함.
-         */
-        if (
-            nextHistoryMode === true
-        ) {
-
-            explanation.classList.add(
-                "is-history-section"
-            );
-
-        }
-        else if (
-            nextHistoryMode === false
-        ) {
-
-            explanation.classList.remove(
-                "is-history-section"
-            );
-
-        }
-
-
-        setContent(
-            nextTitle,
-            nextDescription,
-            nextStudentYear
-        );
-
-        await playEnter();
-
-
-        isAnimating =
-            false;
-
-
-        if (
-            pendingTitle !== null
-        ) {
-
-            const queuedTitle =
-                pendingTitle;
-
-            const queuedDescription =
-                pendingDescription;
-
-            const queuedHistoryMode =
-                pendingHistoryMode;
-
-            const queuedStudentYear = pendingStudentYear;
-
-
-            pendingTitle =
-                null;
-
-            pendingDescription =
-                null;
-
-            pendingHistoryMode =
-                null;
-
-            pendingStudentYear = null;
-
-
-            if (
-                queuedTitle !== currentTitle ||
-                queuedDescription !== currentDescription ||
-                queuedStudentYear !== currentStudentYear ||
-                (queuedHistoryMode !== null && queuedHistoryMode !== explanation.classList.contains("is-history-section"))
-            ) {
-
-                changeExplanation(
-                    queuedTitle,
-                    queuedDescription,
-                    queuedHistoryMode,
-                    queuedStudentYear
-                );
-
-            }
-
-        }
-
     }
 
+    function showSelection() {
+        const card = pointerCard || focusedCard;
+        if (card) showContent(contentByCard.get(card));
+        else if (!historyActive) showContent(defaultContent);
+        // Keep the last selection while crossing the gaps between cards.
+    }
 
-    function restoreExplanation() {
+    cards.forEach(card => {
+        const item = card.closest('.history-item');
+        // Linked exhibitions have one focus stop; the other cards remain focusable.
+        if (item.matches('a[href]')) card.removeAttribute('tabindex');
+        else card.tabIndex = 0;
+        item.addEventListener('mouseenter', () => {
+            pointerCard = card;
+            showSelection();
+        });
+        item.addEventListener('mouseleave', () => {
+            if (pointerCard === card) pointerCard = null;
+            showSelection();
+        });
+        item.addEventListener('focusin', () => {
+            pointerCard = null;
+            focusedCard = card;
+            showSelection();
+        });
+        item.addEventListener('focusout', event => {
+            if (item.contains(event.relatedTarget)) return;
+            if (focusedCard === card) focusedCard = null;
+            showSelection();
+        });
+    });
 
-        /*
-         * 카드 사이의 여백에서도 마지막 카드 정보를 유지한다.
-         * 기본 설명 복귀는 historyObserver의 구간 이탈 처리에서 맡는다.
-         */
-        if (
-            isHistorySectionActive
-        ) {
-            return;
-
+    const observer = new IntersectionObserver(entries => {
+        const active = entries[0].isIntersecting && archiveDesktop.matches;
+        if (active === historyActive) return;
+        historyActive = active;
+        if (active) {
+            const selected = pointerCard || focusedCard;
+            showContent(selected ? contentByCard.get(selected) : historyContent);
+        } else {
+            pointerCard = focusedCard = null;
+            showContent(defaultContent);
         }
-
-
-        changeExplanation(
-            defaultTitle,
-            defaultDescription,
-            false
-        );
-
-    }
-
-
-    /* =====================================================
-       Hover / Focus
-    ===================================================== */
-
-    historyCards.forEach(
-        card => {
-
-            card.addEventListener(
-                "mouseenter",
-                () => {
-
-                    hoveredHistoryCard =
-                        card;
-
-                    changeExplanation(
-                        card.dataset.title,
-                        card.dataset.description,
-                        isHistorySectionActive,
-                        getStudentYear(card)
-                    );
-
-                }
-            );
-
-
-            card.addEventListener(
-                "mouseleave",
-                () => {
-
-                    if (
-                        hoveredHistoryCard ===
-                        card
-                    ) {
-
-                        hoveredHistoryCard =
-                            null;
-
-                    }
-
-
-                    restoreExplanation();
-
-                }
-            );
-
-
-            card.setAttribute(
-                "tabindex",
-                "0"
-            );
-
-
-            card.addEventListener(
-                "focus",
-                () => {
-
-                    hoveredHistoryCard =
-                        card;
-
-                    changeExplanation(
-                        card.dataset.title,
-                        card.dataset.description,
-                        isHistorySectionActive,
-                        getStudentYear(card)
-                    );
-
-                }
-            );
-
-
-            card.addEventListener(
-                "blur",
-                () => {
-
-                    if (
-                        hoveredHistoryCard ===
-                        card
-                    ) {
-
-                        hoveredHistoryCard =
-                            null;
-
-                    }
-
-
-                    restoreExplanation();
-
-                }
-            );
-
-        }
-    );
-
-
-    /* =====================================================
-       History 구간 진입 / 이탈
-
-       이번에는 오직 history-card 묶음(card-wrap)이
-       실제 화면 안에 들어왔을 때만 활성화.
-    ===================================================== */
-
-    const historySection =
-        document.querySelector(
-            ".history"
-        );
-
-    const historyCardWrap =
-        historySection?.querySelector(
-            ".card-wrap"
-        );
-
-
-    if (
-        historySection &&
-        historyCardWrap
-    ) {
-
-        let historyModeActive =
-            false;
-
-
-        const historyObserver =
-            new IntersectionObserver(
-                entries => {
-
-                    entries.forEach(
-                        entry => {
-
-                            /*
-                             * card-wrap이 실제 viewport 안에
-                             * 들어온 경우에만 과거 전시 모드 활성화.
-                             */
-                            if (
-                                entry.isIntersecting
-                            ) {
-
-                                if (
-                                    historyModeActive
-                                ) {
-                                    return;
-                                }
-
-
-                                historyModeActive =
-                                    true;
-
-                                isHistorySectionActive =
-                                    true;
-
-
-                                /*
-                                 * 카드 hover 중이면
-                                 * 해당 카드의 문구를 유지.
-                                 */
-                                if (
-                                    hoveredHistoryCard
-                                ) {
-
-                                    changeExplanation(
-                                        hoveredHistoryCard.dataset.title,
-                                        hoveredHistoryCard.dataset.description,
-                                        true,
-                                        getStudentYear(hoveredHistoryCard)
-                                    );
-
-                                    return;
-
-                                }
-
-
-                                changeExplanation(
-                                    historySectionTitle,
-                                    historySectionDescription,
-                                    true,
-                                    null
-                                );
-
-
-                                return;
-
-                            }
-
-
-                            /*
-                             * card-wrap이 viewport에서 벗어나면
-                             * 항상 원래 hero 설명으로 복귀.
-                             */
-                            if (
-                                historyModeActive
-                            ) {
-
-                                historyModeActive =
-                                    false;
-
-                                isHistorySectionActive =
-                                    false;
-
-                                hoveredHistoryCard =
-                                    null;
-
-                                changeExplanation(
-                                    defaultTitle,
-                                    defaultDescription,
-                                    false
-                                );
-
-                            }
-
-                        }
-                    );
-
-                },
-                {
-                    /*
-                     * card-wrap의 20% 이상이
-                     * 화면에 들어왔을 때 활성화.
-                     */
-                    threshold:
-                        0.20,
-
-                    /*
-                     * 선행 감지 없음.
-                     * 실제 viewport 안에서만 판정.
-                     */
-                    rootMargin:
-                        "0px"
-                }
-            );
-
-
-        historyObserver.observe(
-            historyCardWrap
-        );
-
-    }
-    }
-
-
+    }, { threshold: 0.2 });
+    observer.observe(cardWrap);
+    reducedMotion.addEventListener('change', cancelAnimations);
+    archiveDesktop.addEventListener('change', () => {
+        if (archiveDesktop.matches) return;
+        pointerCard = focusedCard = null;
+        historyActive = false;
+        cancelAnimations();
+        showContent(defaultContent, false);
+    });
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) cancelAnimations();
+    });
+    window.addEventListener('pagehide', cancelAnimations);
+    showContent(defaultContent, false);
+}
 
 
 /* =========================================================
@@ -1532,6 +742,7 @@ function initTwoStepScroll() {
     function handleWheel(
         event
     ) {
+        if (!archiveDesktop.matches || archiveReducedMotion.matches) return;
 
         if (
             Math.abs(
@@ -1685,6 +896,7 @@ function initTwoStepScroll() {
     window.addEventListener(
         "resize",
         () => {
+            if (!archiveDesktop.matches || archiveReducedMotion.matches) return;
 
             /*
              * 현재 0~200vh 구간 안에 있을 때만
@@ -2017,6 +1229,7 @@ function initExplanationArchiveFade() {
 
     function update() {
         frame = 0;
+        if (!archiveDesktop.matches) return;
         const y = window.scrollY;
         const vh = window.innerHeight;
         const stickyTop = parseFloat(getComputedStyle(explanation).top) || 0;
@@ -2181,13 +1394,39 @@ function initExplanationArchiveFade() {
         let width = host.clientWidth;
         let height = host.clientHeight;
         let frame = 0;
+        let pageActive = true;
         let lastTime = null;
         let elapsed = 0;
         let nextCollisionCheck = 0;
         let nextMerge = 0;
-        const transitionActive = () => document.documentElement.matches(
+        const transitionActive = () => !archiveDesktop.matches || document.documentElement.matches(
             '.page-transition-preload, .page-transition-active'
         );
+
+        function canAnimate() {
+            return pageActive && host.isConnected && !document.hidden && !transitionActive() &&
+                (!reducedMotion.matches || merges.size > 0);
+        }
+
+        // A collision can request a frame from inside tick(). All callers must
+        // share this guard so its final scheduling step cannot create a second loop.
+        function scheduleFrame() {
+            if (frame) return;
+            if (!canAnimate()) {
+                lastTime = null;
+                host.dataset.motion = 'paused';
+                return;
+            }
+            if (host.dataset.motion !== 'running') host.dataset.motion = 'running';
+            frame = requestAnimationFrame(tick);
+        }
+
+        function stopFrame() {
+            if (frame) cancelAnimationFrame(frame);
+            frame = 0;
+            lastTime = null;
+            host.dataset.motion = 'paused';
+        }
 
         const lerp = (from, to, amount) => from + (to - from) * amount;
 
@@ -2295,7 +1534,7 @@ function initExplanationArchiveFade() {
             nextMerge = elapsed + 0.8;
             // Reduced motion skips the approach but still observes the split timer.
             if (reducedMotion.matches) animateMerges(0);
-            if (!frame) frame = requestAnimationFrame(tick);
+            scheduleFrame();
         }
 
         function animateMerges(dt) {
@@ -2369,8 +1608,8 @@ function initExplanationArchiveFade() {
 
         function tick(time) {
             frame = 0;
-            if (!host.isConnected || document.hidden || (reducedMotion.matches && !merges.size) || transitionActive()) {
-                lastTime = null;
+            if (!canAnimate()) {
+                stopFrame();
                 return;
             }
             const dt = lastTime === null ? 0 : Math.min((time - lastTime) / 1000, 0.05);
@@ -2414,13 +1653,11 @@ function initExplanationArchiveFade() {
             render();
             if (activeDrag) setDropTarget(findDropTarget(activeDrag.particle));
             if (!reducedMotion.matches) checkCollisions();
-            if (!reducedMotion.matches || merges.size) frame = requestAnimationFrame(tick);
+            scheduleFrame();
         }
 
         function syncMotion() {
-            if (frame) cancelAnimationFrame(frame);
-            frame = 0;
-            lastTime = null;
+            stopFrame();
             cancelDrag();
             // Keep the outline field still while the page wave uses the frame budget.
             if (transitionActive()) {
@@ -2428,12 +1665,9 @@ function initExplanationArchiveFade() {
                 return;
             }
             merges.forEach(merge => finishMerge(merge, false));
+            if (!pageActive || document.hidden || !host.isConnected) return;
             render();
-            host.dataset.motion = 'paused';
-            if (!document.hidden && !reducedMotion.matches && host.isConnected) {
-                host.dataset.motion = 'running';
-                frame = requestAnimationFrame(tick);
-            }
+            scheduleFrame();
         }
 
         const isContentTarget = target => target instanceof Element && target.closest(
@@ -2627,18 +1861,21 @@ function initExplanationArchiveFade() {
         document.addEventListener("visibilitychange", syncMotion);
         document.addEventListener("page-transition:change", syncMotion);
         reducedMotion.addEventListener("change", syncMotion);
+        archiveDesktop.addEventListener("change", syncMotion);
         window.addEventListener("scroll", () => {
             if (activeDrag) moveDrag(activeDrag.clientX, activeDrag.clientY);
             else if (reducedMotion.matches) render();
         }, { passive: true });
         window.addEventListener("pagehide", () => {
-            if (frame) cancelAnimationFrame(frame);
-            frame = 0;
-            lastTime = null;
+            pageActive = false;
+            stopFrame();
             cancelDrag();
             merges.forEach(merge => finishMerge(merge, false));
         });
-        window.addEventListener("pageshow", syncMotion);
+        window.addEventListener("pageshow", () => {
+            pageActive = true;
+            syncMotion();
+        });
         syncMotion();
 
         return {
@@ -2803,6 +2040,7 @@ function initExplanationArchiveFade() {
         const flow = createFlow(host);
 
         function syncStages() {
+            if (!archiveDesktop.matches) return;
             flow.resize();
             const tileHeight = window.innerHeight * TILE_HEIGHT_VH / 100;
             const count = Math.max(1, Math.ceil(host.clientHeight / Math.max(1, tileHeight)));

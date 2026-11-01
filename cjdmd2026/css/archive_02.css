@@ -467,7 +467,7 @@ img {
     /* 화면 밖 기본 상태 */
     opacity: 0;
 
-    box-shadow: 0 0 500px 15px rgba(255, 255, 255, 0);
+    isolation: isolate;
 
     transform:
         translate3d(0, 55px, 0)
@@ -483,24 +483,30 @@ img {
         cubic-bezier(.18, .82, .22, 1)
         var(--history-current-delay, 0ms),
 
-        scale 0.8s
-        cubic-bezier(.22, 1, .36, 1),
-
-        filter 0.4s ease,
-        
-        box-shadow
-        1.5s
-        ease;
+        scale 0.65s
+        cubic-bezier(.22, 1, .36, 1);
 
     will-change:
         transform,
         opacity,
-        scale,
-        box-shadow;
+        scale;
+}
+
+/* A small, static halo only fades in; no large animated blur surface. */
+.history-item::before {
+    content: "";
+    position: absolute;
+    inset: -48px;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(ellipse, rgba(255, 255, 255, 0.55), transparent 72%);
+    opacity: 0;
+    transition: opacity 0.45s ease;
 }
 
 .history-item .history-card {
     flex-shrink: 0;
+    transition: opacity 0.45s ease;
 }
 
 .history-meta {
@@ -511,6 +517,7 @@ img {
     align-items: center;
     justify-content: space-between;
     gap: 10px;
+    transition: opacity 0.45s ease;
 }
 
 .history-year,
@@ -555,27 +562,6 @@ img {
     cursor: default;
 }
 
-.history-card--unavailable::after {
-    content: "웹페이지 없음";
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    border-radius: inherit;
-    background: rgba(255, 255, 255, 0.75);
-    color: #666;
-    letter-spacing: 0.02em;
-    font-size: 0.875rem;
-    font-weight: 600;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.25s ease;
-}
-
-.history-card--unavailable:is(:hover, :focus-visible)::after {
-    opacity: 1;
-}
-
 .history .card-wrap .history-item.is-history-visible {
     opacity: 1;
 
@@ -584,26 +570,30 @@ img {
         scale(1);
 }
 
-.history .card-wrap .history-item:hover {
-    scale: 1.1;
-    z-index: 999;
-
-    box-shadow: 0 0 500px 15px rgba(255, 255, 255, 0.3);
-    transition: 0.8s ease;
-}
-
-.history .card-wrap:has(.history-item:hover)
-.history-item:not(:hover) {
-    filter: opacity(0.4);
-}
-
-.history .card-wrap .history-item:hover {
-    filter: opacity(1);
+.history .card-wrap .history-item:is(:hover, :focus-within) {
     scale: 1.1;
     z-index: 10;
 }
 
-.history .card-wrap .history-item:hover .history-year {
+.history .card-wrap .history-item:is(:hover, :focus-within)::before {
+    opacity: 1;
+}
+
+/* Keep the ON poster still while its year and title retain their emphasis. */
+.history .card-wrap .history-item:has(.history-card--unavailable) {
+    scale: 1;
+}
+
+.history .card-wrap .history-item:has(.history-card--unavailable)::before {
+    opacity: 0;
+}
+
+.history .card-wrap:has(.history-item:is(:hover, :focus-within))
+.history-item:not(:hover, :focus-within) :is(.history-card, .history-meta) {
+    opacity: 0.4;
+}
+
+.history .card-wrap .history-item:is(:hover, :focus-within) .history-year {
     opacity: 1;
 
     font-weight: 500;
@@ -611,7 +601,7 @@ img {
     transition: 0.3s ease;
 }
 
-.history .card-wrap .history-item:hover .history-keyword {
+.history .card-wrap .history-item:is(:hover, :focus-within) .history-keyword {
     opacity: 1;
 
     font-weight: 500;
@@ -1010,11 +1000,17 @@ img {
 
 @media (prefers-reduced-motion: reduce) {
     .archive-box,
+    .history .card-wrap .history-item,
     .history .card-wrap .history-card {
         opacity: 1;
         transform: none;
         transition: none;
     }
+
+    .history .card-wrap .history-item,
+    .history .card-wrap .history-item:is(:hover, :focus-within) { scale: 1; }
+    .history-item::before,
+    .history-meta { transition: none; }
 
     .history-title-mask h2,
     .history-description-line {
