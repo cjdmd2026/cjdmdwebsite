@@ -1,0 +1,92 @@
+/* Reference-specific refinements: keep independent button proportions. */
+@media(min-width:901px){
+ .home-page .link-card .card-shortcut{width:8.8vw;height:2.8vw;min-height:0;padding:0 .9vw;gap:.45vw;font:400 1.08vw/1.1 ApuNavHeading,sans-serif;border-radius:99vw}
+ .home-page .kit-movie-stage{padding-top:4.5vw;gap:1.5vw}
+ .home-page .kit-movie-stage h2{margin-top:0}
+ .home-page .kit-movie-screen{width:min(89vw,calc((100svh - var(--header-h) - 12vw)*1.77778))}
+ .apu-kit-page .kw-carousel-slide>a.kw-banner-shortcut{width:9vw;height:3.1vw;min-height:0;font-size:1.05vw;padding:0 .8vw;border-radius:1.25vw;gap:.65vw}
+ .apu-kit-page .kw-side-story img{bottom:8%}
+ .apu-kit-page .unboxing-copy{top:7%;left:10%;width:80%}
+ .apu-kit-page .unboxing-copy h2{margin:0;font-size:2.35vw;line-height:1.35}
+ .apu-kit-page .package-camera{inset:3% 0 -3%}
+ .apu-kit-page .unboxing-description{bottom:8%;left:10%;width:80%;font-size:1.12vw}
+ .apu-kit-page #components.kw-wrap{width:82.75%;padding-block:4vw}
+ .apu-kit-page #components h2{font-size:2.15vw;line-height:1.4;margin:0 0 3vw}
+ .apu-kit-page #components .kw-component-grid{column-gap:2.6vw;row-gap:2.6vw}
+ .apu-kit-page #components .kw-component{min-height:0;aspect-ratio:2.23;grid-template-columns:44.5% 55.5%}
+ .apu-kit-page #components .kw-component>div:last-child{padding:2.3vw 1.8vw}
+ .apu-kit-page #components .kw-component h3{font-size:1.5vw;margin:.9vw 0 1.3vw}
+ .apu-kit-page #components .kw-component p{font-size:1vw;line-height:1.5;word-break:keep-all}
+ .apu-kit-page #components .kw-component-media img{box-sizing:border-box;padding:.8vw}
+}
+/* Lift the card and its original icon together, without deforming the artwork. */
+.home-page #oral-care .info-card{transition:translate .35s ease,box-shadow .35s ease,background .35s ease;outline-offset:5px}
+.home-page #oral-care .info-card:is(:hover,:focus-visible){translate:0 -.65vw;background:#c5eaff;box-shadow:0 1vw 2.2vw #097bb51a}
+.home-page #oral-care .info-card .circle-img img{transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.home-page #oral-care .info-card:is(:hover,:focus-visible) .circle-img img{transform:translateY(-.55vw) rotate(-4deg) scale(1.055)}
+.home-page #oral-care .info-card:nth-child(2):is(:hover,:focus-visible) .circle-img img{transform:translateY(-.55vw) rotate(4deg) scale(1.055)}
+@media(prefers-reduced-motion:reduce){.home-page #oral-care .info-card,.home-page #oral-care .info-card .circle-img img{transition:none;translate:none!important;transform:none!important}}
+/* WATCH / TOUCH / FOLLOW lettering from the supplied reference. */
+.apu-kit-page #learning .kw-learning-tabs :is(b,small){font-family:ApuNavHeading,sans-serif;font-weight:400;font-synthesis:none;line-height:1.2}
+.apu-kit-page #learning .kw-learning-tabs span span{font-family:ApuNavBody,sans-serif;font-weight:400;line-height:1.45}
+.apu-kit-page #learning .kw-learning-tabs small{align-self:start;margin-top:.15em;color:#999}
+.apu-kit-page #learning .kw-learning-tabs b{color:#464646}
+.apu-kit-page #learning .kw-learning-tabs i{font-family:ApuNavBody,sans-serif;font-style:normal;font-weight:400;color:#999}
+.apu-kit-page #learning .kw-learning-tabs button[aria-selected=true] :is(b,small,i){color:#fff}
+@media(min-width:901px){
+.apu-kit-page #learning .kw-learning-tabs button{padding:2.3vw 2.4vw;gap:1.25vw;align-items:center}
+.apu-kit-page #learning .kw-learning-tabs b{font-size:2vw}
+.apu-kit-page #learning .kw-learning-tabs small{font-size:1.35vw;margin-top:.35em}
+.apu-kit-page #learning .kw-learning-tabs span span{font-size:1.22vw;margin-top:1.1vw}
+.apu-kit-page #learning .kw-learning-tabs i{font-size:2.1vw}
+}
+@media(min-width:901px){
+.apu-kit-page #tsd.kw-wrap{width:78%;margin-inline:auto;padding-block:4vw}
+.apu-kit-page #tsd .kw-tsd-layout{grid-template-columns:40% 50%;gap:10%;margin-top:4vw}
+.apu-kit-page #tsd .kw-apu{width:100%;max-width:31vw}
+.apu-kit-page #tsd .kw-tsd-steps{gap:2.2vw}
+.apu-kit-page #tsd .kw-tsd-steps li{min-height:7vw;padding:1.8vw 2vw 1.8vw 7vw}
+.apu-kit-page #tsd .kw-tsd-steps li h3{font:600 1.15vw/1.4 ApuNavBody,sans-serif}
+.apu-kit-page #tsd .kw-tsd-steps li p{font-size:.94vw;line-height:1.5;margin-top:.5vw}
+.apu-kit-page #guide{padding-block:5vw;min-height:0}
+.apu-kit-page #guide>.kw-wide{width:82.75%;margin-inline:auto}
+.apu-kit-page #guide .kw-guide-grid{gap:3vw;margin-top:3.3vw}
+.apu-kit-page #guide .kw-guide-grid article{padding:2.8vw 1.45vw 2vw;border-radius:1vw}
+.apu-kit-page #guide .kw-guide-grid h3{font-size:1.35vw;line-height:1.4}
+.apu-kit-page #guide .kw-guide-grid p{font-size:.98vw;line-height:1.55;margin:2vw 0 2.2vw}
+.apu-kit-page #guide .kw-guide-grid img{aspect-ratio:1.52;width:100%;height:auto}
+.apu-kit-page #rentalBenefits .kw-benefits-pin.kw-wrap{width:82%;grid-template-columns:45% 45%;gap:10%}
+.apu-kit-page #rentalBenefits .kw-benefits-left{align-self:center}
+.apu-kit-page #rentalBenefits .kw-rental-media{margin-top:2.6vw;aspect-ratio:1.72}
+.apu-kit-page #rentalBenefits .kw-benefits h3{font-size:1.4vw}
+.apu-kit-page #rentalBenefits .kw-benefits li p{font-size:.98vw;line-height:1.6;margin-top:1.2vw;padding-left:0}
+.apu-kit-page #rentalGuide{width:82%;margin-inline:auto}
+.apu-kit-page #rentalGuide .kw-service-grid{gap:3.2vw;margin-top:4vw}
+.apu-kit-page #rentalGuide .kw-step-copy{padding:1.9vw 0 0 2.8vw}
+.apu-kit-page #rentalGuide .kw-step-copy>span{font-size:2vw}
+.apu-kit-page #rentalGuide .kw-step-copy h3{font-size:1.25vw;margin:1.3vw 0 .9vw}
+.apu-kit-page #rentalGuide .kw-step-copy p{font-size:.98vw;line-height:1.5}
+}
+/* Learning tabs follow the complete section reference, not the enlarged crop. */
+@media(min-width:901px){
+.apu-kit-page #learning .kw-learning-tabs button{padding:1.5vw 2.85vw 1.5vw 1.5vw;gap:1.15vw;align-items:center}
+.apu-kit-page #learning .kw-learning-tabs b{font-size:1.55vw;line-height:1.2}
+.apu-kit-page #learning .kw-learning-tabs small{font-size:1.05vw;margin-top:.2em}
+.apu-kit-page #learning .kw-learning-tabs span span{font-size:.98vw;line-height:1.45;margin-top:.65vw}
+.apu-kit-page #learning .kw-learning-tabs i{font-size:1.35vw;right:2.5vw}
+.apu-kit-page #learning .kw-learning-layout{grid-template-columns:30% minmax(0,1fr);gap:5%;margin-top:3.5vw}
+.apu-kit-page #learning .kw-learning-panels{height:26vw}
+}
+
+/* Fixed left panel, scrolling right list, as in the motion reference. */
+@media(min-width:901px){
+.apu-kit-page #rentalBenefits{height:320svh;padding:0;display:block}
+.apu-kit-page #rentalBenefits .kw-benefits-pin.kw-wrap{position:sticky;top:var(--header-h);height:calc(100svh - var(--header-h));min-height:0;width:82%;padding:0;display:grid;grid-template-columns:45% 45%;gap:10%;align-items:center;align-content:center}
+.apu-kit-page #rentalBenefits .kw-benefits-left{align-self:center}
+.apu-kit-page #rentalBenefits .kw-benefits-window{height:70vh;overflow:hidden;mask-image:linear-gradient(transparent,#000 20%,#000 80%,transparent);-webkit-mask-image:linear-gradient(transparent,#000 20%,#000 80%,transparent)}
+.apu-kit-page #rentalBenefits .kw-benefits{will-change:transform}
+.apu-kit-page #rentalBenefits .kw-benefits li,.apu-kit-page #rentalBenefits .kw-benefits li:first-child{box-sizing:border-box;height:24vh;min-height:0;padding:2vh 0;display:flex;justify-content:center;flex-direction:column;opacity:var(--row-opacity,.2)}
+.apu-kit-page #rentalBenefits .kw-benefits li h3{font-size:1.35vw}
+.apu-kit-page #rentalBenefits .kw-benefits li p{font-size:.98vw;line-height:1.6;margin-top:1.2vw}
+}
+@media(prefers-reduced-motion:reduce){.apu-kit-page #rentalBenefits{height:auto}.apu-kit-page #rentalBenefits .kw-benefits-pin.kw-wrap{position:static;height:auto;padding-block:5vw}.apu-kit-page #rentalBenefits .kw-benefits-window{height:auto;mask-image:none;-webkit-mask-image:none}.apu-kit-page #rentalBenefits .kw-benefits li{opacity:1}}

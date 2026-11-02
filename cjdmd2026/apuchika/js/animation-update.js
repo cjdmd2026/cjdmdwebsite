@@ -1,0 +1,36 @@
+(()=>{
+ const episodes=window.apuEpisodes,key='apuchika-animation-favorites';let saved=[];
+ try{const parsed=JSON.parse(localStorage.getItem(key)||'[]');if(Array.isArray(parsed))saved=parsed;}catch{}
+ const escape=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const url=e=>'episode.html?id='+encodeURIComponent(e.id);
+ const art=e=>e.cover?'<img src="'+escape(e.cover)+'" alt="'+escape(e.title)+'">':'';
+ const notice=message=>{const el=document.querySelector('.animation-notice');el.textContent=message;el.hidden=false;clearTimeout(notice.timer);notice.timer=setTimeout(()=>el.hidden=true,3000);};
+ const toggle=id=>{saved=saved.includes(id)?saved.filter(v=>v!==id):[...saved,id];try{localStorage.setItem(key,JSON.stringify(saved));}catch{}refreshHearts();};
+ function refreshHearts(){document.querySelectorAll('[data-favorite]').forEach(b=>{const active=saved.includes(b.dataset.favorite);b.setAttribute('aria-pressed',String(active));b.setAttribute('aria-label',active?'즐겨찾기 해제':'즐겨찾기 추가');});}
+ function card(e,short=false){return `<article class="episode-card"><a class="card-cover-link" href="${url(e)}" aria-label="${escape(e.title)} 상세 보기"><span class="cover">${art(e)}<span class="cover-play${e.locked?' is-locked':''}" aria-hidden="true">${e.locked?'<img class="episode-lock-icon" src="../assets/images/user-uploaded/icon-lock.webp" alt="">':'<img class="supplied-play" src="../assets/images/user-uploaded/icon-play.webp" alt="">'}</span></span></a><button class="episode-heart" data-favorite="${e.id}" aria-label="즐겨찾기 추가" aria-pressed="false">♥</button><a href="${url(e)}"><h3>${escape(e.title)}</h3></a>${short?'':`<p>${escape(e.description)}</p>`}</article>`;}
+ document.addEventListener('click',e=>{const b=e.target.closest('[data-favorite]');if(b){toggle(b.dataset.favorite);if(onlyFavorites)render();}});
+ document.querySelector('[data-top]').onclick=()=>window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+ let onlyFavorites=false,page=1;
+ const grid=document.querySelector('.episode-grid');
+ function render(){if(!grid)return;const query=document.querySelector('#episodeSearch').value.trim().replace(/\s/g,'').toLowerCase();const filtered=episodes.filter(e=>(e.title+e.description).replace(/\s/g,'').toLowerCase().includes(query)&&(!onlyFavorites||saved.includes(e.id)));const total=Math.max(1,Math.ceil(filtered.length/12));page=Math.min(page,total);grid.innerHTML=filtered.slice((page-1)*12,page*12).map(e=>card(e)).join('');document.querySelector('.episode-empty').hidden=filtered.length>0;const nav=document.querySelector('.episode-pagination');nav.innerHTML=`<button class="page-arrow page-prev" data-page="${page-1}" aria-label="이전 페이지" ${page===1?'disabled':''}><svg viewBox="0 0 20 32" aria-hidden="true"><path d="M17 3 4 16l13 13"/></svg></button>`+Array.from({length:total},(_,i)=>`<button data-page="${i+1}" ${page===i+1?'aria-current="page"':''}>${i+1}</button>`).join('')+`<button class="page-arrow page-next" data-page="${page+1}" aria-label="다음 페이지" ${page===total?'disabled':''}><svg viewBox="0 0 20 32" aria-hidden="true"><path d="m3 3 13 13L3 29"/></svg></button>`;refreshHearts();}
+ if(grid){
+ const labels=['수호대원 모집 중!','입속 깊은 곳을 찾아봐요','오늘의 도구 등장','양치별 친구들이 출동해요'];
+ document.querySelector('.feature-list').innerHTML=episodes.slice(0,4).map((e,i)=>`<button class="feature-option" data-feature="${i}" aria-pressed="${i===0}"><span class="cover">${art(e)}</span><span>${labels[i]}</span></button>`).join('');
+ const list=document.querySelector('.feature-list');
+ const shell=document.createElement('div');shell.className='feature-list-shell';list.before(shell);shell.append(list);
+ const rail=document.createElement('div');rail.className='feature-scrollbar';rail.setAttribute('aria-hidden','true');
+ const thumb=document.createElement('span');thumb.className='feature-scroll-thumb';rail.append(thumb);shell.append(rail);
+ function syncFeatureScroll(){const max=list.scrollHeight-list.clientHeight;rail.hidden=max<=1;const travel=rail.clientHeight-thumb.offsetHeight;thumb.style.transform=`translateY(${max>0?list.scrollTop/max*travel:0}px)`;}
+ list.addEventListener('scroll',syncFeatureScroll,{passive:true});
+ const resize=new ResizeObserver(syncFeatureScroll);resize.observe(list);resize.observe(shell);
+ list.querySelectorAll('img').forEach(img=>img.addEventListener('load',syncFeatureScroll));
+ let drag=null;
+ rail.addEventListener('pointerdown',e=>{e.preventDefault();const y=e.clientY-rail.getBoundingClientRect().top;const top=list.scrollTop/Math.max(1,list.scrollHeight-list.clientHeight)*(rail.clientHeight-thumb.offsetHeight);drag=y>=top&&y<=top+thumb.offsetHeight?y-top:thumb.offsetHeight/2;rail.setPointerCapture(e.pointerId);moveFeatureScroll(e);});
+ function moveFeatureScroll(e){if(drag===null)return;const travel=rail.clientHeight-thumb.offsetHeight;const y=e.clientY-rail.getBoundingClientRect().top-drag;list.scrollTop=Math.max(0,Math.min(1,y/Math.max(1,travel)))*(list.scrollHeight-list.clientHeight);}
+ rail.addEventListener('pointermove',moveFeatureScroll);rail.addEventListener('lostpointercapture',()=>drag=null);
+ document.fonts.ready.then(syncFeatureScroll);
+ document.querySelector('.feature-list').onclick=e=>{const b=e.target.closest('[data-feature]');if(!b)return;const ep=episodes[Number(b.dataset.feature)];document.querySelector('#featuredLink').href=url(ep);document.querySelector('#featuredLink').innerHTML=art(ep);document.querySelector('#featureTitle').textContent=ep.title;document.querySelector('#featureDescription').textContent=ep.description;document.querySelectorAll('[data-feature]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));};
+ document.querySelector('#episodeSearch').oninput=()=>{page=1;render();};document.querySelector('.favorites-filter').onclick=e=>{onlyFavorites=!onlyFavorites;e.currentTarget.setAttribute('aria-pressed',String(onlyFavorites));page=1;render();};document.querySelector('.episode-pagination').onclick=e=>{const b=e.target.closest('[data-page]');if(b&&!b.disabled){page=Number(b.dataset.page);render();}};render();
+ }
+ const title=document.querySelector('#episodeTitle');if(title){const id=new URLSearchParams(location.search).get('id');const ep=episodes.find(e=>e.id===id)||episodes[0];title.textContent=ep.title;document.title='아푸치카 | '+ep.title;document.querySelector('#episodeDescription').textContent=ep.description;const player=document.querySelector('.episode-player');if(ep.cover)player.insertAdjacentHTML('afterbegin',art(ep));document.querySelector('.episode-play').onclick=()=>{if(!ep.video){notice('이 회차의 영상은 준비 중입니다.');return;}const v=document.createElement('video');v.src=ep.video;v.controls=true;v.playsInline=true;player.replaceChildren(v);v.play().catch(()=>{});};const fav=document.querySelector('#episodeFavorite');fav.dataset.favorite=ep.id;document.querySelector('#episodeShare').onclick=async()=>{try{await navigator.clipboard.writeText(location.href);notice('이야기 링크를 복사했습니다.');}catch{notice('주소창의 링크를 복사해 공유해 주세요.');}};document.querySelector('.other-track').innerHTML=episodes.filter(e=>e.id!==ep.id).map(e=>card(e,true)).join('');refreshHearts();}
+})();

@@ -1,0 +1,23 @@
+
+#badgeFarewell{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;background:#0b99ff url(../assets/images/badge/background-v71.webp) center/cover;opacity:1;transition:opacity .65s ease;pointer-events:auto}
+#badgeFarewell[hidden]{display:none!important}#badgeFarewell.is-leaving{opacity:0;pointer-events:none}
+.farewell-scene{position:relative;width:min(calc(600 * var(--exhibit-unit,1px)),64vw,76vh);text-align:center;padding-top:calc(100 * var(--exhibit-unit,1px))}
+.letter-envelope{position:relative;width:100%;aspect-ratio:1.65;isolation:isolate;filter:drop-shadow(0 20px 22px #387b9d22)}
+.envelope-back{position:absolute;inset:0;border-radius:0 0 calc(10 * var(--exhibit-unit,1px)) calc(10 * var(--exhibit-unit,1px));background:#42aff5}
+.letter-mask{position:absolute;left:0;right:0;top:-85%;height:185%;overflow:hidden;z-index:2}
+#farewellCard{position:absolute;width:86%;height:auto;left:7%;top:51.351351%;transform:translateY(-70%);border-radius:calc(10 * var(--exhibit-unit,1px));box-shadow:0 5px 18px #235d8026}
+.envelope-front{position:absolute;inset:0;z-index:3;border-radius:0 0 calc(10 * var(--exhibit-unit,1px)) calc(10 * var(--exhibit-unit,1px));background:#48b2f8;clip-path:polygon(0 0,50% 54%,100% 0,100% 100%,0 100%)}
+.envelope-front:after{content:'';position:absolute;inset:0;background:#4bb4f8;clip-path:polygon(0 100%,48% 48%,52% 48%,100% 100%)}
+.envelope-flap{position:absolute;left:0;top:0;width:100%;height:60%;background:#66c2ff;clip-path:polygon(0 0,100% 0,52% 100%,48% 100%);transform-origin:top;transform:scaleY(-1);z-index:4;backface-visibility:visible}
+.farewell-scene h2{position:absolute;bottom:calc(100% - calc(55 * var(--exhibit-unit,1px)));left:-10%;width:120%;margin:0;font:400 clamp(calc(24 * var(--exhibit-unit,1px)),2.5vw,calc(44 * var(--exhibit-unit,1px)))/1.4 ApuNavHeading,sans-serif;color:#fff;opacity:0;transform:translateY(16px)}
+.is-playing #farewellCard{animation:letterInsert 1.3s .2s cubic-bezier(.4,0,.2,1) both}
+.is-playing .envelope-flap{animation:flapClose 1.05s 1.8s cubic-bezier(.4,0,.2,1) both}
+.is-playing .farewell-scene h2{animation:congratsReveal .5s 3s ease-out forwards}
+@keyframes letterInsert{from{transform:translateY(-70%)}to{transform:translateY(0)}}
+@keyframes flapClose{from{transform:scaleY(-1)}to{transform:scaleY(1)}}
+@keyframes flapLayer{0%,49.99%{z-index:1}50%,100%{z-index:4}}
+@keyframes congratsReveal{to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.is-playing #farewellCard{animation-duration:.01s}.is-playing .envelope-flap{animation-duration:.01s}.is-playing .farewell-scene h2{animation-duration:.01s}}
+
+.is-playing .farewell-scene{animation:sceneEnter .45s ease-out both}
+@keyframes sceneEnter{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}

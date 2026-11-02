@@ -1,0 +1,1 @@
+const track=document.querySelector('.other-track'),slider=document.querySelector('.other-scroll');slider.addEventListener('input',()=>{track.scrollLeft=(track.scrollWidth-track.clientWidth)*slider.value/1000});track.addEventListener('scroll',()=>{const max=track.scrollWidth-track.clientWidth;slider.value=max?track.scrollLeft/max*1000:0},{passive:true});
