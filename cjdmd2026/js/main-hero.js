@@ -24,6 +24,8 @@
         iconBlurClearSize: 40,   // 이 크기까지 블러를 점진적으로 줄이고, 큰 아이콘은 선명하게
         iconBlurMax: 3.5,        // 원본 기준 최대 블러 반경 — 화면 크기에 맞춰 함께 축소
         iconBlurLayers: 6,      // 약한 블러부터 강한 블러까지, 인접 단계를 섞어 연속적으로 표현
+        iconBlurPixelBudget: 1440 * 900, // 블러 레이어별 최대 픽셀 수 — 큰 화면의 합성 비용 제한
+        maxFPS: 60,             // 120/144Hz 화면에서도 아이콘 연산은 초당 최대 60회
         iconBlurFalloff: 3,     // 중간 크기도 최대 강도에 몰리지 않도록 크기에 따라 빠르게 완화
         iconPushMinSize: 8,      // 원본 기준: 가장 작은 아이콘의 마우스 반응
         iconPushFullSize: 40,    // 이 크기부터 기존 마우스 반응 강도 유지
@@ -289,6 +291,7 @@
     }
 
     let posterW = 1, posterH = 1;
+    const blurPixelRatio = () => Math.min(DPR, 1, Math.sqrt(SETTINGS.iconBlurPixelBudget / (W * H)));
     function measure() {
         const rect = stage.getBoundingClientRect();
         stageLeft = rect.left;
@@ -298,11 +301,12 @@
         H = Math.max(1, rect.height);
         DPR = Math.min(window.devicePixelRatio || 1, 2);
         sizeCanvas(canvas, ctx, W, H);
+        const blurRatio = blurPixelRatio();
         for (const layer of blurLayers) {
             // 이미 흐린 작은 아이콘에 고해상도 화면 전체 버퍼를 중복해서 쓰지 않습니다.
-            if (layer.batch) layer.batch.resize(W, H, Math.min(DPR, 1));
+            if (layer.batch) layer.batch.resize(W, H, blurRatio);
             else {
-                sizeCanvas(layer.canvas, layer.ctx, W, H, Math.min(DPR, 1));
+                sizeCanvas(layer.canvas, layer.ctx, W, H, blurRatio);
                 layer.ctx.imageSmoothingQuality = "high";
             }
             layer.dirty = true;
@@ -850,7 +854,7 @@
         layer.canvas.replaceWith(replacement);
         layer.canvas = replacement;
         layer.ctx = replacement.getContext("2d");
-        sizeCanvas(replacement, layer.ctx, W, H, Math.min(DPR, 1));
+        sizeCanvas(replacement, layer.ctx, W, H, blurPixelRatio());
         layer.ctx.imageSmoothingQuality = "high";
         lastIconState = "";
     }
@@ -1264,12 +1268,19 @@
         header?.classList.toggle("is-dark", stage.dataset.theme === "dark" && rect.bottom > headerHeight);
     }
 
+    const frameInterval = 1000 / SETTINGS.maxFPS;
+    let lastFrameTime = 0;
     function loop(now) {
         requestAnimationFrame(loop);
         if (document.hidden || document.documentElement.classList.contains("page-transition-active")) {
             lastIconTime = 0;
+            lastFrameTime = 0;
             return;
         }
+        const elapsed = now - lastFrameTime;
+        if (elapsed < frameInterval - .5) return;
+        // 144Hz처럼 60의 배수가 아닌 화면에서도 남은 시간을 다음 프레임에 반영합니다.
+        lastFrameTime = now - Math.min(frameInterval, Math.max(0, elapsed - frameInterval));
         stepTweens(now);
         stepTheme(now);
         const rect = hero.getBoundingClientRect();
@@ -1277,7 +1288,7 @@
             renderBg(now);
             renderIcons(now);
             renderPoster(now);
-        }
+        } else lastIconTime = 0;
         syncCSS(rect);
     }
 
