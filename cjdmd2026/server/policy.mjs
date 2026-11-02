@@ -52,6 +52,8 @@ export function readTicket(ticket, secret = process.env.SUBMISSION_SIGNING_SECRE
     const actual = Buffer.from(signature, 'base64url');
     if (actual.length !== expected.length || !timingSafeEqual(actual, expected)) throw new Error();
     const payload = JSON.parse(Buffer.from(data, 'base64url').toString());
+    if (payload.purpose !== undefined && payload.purpose !== 'server') throw new Error();
+    if (payload.purpose === 'server' && payload.mode !== 'folder') throw new Error();
     if (!/^[a-f0-9-]{36}$/.test(payload.id) || !findTeam(payload.teamId) || !Number.isFinite(payload.expires) || payload.expires < now) throw new Error();
     const team = findTeam(payload.teamId);
     const pathname = payload.mode === 'folder' ? `submissions/${payload.id}/files/` : `submissions/${payload.id}/site.zip`;

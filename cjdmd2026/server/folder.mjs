@@ -3,6 +3,7 @@ import { get, head, list, StorageNotFoundError } from './r2.mjs';
 import { readJson, writeJson, readState, writeState, takeLock, releaseLock, del } from './storage.mjs';
 import { SubmissionError } from './policy.mjs';
 import { validateImageContent } from '../submit/files.mjs';
+import { validateSourceText, sourceTextFile } from '../submit/source-files.mjs';
 
 export const filePath = (id, index) => `submissions/${id}/files/${index}`;
 const markerPath = (id, index) => `submissions/${id}/verified/${index}.json`;
@@ -53,7 +54,13 @@ export async function confirmFile(submission, state, index, { read = readJson, w
   if (await read(markerPath(submission.id, index))) return { uploaded: true };
   const pathname = filePath(submission.id, index);
   let content;
-  try { content = await readContent(pathname, file); }
+  try {
+    content = await readContent(pathname, file);
+    if (state.purpose === 'server' && sourceTextFile(file.path)) {
+      try { validateSourceText(file.path, content.toString('utf8')); }
+      catch (error) { throw new SubmissionError(error.message, 422); }
+    }
+  }
   catch (error) {
     if (error instanceof StorageNotFoundError || error.status === 404) return { uploaded: false };
     if (error.status === 422) { await remove(pathname); return { uploaded: false, message: error.message }; }

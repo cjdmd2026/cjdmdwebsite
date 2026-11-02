@@ -4,8 +4,10 @@ import { submitToGithub, mergeSubmission, githubClient } from './github.mjs';
 import { readState, writeState, takeLock, releaseLock, readArchive } from './storage.mjs';
 import { folderArchive } from './folder.mjs';
 import { admission } from './admission.mjs';
+import { sourceConfiguration } from './source-policy.mjs';
+import { saveServerSource } from './source-github.mjs';
 
-export function createProcessor({ read = readState, write = writeState, lockSubmission = takeLock, unlock = releaseLock, gate = admission, configFor = configuration, client = githubClient, prepareArchive = async (submission, state) => state.mode === 'folder' ? folderArchive(submission, state) : readSiteArchive(await readArchive(submission)), submit = submitToGithub, merge = mergeSubmission } = {}) {
+export function createProcessor({ read = readState, write = writeState, lockSubmission = takeLock, unlock = releaseLock, gate = admission, configFor = configuration, sourceConfigFor = sourceConfiguration, client = githubClient, prepareArchive = async (submission, state) => state.mode === 'folder' ? folderArchive(submission, state) : readSiteArchive(await readArchive(submission)), submit = submitToGithub, merge = mergeSubmission, saveSource = saveServerSource } = {}) {
   return async function processSubmission(submission) {
     const lock = await lockSubmission(submission.id);
     if (!lock) return;
@@ -13,11 +15,25 @@ export function createProcessor({ read = readState, write = writeState, lockSubm
     try {
       state = await read(submission.id);
       if (!state || ['submitted', 'merge_failed', 'failed', 'cancelled'].includes(state.phase) || state.resumeAfter > Date.now()) return;
+      if (state.purpose !== submission.purpose) throw new SubmissionError('접수 종류가 일치하지 않습니다.', 403);
       if (state.mode === 'folder' && (state.phase === 'awaiting_upload' || !state.finalizedAt)) return;
       await gate.touch(submission);
       state = { ...state, phase: state.pullNumber ? 'merging' : 'validating', attempts: (state.attempts || 0) + 1 };
       if (state.attempts > 8) throw new SubmissionError('처리가 지연되고 있습니다. 접수 번호를 담당자에게 알려주세요.');
       await write(submission.id, state);
+      if (state.purpose === 'server') {
+        const sourceConfig = sourceConfigFor();
+        if (!sourceConfig.enabled || sourceConfig.repository.toLowerCase() !== state.sourceDestination?.repository?.toLowerCase()) throw new SubmissionError('서버 원본 저장소 설정이 변경되었습니다. 담당자에게 알려주세요.', 409);
+        const github = client(sourceConfig.token, sourceConfig.repository, fetch, Date.now() + 210000);
+        const archive = await prepareArchive(submission, state);
+        state = { ...state, phase: 'saving' }; await write(submission.id, state);
+        const saved = await saveSource(submission, state, archive, { github, onProgress: async (completedFiles, totalFiles, checkpoint) => {
+          state = { ...state, completedFiles, totalFiles, checkpoint }; await write(submission.id, state); await gate.touch(submission);
+        } });
+        await write(submission.id, { ...state, phase: 'submitted', archived: true, sourceCommit: saved.commit, sourcePath: saved.path, checkpoint: undefined, message: undefined, resumeAfter: undefined });
+        await gate.finish(submission).catch(() => {});
+        return;
+      }
       const config = configFor();
       const github = client(process.env.SUBMISSION_GITHUB_TOKEN, config.repository, fetch, Date.now() + 210000);
       if (!state.pullNumber) {
