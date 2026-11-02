@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>아푸치카 | 양치별 친구들</title>
+    <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body>
+    <header class="site-header" id="top">
+        <a href="../index.html" class="brand" aria-label="아푸치카 인덱스 페이지로 이동">
+            <img src="../assets/images/logo-apuchika.png" alt="아푸치카 로고" />
+        </a>
+
+        <nav class="gnb" aria-label="주요 메뉴">
+            <a href="./kit.html">체험 키트</a>
+            <a href="./characters.html" class="is-active">양치별 친구들</a>
+            <a href="./animation.html">애니메이션</a>
+        </nav>
+    </header>
+
+    <button type="button" class="top-button" aria-label="상단으로 이동">↑</button>
+
+    <main class="character-page">
+
+        <!-- Character Planet 3D Hero -->
+        <section class="character-planet-hero" id="characterHero">
+            <div class="space-bg" aria-hidden="true">
+                <div class="stars stars-1"></div>
+                <div class="stars stars-2"></div>
+                <div class="stars stars-3"></div>
+                <div class="space-glow glow-1"></div>
+                <div class="space-glow glow-2"></div>
+            </div>
+
+            <!-- 3D GLB 모델이 들어가는 캔버스 영역 -->
+            <div
+                class="tooth-planet-canvas"
+                id="toothPlanetCanvas"
+                data-model="../assets/models/tooth-planet.glb"
+            ></div>
+
+            <p class="planet-model-status" id="planetModelStatus">
+                3D 양치별을 불러오는 중입니다.
+            </p>
+
+            <p class="planet-guide-text">
+                마우스로 양치별을 움직여보세요.
+            </p>
+
+            <button type="button" class="scroll-mouse planet-scroll-btn" id="heroScrollBtn" aria-label="아래로 이동">
+                <span></span>
+            </button>
+        </section>
+
+        <section class="character-intro section" id="characterIntro">
+            <div class="section-head">
+                <h1>양치별을 지키는 수호대원</h1>
+                <p>
+                    아푸와 치카는 올바른 양치 습관을 돕는 양치별의 친구들이에요.<br />
+                    두 친구는 아이와 함께 양치별을 지키며, 올바른 양치 방법을 쉬운 모험처럼 알려줘요.
+                </p>
+            </div>
+
+            <div class="guardian-circle-list">
+                <a href="#apuSection" class="guardian-circle-card">
+                    <div class="guardian-circle-img">
+                        <img src="../assets/images/character-apu-circle.png" alt="아푸" />
+                    </div>
+                    <span class="guardian-chip dark">아푸</span>
+                </a>
+
+                <a href="#chikaSection" class="guardian-circle-card">
+                    <div class="guardian-circle-img">
+                        <img src="../assets/images/character-chika-circle.png" alt="치카" />
+                    </div>
+                    <span class="guardian-chip light">치카</span>
+                </a>
+            </div>
+        </section>
+
+        <section class="character-detail section" id="apuSection">
+            <div class="character-detail-grid">
+                <div class="character-detail-visual">
+                    <div class="character-hover-img">
+                        <img class="character-img-default" src="../assets/images/apu-main.png" alt="아푸 기본 이미지" />
+                        <img class="character-img-hover" src="../assets/images/apu-main-2.png" alt="아푸 호버 이미지" />
+                    </div>
+                </div>
+
+                <div class="character-detail-copy">
+                    <h2>용감한 양치별 리더 <b>아푸</b></h2>
+                    <p>
+                        아푸는 양치별을 지키는 든든한 리더예요. 밝고 친근한 성격으로 아이들이 양치에 쉽게 다가갈 수 있도록 도와줘요.
+                    </p>
+                    <p>
+                        위기 상황에서는 침착하게 문제를 해결하고, 양치별 친구들과 함께 치아 건강을 지켜나가요.
+                    </p>
+                    <div class="character-tag-list">
+                        <span class="character-tag">용감한</span>
+                        <span class="character-tag">친근한</span>
+                        <span class="character-tag">리더형</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="character-sheet">
+            <img src="../assets/images/apu-model-sheet.jpg" alt="아푸 기본 모델 시트" class="character-sheet-img" />
+        </section>
+
+        <section class="character-detail section" id="chikaSection">
+            <div class="character-detail-grid reverse">
+                <div class="character-detail-copy">
+                    <h2>똑똑한 양치별 박사님 <b>치카</b></h2>
+                    <p>
+                        치카는 호기심이 많고 똑똑한 양치별의 안내자예요. 아이들에게 칫솔의 역할과 양치 순서를 차근차근 설명해줘요.
+                    </p>
+                    <p>
+                        귀엽고 발랄한 움직임으로 아이들이 양치를 지루하지 않게 따라 할 수 있도록 도와줘요.
+                    </p>
+                    <div class="character-tag-list">
+                        <span class="character-tag">박사님</span>
+                        <span class="character-tag">똑똑한</span>
+                        <span class="character-tag">부지런한</span>
+                    </div>
+                </div>
+
+                <div class="character-detail-visual">
+                    <div class="character-hover-img">
+                        <img class="character-img-default" src="../assets/images/chika-main.png" alt="치카 기본 이미지" />
+                        <img class="character-img-hover" src="../assets/images/chika-main-2.png" alt="치카 호버 이미지" />
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="character-sheet">
+            <img src="../assets/images/chika-model-sheet.jpg" alt="치카 기본 모델 시트" class="character-sheet-img" />
+        </section>
+
+        <section class="character-story section">
+            <div class="section-head">
+                <h1>양치별 이야기</h1>
+            </div>
+
+            <div class="story-highlight">
+                <a href="./animation.html" class="story-main-thumb" aria-label="애니메이션 페이지로 이동">
+                    <img src="../assets/images/story-main-thumb.jpg" alt="양치별 이야기 대표 썸네일" />
+                    <span class="story-play-icon">
+                        <img src="../assets/images/icon-play.png" alt="" />
+                    </span>
+                </a>
+
+                <div class="story-sub-list">
+                    <a href="./animation.html" class="story-sub-thumb">
+                        <img src="../assets/images/story-sub-01.jpg" alt="양치별 이야기 썸네일 1" />
+                    </a>
+                    <a href="./animation.html" class="story-sub-thumb">
+                        <img src="../assets/images/story-sub-02.jpg" alt="양치별 이야기 썸네일 2" />
+                    </a>
+                    <a href="./animation.html" class="story-sub-thumb">
+                        <img src="../assets/images/story-sub-03.jpg" alt="양치별 이야기 썸네일 3" />
+                    </a>
+                </div>
+
+                <div class="story-character-float">
+                    <img src="../assets/images/chika-main.png" alt="치카 캐릭터" />
+                </div>
+            </div>
+
+            <div class="story-button-wrap">
+                <a href="./animation.html" class="story-more-btn">보러 가기</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-logo">
+                <img src="../assets/images/logo-apuchika.png" alt="아푸치카 로고" />
+            </div>
+
+            <div class="footer-center">
+                <p>2026 청주대학교 디지털미디어디자인학과</p>
+                <p>제6회 졸업전시회 유연한 결합</p>
+            </div>
+
+            <div class="footer-credit">
+                <p>윤태균 이나영 안나경</p>
+            </div>
+        </div>
+
+        <p class="footer-copy">© 2026 Apuchika. All rights reserved.</p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script type="module" src="../js/tooth-planet-model.js"></script>
+</body>
+
+</html>
