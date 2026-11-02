@@ -24,6 +24,7 @@
     <section class="submission-notice" aria-labelledby="submission-notice-title">
       <div class="notice-heading"><span class="micro-label">제출 전 필독</span><time datetime="2026-11-02">2026. 11. 02.</time></div>
       <h2 id="submission-notice-title">제출 후, 우리 팀 주소에서 모든 페이지를 확인해주세요.</h2>
+      <p><strong>본인 팀의 프로젝트만 수정해주세요. 다른 팀 프로젝트에 파일을 추가·교체·삭제하는 행위는 금지합니다.</strong> 반영된 변경사항은 접수번호·반영 시각·대상 팀·파일 변경 이력으로 기록됩니다. 로그가 남으므로 무단 변경 내역을 추적·확인할 수 있습니다. 팀을 잘못 선택했다면 업로드하거나 변경사항을 반영하지 말고, 본인 팀을 다시 선택해주세요.</p>
       <p>페이지에서 사용하는 CSS·이미지·영상 등이 빠지거나 파일명이 다르면 화면이 깨질 수 있어요. 제출 시스템은 선택한 파일과 폴더 구조를 저장하며, 코드 안의 연결 경로를 자동으로 수정하지 않습니다.</p>
       <ul class="notice-checklist"><li>첫 화면과 하위 페이지에 필요한 파일 모두 포함</li><li>폴더명·파일명·대소문자·확장자 일치</li><li>배포 후 메뉴·이미지·영상·버튼 직접 확인</li></ul>
       <p><strong>이미지 제출 형식:</strong> WebP·AVIF·JPG/JPEG·SVG·GIF만 받습니다. 파비콘용 ICO도 허용합니다. <strong>PNG·BMP는 업로드할 수 없으며</strong>, 이미 저장된 파일은 유지됩니다.</p>
@@ -77,7 +78,7 @@
             <section class="form-section">
               <div class="step-heading"><span class="step-number">01</span><label for="team">우리 팀 선택</label><span class="required-mark">필수</span></div>
               <div class="select-wrap"><select id="team" name="team" required aria-describedby="team-help"><option value="">제출할 팀을 선택해주세요</option></select><span aria-hidden="true">⌄</span></div>
-              <p id="team-help" class="field-help">팀을 선택하면 웹사이트 주소가 자동으로 연결됩니다.</p>
+              <p id="team-help" class="field-help">반드시 본인 팀을 선택해주세요. 선택한 팀의 웹사이트 주소가 자동으로 연결됩니다. 다른 팀 파일의 추가·교체·삭제는 금지합니다.</p>
               <div id="team-preview" class="team-preview" hidden><div><span class="micro-label">SELECTED TEAM</span><strong id="team-name"></strong><p id="team-members"></p></div><div class="destination"><span>연결될 주소</span><p id="team-url"></p></div></div>
             </section>
             <section class="form-section upload-section">
@@ -105,7 +106,7 @@
               <p id="file-help" class="field-help">추가·교체할 파일만 업로드합니다. 전체 500 MiB · 파일당 95 MiB. 업로드를 시작하면 이번 변경 목록이 고정됩니다.</p>
               <button id="upload-button" class="upload-button" type="button" disabled>업로드 시작 <span aria-hidden="true">↑</span></button>
             </section>
-            <div class="form-bottom"><div class="step-heading"><span class="step-number">03</span><span>변경사항 반영</span></div><p id="change-summary" class="field-help">아직 변경한 파일이 없습니다.</p><label class="confirmation"><input id="confirm" type="checkbox" required><span>선택한 팀과 추가·교체·삭제할 파일을 확인했습니다. 이 변경사항을 웹사이트에 반영합니다.</span></label><button id="submit-button" class="submit-button" type="submit" disabled><span>변경사항 반영</span><span aria-hidden="true">↗</span></button><p class="submit-help">기존 파일은 유지하고 선택한 변경만 반영합니다.<br>반영 후에도 파일을 계속 추가할 수 있어요.</p></div>
+            <div class="form-bottom"><div class="step-heading"><span class="step-number">03</span><span>변경사항 반영</span></div><p id="change-summary" class="field-help">아직 변경한 파일이 없습니다.</p><label class="confirmation"><input id="confirm" type="checkbox" required><span>본인 팀의 프로젝트가 맞으며, 추가·교체·삭제할 파일을 확인했습니다. 변경 이력이 기록됨을 확인하고 이 변경사항을 웹사이트에 반영합니다.</span></label><button id="submit-button" class="submit-button" type="submit" disabled><span>변경사항 반영</span><span aria-hidden="true">↗</span></button><p class="submit-help">기존 파일은 유지하고 선택한 변경만 반영합니다.<br>반영 후에도 파일을 계속 추가할 수 있어요.</p></div>
           </fieldset>
         </form>
         <div id="form-error" class="form-error" role="alert" tabindex="-1" hidden></div>
