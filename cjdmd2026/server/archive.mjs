@@ -1,8 +1,8 @@
 import yauzl from 'yauzl';
 import { crc32 } from 'node:zlib';
 import { limits, SubmissionError } from './policy.mjs';
+import { validateFileType, validateImageContent } from '../submit/files.mjs';
 
-const extensions = new Set('html htm css js mjs json jpg jpeg png gif webp avif svg ico bmp woff woff2 ttf otf eot mp4 webm ogg mp3 wav m4a glb gltf bin wasm txt xml pdf webmanifest map'.split(' '));
 const forbiddenNames = new Set(['node_modules', 'package.json', 'package-lock.json', 'yarn.lock', 'pnpm-lock.yaml', 'vercel.json', 'netlify.toml']);
 export function safeArchivePath(name) {
   if (!name || name.length > 240 || /[\\\x00-\x1f<>:"|?*%]/.test(name) || name.startsWith('/')) throw new SubmissionError('ZIP 안에 사용할 수 없는 파일 경로가 있습니다.');
@@ -49,8 +49,8 @@ export async function readSiteArchive(buffer, policy = limits) {
           if (entry.uncompressedSize > policy.fileBytes) throw new SubmissionError('개별 파일은 95 MiB까지 가능합니다. 큰 영상의 용량을 줄여주세요.');
           total += entry.uncompressedSize;
           if (total > policy.totalBytes || items.length >= policy.files) throw new SubmissionError('압축 해제 후 500 MiB, 최대 500개 파일까지 제출할 수 있습니다.');
-          const extension = path.split('.').pop().toLowerCase();
-          if (!extensions.has(extension)) throw new SubmissionError('웹사이트용이 아닌 파일이 있습니다. 디자인 원본이나 실행 파일을 제외하고 다시 압축해주세요.');
+          try { validateFileType(path); }
+          catch (error) { throw new SubmissionError(error.message); }
           items.push({ entry, path });
           zip.readEntry();
         } catch (error) { reject(error); }
@@ -74,7 +74,10 @@ export async function readSiteArchive(buffer, policy = limits) {
         chunks.push(chunk);
       }
       if (size !== entry.uncompressedSize || crc !== entry.crc32) throw new SubmissionError('ZIP 안의 파일이 손상되었습니다. 다시 압축해주세요.');
-      files.push({ path: path.slice(prefix.length), content: Buffer.concat(chunks) });
+      const content = Buffer.concat(chunks);
+      try { validateImageContent(path, content); }
+      catch (error) { throw new SubmissionError(error.message); }
+      files.push({ path: path.slice(prefix.length), content });
     }
     if (!files.find(file => file.path === 'index.html')?.content.length) throw new SubmissionError('index.html 파일이 비어 있습니다.');
     return { files, bytes: expanded };

@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { get, head, list, StorageNotFoundError } from './r2.mjs';
 import { readJson, writeJson, readState, writeState, takeLock, releaseLock, del } from './storage.mjs';
 import { SubmissionError } from './policy.mjs';
+import { validateImageContent } from '../submit/files.mjs';
 
 export const filePath = (id, index) => `submissions/${id}/files/${index}`;
 const markerPath = (id, index) => `submissions/${id}/verified/${index}.json`;
@@ -41,7 +42,10 @@ export async function readVerifiedContent(pathname, file, { getBlob = get, headB
     chunks.push(Buffer.from(chunk));
   }
   if (size !== file.size || hash.digest('hex') !== file.sha256) throw new SubmissionError('파일 전송 내용이 일치하지 않습니다. 이 파일을 다시 업로드해주세요.', 422);
-  return Buffer.concat(chunks);
+  const content = Buffer.concat(chunks);
+  try { validateImageContent(file.path, content); }
+  catch (error) { throw new SubmissionError(error.message, 422); }
+  return content;
 }
 export async function confirmFile(submission, state, index, { read = readJson, write = writeJson, readContent = readVerifiedContent, remove = del } = {}) {
   assertUploading(state);

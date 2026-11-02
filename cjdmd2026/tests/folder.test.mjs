@@ -9,6 +9,30 @@ const hash = value => createHash('sha256').update(value).digest('hex');
 const files = [{ path: 'index.html', size: 2, sha256: hash('hi') }, { path: 'images/그림.svg', size: 6, sha256: hash('<svg/>') }];
 const submission = { id: '62c12225-8afa-478b-8a57-1aad5a411ad5', mode: 'folder', teamId: 'ilkko', slug: 'ilkko' };
 
+test('new folder manifests reject PNG/BMP on both client and server while retaining GIF support', () => {
+  for (const extension of ['png', 'PNG', 'bmp', 'BmP']) {
+    const path = `images/photo.${extension}`;
+    const added = { path, size: 8, sha256: hash('image') };
+    assert.throws(() => validateFolderSubmission({ teamId: 'ilkko', files: [added], baseTreeSha: null }), /PNG·BMP/);
+    assert.throws(() => folderSelection([{ webkitRelativePath: `site/${path}`, size: 8 }], { requireIndex: false }), /PNG·BMP/);
+  }
+  for (const extension of ['webp', 'avif', 'jpg', 'JPEG', 'svg', 'GIF', 'ico']) {
+    assert.equal(validateFolderSubmission({ teamId: 'ilkko', files: [{ path: `images/photo.${extension}`, size: 8, sha256: hash('image') }], baseTreeSha: null }).totalFiles, 1);
+  }
+});
+
+test('server rejects PNG/BMP renamed as JPG even with matching size and digest, and accepts GIF bytes', async () => {
+  const png = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 0]);
+  const bmp = Buffer.from([66, 77, ...new Array(12).fill(0)]);
+  for (const content of [png, bmp]) {
+    const file = { path: 'images/photo.jpg', size: content.length, sha256: hash(content) };
+    await assert.rejects(readVerifiedContent('fixed/path', file, { headBlob: async () => ({ size: content.length }), getBlob: async () => ({ stream: new Response(content).body }) }), error => error.status === 422 && /확장자 이름만/.test(error.message));
+  }
+  const gif = Buffer.from('GIF89a');
+  const file = { path: 'images/animation.GIF', size: gif.length, sha256: hash(gif) };
+  assert.deepEqual(await readVerifiedContent('fixed/path', file, { headBlob: async () => ({ size: gif.length }), getBlob: async () => ({ stream: new Response(gif).body }) }), gif);
+});
+
 test('folder selection preserves nested paths, removes only the selected root and ignores OS metadata', () => {
   const input = files.map(file => ({ webkitRelativePath: `팀 사이트/${file.path}`, size: file.size }));
   const selected = folderSelection([...input, { webkitRelativePath: '팀 사이트/.DS_Store', size: 1 }]);

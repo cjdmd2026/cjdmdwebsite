@@ -1,6 +1,6 @@
 import { upload } from './upload.mjs';
 import { initBotId } from 'botid/client/core';
-import { folderSelection, validateFiles, applyFileChanges, ignoredFile } from './files.mjs';
+import { folderSelection, validateFiles, validateImageContent, applyFileChanges, ignoredFile } from './files.mjs';
 import './header.mjs';
 
 const teams = __TEAMS__;
@@ -215,7 +215,9 @@ async function chooseFolder(files, kind = 'site') {
     for (let i = 0; i < selected.files.length; i++) {
       const entry = selected.files[i];
       showStatus('폴더를 확인하고 있어요.', `${entry.path}\n파일 ${i + 1} / ${selected.files.length}개 확인 중`, i / selected.files.length * 100);
-      const digest = await crypto.subtle.digest('SHA-256', await entry.file.arrayBuffer());
+      const content = await entry.file.arrayBuffer();
+      validateImageContent(entry.path, new Uint8Array(content));
+      const digest = await crypto.subtle.digest('SHA-256', content);
       entry.sha256 = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
     }
     if (receipt) {

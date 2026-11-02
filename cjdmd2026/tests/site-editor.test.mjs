@@ -51,6 +51,14 @@ test('separate updates preserve earlier files, replace exact paths, and count th
   assert.throws(() => applyFileChanges(existing, [file('images', 1)]), /파일과 폴더/);
 });
 
+test('existing PNG files survive unrelated edits and can be explicitly removed during conversion', () => {
+  const previous = [file('index.html'), file('images/legacy.png', 20)];
+  const additions = validateFolderSubmission({ teamId: 'ilkko', files: [file('app.js')], baseTreeSha: oldTree });
+  assert.ok(applyFileChanges(previous, additions.files).files.some(file => file.path === 'images/legacy.png'));
+  const converted = validateFolderSubmission({ teamId: 'ilkko', files: [file('images/legacy.webp', 5)], deletions: ['images/legacy.png'], baseTreeSha: oldTree });
+  assert.deepEqual(applyFileChanges(previous, converted.files, converted.deletions).files.map(file => file.path), ['index.html', 'images/legacy.webp']);
+});
+
 test('the root index must survive; a partial update needs no additional index', () => {
   assert.equal(validateFolderSubmission({ teamId: 'ilkko', files: [file('images/new.svg')], baseTreeSha: oldTree }).totalFiles, 1);
   assert.throws(() => applyFileChanges([], [file('images/new.svg')]), /index.html/);

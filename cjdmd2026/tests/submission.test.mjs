@@ -84,8 +84,18 @@ test('symbolic links are rejected', async () => {
   await assert.rejects(readSiteArchive(await zip([{ path: 'index.html' }, { path: 'link.js', options: { mode: 0o120777 } }])));
 });
 test('case-colliding filenames are rejected', async () => {
-  await assert.rejects(readSiteArchive(await zip([{ path: 'index.html' }, { path: 'img/A.png' }, { path: 'img/a.png' }])));
+  await assert.rejects(readSiteArchive(await zip([{ path: 'index.html' }, { path: 'img/A.webp' }, { path: 'img/a.webp' }])), /중복/);
 });
+test('ZIP uses the same image policy and rejects extension-only renames while allowing GIF', async () => {
+  for (const path of ['img/photo.PNG', 'img/photo.bmp']) {
+    await assert.rejects(readSiteArchive(await zip([{ path: 'index.html' }, { path }])), /PNG·BMP/);
+  }
+  const png = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
+  await assert.rejects(readSiteArchive(await zip([{ path: 'index.html' }, { path: 'img/photo.webp', content: png }])), /실제 파일은 PNG/);
+  const archive = await readSiteArchive(await zip([{ path: 'index.html' }, { path: 'img/animation.gif', content: 'GIF89a' }]));
+  assert.ok(archive.files.some(file => file.path === 'img/animation.gif'));
+});
+
 test('declared expanded size, individual size, count limits are enforced before decompression', async () => {
   const data = await zip([{ path: 'index.html', content: 'x'.repeat(2000) }, { path: 'a.css' }]);
   await assert.rejects(readSiteArchive(data, { ...limits, fileBytes: 100 }));

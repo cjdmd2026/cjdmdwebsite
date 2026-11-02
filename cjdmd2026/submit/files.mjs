@@ -1,6 +1,21 @@
 // Shared by the browser and server; server validation remains authoritative.
 export const folderLimits = Object.freeze({ fileBytes: 95 * 1024 ** 2, totalBytes: 500 * 1024 ** 2, files: 2000 });
-const extensions = new Set('html htm css js mjs json jpg jpeg png gif webp avif svg ico bmp woff woff2 ttf otf eot mp4 webm ogg mp3 wav m4a glb gltf bin wasm txt xml pdf webmanifest map'.split(' '));
+const extensions = new Set('html htm css js mjs json jpg jpeg gif webp avif svg ico woff woff2 ttf otf eot mp4 webm ogg mp3 wav m4a glb gltf bin wasm txt xml pdf webmanifest map'.split(' '));
+const imageExtensions = new Set('jpg jpeg gif webp avif svg ico'.split(' '));
+const imageHelp = '사진은 WebP·AVIF·JPG/JPEG로 변환하고, HTML·CSS·JS의 연결 경로도 수정해주세요. SVG·GIF와 파비콘용 ICO는 허용됩니다.';
+export function validateFileType(path) {
+  const extension = path.split('.').pop().toLowerCase();
+  if (extension === 'png' || extension === 'bmp') throw new Error(`${path}: PNG·BMP 이미지는 새로 제출할 수 없습니다. ${imageHelp}`);
+  if (!extensions.has(extension)) throw new Error(`${path}: 웹사이트용 파일만 제출할 수 있습니다. 디자인 원본과 압축 파일은 제외해주세요.`);
+}
+// Catch common extension-only renames before uploading and again on the server.
+// Existing receipts with .png/.bmp names remain usable; new manifests reject them.
+export function validateImageContent(path, bytes) {
+  if (!imageExtensions.has(path.split('.').pop().toLowerCase())) return;
+  const png = bytes.length >= 8 && [137, 80, 78, 71, 13, 10, 26, 10].every((byte, index) => bytes[index] === byte);
+  const bmp = bytes.length >= 14 && bytes[0] === 66 && bytes[1] === 77;
+  if (png || bmp) throw new Error(`${path}: 실제 파일은 ${png ? 'PNG' : 'BMP'} 이미지입니다. 확장자 이름만 바꾸지 말고 이미지 형식을 변환해주세요. ${imageHelp}`);
+}
 const forbidden = new Set(['node_modules', 'package.json', 'package-lock.json', 'yarn.lock', 'pnpm-lock.yaml', 'vercel.json', 'netlify.toml']);
 export const ignoredFile = path => path.split('/').some(part => part === '__MACOSX' || part === '.DS_Store' || part.startsWith('._'));
 export function validateFiles(input, { hashes = true, policy = folderLimits, requireIndex = true, allowEmpty = false } = {}) {
@@ -12,7 +27,7 @@ export function validateFiles(input, { hashes = true, policy = folderLimits, req
     const path = item.path.normalize('NFC');
     const parts = path.split('/');
     if (parts.some(part => !part || part.startsWith('.') || part.endsWith('.') || part.endsWith(' ') || forbidden.has(part.toLowerCase()))) throw new Error(`${path}: 개발용·설정 파일을 제외하고 배포할 파일만 선택해주세요.`);
-    if (!extensions.has(path.split('.').pop().toLowerCase())) throw new Error(`${path}: 웹사이트용 파일만 제출할 수 있습니다. 디자인 원본과 압축 파일은 제외해주세요.`);
+    validateFileType(path);
     const key = path.toLowerCase();
     if (seen.has(key)) throw new Error(`${path}: 이름이 중복되거나 대소문자만 다른 파일이 있습니다.`);
     seen.add(key);

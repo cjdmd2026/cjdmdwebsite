@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import { readFile } from 'node:fs/promises';
 import { webcrypto } from 'node:crypto';
-import { folderSelection, validateFiles, applyFileChanges, ignoredFile } from '../submit/files.mjs';
+import { folderSelection, validateFiles, validateImageContent, applyFileChanges, ignoredFile } from '../submit/files.mjs';
 import { teams } from '../server/teams.mjs';
 
 // Exercise the actual controller against a minimal DOM and in-memory services.
@@ -59,7 +59,7 @@ async function controller(server) {
   const context = vm.createContext({
     document: { getElementById: get, createElement: element }, window: { addEventListener() {} },
     localStorage: { getItem: key => server.store.get(key) || null, setItem: (key, value) => server.store.set(key, value), removeItem: key => server.store.delete(key) },
-    __TEAMS__: teams, Option: function () {}, initBotId() {}, folderSelection, validateFiles, applyFileChanges, ignoredFile,
+    __TEAMS__: teams, Option: function () {}, initBotId() {}, folderSelection, validateFiles, validateImageContent, applyFileChanges, ignoredFile,
     crypto: webcrypto, AbortController, AbortSignal, setTimeout, setInterval() {}, fetch: server.fetch.bind(server), upload: server.upload.bind(server),
   });
   vm.runInContext(source, context); await context.ready;
@@ -75,6 +75,30 @@ async function select(ui, files = sampleFiles()) {
   ui.get('team').value = 'ilkko'; await ui.event('team', 'change');
   ui.get('folder-files').files = files; await ui.event('folder-files', 'change');
 }
+test('PNG and renamed PNG selections are rejected before reserving a slot or uploading', async () => {
+  for (const name of ['photo.PNG', 'photo.jpg']) {
+    const server = services(), ui = await controller(server);
+    const png = new File([new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10])], name);
+    Object.defineProperty(png, 'webkitRelativePath', { value: `website/images/${name}` });
+    await select(ui, [sampleFiles()[0], png]);
+    assert.match(ui.get('form-error').textContent, /PNG/);
+    assert.equal(ui.get('upload-button').disabled, true);
+    assert.equal(server.preparations, 0);
+    assert.equal(server.uploaded.size, 0);
+  }
+});
+
+test('GIF can still be selected and uploaded', async () => {
+  const server = services(), ui = await controller(server); server.failOnce = false;
+  const gif = new File(['GIF89a'], 'animation.gif');
+  Object.defineProperty(gif, 'webkitRelativePath', { value: 'website/images/animation.gif' });
+  await select(ui, [sampleFiles()[0], gif]);
+  assert.equal(ui.get('upload-button').disabled, false);
+  await ui.event('upload-button', 'click');
+  assert.equal(server.uploaded.size, 2);
+  assert.ok(server.files.some(file => file.path === 'images/animation.gif'));
+});
+
 test('client retries only failed files and requires explicit final confirmation after every file succeeds', async () => {
   const server = services(), ui = await controller(server);
   await select(ui);
