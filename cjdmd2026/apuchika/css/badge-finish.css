@@ -1,0 +1,81 @@
+.badge-page .badge-stepbar{position:absolute;inset:50% 3.2% auto auto;transform:translateY(-50%);min-height:0;pointer-events:none}
+.badge-page .badge-stepbar ol{display:grid;position:relative;gap:2.4cqh;color:white;font:600 clamp(14px,1.35vw,54px)/1 ApuNavBody,sans-serif}
+.badge-page .badge-stepbar ol:before{content:"";position:absolute;top:.55em;bottom:.55em;left:.49em;width:.12em;background:white}
+.badge-page .badge-stepbar li{position:relative;display:flex;gap:.65em;align-items:center}.badge-stepbar li:before{content:"";box-sizing:border-box;width:1.1em;height:1.1em;border:.16em solid white;background:#0b99ff;border-radius:50%}
+.badge-page .badge-stepbar b,.badge-page .badge-stepbar .active b{border:none;border-radius:0;padding:0;background:none;color:inherit;font:inherit}
+.badge-stepbar .active{color:#ffd140}.badge-stepbar .active:before{background:#ffd140}
+.badge-page .role-options button,.badge-page .role-options button:is(:hover,:focus-visible,[aria-pressed=true]){text-shadow:none!important}
+.badge-page #studio #resultStep{box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2cqh 0;gap:4cqh}
+.badge-page #studio #resultStep[hidden]{display:none}
+.badge-page #resultStep .result-step{gap:3cqh}
+.badge-page #studio #resultStep .finished-card{width:min(59vw,calc(60cqh * 2048 / 1129));max-height:none}
+.badge-page #resultStep .review-actions button,.badge-page #resultStep #openSave{height:7cqh;min-height:0;max-height:none;width:14vw;min-width:0;font-size:clamp(16px,1.45vw,56px)!important}
+.badge-page #saveDialog #localDownload{display:inline-block;padding:.65em 2.4em;border-radius:100px;background:#ffd140;color:#333;font:400 clamp(16px,1.12vw,44px)/1.3 ApuNavHeading,sans-serif;cursor:pointer;text-decoration:none}
+.badge-page #saveDialog.is-loading h2{visibility:visible}
+.badge-page #cameraTitle{font-family:ApuNavHeading,sans-serif;font-weight:400;font-synthesis:none;text-shadow:none;-webkit-text-stroke:0;outline:none}
+/* Match the site's display lettering and reading face throughout the studio. */
+body.badge-page :is(#nameTitle,#roleTitle,#cameraTitle,#resultTitle,#saveDialog h2,#badgeFarewell h2,button,#localDownload){font-family:ApuNavHeading,sans-serif!important;font-weight:400!important;font-synthesis:none}
+body.badge-page :is(#memberName,#nameHint,#nameError,.frame-help,.signature-editor label,#cameraStatus,#qrStatus,.camera-placeholder p,.badge-stepbar b){font-family:ApuNavBody,sans-serif!important;font-weight:400!important;font-synthesis:none}
+
+/* The letter travels up a continuous light column into the planet's receiver. */
+#badgeFarewell{overflow:hidden;isolation:isolate;background:radial-gradient(ellipse at 50% 90%,#47318c 0,#22165a 48%,#110e32 100%);color:white}
+#badgeFarewell:after{content:"";position:absolute;inset:0;z-index:7;pointer-events:none;opacity:.09;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23n)' opacity='.7' d='M0 0h180v180H0z'/%3E%3C/svg%3E")}
+#badgeFarewell .arrival-world{position:absolute;inset:0 0 auto;height:40vh;display:grid;place-items:center;z-index:4;background:none}
+#badgeFarewell .arrival-world img{display:block;width:auto;height:38vh;max-width:80vw;object-fit:contain;mix-blend-mode:normal;mask-image:none;-webkit-mask-image:none}
+.arrival-stars{position:absolute;inset:0;background-image:radial-gradient(circle,#fff6b8 0 1px,transparent 2px),radial-gradient(circle,#59e8ff 0 2px,transparent 3px),radial-gradient(circle,#ff8ad6 0 2px,transparent 3px);background-size:17vw 21vh,29vw 33vh,41vw 27vh;background-position:4vw 8vh,12vw 3vh,7vw 15vh;opacity:.7}
+.arrival-beam{position:absolute;z-index:1;inset:34vh 6% -7%;clip-path:polygon(44% 0,56% 0,100% 100%,0 100%);background:linear-gradient(180deg,#eaff5c 0%,#b8ff91e8 24%,#55ead7c9 66%,#58dcff36 100%);transform-origin:50% 0;box-shadow:inset 0 0 8vw #d8ff6b;overflow:hidden}
+.arrival-beam:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#eaff7b88,transparent 8% 92%,#eaff7b88);clip-path:inherit}
+.arrival-beam i{position:absolute;left:0;right:0;height:11%;border-top:2px solid #efffa37a;border-radius:50%;top:100%;opacity:0}
+.arrival-beam i:nth-child(2){animation-delay:.9s!important}.arrival-beam i:nth-child(3){animation-delay:1.8s!important}
+.arrival-port{position:absolute;z-index:3;top:32vh;left:50%;width:16vh;height:3vh;transform:translateX(-50%);border:solid .2vh #c9ff8d;border-radius:50%;background:#f2ff7d;box-shadow:0 0 2vh #dfff64,0 0 7vh #b7ff7b88,inset 0 0 0 .5vh #efffb8}
+.arrival-port b{position:absolute;inset:-.6vh -1.2vh;border:1px solid #c6ffb655;border-radius:50%}
+#badgeFarewell .sky-letter{position:absolute;z-index:2;left:50%;top:77%;width:min(20vw,29vh);aspect-ratio:1.65;transform:translate(-50%,-50%);border:.25vh solid #e7f5ff;border-radius:5%;background:linear-gradient(33deg,#d2e9fc 49.6%,transparent 50%) left/51% 100% no-repeat,linear-gradient(-33deg,#d2e9fc 49.6%,transparent 50%) right/51% 100% no-repeat,#fff9e7;box-shadow:0 1vh 3vh #17235033;display:grid;place-items:center}
+.sky-letter:before{content:"";position:absolute;inset:0;background:#fffdf2;clip-path:polygon(0 0,100% 0,50% 61%)}
+.sky-letter span{position:relative;display:grid;place-items:center;color:#ffb417;font-size:min(4vw,6vh);line-height:1}
+.arrival-dust{position:absolute;inset:28% 21% 11%;z-index:2;pointer-events:none}
+.arrival-dust i{position:absolute;left:var(--x);bottom:0;width:.6vh;height:1.8vh;border-radius:80%;background:#fffbc5;opacity:0;box-shadow:0 0 1vh #dfff83;transform:rotate(15deg)}
+#badgeFarewell h2{position:absolute;inset:auto 2% 3%;z-index:6;text-align:center;color:#fffde9;font:400 clamp(20px,2.4vw,80px)/1.4 ApuNavHeading,sans-serif;text-shadow:none}
+#badgeFarewell.flight .arrival-world{animation:planet-rise 5.4s cubic-bezier(.3,0,.2,1) both;transform-origin:50% 33vh}
+#badgeFarewell.flight .arrival-beam{animation:beam-follow 5.4s cubic-bezier(.3,0,.2,1) both,beam-open 7s linear both}
+#badgeFarewell.flight .arrival-port{animation:port-follow 5.4s cubic-bezier(.3,0,.2,1) both,port-light 7s linear both}
+#badgeFarewell.flight .arrival-beam i{animation:beam-ring 3s linear 2 both}
+#badgeFarewell.flight .sky-letter{animation:letter-lift 4.8s cubic-bezier(.42,0,.72,.65) .65s both}
+#badgeFarewell.flight .arrival-dust i{animation:dust-lift 3.2s cubic-bezier(.42,0,.72,.65) var(--delay) both}
+#badgeFarewell.flight h2{animation:arrival-caption 7s both}
+@keyframes planet-rise{from{transform:translateY(0) scale(1)}to{transform:translateY(-8vh) scale(.9)}}
+@keyframes beam-follow{from{top:34vh}to{top:26vh}}
+@keyframes port-follow{from{top:32vh}to{top:24vh}}
+@keyframes beam-open{0%{opacity:0;transform:scaleX(.8)}12%,77%{opacity:1;transform:scaleX(1)}94%,100%{opacity:0;transform:scaleX(.85)}}
+@keyframes port-light{0%{opacity:0}12%,75%{opacity:1}80%{opacity:1;background:white;box-shadow:0 0 4vh #fff,0 0 10vh #dfff83}94%,100%{opacity:0}}
+@keyframes beam-ring{0%{top:100%;opacity:0;transform:scaleX(1)}18%{opacity:.25}90%{opacity:.2}100%{top:-10%;opacity:0;transform:scaleX(.13)}}
+@keyframes letter-lift{0%{top:78vh;transform:translate(-50%,-50%) rotate(-3deg) scale(1);opacity:1}90%{opacity:1}100%{top:25vh;transform:translate(-50%,-50%) rotate(0) scale(.18);opacity:0}}
+@keyframes dust-lift{0%{opacity:0;transform:translate(0,0) rotate(15deg) scale(1)}18%{opacity:.8}90%{opacity:.6}100%{opacity:0;transform:translate(var(--drift),-54vh) rotate(15deg) scale(.25)}}
+@keyframes arrival-caption{0%,78%{opacity:0;transform:translateY(1vh)}86%,100%{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){#badgeFarewell.flight :is(.arrival-world,.sky-letter,.arrival-beam,.arrival-port,h2,.arrival-beam i,.arrival-dust i){animation:none}#badgeFarewell .sky-letter{top:59%;width:16vh}#badgeFarewell .arrival-beam{opacity:.55}#badgeFarewell .arrival-dust{display:none}}
+
+/* Name and numbered progress use the supplied Gosanja face. */
+body.badge-page :is(#memberName,#nameHint,#nameError,.badge-stepbar ol,.badge-stepbar b){font-family:ApuNavHeading,sans-serif!important;font-weight:400!important;font-synthesis:none}
+.badge-page #studio #resultStep{position:absolute;inset:0;padding:0;display:block}
+.badge-page #studio #resultStep[hidden]{display:none}
+.badge-page #resultStep #resultTitle{position:absolute;inset:6.5cqh 0 auto;margin:0;font-size:2.6vw;line-height:1.3;text-align:center;outline:none}
+.badge-page #resultStep .result-step{position:absolute;top:20cqh;left:0;width:100%;margin:0;display:flex;flex-direction:column;align-items:center;gap:4cqh}
+.badge-page #studio #resultStep .finished-card{width:min(58.6vw,calc(61cqh * 2048 / 1129));max-height:none}
+.badge-page #resultStep :is(.review-actions,.result-panel){margin:0;padding:0}
+/* Receive the letter first, then let the planet carry it out of view. */
+#badgeFarewell .arrival-world{height:42vh}
+#badgeFarewell .arrival-port{top:34vh}
+#badgeFarewell .arrival-beam{top:36vh}
+#badgeFarewell.flight .arrival-world{animation:planet-depart 6.8s cubic-bezier(.4,0,.2,1) both;transform-origin:50% 34vh}
+#badgeFarewell.flight .arrival-port{animation:receiver-depart 6.8s cubic-bezier(.4,0,.2,1) both,receiver-glow 6.8s linear both}
+#badgeFarewell.flight .arrival-beam{animation:column-depart 6.8s cubic-bezier(.4,0,.2,1) both,column-light 6.8s linear both}
+#badgeFarewell.flight .sky-letter{animation:letter-receive 3.35s cubic-bezier(.42,0,.65,.75) .65s both}
+#badgeFarewell.flight h2{animation:departure-caption 7s both}
+#badgeFarewell.flight .arrival-dust i{animation:dust-lift 2.7s ease-in var(--delay) both}
+@keyframes planet-depart{0%,59%{transform:translateY(0) scale(1)}100%{transform:translateY(-45vh) scale(.78)}}
+@keyframes receiver-depart{0%,59%{top:34vh;transform:translateX(-50%) scale(1)}100%{top:-11vh;transform:translateX(-50%) scale(.78)}}
+@keyframes column-depart{0%,59%{top:36vh}100%{top:-9vh}}
+@keyframes receiver-glow{0%{opacity:0}10%,52%{opacity:1}59%{opacity:1;box-shadow:0 0 3vh #fff,0 0 7vh #dfff83}80%,100%{opacity:0}}
+@keyframes column-light{0%{opacity:0;transform:scaleX(.75)}12%,52%{opacity:.9;transform:scaleX(1)}65%{opacity:.5;transform:scaleX(.5)}84%,100%{opacity:0;transform:scaleX(.03)}}
+@keyframes letter-receive{0%{top:78vh;transform:translate(-50%,-50%) rotate(-2deg) scale(1);opacity:1}92%{opacity:1}100%{top:31vh;transform:translate(-50%,-50%) rotate(0) scale(.34);opacity:0}}
+@keyframes departure-caption{0%,70%{opacity:0;transform:translateY(1vh)}80%,100%{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){#badgeFarewell.flight :is(.arrival-world,.arrival-port,.arrival-beam,.sky-letter,h2,.arrival-dust i){animation:none}#badgeFarewell .sky-letter{top:60vh;width:18vh}}

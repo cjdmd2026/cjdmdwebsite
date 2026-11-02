@@ -1,0 +1,17 @@
+/* Family reviews, between the rental process and FAQ. */
+.community-reviews{padding:calc(80 * var(--exhibit-unit,1px)) 0 calc(85 * var(--exhibit-unit,1px));overflow:hidden;background:linear-gradient(180deg,#fff 0%,#fff9e6 45%,#f9e5a4 100%);color:#333}
+.reviews-heading{text-align:center;padding:0 calc(20 * var(--exhibit-unit,1px));margin-bottom:calc(48 * var(--exhibit-unit,1px))}
+.reviews-heading h2{font-family:Gosan,sans-serif;font-size:calc(32 * var(--exhibit-unit,1px));line-height:1.4;font-weight:400;letter-spacing:-.02em}
+.reviews-heading h2 em{color:#e3b82b}.reviews-heading>p{font-size:calc(15 * var(--exhibit-unit,1px));line-height:1.6;margin-top:calc(16 * var(--exhibit-unit,1px));color:#333}
+.reviews-heading small{display:block;font-size:calc(11 * var(--exhibit-unit,1px));margin-top:calc(9 * var(--exhibit-unit,1px))}
+.reviews-marquee{overflow:hidden;padding:calc(16 * var(--exhibit-unit,1px)) 0 calc(22 * var(--exhibit-unit,1px))}
+.reviews-track{display:flex;width:max-content;animation:none;will-change:transform}
+.review-group{display:flex;flex:0 0 auto;width:max-content;gap:calc(32 * var(--exhibit-unit,1px));padding-right:calc(32 * var(--exhibit-unit,1px));align-items:stretch}
+.review-item{flex:0 0 calc(300 * var(--exhibit-unit,1px));width:calc(300 * var(--exhibit-unit,1px));background:#fff;border-radius:calc(7 * var(--exhibit-unit,1px));overflow:hidden;box-shadow:0 3px 10px rgba(65,49,20,.035);transition:transform .25s ease,box-shadow .25s ease;transform-origin:center}
+.review-item:hover,.review-item:focus-visible{transform:scale(1.04);box-shadow:0 5px 14px rgba(65,49,20,.06);outline:none}
+.review-photo{height:calc(180 * var(--exhibit-unit,1px));overflow:hidden}.review-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.review-item>div:last-child{padding:calc(24 * var(--exhibit-unit,1px)) calc(18 * var(--exhibit-unit,1px)) calc(28 * var(--exhibit-unit,1px));text-align:center;display:flex;flex-direction:column;align-items:center}
+.review-item h3{font-size:calc(18 * var(--exhibit-unit,1px));line-height:1.5;font-weight:400;min-height:calc(54 * var(--exhibit-unit,1px));margin:0 0 calc(17 * var(--exhibit-unit,1px))}
+.review-item p{font-size:calc(14 * var(--exhibit-unit,1px));line-height:1.8;font-weight:400;min-height:calc(76 * var(--exhibit-unit,1px));white-space:nowrap;color:#555}
+@media(max-width:620px){.community-reviews{padding:calc(55 * var(--exhibit-unit,1px)) 0 calc(60 * var(--exhibit-unit,1px))}.reviews-heading{margin-bottom:calc(30 * var(--exhibit-unit,1px))}.reviews-heading h2{font-size:calc(26 * var(--exhibit-unit,1px))}.reviews-heading>p{font-size:calc(13 * var(--exhibit-unit,1px))}.review-group{gap:calc(20 * var(--exhibit-unit,1px));padding-right:calc(20 * var(--exhibit-unit,1px))}.review-item{flex-basis:calc(260 * var(--exhibit-unit,1px));width:calc(260 * var(--exhibit-unit,1px))}.review-photo{height:calc(156 * var(--exhibit-unit,1px))}.review-item h3{font-size:calc(17 * var(--exhibit-unit,1px))}.review-item p{font-size:calc(13 * var(--exhibit-unit,1px))}}
+@media(prefers-reduced-motion:reduce){.reviews-marquee{overflow-x:auto}.review-item{transition:none}}

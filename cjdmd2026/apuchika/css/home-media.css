@@ -1,0 +1,8 @@
+@media(min-width:901px){
+ .home-page .vertical-card-grid .info-card p{top:64.6%;line-height:1.15}
+ .home-page .vertical-card-grid .info-card h3{top:71%;line-height:1.18}
+ .home-page .solution-section .hero-logo-video{width:67vw!important;height:auto;max-width:100%;max-height:none}
+ .home-page .solution-inner{gap:3.4vw;padding-block:7vw}
+ .home-page .kit-movie-screen{width:min(89vw,calc((100svh - var(--header-h) - 5vw)*1.77778));max-width:none;height:auto;aspect-ratio:16/9}
+ .home-page .kit-movie-stage{padding-block:1vw;gap:.7vw;overflow:hidden}
+}

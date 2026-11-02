@@ -1,0 +1,10 @@
+
+.signature-editor label{transform:translateX(-7%)}
+#saveDialog #qrStatus{font-weight:400;font-synthesis:none}
+.episode-actions .episode-action-icon{display:block;width:calc(32 * var(--exhibit-unit,1px));height:calc(32 * var(--exhibit-unit,1px));object-fit:contain;margin:0 auto calc(12 * var(--exhibit-unit,1px))}
+.friend-trio h3.friend-name{border:0;padding:0;background:none;width:calc(150 * var(--exhibit-unit,1px));max-width:85%;margin-top:calc(28 * var(--exhibit-unit,1px))}
+.friend-trio .friend-name img{display:block;width:100%;height:auto;object-fit:contain}
+.friends-story-track a{overflow:hidden}
+.friends-story-track a>img{transition:transform .35s ease;transform-origin:center}
+.friends-story-track a:hover>img,.friends-story-track a:focus-visible>img{transform:scale(1.08)}
+@media(prefers-reduced-motion:reduce){.friends-story-track a>img{transition:none}}

@@ -1,0 +1,21 @@
+/* Shared section title and introductory body scale. */
+@media(min-width:901px){
+:root{--section-title-size:2.15vw;--section-lead-size:1.12vw}
+body :is(.section-head h2,.kw-center h2,.kw-components>h2,.kw-learning>h2,.kw-benefits-left>h2,.reviews-heading h2,.kw-faq>h2,.story-section-title,.feature-layout h2,.guardians h1,.planet-friends h2,.friends-stories h2,.join-guardians h2,.unboxing-copy h2,.solution-title,.learn-section>.section-head h2,.badge-invite-v98>h2,.cta-content h2){font-size:var(--section-title-size)!important;line-height:1.35}
+body :is(.section-head>p,.kw-center>p,.kw-lead,.kw-faq>p,.reviews-heading>p,.feature-layout>div>p,.guardians>p,.friends-stories>p,.join-guardians>p,.badge-invite-v98>p,.cta-content>p,.solution-copy,.unboxing-description){font-size:var(--section-lead-size)!important;line-height:1.6}
+}
+
+/* Readable exhibition footer across the site. */
+body .site-footer :is(.footer-center,.footer-credit,.footer-copy){font-family:ApuNavBody,sans-serif;font-size:clamp(14px,1.05vw,44px)!important;line-height:1.7}
+body .site-footer{font-size:clamp(14px,1.05vw,44px)!important;padding-block:3.2vw}
+@media(min-width:901px){
+.apu-kit-page #faq{width:88%;padding:5.5vw 0 6vw}
+.apu-kit-page #faq>p{font-family:ApuNavHeading,sans-serif;margin:1.5vw 0 3.4vw}
+.apu-kit-page #faq details{border:0;border-radius:1.15vw;background:#f8f8f8;margin:0 0 1.6vw;overflow:hidden}
+.apu-kit-page #faq summary{min-height:7.45vw;padding:2.3vw 3.2vw;font:400 1.4vw/1.4 ApuNavHeading,sans-serif;gap:.5vw;background:transparent}
+.apu-kit-page #faq summary>span{color:#0b99ff}
+.apu-kit-page #faq summary>i{display:none}
+.apu-kit-page #faq summary::after{content:"";display:block;width:.85vw;height:.85vw;border:solid #0b99ff;border-width:0 .16vw .16vw 0;transform:rotate(-45deg);margin-left:auto;transition:transform .2s}
+.apu-kit-page #faq details[open] summary::after{transform:rotate(45deg)}
+.apu-kit-page #faq .kw-faq-answer{padding:0 3.2vw 2vw;background:transparent}
+}
