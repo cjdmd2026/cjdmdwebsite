@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="ko" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>메인 · 아이콘 부유와 결합</title>
+<link rel="icon" href="data:,"><link rel="stylesheet" href="../css/main-effect.css">
+<script>if ('scrollRestoration' in history) history.scrollRestoration = 'manual';</script>
+<script defer src="../js/main-posters.js"></script><script defer src="../js/main-poster-sprites.js"></script><script defer src="../js/main-scroll-input.js"></script><script defer src="../js/main-hero-sprite-batch.js"></script><script defer src="../js/main-hero.js"></script>
+</head><body>
+<nav class="demo-nav" aria-label="예제 이동"><a href="../">목록</a><a href="../archive/">아카이브 효과</a><a href="./">다시 시작</a></nav>
+<main><section class="hero" id="hero" aria-labelledby="heroTitle"><div class="hero-stage" id="heroStage" data-theme="light" data-step="0">
+<canvas class="hero-bg" id="heroBg" aria-hidden="true"></canvas><canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas><canvas class="hero-fx" id="heroFx" aria-hidden="true"></canvas>
+<div class="hero-layout"><div class="hero-poster-col"><button class="hero-poster" id="heroPoster" type="button" aria-label="포스터 전환"><canvas class="hero-poster__canvas" id="heroPosterCanvas" aria-hidden="true"></canvas></button>
+<div class="hero-indicator" id="heroIndicator" role="tablist" aria-label="포스터 선택"><button type="button" role="tab" data-index="0" aria-selected="true" aria-label="화이트 포스터"></button><button type="button" role="tab" data-index="1" aria-selected="false" aria-label="블랙 포스터"></button></div></div>
+<div class="hero-text"><h1 id="heroTitle">다채로운 개성이<br>빚어낸 결합</h1><p>위로 스크롤하면 결합 상태로 돌아갑니다.<br>한 번 더 올리면 아이콘이 다시 흩어집니다.</p></div></div>
+<div class="hero-scroll-hint" id="heroHint" aria-hidden="true"><img src="../assets/images/icons/mouse-icon-animated.svg" alt=""><span>아래로: 결합 → 포스터 · 위로: 이전 단계</span></div>
+</div></section></main></body></html>

@@ -1,0 +1,17 @@
+{
+  "count": 33,
+  "instagramMissing": [
+    {
+      "id": "noh-minyeong",
+      "name": "노민영"
+    },
+    {
+      "id": "song-seungbin",
+      "name": "송승빈"
+    }
+  ],
+  "sourceSha256": "9c2947d186c9b02bcd3851a22abf4b78e0a627f4c6972d4ea120aa39b45c721c",
+  "originalUnchanged": true,
+  "xlsx": "C:\\Users\\tph06\\Documents\\GitHub\\cjdmdwebsite\\cjdmd2026\\outputs\\student-contacts-20261103-01a1a093\\학생_이메일_인스타그램_20261103.xlsx",
+  "text": "C:\\Users\\tph06\\Documents\\GitHub\\cjdmdwebsite\\cjdmd2026\\outputs\\student-contacts-20261103-01a1a093\\학생_이메일_인스타그램_복사용.txt"
+}

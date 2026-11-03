@@ -1,0 +1,42 @@
+{
+  "desktop": {
+    "connected": {
+      "main": {
+        "step": 0,
+        "busy": false,
+        "locked": true,
+        "top": 10699.65625,
+        "ready": true,
+        "count": 7594,
+        "width": 1440,
+        "height": 900
+      },
+      "offset": 0.34375,
+      "progress": 1,
+      "body": "main-page"
+    },
+    "coloredPixels": 175524,
+    "forwardAndReverse": true,
+    "errors": []
+  },
+  "mobile": {
+    "connected": {
+      "main": {
+        "step": 0,
+        "busy": false,
+        "locked": true,
+        "top": 10033.90625,
+        "ready": true,
+        "count": 7594,
+        "width": 390,
+        "height": 844
+      },
+      "offset": 0.09375,
+      "progress": 0.9999999999999996,
+      "body": "main-page"
+    },
+    "coloredPixels": 67900,
+    "forwardAndReverse": true,
+    "errors": []
+  }
+}

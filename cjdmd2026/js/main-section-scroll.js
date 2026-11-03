@@ -24,7 +24,7 @@
         const available = Math.max(1, innerHeight - headerHeight);
         const viewportCenter = headerHeight + available / 2;
         main.style.paddingBottom = "0px";
-        const next = [{ y: 0, section: sections[0] }];
+        const next = [{ y: window.MainIntro?.anchor() || 0, section: sections[0] }];
 
         sections.slice(1).forEach(section => {
             const rect = section.getBoundingClientRect();
@@ -96,6 +96,7 @@
     }
 
     function ignore(event) {
+        if (window.MainIntro && !window.MainIntro.complete) { wheelOwned = false; return true; }
         return event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey
             || document.body.classList.contains("mobile-menu-open")
             || document.documentElement.classList.contains("page-transition-active")
@@ -104,7 +105,8 @@
 
     function ownsScroll(direction) {
         // 포스터의 0 → 1 → 2 단계와 위로 되감기는 입력은 기존 히어로가 담당합니다.
-        return scrollY > 2 || (direction > 0 && window.MainHeroCanScroll?.());
+        if (window.MainIntro && !window.MainIntro.complete) return false;
+        return scrollY > (window.MainIntro?.anchor() || 0) + 2 || (direction > 0 && window.MainHeroCanScroll?.());
     }
 
     function consume(event) {

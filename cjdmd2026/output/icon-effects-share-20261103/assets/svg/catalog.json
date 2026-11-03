@@ -1,0 +1,230 @@
+{
+  "teams": [
+    "assets/images/project/test/icon/team-01-apuchika.svg",
+    "assets/images/project/test/icon/team-02-ommix.svg",
+    "assets/images/project/test/icon/team-03-phishing-ttuk.svg",
+    "assets/images/project/test/icon/team-04-ilkko.svg",
+    "assets/images/project/test/icon/team-05-kuro.svg",
+    "assets/images/project/test/icon/team-06-dadeullim.svg",
+    "assets/images/project/test/icon/team-07-style-lens.svg",
+    "assets/images/project/test/icon/team-08-geuneuljabi.svg",
+    "assets/images/project/test/icon/team-09-magmoa.svg",
+    "assets/images/project/test/icon/team-10-ieoon.svg",
+    "assets/images/project/test/icon/team-11-byeolungwan.svg",
+    "assets/images/project/test/icon/team-12-kokorang.svg",
+    "assets/images/project/test/icon/team-13-effect.svg",
+    "assets/images/project/test/icon/team-14-jikji-jamboree.svg"
+  ],
+  "individual": [
+    {
+      "id": "ahn-nagyeong",
+      "color": "#ccebf5",
+      "file": "assets/svg/individual/ahn-nagyeong.svg",
+      "teamSvg": "assets/images/project/test/icon/team-01-apuchika.svg"
+    },
+    {
+      "id": "youn-taegyun",
+      "color": "#ffce07",
+      "file": "assets/svg/individual/youn-taegyun.svg",
+      "teamSvg": "assets/images/project/test/icon/team-01-apuchika.svg"
+    },
+    {
+      "id": "lee-nayeong",
+      "color": "#00aaff",
+      "file": "assets/svg/individual/lee-nayeong.svg",
+      "teamSvg": "assets/images/project/test/icon/team-01-apuchika.svg"
+    },
+    {
+      "id": "noh-minyeong",
+      "color": "#c4272f",
+      "file": "assets/svg/individual/noh-minyeong.svg",
+      "teamSvg": "assets/images/project/test/icon/team-02-ommix.svg"
+    },
+    {
+      "id": "song-seungbin",
+      "color": "#ffc5c8",
+      "file": "assets/svg/individual/song-seungbin.svg",
+      "teamSvg": "assets/images/project/test/icon/team-02-ommix.svg"
+    },
+    {
+      "id": "ham-daeyeon",
+      "color": "#7f1616",
+      "file": "assets/svg/individual/ham-daeyeon.svg",
+      "teamSvg": "assets/images/project/test/icon/team-02-ommix.svg"
+    },
+    {
+      "id": "kim-jiyoo-phishing-ddook",
+      "color": "#e5903a",
+      "file": "assets/svg/individual/kim-jiyoo-phishing-ddook.svg",
+      "teamSvg": "assets/images/project/test/icon/team-03-phishing-ttuk.svg"
+    },
+    {
+      "id": "nam-nayoung",
+      "color": "#f2f070",
+      "file": "assets/svg/individual/nam-nayoung.svg",
+      "teamSvg": "assets/images/project/test/icon/team-03-phishing-ttuk.svg"
+    },
+    {
+      "id": "lee-goeun",
+      "color": "#eec35a",
+      "file": "assets/svg/individual/lee-goeun.svg",
+      "teamSvg": "assets/images/project/test/icon/team-03-phishing-ttuk.svg"
+    },
+    {
+      "id": "seo-yeonwoo",
+      "color": "#f59000",
+      "file": "assets/svg/individual/seo-yeonwoo.svg",
+      "teamSvg": "assets/images/project/test/icon/team-04-ilkko.svg"
+    },
+    {
+      "id": "lim-jongwon",
+      "color": "#e1ff85",
+      "file": "assets/svg/individual/lim-jongwon.svg",
+      "teamSvg": "assets/images/project/test/icon/team-04-ilkko.svg"
+    },
+    {
+      "id": "jo-eungyo",
+      "color": "#ffd834",
+      "file": "assets/svg/individual/jo-eungyo.svg",
+      "teamSvg": "assets/images/project/test/icon/team-04-ilkko.svg"
+    },
+    {
+      "id": "park-yuna",
+      "color": "#bdffbf",
+      "file": "assets/svg/individual/park-yuna.svg",
+      "teamSvg": "assets/images/project/test/icon/team-05-kuro.svg"
+    },
+    {
+      "id": "yoo-hyejin",
+      "color": "#8bff6c",
+      "file": "assets/svg/individual/yoo-hyejin.svg",
+      "teamSvg": "assets/images/project/test/icon/team-05-kuro.svg"
+    },
+    {
+      "id": "ju-bomin",
+      "color": "#3f66b5",
+      "file": "assets/svg/individual/ju-bomin.svg",
+      "teamSvg": "assets/images/project/test/icon/team-05-kuro.svg"
+    },
+    {
+      "id": "kim-doyeon",
+      "color": "#4ccad1",
+      "file": "assets/svg/individual/kim-doyeon.svg",
+      "teamSvg": "assets/images/project/test/icon/team-06-dadeullim.svg"
+    },
+    {
+      "id": "kim-sungeun",
+      "color": "#a8f0db",
+      "file": "assets/svg/individual/kim-sungeun.svg",
+      "teamSvg": "assets/images/project/test/icon/team-06-dadeullim.svg"
+    },
+    {
+      "id": "yun-jiwon",
+      "color": "#3b82a6",
+      "file": "assets/svg/individual/yun-jiwon.svg",
+      "teamSvg": "assets/images/project/test/icon/team-06-dadeullim.svg"
+    },
+    {
+      "id": "kim-dahyun",
+      "color": "#d33bff",
+      "file": "assets/svg/individual/kim-dahyun.svg",
+      "teamSvg": "assets/images/project/test/icon/team-07-style-lens.svg"
+    },
+    {
+      "id": "kim-hawon",
+      "color": "#e692ff",
+      "file": "assets/svg/individual/kim-hawon.svg",
+      "teamSvg": "assets/images/project/test/icon/team-07-style-lens.svg"
+    },
+    {
+      "id": "kim-minjae",
+      "color": "#b5b5b5",
+      "file": "assets/svg/individual/kim-minjae.svg",
+      "teamSvg": "assets/images/project/test/icon/team-08-geuneuljabi.svg"
+    },
+    {
+      "id": "jo-wooseong",
+      "color": "#72a7c1",
+      "file": "assets/svg/individual/jo-wooseong.svg",
+      "teamSvg": "assets/images/project/test/icon/team-08-geuneuljabi.svg"
+    },
+    {
+      "id": "son-yejin",
+      "color": "#536dea",
+      "file": "assets/svg/individual/son-yejin.svg",
+      "teamSvg": "assets/images/project/test/icon/team-09-magmoa.svg"
+    },
+    {
+      "id": "song-yujin",
+      "color": "#4df4ff",
+      "file": "assets/svg/individual/song-yujin.svg",
+      "teamSvg": "assets/images/project/test/icon/team-09-magmoa.svg"
+    },
+    {
+      "id": "kwon-minseong",
+      "color": "#4f00b4",
+      "file": "assets/svg/individual/kwon-minseong.svg",
+      "teamSvg": "assets/images/project/test/icon/team-10-ieoon.svg"
+    },
+    {
+      "id": "min-jiho",
+      "color": "#ccbbff",
+      "file": "assets/svg/individual/min-jiho.svg",
+      "teamSvg": "assets/images/project/test/icon/team-10-ieoon.svg"
+    },
+    {
+      "id": "park-yoonji",
+      "color": "#065182",
+      "file": "assets/svg/individual/park-yoonji.svg",
+      "teamSvg": "assets/images/project/test/icon/team-11-byeolungwan.svg"
+    },
+    {
+      "id": "ju-yejin",
+      "color": "#d5c8ac",
+      "file": "assets/svg/individual/ju-yejin.svg",
+      "teamSvg": "assets/images/project/test/icon/team-11-byeolungwan.svg"
+    },
+    {
+      "id": "kim-jiyou-cocorang",
+      "color": "#ffba79",
+      "file": "assets/svg/individual/kim-jiyou-cocorang.svg",
+      "teamSvg": "assets/images/project/test/icon/team-12-kokorang.svg"
+    },
+    {
+      "id": "kim-jiyoon",
+      "color": "#ff7154",
+      "file": "assets/svg/individual/kim-jiyoon.svg",
+      "teamSvg": "assets/images/project/test/icon/team-12-kokorang.svg"
+    },
+    {
+      "id": "go-biju",
+      "color": "#50c4a6",
+      "file": "assets/svg/individual/go-biju.svg",
+      "teamSvg": "assets/images/project/test/icon/team-13-effect.svg"
+    },
+    {
+      "id": "kim-hyejin",
+      "color": "#178466",
+      "file": "assets/svg/individual/kim-hyejin.svg",
+      "teamSvg": "assets/images/project/test/icon/team-13-effect.svg"
+    },
+    {
+      "id": "kim-juyoun",
+      "color": "#fbe19f",
+      "file": "assets/svg/individual/kim-juyoun.svg",
+      "teamSvg": "assets/images/project/test/icon/team-14-jikji-jamboree.svg"
+    }
+  ],
+  "reference": [
+    {
+      "file": "assets/svg/reference/assembly-poster.svg",
+      "original": "assets/images/poster/assembly-poster.svg",
+      "usage": "assembly 페이지의 포스터 벡터 참고본. 현재 main의 렌더링 입력 파일은 아님."
+    },
+    {
+      "file": "assets/svg/reference/gyeolhap-word.svg",
+      "original": "assets/images/designer/gyeolhap-word.svg",
+      "usage": "designer 페이지의 결합 글자 벡터 참고본. 현재 main의 좌표 데이터와 별개."
+    }
+  ]
+}

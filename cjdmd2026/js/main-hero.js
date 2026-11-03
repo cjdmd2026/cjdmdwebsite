@@ -23,8 +23,7 @@
         iconBlurFullSize: 8,     // 원본 기준: 가장 작은 아이콘은 최대 블러 유지
         iconBlurClearSize: 40,   // 이 크기까지 블러를 점진적으로 줄이고, 큰 아이콘은 선명하게
         iconBlurMax: 3.5,        // 원본 기준 최대 블러 반경 — 화면 크기에 맞춰 함께 축소
-        iconBlurLayers: 6,      // 약한 블러부터 강한 블러까지, 인접 단계를 섞어 연속적으로 표현
-        iconBlurPixelBudget: 1440 * 900, // 블러 레이어별 최대 픽셀 수 — 큰 화면의 합성 비용 제한
+        iconSidePixelBudget: 1440 * 900, // 주변 장식의 최대 픽셀 수 — 큰 화면의 합성 비용 제한
         maxFPS: 60,             // 120/144Hz 화면에서도 아이콘 연산은 초당 최대 60회
         idleFPS: 30,            // 아주 느린 부유는 30fps, 결합·스크롤·마우스 반응은 60fps
         iconBlurFalloff: 3,     // 중간 크기도 최대 강도에 몰리지 않도록 크기에 따라 빠르게 완화
@@ -77,20 +76,6 @@
     if (!hero || !stage || !canvas || !posterButton || !posterCanvas || !bgCanvas) return;
 
     const ctx = canvas.getContext("2d");
-    // 인접한 블러 레이어를 크기별 비율로 섞어 강도가 경계 없이 이어지게 합니다.
-    // 필터는 레이어에만 적용해 수천 개 아이콘의 개별 필터 연산을 피합니다.
-    const blurLayers = Array.from({ length: SETTINGS.iconBlurLayers }, (_, i) => {
-        let layerCanvas = document.createElement("canvas");
-        const batch = window.createHeroSpriteBatch?.(layerCanvas) || null;
-        // WebGL 초기화가 중간에 실패한 캔버스도 새 2D 캔버스로 안전하게 대체합니다.
-        if (!batch) layerCanvas = document.createElement("canvas");
-        layerCanvas.id = `heroSoftCanvas${i + 1}`;
-        layerCanvas.className = canvas.className;
-        layerCanvas.setAttribute("aria-hidden", "true");
-        return { canvas: layerCanvas, batch, ctx: batch ? null : layerCanvas.getContext("2d"), strength: (i + 1) / SETTINGS.iconBlurLayers, alpha: 1, dirty: false };
-    });
-    // 강하게 흐린 작은 아이콘이 뒤에, 선명한 큰 아이콘이 앞에 놓입니다.
-    for (const layer of [...blurLayers].reverse()) canvas.before(layer.canvas);
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
     const posters = window.MAIN_POSTERS || [
         { theme: "light", image: "", pdf: "", background: "#fff" },
@@ -188,8 +173,6 @@
     const iconsNow = () => iconSets[themeOf()]?.length ? iconSets[themeOf()] : iconSets.light;
     const iconPhysics = new WeakMap();
     const pointerCellSize = 128;
-    const settledCache = { canvas: document.createElement("canvas"), key: "", floating: [] };
-    settledCache.ctx = settledCache.canvas.getContext("2d");
     let bigFrame = { x: 0, y: 0, w: 1, h: 1 };
     let smallFrame = { x: 0, y: 0, w: 1, h: 1 };
 
@@ -209,10 +192,10 @@
             clamp((size - SETTINGS.iconPushMinSize) / (SETTINGS.iconPushFullSize - SETTINGS.iconPushMinSize)));
         const idleStrength = size => 1 - clamp((size - SETTINGS.iconIdleFullSize) /
             (SETTINGS.iconIdleMaxSize - SETTINGS.iconIdleFullSize));
-        const blurLevel = size => {
+        const blurStrength = size => {
             const t = clamp((SETTINGS.iconBlurClearSize - size) / (SETTINGS.iconBlurClearSize - SETTINGS.iconBlurFullSize));
             // 원본 8px 이하: 최대 / 13px: 약 60% / 18px: 약 32% / 24px: 약 13%.
-            return Math.pow(t, SETTINGS.iconBlurFalloff) * blurLayers.length;
+            return Math.pow(t, SETTINGS.iconBlurFalloff);
         };
         function glyphMotionStrengths(set) {
             // 확정 포스터(1130 × 1600)의 글자 획만 고정합니다.
@@ -280,7 +263,7 @@
                     gatherPushEnd: gatherStart + gatherDuration * SETTINGS.iconGatherTurnOverlap,
                     gatherOutward: idleStrength(size), // 8px 이하는 최대, 24px 이상은 바깥 밀림 없음
                     whole: kind === 1,
-                    blurLevel: blurLevel(size),
+                    blurStrength: blurStrength(size),
                     pushStrength: pushStrength(size),
                     idleDrift: motionStrength[index] ? motionStrength[index] * idleStrength(size) * SETTINGS.iconIdleDistance * rand(.6, 1) : 0,
                     ...scatterPosition(), // 캔버스는 화면 크기로 유지하고 시작 좌표만 바깥까지 확장
@@ -392,7 +375,7 @@
         }
         const size = `${W}:${H}:${DPR}`;
         if (sideBatchSize !== size) {
-            const ratio = Math.min(DPR, 1.5, Math.sqrt(SETTINGS.iconBlurPixelBudget / (W * H)));
+            const ratio = Math.min(DPR, 1.5, Math.sqrt(SETTINGS.iconSidePixelBudget / (W * H)));
             sideBatch.resize(W, H, ratio);
             sideGpuFrame.progress = -1;
             sideBatchSize = size;
@@ -561,7 +544,6 @@
             iconPhysics.set(icons, { grid, awake, scattered });
         }
         measureSideIcons();
-        settledCache.key = "";
     }
 
     function nearbyIcons(x1, y1, x2, y2, radius) {
@@ -579,25 +561,7 @@
         return candidates;
     }
 
-    function paintSettledCache(atlas, icons) {
-        const key = `${themeOf()}:${W}:${H}:${DPR}`;
-        if (settledCache.key !== key) {
-            const c = settledCache.ctx;
-            sizeCanvas(settledCache.canvas, c, W, H);
-            c.clearRect(0, 0, W, H);
-            c.imageSmoothingQuality = "high";
-            settledCache.floating = [];
-            for (const ic of icons) {
-                if (ic.idleDrift) settledCache.floating.push(ic);
-                else c.drawImage(atlas, ic.ax, ic.ay, ic.gw, ic.gh, ic.tx, ic.ty, ic.sw, ic.sh);
-            }
-            settledCache.key = key;
-        }
-        ctx.drawImage(settledCache.canvas, 0, 0, W, H);
-    }
-
     let posterW = 1, posterH = 1;
-    const blurPixelRatio = () => Math.min(DPR, 1, Math.sqrt(SETTINGS.iconBlurPixelBudget / (W * H)));
     function measure() {
         const rect = stage.getBoundingClientRect();
         stageLeft = rect.left;
@@ -607,17 +571,7 @@
         H = Math.max(1, rect.height);
         DPR = Math.min(window.devicePixelRatio || 1, 2);
         sizeCanvas(canvas, ctx, W, H);
-        assembledBatch?.resize(W, H, DPR);
-        const blurRatio = blurPixelRatio();
-        for (const layer of blurLayers) {
-            // 이미 흐린 작은 아이콘에 고해상도 화면 전체 버퍼를 중복해서 쓰지 않습니다.
-            if (layer.batch) layer.batch.resize(W, H, blurRatio);
-            else {
-                sizeCanvas(layer.canvas, layer.ctx, W, H, blurRatio);
-                layer.ctx.imageSmoothingQuality = "high";
-            }
-            layer.dirty = true;
-        }
+        iconBatch?.resize(W, H, DPR);
         bgWipe.resize(W, H, DPR);
         ctx.imageSmoothingQuality = "high";
 
@@ -1062,7 +1016,12 @@
     let pointerNearHeader = false;
     function syncHeaderVisibility() {
         if (!header) return;
-        const hidden = V.text <= 0 && !pointerNearHeader;
+        const intro = window.MainIntro && !window.MainIntro.complete;
+        const progress = intro ? window.MainIntro.headerProgress : (V.text <= 0 ? 1 : 0);
+        header.style.setProperty('--intro-header-offset', `calc(${-100 * progress}% - ${progress}px)`);
+        header.style.setProperty('--intro-header-opacity', String(1 - progress));
+        header.style.setProperty('--intro-header-duration', intro ? '0s' : '.4s');
+        const hidden = progress > 0 && !pointerNearHeader;
         if (header.classList.contains("is-intro-hidden") !== hidden) {
             header.classList.toggle("is-intro-hidden", hidden);
         }
@@ -1076,7 +1035,7 @@
             syncHeaderVisibility();
         }
         const [x, y] = toStage(e);
-        if (step !== 0 || x < 0 || y < 0 || x > W || y > H) { pointer.active = false; return; }
+        if ((window.MainIntro && !window.MainIntro.complete) || step !== 0 || x < 0 || y < 0 || x > W || y > H) { pointer.active = false; return; }
         if (pointer.active) {
             pointer.oldX = pointer.x; pointer.oldY = pointer.y;
             pointer.vx = clamp(x - pointer.x, -65, 65); pointer.vy = clamp(y - pointer.y, -65, 65);
@@ -1084,6 +1043,7 @@
         pointer.x = x; pointer.y = y; pointer.active = true;
     }, { passive: true });
     document.addEventListener("pointerdown", e => {
+        if (window.MainIntro && !window.MainIntro.complete) return;
         if (step !== 0) return;
         const [x, y] = toStage(e);
         pointer.down = true;
@@ -1154,61 +1114,70 @@
     let scatterTime = 0; // 스크롤 전후에 이어지는 부유 시간 — 숨겨진 탭에서는 멈춤
     let lastIconState = "";
     let assembledTime = 0;
-    let assembledCanvas = null, assembledBatch = null, assembledBatchUnavailable = false;
+    let iconCanvas = null, iconBatch = null, iconBatchUnavailable = false;
+    let iconScratch = null, iconScratchCtx = null, iconSoftScratch = null, iconSoftScratchCtx = null;
 
-    function disableAssembledBatch() {
-        assembledBatch?.dispose();
-        assembledBatch = assembledCanvas = null;
-        assembledBatchUnavailable = true;
-        lastIconState = "";
-    }
-
-    function getAssembledBatch() {
-        if (assembledBatchUnavailable) return null;
-        if (!assembledBatch) {
-            // 디자이너 페이지와 같이 선명한 아이콘 전체를 한 GPU 배치로 그린 뒤 한 번만 합성합니다.
-            // 첫 화면에서는 쓰지 않으므로 실제로 모인 뒤에만 버퍼를 만듭니다.
-            assembledCanvas = document.createElement("canvas");
-            assembledBatch = window.createHeroSpriteBatch?.(assembledCanvas) || null;
-            if (!assembledBatch) { disableAssembledBatch(); return null; }
-            assembledBatch.resize(W, H, DPR);
-            // 동작 줄이기로 정지한 상태에서도 컨텍스트가 손실되면 2D로 다시 그립니다.
-            assembledCanvas.addEventListener("webglcontextlost", disableAssembledBatch, { once: true });
+    function prepareFallbackIcon(atlas, ic, w, h, blur) {
+        if (!iconScratch) {
+            iconScratch = document.createElement("canvas");
+            iconScratch.width = iconScratch.height = 1;
+            iconScratchCtx = iconScratch.getContext("2d");
+            iconSoftScratch = document.createElement("canvas");
+            iconSoftScratch.width = iconSoftScratch.height = 1;
+            iconSoftScratchCtx = iconSoftScratch.getContext("2d");
         }
-        return assembledBatch;
+        const width = Math.ceil(w * DPR), height = Math.ceil(h * DPR);
+        if (iconScratch.width < width) iconScratch.width = width;
+        if (iconScratch.height < height) iconScratch.height = height;
+        iconScratchCtx.clearRect(0, 0, iconScratch.width, iconScratch.height);
+        iconScratchCtx.imageSmoothingQuality = "high";
+        iconScratchCtx.drawImage(atlas, ic.ax, ic.ay, ic.gw, ic.gh, 0, 0, w * DPR, h * DPR);
+        if (!blur) return { source: iconScratch, width: w * DPR, height: h * DPR, pad: 0 };
+        const pad = Math.ceil(blur * DPR * 3);
+        const sw = width + pad * 2, sh = height + pad * 2;
+        if (iconSoftScratch.width < sw) iconSoftScratch.width = sw;
+        if (iconSoftScratch.height < sh) iconSoftScratch.height = sh;
+        iconSoftScratchCtx.clearRect(0, 0, iconSoftScratch.width, iconSoftScratch.height);
+        // 화면 크기의 캔버스에 필터를 걸지 않고 작은 작업 영역 안에서만 흐리게 합니다.
+        iconSoftScratchCtx.filter = `blur(${blur * DPR}px)`;
+        iconSoftScratchCtx.drawImage(iconScratch, 0, 0, w * DPR, h * DPR, pad, pad, w * DPR, h * DPR);
+        iconSoftScratchCtx.filter = "none";
+        return { source: iconSoftScratch, width: sw, height: sh, pad: pad / DPR };
     }
 
-    function useCanvasFallback(layer) {
-        layer.batch.dispose();
-        layer.batch = null;
-        const replacement = layer.canvas.cloneNode(false);
-        layer.canvas.replaceWith(replacement);
-        layer.canvas = replacement;
-        layer.ctx = replacement.getContext("2d");
-        sizeCanvas(replacement, layer.ctx, W, H, blurPixelRatio());
-        layer.ctx.imageSmoothingQuality = "high";
+    function disableIconBatch() {
+        iconBatch?.dispose();
+        iconBatch = iconCanvas = null;
+        iconBatchUnavailable = true;
         lastIconState = "";
+    }
+
+    function getIconBatch() {
+        if (iconBatchUnavailable) return null;
+        if (!iconBatch) {
+            // 흩어짐부터 정착까지 같은 해상도·샘플링·겹침 순서를 유지합니다.
+            // 아이콘별 블러는 이 배치 안에서 처리하므로 별도 화면 크기 블러 레이어가 필요 없습니다.
+            iconCanvas = document.createElement("canvas");
+            iconBatch = window.createHeroSpriteBatch?.(iconCanvas) || null;
+            if (!iconBatch) { disableIconBatch(); return null; }
+            iconBatch.resize(W, H, DPR);
+            // 동작 줄이기로 정지한 상태에서도 컨텍스트가 손실되면 2D로 다시 그립니다.
+            iconCanvas.addEventListener("webglcontextlost", disableIconBatch, { once: true });
+        }
+        return iconBatch;
     }
 
     function renderIcons(time) {
         renderSideIcons(time);
         const state = `${current}:${V.fly}:${V.graphic}:${V.dissolve}:${V.move}:${V.reveal}:${ready(atlasNow())}`;
         const idling = step === 1 && V.fly === 1 && V.move === 0;
-        const moving = (V.fly < 1 || idling) && !reducedMotion.matches && V.dissolve < 1 && V.reveal < 1;
+        const moving = (V.fly < 1 || idling) && !reducedMotion.matches && V.dissolve < 1 && V.reveal < 1 && (!window.MainIntro || window.MainIntro.complete);
         if (!moving && state === lastIconState) { lastIconTime = time; return; }
         lastIconState = state;
         ctx.clearRect(0, 0, W, H);
-        for (const layer of blurLayers) {
-            if (layer.dirty) {
-                if (layer.batch) layer.batch.clear();
-                else layer.ctx.clearRect(0, 0, W, H);
-            }
-            layer.dirty = false;
-            layer.alpha = 1;
-        }
         const dt = lastIconTime ? Math.min(.05, (time - lastIconTime) / 1000) : 0;
         lastIconTime = time;
-        if (V.fly < 1 && !reducedMotion.matches) scatterTime += dt;
+        if (V.fly < 1 && !reducedMotion.matches && (!window.MainIntro || window.MainIntro.complete)) scatterTime += dt;
         const scatterClock = scatterTime * SETTINGS.iconScatterSpeed;
         if (V.fly === 0) assembledTime = 0;
         else if (idling && !reducedMotion.matches) assembledTime += dt;
@@ -1252,22 +1221,8 @@
         const scattered = V.fly === 0;
         const settled = V.fly === 1;
         if (scattered) icons = iconPhysics.get(icons).scattered;
-        // 글자 획은 정지 이미지로 재사용하고 외곽의 움직이는 아이콘만 매 프레임 그립니다.
-        // 축소·역방향 전환에서는 전체 아이콘의 위치를 다시 계산합니다.
-        if (idling && V.dissolve === 0 && V.reveal === 0 && V.graphic === 0) {
-            paintSettledCache(atlas, icons);
-            icons = settledCache.floating;
-        }
-        // 모이는 동안 초점이 돌아오고, 결합이 완성되면 원래 캔버스에 선명하게 그립니다.
-        const focus = easeInOut(clamp(V.fly));
-        const blur = SETTINGS.iconBlurMax * k * (1 - focus);
-        for (const layer of blurLayers) {
-            const radius = blur * layer.strength;
-            const filter = radius > .001 ? `blur(${radius.toFixed(3)}px)` : "none";
-            if (layer.canvas.style.filter !== filter) layer.canvas.style.filter = filter;
-        }
         const hide = 1 - V.reveal;
-        const batch = settled ? getAssembledBatch() : null;
+        const batch = getIconBatch();
         if (batch) batch.clear();
         let batchDirty = false;
         let lastAlpha = 1;
@@ -1285,6 +1240,10 @@
             // 완전히 덮인 순간 지움 → 보는 사람에게는 주변 글자·선만 새로 나타나는 것처럼 보임
             const alpha = (ic.whole ? 1 : a) * fade * hide;
             if (alpha <= 0.01) continue;
+            // 전체 시간이 아니라 이 아이콘의 실제 이동 진행률에 맞춰 초점을 맞춥니다.
+            // 거의 0인 반경은 일찍 정리해 도착 프레임에서도 동일한 선명한 그리기를 이어갑니다.
+            const radius = SETTINGS.iconBlurMax * k * ic.blurStrength * (1 - a);
+            const blur = radius > .01 ? radius : 0;
 
             const ws = ic.scatterW, hs = ic.scatterH;
             const w = lerp(ws, ic.gw * kf * fs, a), h = lerp(hs, ic.gh * kf * fsy, a);
@@ -1293,7 +1252,7 @@
             const ty = frame.y + (gcy + (ic.gy - gcy) * fsy + fy0) * kf;
             const ang = ic.angle * wob;
             const drift = ic.idleDrift * kf * a * idleAmount;
-            const margin = Math.abs(ang) > .002 ? Math.max(w, h) : 0;
+            const margin = (Math.abs(ang) > .002 ? Math.max(w, h) : 0) + blur * 3;
             let x = tx, y = ty;
             if (!settled) {
                 // 합류가 시작될 때도 바깥 움직임을 조금 이어가 멈춤 없이 부드러운 곡선으로 돌아옵니다.
@@ -1320,51 +1279,33 @@
                 y += Math.cos(assembledTime * ic.speed * .81 + ic.phase) * drift;
             }
             if (x + w + margin < 0 || y + h + margin < 0 || x - margin > W || y - margin > H) continue;
-            // 크기별 연속값으로 두 강도를 섞고, 모일수록 한 레이어로 정리합니다.
-            const level = settled ? 0 : ic.blurLevel;
-            const lower = Math.floor(level), blend = (level - lower) * (1 - a);
-            const passes = blend > 0 ? 2 : 1;
-            for (let pass = 0; pass < passes; pass++) {
-                const index = lower + pass;
-                const layer = index > 0 ? blurLayers[index - 1] : null;
-                const drawCtx = layer ? layer.ctx : ctx;
-                const opacity = alpha * (pass === 0 ? 1 - blend : blend);
-                if (layer) {
-                    layer.dirty = true;
-                    if (layer.batch) {
-                        layer.batch.add(ic, x, y, w, h, ang, opacity);
-                        continue;
-                    }
-                    if (opacity !== layer.alpha) { drawCtx.globalAlpha = opacity; layer.alpha = opacity; }
-                } else if (batch) {
-                    batch.add(ic, x, y, w, h, ang, opacity);
-                    batchDirty = true;
-                    continue;
-                } else if (opacity !== lastAlpha) { ctx.globalAlpha = opacity; lastAlpha = opacity; }
-                if (Math.abs(ang) > .002) {
-                    const dx = x + w / 2, dy = y + h / 2;
-                    drawCtx.save(); drawCtx.translate(dx, dy); drawCtx.rotate(ang);
-                    drawCtx.drawImage(atlas, ic.ax, ic.ay, ic.gw, ic.gh, -w / 2, -h / 2, w, h);
-                    drawCtx.restore();
-                } else drawCtx.drawImage(atlas, ic.ax, ic.ay, ic.gw, ic.gh, x, y, w, h);
+            if (batch) {
+                batch.add(ic, x, y, w, h, ang, alpha, blur);
+                batchDirty = true;
+                continue;
             }
+            // 큰 아틀라스 전체에 필터가 계산되지 않도록 작은 아이콘을 먼저 잘라 냅니다.
+            // WebGL 미지원·컨텍스트 손실 때도 한 아이콘을 한 번만 합성합니다.
+            const tile = prepareFallbackIcon(atlas, ic, w, h, blur);
+            const dw = tile.width / DPR, dh = tile.height / DPR;
+            if (alpha !== lastAlpha) { ctx.globalAlpha = alpha; lastAlpha = alpha; }
+            if (Math.abs(ang) > .002) {
+                const dx = x + w / 2, dy = y + h / 2;
+                ctx.save(); ctx.translate(dx, dy); ctx.rotate(ang);
+                ctx.drawImage(tile.source, 0, 0, tile.width, tile.height, -w / 2 - tile.pad, -h / 2 - tile.pad, dw, dh);
+                ctx.restore();
+            } else ctx.drawImage(tile.source, 0, 0, tile.width, tile.height, x - tile.pad, y - tile.pad, dw, dh);
         }
         ctx.globalAlpha = 1;
+        ctx.filter = "none";
         if (batchDirty) {
             if (!batch.flush(atlas)) {
                 // 업로드 실패도 같은 프레임에 2D로 다시 그려 아이콘이 사라지지 않게 합니다.
-                disableAssembledBatch();
+                disableIconBatch();
                 renderIcons(time);
                 return;
             }
-            ctx.drawImage(assembledCanvas, 0, 0, W, H);
-        }
-        for (const layer of blurLayers) {
-            if (layer.batch) {
-                if (layer.dirty && !layer.batch.flush(atlas)) useCanvasFallback(layer);
-            } else layer.ctx.globalAlpha = 1;
-            const visibility = layer.dirty ? "" : "hidden";
-            if (layer.canvas.style.visibility !== visibility) layer.canvas.style.visibility = visibility;
+            ctx.drawImage(iconCanvas, 0, 0, W, H);
         }
     }
 
@@ -1455,8 +1396,9 @@
     }
 
     /* ---------- 입력: 휠 / 터치 / 키보드 ---------- */
-    const atTop = () => window.scrollY <= 2;
-    const wantsHero = dir => atTop() && ((dir > 0 && step < 2) || (dir < 0 && step > 0));
+    const heroTop = () => window.MainIntro?.anchor() || 0;
+    const atTop = () => (!window.MainIntro || window.MainIntro.complete) && Math.abs(window.scrollY - heroTop()) <= 2;
+    const wantsHero = dir => atTop() && ((dir > 0 && step < 2) || (dir < 0 && (step > 0 || window.MainIntro?.reverse)));
     const wheelIntent = window.MainScrollInput.createWheelTracker();
 
     /* 페이지 스크롤 잠금
@@ -1480,6 +1422,10 @@
 
     function handleIntent(dir) {
         if (busy) { pendingIntent = dir; return; }
+        if (dir < 0 && step === 0 && window.MainIntro?.complete && window.MainIntro.reverse) {
+            locked = false; if (hasLenis()) lenis.start();
+            window.MainIntro.reverse(); return;
+        }
         if (wantsHero(dir)) void goStep(step + dir);
         else if (dir > 0 && step === 2) window.MainSectionScroll?.request(dir);
     }
@@ -1493,6 +1439,7 @@
     }
 
     window.addEventListener("wheel", e => {
+        if (window.MainIntro && !window.MainIntro.complete) return;
         if (e.defaultPrevented || e.target.closest?.("input, textarea, select, [contenteditable]") ||
             document.body.classList.contains('mobile-menu-open') ||
             document.documentElement.classList.contains('page-transition-active')) return;
@@ -1503,6 +1450,7 @@
         if (!hero) return;
         e.preventDefault();
         e.stopImmediatePropagation();   // Lenis 스크롤 막기
+        if (performance.now() < (window.MainIntro?.inputUntil || 0)) return;
         if (intent.trigger) handleIntent(dir);
         if (step === 2 && !busy) unlockPage();
     }, { passive: false, capture: true });
@@ -1546,8 +1494,26 @@
     }, { capture: true });
 
     window.addEventListener("scroll", () => {
-        if (window.scrollY > 40 && step < 2) jumpToSettled();
+        if (window.MainIntro && !window.MainIntro.complete) return;
+        if (window.scrollY > heroTop() + 40 && step < 2) jumpToSettled();
     }, { passive: true });
+    window.addEventListener('main-intro-handoff', event => {
+        measure();
+        if (event.detail.complete) {
+            if (window.scrollY > heroTop() + 40) jumpToSettled();
+            else lockPage();
+        } else {
+            locked = false; if (hasLenis()) lenis.start();
+        }
+    });
+    window.MainHeroIntro = {
+        targets() {
+            return iconsNow().filter(ic => ic.whole).slice().sort((a,b) => b.scatterW * b.scatterH - a.scatterW * a.scatterH)
+                .map(ic => ({x:ic.sx*W+Math.sin(ic.phase)*ic.drift*SETTINGS.iconScatterDistance,
+                    y:ic.sy*H+Math.cos(ic.phase)*ic.drift*SETTINGS.iconScatterDistance,size:Math.max(ic.scatterW,ic.scatterH)}));
+        },
+        inspect: () => ({step,busy,locked,top:heroTop(),ready:ready(atlasNow()),count:iconsNow().length,width:W,height:H})
+    };
 
     /* =====================================================
        6. 포스터 전환 (기본 ↔ 다크)
@@ -1649,7 +1615,7 @@
         const tabIndex = posterReady ? 0 : -1;
         if (posterButton.tabIndex !== tabIndex) posterButton.tabIndex = tabIndex;
         syncHeaderVisibility();
-        header?.classList.toggle("is-dark", stage.dataset.theme === "dark" && rect.bottom > headerHeight);
+        header?.classList.toggle("is-dark", (!window.MainIntro || window.MainIntro.complete) && stage.dataset.theme === "dark" && rect.bottom > headerHeight);
     }
 
     let lastFrameTime = 0;
@@ -1670,7 +1636,7 @@
         stepTweens(now);
         stepTheme(now);
         const rect = hero.getBoundingClientRect();
-        if (rect.bottom > 0 && rect.top < innerHeight) {
+        if ((rect.bottom > 0 && rect.top < innerHeight) || (window.MainIntro?.progress > 0 && !window.MainIntro.complete)) {
             renderBg(now);
             renderIcons(now);
             renderPoster(now);
@@ -1686,12 +1652,12 @@
     document.fonts?.ready.then(measure);
     window.addEventListener("load", () => {
         measure();
-        if (window.scrollY > 40) jumpToSettled();
+        if ((!window.MainIntro || window.MainIntro.complete) && window.scrollY > heroTop() + 40) jumpToSettled();
     });
 
     measure();
     buildIcons();
     syncUI(0);
-    if (window.scrollY <= 2) lockPage();
+    if (atTop()) lockPage();
     requestAnimationFrame(loop);
 })();

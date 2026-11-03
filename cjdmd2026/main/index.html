@@ -10,10 +10,12 @@
         if (sessionStorage.getItem('stamp-page-transition') === '1') {
             document.documentElement.classList.add('page-transition-preload');
         }
-        // 메인은 항상 맨 위(포스터 첫 화면)에서 시작합니다.
+        // 메인은 항상 맨 위(인트로 첫 화면)에서 시작합니다.
         if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     </script>
 
+    <link rel="stylesheet" href="../css/main-intro.css?v=20261104-1">
+    <script>window.MainIntro={complete:false,progress:0,headerProgress:0,inputUntil:0,anchor:()=>{const hero=document.getElementById("hero");return hero?hero.getBoundingClientRect().top+scrollY:0;}};</script>
     <!-- Scripts:S -->
     <script src="../js/stamp-effect-transition.js" defer></script>
     <script src="../js/page-transition.js?v=20261030-perf-1"></script>
@@ -25,21 +27,22 @@
     <script src="../js/main-icon-fragments.js?v=20261023-35" defer></script>
     <script src="../js/main-poster-sprites.js?v=20261023-35" defer></script>
     <script src="../js/main-scroll-input.js?v=20261030-1" defer></script>
-    <script src="../js/main-section-scroll.js?v=20261030-scroll-input" defer></script>
-    <script src="../js/main-hero-sprite-batch.js?v=20261102-perf-1" defer></script>
-    <script src="../js/main-hero.js?v=20261103-hero-perf-1" defer></script>
+    <script src="../js/main-section-scroll.js?v=20261104-intro-1" defer></script>
+    <script src="../js/main-hero-sprite-batch.js?v=20261103-focus-1" defer></script>
+    <script src="../js/main-hero.js?v=20261104-intro-1" defer></script>
+    <script src="../js/main-intro.js?v=20261104-1" defer></script>
     <script src="../js/main.js?v=20261030-menu-1" defer></script>
 
     <script src="https://unpkg.com/lenis@1.3.15/dist/lenis.min.js"></script>
     <script>
-    const lenis = new Lenis({
+    const lenis = typeof Lenis === "function" ? new Lenis({
         duration: 1.0,
         smoothWheel: true,
         wheelMultiplier: 0.75
-    });
+    }) : null;
 
     function raf(time) {
-        lenis.raf(time);
+        lenis?.raf(time);
         requestAnimationFrame(raf);
     }
 
@@ -47,9 +50,9 @@
     </script>
     <!-- Scripts:E -->
 </head>
-<body class="main-page">
+<body class="main-page intro-before-main">
     <!-- Header:S -->
-    <header class="header is-intro-hidden">
+    <header class="header">
         <div class="container">
             <!-- 로고 -->
             <h1 class="logo"><a href="../main/" page-transition><img src="../assets/images/icons/logo_wv.svg" width="160" height="31" alt="유연한 결합"></a></h1>
@@ -81,6 +84,93 @@
 
     <!-- Main:S -->
     <main class="main">
+        <div id="mainIntro" aria-label="졸업 전시 인트로">
+    <div class="intro-sequence">
+    <section id="home" class="intro-section exhibition-hero dotted-surface" aria-labelledby="exhibition-title" data-node-id="1:3">
+      <div class="hero-art" aria-hidden="true">
+      </div>
+      <h1 id="exhibition-title" class="section-heading hero-heading" data-node-id="1:4">
+        <span class="heading-lead" data-hover-text>청주대학교</span>
+        <span class="heading-main"><span data-hover-text>디지털미디어디자인학과</span> <span class="exhibition-word" data-hover-text>졸업전시회</span></span>
+      </h1>
+    </section>
+
+    <section id="content01" class="intro-section content-one dotted-surface" aria-labelledby="individuality-title" data-node-id="1:53">
+      <h2 id="individuality-title" class="individuality-title" data-node-id="1:54">
+        <span class="reading-line" data-keyword="like"><span class="reading-copy" data-read data-read-accent="것">좋아하는 것도</span></span>
+        <span class="reading-line" data-keyword="thought"><span class="reading-copy" data-read data-read-accent="방식">생각하는 방식도</span></span>
+        <span class="reading-line" data-keyword="inspiration"><span class="reading-copy" data-read data-read-accent="순간">영감을 얻는 순간도</span></span>
+        <span class="reading-line" data-keyword="idea"><span class="reading-copy" data-read data-read-accent="아이디어">떠올리는 아이디어도</span></span>
+        <span class="reading-line" data-keyword="future"><span class="reading-copy" data-read data-read-accent="모습">꿈꾸는 미래의 모습도</span></span>
+        <span class="reading-line"><span data-read>우리는 저마다 다릅니다.</span></span>
+      </h2>
+    </section>
+      <div class="year-track">
+        <div class="year-stage"><p class="section-year" data-node-id="1:5">2026</p></div>
+      </div>
+    </div>
+
+    <section id="journey" class="journey" aria-label="콘텐츠 02 — 각자의 개성을 담은 33개의 아이콘" data-node-id="1:20">
+      <div class="hero animation-stage" aria-label="점에서 선과 입체를 거쳐 컬러 2D 아이콘으로 이어지는 형태">
+        <div id="scene" class="scene"></div>
+        <div id="story-captions" class="story-captions">
+          <h2 class="section-heading scene-caption" data-caption="0" aria-hidden="true">
+            <span class="heading-lead">서로 다른 우리들</span>
+            <span class="heading-main">어떻게 표현할까요?</span>
+          </h2>
+          <h2 class="section-heading scene-caption" data-caption="1" data-node-id="1:73" aria-hidden="true">
+            <span class="heading-lead">각자의 개성을</span>
+            <span class="heading-main">아이콘으로 만들어 보았어요.</span>
+          </h2>
+          <h2 class="section-heading scene-caption" data-caption="2" data-node-id="1:74" aria-hidden="true">
+            <span class="heading-lead">서로 다른 모양은 우리가 세상을</span>
+            <span class="heading-main">바라보는 다양한 <span class="caption-keyword-wrap"><span class="caption-keyword" data-caption-keyword>시선</span>을</span> 의미해요.</span>
+          </h2>
+          <h2 class="section-heading scene-caption" data-caption="3" data-node-id="1:77" aria-hidden="true">
+            <span class="heading-lead">같은 순간을 마주해도</span>
+            <span class="heading-main">다르게 느끼는 <span class="caption-keyword-wrap"><span class="caption-keyword" data-caption-keyword>감각</span>을</span> 담았어요.</span>
+          </h2>
+        </div>
+        <div class="construction-bar" data-node-id="5:83" role="toolbar" aria-label="아이콘 도구" aria-hidden="true" inert>
+          <div class="construction-bar-face" data-node-id="5:2"></div>
+          <div class="construction-bar-tools">
+            <button type="button" class="construction-tool tool-select" data-node-id="5:10" aria-label="선택" aria-pressed="false" tabindex="-1">
+              <img src="../assets/main-intro/figma/bar-select.svg" alt="">
+              <img class="tool-chevron" src="../assets/main-intro/figma/bar-chevron.svg" alt="" data-node-id="5:9">
+            </button>
+            <button type="button" class="construction-tool" data-node-id="5:11" aria-label="프레임" aria-pressed="false" tabindex="-1">
+              <img class="tool-frame-vertical" src="../assets/main-intro/figma/bar-frame-vertical.svg" alt="" data-node-id="5:39">
+              <span class="tool-frame-horizontal" data-node-id="5:40"><span><img src="../assets/main-intro/figma/bar-frame-horizontal.svg" alt=""></span></span>
+              <img class="tool-chevron" src="../assets/main-intro/figma/bar-chevron.svg" alt="" data-node-id="5:14">
+            </button>
+            <button type="button" class="construction-tool" data-node-id="5:15" aria-label="선" aria-pressed="false" tabindex="-1">
+              <img src="../assets/main-intro/figma/bar-line.svg" alt="">
+              <img class="tool-chevron" src="../assets/main-intro/figma/bar-chevron.svg" alt="" data-node-id="5:18">
+            </button>
+            <button type="button" class="construction-tool" data-node-id="5:19" aria-label="펜" aria-pressed="false" tabindex="-1">
+              <span class="tool-pen" data-node-id="5:55"><img src="../assets/main-intro/figma/bar-pen.svg" alt=""></span>
+              <img class="tool-chevron" src="../assets/main-intro/figma/bar-chevron.svg" alt="" data-node-id="5:22">
+            </button>
+            <button type="button" class="construction-tool" data-node-id="5:23" aria-label="텍스트" aria-pressed="false" tabindex="-1">
+              <img src="../assets/main-intro/figma/bar-text.svg" alt="">
+              <img class="tool-chevron" src="../assets/main-intro/figma/bar-chevron.svg" alt="" data-node-id="5:26">
+            </button>
+            <button type="button" class="construction-tool" data-node-id="5:27" aria-label="말풍선" aria-pressed="false" tabindex="-1">
+              <span class="tool-bubble" data-node-id="5:65"></span>
+              <img class="tool-chevron" src="../assets/main-intro/figma/bar-chevron.svg" alt="" data-node-id="5:30">
+            </button>
+            <button type="button" class="construction-tool" data-node-id="5:31" aria-label="도형" aria-pressed="false" tabindex="-1">
+              <span class="tool-shape-square" data-node-id="5:76"></span>
+              <span class="tool-shape-diamond" data-node-id="5:77"><span></span></span>
+              <span class="tool-shape-circle" data-node-id="5:78"><span></span></span>
+              <img class="tool-shape-plus" src="../assets/main-intro/figma/bar-shapes-plus.svg" alt="" data-node-id="5:79">
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+        </div>
 
         <!-- ========== 01. Poster Hero ==========
              스크롤 1번: 흩어진 아이콘 → '결합' 완성 → 포스터 그래픽으로 전환

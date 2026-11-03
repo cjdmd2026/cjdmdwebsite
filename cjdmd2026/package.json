@@ -15,7 +15,8 @@
     "@aws-sdk/s3-request-presigner": "^3.1161.0",
     "@vercel/functions": "^3.10.5",
     "botid": "^1.5.12",
-    "yauzl": "^3.4.0"
+    "yauzl": "^3.4.0",
+    "three": "0.185.0"
   },
   "overrides": {
     "zod": "^4.6.6"

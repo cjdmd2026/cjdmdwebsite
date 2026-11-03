@@ -1,0 +1,159 @@
+/* Hero rules extracted from css/main.css. Demo reset uses system fonts. */
+:root { --u: min(1vw, calc(100vh * 16 / 9 / 100)); --poster-ratio: 1686 / 2387; --hero-poster-height: min(58.2vh, calc(46 * var(--u))); --header-height: 70px; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, "Malgun Gothic", sans-serif; background: #fff; color: #111; overflow-x: clip; line-height: 1.5; }
+button { border: 0; background: none; color: inherit; font: inherit; cursor: pointer; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid #4f7cff; outline-offset: 4px; }
+.hero {
+    position: relative;
+    height: 100vh;
+    height: 100svh;
+}
+
+.hero-stage {
+    --hero-bg: #fff;
+    --hero-fg: #111;
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    color: var(--hero-fg);
+    transition: color var(--theme-color-dur, .9s) ease;
+}
+.hero-stage[data-theme="dark"] { --hero-bg: #000; --hero-fg: #fff; }
+
+.hero-bg,
+.hero-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+.hero-bg { z-index: 0; background: #fff; }
+.hero-canvas { z-index: 2; }
+.hero-stage.icons-front .hero-canvas { z-index: 5; }   /* 포스터가 나타나는 동안 결합은 포스터 위 */
+.hero-fx {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 4;              /* 포스터보다 앞 — 흩어지는 입자가 포스터 밖으로도 날아감 */
+    pointer-events: none;
+}
+
+.hero-layout {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+}
+
+/* 포스터: 시안 x 380 (calc(19.8 * var(--u))), 세로 가운데 */
+.hero-poster-col {
+    position: absolute;
+    left: 20.625vw;                      /* 시안 x 396 (포스터 443 × 629) */
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.hero-poster {
+    position: relative;
+    display: block;
+    height: var(--hero-poster-height);
+    aspect-ratio: var(--poster-ratio);
+    cursor: default;
+    pointer-events: none;           /* 포스터가 다 나타난 뒤에만 클릭 가능 */
+    border-radius: 4px;
+    overflow: hidden;
+    /* 시안 그림자 — 화이트: Y4 Blur50 #000 8% / 블랙: Y6 Blur50 #FFF 16% */
+    box-shadow: 0 4px 50px rgba(0, 0, 0, calc(var(--poster-shadow, 0) * .08));
+}
+.hero-stage[data-theme="dark"] .hero-poster {
+    box-shadow: 0 6px 50px rgba(255, 255, 255, calc(var(--poster-shadow, 0) * .16));
+}
+.hero-poster__canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero-stage.is-poster-ready .hero-poster { cursor: pointer; pointer-events: auto; }
+
+/* 포스터 아래 바+점 (시안: 높이 13, 바 48, 간격 17) */
+.hero-indicator {
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 30px);
+    transform: translateX(-50%);
+    display: flex;
+    gap: 17px;
+    align-items: center;
+    opacity: var(--text-opacity, 0);
+    pointer-events: var(--text-events, none);
+}
+.hero-indicator button {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    transition: width .5s cubic-bezier(.6, 0, .2, 1);
+}
+/* 색은 위치 고정: 왼쪽 #7B7B7B / 오른쪽 #CCCCCC, 선택된 쪽이 길어짐 */
+.hero-indicator button:first-child { background: #444; }
+.hero-indicator button:last-child { background: #ddd; }
+.hero-indicator button[aria-selected="true"] { width: 48px; }
+
+/* 설명: 시안 x 968 (calc(50.4 * var(--u))) */
+.hero-text {
+    position: absolute;
+    left: 50.4vw;
+    top: calc(50% + 2.27vh);              /* 시안: 텍스트 묶음 중심이 화면 중앙보다 약간 아래 */
+    width: 40vw;
+    opacity: var(--text-opacity, 0);
+    transform: translate(calc((1 - var(--text-opacity, 0)) * 30px), -50%);
+    pointer-events: var(--text-events, none);
+}
+.hero-text h2 {
+    font-size: clamp(1.6rem, 2.1875vw, 2.75rem);   /* 시안 원본 42px SemiBold (화면 높이와 무관하게 유지) */
+    font-weight: 600;
+    line-height: 1.33;
+    letter-spacing: -0.02em;
+    margin-bottom: 2.14vw;                 /* 시안 41px */
+}
+.hero-text p {
+    font-size: clamp(.875rem, 1.08vw, 1rem);  /* 시안 원본 약 21px Regular, 행간 180%, 자간 -2% */
+    font-weight: 400;
+    line-height: 1.8;
+    letter-spacing: -0.02em;
+    margin-bottom: 3vw;                    /* 시안 약 58px */
+    word-break: keep-all;
+    white-space: nowrap;
+}
+
+.hero-scroll-hint {
+    position: absolute;
+    z-index: 3;
+    left: 50%;
+    bottom: 32px;
+    transform: translateX(-50%);
+    opacity: var(--hint-opacity, 1);
+    transition: opacity .4s ease;
+    pointer-events: none;
+}
+.hero-scroll-hint img { width: 34px; height: 34px; filter: invert(1); opacity: .5; }
+.hero-stage[data-theme="dark"] .hero-scroll-hint img { filter: none; }
+
+
+@media (max-width: 1100px) {
+    .hero-poster-col { left: calc(8 * var(--u)); }
+    .hero-text { left: calc(calc(8 * var(--u)) + var(--hero-poster-height) * 1686 / 2387 + calc(6 * var(--u))); width: auto; right: calc(4 * var(--u)); }
+    .hero-text p { white-space: normal; }
+}
+
+
+.demo-nav { position: fixed; z-index: 20; top: 16px; left: 16px; display: flex; gap: 12px; padding: 10px 14px; border: 1px solid #ddd; border-radius: 12px; background: #fffe; font-size: 13px; }
+.demo-nav a { text-decoration: none; }
+.hero-text p { white-space: normal; }
+.hero-scroll-hint { display: flex; flex-direction: column; align-items: center; gap: 8px; width: max-content; font-size: 12px; }
+@media (max-width: 759px) {
+  :root { --hero-poster-height: 44svh; --header-height: 56px; }
+  .hero-poster-col { left: 50%; top: calc(var(--header-height) + 24px); transform: translateX(-50%); }
+  .hero-indicator { top: calc(100% + 14px); }
+  .hero-text { left: 20px; right: 20px; top: auto; bottom: 34px; width: auto; text-align: center; transform: translateY(calc((1 - var(--text-opacity, 0)) * 20px)); }
+  .hero-text h2 { font-size: 1.5rem; margin-bottom: .8rem; }
+  .hero-text p { font-size: .82rem; margin-bottom: 1rem; }
+}

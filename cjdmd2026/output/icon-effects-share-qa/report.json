@@ -1,0 +1,13 @@
+{
+  "errors": [],
+  "checks": [
+    "main wheel: 0 -> 1 -> 2 -> 1 -> 0; no missing image/script resources",
+    "main at 390px: resized and keyboard assembly completed",
+    "archive automatic collision merge observed",
+    "archive real pointer drag/drop merge and timed split in reduced motion",
+    "archive original 760px breakpoint retained",
+    "all 50 packaged SVG files fetched and XML parsed successfully",
+    "all 27 copied originals match SHA-256; original source files unchanged"
+  ],
+  "success": true
+}

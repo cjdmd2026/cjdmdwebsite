@@ -1,0 +1,33 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="mouse-scroll-title">
+  <title id="mouse-scroll-title">Scroll down</title>
+  <style>
+    .mouse-scroll {
+      animation: mouse-scroll-down 1.8s cubic-bezier(0.55, 0, 1, 0.45) infinite;
+    }
+
+    @keyframes mouse-scroll-down {
+      0% {
+        opacity: 0;
+        transform: translateY(0);
+      }
+      15% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      75%, 100% {
+        opacity: 0;
+        transform: translateY(150px);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .mouse-scroll {
+        animation: none;
+      }
+    }
+  </style>
+  <rect x="312" y="212" width="400" height="600" rx="200" stroke="white" stroke-width="50"/>
+  <g class="mouse-scroll">
+    <path d="M512 367L512 437" stroke="white" stroke-width="50" stroke-linecap="round"/>
+  </g>
+</svg>

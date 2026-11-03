@@ -1,4 +1,4 @@
-/* 작은 히어로 아이콘을 블러 레이어별 한 번의 GPU 호출로 그립니다.
+/* 작은 히어로 아이콘의 이동·블러·정착을 같은 GPU 배치로 그립니다.
    로컬 파일·WebGL 미지원·컨텍스트 손실 시 main-hero.js의 2D 경로를 사용합니다. */
 (() => {
     "use strict";
@@ -11,7 +11,7 @@
         if (!gl) return null;
         // 한 아이콘의 정보를 한 번만 전송합니다. 확장이 없는 기기는 기존 삼각형 배치를 사용합니다.
         const instancing = gl.getExtension("ANGLE_instanced_arrays");
-        const floatsPerIcon = instancing ? 11 : 30;
+        const floatsPerIcon = instancing ? 12 : 66;
         const shaders = [];
         let program, buffer, quadBuffer, failed = false;
         function compile(type, source) {
@@ -30,40 +30,78 @@
                 attribute vec4 aUVRect;
                 attribute vec2 aRotation;
                 attribute float aAlpha;
+                attribute float aBlur;
                 uniform vec2 uSize, uAtlasSize;
                 varying vec2 vUV;
+                varying vec4 vBounds;
+                varying vec2 vBlur;
                 varying float vAlpha;
                 void main() {
-                    vec2 offset = (aCorner - 0.5) * aRect.zw;
+                    vec2 extent = aRect.zw + aBlur * 4.0;
+                    vec2 offset = (aCorner - 0.5) * extent;
                     vec2 rotated = vec2(
                         offset.x * aRotation.x - offset.y * aRotation.y,
                         offset.x * aRotation.y + offset.y * aRotation.x);
                     vec2 position = aRect.xy + aRect.zw * 0.5 + rotated;
                     vec2 clip = position / uSize * 2.0 - 1.0;
                     gl_Position = vec4(clip.x, -clip.y, 0.0, 1.0);
-                    vUV = (aUVRect.xy + aCorner * aUVRect.zw) / uAtlasSize;
+                    vec2 source = (aCorner - 0.5) * extent / aRect.zw + 0.5;
+                    vUV = (aUVRect.xy + source * aUVRect.zw) / uAtlasSize;
+                    vBounds = vec4(aUVRect.xy, aUVRect.xy + aUVRect.zw) / uAtlasSize.xyxy;
+                    vBlur = aBlur * aUVRect.zw / aRect.zw / uAtlasSize;
                     vAlpha = aAlpha;
                 }
             ` : `
                 attribute vec2 aPosition;
                 attribute vec2 aUV;
                 attribute float aAlpha;
+                attribute vec4 aBounds;
+                attribute vec2 aBlurUV;
                 uniform vec2 uSize, uAtlasSize;
                 varying vec2 vUV;
+                varying vec4 vBounds;
+                varying vec2 vBlur;
                 varying float vAlpha;
                 void main() {
                     vec2 clip = aPosition / uSize * 2.0 - 1.0;
                     gl_Position = vec4(clip.x, -clip.y, 0.0, 1.0);
                     vUV = aUV / uAtlasSize;
+                    vBounds = aBounds / uAtlasSize.xyxy;
+                    vBlur = aBlurUV / uAtlasSize;
                     vAlpha = aAlpha;
                 }
             `));
             gl.attachShader(program, compile(gl.FRAGMENT_SHADER, `
+                #ifdef GL_FRAGMENT_PRECISION_HIGH
+                precision highp float;
+                #else
                 precision mediump float;
+                #endif
                 uniform sampler2D uAtlas;
                 varying vec2 vUV;
+                varying vec4 vBounds;
+                varying vec2 vBlur;
                 varying float vAlpha;
-                void main() { gl_FragColor = texture2D(uAtlas, vUV) * vAlpha; }
+                vec4 sampleIcon(vec2 uv) {
+                    // 아틀라스의 이웃 아이콘이 블러에 섞이지 않게 원본 영역 밖은 투명하게 처리합니다.
+                    vec2 inside = step(vBounds.xy, uv) * step(uv, vBounds.zw);
+                    return texture2D(uAtlas, uv) * inside.x * inside.y;
+                }
+                vec4 blurRow(float y) {
+                    vec2 uv = vUV + vec2(0.0, y) * vBlur;
+                    vec2 dx = vec2(vBlur.x, 0.0);
+                    return (sampleIcon(uv - 2.0 * dx) + 4.0 * sampleIcon(uv - dx) +
+                        6.0 * sampleIcon(uv) + 4.0 * sampleIcon(uv + dx) +
+                        sampleIcon(uv + 2.0 * dx)) / 16.0;
+                }
+                void main() {
+                    vec4 color = vBlur.x > 0.0
+                        ? (blurRow(-2.0) + 4.0 * blurRow(-1.0) + 6.0 * blurRow(0.0) +
+                            4.0 * blurRow(1.0) + blurRow(2.0)) / 16.0
+                        : texture2D(uAtlas, vUV);
+                    // 정규화한 premultiplied RGBA를 한 번만 합성해 초점에 따라 불투명도가 변하지 않습니다.
+                    gl_FragColor = color * vAlpha;
+                }
             `));
             gl.linkProgram(program);
             if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error("Sprite program unavailable");
@@ -82,8 +120,8 @@
         }
         shaders.forEach(shader => gl.deleteShader(shader));
         const attributes = (instancing
-            ? [["aRect", 4, 0], ["aUVRect", 4, 16], ["aRotation", 2, 32], ["aAlpha", 1, 40]]
-            : [["aPosition", 2, 0], ["aUV", 2, 8], ["aAlpha", 1, 16]])
+            ? [["aRect", 4, 0], ["aUVRect", 4, 16], ["aRotation", 2, 32], ["aAlpha", 1, 40], ["aBlur", 1, 44]]
+            : [["aPosition", 2, 0], ["aUV", 2, 8], ["aAlpha", 1, 16], ["aBounds", 4, 20], ["aBlurUV", 2, 36]])
             .map(([name, count, offset]) => [gl.getAttribLocation(program, name), count, offset]);
         const corner = instancing ? gl.getAttribLocation(program, "aCorner") : -1;
         const size = gl.getUniformLocation(program, "uSize");
@@ -94,10 +132,13 @@
         let width = 1, height = 1;
         canvas.addEventListener("webglcontextlost", () => { failed = true; }, { once: true });
 
-        function vertex(x, y, u, v, opacity) {
+        function vertex(x, y, u, v, opacity, ic, blurX, blurY) {
             vertices[used++] = x; vertices[used++] = y;
             vertices[used++] = u; vertices[used++] = v;
             vertices[used++] = opacity;
+            vertices[used++] = ic.ax; vertices[used++] = ic.ay;
+            vertices[used++] = ic.ax + ic.gw; vertices[used++] = ic.ay + ic.gh;
+            vertices[used++] = blurX; vertices[used++] = blurY;
         }
         return {
             resize(w, h, ratio) {
@@ -112,7 +153,7 @@
                 gl.clearColor(0, 0, 0, 0);
                 gl.clear(gl.COLOR_BUFFER_BIT);
             },
-            add(ic, x, y, w, h, angle, opacity) {
+            add(ic, x, y, w, h, angle, opacity, blur = 0) {
                 if (used + floatsPerIcon > vertices.length) {
                     const next = new Float32Array(vertices.length * 2);
                     next.set(vertices); vertices = next;
@@ -126,8 +167,13 @@
                     vertices[used++] = rotated ? Math.cos(angle) : 1;
                     vertices[used++] = rotated ? Math.sin(angle) : 0;
                     vertices[used++] = opacity;
+                    vertices[used++] = blur;
                     return;
                 }
+                const blurX = blur * ic.gw / w, blurY = blur * ic.gh / h;
+                // 인스턴싱이 없는 기기도 같은 여백·UV·중심 회전을 사용합니다.
+                x -= blur * 2; y -= blur * 2;
+                w += blur * 4; h += blur * 4;
                 let ax = x, ay = y, bx = x + w, by = y, cx = x + w, cy = y + h, dx = x, dy = y + h;
                 if (Math.abs(angle) > .002) {
                     const cos = Math.cos(angle), sin = Math.sin(angle), mx = x + w / 2, my = y + h / 2;
@@ -137,9 +183,14 @@
                     cx = mx + wx + hx; cy = my + wy + hy;
                     dx = mx - wx + hx; dy = my - wy + hy;
                 }
-                const u = ic.ax, v = ic.ay, u2 = u + ic.gw, v2 = v + ic.gh;
-                vertex(ax, ay, u, v, opacity); vertex(bx, by, u2, v, opacity); vertex(cx, cy, u2, v2, opacity);
-                vertex(ax, ay, u, v, opacity); vertex(cx, cy, u2, v2, opacity); vertex(dx, dy, u, v2, opacity);
+                const u = ic.ax - blurX * 2, v = ic.ay - blurY * 2;
+                const u2 = ic.ax + ic.gw + blurX * 2, v2 = ic.ay + ic.gh + blurY * 2;
+                vertex(ax, ay, u, v, opacity, ic, blurX, blurY);
+                vertex(bx, by, u2, v, opacity, ic, blurX, blurY);
+                vertex(cx, cy, u2, v2, opacity, ic, blurX, blurY);
+                vertex(ax, ay, u, v, opacity, ic, blurX, blurY);
+                vertex(cx, cy, u2, v2, opacity, ic, blurX, blurY);
+                vertex(dx, dy, u, v2, opacity, ic, blurX, blurY);
             },
             flush(atlas) {
                 if (failed || gl.isContextLost()) return false;
@@ -172,7 +223,7 @@
                 gl.bufferSubData(gl.ARRAY_BUFFER, 0, vertices.subarray(0, used));
                 for (const [attribute, count, offset] of attributes) {
                     gl.enableVertexAttribArray(attribute);
-                    gl.vertexAttribPointer(attribute, count, gl.FLOAT, false, instancing ? 44 : 20, offset);
+                    gl.vertexAttribPointer(attribute, count, gl.FLOAT, false, instancing ? 48 : 44, offset);
                     if (instancing) instancing.vertexAttribDivisorANGLE(attribute, 1);
                 }
                 gl.uniform2f(size, width, height);
@@ -183,7 +234,7 @@
                 gl.enable(gl.BLEND);
                 gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
                 if (instancing) instancing.drawArraysInstancedANGLE(gl.TRIANGLES, 0, 6, used / floatsPerIcon);
-                else gl.drawArrays(gl.TRIANGLES, 0, used / 5);
+                else gl.drawArrays(gl.TRIANGLES, 0, used / 11);
                 return true;
             },
             dispose() {

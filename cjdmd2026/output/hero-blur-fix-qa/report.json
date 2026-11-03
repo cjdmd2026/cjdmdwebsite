@@ -1,0 +1,184 @@
+{
+  "mode": "Headless Chromium / SwiftShader, deterministic frames; not a real-device performance benchmark",
+  "cases": [
+    {
+      "label": "1440x900-dpr1",
+      "before": {
+        "W": 1425,
+        "H": 900,
+        "DPR": 1,
+        "gpu": true,
+        "iconCount": 7594,
+        "buffer": [
+          1425,
+          900
+        ]
+      },
+      "after": {
+        "W": 1425,
+        "H": 900,
+        "DPR": 1,
+        "gpu": true,
+        "iconCount": 7594,
+        "buffer": [
+          1425,
+          900
+        ]
+      },
+      "difference": {
+        "changedPixels": 0,
+        "strongPixels": 0,
+        "occupiedPixels": 138059,
+        "meanRGBDifference": 0,
+        "inkChangePercent": 0
+      },
+      "reverse": {
+        "changedPixels": 0,
+        "strongPixels": 0,
+        "occupiedPixels": 138059,
+        "meanRGBDifference": 0,
+        "inkChangePercent": 0
+      }
+    },
+    {
+      "label": "1440x900-dpr2",
+      "before": {
+        "W": 1425,
+        "H": 900,
+        "DPR": 2,
+        "gpu": true,
+        "iconCount": 7594,
+        "buffer": [
+          2850,
+          1800
+        ]
+      },
+      "after": {
+        "W": 1425,
+        "H": 900,
+        "DPR": 2,
+        "gpu": true,
+        "iconCount": 7594,
+        "buffer": [
+          2850,
+          1800
+        ]
+      },
+      "difference": {
+        "changedPixels": 0,
+        "strongPixels": 0,
+        "occupiedPixels": 552921,
+        "meanRGBDifference": 0,
+        "inkChangePercent": 0
+      },
+      "reverse": {
+        "changedPixels": 0,
+        "strongPixels": 0,
+        "occupiedPixels": 552921,
+        "meanRGBDifference": 0,
+        "inkChangePercent": 0
+      }
+    },
+    {
+      "label": "1920x1080-dpr1",
+      "before": {
+        "W": 1905,
+        "H": 1080,
+        "DPR": 1,
+        "gpu": true,
+        "iconCount": 7594,
+        "buffer": [
+          1905,
+          1080
+        ]
+      },
+      "after": {
+        "W": 1905,
+        "H": 1080,
+        "DPR": 1,
+        "gpu": true,
+        "iconCount": 7594,
+        "buffer": [
+          1905,
+          1080
+        ]
+      },
+      "difference": {
+        "changedPixels": 0,
+        "strongPixels": 0,
+        "occupiedPixels": 199102,
+        "meanRGBDifference": 0,
+        "inkChangePercent": 0
+      },
+      "reverse": {
+        "changedPixels": 0,
+        "strongPixels": 0,
+        "occupiedPixels": 199102,
+        "meanRGBDifference": 0,
+        "inkChangePercent": 0
+      }
+    },
+    {
+      "label": "390x844-dpr2",
+      "before": {
+        "W": 375,
+        "H": 844,
+        "DPR": 2,
+        "gpu": true,
+        "iconCount": 7594,
+        "buffer": [
+          750,
+          1688
+        ]
+      },
+      "after": {
+        "W": 375,
+        "H": 844,
+        "DPR": 2,
+        "gpu": true,
+        "iconCount": 7594,
+        "buffer": [
+          750,
+          1688
+        ]
+      },
+      "difference": {
+        "changedPixels": 0,
+        "strongPixels": 0,
+        "occupiedPixels": 205160,
+        "meanRGBDifference": 0,
+        "inkChangePercent": 0
+      },
+      "reverse": {
+        "changedPixels": 0,
+        "strongPixels": 0,
+        "occupiedPixels": 205160,
+        "meanRGBDifference": 0,
+        "inkChangePercent": 0
+      }
+    }
+  ],
+  "errors": [],
+  "checks": [
+    "Gather completion and reverse start have no strong pixel discontinuity at desktop, high DPI, Full HD and mobile sizes",
+    "Dark atlas transition and WebGL context-loss fallback rendered",
+    "2D fallback has no completion discontinuity",
+    "Real wheel transitions 0 -> 1 -> 2 -> 1 -> 0 completed",
+    "Reduced-motion assembly completed"
+  ],
+  "dark": {
+    "changedPixels": 0,
+    "strongPixels": 0,
+    "occupiedPixels": 130329,
+    "meanRGBDifference": 0,
+    "inkChangePercent": 0
+  },
+  "fallback": {
+    "changedPixels": 0,
+    "strongPixels": 0,
+    "occupiedPixels": 177562,
+    "meanRGBDifference": 0,
+    "inkChangePercent": 0
+  },
+  "success": true
+}

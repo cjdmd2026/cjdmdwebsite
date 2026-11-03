@@ -1,0 +1,137 @@
+[
+  {
+    "source": "js/main-hero.js",
+    "destination": "js/main-hero.js",
+    "sha256": "e3e7bd4c29854a0be03159b357901e275182f927ca8b61139c75780ce9fe5736"
+  },
+  {
+    "source": "js/main-hero-sprite-batch.js",
+    "destination": "js/main-hero-sprite-batch.js",
+    "sha256": "b01b6137c985463bfdb55ffeff82100b02b656532c952017f4c857fe9b6c3a08"
+  },
+  {
+    "source": "js/main-poster-sprites.js",
+    "destination": "js/main-poster-sprites.js",
+    "sha256": "42f7680771dc4861d3f635e9e8cb8d9ba7452dcb3da09225562b135f1cadf3a9"
+  },
+  {
+    "source": "js/main-scroll-input.js",
+    "destination": "js/main-scroll-input.js",
+    "sha256": "ec1ca320b38b342e26892a28068ca5095d934d1f424d0172f0daf1e4aa0ea9f7"
+  },
+  {
+    "source": "assets/images/poster/poster_sprites_white.webp",
+    "destination": "assets/images/poster/poster_sprites_white.webp",
+    "sha256": "95207c1543921b52be4e9e3475062ac021fa40449f8229e08d1522f455ab77ce"
+  },
+  {
+    "source": "assets/images/poster/poster_sprites_black.webp",
+    "destination": "assets/images/poster/poster_sprites_black.webp",
+    "sha256": "1b871720ef29cab496f9f2149eec1ed79ac194e3057c874554903b18245d7d98"
+  },
+  {
+    "source": "assets/images/poster/Vertical_poster_white.webp",
+    "destination": "assets/images/poster/Vertical_poster_white.webp",
+    "sha256": "b8ea0d1437f542346a4796d617ed2a8348936c7a83514ff7bf4e4901c0336c14"
+  },
+  {
+    "source": "assets/images/poster/Vertical_poster_black.webp",
+    "destination": "assets/images/poster/Vertical_poster_black.webp",
+    "sha256": "ecb95f678e4a329472a8c72ee610a69d2fbe4f4a8c2adc7f042de9489168017b"
+  },
+  {
+    "source": "assets/images/icons/mouse-icon-animated.svg",
+    "destination": "assets/images/icons/mouse-icon-animated.svg",
+    "sha256": "b04e367bd5d348d09e5c171820c3b07ef1c3efe35dc82cc0979df16aab745e7f"
+  },
+  {
+    "source": "assets/images/project/test/icon/team-01-apuchika.svg",
+    "destination": "assets/images/project/test/icon/team-01-apuchika.svg",
+    "sha256": "bde827e6113105e60814aab742bcbd284007571d340702739863a2491bd50fbe"
+  },
+  {
+    "source": "assets/images/project/test/icon/team-02-ommix.svg",
+    "destination": "assets/images/project/test/icon/team-02-ommix.svg",
+    "sha256": "1c7f903fac1cd023c207048583e2f54981d986ab5d3b24123cd075e6a7d8a8da"
+  },
+  {
+    "source": "assets/images/project/test/icon/team-03-phishing-ttuk.svg",
+    "destination": "assets/images/project/test/icon/team-03-phishing-ttuk.svg",
+    "sha256": "10d8cbb9ea433c4afd1b2ca040ac864c85d8c8eea67fb85b875d714c7afb08a0"
+  },
+  {
+    "source": "assets/images/project/test/icon/team-04-ilkko.svg",
+    "destination": "assets/images/project/test/icon/team-04-ilkko.svg",
+    "sha256": "e65c0475674f5ed4c34a349590cdb17cb206f236f1a79ae73df684858114d11c"
+  },
+  {
+    "source": "assets/images/project/test/icon/team-05-kuro.svg",
+    "destination": "assets/images/project/test/icon/team-05-kuro.svg",
+    "sha256": "301704dce98529e85e5f3a50d93df020dab0e27799be633bcc3232808a43d2fe"
+  },
+  {
+    "source": "assets/images/project/test/icon/team-06-dadeullim.svg",
+    "destination": "assets/images/project/test/icon/team-06-dadeullim.svg",
+    "sha256": "78fd8559f0d3e2ff3ddabab1fae6c368037fee673569b0ba171d448c20e063cb"
+  },
+  {
+    "source": "assets/images/project/test/icon/team-07-style-lens.svg",
+    "destination": "assets/images/project/test/icon/team-07-style-lens.svg",
+    "sha256": "20b82639be8701e3c3fa1de96231436bde4c12f78b58047b9183bb88a2126fb3"
+  },
+  {
+    "source": "assets/images/project/test/icon/team-08-geuneuljabi.svg",
+    "destination": "assets/images/project/test/icon/team-08-geuneuljabi.svg",
+    "sha256": "c07069ebf1e59fcc67ef0e22e333d94ddd91c949a704a9c5be7e8e61865bb053"
+  },
+  {
+    "source": "assets/images/project/test/icon/team-09-magmoa.svg",
+    "destination": "assets/images/project/test/icon/team-09-magmoa.svg",
+    "sha256": "653c9c614408e70ef3e3ed54d1cfb45056842ccfa5efd01bbf7c811c937a70f0"
+  },
+  {
+    "source": "assets/images/project/test/icon/team-10-ieoon.svg",
+    "destination": "assets/images/project/test/icon/team-10-ieoon.svg",
+    "sha256": "eb890b97aa99513cd28c3428230d1550adf7cba59c2c84f1205dd1323cfc02bc"
+  },
+  {
+    "source": "assets/images/project/test/icon/team-11-byeolungwan.svg",
+    "destination": "assets/images/project/test/icon/team-11-byeolungwan.svg",
+    "sha256": "592f1c759708fa31dededf52d922a0cfdf0210a8dd4acfeca4f1a61b84eb5815"
+  },
+  {
+    "source": "assets/images/project/test/icon/team-12-kokorang.svg",
+    "destination": "assets/images/project/test/icon/team-12-kokorang.svg",
+    "sha256": "21ad709267a734c8b7ea63ccd1f147cf1c0ec6cf605f9a639e238409b1fe7c1e"
+  },
+  {
+    "source": "assets/images/project/test/icon/team-13-effect.svg",
+    "destination": "assets/images/project/test/icon/team-13-effect.svg",
+    "sha256": "18c6fe8aa70effee4dcbd47075edb24341358095b1ed14004f1b5799e81f2e7f"
+  },
+  {
+    "source": "assets/images/project/test/icon/team-14-jikji-jamboree.svg",
+    "destination": "assets/images/project/test/icon/team-14-jikji-jamboree.svg",
+    "sha256": "048606b72e0e50f0ba4eb03ed1ea5124fc131ad451ec75115d986183f6d02cc2"
+  },
+  {
+    "source": "js/main-icon-fragments.js",
+    "destination": "assets/svg/source-data/main-icon-fragments.js",
+    "sha256": "7a037dbe2bda4c1af58e40de381cc7f1737c7471f1b7de06050561219bfda9af"
+  },
+  {
+    "source": "js/designer-icon-data.js",
+    "destination": "assets/svg/source-data/designer-icon-data.js",
+    "sha256": "53e13ebbfc483c9d971cf0d3d86179d56504229f2c1b7aa9cd917ed7fb38e0ae"
+  },
+  {
+    "source": "assets/images/poster/assembly-poster.svg",
+    "destination": "assets/svg/reference/assembly-poster.svg",
+    "sha256": "109fff3f4b595c5ca0943c911870b648f02d77ced0b957fa597c00ecfceabb06"
+  },
+  {
+    "source": "assets/images/designer/gyeolhap-word.svg",
+    "destination": "assets/svg/reference/gyeolhap-word.svg",
+    "sha256": "6c1a378672ab8fe363dbe29e2c8835ecee45b1d8581a75d4c8489c52c633f4ff"
+  }
+]

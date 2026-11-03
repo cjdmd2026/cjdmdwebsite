@@ -1,0 +1,383 @@
+{
+  "mode": "Headless Chromium / SwiftShader, deterministic frames; not a real-device performance benchmark",
+  "cases": [
+    {
+      "label": "1440x900-dpr1",
+      "before": {
+        "W": 1425,
+        "H": 900,
+        "DPR": 1,
+        "blurRatio": 1,
+        "iconCount": 7594,
+        "layers": [
+          {
+            "id": "heroCanvas",
+            "w": 1425,
+            "h": 900,
+            "filter": "",
+            "visibility": ""
+          },
+          {
+            "id": "heroSoftCanvas1",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": ""
+          },
+          {
+            "id": "heroSoftCanvas2",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": ""
+          },
+          {
+            "id": "heroSoftCanvas3",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": ""
+          },
+          {
+            "id": "heroSoftCanvas4",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": ""
+          },
+          {
+            "id": "heroSoftCanvas5",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": ""
+          },
+          {
+            "id": "heroSoftCanvas6",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": ""
+          }
+        ]
+      },
+      "after": {
+        "W": 1425,
+        "H": 900,
+        "DPR": 1,
+        "blurRatio": 1,
+        "iconCount": 7594,
+        "layers": [
+          {
+            "id": "heroCanvas",
+            "w": 1425,
+            "h": 900,
+            "filter": "",
+            "visibility": ""
+          },
+          {
+            "id": "heroSoftCanvas1",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": "hidden"
+          },
+          {
+            "id": "heroSoftCanvas2",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": "hidden"
+          },
+          {
+            "id": "heroSoftCanvas3",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": "hidden"
+          },
+          {
+            "id": "heroSoftCanvas4",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": "hidden"
+          },
+          {
+            "id": "heroSoftCanvas5",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": "hidden"
+          },
+          {
+            "id": "heroSoftCanvas6",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": "hidden"
+          }
+        ]
+      },
+      "difference": {
+        "changedPixels": 83830,
+        "strongPixels": 23842,
+        "occupiedPixels": 151033,
+        "meanRGBDifference": 0.5169733593242365,
+        "inkChangePercent": -1.0641078479603605
+      }
+    },
+    {
+      "label": "1440x900-dpr2",
+      "before": {
+        "W": 1425,
+        "H": 900,
+        "DPR": 2,
+        "blurRatio": 1,
+        "iconCount": 7594,
+        "layers": [
+          {
+            "id": "heroCanvas",
+            "w": 2850,
+            "h": 1800,
+            "filter": "",
+            "visibility": ""
+          },
+          {
+            "id": "heroSoftCanvas1",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": ""
+          },
+          {
+            "id": "heroSoftCanvas2",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": ""
+          },
+          {
+            "id": "heroSoftCanvas3",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": ""
+          },
+          {
+            "id": "heroSoftCanvas4",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": ""
+          },
+          {
+            "id": "heroSoftCanvas5",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": ""
+          },
+          {
+            "id": "heroSoftCanvas6",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": ""
+          }
+        ]
+      },
+      "after": {
+        "W": 1425,
+        "H": 900,
+        "DPR": 2,
+        "blurRatio": 1,
+        "iconCount": 7594,
+        "layers": [
+          {
+            "id": "heroCanvas",
+            "w": 2850,
+            "h": 1800,
+            "filter": "",
+            "visibility": ""
+          },
+          {
+            "id": "heroSoftCanvas1",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": "hidden"
+          },
+          {
+            "id": "heroSoftCanvas2",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": "hidden"
+          },
+          {
+            "id": "heroSoftCanvas3",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": "hidden"
+          },
+          {
+            "id": "heroSoftCanvas4",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": "hidden"
+          },
+          {
+            "id": "heroSoftCanvas5",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": "hidden"
+          },
+          {
+            "id": "heroSoftCanvas6",
+            "w": 1425,
+            "h": 900,
+            "filter": "none",
+            "visibility": "hidden"
+          }
+        ]
+      },
+      "difference": {
+        "changedPixels": 610166,
+        "strongPixels": 346379,
+        "occupiedPixels": 683997,
+        "meanRGBDifference": 1.9570553606237817,
+        "inkChangePercent": 0.8079262396479825
+      }
+    },
+    {
+      "label": "1920x1080-dpr1",
+      "before": {
+        "W": 1905,
+        "H": 1080,
+        "DPR": 1,
+        "blurRatio": 0.7936757901325451,
+        "iconCount": 7594,
+        "layers": [
+          {
+            "id": "heroCanvas",
+            "w": 1905,
+            "h": 1080,
+            "filter": "",
+            "visibility": ""
+          },
+          {
+            "id": "heroSoftCanvas1",
+            "w": 1512,
+            "h": 857,
+            "filter": "none",
+            "visibility": ""
+          },
+          {
+            "id": "heroSoftCanvas2",
+            "w": 1512,
+            "h": 857,
+            "filter": "none",
+            "visibility": ""
+          },
+          {
+            "id": "heroSoftCanvas3",
+            "w": 1512,
+            "h": 857,
+            "filter": "none",
+            "visibility": ""
+          },
+          {
+            "id": "heroSoftCanvas4",
+            "w": 1512,
+            "h": 857,
+            "filter": "none",
+            "visibility": ""
+          },
+          {
+            "id": "heroSoftCanvas5",
+            "w": 1512,
+            "h": 857,
+            "filter": "none",
+            "visibility": ""
+          },
+          {
+            "id": "heroSoftCanvas6",
+            "w": 1512,
+            "h": 857,
+            "filter": "none",
+            "visibility": ""
+          }
+        ]
+      },
+      "after": {
+        "W": 1905,
+        "H": 1080,
+        "DPR": 1,
+        "blurRatio": 0.7936757901325451,
+        "iconCount": 7594,
+        "layers": [
+          {
+            "id": "heroCanvas",
+            "w": 1905,
+            "h": 1080,
+            "filter": "",
+            "visibility": ""
+          },
+          {
+            "id": "heroSoftCanvas1",
+            "w": 1512,
+            "h": 857,
+            "filter": "none",
+            "visibility": "hidden"
+          },
+          {
+            "id": "heroSoftCanvas2",
+            "w": 1512,
+            "h": 857,
+            "filter": "none",
+            "visibility": "hidden"
+          },
+          {
+            "id": "heroSoftCanvas3",
+            "w": 1512,
+            "h": 857,
+            "filter": "none",
+            "visibility": "hidden"
+          },
+          {
+            "id": "heroSoftCanvas4",
+            "w": 1512,
+            "h": 857,
+            "filter": "none",
+            "visibility": "hidden"
+          },
+          {
+            "id": "heroSoftCanvas5",
+            "w": 1512,
+            "h": 857,
+            "filter": "none",
+            "visibility": "hidden"
+          },
+          {
+            "id": "heroSoftCanvas6",
+            "w": 1512,
+            "h": 857,
+            "filter": "none",
+            "visibility": "hidden"
+          }
+        ]
+      },
+      "difference": {
+        "changedPixels": 219638,
+        "strongPixels": 109995,
+        "occupiedPixels": 244621,
+        "meanRGBDifference": 1.5606185800848968,
+        "inkChangePercent": -0.016185791277079087
+      }
+    }
+  ]
+}

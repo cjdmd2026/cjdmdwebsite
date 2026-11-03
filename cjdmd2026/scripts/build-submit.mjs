@@ -4,8 +4,10 @@ import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 import { teams } from '../server/teams.mjs';
 import { limits } from '../server/policy.mjs';
+import { buildMainIntro } from './build-main-intro.mjs';
 
 const root = path.resolve(fileURLToPath(new URL('../', import.meta.url)));
+await buildMainIntro();
 const output = path.resolve(root, 'public-dist');
 // Delete only this script's generated output, after verifying the absolute target.
 if (!output.startsWith(root + path.sep) || path.basename(output) !== 'public-dist') throw new Error('Unsafe build output path');
