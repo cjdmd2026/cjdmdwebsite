@@ -26,17 +26,40 @@
         iconBlurLayers: 6,      // 약한 블러부터 강한 블러까지, 인접 단계를 섞어 연속적으로 표현
         iconBlurPixelBudget: 1440 * 900, // 블러 레이어별 최대 픽셀 수 — 큰 화면의 합성 비용 제한
         maxFPS: 60,             // 120/144Hz 화면에서도 아이콘 연산은 초당 최대 60회
+        idleFPS: 30,            // 아주 느린 부유는 30fps, 결합·스크롤·마우스 반응은 60fps
         iconBlurFalloff: 3,     // 중간 크기도 최대 강도에 몰리지 않도록 크기에 따라 빠르게 완화
         iconPushMinSize: 8,      // 원본 기준: 가장 작은 아이콘의 마우스 반응
         iconPushFullSize: 40,    // 이 크기부터 기존 마우스 반응 강도 유지
         iconPushMinStrength: .15,// 가장 작은 아이콘은 기존 힘의 15%만 적용
+        iconScatterSpeed: .14,   // 첫 화면에서는 아주 느린 흐름으로 움직임
+        iconScatterDistance: 1.25, // 작은 흔들림보다 길게 미끄러지는 부유 경로
         iconIdleFullSize: 8,     // 결합 상태에서 가장 작은 아이콘은 천천히 떠다님
         iconIdleMaxSize: 24,     // 떠다니는 작은 아이콘의 크기에 따른 움직임 강도 기준
         iconIdleDistance: 27,    // 원본 기준 이동 반경 — 화면에 맞춰 함께 축소
         iconIdleIntro: 2,        // 결합 후 떠다니는 움직임이 서서히 시작되는 시간(초)
         iconIdleStrokeFalloff: 48, // 획에서 멀어질수록 기존 이동 범위로 돌아오는 거리
+        iconSideMaxCount: 1800,   // 결합 글자 주변을 더 풍성하게 채우되 최대 개수 제한 (양쪽 합계)
+        iconSideAreaPerIcon: 500, // 여백 면적에 맞춰 기존보다 촘촘하게 배치
+        iconSideMinWidth: 64,     // 좁은 모바일 여백에는 추가하지 않아 글자를 가리지 않음
+        iconSideSpreadStart: .3, // 결합 도중부터 개별 아이콘이 퍼지는 흐름을 이어감
+        iconSideSpreadStagger: 280, // 결합 완료 무렵 거의 자리 잡도록 개별 출발 시차를 압축(ms)
+        iconSideTravelMin: 320,  // 서로 다른 속도와 감속은 유지하며 전체 방출을 760ms로 단축
+        iconSideTravelMax: 480,
+        iconSideFadeOut: 480,    // 역스크롤 때 현재 자리에서 부드럽게 사라지는 시간(ms)
+        iconSideIdleDistance: 30, // 원본 기준 개별 부유 반경 — 화면 크기에 맞춰 함께 축소
+        iconForegroundScale: .22, // 큰 아이콘은 전경에서 최대 22% 크게 떠 있다가 원래 크기로 안착
+        iconGatherFirstEnd: .72, // 개별 이동은 648ms로 여유를 두고 서로 겹치게 함
+        iconGatherLastStart: .28, // 출발·도착 시차는 252ms로 큰 아이콘부터 촘촘하게 연결
+        iconGatherRankBlend: .7, // 크기와 크기순 순위를 함께 반영해 작은 아이콘의 도착이 몰리지 않게 함
+        iconGatherOutwardScale: .18, // 작은 아이콘은 화면 중심에서 바깥쪽으로 살짝 밀린 뒤 합류
+        iconGatherTurnOverlap: .16, // 바깥 밀림과 합류 시작을 겹쳐 중간에 멈추지 않고 방향을 바꿈
+        iconGatherCurve: .04,    // 이동 거리의 4%만 옆으로 휘어 중앙까지 완만한 곡선으로 합류
+        iconOffscreenRatio: .15,  // 첫 화면에 약 85%를 보이고, 나머지는 화면 밖에서 합류
+        iconOffscreenNear: .18,   // 화면 가장자리에서 충분히 떨어져 부유 중에도 안으로 비치지 않게 함
+        iconOffscreenFar: .65,    // 위·아래·양옆에서 서로 다른 거리로 날아옴 (화면 크기 기준)
         // 단계 전환 시간(ms)
-        fly: 1500, graphicIn: 320, dissolve: 420,   // 모임 → (바로) 그래픽이 뒤에 깔림 → 아이콘 한 번에 사라짐
+        fly: 900, scatter: 1275, // 648ms 이동 + 252ms 시차, 마지막 안착에 조금 더 여유를 줌
+        graphicIn: 320, dissolve: 420,
         move: 1250, reveal: 380,
         clickSwitch: 280          // 포스터 클릭 시 빠른 전환(ms)
     };
@@ -80,6 +103,8 @@
 
     const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
     const easeInOut = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    // 결합 전용: 40% 지점부터 길게 감속하며, 도착할 때 속도·가속도·가속도의 변화율까지 0이 됩니다.
+    const easeGather = t => t * t * t * (20 + t * (-45 + t * (36 - 10 * t)));
     const easeOut = t => 1 - Math.pow(1 - t, 3);
     const lerp = (a, b, t) => a + (b - a) * t;
     const rand = (a, b) => a + Math.random() * (b - a);
@@ -109,6 +134,8 @@
     ===================================================== */
     const V = {
         fly: 0,        // 아이콘: 흩어짐(0) → 자리(1)
+        sideSpread: 0, // 주변 아이콘은 결합 이후에도 독립적으로 하나씩 퍼짐
+        sideOpacity: 0, // 역스크롤에서는 이동을 멈추고 투명도만 낮춤
         graphic: 0,    // 그래픽이 아이콘 뒤에 깔림
         dissolve: 0,   // 아이콘이 입자처럼 사라짐
         move: 0,       // 그래픽: 화면 중앙(0) → 포스터 자리(1)
@@ -144,6 +171,20 @@
     let W = 1, H = 1, DPR = 1;
     let stageLeft = 0, stageTop = 0, headerHeight = 70;
     let iconSets = { light: [], dark: [] };
+    let sideIconSets = { light: [], dark: [] }, sideFields = { light: [], dark: [] };
+    // 개별 방출과 부유를 같은 경로로 그립니다. 페이드아웃·동작 줄이기에서는 그린 캔버스를 재사용합니다.
+    const sideLayers = [-1, 1].map(side => {
+        const c = document.createElement("canvas");
+        c.className = "hero-side-icons";
+        c.setAttribute("aria-hidden", "true");
+        c.style.cssText = "position:absolute;pointer-events:none;z-index:2;opacity:0;";
+        canvas.before(c);
+        return { side, canvas: c, ctx: c.getContext("2d"), populated: false, progress: -1, reduced: false };
+    });
+    let sideCacheKey = "";
+    let sideFloatTime = 0, sideLastTime = null;
+    let sideBatch = null, sideBatchCanvas = null, sideBatchUnavailable = false, sideBatchSize = "";
+    const sideGpuFrame = { left: 0, top: 0, items: null, progress: -1, reduced: false, floatTime: 0 };
     const iconsNow = () => iconSets[themeOf()]?.length ? iconSets[themeOf()] : iconSets.light;
     const iconPhysics = new WeakMap();
     const pointerCellSize = 128;
@@ -153,6 +194,17 @@
     let smallFrame = { x: 0, y: 0, w: 1, h: 1 };
 
     function buildIcons() {
+        function scatterPosition() {
+            // 좌우 화면 밖까지 조금 겹쳐 배치해 부유 중에도 가장자리에 빈 띠가 생기지 않게 합니다.
+            if (Math.random() >= SETTINGS.iconOffscreenRatio) return { sx: rand(-.03, 1.03), sy: rand(.03, .97) };
+            const edge = Math.floor(Math.random() * 4);
+            const distance = rand(SETTINGS.iconOffscreenNear, SETTINGS.iconOffscreenFar);
+            const along = rand(-.12, 1.12);
+            if (edge === 0) return { sx: -distance, sy: along };
+            if (edge === 1) return { sx: 1 + distance, sy: along };
+            if (edge === 2) return { sx: along, sy: -distance };
+            return { sx: along, sy: 1 + distance };
+        }
         const pushStrength = size => lerp(SETTINGS.iconPushMinStrength, 1,
             clamp((size - SETTINGS.iconPushMinSize) / (SETTINGS.iconPushFullSize - SETTINGS.iconPushMinSize)));
         const idleStrength = size => 1 - clamp((size - SETTINGS.iconIdleFullSize) /
@@ -206,23 +258,257 @@
         const make = set => {
             const sprites = set?.s || [];
             const motionStrength = glyphMotionStrengths(set);
-            return sprites.map(([gx, gy, gw, gh, ax, ay, kind], index) => ({
-                gx, gy, gw, gh, ax, ay,
-                whole: kind === 1,
-                blurLevel: blurLevel(Math.max(gw, gh)),
-                pushStrength: pushStrength(Math.max(gw, gh)),
-                idleDrift: motionStrength[index] ? motionStrength[index] * idleStrength(Math.max(gw, gh)) * SETTINGS.iconIdleDistance * rand(.6, 1) : 0,
-                sx: rand(-.03, 1.03), sy: rand(-.03, 1.03),       // 흩어진 위치 (화면 비율)
-                delay: Math.random() * .4,
-                // 사라질 때 순서: 왼쪽→오른쪽 + 입자 노이즈
-                phase: Math.random() * Math.PI * 2,
-                px: 0, py: 0, pvx: 0, pvy: 0, spin: 0, angle: 0, awake: false,   // 마우스에 밀린 정도
-                speed: rand(.2, .55),
-                drift: rand(8, 26)
-            }));
+            const sizes = sprites.map(s => Math.max(s[2], s[3]));
+            const minSize = sizes.reduce((min, size) => Math.min(min, size), Infinity);
+            const maxSize = sizes.reduce((max, size) => Math.max(max, size), 0);
+            // 실제 크기만 쓰면 대부분인 3~16px 아이콘이 같은 시점에 몰립니다.
+            // 큰 순서의 순위를 섞어 연속적으로 배분하고, 같은 크기도 원본 순서대로 조금씩 시차를 둡니다.
+            const ranked = sizes.map((_, index) => index).sort((a, b) => sizes[b] - sizes[a] || a - b);
+            const ranks = new Uint32Array(sprites.length);
+            ranked.forEach((index, rank) => { ranks[index] = rank; });
+            const lastRank = Math.max(1, sprites.length - 1);
+            return sprites.map(([gx, gy, gw, gh, ax, ay, kind], index) => {
+                const size = sizes[index];
+                const depth = (size - minSize) / (maxSize - minSize || 1);
+                const gatherOrder = lerp(1 - depth, ranks[index] / lastRank, SETTINGS.iconGatherRankBlend);
+                const gatherStart = gatherOrder * SETTINGS.iconGatherLastStart;
+                const gatherEnd = lerp(SETTINGS.iconGatherFirstEnd, 1, gatherOrder);
+                const gatherDuration = gatherEnd - gatherStart;
+                return {
+                    gx, gy, gw, gh, ax, ay, depth,
+                    gatherStart, gatherDuration,
+                    gatherPushEnd: gatherStart + gatherDuration * SETTINGS.iconGatherTurnOverlap,
+                    gatherOutward: idleStrength(size), // 8px 이하는 최대, 24px 이상은 바깥 밀림 없음
+                    whole: kind === 1,
+                    blurLevel: blurLevel(size),
+                    pushStrength: pushStrength(size),
+                    idleDrift: motionStrength[index] ? motionStrength[index] * idleStrength(size) * SETTINGS.iconIdleDistance * rand(.6, 1) : 0,
+                    ...scatterPosition(), // 캔버스는 화면 크기로 유지하고 시작 좌표만 바깥까지 확장
+                    delay: Math.random() * .4, // 역방향으로 흩어질 때의 시차
+                    phase: Math.random() * Math.PI * 2,
+                    px: 0, py: 0, pvx: 0, pvy: 0, spin: 0, angle: 0, awake: false,   // 마우스에 밀린 정도
+                    speed: rand(.2, .55),
+                    drift: rand(8, 26)
+                };
+            }).sort((a, b) => a.depth - b.depth); // 작은 아이콘부터 그려 큰 전경 아이콘이 앞에 놓이게 합니다.
         };
         iconSets = { light: make(SETS.light), dark: make(SETS.dark) };
+        for (const [theme, icons] of Object.entries(iconSets)) {
+            const pool = icons.filter(ic => Math.max(ic.gw, ic.gh) >= 8 && Math.max(ic.gw, ic.gh) <= 24);
+            const set = SETS[theme];
+            // 실제 글자 획의 아이콘을 출발점으로 삼고, 목적지와 비슷한 높이에서 퍼지게 합니다.
+            const sources = Object.fromEntries([-1, 1].map(side => {
+                const strokes = pool.filter(ic => !ic.idleDrift && (ic.gx + ic.gw / 2 < set.w / 2 ? -1 : 1) === side);
+                return [side, (strokes.length ? strokes : pool).slice().sort((a, b) => a.gy - b.gy)];
+            }));
+            sideIconSets[theme] = pool.length ? Array.from({ length: SETTINGS.iconSideMaxCount }, (_, i) => {
+                const side = i % 2 ? 1 : -1, v = Math.random();
+                const origins = sources[side];
+                const sourceIndex = Math.min(origins.length - 1, Math.floor(clamp(v + rand(-.1, .1)) * origins.length));
+                return {
+                    sprite: pool[Math.floor(Math.random() * pool.length)],
+                    source: origins[sourceIndex], side,
+                    u: Math.random(), v, edgeJitter: rand(-1, 1),
+                    size: rand(5, 18), alpha: rand(.4, .85),
+                    launch: rand(0, SETTINGS.iconSideSpreadStagger),
+                    duration: rand(SETTINGS.iconSideTravelMin, SETTINGS.iconSideTravelMax),
+                    bend: rand(-1, 1),
+                    floatPhase: rand(0, Math.PI * 2), floatSpeed: rand(.35, .65), floatStrength: rand(.6, 1)
+                };
+            }) : [];
+        }
         measureIcons();
+    }
+
+    function measureSideIcons() {
+        const innerLeft = bigFrame.x + bigFrame.w * .24;
+        const innerRight = bigFrame.x + bigFrame.w * .76;
+        const margin = 16, fieldHeight = Math.min(bigFrame.h * 1.04, Math.max(1, H - 24));
+        const fieldTop = (H - fieldHeight) / 2;
+        const spans = { '-1': Math.max(0, innerLeft - margin), '1': Math.max(0, W - margin - innerRight) };
+        const counts = Object.fromEntries(Object.entries(spans).map(([side, span]) => [side,
+            // 글자 쪽으로 확장한 영역을 빼고 실제 화면 여백을 확인해 좁은 모바일은 비워 둡니다.
+            span - bigFrame.w * .12 < SETTINGS.iconSideMinWidth ? 0 : Math.min(SETTINGS.iconSideMaxCount / 2,
+                Math.floor(span * fieldHeight / SETTINGS.iconSideAreaPerIcon))]));
+        for (const [theme, pool] of Object.entries(sideIconSets)) {
+            const used = { '-1': 0, '1': 0 };
+            sideFields[theme] = [];
+            for (const item of pool) {
+                if (used[item.side]++ >= counts[item.side]) continue;
+                const vertical = item.v * 2 - 1;
+                // 위아래는 좁고 중앙은 넓은 구름 모양으로 원본 외곽과 자연스럽게 연결합니다.
+                const envelope = .45 + .55 * Math.sqrt(Math.max(0, 1 - vertical * vertical));
+                // 글자 가까이는 촘촘하고 멀어질수록 성기게, 시작 경계도 조금씩 흩어 줍니다.
+                const travel = Math.pow(item.u, 1.7);
+                const inner = (item.side < 0 ? innerLeft : innerRight) + item.edgeJitter * bigFrame.w * .04;
+                item.x = inner + item.side * spans[item.side] * envelope * travel;
+                item.y = fieldTop + item.v * fieldHeight;
+                item.originX = item.source.tx + item.source.sw / 2;
+                item.originY = item.source.ty + item.source.sh / 2;
+                item.arc = item.bend * Math.min(36, bigFrame.h * .045);
+                item.floatRadius = item.floatStrength * SETTINGS.iconSideIdleDistance * bigFrame.h / SPRITES.h;
+                const size = clamp(item.size * bigFrame.h / SPRITES.h * lerp(1, .55, travel), 1.25, 10);
+                const ratio = size / Math.max(item.sprite.gw, item.sprite.gh);
+                item.w = item.sprite.gw * ratio;
+                item.h = item.sprite.gh * ratio;
+                // 가장자리 일부만 지우지 않고, 분포 전체의 크기·농도를 연속적으로 낮춥니다.
+                const verticalFade = 1 - Math.pow(Math.abs(vertical), 3);
+                const outerFade = (1 - travel) * (1 - travel) * (1 + 2 * travel);
+                item.opacity = item.alpha * verticalFade * outerFade;
+                if (item.opacity > .01) sideFields[theme].push(item);
+            }
+        }
+        sideCacheKey = "";
+        // 이미지가 준비된 로드·리사이즈 시점에도 현재 진행도와 부유 위치를 유지합니다.
+        paintSideCache();
+    }
+
+    function disableSideBatch() {
+        sideBatch?.dispose();
+        sideBatchCanvas?.remove();
+        sideBatch = sideBatchCanvas = null;
+        sideBatchUnavailable = true;
+        sideBatchSize = sideCacheKey = "";
+    }
+
+    function getSideBatch() {
+        if (sideBatchUnavailable) return null;
+        if (!sideBatch) {
+            const c = document.createElement("canvas");
+            sideBatch = window.createHeroSpriteBatch?.(c) || null;
+            if (!sideBatch) { sideBatchUnavailable = true; return null; }
+            c.className = "hero-side-icons";
+            c.setAttribute("aria-hidden", "true");
+            c.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;opacity:0;";
+            canvas.before(c);
+            sideBatchCanvas = c;
+            c.addEventListener("webglcontextlost", disableSideBatch, { once: true });
+            // GPU를 쓰는 동안 2D 대체 버퍼는 보관하지 않습니다.
+            for (const layer of sideLayers) {
+                layer.canvas.style.opacity = "0";
+                layer.canvas.width = layer.canvas.height = 1;
+                layer.progress = -1;
+            }
+        }
+        const size = `${W}:${H}:${DPR}`;
+        if (sideBatchSize !== size) {
+            const ratio = Math.min(DPR, 1.5, Math.sqrt(SETTINGS.iconBlurPixelBudget / (W * H)));
+            sideBatch.resize(W, H, ratio);
+            sideGpuFrame.progress = -1;
+            sideBatchSize = size;
+        }
+        return sideBatch;
+    }
+
+    function paintSideCache() {
+        const atlas = atlasNow();
+        if (!ready(atlas)) return;
+        // 로드·리사이즈 때 GPU를 준비하고, 실패한 환경에서만 2D 캐시를 만듭니다.
+        if (sideFields[themeOf()]?.length && getSideBatch()) return;
+        const key = `${themeOf()}:${W}:${H}:${DPR}`;
+        if (sideCacheKey === key) return;
+        const icons = sideFields[themeOf()] || [];
+        for (const layer of sideLayers) {
+            const items = icons.filter(item => item.side === layer.side);
+            const c = layer.canvas, context = layer.ctx;
+            layer.items = items;
+            layer.populated = items.length > 0;
+            if (!layer.populated) {
+                c.style.opacity = "0";
+                c.width = c.height = 1;
+                continue;
+            }
+            let left = W, top = H, right = 0, bottom = 0;
+            for (const item of items) {
+                left = Math.min(left, Math.min(item.x, item.originX) - item.floatRadius - item.w / 2);
+                top = Math.min(top, Math.min(item.y, item.originY) - Math.abs(item.arc) - item.floatRadius - item.h / 2);
+                right = Math.max(right, Math.max(item.x, item.originX) + item.floatRadius + item.w / 2);
+                bottom = Math.max(bottom, Math.max(item.y, item.originY) + Math.abs(item.arc) + item.floatRadius + item.h / 2);
+            }
+            left = Math.floor(left) - 1; top = Math.floor(top) - 1;
+            const width = Math.ceil(right) - left + 1, height = Math.ceil(bottom) - top + 1;
+            // 옅고 작은 장식에는 1.5배면 충분하며, 실제 분포 영역만 버퍼로 잡습니다.
+            sizeCanvas(c, context, width, height, Math.min(DPR, 1.5));
+            context.imageSmoothingQuality = "high";
+            Object.assign(layer, { left, top, width, height });
+            paintSideFrame(layer, atlas, clamp(V.sideSpread));
+            c.style.left = `${left}px`; c.style.top = `${top}px`;
+            c.style.width = `${width}px`; c.style.height = `${height}px`;
+        }
+        sideCacheKey = key;
+    }
+
+    function paintSideFrame(layer, atlas, progress, batch = null) {
+        const context = layer.ctx, reduced = reducedMotion.matches;
+        const elapsed = progress * (SETTINGS.iconSideSpreadStagger + SETTINGS.iconSideTravelMax);
+        if (batch) batch.clear();
+        else context.clearRect(0, 0, layer.width, layer.height);
+        for (const item of layer.items) {
+            const p = clamp((elapsed - item.launch) / item.duration);
+            if (p <= 0) continue;
+            // 출발·도착 시점을 각자 다르게 두고, 천천히 가속한 뒤 길게 감속합니다.
+            const travel = reduced ? 1 : easeGather(p);
+            const scale = reduced ? 1 : lerp(.35, 1, travel);
+            // 방출 경로에 부유를 처음부터 섞어 도착 후 별도의 이동으로 전환되지 않게 합니다.
+            const phase = sideFloatTime * item.floatSpeed + item.floatPhase;
+            const floatRadius = reduced ? 0 : item.floatRadius * travel;
+            const x = lerp(item.originX, item.x, travel) + Math.sin(phase) * floatRadius;
+            const y = lerp(item.originY, item.y, travel) + item.arc * 4 * travel * (1 - travel) +
+                Math.cos(phase * .81 + item.floatPhase) * floatRadius;
+            const w = item.w * scale, h = item.h * scale;
+            const ic = item.sprite;
+            // 투명도 변화는 출발점의 짧은 구간에만 사용하고, 등장은 이동으로 보여 줍니다.
+            const alpha = item.opacity * easeOut(clamp(p / (reduced ? 1 : .14)));
+            if (batch) batch.add(ic, x - w / 2, y - h / 2, w, h, 0, alpha);
+            else {
+                context.globalAlpha = alpha;
+                context.drawImage(atlas, ic.ax, ic.ay, ic.gw, ic.gh,
+                    x - w / 2 - layer.left, y - h / 2 - layer.top, w, h);
+            }
+        }
+        if (batch) { if (!batch.flush(atlas)) return false; }
+        else context.globalAlpha = 1;
+        layer.progress = progress;
+        layer.reduced = reduced;
+        layer.floatTime = sideFloatTime;
+        return true;
+    }
+
+    function renderSideIcons(time) {
+        const progress = clamp(V.sideSpread);
+        const opacity = V.sideOpacity * (1 - easeOut(clamp(V.move))) * (1 - V.dissolve) * (1 - V.reveal);
+        const visible = progress > 0 && opacity > .001 && ready(atlasNow()) && sideFields[themeOf()]?.length;
+        const floating = visible && step !== 0 && !reducedMotion.matches;
+        // 숨겨진 탭·포스터 단계에서 시간이 지나도 복귀 시 위치가 갑자기 바뀌지 않습니다.
+        if (floating && sideLastTime !== null) sideFloatTime += clamp((time - sideLastTime) / 1000, 0, .05);
+        sideLastTime = floating ? time : null;
+        if (sideBatchCanvas && !visible) sideBatchCanvas.style.opacity = "0";
+        if (visible) {
+            const batch = getSideBatch();
+            if (batch) {
+                if (sideGpuFrame.items !== sideFields[themeOf()]) {
+                    sideGpuFrame.items = sideFields[themeOf()];
+                    sideGpuFrame.progress = -1;
+                }
+                const repaint = sideGpuFrame.progress !== progress || sideGpuFrame.reduced !== reducedMotion.matches ||
+                    (floating && sideGpuFrame.floatTime !== sideFloatTime);
+                if (!repaint || paintSideFrame(sideGpuFrame, atlasNow(), progress, batch)) {
+                    const value = opacity.toFixed(4);
+                    if (sideBatchCanvas.style.opacity !== value) sideBatchCanvas.style.opacity = value;
+                    return;
+                }
+                // GPU 업로드 실패 시 같은 프레임에 2D로 대체해 아이콘을 유지합니다.
+                disableSideBatch();
+            }
+        }
+        if (visible) paintSideCache();
+        for (const layer of sideLayers) {
+            const value = visible && layer.populated ? opacity.toFixed(4) : "0";
+            if (layer.canvas.style.opacity !== value) layer.canvas.style.opacity = value;
+            if (value === "0") continue;
+            if (layer.progress !== progress || layer.reduced !== reducedMotion.matches ||
+                (floating && layer.floatTime !== sideFloatTime)) paintSideFrame(layer, atlasNow(), progress);
+        }
     }
 
     function sizeCanvas(c, context, w, h, pixelRatio = DPR) {
@@ -238,23 +524,43 @@
     function measureIcons() {
         const k = bigFrame.h / SPRITES.h;
         for (const icons of Object.values(iconSets)) {
-            const grid = new Map(), awake = new Set();
+            const grid = new Map(), awake = new Set(), scattered = [];
             for (const ic of icons) {
                 ic.sw = ic.gw * k;
                 ic.sh = ic.gh * k;
-                ic.left = ic.sx * W - ic.sw / 2;
-                ic.top = ic.sy * H - ic.sh / 2;
+                const foreground = 1 + ic.depth * SETTINGS.iconForegroundScale;
+                ic.scatterW = ic.sw * foreground;
+                ic.scatterH = ic.sh * foreground;
+                ic.left = ic.sx * W - ic.scatterW / 2;
+                ic.top = ic.sy * H - ic.scatterH / 2;
+                const outward = ic.gatherOutward * SETTINGS.iconGatherOutwardScale;
+                ic.outwardX = (ic.sx - .5) * W * outward;
+                ic.outwardY = (ic.sy - .5) * H * outward;
                 ic.tx = bigFrame.x + ic.gx * k;
                 ic.ty = bigFrame.y + ic.gy * k;
+                // 경로의 휨은 크기 측정 때 한 번만 계산해 매 프레임 거리 연산을 피합니다.
+                const dx = ic.tx - ic.left, dy = ic.ty - ic.top;
+                const distance = Math.hypot(dx, dy);
+                const bend = Math.min(distance * SETTINGS.iconGatherCurve, Math.min(W, H) * .04);
+                const direction = ic.phase < Math.PI ? 1 : -1;
+                ic.curveX = distance ? -dy / distance * bend * direction : 0;
+                ic.curveY = distance ? dx / distance * bend * direction : 0;
                 // 회전·부유를 포함한 최대 영역이 화면 밖이면 삼각함수 계산 전 제외합니다.
-                ic.reach = ic.drift + Math.max(ic.sw, ic.sh);
+                ic.reach = ic.drift * SETTINGS.iconScatterDistance + Math.max(ic.scatterW, ic.scatterH);
+                if (ic.awake) awake.add(ic);
+                const outside = ic.left + ic.scatterW + ic.reach < 0 || ic.top + ic.scatterH + ic.reach < 0 ||
+                    ic.left - ic.reach > W || ic.top - ic.reach > H;
+                // 화면 밖에서 대기하는 아이콘은 첫 화면의 렌더 루프와 마우스 격자에서 모두 제외합니다.
+                // 이미 마우스에 밀린 아이콘은 리사이즈 후에도 돌아오는 움직임을 유지합니다.
+                if (outside && !ic.awake) continue;
+                scattered.push(ic);
                 const cell = `${Math.floor(ic.sx * W / pointerCellSize)}:${Math.floor(ic.sy * H / pointerCellSize)}`;
                 if (!grid.has(cell)) grid.set(cell, []);
                 grid.get(cell).push(ic);
-                if (ic.awake) awake.add(ic);
             }
-            iconPhysics.set(icons, { grid, awake });
+            iconPhysics.set(icons, { grid, awake, scattered });
         }
+        measureSideIcons();
         settledCache.key = "";
     }
 
@@ -301,6 +607,7 @@
         H = Math.max(1, rect.height);
         DPR = Math.min(window.devicePixelRatio || 1, 2);
         sizeCanvas(canvas, ctx, W, H);
+        assembledBatch?.resize(W, H, DPR);
         const blurRatio = blurPixelRatio();
         for (const layer of blurLayers) {
             // 이미 흐린 작은 아이콘에 고해상도 화면 전체 버퍼를 중복해서 쓰지 않습니다.
@@ -844,8 +1151,32 @@
         pointer.vx *= .65; pointer.vy *= .65;
     }
     let lastIconTime = 0;
+    let scatterTime = 0; // 스크롤 전후에 이어지는 부유 시간 — 숨겨진 탭에서는 멈춤
     let lastIconState = "";
     let assembledTime = 0;
+    let assembledCanvas = null, assembledBatch = null, assembledBatchUnavailable = false;
+
+    function disableAssembledBatch() {
+        assembledBatch?.dispose();
+        assembledBatch = assembledCanvas = null;
+        assembledBatchUnavailable = true;
+        lastIconState = "";
+    }
+
+    function getAssembledBatch() {
+        if (assembledBatchUnavailable) return null;
+        if (!assembledBatch) {
+            // 디자이너 페이지와 같이 선명한 아이콘 전체를 한 GPU 배치로 그린 뒤 한 번만 합성합니다.
+            // 첫 화면에서는 쓰지 않으므로 실제로 모인 뒤에만 버퍼를 만듭니다.
+            assembledCanvas = document.createElement("canvas");
+            assembledBatch = window.createHeroSpriteBatch?.(assembledCanvas) || null;
+            if (!assembledBatch) { disableAssembledBatch(); return null; }
+            assembledBatch.resize(W, H, DPR);
+            // 동작 줄이기로 정지한 상태에서도 컨텍스트가 손실되면 2D로 다시 그립니다.
+            assembledCanvas.addEventListener("webglcontextlost", disableAssembledBatch, { once: true });
+        }
+        return assembledBatch;
+    }
 
     function useCanvasFallback(layer) {
         layer.batch.dispose();
@@ -860,6 +1191,7 @@
     }
 
     function renderIcons(time) {
+        renderSideIcons(time);
         const state = `${current}:${V.fly}:${V.graphic}:${V.dissolve}:${V.move}:${V.reveal}:${ready(atlasNow())}`;
         const idling = step === 1 && V.fly === 1 && V.move === 0;
         const moving = (V.fly < 1 || idling) && !reducedMotion.matches && V.dissolve < 1 && V.reveal < 1;
@@ -874,9 +1206,10 @@
             layer.dirty = false;
             layer.alpha = 1;
         }
-        const t = time / 1000;
         const dt = lastIconTime ? Math.min(.05, (time - lastIconTime) / 1000) : 0;
         lastIconTime = time;
+        if (V.fly < 1 && !reducedMotion.matches) scatterTime += dt;
+        const scatterClock = scatterTime * SETTINGS.iconScatterSpeed;
         if (V.fly === 0) assembledTime = 0;
         else if (idling && !reducedMotion.matches) assembledTime += dt;
         if (dt && !reducedMotion.matches && V.fly < 1) stepPush(dt * 60);
@@ -918,51 +1251,74 @@
         let icons = iconsNow();
         const scattered = V.fly === 0;
         const settled = V.fly === 1;
+        if (scattered) icons = iconPhysics.get(icons).scattered;
         // 글자 획은 정지 이미지로 재사용하고 외곽의 움직이는 아이콘만 매 프레임 그립니다.
-        // 축소·역방향 전환에서는 원래 개별 아이콘 렌더링으로 돌아갑니다.
+        // 축소·역방향 전환에서는 전체 아이콘의 위치를 다시 계산합니다.
         if (idling && V.dissolve === 0 && V.reveal === 0 && V.graphic === 0) {
             paintSettledCache(atlas, icons);
             icons = settledCache.floating;
         }
         // 모이는 동안 초점이 돌아오고, 결합이 완성되면 원래 캔버스에 선명하게 그립니다.
-        const blur = SETTINGS.iconBlurMax * k * (1 - easeInOut(clamp(V.fly)));
+        const focus = easeInOut(clamp(V.fly));
+        const blur = SETTINGS.iconBlurMax * k * (1 - focus);
         for (const layer of blurLayers) {
             const radius = blur * layer.strength;
             const filter = radius > .001 ? `blur(${radius.toFixed(3)}px)` : "none";
             if (layer.canvas.style.filter !== filter) layer.canvas.style.filter = filter;
         }
         const hide = 1 - V.reveal;
+        const batch = settled ? getAssembledBatch() : null;
+        if (batch) batch.clear();
+        let batchDirty = false;
         let lastAlpha = 1;
         for (let i = 0; i < icons.length; i++) {
             const ic = icons[i];
             if (scattered) {
                 const left = ic.left + ic.px, top = ic.top + ic.py, reach = ic.reach;
-                if (left + ic.sw + reach < 0 || top + ic.sh + reach < 0 || left - reach > W || top - reach > H) continue;
+                if (left + ic.scatterW + reach < 0 || top + ic.scatterH + reach < 0 || left - reach > W || top - reach > H) continue;
             }
-            const a = scattered ? 0 : settled ? 1 : easeInOut(clamp(V.fly * 1.4 - ic.delay));
+            // 크기별 순서는 유지하며 중간에도 가속도가 꺾이지 않는 ease-in-out을 적용합니다.
+            const a = scattered ? 0 : settled ? 1 : step === 1
+                ? easeGather(clamp((V.fly - ic.gatherStart) / ic.gatherDuration))
+                : easeInOut(clamp(V.fly * 1.4 - ic.delay));
             // 포스터에 같은 '결합'이 같은 자리에 있으므로, 아이콘은 포스터가 다 나타날 때까지 그대로 두었다가
             // 완전히 덮인 순간 지움 → 보는 사람에게는 주변 글자·선만 새로 나타나는 것처럼 보임
             const alpha = (ic.whole ? 1 : a) * fade * hide;
             if (alpha <= 0.01) continue;
 
-            const ws = ic.sw, hs = ic.sh;
+            const ws = ic.scatterW, hs = ic.scatterH;
             const w = lerp(ws, ic.gw * kf * fs, a), h = lerp(hs, ic.gh * kf * fsy, a);
             const wob = (1 - a) * motion;
             const tx = frame.x + (gcx + (ic.gx - gcx) * fs + fx0) * kf;
             const ty = frame.y + (gcy + (ic.gy - gcy) * fsy + fy0) * kf;
             const ang = ic.angle * wob;
             const drift = ic.idleDrift * kf * a * idleAmount;
+            const margin = Math.abs(ang) > .002 ? Math.max(w, h) : 0;
             let x = tx, y = ty;
             if (!settled) {
-                const sx = ic.left + (wob ? (Math.sin(t * ic.speed + ic.phase) * ic.drift + ic.px) * wob : 0);
-                const sy = ic.top + (wob ? (Math.cos(t * ic.speed * .8 + ic.phase) * ic.drift + ic.py) * wob : 0);
-                x = lerp(sx, tx, a); y = lerp(sy, ty, a);
+                // 합류가 시작될 때도 바깥 움직임을 조금 이어가 멈춤 없이 부드러운 곡선으로 돌아옵니다.
+                const outward = step === 1 && ic.gatherOutward
+                    ? easeGather(clamp(V.fly / ic.gatherPushEnd)) * motion : 0;
+                // 바깥 밀림을 출발 위치에 더해 먼저 살짝 퍼지고, 합류할수록 자연스럽게 사라지게 합니다.
+                x = lerp(ic.left + ic.px * wob + ic.outwardX * outward, tx, a);
+                y = lerp(ic.top + ic.py * wob + ic.outwardY * outward, ty, a);
+                const curve = step === 1 ? 4 * a * (1 - a) * motion : 0;
+                x += ic.curveX * curve;
+                y += ic.curveY * curve;
+                // 같은 부유 위상을 유지한 채 진폭만 천천히 줄여 현재 움직임에서 결합으로 이어집니다.
+                const floatReach = ic.drift * SETTINGS.iconScatterDistance * wob * (1 - a);
+                const padding = floatReach + Math.abs(drift) + margin + blur * 3;
+                // 모이는 중에도 아직 화면에 들어오지 않은 아이콘은 부유·회전·그리기 계산을 생략합니다.
+                if (x + w + padding < 0 || y + h + padding < 0 || x - padding > W || y - padding > H) continue;
+                if (floatReach) {
+                    x += Math.sin(scatterClock * ic.speed + ic.phase) * floatReach;
+                    y += Math.cos(scatterClock * ic.speed * .8 + ic.phase) * floatReach;
+                }
             }
             if (drift) {
                 x += Math.sin(assembledTime * ic.speed + ic.phase) * drift;
                 y += Math.cos(assembledTime * ic.speed * .81 + ic.phase) * drift;
             }
-            const margin = Math.abs(ang) > .002 ? Math.max(w, h) : 0;
             if (x + w + margin < 0 || y + h + margin < 0 || x - margin > W || y - margin > H) continue;
             // 크기별 연속값으로 두 강도를 섞고, 모일수록 한 레이어로 정리합니다.
             const level = settled ? 0 : ic.blurLevel;
@@ -980,6 +1336,10 @@
                         continue;
                     }
                     if (opacity !== layer.alpha) { drawCtx.globalAlpha = opacity; layer.alpha = opacity; }
+                } else if (batch) {
+                    batch.add(ic, x, y, w, h, ang, opacity);
+                    batchDirty = true;
+                    continue;
                 } else if (opacity !== lastAlpha) { ctx.globalAlpha = opacity; lastAlpha = opacity; }
                 if (Math.abs(ang) > .002) {
                     const dx = x + w / 2, dy = y + h / 2;
@@ -990,6 +1350,15 @@
             }
         }
         ctx.globalAlpha = 1;
+        if (batchDirty) {
+            if (!batch.flush(atlas)) {
+                // 업로드 실패도 같은 프레임에 2D로 다시 그려 아이콘이 사라지지 않게 합니다.
+                disableAssembledBatch();
+                renderIcons(time);
+                return;
+            }
+            ctx.drawImage(assembledCanvas, 0, 0, W, H);
+        }
         for (const layer of blurLayers) {
             if (layer.batch) {
                 if (layer.dirty && !layer.batch.flush(atlas)) useCanvasFallback(layer);
@@ -1018,7 +1387,17 @@
         stopAuto();
 
         if (prev === 0 && next === 1) {
-            await tween("fly", 1, SETTINGS.fly);
+            sideFloatTime = 0;
+            sideLastTime = null;
+            setNow({ sideSpread: 0, sideOpacity: 1 });
+            // 주변 장식은 결합 도중부터 겹쳐 나오고 이후에도 각자의 속도로 퍼집니다.
+            // 장식의 완료를 기다리지 않아 다음 스크롤은 기존 시점부터 받습니다.
+            tween("sideSpread", 1, SETTINGS.iconSideSpreadStagger + SETTINGS.iconSideTravelMax, {
+                delay: reducedMotion.matches ? 0 : SETTINGS.fly * SETTINGS.iconSideSpreadStart,
+                ease: t => t
+            });
+            // 전체 시간은 선형으로 진행하고, 아이콘별 구간에서 easing을 한 번만 적용합니다.
+            await tween("fly", 1, SETTINGS.fly, { ease: t => t });
             if (hasGraphic()) {   // 그래픽 이미지가 있는 버전만 이미지로 교체 (흰 버전은 아이콘 그대로)
                 await tween("graphic", 1, SETTINGS.graphicIn, { ease: easeOut });
                 await tween("dissolve", 1, SETTINGS.dissolve, { ease: easeOut });
@@ -1026,7 +1405,11 @@
         } else if (prev === 1 && next === 0) {
             if (V.dissolve > 0) await tween("dissolve", 0, SETTINGS.dissolve * .7, { ease: t => t });
             if (V.graphic > 0) await tween("graphic", 0, 250);
-            await tween("fly", 0, SETTINGS.fly * .85);
+            // 방출 도중 되돌려도 현재 위치를 보존하고, 새 아이콘의 출발도 멈춥니다.
+            setNow({ sideSpread: V.sideSpread });
+            tween("sideOpacity", 0, SETTINGS.iconSideFadeOut);
+            await tween("fly", 0, SETTINGS.scatter);
+            setNow({ sideSpread: 0, sideOpacity: 0 });
         } else if (prev === 1 && next === 2) {
             measure();
             tween("text", 1, 800, { delay: 450, ease: easeOut });
@@ -1039,6 +1422,7 @@
             await tween("move", 1, SETTINGS.move);
             // 포스터가 나타나는 동안만 잠금을 유지합니다.
             await revealDone;
+            setNow({ sideSpread: 1 }); // 가려진 장식의 방출을 마무리해 되돌아올 때 완성 상태 유지
             // 포스터가 다 나타나면 배경 아이콘을 왼쪽부터 오른쪽으로 천천히 드러냅니다.
             tween("ambient", 1, 1200, { ease: t => t });
             startAuto();
@@ -1063,7 +1447,7 @@
         step = 2;
         stage.dataset.step = "2";
         const g = hasGraphic() ? 1 : 0;
-        setNow({ fly: 1, graphic: g, dissolve: g, move: 1, reveal: 1, text: 1, ambient: 1 });
+        setNow({ fly: 1, sideSpread: 1, sideOpacity: 1, graphic: g, dissolve: g, move: 1, reveal: 1, text: 1, ambient: 1 });
         locked = false;
         if (hasLenis()) lenis.start();
         measure();
@@ -1268,7 +1652,6 @@
         header?.classList.toggle("is-dark", stage.dataset.theme === "dark" && rect.bottom > headerHeight);
     }
 
-    const frameInterval = 1000 / SETTINGS.maxFPS;
     let lastFrameTime = 0;
     function loop(now) {
         requestAnimationFrame(loop);
@@ -1277,6 +1660,9 @@
             lastFrameTime = 0;
             return;
         }
+        const resting = step < 2 && !busy && !tweens.size && !pointer.down &&
+            Math.abs(pointer.vx) + Math.abs(pointer.vy) < .1;
+        const frameInterval = 1000 / (resting ? SETTINGS.idleFPS : SETTINGS.maxFPS);
         const elapsed = now - lastFrameTime;
         if (elapsed < frameInterval - .5) return;
         // 144Hz처럼 60의 배수가 아닌 화면에서도 남은 시간을 다음 프레임에 반영합니다.

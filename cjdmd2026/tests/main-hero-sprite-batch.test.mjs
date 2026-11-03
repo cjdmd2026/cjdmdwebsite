@@ -89,6 +89,27 @@ test('devices without instancing retain the triangle renderer and rotated geomet
     assert.equal(calls.some(c => c[0] === 'instances'), false);
 });
 
+test('long-running animation reuses its buffer and the two poster atlas textures', () => {
+    const { batch, calls } = renderer();
+    const darkAtlas = { naturalWidth: 128, naturalHeight: 64 };
+    let textureUploads = 0, bufferAllocations = 0;
+    // Keep only the current frame's mock output, as the renderer does with its vertex buffer.
+    for (let frame = 0; frame < 180; frame++) {
+        calls.length = 0;
+        batch.clear();
+        for (let i = 0; i < 1800; i++) batch.add(icon, i % 120, frame / 60, 8, 12, 0, .6);
+        assert.equal(batch.flush(frame % 2 ? darkAtlas : atlas), true);
+        textureUploads += calls.filter(call => call[0] === 'texImage2D').length;
+        bufferAllocations += calls.filter(call => call[0] === 'bufferData').length;
+        assert.equal(calls.find(call => call[0] === 'upload')[2].length, 1800 * 11);
+        assert.equal(calls.find(call => call[0] === 'instances')[4], 1800);
+    }
+    assert.equal(textureUploads, 2);
+    assert.equal(bufferAllocations, 1);
+    batch.dispose();
+    assert.equal(calls.filter(call => call[0] === 'deleteTexture').length, 2);
+});
+
 test('missing WebGL and lost contexts can fall back safely; disposal releases both buffers', () => {
     assert.equal(renderer({ protocol: 'file:' }).batch, null);
     assert.equal(renderer({ webgl: false }).batch, null);
