@@ -1,4 +1,4 @@
-import {CRESCENDO_START,TOPVIEW_START,PULLBACK_END,STORY_END,INTRO_CUES,introIndex} from './crescendo.js';
+import {CRESCENDO_START,TOPVIEW_START,PULLBACK_END,INTRO_CUES,introIndex} from './crescendo.js';
 import {POINT_END,OUTLINE_DURATION,EXTRUSION_START,EXTRUSION_DURATION,OPENING_MEASURE_DURATION} from './reveal-timing.js';
 
 export const CAMERA_START=OPENING_MEASURE_DURATION+EXTRUSION_START+EXTRUSION_DURATION*.5;
@@ -28,7 +28,7 @@ function track(time,values){
 }
 
 export function sampleCamera(timeline,poses,wide,motion=1){
-  const time=Math.max(0,Math.min(STORY_END,timeline));
+  const time=Math.max(0,Math.min(PULLBACK_END,timeline));
   const [first,second,third]=poses,span=wide.distance-first.distance;
   const between=(key,t)=>mix(third[key],wide[key],t);
   const centers=[first.center,second.center,third.center,...[.16,.65,.90,1].map(t=>({

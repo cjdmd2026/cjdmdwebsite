@@ -1,5 +1,28 @@
 // All solids share the final transition from lit clay to flat SVG color.
 export const flatFinish={value:0};
+export const gridNear={value:1};
+export const gridFalloff=1.15;
+
+// Keep the floor fixed in world space. Only its ink fades with true eye
+// distance; the camera projection alone determines tile position and size.
+export function applyGridDistance(material){
+  const compile=material.onBeforeCompile,key=material.customProgramCacheKey();
+  material.onBeforeCompile=function(shader,renderer){
+    compile.call(this,shader,renderer);
+    Object.assign(shader.uniforms,{gridNear,gridFlat:flatFinish});
+    shader.vertexShader='varying vec3 vGridView;\n'+shader.vertexShader;
+    shader.vertexShader=shader.vertexShader.replace('#include <project_vertex>',
+      '#include <project_vertex>\nvGridView=mvPosition.xyz;');
+    shader.fragmentShader='varying vec3 vGridView; uniform float gridNear,gridFlat;\n'+shader.fragmentShader;
+    shader.fragmentShader=shader.fragmentShader.replace('#include <opaque_fragment>',`
+      float eye=length(vGridView);
+      float distanceInk=1./(1.+${gridFalloff}*max(0.,eye/gridNear-1.));
+      diffuseColor.a*=mix(1.,distanceInk,gridFlat);
+      #include <opaque_fragment>`);
+  };
+  material.customProgramCacheKey=()=>key+'-grid-distance';
+  return material;
+}
 
 export function applyFlatColorFinish(material){
   const compile=material.onBeforeCompile,key=material.customProgramCacheKey();
@@ -11,5 +34,6 @@ export function applyFlatColorFinish(material){
       'outgoingLight=mix(outgoingLight,diffuseColor.rgb,flatFinish);\n#include <opaque_fragment>');
   };
   material.customProgramCacheKey=()=>key+'-flat-color-finish';
-  return material;
+  return applyGridDistance(material);
 }
+

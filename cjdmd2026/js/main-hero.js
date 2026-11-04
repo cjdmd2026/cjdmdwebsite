@@ -65,7 +65,9 @@
 
     const hero = document.getElementById("hero");
     const stage = document.getElementById("heroStage");
+    const wordFlight = stage?.hasAttribute("data-word-flight");
     const canvas = document.getElementById("heroCanvas");
+    const rearGrid = document.getElementById("heroGrid");
     const bgCanvas = document.getElementById("heroBg");
     const posterButton = document.getElementById("heroPoster");
     const posterCanvas = document.getElementById("heroPosterCanvas");
@@ -238,8 +240,10 @@
                 return proximity * proximity * (3 - 2 * proximity);
             });
         }
-        const make = set => {
+        const make = (set, theme) => {
             const sprites = set?.s || [];
+            const identities = window.MAIN_POSTER_IDENTITIES;
+            const codes = atob(identities?.[theme] || "");
             const motionStrength = glyphMotionStrengths(set);
             const sizes = sprites.map(s => Math.max(s[2], s[3]));
             const minSize = sizes.reduce((min, size) => Math.min(min, size), Infinity);
@@ -251,6 +255,8 @@
             ranked.forEach((index, rank) => { ranks[index] = rank; });
             const lastRank = Math.max(1, sprites.length - 1);
             return sprites.map(([gx, gy, gw, gh, ax, ay, kind], index) => {
+                const identity = codes.length === sprites.length ? codes.charCodeAt(index) - 1 : -1;
+                const design = identity >> 2;
                 const size = sizes[index];
                 const depth = (size - minSize) / (maxSize - minSize || 1);
                 const gatherOrder = lerp(1 - depth, ranks[index] / lastRank, SETTINGS.iconGatherRankBlend);
@@ -259,6 +265,9 @@
                 const gatherDuration = gatherEnd - gatherStart;
                 return {
                     gx, gy, gw, gh, ax, ay, depth,
+                    designId: identities?.designs[design] || null,
+                    designAngle: (identity & 3) * Math.PI / 2,
+                    designPeriod: (identities?.symmetryTurns[design] || 4) * Math.PI / 2,
                     gatherStart, gatherDuration,
                     gatherPushEnd: gatherStart + gatherDuration * SETTINGS.iconGatherTurnOverlap,
                     gatherOutward: idleStrength(size), // 8px 이하는 최대, 24px 이상은 바깥 밀림 없음
@@ -275,7 +284,7 @@
                 };
             }).sort((a, b) => a.depth - b.depth); // 작은 아이콘부터 그려 큰 전경 아이콘이 앞에 놓이게 합니다.
         };
-        iconSets = { light: make(SETS.light), dark: make(SETS.dark) };
+        iconSets = { light: make(SETS.light, "light"), dark: make(SETS.dark, "dark") };
         for (const [theme, icons] of Object.entries(iconSets)) {
             const pool = icons.filter(ic => Math.max(ic.gw, ic.gh) >= 8 && Math.max(ic.gw, ic.gh) <= 24);
             const set = SETS[theme];
@@ -509,6 +518,7 @@
         for (const icons of Object.values(iconSets)) {
             const grid = new Map(), awake = new Set(), scattered = [];
             for (const ic of icons) {
+                ic.entryFlight = null;
                 ic.sw = ic.gw * k;
                 ic.sh = ic.gh * k;
                 const foreground = 1 + ic.depth * SETTINGS.iconForegroundScale;
@@ -1067,10 +1077,12 @@
     }, { passive: true });
 
     function stepPush(dtFrames) {
-        const canPush = pointer.active && step === 0;
+        const speed = Math.hypot(pointer.vx, pointer.vy);
+        // A resting cursor must not continuously excavate a disk in the poster.
+        const force = pointer.down ? 1 : clamp(speed / 2);
+        const canPush = pointer.active && step === 0 && (pointer.down || speed > .1);
         const { awake } = iconPhysics.get(iconsNow());
         if (!canPush && !awake.size) return;
-        const speed = Math.hypot(pointer.vx, pointer.vy);
         const radius = Math.min(PUSH.radius, W * .2) + Math.min(speed, 30);
         const radiusSquared = radius * radius;
         const dec = Math.pow(PUSH.decay, dtFrames);
@@ -1086,7 +1098,7 @@
                 if (distanceSquared < radiusSquared) {
                     let d = Math.sqrt(distanceSquared);
                     if (d < .1) { dx = Math.cos(ic.phase); dy = Math.sin(ic.phase); d = 1; }
-                    const strength = PUSH.strength * ic.pushStrength;
+                    const strength = PUSH.strength * ic.pushStrength * force;
                     const fall = Math.pow(1 - d / radius, 1.5), f = fall * (1.8 + Math.min(speed, 40) * .36 + (pointer.down ? 3 : 0)) * strength;
                     ic.pvx += dx / d * f + pointer.vx * fall * .17 * strength;
                     ic.pvy += dy / d * f + pointer.vy * fall * .17 * strength;
@@ -1116,6 +1128,176 @@
     let assembledTime = 0;
     let iconCanvas = null, iconBatch = null, iconBatchUnavailable = false;
     let iconScratch = null, iconScratchCtx = null, iconSoftScratch = null, iconSoftScratchCtx = null;
+    let carriedIcons = [], carriedBySprite = new Map(), additionalCarriers = [], carryProgress = 0;
+    let entryItems, entrySet, entryMotion;
+    let carryWidth = 1, carryHeight = 1;
+    let vectorAtlas, vectorTiles = new Map();
+    const smooth = t => { t=clamp(t); return t*t*(3-2*t); };
+    // Zero speed and zero acceleration at the destination.
+    function arriveSlowly(progress) {
+        const t = clamp(progress);
+        return t * t * (6 - 8 * t + 3 * t * t);
+    }
+
+    // Rasterize the 33 SVG silhouettes once so they can use the same sprite
+    // blur and instanced drawing as the poster, even while they are receding.
+    function prepareVectorAtlas(items) {
+        if (vectorAtlas) return;
+        const designs=[...new Map(items.map(item=>[item.id,item])).values()];
+        const tile=144, stride=tile+4, cols=Math.ceil(Math.sqrt(designs.length));
+        vectorAtlas=document.createElement("canvas");
+        vectorAtlas.width=cols*stride; vectorAtlas.height=Math.ceil(designs.length/cols)*stride;
+        const c=vectorAtlas.getContext("2d");
+        designs.forEach((item,i)=>{
+            const ax=(i%cols)*stride+2, ay=Math.floor(i/cols)*stride+2;
+            c.save(); c.translate(ax+tile/2,ay+tile/2); c.scale(tile/item.size,tile/item.size);
+            c.fillStyle=item.color; c.fill(item.path,"evenodd"); c.restore();
+            vectorTiles.set(item.id,{ax,ay,gw:tile,gh:tile});
+        });
+    }
+
+    function scatterCenter(ic) {
+        const motion = reducedMotion.matches ? 0 : 1, clock = scatterTime * SETTINGS.iconScatterSpeed;
+        const reach = ic.drift * SETTINGS.iconScatterDistance * motion;
+        return {x:ic.sx*W+ic.px*motion+Math.sin(clock*ic.speed+ic.phase)*reach,
+                y:ic.sy*H+ic.py*motion+Math.cos(clock*ic.speed*.8+ic.phase)*reach};
+    }
+
+    function carriedPose(item, progress = carryProgress) {
+        const ic=item.sprite, motion=reducedMotion.matches?0:1;
+        const {x:targetX,y:targetY}=scatterCenter(ic);
+        const delay = motion ? item.waveArrival : item.delay;
+        const posterTime = entryMotion.posterProgress(progress);
+        const travel = clamp((posterTime - delay) / (1 - delay));
+        const fromX = item.x * W / carryWidth, fromY = item.y * H / carryHeight;
+        const span = Math.hypot(targetX-fromX, targetY-fromY) / Math.min(W,H);
+        const depthLag = item.depthHold * (.25 + .75 * Math.min(1, span * 2));
+        const blend = arriveSlowly(travel * (1 - depthLag * (1 - travel)));
+        // The curve carries the outward wave past its starting cell, then
+        // settles directly onto the same design in the scattered poster.
+        const arc = 4 * blend * (1 - blend) * Math.min(W,H) * motion;
+        const start = item.size * item.scale * Math.min(W/carryWidth,H/carryHeight) * (1 - entryMotion.amount(progress));
+        const end = Math.max(ic.scatterW,ic.scatterH);
+        const depthBlend = arriveSlowly(travel * (1 - item.depthHold * (1 - travel)));
+        // Keep some projected area in the leading silhouettes while the next
+        // wave is crossing the viewport. Both curves settle at the native size.
+        const areaSize = Math.sqrt(lerp(start * start, end * end, depthBlend));
+        const size = lerp(lerp(start, end, depthBlend), areaSize, item.depthHold);
+        const turnMix = smooth(blend / .72);
+        const driftAngle = ic.angle * motion * blend;
+        return {
+            x: lerp(fromX, targetX, blend) + item.sprayX * arc,
+            y: lerp(fromY, targetY, blend) + item.sprayY * arc,
+            scale:size/item.size, size, angle:item.angle + item.turn * turnMix + driftAngle,
+            atlasAngle: driftAngle - item.turn * (1 - turnMix),
+            blur:SETTINGS.iconBlurMax*(bigFrame.h/SPRITES.h)*ic.blurStrength*smooth(depthBlend),
+            printed:smooth((blend-.48)/.49)
+        };
+    }
+
+    function flightFor(ic) {
+        if(ic.entryFlight)return ic.entryFlight;
+        const size = Math.max(ic.gw, ic.gh);
+        // Every new sprite crosses an edge with its full silhouette. The small
+        // details leave first, from a wider spread of angles, at their print size.
+        const foreground = smooth((size - 12) / 32);
+        const dx = (ic.sx - .5) * W, dy = (ic.sy - .5) * H;
+        const heading = Math.atan2(dy, dx) + lerp(2.6, .63, foreground) * Math.sin(ic.phase);
+        const ux = Math.cos(heading), uy = Math.sin(heading);
+        const interior = 1 - smooth(2 * Math.hypot(dx,dy) / Math.hypot(W,H));
+        const margin = Math.max(ic.scatterW, ic.scatterH) + 16;
+        const edge = Math.min((W / 2 + margin) / Math.abs(ux), (H / 2 + margin) / Math.abs(uy))
+            + Math.min(W, H) * ic.delay;
+        return ic.entryFlight = {
+            sx: .5 + ux * edge / W, sy: .5 + uy * edge / H,
+            delay: .035 + .075 * foreground + ic.delay * .28,
+            pace: 1 + (1 - foreground) * (.85 + 1.9 * interior + .35 * Math.cos(ic.phase)),
+            bend: .10 * Math.sin(ic.phase), zoom: lerp(1, .20, foreground)
+        };
+    }
+
+    function clipEntrySide(cut) {
+        if (!cut) return;
+        const x = Math.abs(cut);
+        ctx.beginPath();
+        ctx.rect(cut > 0 ? 0 : x, 0, cut > 0 ? x : W - x, H);
+        ctx.clip();
+    }
+
+    function paintEntrySprite(batch,atlas,ic,cx,cy,w,h,angle,blur,cut=0) {
+        const margin=Math.max(w,h)*.72+blur*3;
+        if(w<=0 || h<=0 || cx < -margin || cy < -margin || cx>W+margin || cy>H+margin)return;
+        if(batch){batch.add(ic,cx-w/2,cy-h/2,w,h,angle,1,blur,cut);return;}
+        const tile=prepareFallbackIcon(atlas,ic,w,h,blur);
+        ctx.save(); clipEntrySide(cut); ctx.translate(cx,cy); ctx.rotate(angle);
+        ctx.drawImage(tile.source,0,0,tile.width,tile.height,-w/2-tile.pad,-h/2-tile.pad,tile.width/DPR,tile.height/DPR);
+        ctx.restore();
+    }
+
+    function renderScatterEntry() {
+        const atlas=atlasNow(), loaded=ready(atlas), batch=getIconBatch();
+        const p=entryMotion.posterProgress(carryProgress), k=bigFrame.h/SPRITES.h, motion=reducedMotion.matches?0:1;
+        if(batch)batch.clear();
+        const vectors=[],sharp=[];
+        if(themeOf()==="dark"){
+            const gray=Math.round(255*(1-smooth(p)));
+            ctx.fillStyle=`rgb(${gray},${gray},${gray})`;ctx.fillRect(0,0,W,H);
+        }
+        for(const ic of iconsNow()){
+            if(!ic.whole)continue;
+            const item=carriedBySprite.get(ic);
+            if(item){
+                const pose=carriedPose(item), printed=loaded?pose.printed:0;
+                // The matched SVG and poster print share a silhouette and a
+                // single moving boundary. Every pixel is drawn at full opacity.
+                const extent = .72 * pose.size + 3 * pose.blur;
+                const cut = printed > 0 && printed < 1
+                    ? clamp(pose.x + (2 * printed - 1) * extent, .0001, W) : 0;
+                if(printed<1)(pose.blur<.12?sharp:vectors).push({item,pose,cut:-cut});
+                if(printed>0){
+                    const ratio=pose.size/Math.max(ic.scatterW,ic.scatterH);
+                    paintEntrySprite(batch,atlas,ic,pose.x,pose.y,ic.scatterW*ratio,ic.scatterH*ratio,pose.atlasAngle,pose.blur,cut);
+                }
+            }else if(loaded && p>0){
+                const flight=flightFor(ic);
+                const launch = flight.delay;
+                if(p<=launch)continue;
+                const travel = clamp((p - launch) / (1 - launch));
+                const t = arriveSlowly(1 - (1 - travel) ** flight.pace);
+                const end = scatterCenter(ic);
+                const fromX=flight.sx*W,fromY=flight.sy*H;
+                const bend=4*t*(1-t)*flight.bend*motion;
+                const x=lerp(fromX,end.x,t)-(end.y-fromY)*bend, y=lerp(fromY,end.y,t)+(end.x-fromX)*bend;
+                const zoom=lerp(flight.zoom, 1, smooth(t));
+                const blur=SETTINGS.iconBlurMax*k*ic.blurStrength*zoom;
+                paintEntrySprite(batch,atlas,ic,x,y,ic.scatterW*zoom,ic.scatterH*zoom,ic.angle*motion,blur);
+            }
+        }
+        // On an oversized grid several copies of a rare design may converge
+        // on one matching poster slot. Paint the printed destination once.
+        for (const item of additionalCarriers) {
+            const pose = carriedPose(item);
+            const merge = item.sprite.designId ? 1 - smooth((p - .68) / .32) : 1;
+            if (merge <= 0) continue;
+            pose.scale *= merge; pose.size *= merge; pose.blur *= merge;
+            (pose.blur < .12 ? sharp : vectors).push({item, pose, cut:0});
+        }
+        const flush=sheet=>{
+            if(!batch)return true;
+            if(!batch.flush(sheet)){disableIconBatch();return false;}
+            ctx.drawImage(iconCanvas,0,0,W,H); batch.clear();return true;
+        };
+        if(loaded&&!flush(atlas)){renderIcons(performance.now());return;}
+        for(const {item,pose,cut} of vectors)
+            paintEntrySprite(batch,vectorAtlas,vectorTiles.get(item.id),pose.x,pose.y,pose.size,pose.size,pose.angle,pose.blur,cut);
+        if(vectors.length&&!flush(vectorAtlas)){renderIcons(performance.now());return;}
+        // Preserve the grid's sharp contour during its first, unblurred frames.
+        for(const {item,pose,cut} of sharp){
+            if(pose.x+pose.size<0||pose.y+pose.size<0||pose.x-pose.size>W||pose.y-pose.size>H)continue;
+            ctx.save();clipEntrySide(cut);ctx.translate(pose.x,pose.y);ctx.rotate(pose.angle);
+            ctx.scale(pose.scale,pose.scale);ctx.fillStyle=item.color;ctx.fill(item.path,"evenodd");ctx.restore();
+        }
+    }
 
     function prepareFallbackIcon(atlas, ic, w, h, blur) {
         if (!iconScratch) {
@@ -1168,22 +1350,34 @@
     }
 
     function renderIcons(time) {
+        if (wordFlight && !window.MainIntro.complete) return;
+        if(entryMotion && carryProgress>0 && carryProgress<entryMotion.flatAt){
+            lastIconTime=time;
+            return; // The live 3D canvas still owns these frames.
+        }
         renderSideIcons(time);
-        const state = `${current}:${V.fly}:${V.graphic}:${V.dissolve}:${V.move}:${V.reveal}:${ready(atlasNow())}`;
+        const state = `${current}:${V.fly}:${V.graphic}:${V.dissolve}:${V.move}:${V.reveal}:${ready(atlasNow())}:${carryProgress}`;
         const idling = step === 1 && V.fly === 1 && V.move === 0;
-        const moving = (V.fly < 1 || idling) && !reducedMotion.matches && V.dissolve < 1 && V.reveal < 1 && (!window.MainIntro || window.MainIntro.complete);
+        const floatIn = !window.MainIntro || window.MainIntro.complete ? 1 :
+            window.MainIntro.moving ? smooth((carryProgress - .5) / .45) : 0;
+        const moving = (V.fly < 1 || idling) && !reducedMotion.matches && V.dissolve < 1 && V.reveal < 1 && floatIn > 0;
         if (!moving && state === lastIconState) { lastIconTime = time; return; }
         lastIconState = state;
         ctx.clearRect(0, 0, W, H);
-        const dt = lastIconTime ? Math.min(.05, (time - lastIconTime) / 1000) : 0;
+        const dt = lastIconTime ? clamp((time - lastIconTime) / 1000, 0, .05) : 0;
         lastIconTime = time;
-        if (V.fly < 1 && !reducedMotion.matches && (!window.MainIntro || window.MainIntro.complete)) scatterTime += dt;
+        if (V.fly < 1 && !reducedMotion.matches) scatterTime += dt * floatIn;
         const scatterClock = scatterTime * SETTINGS.iconScatterSpeed;
         if (V.fly === 0) assembledTime = 0;
         else if (idling && !reducedMotion.matches) assembledTime += dt;
-        if (dt && !reducedMotion.matches && V.fly < 1) stepPush(dt * 60);
+        if (dt && !reducedMotion.matches && V.fly < 1 && (!window.MainIntro || window.MainIntro.complete)) stepPush(dt * 60);
+        if (carriedIcons.length && V.fly === 0 && (carryProgress < 1 || !ready(atlasNow()))) {
+            renderScatterEntry();
+            return;
+        }
         const motion = reducedMotion.matches ? 0 : 1;
         const move = easeInOut(clamp(V.move));
+        if (rearGrid) rearGrid.style.opacity = String(1 - move);
         // 결합 직후에는 서서히 움직이고, 축소가 시작되면 현재 흔들림을 멈춰 원래 자리로 돌아갑니다.
         const idleAmount = easeInOut(clamp(assembledTime / SETTINGS.iconIdleIntro)) * (1 - easeOut(clamp(V.move))) * motion;
         const frame = {
@@ -1398,7 +1592,7 @@
     /* ---------- 입력: 휠 / 터치 / 키보드 ---------- */
     const heroTop = () => window.MainIntro?.anchor() || 0;
     const atTop = () => (!window.MainIntro || window.MainIntro.complete) && Math.abs(window.scrollY - heroTop()) <= 2;
-    const wantsHero = dir => atTop() && ((dir > 0 && step < 2) || (dir < 0 && (step > 0 || window.MainIntro?.reverse)));
+    const wantsHero = dir => atTop() && ((dir > 0 && step < 2) || (dir < 0 && (step > (wordFlight ? 1 : 0) || window.MainIntro?.reverse)));
     const wheelIntent = window.MainScrollInput.createWheelTracker();
 
     /* 페이지 스크롤 잠금
@@ -1422,7 +1616,7 @@
 
     function handleIntent(dir) {
         if (busy) { pendingIntent = dir; return; }
-        if (dir < 0 && step === 0 && window.MainIntro?.complete && window.MainIntro.reverse) {
+        if (dir < 0 && step === (wordFlight ? 1 : 0) && window.MainIntro?.complete && window.MainIntro.reverse) {
             locked = false; if (hasLenis()) lenis.start();
             window.MainIntro.reverse(); return;
         }
@@ -1501,18 +1695,104 @@
         measure();
         if (event.detail.complete) {
             if (window.scrollY > heroTop() + 40) jumpToSettled();
-            else lockPage();
+            else {
+                if (wordFlight) {
+                    step=1;busy=false;pendingIntent=0;
+                    stage.dataset.step="1";stage.dataset.motion="idle";
+                    assembledTime=0;stopAuto();
+                    setNow({fly:1,sideSpread:0,sideOpacity:1,graphic:0,dissolve:0,move:0,reveal:0,text:0,ambient:0});
+                    tween("sideSpread",1,SETTINGS.iconSideSpreadStagger+SETTINGS.iconSideTravelMax,{ease:t=>t});
+                }
+                lockPage();
+            }
         } else {
-            locked = false; if (hasLenis()) lenis.start();
+            locked=false;
+            if (!window.MainIntro.moving && hasLenis()) lenis.start();
         }
+        renderIcons(performance.now());
     });
-    window.MainHeroIntro = {
-        targets() {
-            return iconsNow().filter(ic => ic.whole).slice().sort((a,b) => b.scatterW * b.scatterH - a.scatterW * a.scatterH)
-                .map(ic => ({x:ic.sx*W+Math.sin(ic.phase)*ic.drift*SETTINGS.iconScatterDistance,
-                    y:ic.sy*H+Math.cos(ic.phase)*ic.drift*SETTINGS.iconScatterDistance,size:Math.max(ic.scatterW,ic.scatterH)}));
+    if (wordFlight) window.MainWordSurface = {
+        get theme() { return themeOf(); },
+        get frame() { return {...bigFrame}; },
+        getSource(theme) { return {set:SETS[theme], image:atlases[theme]}; },
+        inspect:()=>({step,busy,locked})
+    };
+    else window.MainHeroIntro = {
+        attach(items, width, height, motion = entryMotion) {
+            carryWidth = width; carryHeight = height;
+            entryItems=items;entrySet=iconsNow();entryMotion=motion;
+            prepareVectorAtlas(items);
+            const pools = new Map();
+            for (const sprite of entrySet) {
+                if (!sprite.whole || !sprite.designId) continue;
+                if (!pools.has(sprite.designId)) pools.set(sprite.designId, {all: [], free: []});
+                pools.get(sprite.designId).all.push(sprite);
+            }
+            for (const pool of pools.values()) {
+                pool.all.sort((a,b) => Math.max(a.gw,a.gh) - Math.max(b.gw,b.gh));
+                const visible = pool.all.filter(ic => ic.sx >= 0 && ic.sx <= 1 && ic.sy >= 0 && ic.sy <= 1);
+                const prints = visible.length ? visible : pool.all;
+                const smallest = Math.max(prints[0].gw, prints[0].gh);
+                // Match small prints across the whole poster, keeping its
+                // foreground designs available to fly in from the edges.
+                pool.all = prints.filter(ic => Math.max(ic.gw, ic.gh) <= smallest + 9);
+                pool.free = pool.all.slice();
+            }
+            carriedBySprite = new Map();
+            additionalCarriers = [];
+            const viewportRadius = Math.hypot(width, height) / 2;
+            carriedIcons = items.map(item => {
+                const dx = item.x - width / 2, dy = item.y - height / 2;
+                const radiusFromCenter = Math.hypot(dx, dy);
+                const radial = Math.min(1, radiusFromCenter / viewportRadius);
+                const recession = 1 - smooth(radial / .90);
+                const start = item.size * item.scale;
+                const heading = Math.atan2(dy, dx);
+                const phase = 19 * dx / width + 29 * dy / height;
+                const direction = heading + lerp(2.5, .9, smooth(radial/.7)) * Math.sin(phase);
+                const spray = .095 * radial * (.8 + .2 * Math.cos(phase));
+                const sprayX = spray * Math.cos(direction), sprayY = spray * Math.sin(direction);
+                const aimX = dx + sprayX * Math.min(width,height);
+                const aimY = dy + sprayY * Math.min(width,height);
+                const pool = pools.get(item.id);
+                const candidates = pool?.free.length ? pool.free : pool?.all || [];
+                let sprite, distance = Infinity;
+                for (const ic of candidates) {
+                    const cost = Math.hypot((ic.sx - .5) * width - aimX, (ic.sy - .5) * height - aimY);
+                    if (cost < distance) { distance = cost; sprite = ic; }
+                }
+                if (pool?.free.length) pool.free.splice(pool.free.indexOf(sprite), 1);
+                if (!sprite) {
+                    // If a future atlas has no verified copy, let this SVG
+                    // travel beyond the edge without ever changing its shape.
+                    sprite = {
+                        designId: null, designAngle: item.angle, designPeriod: 2 * Math.PI,
+                        sx: .5 + 1.5 * Math.cos(heading), sy: .5 + 1.5 * Math.sin(heading),
+                        px: 0, py: 0, phase: 0, speed: 0, drift: 0, angle: 0,
+                        scatterW: start * .12, scatterH: start * .12, blurStrength: 1
+                    };
+                }
+                const difference = sprite.designAngle - item.angle;
+                const turn = difference - Math.round(difference / sprite.designPeriod) * sprite.designPeriod;
+                const carried = {
+                    ...item, sprite, turn, sprayX, sprayY,
+                    depthHold: .98 * recession**1.5 * clamp(1-Math.max(sprite.scatterW,sprite.scatterH)/start),
+                    waveArrival: .22 * radial + .014 * (.5 + .5 * Math.sin(sprite.phase))
+                };
+                if (sprite.designId && !carriedBySprite.has(sprite)) carriedBySprite.set(sprite,carried);
+                else additionalCarriers.push(carried);
+                return carried;
+            });
+            lastIconState = "";
         },
-        inspect: () => ({step,busy,locked,top:heroTop(),ready:ready(atlasNow()),count:iconsNow().length,width:W,height:H})
+        renderHandoff(progress) {
+            if(progress<1&&entryItems&&entrySet!==iconsNow())this.attach(entryItems,carryWidth,carryHeight);
+            if (carryProgress === progress) return;
+            carryProgress = progress;
+            renderIcons(performance.now());
+        },
+        carriedSnapshot: (progress = carryProgress) => carriedIcons.map(item => ({id:item.id,targetId:item.sprite.designId,color:item.color,...carriedPose(item,progress)})),
+        inspect: () => ({step,busy,locked,top:heroTop(),ready:ready(atlasNow()),count:iconsNow().length,width:W,height:H,carried:carriedIcons.length,carryProgress})
     };
 
     /* =====================================================
@@ -1657,6 +1937,9 @@
 
     measure();
     buildIcons();
+    for(const atlas of Object.values(atlases)) {
+        if(atlas && !ready(atlas))atlas.addEventListener("load",measure,{once:true});
+    }
     syncUI(0);
     if (atTop()) lockPage();
     requestAnimationFrame(loop);

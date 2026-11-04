@@ -2,6 +2,7 @@ import * as THREE from 'three';
 
 // The key light and its projection must agree as the camera travels.
 export const KEY_LIGHT_POSITION = [-10, 30, 16];
+export const CONTACT_SHADOW_LAYER = 1;
 const ATLAS_COLUMNS = 4;
 const FRAME_COUNT = 16;
 const TILE_SIZE = 256;
@@ -112,3 +113,4 @@ export function createShadowMaterial(map = null, instanced = false) {
   material.customProgramCacheKey = () => 'height-aware-ground-shadow-' + instanced;
   return material;
 }
+

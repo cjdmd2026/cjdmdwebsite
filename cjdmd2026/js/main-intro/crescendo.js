@@ -18,7 +18,10 @@ export const WAVE_SPREAD=7.20;
 export const OUTLINE_RETURN_START=CRESCENDO_START+WAVE_SPREAD+.52*REVEAL_DURATION/.70+.27;
 export const TOPVIEW_START=OUTLINE_RETURN_START-1.05;
 export const PULLBACK_END=OUTLINE_RETURN_START+1.55;
-export const STORY_END=PULLBACK_END+.5;
+// The icons lose all depth four fifths of the way through the final tilt.
+// The grid remains flat as the camera finishes its overhead approach.
+export const FLAT_GRID_TIME=OUTLINE_RETURN_START+.8*(PULLBACK_END-OUTLINE_RETURN_START);
+export const STORY_END=PULLBACK_END;
 export const WAVE_EXTRUSION_SHARE=.48;
 export const WAVE_COLOR_DURATION=2.00+COLOR_FADE_EXTENSION;
 // Start inner colors earlier so successive bands are 1.4 units apart instead
@@ -37,7 +40,7 @@ const retimedPhases=[
 export function introIndex(time){return time<INTRO_CUES[1].start?0:time<INTRO_CUES[2].start?1:2;}
 
 export function outlineReturn(timeline){
-  return Math.max(0,Math.min(1,(timeline-OUTLINE_RETURN_START)/(PULLBACK_END-OUTLINE_RETURN_START)));
+  return Math.max(0,Math.min(1,(timeline-OUTLINE_RETURN_START)/(FLAT_GRID_TIME-OUTLINE_RETURN_START)));
 }
 
 export function revealCue(index){

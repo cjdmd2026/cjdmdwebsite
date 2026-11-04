@@ -1,41 +1,31 @@
 {
   "desktop": {
-    "connected": {
-      "main": {
-        "step": 0,
-        "busy": false,
-        "locked": true,
-        "top": 10699.65625,
-        "ready": true,
-        "count": 7594,
-        "width": 1440,
-        "height": 900
-      },
-      "offset": 0.34375,
-      "progress": 1,
-      "body": "main-page"
+    "meanPixelError": 5.430089869281046,
+    "ink": 30.734276960784314,
+    "rearInk": 3.9156004901960784,
+    "wordStep": 1,
+    "portrait": true,
+    "fixedGrid": {
+      "count": 2832,
+      "anchored": 0.9992937853107344,
+      "contrast": 0.6852632036691709
     },
-    "coloredPixels": 175524,
+    "zoomFrames": 146,
     "forwardAndReverse": true,
     "errors": []
   },
   "mobile": {
-    "connected": {
-      "main": {
-        "step": 0,
-        "busy": false,
-        "locked": true,
-        "top": 10033.90625,
-        "ready": true,
-        "count": 7594,
-        "width": 390,
-        "height": 844
-      },
-      "offset": 0.09375,
-      "progress": 0.9999999999999996,
-      "body": "main-page"
+    "meanPixelError": 8.403161764705882,
+    "ink": 31.270392156862744,
+    "rearInk": 5.123713235294118,
+    "wordStep": 1,
+    "portrait": true,
+    "fixedGrid": {
+      "count": 238,
+      "anchored": 1,
+      "contrast": 0.7135756532363313
     },
-    "coloredPixels": 67900,
+    "zoomFrames": 12,
     "forwardAndReverse": true,
     "errors": []
   }

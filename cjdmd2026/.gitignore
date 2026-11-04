@@ -5,3 +5,8 @@ public-dist/
 .env.*
 !.env.example
 output/submit-qa/
+
+# Browser profiles can contain cached API keys, cookies, and local session data.
+chrome-profile*/
+chromium-profile*/
+browser-profile*/

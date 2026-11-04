@@ -4,7 +4,7 @@ import {GUIDE_DURATION,GUIDE_SWEEP_END,POINT_START,POINT_END,OUTLINE_DURATION,FI
 export const TRAVEL_START=SOLID_START+.01;
 const clamp=value=>THREE.MathUtils.clamp(value,0,1);
 const ease=value=>{const t=clamp(value);return t*t*(3-2*t);};
-export const flattenProgress=ending=>ease(ending/.8);
+export const flattenProgress=ending=>ease(ending);
 const WHITE=new THREE.Color(0xffffff),NEUTRAL_LINE=new THREE.Color(0x9098a1);
 let glowTexture;
 

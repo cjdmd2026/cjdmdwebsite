@@ -15,16 +15,19 @@ export function createDottedFloor(renderer){
   const opacity={value:1};
   // The floor is unlit so the dots keep their requested #ddd color under the
   // bright studio lighting. The existing contact shadows sit above this surface.
-  const material=new THREE.MeshBasicMaterial({name:'White dotted floor',map,color:0xffffff,toneMapped:false});
+  // This is a backdrop. Projected icons can recede in screen space while
+  // their flat meshes still share almost the same depth as the white plane.
+  const material=new THREE.MeshBasicMaterial({name:'White dotted floor',map,color:0xffffff,toneMapped:false,depthWrite:false});
   material.onBeforeCompile=shader=>{
     shader.uniforms.dotOpacity=opacity;
     shader.fragmentShader='uniform float dotOpacity;\n'+shader.fragmentShader;
     shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',
-      '#include <map_fragment>\ndiffuseColor.rgb=mix(vec3(1.0),diffuseColor.rgb,dotOpacity);');
+      `#include <map_fragment>
+       diffuseColor.rgb=mix(vec3(1.0),diffuseColor.rgb,dotOpacity);`);
   };
   material.customProgramCacheKey=()=> 'dotted-floor-fade';
   const mesh=new THREE.Mesh(new THREE.PlaneGeometry(FLOOR_SIZE,FLOOR_SIZE),material);
-  mesh.name='White floor';mesh.rotation.x=-Math.PI/2;
+  mesh.name='White floor';mesh.rotation.x=-Math.PI/2;mesh.renderOrder=-1;
   let worldSpacing=0;
   return {
     mesh,

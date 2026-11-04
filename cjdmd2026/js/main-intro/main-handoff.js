@@ -1,100 +1,91 @@
-import * as THREE from 'three';
 export const HANDOFF_VIEWPORTS=.85;
-const clamp=v=>Math.max(0,Math.min(1,v));
-const ease=v=>{const t=clamp(v);return t*t*(3-2*t);};
+const clamp=value=>Math.max(0,Math.min(1,value));
+const smooth=t=>t*t*(3-2*t);
+const lenisInstance=()=>typeof lenis==='undefined'?null:lenis;
 
-// Keep the finished flat icons on the same screen while they move toward the
-// real poster hero's scatter positions. Its existing gathering animation follows.
-export function createMainHandoff(host,objects,copies,camera){
-  const state=window.MainIntro,stage=host.closest('.animation-stage');
-  const canvas=document.createElement('canvas');canvas.className='intro-scatter-canvas';canvas.setAttribute('aria-hidden','true');stage.append(canvas);
-  const ctx=canvas.getContext('2d'),paths=new Map();
-  let items=null,width=0,height=0,moving=false;
-  function pathFor(source){
-    if(paths.has(source.icon.id))return paths.get(source.icon.id);
-    const path=new Path2D();
-    for(const {points} of source.caster.contours){
-      path.moveTo(...points[0]);for(const point of points.slice(1))path.lineTo(...point);path.closePath();
-    }
-    paths.set(source.icon.id,path);return path;
-  }
-  function prepare(){
-    width=host.clientWidth;height=host.clientHeight;
-    const dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    const targets=window.MainHeroIntro?.targets()||[];
-    const project=(x,z)=>{const p=new THREE.Vector3(x,.003,z).project(camera);return {x:(p.x+1)*width/2,y:(1-p.y)*height/2};};
-    const entries=[...objects,...copies()].map(object=>{
-      const source=objects[object.sourceIndex??object.index],x=object.mesh.position.x,z=object.mesh.position.z;
-      const p=project(x,z),unit=project(x+1,z);
-      return {source,path:pathFor(source),x:p.x,y:p.y,scale:Math.hypot(unit.x-p.x,unit.y-p.y),angle:Math.atan2(unit.y-p.y,unit.x-p.x)};
-    }).sort((a,b)=>Math.hypot(a.x-width/2,a.y-height/2)-Math.hypot(b.x-width/2,b.y-height/2));
-    items=entries.map((entry,index)=>{
-      const target=targets[index]||{x:width*(.5+Math.cos(index*2.39996)*1.2),y:height*(.5+Math.sin(index*2.39996)*1.2),size:12};
-      return {...entry,target,delay:Math.min(.12,index/entries.length*.12)};
-    });
-  }
+// One deliberate gesture, as in designer-icon-slide. Scrollbar dragging can
+// also scrub the same distance directly without starting an automatic step.
+export function createMainHandoff(host,onProgress){
+  const state=window.MainIntro, stage=host.closest('.animation-stage');
+  const range=()=>host.clientHeight*HANDOFF_VIEWPORTS;
+  const gridTop=()=>state.anchor()-range();
+  let frame=0,sequence=0,wheelTotal=0,lastWheel=-Infinity,lastDirection=0;
   function update(progress){
-    const p=clamp(progress),wasComplete=state.complete;
-    state.progress=p;state.complete=p>=.99999;
+    const wasComplete=state.complete;
+    state.progress=progress;state.complete=progress===1;
     document.body.classList.toggle('intro-before-main',!state.complete);
-    document.body.classList.toggle('intro-scattering',p>0&&!state.complete);
-    document.getElementById('mainIntro').inert=state.complete;
-    if(p>0&&p<1){
-      if(!items||width!==host.clientWidth||height!==host.clientHeight)prepare();
-      ctx.fillStyle='#fff';ctx.fillRect(0,0,width,height);
-      for(const item of items){
-        const t=ease((p-item.delay)/(1-item.delay)),arc=Math.sin(t*Math.PI)*(1-t)*.10;
-        const x=THREE.MathUtils.lerp(item.x,item.target.x,t)+(item.target.x-width/2)*arc;
-        const y=THREE.MathUtils.lerp(item.y,item.target.y,t)+(item.target.y-height/2)*arc;
-        const scale=THREE.MathUtils.lerp(item.scale,item.target.size/item.source.size,t);
-        ctx.save();ctx.translate(x,y);ctx.rotate(item.angle*(1-t));ctx.scale(scale,scale);
-        ctx.fillStyle=item.source.color;ctx.fill(item.path,'evenodd');ctx.restore();
-      }
-    }
-    canvas.style.display=p>0&&!state.complete?'block':'none';
-    host.style.visibility=p>0?'hidden':'visible';
-    stage.style.opacity=String(1-ease((p-.72)/.28));
     stage.style.visibility=state.complete?'hidden':'visible';
-    if(state.complete!==wasComplete)window.dispatchEvent(new CustomEvent('main-intro-handoff',{detail:{complete:state.complete}}));
+    document.getElementById('mainIntro').inert=state.complete;
+    if(wasComplete!==state.complete){
+      window.dispatchEvent(new CustomEvent('main-intro-handoff',{detail:{complete:state.complete}}));
+    }
   }
-  const lenisInstance=()=>{try{return typeof lenis!=='undefined'?lenis:null;}catch{return null;}};
-  function travel(forward){
-    if(moving)return;moving=true;state.moving=true;
-    const start=scrollY,end=state.anchor()-(forward?0:innerHeight*HANDOFF_VIEWPORTS);
-    const begin=performance.now(),duration=matchMedia('(prefers-reduced-motion:reduce)').matches?180:1250;
-    lenisInstance()?.stop();
-    const frame=now=>{
-      const t=clamp((now-begin)/duration);
-      window.scrollTo({top:start+(end-start)*ease(t),behavior:'instant'});
-      if(t<1)requestAnimationFrame(frame);
-      else{
-        moving=false;state.moving=false;state.inputUntil=performance.now()+450;
-        lenisInstance()?.scrollTo(end,{immediate:true,force:true});
-        if(!forward)lenisInstance()?.start();
-        window.dispatchEvent(new Event('scroll'));
-      }
-    };requestAnimationFrame(frame);
+  function readScroll(){
+    if(state.moving)return;
+    const offset=scrollY-gridTop(),length=range();
+    onProgress(offset<=1?0:offset>=length-1?1:offset/length);
+  }
+  async function travel(forward){
+    const from=clamp((scrollY-gridTop())/range()), to=forward?1:0;
+    if(from===to&&!state.moving)return;
+    const id=++sequence;
+    cancelAnimationFrame(frame);state.moving=true;
+    const driver=lenisInstance();driver?.stop();
+    const surface=window.MainWordSurface;
+    const img=surface?.getSource(surface.theme).image;
+    if(img && !img.complete){try{await img.decode();}catch{/* The native poster still exposes its text and download. */}}
+    if(id!==sequence)return;
+    const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Designer's return from the enlarged detail is 2.9s; its zoom-in is 3.6s.
+    const duration=reduced?180:Math.max(300,(forward?2900:3600)*Math.abs(to-from));
+    const start=performance.now();
+    function tick(now){
+      if(id!==sequence)return;
+      const t=clamp((now-start)/duration),p=from+(to-from)*smooth(t);
+      const y=gridTop()+range()*p;
+      window.scrollTo({top:y,behavior:'instant'});onProgress(p);
+      if(t<1){frame=requestAnimationFrame(tick);return;}
+      state.moving=false;state.inputUntil=performance.now()+300;
+      driver?.scrollTo(y,{immediate:true,force:true});driver?.start();
+    }
+    frame=requestAnimationFrame(tick);
   }
   state.reverse=()=>travel(false);
-  const ignore=event=>event.defaultPrevented||document.body.classList.contains('mobile-menu-open')||document.documentElement.classList.contains('page-transition-active')||event.target.closest?.('input,textarea,select,[contenteditable]');
-  function wants(direction){
-    return moving||(!state.complete&&direction>0&&scrollY>=state.anchor()-innerHeight*HANDOFF_VIEWPORTS-Math.min(80,innerHeight*.08));
+  const excluded=e=>e.defaultPrevented||e.ctrlKey||e.metaKey||e.altKey||
+    document.body.classList.contains('mobile-menu-open')||document.documentElement.classList.contains('page-transition-active')||
+    e.target.closest?.('input,textarea,select,[contenteditable]');
+  function owns(direction){
+    if(state.moving)return true;
+    const offset=scrollY-gridTop();
+    return direction>0 ? offset>=-2 && offset<range()-1 : offset>1 && offset<=range()+2;
   }
-  addEventListener('wheel',event=>{
-    if(ignore(event)||!wants(Math.sign(event.deltaY)))return;
-    event.preventDefault();event.stopImmediatePropagation();if(!moving)travel(true);
+  const consume=e=>{e.preventDefault();e.stopImmediatePropagation();};
+  addEventListener('wheel',e=>{
+    if(excluded(e)||Math.abs(e.deltaX)>=Math.abs(e.deltaY))return;
+    const direction=Math.sign(e.deltaY),now=performance.now();
+    if(!owns(direction))return;
+    consume(e);
+    if(state.moving||now<state.inputUntil)return;
+    if(now-lastWheel>220||direction!==lastDirection)wheelTotal=0;
+    lastDirection=direction;lastWheel=now;
+    wheelTotal+=Math.abs(e.deltaY)*(e.deltaMode===1?16:e.deltaMode===2?innerHeight:1);
+    if(wheelTotal>=60){wheelTotal=0;travel(direction>0);}
   },{capture:true,passive:false});
-  let touchY=0;
-  addEventListener('touchstart',event=>{touchY=event.touches[0].clientY;},{passive:true});
-  addEventListener('touchmove',event=>{
-    if(ignore(event)||event.touches.length!==1)return;
-    const delta=touchY-event.touches[0].clientY;if(!wants(Math.sign(delta)))return;
-    event.preventDefault();event.stopImmediatePropagation();if(!moving&&delta>36)travel(true);
+  let touch=null;
+  addEventListener('touchstart',e=>{touch=e.touches.length===1?e.touches[0]:null;},{passive:true});
+  addEventListener('touchmove',e=>{
+    if(!touch||excluded(e)||e.touches.length!==1)return;
+    const dy=touch.clientY-e.touches[0].clientY;
+    if(Math.abs(dy)<Math.abs(touch.clientX-e.touches[0].clientX)||!owns(Math.sign(dy)))return;
+    consume(e);
+    if(!state.moving && Math.abs(dy)>=42){touch=null;travel(dy>0);}
   },{capture:true,passive:false});
-  addEventListener('keydown',event=>{
-    if(ignore(event)||!['ArrowDown','PageDown',' '].includes(event.key)||event.target.closest?.('button,a'))return;
-    if(!wants(1))return;event.preventDefault();event.stopImmediatePropagation();if(!moving&&!event.repeat)travel(true);
+  addEventListener('keydown',e=>{
+    if(excluded(e)||e.target.closest?.('button,a'))return;
+    const direction=['ArrowDown','PageDown',' '].includes(e.key)?1:['ArrowUp','PageUp'].includes(e.key)?-1:0;
+    if(!direction||!owns(direction))return;
+    consume(e);
+    if(!state.moving&&!e.repeat)travel(direction>0);
   },{capture:true});
-  return {update,reset(){items=null;},inspect:()=>({progress:state.progress,complete:state.complete,moving,count:items?.length||0,anchor:state.anchor()})};
+  return {update,readScroll};
 }

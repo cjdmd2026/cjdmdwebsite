@@ -116,6 +116,8 @@
 
     window.addEventListener("wheel", event => {
         if (ignore(event)) return;
+        if (performance.now() < (window.MainIntro?.inputUntil || 0) &&
+            Math.abs(scrollY-window.MainIntro.anchor())<=2) { consume(event); return; }
         const intent = wheelIntent(event);
         if (!intent) return;
         if (intent.fresh) wheelOwned = false;

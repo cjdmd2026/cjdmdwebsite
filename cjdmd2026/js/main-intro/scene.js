@@ -2,11 +2,13 @@ import * as THREE from 'three';
 import {SVGLoader} from 'three/addons/loaders/SVGLoader.js';
 import {GLTFExporter} from 'three/addons/exporters/GLTFExporter.js';
 import {createReveal,updateReveal,flattenProgress,inspectGuide,fitGuideViewport,fitGuideToCell} from './reveal.js';
-import {SOLO_COUNT,CRESCENDO_START,TOPVIEW_START,PULLBACK_END,STORY_END,localReveal,fieldPositions,outlineReturn,patternGrid} from './crescendo.js';
+import {SOLO_COUNT,CRESCENDO_START,TOPVIEW_START,OUTLINE_RETURN_START,PULLBACK_END,STORY_END,localReveal,fieldPositions,outlineReturn,patternGrid} from './crescendo.js';
+import {createWordFlight} from './word-flight.js';
 import {PatternField} from './pattern.js';
+import {paintGridBackdrop} from './grid-extension.js';
 import {sampleCamera} from './camera-motion.js';
 import {timelineAtScroll,SCROLL_DURATION,JOURNEY_HEIGHT_SVH,journeyScrollRange} from './scroll-timing.js';
-import {createShadowAtlas,createShadowMaterial,KEY_LIGHT_POSITION} from './shadows.js';
+import {createShadowAtlas,createShadowMaterial,KEY_LIGHT_POSITION,CONTACT_SHADOW_LAYER} from './shadows.js';
 import {applyFlatColorFinish,flatFinish} from './materials.js';
 import {createDottedFloor} from './floor-pattern.js';
 import {createOpeningDimension} from './opening-dimension.js';
@@ -29,7 +31,9 @@ let renderer,scene,camera,keyLight,pattern,floorPattern,openingDimension,opening
 const timelineEnd=()=>STORY_END;
 const journey={current:0,target:0,poses:[],lastFrame:0};
 let handoff;
-const handoffMotion={current:0,target:0};
+let wordFlight;
+let handoffProgress=0;
+let backdropNeedsResize=true;
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
 const focus=new THREE.Vector3();
 // Keep the matte finish, with less self-lighting so adjacent faces stay distinct.
@@ -41,19 +45,22 @@ const noise=(i,k=1)=>{const x=Math.sin((i+1)*127.1+k*311.7)*43758.5453;return x-
 function render(time){
   raf=0;if(!renderer||exporting)return;
   const dt=Math.min((time-journey.lastFrame)/1000||.016,.05);journey.lastFrame=time;
-  const difference=journey.target-journey.current;
-  journey.current=reducedMotion.matches||Math.abs(difference)<.0001?journey.target:journey.current+difference*(1-Math.exp(-12*dt));
-  if(Math.abs(journey.target-journey.current)<.0001)journey.current=journey.target;
-  const handoffDifference=handoffMotion.target-handoffMotion.current;
-  handoffMotion.current=reducedMotion.matches||Math.abs(handoffDifference)<.00001?handoffMotion.target:handoffMotion.current+handoffDifference*(1-Math.exp(-12*dt));
-  if(Math.abs(handoffMotion.target-handoffMotion.current)<.00001)handoffMotion.current=handoffMotion.target;
-  if(window.MainIntro.complete&&handoffMotion.current===1&&handoffMotion.target===1){handoff?.update(1);return;}
-  if(handoffMotion.current>0)journey.current=STORY_END;
+  if(window.MainIntro.complete&&handoffProgress===1&&!backdropNeedsResize){handoff?.update(1);return;}
+  if(handoffProgress>0)journey.current=STORY_END;
+  else{
+    const difference=journey.target-journey.current;
+    journey.current=reducedMotion.matches||Math.abs(difference)<.001
+      ?journey.target:journey.current+difference*(1-Math.exp(-12*dt));
+  }
   setCamera(width,height);
-  if(handoffMotion.current===0)renderer.render(scene,camera);
-  handoff?.update(handoffMotion.current);
-  if(Math.abs(handoffMotion.target-handoffMotion.current)>.00001)invalidate();
-  if(Math.abs(journey.target-journey.current)>.0001||objects.some(object=>object.reveal.active&&performance.now()-object.reveal.sparkAt<360)||pattern?.isFlashing())invalidate();
+  wordFlight.update(camera,floorPattern.mesh,handoffProgress,camera.userData.ending);
+  if(handoffProgress===1){
+    paintGridBackdrop(pattern.extension,$('#heroGrid'),camera,width,height);
+    backdropNeedsResize=false;
+  }
+  renderer.render(scene,camera);
+  handoff?.update(handoffProgress);
+  if((handoffProgress===0&&Math.abs(journey.target-journey.current)>.0001)||objects.some(object=>object.reveal.active&&performance.now()-object.reveal.sparkAt<360)||pattern?.isFlashing())invalidate();
 }
 function invalidate(){if(!raf)raf=requestAnimationFrame(render);}
 
@@ -162,6 +169,9 @@ function setCamera(w,h){
   pageStory.update(timeline);
   const ending=outlineReturn(timeline);
   flatFinish.value=flattenProgress(ending);
+  const shadowStrength=handoffProgress>0?0:settings.shadow*(1-THREE.MathUtils.smoothstep(timeline,TOPVIEW_START,OUTLINE_RETURN_START));
+  if(shadowStrength>0)camera.layers.enable(CONTACT_SHADOW_LAYER);
+  else camera.layers.disable(CONTACT_SHADOW_LAYER);
   const pose=sampleCamera(timeline,journey.poses,journey.wide,reducedMotion.matches?0:1);
   const {solo,index:soloIndex,distance,yaw,pitch,shiftX,shiftY,roll,fov,travelling,pullback,overhead}=pose;
   focus.set(pose.center.x,pose.center.y,pose.center.z);
@@ -175,12 +185,12 @@ function setCamera(w,h){
   objects.forEach(object=>{
     const started=timeline>=object.cue.start;
     const visible=started;
-    updateReveal(object,localReveal(timeline,object.cue),visible,settings.depth*object.heightFactor,settings.shadow,ending);
+    updateReveal(object,localReveal(timeline,object.cue),visible,settings.depth*object.heightFactor,shadowStrength,ending);
     if(started)generated++;
     if(visible&&object.reveal.state.complete)complete++;
     if(visible&&(!object.reveal.state.complete||(ending>0&&ending<1)))activeReveals++;
   });
-  pattern?.update(timeline,settings);
+  pattern?.update(timeline,settings,shadowStrength);
   scene.updateMatrixWorld(true);
   openingGuideOverlay?.update(camera);
   openingDimension?.update(localReveal(timeline,objects[0].cue),camera,w,h);
@@ -191,7 +201,7 @@ function setCamera(w,h){
   const index=solo?soloIndex:latest.index,state=objects[index].reveal.state;
   const phase=solo?'solo':timeline<TOPVIEW_START+.3?'crescendo':'finale';
   const framing=pullback>.99?fieldBounds():screenBounds(objects[index].mesh);
-  camera.userData={projection:'cinematic-perspective',framing,position:camera.position.toArray(),focus:focus.toArray(),index,progress:timeline/STORY_END,timeline,yaw,pitch,roll,distance,travelling,pullback,overhead,ending,direction:camera.getWorldDirection(new THREE.Vector3()).toArray(),phase,generated,complete,activeReveals,reveal:{...state}};
+  camera.userData={projection:'cinematic-perspective',framing,position:camera.position.toArray(),focus:focus.toArray(),index,progress:timeline/STORY_END,timeline,yaw,pitch,roll,distance,travelling,pullback,overhead,ending,groundShadows:camera.layers.isEnabled(CONTACT_SHADOW_LAYER),direction:camera.getWorldDirection(new THREE.Vector3()).toArray(),phase,generated,complete,activeReveals,reveal:{...state}};
 }
 
 function readScroll(){
@@ -199,9 +209,10 @@ function readScroll(){
   const trackTop=track.getBoundingClientRect().top+scrollY;
   const handoffDistance=host.clientHeight*HANDOFF_VIEWPORTS;
   const {start,distance}=journeyScrollRange(trackTop,track.offsetHeight-handoffDistance,host.clientHeight);
-  handoffMotion.target=THREE.MathUtils.clamp((scrollY-start-distance)/handoffDistance,0,1);
+  const gridOffset=scrollY-start-distance;
+  handoff?.readScroll();
   const target=timelineAtScroll(THREE.MathUtils.clamp((scrollY-start)/distance,0,1)*SCROLL_DURATION),nearest=Math.round(target);
-  journey.target=Math.abs(target-nearest)<.001?nearest:target;
+  journey.target=gridOffset>=-1?STORY_END:Math.abs(target-nearest)<.001?Math.min(nearest,STORY_END):target;
   invalidate();
 }
 
@@ -241,6 +252,7 @@ async function createObjects(){
         {hole:false,points:shape.getPoints(16)},...shape.holes.map(hole=>({hole:true,points:hole.getPoints(16)}))
       ]).map(contour=>({hole:contour.hole,points:contour.points.map(p=>[(p.x-center.x)*scale,(p.y-center.z)*scale])}))};
       const shadow=new THREE.Mesh(new THREE.PlaneGeometry(shadowSpan,shadowSpan),createShadowMaterial());
+      shadow.layers.set(CONTACT_SHADOW_LAYER);
       shadow.name=icon.id+'-contact';shadow.rotation.x=-Math.PI/2;shadow.position.y=.001;shadow.renderOrder=1;scene.add(shadow);
       objects.push({icon,color,mesh,shadow,size,radius,index,shadowSpan,caster,shadowKey:''});
     }catch(error){failures.push({id:icon.id,error:error.message});}
@@ -278,10 +290,15 @@ function positionObjects(){
 function resize(){
   if(!renderer||exporting)return;
   width=host.clientWidth;height=host.clientHeight;
+  backdropNeedsResize=true;
   if(journey.layoutMode!==(width/height<.8?'portrait':'landscape'))positionObjects();
   // Supersample lower-density displays too, keeping small silhouettes well defined.
   renderer.setPixelRatio(2);renderer.setSize(width,height,false);
-  fitPoses(width,height);handoff?.reset();readScroll();setCamera(width,height);preparation?.prepare();invalidate();
+  fitPoses(width,height);
+  const terminal=journey.wide;
+  placeCamera(width,height,terminal.center,terminal.distance,0,0,terminal.yaw,90,0,terminal.fov);
+  wordFlight.fit(camera,width,height);
+  readScroll();setCamera(width,height);preparation?.prepare();invalidate();
 }
 
 async function exportPNG(w=3840,h=2160){
@@ -341,15 +358,19 @@ async function init(){
     openingGuideOverlay=createOpeningGuideOverlay(host,objects[0].reveal);
     pattern=new PatternField(scene,objects,clayMaterial);
     preparation=createScenePreparation(renderer,scene,camera,invalidate);
-    handoff=createMainHandoff(host,objects,()=>pattern.copies,camera);
+    wordFlight=createWordFlight(scene,invalidate);
+    await wordFlight.ready;
+    handoff=createMainHandoff(host,progress=>{
+      handoffProgress=progress;invalidate();
+    });
     $('#journey').style.height=`${JOURNEY_HEIGHT_SVH+HANDOFF_VIEWPORTS*100}svh`;
     addEventListener('scroll',readScroll,{passive:true});addEventListener('resize',resize);
     resize();renderer.render(scene,camera);host.classList.add('ready');
-    window.heroStudio={ready:true,exportPNG,exportGLB,inspect:()=>({count:objects.length,preparation:preparation.inspect(),pattern:pattern.inspect(),floor:floorPattern.inspect(),dimension:openingDimension.inspect(),errors:failures,settings:{...settings},timelineEnd:timelineEnd(),cameraPath:{poses:journey.poses,wide:journey.wide},camera:{...camera.userData,rotation:camera.rotation.toArray(),up:camera.up.toArray()},objects:objects.map(({mesh,icon,reveal,heightFactor,index,radius,cue})=>({id:icon.id,name:icon.name,vertices:mesh.geometry.attributes.position.count,triangles:mesh.geometry.attributes.position.count/3,...mesh.userData,color:mesh.material.color.getHexString(),lineColor:reveal.lines[0].material.color.getHexString(),cue,heightFactor,radius,position:mesh.position.toArray(),baseY:mesh.position.y,rotation:mesh.rotation.toArray(),heightScale:mesh.scale.y,visible:mesh.visible,guide:inspectGuide(reveal),drawingVisible:reveal.group.visible,pointVisible:reveal.group.visible&&reveal.dot.visible,strokeVertices:reveal.lines.reduce((sum,line)=>sum+line.geometry.drawRange.count,0),reveal:{...reveal.state}})),renderer:renderer.info.render})};
+    window.heroStudio={ready:true,exportPNG,exportGLB,inspect:()=>({count:objects.length,preparation:preparation.inspect(),pattern:pattern.inspect(),floor:floorPattern.inspect(),dimension:openingDimension.inspect(),errors:failures,settings:{...settings},timelineEnd:timelineEnd(),cameraPath:{poses:journey.poses,wide:journey.wide},wordFlight:wordFlight.inspect(),camera:{...camera.userData,rotation:camera.rotation.toArray(),up:camera.up.toArray()},objects:objects.map(({mesh,icon,reveal,heightFactor,index,radius,cue})=>({id:icon.id,name:icon.name,vertices:mesh.geometry.attributes.position.count,triangles:mesh.geometry.attributes.position.count/3,...mesh.userData,color:mesh.material.color.getHexString(),lineColor:reveal.lines[0].material.color.getHexString(),cue,heightFactor,radius,position:mesh.position.toArray(),baseY:mesh.position.y,rotation:mesh.rotation.toArray(),heightScale:mesh.scale.y,visible:mesh.visible,guide:inspectGuide(reveal),drawingVisible:reveal.group.visible,pointVisible:reveal.group.visible&&reveal.dot.visible,strokeVertices:reveal.lines.reduce((sum,line)=>sum+line.geometry.drawRange.count,0),reveal:{...reveal.state}})),renderer:renderer.info.render})};
   }catch(error){
     console.warn('Intro unavailable; continuing with the existing main hero.',error);
     window.MainIntro.complete=true;window.MainIntro.progress=1;
-    document.body.classList.remove('intro-before-main','intro-scattering');
+    document.body.classList.remove('intro-before-main');
     document.body.classList.add('intro-unavailable');
     window.dispatchEvent(new CustomEvent('main-intro-handoff',{detail:{complete:true}}));
     window.heroStudio={ready:false,error:String(error)};

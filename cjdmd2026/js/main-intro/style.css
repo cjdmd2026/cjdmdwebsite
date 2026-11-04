@@ -111,8 +111,7 @@ a:focus-visible{outline:2px solid #ff3c3c;outline-offset:6px}
 #mainIntro{position:relative;z-index:3;background:transparent}
 .main-page #hero{margin-top:-100svh;z-index:2}
 .intro-before-main #hero .hero-stage{position:fixed;inset:0;height:100svh;visibility:hidden;pointer-events:none}
-.intro-before-main.intro-scattering #hero .hero-stage{visibility:visible}
-#mainIntro .intro-scatter-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;display:none;pointer-events:none}
+.intro-before-main #hero .hero-scroll-hint{visibility:hidden}
 .main-page .header{transition:transform var(--intro-header-duration,.4s) cubic-bezier(.22,1,.36,1),color .6s ease}
 .header.is-intro-hidden{--header-background-opacity:var(--intro-header-opacity,0);transform:translateY(var(--intro-header-offset,calc(-100% - 1px)))}
 .header:focus-within,body.mobile-menu-open .header{--header-background-opacity:1;transform:none;pointer-events:auto}

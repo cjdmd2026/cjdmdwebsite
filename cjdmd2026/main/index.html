@@ -14,7 +14,7 @@
         if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     </script>
 
-    <link rel="stylesheet" href="../css/main-intro.css?v=20261104-1">
+    <link rel="stylesheet" href="../css/main-intro.css?v=20261104-depth-passage">
     <script>window.MainIntro={complete:false,progress:0,headerProgress:0,inputUntil:0,anchor:()=>{const hero=document.getElementById("hero");return hero?hero.getBoundingClientRect().top+scrollY:0;}};</script>
     <!-- Scripts:S -->
     <script src="../js/stamp-effect-transition.js" defer></script>
@@ -25,12 +25,12 @@
     <script src="../js/designer-icon-data.js" defer></script>
     <script src="../js/main-data.js?v=20261023-35" defer></script>
     <script src="../js/main-icon-fragments.js?v=20261023-35" defer></script>
-    <script src="../js/main-poster-sprites.js?v=20261023-35" defer></script>
+    <script src="../js/main-poster-sprites.js?v=20261104-identity-1" defer></script>
     <script src="../js/main-scroll-input.js?v=20261030-1" defer></script>
-    <script src="../js/main-section-scroll.js?v=20261104-intro-1" defer></script>
-    <script src="../js/main-hero-sprite-batch.js?v=20261103-focus-1" defer></script>
-    <script src="../js/main-hero.js?v=20261104-intro-1" defer></script>
-    <script src="../js/main-intro.js?v=20261104-1" defer></script>
+    <script src="../js/main-section-scroll.js?v=20261104-depth-passage" defer></script>
+    <script src="../js/main-hero-sprite-batch.js?v=20261104-solid-travel" defer></script>
+    <script src="../js/main-hero.js?v=20261104-rear-grid" defer></script>
+    <script src="../js/main-intro.js?v=20261104-rear-grid" defer></script>
     <script src="../js/main.js?v=20261030-menu-1" defer></script>
 
     <script src="https://unpkg.com/lenis@1.3.15/dist/lenis.min.js"></script>
@@ -172,12 +172,9 @@
 
         </div>
 
-        <!-- ========== 01. Poster Hero ==========
-             스크롤 1번: 흩어진 아이콘 → '결합' 완성 → 포스터 그래픽으로 전환
-             스크롤 2번: 그래픽이 왼쪽 포스터 자리로 이동 + 설명 노출
-             정착 후: 기본 ↔ 다크 포스터 자동 전환 (main-hero.js) -->
+        <!-- Camera passes through the icons to the original vertical word; the next step introduces the poster. -->
         <section class="hero" id="hero" aria-labelledby="heroTitle">
-            <div class="hero-stage" id="heroStage" data-theme="light" data-step="0">
+            <div class="hero-stage" id="heroStage" data-word-flight data-theme="light" data-step="0">
                 <!-- 배경색 (포스터 전환 시 입자 느낌으로 닦이며 바뀜) -->
                 <canvas class="hero-bg" id="heroBg" aria-hidden="true"></canvas>
 
@@ -185,6 +182,7 @@
                 <div class="ambient hero-ambient" data-ambient="hero" aria-hidden="true"></div>
 
                 <!-- 아이콘 → 결합 → 포스터 그래픽 -->
+                <canvas class="hero-canvas" id="heroGrid" aria-hidden="true"></canvas>
                 <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
 
                 <!-- 포스터 전환 입자 (기존 포스터가 입자로 흩어지며 오른쪽으로 날아감) -->

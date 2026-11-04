@@ -3,8 +3,9 @@ import {createReveal,updateDrawing,inspectGuide,fitGuideToCell} from './reveal.j
 import {patternGrid,SOLO_COUNT,revealCue,waveCue,outlineReturn,localReveal} from './crescendo.js';
 import {REVEAL_DURATION} from './reveal-timing.js';
 import {scatterPattern,randomGenerator} from './scatter.js';
-import {createShadowMaterial} from './shadows.js';
+import {CONTACT_SHADOW_LAYER,createShadowMaterial} from './shadows.js';
 import {applyFlatColorFinish} from './materials.js';
+import {createGridExtension} from './grid-extension.js';
 
 function instanceMaterial(source,color){
   const material=source.clone();material.transparent=true;material.opacity=1;
@@ -91,6 +92,7 @@ export class PatternField{
       geometry.setAttribute('instanceTint',tint);
       const mesh=new THREE.InstancedMesh(geometry,instanceMaterial(source.mesh.material,source.color),cells.length);
       const shadow=new THREE.InstancedMesh(shadowGeometry,createShadowMaterial(source.patternShadow,true),cells.length);
+      shadow.layers.set(CONTACT_SHADOW_LAYER);
       mesh.name=source.icon.id+'-pattern';shadow.name=source.icon.id+'-pattern-contact';shadow.renderOrder=1;
       // Repeated objects share the source's soft, lightly tinted shadow.
       mesh.castShadow=mesh.receiveShadow=false;mesh.frustumCulled=shadow.frustumCulled=false;
@@ -109,12 +111,17 @@ export class PatternField{
       });
       shadow.instanceMatrix.needsUpdate=true;
     });
+    if(settings.layout==='grid'){
+      this.extension=createGridExtension(grid,minCol,maxCol,minRow,maxRow,this.sources,this.copies);
+      this.scene.add(this.extension);
+    }
     this.stats.count=this.copies.length;
   }
 
-  update(timeline,settings){
+  update(timeline,settings,shadowStrength){
     let visible=0,complete=0,active=0,flattened=0;
     const ending=outlineReturn(timeline);
+    if(this.extension)this.extension.visible=ending===1;
     this.batches.forEach(batch=>{batch.dirty=false;});
     for(const copy of this.copies){
       const started=timeline>=copy.cue.start,local=localReveal(timeline,copy.cue);
@@ -144,7 +151,7 @@ export class PatternField{
         batch.shadow.visible=batch.contact.array.some(value=>value>0);
         batch.mesh.instanceMatrix.needsUpdate=true;batch.fill.needsUpdate=batch.contact.needsUpdate=batch.tint.needsUpdate=true;
       }
-      batch.shadow.material.opacity=settings.shadow;
+      batch.shadow.material.opacity=shadowStrength;
     }
     this.stats={count:this.copies.length,visible,complete,active,flattened};
   }
@@ -153,6 +160,11 @@ export class PatternField{
   inspect(){return {...this.stats,coverage:this.coverage,wave:this.wave,instances:this.copies.map(copy=>({id:copy.icon.id,color:new THREE.Color(0xffffff).lerp(copy.reveal.targetColor,copy.batch.tint.getX(copy.slot)).getHexString(),tint:copy.batch.tint.getX(copy.slot),fill:copy.batch.fill.getX(copy.slot),flatness:copy.reveal.state.flatness,lineOpacity:copy.reveal.state.lineOpacity,lineColor:copy.reveal.lines[0].material.color.getHexString(),x:copy.x,z:copy.z,radius:copy.radius,rotation:copy.rotation,cue:copy.cue,visible:copy.batch.fill.getX(copy.slot)>0,extrusion:copy.batch.contact.getX(copy.slot),guide:inspectGuide(copy.reveal),drawingVisible:copy.reveal.group.visible,pointVisible:copy.reveal.group.visible&&copy.reveal.dot.visible,strokeVertices:copy.reveal.lines.reduce((sum,line)=>sum+line.geometry.drawRange.count,0),phase:copy.reveal.state.phase}))};}
 
   clear(){
+    if(this.extension){
+      this.scene.remove(this.extension);
+      this.extension.material.map.dispose();this.extension.material.dispose();this.extension.geometry.dispose();
+      this.extension=null;
+    }
     for(const copy of this.copies){
       this.scene.remove(copy.reveal.group);
       copy.reveal.guide.geometry.dispose();copy.reveal.guide.material.dispose();

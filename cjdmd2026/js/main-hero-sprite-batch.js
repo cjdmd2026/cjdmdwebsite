@@ -11,7 +11,7 @@
         if (!gl) return null;
         // 한 아이콘의 정보를 한 번만 전송합니다. 확장이 없는 기기는 기존 삼각형 배치를 사용합니다.
         const instancing = gl.getExtension("ANGLE_instanced_arrays");
-        const floatsPerIcon = instancing ? 12 : 66;
+        const floatsPerIcon = instancing ? 13 : 72;
         const shaders = [];
         let program, buffer, quadBuffer, failed = false;
         function compile(type, source) {
@@ -31,11 +31,13 @@
                 attribute vec2 aRotation;
                 attribute float aAlpha;
                 attribute float aBlur;
+                attribute float aCut;
                 uniform vec2 uSize, uAtlasSize;
                 varying vec2 vUV;
                 varying vec4 vBounds;
                 varying vec2 vBlur;
                 varying float vAlpha;
+                varying float vCutDistance;
                 void main() {
                     vec2 extent = aRect.zw + aBlur * 4.0;
                     vec2 offset = (aCorner - 0.5) * extent;
@@ -50,6 +52,7 @@
                     vBounds = vec4(aUVRect.xy, aUVRect.xy + aUVRect.zw) / uAtlasSize.xyxy;
                     vBlur = aBlur * aUVRect.zw / aRect.zw / uAtlasSize;
                     vAlpha = aAlpha;
+                    vCutDistance = aCut == 0.0 ? 1.0 : sign(aCut) * (abs(aCut) - position.x);
                 }
             ` : `
                 attribute vec2 aPosition;
@@ -57,11 +60,13 @@
                 attribute float aAlpha;
                 attribute vec4 aBounds;
                 attribute vec2 aBlurUV;
+                attribute float aCut;
                 uniform vec2 uSize, uAtlasSize;
                 varying vec2 vUV;
                 varying vec4 vBounds;
                 varying vec2 vBlur;
                 varying float vAlpha;
+                varying float vCutDistance;
                 void main() {
                     vec2 clip = aPosition / uSize * 2.0 - 1.0;
                     gl_Position = vec4(clip.x, -clip.y, 0.0, 1.0);
@@ -69,6 +74,7 @@
                     vBounds = aBounds / uAtlasSize.xyxy;
                     vBlur = aBlurUV / uAtlasSize;
                     vAlpha = aAlpha;
+                    vCutDistance = aCut == 0.0 ? 1.0 : sign(aCut) * (abs(aCut) - aPosition.x);
                 }
             `));
             gl.attachShader(program, compile(gl.FRAGMENT_SHADER, `
@@ -82,6 +88,7 @@
                 varying vec4 vBounds;
                 varying vec2 vBlur;
                 varying float vAlpha;
+                varying float vCutDistance;
                 vec4 sampleIcon(vec2 uv) {
                     // 아틀라스의 이웃 아이콘이 블러에 섞이지 않게 원본 영역 밖은 투명하게 처리합니다.
                     vec2 inside = step(vBounds.xy, uv) * step(uv, vBounds.zw);
@@ -95,6 +102,7 @@
                         sampleIcon(uv + 2.0 * dx)) / 16.0;
                 }
                 void main() {
+                    if (vCutDistance < 0.0) discard;
                     vec4 color = vBlur.x > 0.0
                         ? (blurRow(-2.0) + 4.0 * blurRow(-1.0) + 6.0 * blurRow(0.0) +
                             4.0 * blurRow(1.0) + blurRow(2.0)) / 16.0
@@ -120,8 +128,8 @@
         }
         shaders.forEach(shader => gl.deleteShader(shader));
         const attributes = (instancing
-            ? [["aRect", 4, 0], ["aUVRect", 4, 16], ["aRotation", 2, 32], ["aAlpha", 1, 40], ["aBlur", 1, 44]]
-            : [["aPosition", 2, 0], ["aUV", 2, 8], ["aAlpha", 1, 16], ["aBounds", 4, 20], ["aBlurUV", 2, 36]])
+            ? [["aRect", 4, 0], ["aUVRect", 4, 16], ["aRotation", 2, 32], ["aAlpha", 1, 40], ["aBlur", 1, 44], ["aCut", 1, 48]]
+            : [["aPosition", 2, 0], ["aUV", 2, 8], ["aAlpha", 1, 16], ["aBounds", 4, 20], ["aBlurUV", 2, 36], ["aCut", 1, 44]])
             .map(([name, count, offset]) => [gl.getAttribLocation(program, name), count, offset]);
         const corner = instancing ? gl.getAttribLocation(program, "aCorner") : -1;
         const size = gl.getUniformLocation(program, "uSize");
@@ -132,13 +140,13 @@
         let width = 1, height = 1;
         canvas.addEventListener("webglcontextlost", () => { failed = true; }, { once: true });
 
-        function vertex(x, y, u, v, opacity, ic, blurX, blurY) {
+        function vertex(x, y, u, v, opacity, ic, blurX, blurY, cut) {
             vertices[used++] = x; vertices[used++] = y;
             vertices[used++] = u; vertices[used++] = v;
             vertices[used++] = opacity;
             vertices[used++] = ic.ax; vertices[used++] = ic.ay;
             vertices[used++] = ic.ax + ic.gw; vertices[used++] = ic.ay + ic.gh;
-            vertices[used++] = blurX; vertices[used++] = blurY;
+            vertices[used++] = blurX; vertices[used++] = blurY; vertices[used++] = cut;
         }
         return {
             resize(w, h, ratio) {
@@ -153,7 +161,7 @@
                 gl.clearColor(0, 0, 0, 0);
                 gl.clear(gl.COLOR_BUFFER_BIT);
             },
-            add(ic, x, y, w, h, angle, opacity, blur = 0) {
+            add(ic, x, y, w, h, angle, opacity, blur = 0, cut = 0) {
                 if (used + floatsPerIcon > vertices.length) {
                     const next = new Float32Array(vertices.length * 2);
                     next.set(vertices); vertices = next;
@@ -168,6 +176,7 @@
                     vertices[used++] = rotated ? Math.sin(angle) : 0;
                     vertices[used++] = opacity;
                     vertices[used++] = blur;
+                    vertices[used++] = cut;
                     return;
                 }
                 const blurX = blur * ic.gw / w, blurY = blur * ic.gh / h;
@@ -185,12 +194,12 @@
                 }
                 const u = ic.ax - blurX * 2, v = ic.ay - blurY * 2;
                 const u2 = ic.ax + ic.gw + blurX * 2, v2 = ic.ay + ic.gh + blurY * 2;
-                vertex(ax, ay, u, v, opacity, ic, blurX, blurY);
-                vertex(bx, by, u2, v, opacity, ic, blurX, blurY);
-                vertex(cx, cy, u2, v2, opacity, ic, blurX, blurY);
-                vertex(ax, ay, u, v, opacity, ic, blurX, blurY);
-                vertex(cx, cy, u2, v2, opacity, ic, blurX, blurY);
-                vertex(dx, dy, u, v2, opacity, ic, blurX, blurY);
+                vertex(ax, ay, u, v, opacity, ic, blurX, blurY, cut);
+                vertex(bx, by, u2, v, opacity, ic, blurX, blurY, cut);
+                vertex(cx, cy, u2, v2, opacity, ic, blurX, blurY, cut);
+                vertex(ax, ay, u, v, opacity, ic, blurX, blurY, cut);
+                vertex(cx, cy, u2, v2, opacity, ic, blurX, blurY, cut);
+                vertex(dx, dy, u, v2, opacity, ic, blurX, blurY, cut);
             },
             flush(atlas) {
                 if (failed || gl.isContextLost()) return false;
@@ -223,18 +232,18 @@
                 gl.bufferSubData(gl.ARRAY_BUFFER, 0, vertices.subarray(0, used));
                 for (const [attribute, count, offset] of attributes) {
                     gl.enableVertexAttribArray(attribute);
-                    gl.vertexAttribPointer(attribute, count, gl.FLOAT, false, instancing ? 48 : 44, offset);
+                    gl.vertexAttribPointer(attribute, count, gl.FLOAT, false, instancing ? 52 : 48, offset);
                     if (instancing) instancing.vertexAttribDivisorANGLE(attribute, 1);
                 }
                 gl.uniform2f(size, width, height);
-                gl.uniform2f(atlasSize, atlas.naturalWidth, atlas.naturalHeight);
+                gl.uniform2f(atlasSize, atlas.naturalWidth || atlas.width, atlas.naturalHeight || atlas.height);
                 gl.activeTexture(gl.TEXTURE0);
                 gl.bindTexture(gl.TEXTURE_2D, texture);
                 gl.uniform1i(sampler, 0);
                 gl.enable(gl.BLEND);
                 gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
                 if (instancing) instancing.drawArraysInstancedANGLE(gl.TRIANGLES, 0, 6, used / floatsPerIcon);
-                else gl.drawArrays(gl.TRIANGLES, 0, used / 11);
+                else gl.drawArrays(gl.TRIANGLES, 0, used / 12);
                 return true;
             },
             dispose() {
