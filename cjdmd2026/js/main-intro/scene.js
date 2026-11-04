@@ -5,7 +5,6 @@ import {createReveal,updateReveal,flattenProgress,inspectGuide,fitGuideViewport,
 import {SOLO_COUNT,CRESCENDO_START,TOPVIEW_START,OUTLINE_RETURN_START,PULLBACK_END,STORY_END,localReveal,fieldPositions,outlineReturn,patternGrid} from './crescendo.js';
 import {createWordFlight} from './word-flight.js';
 import {PatternField} from './pattern.js';
-import {paintGridBackdrop} from './grid-extension.js';
 import {sampleCamera} from './camera-motion.js';
 import {timelineAtScroll,SCROLL_DURATION,JOURNEY_HEIGHT_SVH,journeyScrollRange} from './scroll-timing.js';
 import {createShadowAtlas,createShadowMaterial,KEY_LIGHT_POSITION,CONTACT_SHADOW_LAYER} from './shadows.js';
@@ -33,7 +32,7 @@ const journey={current:0,target:0,poses:[],lastFrame:0};
 let handoff;
 let wordFlight;
 let handoffProgress=0;
-let backdropNeedsResize=true;
+let gatherProgress=0;
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
 const focus=new THREE.Vector3();
 // Keep the matte finish, with less self-lighting so adjacent faces stay distinct.
@@ -45,22 +44,20 @@ const noise=(i,k=1)=>{const x=Math.sin((i+1)*127.1+k*311.7)*43758.5453;return x-
 function render(time){
   raf=0;if(!renderer||exporting)return;
   const dt=Math.min((time-journey.lastFrame)/1000||.016,.05);journey.lastFrame=time;
-  if(window.MainIntro.complete&&handoffProgress===1&&!backdropNeedsResize){handoff?.update(1);return;}
+  if(window.MainIntro.complete && handoffProgress===1 && gatherProgress===1)return;
   if(handoffProgress>0)journey.current=STORY_END;
   else{
     const difference=journey.target-journey.current;
     journey.current=reducedMotion.matches||Math.abs(difference)<.001
       ?journey.target:journey.current+difference*(1-Math.exp(-12*dt));
   }
-  setCamera(width,height);
-  wordFlight.update(camera,floorPattern.mesh,handoffProgress,camera.userData.ending);
-  if(handoffProgress===1){
-    paintGridBackdrop(pattern.extension,$('#heroGrid'),camera,width,height);
-    backdropNeedsResize=false;
-  }
+  // The rear grid is already flat. Only the flight camera and the swimming ink change now.
+  if(handoffProgress===0 || camera.userData.timeline!==STORY_END)setCamera(width,height);
+  wordFlight.update(camera,floorPattern.mesh,handoffProgress,camera.userData.ending,gatherProgress);
   renderer.render(scene,camera);
-  handoff?.update(handoffProgress);
-  if((handoffProgress===0&&Math.abs(journey.target-journey.current)>.0001)||objects.some(object=>object.reveal.active&&performance.now()-object.reveal.sparkAt<360)||pattern?.isFlashing())invalidate();
+  handoff?.update(handoffProgress,gatherProgress);
+  const swimming=handoffProgress>0 && handoffProgress<1 && !reducedMotion.matches && !document.hidden;
+  if(swimming||(handoffProgress===0&&Math.abs(journey.target-journey.current)>.0001)||objects.some(object=>object.reveal.active&&performance.now()-object.reveal.sparkAt<360)||pattern?.isFlashing())invalidate();
 }
 function invalidate(){if(!raf)raf=requestAnimationFrame(render);}
 
@@ -290,7 +287,6 @@ function positionObjects(){
 function resize(){
   if(!renderer||exporting)return;
   width=host.clientWidth;height=host.clientHeight;
-  backdropNeedsResize=true;
   if(journey.layoutMode!==(width/height<.8?'portrait':'landscape'))positionObjects();
   // Supersample lower-density displays too, keeping small silhouettes well defined.
   renderer.setPixelRatio(2);renderer.setSize(width,height,false);
@@ -360,8 +356,8 @@ async function init(){
     preparation=createScenePreparation(renderer,scene,camera,invalidate);
     wordFlight=createWordFlight(scene,invalidate);
     await wordFlight.ready;
-    handoff=createMainHandoff(host,progress=>{
-      handoffProgress=progress;invalidate();
+    handoff=createMainHandoff(host,(progress,gather)=>{
+      handoffProgress=progress;gatherProgress=gather;invalidate();
     });
     $('#journey').style.height=`${JOURNEY_HEIGHT_SVH+HANDOFF_VIEWPORTS*100}svh`;
     addEventListener('scroll',readScroll,{passive:true});addEventListener('resize',resize);

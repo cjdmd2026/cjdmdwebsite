@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {applyGridDistance,gridNear,gridFalloff} from './materials.js';
+import {applyGridDistance} from './materials.js';
 
 // Repeat the actual fitted cells outside the animated field. The hole in the
 // middle leaves every original mesh visible and avoids drawing the ink twice.
@@ -51,28 +51,5 @@ export function createGridExtension(grid,minCol,maxCol,minRow,maxRow,sources,cop
     map,transparent:true,depthWrite:false,toneMapped:false,fog:false
   }));
   const mesh=new THREE.Mesh(geometry,material);mesh.name='Continuous flat icon grid';mesh.visible=false;
-  mesh.userData.tile={left,back,width,length};
   return mesh;
-}
-
-// At 90° the rear plane projects affinely. Reuse its exact tile and camera
-// projection behind the native portrait without keeping WebGL rendering.
-export function paintGridBackdrop(mesh,canvas,camera,w,h){
-  if(!mesh||!canvas)return;
-  const {left,back,width,length}=mesh.userData.tile;
-  function project(x,z){
-    const p=new THREE.Vector3(x,.003,z).project(camera);
-    return new THREE.Vector2((p.x+1)*w/2,(1-p.y)*h/2);
-  }
-  const tile=mesh.material.map.image,origin=project(left,back);
-  const u=project(left+width,back).sub(origin).divideScalar(tile.width);
-  const v=project(left,back+length).sub(origin).divideScalar(tile.height);
-  const ratio=Math.min(devicePixelRatio||1,2);
-  canvas.width=Math.round(w*ratio);canvas.height=Math.round(h*ratio);
-  const ctx=canvas.getContext('2d');
-  const fill=ctx.createPattern(tile,'repeat');
-  fill.setTransform(new DOMMatrix([u.x,u.y,v.x,v.y,origin.x,origin.y]));
-  ctx.setTransform(ratio,0,0,ratio,0,0);ctx.fillStyle=fill;
-  ctx.globalAlpha=1/(1+gridFalloff*((camera.position.y-.003)/gridNear.value-1));
-  ctx.fillRect(0,0,w,h);
 }

@@ -1,7 +1,14 @@
 export const HANDOFF_VIEWPORTS=.85;
 const clamp=value=>Math.max(0,Math.min(1,value));
-const smooth=t=>t*t*(3-2*t);
+const smooth=t=>t*t*t*(t*(t*6-15)+10);
 const lenisInstance=()=>typeof lenis==='undefined'?null:lenis;
+const gatherStart=.56;
+// The zoom eases to rest cubically. Undo that slowdown for the gather so
+// the icons keep travelling through the last seconds of the camera move.
+function gatherAtZoom(progress){
+  const remaining=clamp((1-progress)/(1-gatherStart));
+  return 1-Math.cbrt(remaining);
+}
 
 // One deliberate gesture, as in designer-icon-slide. Scrollbar dragging can
 // also scrub the same distance directly without starting an automatic step.
@@ -10,9 +17,12 @@ export function createMainHandoff(host,onProgress){
   const range=()=>host.clientHeight*HANDOFF_VIEWPORTS;
   const gridTop=()=>state.anchor()-range();
   let frame=0,sequence=0,wheelTotal=0,lastWheel=-Infinity,lastDirection=0;
-  function update(progress){
+  function setPose(progress){
+    onProgress(progress,gatherAtZoom(progress));
+  }
+  function update(progress,gather){
     const wasComplete=state.complete;
-    state.progress=progress;state.complete=progress===1;
+    state.progress=progress;state.complete=progress===1 && gather===1;
     document.body.classList.toggle('intro-before-main',!state.complete);
     stage.style.visibility=state.complete?'hidden':'visible';
     document.getElementById('mainIntro').inert=state.complete;
@@ -23,11 +33,13 @@ export function createMainHandoff(host,onProgress){
   function readScroll(){
     if(state.moving)return;
     const offset=scrollY-gridTop(),length=range();
-    onProgress(offset<=1?0:offset>=length-1?1:offset/length);
+    setPose(offset<=1?0:offset>=length-1?1:offset/length);
   }
   async function travel(forward){
-    const from=clamp((scrollY-gridTop())/range()), to=forward?1:0;
-    if(from===to&&!state.moving)return;
+    const offset=scrollY-gridTop(),length=range();
+    const from=offset>=length-1?1:offset<=1?0:clamp(offset/length);
+    const to=forward?1:0;
+    if(from===to && !state.moving)return;
     const id=++sequence;
     cancelAnimationFrame(frame);state.moving=true;
     const driver=lenisInstance();driver?.stop();
@@ -36,15 +48,16 @@ export function createMainHandoff(host,onProgress){
     if(img && !img.complete){try{await img.decode();}catch{/* The native poster still exposes its text and download. */}}
     if(id!==sequence)return;
     const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-    // Designer's return from the enlarged detail is 2.9s; its zoom-in is 3.6s.
-    const duration=reduced?180:Math.max(300,(forward?2900:3600)*Math.abs(to-from));
+    const duration=(reduced?240:4450)*Math.abs(to-from);
     const start=performance.now();
     function tick(now){
       if(id!==sequence)return;
-      const t=clamp((now-start)/duration),p=from+(to-from)*smooth(t);
+      const elapsed=now-start;
+      const t=duration?clamp(elapsed/duration):1;
+      const p=clamp(from+(to-from)*smooth(t));
       const y=gridTop()+range()*p;
-      window.scrollTo({top:y,behavior:'instant'});onProgress(p);
-      if(t<1){frame=requestAnimationFrame(tick);return;}
+      window.scrollTo({top:y,behavior:'instant'});setPose(p);
+      if(elapsed<duration){frame=requestAnimationFrame(tick);return;}
       state.moving=false;state.inputUntil=performance.now()+300;
       driver?.scrollTo(y,{immediate:true,force:true});driver?.start();
     }

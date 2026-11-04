@@ -67,7 +67,6 @@
     const stage = document.getElementById("heroStage");
     const wordFlight = stage?.hasAttribute("data-word-flight");
     const canvas = document.getElementById("heroCanvas");
-    const rearGrid = document.getElementById("heroGrid");
     const bgCanvas = document.getElementById("heroBg");
     const posterButton = document.getElementById("heroPoster");
     const posterCanvas = document.getElementById("heroPosterCanvas");
@@ -79,6 +78,11 @@
 
     const ctx = canvas.getContext("2d");
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+    // The flight and the resting portrait sample the same animation frame, even in reverse.
+    const swimEpoch = document.timeline.currentTime ?? performance.now();
+    const swimTime = () => ((document.timeline.currentTime ?? performance.now()) - swimEpoch) * .001;
+    const swimX = (swim, t) => Math.sin(swim[0] + t * swim[1]);
+    const swimY = (swim, t) => .70 * Math.cos(swim[0] * 1.37 + t * swim[1] * .81);
     const posters = window.MAIN_POSTERS || [
         { theme: "light", image: "", pdf: "", background: "#fff" },
         { theme: "dark", image: "", pdf: "", background: "#000" }
@@ -158,6 +162,8 @@
     let W = 1, H = 1, DPR = 1;
     let stageLeft = 0, stageTop = 0, headerHeight = 70;
     let iconSets = { light: [], dark: [] };
+    const flightPrints = {};
+    const landingBackdrops = {};
     let sideIconSets = { light: [], dark: [] }, sideFields = { light: [], dark: [] };
     // 개별 방출과 부유를 같은 경로로 그립니다. 페이드아웃·동작 줄이기에서는 그린 캔버스를 재사용합니다.
     const sideLayers = [-1, 1].map(side => {
@@ -264,7 +270,8 @@
                 const gatherEnd = lerp(SETTINGS.iconGatherFirstEnd, 1, gatherOrder);
                 const gatherDuration = gatherEnd - gatherStart;
                 return {
-                    gx, gy, gw, gh, ax, ay, depth,
+                    gx, gy, gw, gh, ax, ay, depth, sourceIndex: index,
+                    scatterScale: 1 + depth * SETTINGS.iconForegroundScale,
                     designId: identities?.designs[design] || null,
                     designAngle: (identity & 3) * Math.PI / 2,
                     designPeriod: (identities?.symmetryTurns[design] || 4) * Math.PI / 2,
@@ -286,6 +293,19 @@
         };
         iconSets = { light: make(SETS.light, "light"), dark: make(SETS.dark, "dark") };
         for (const [theme, icons] of Object.entries(iconSets)) {
+            if (wordFlight) {
+                flightPrints[theme] = new Array(icons.length);
+                for (const ic of icons) {
+                    // Original SVG units: keep the strokes readable; loose flecks can roam further.
+                    ic.swim = [ic.phase, .38 + ic.speed * .72, 2.6 + 2 * ic.depth + ic.idleDrift * .72];
+                    flightPrints[theme][ic.sourceIndex] = {
+                        swim: ic.swim,
+                        scatter: [ic.sx, ic.sy, ic.scatterScale, SETTINGS.iconBlurMax * ic.blurStrength],
+                        span: [ic.gatherStart, ic.gatherDuration]
+                    };
+                }
+                landingBackdrops[theme] = buildLandingBackdrops(icons);
+            }
             const pool = icons.filter(ic => Math.max(ic.gw, ic.gh) >= 8 && Math.max(ic.gw, ic.gh) <= 24);
             const set = SETS[theme];
             // 실제 글자 획의 아이콘을 출발점으로 삼고, 목적지와 비슷한 높이에서 퍼지게 합니다.
@@ -312,6 +332,38 @@
         measureIcons();
     }
 
+    // Tiny original prints in and around the ㄹ detail span the gap between
+    // the rear lattice and the word, including on narrow screens.
+    const detailPrints = [[.43,.325],[.51,.338],[.555,.36],[.415,.391],[.55,.41],[.47,.427],[.596,.387],[.395,.353]];
+    // Work in original SVG coordinates so resizing never reshuffles a pocket of ink.
+    function buildLandingBackdrops(icons) {
+        const sizeOf = icon => Math.max(icon.gw, icon.gh);
+        const small = icons.filter(icon => icon.whole && sizeOf(icon) >= 8 && sizeOf(icon) <= 16);
+        const marks = [], footprints = [];
+        if (!small.length) return marks;
+        // Icons are sorted by size. Several atlas tiles can belong to one large SVG mark.
+        for (let i = icons.length - 1; i >= 0; i--) {
+            const icon = icons[i], size = sizeOf(icon);
+            if (size < 30) break;
+            const x = icon.gx + icon.gw / 2, y = icon.gy + icon.gh / 2;
+            if (footprints.some(p => Math.hypot(p.x - x, p.y - y) < .30 * (size + p.size))) continue;
+            footprints.push({x, y, size});
+            const count = Math.round(size / 7.5);
+            for (let j = 0; j < count; j++) {
+                const seed = icon.sourceIndex * 73 + j * 137;
+                const sprite = small[seed % small.length];
+                const angle = icon.sourceIndex * 1.73 + j * 2.40;
+                const radius = .40 * Math.sqrt((j + .35) / count);
+                const side = size * (.22 + .06 * Math.sin(seed));
+                const scale = side / sizeOf(sprite);
+                marks.push({sprite, ownerIndex: icon.sourceIndex, x: x + Math.cos(angle) * icon.gw * radius,
+                    y: y + Math.sin(angle) * icon.gh * radius, w: sprite.gw * scale, h: sprite.gh * scale,
+                    opacity: .49 + .08 * Math.cos(seed), blurRatio: .20,
+                    swim: [angle % (Math.PI * 2), sprite.swim[1], size * .045]});
+            }
+        }
+        return marks;
+    }
     function measureSideIcons() {
         const innerLeft = bigFrame.x + bigFrame.w * .24;
         const innerRight = bigFrame.x + bigFrame.w * .76;
@@ -325,6 +377,13 @@
         for (const [theme, pool] of Object.entries(sideIconSets)) {
             const used = { '-1': 0, '1': 0 };
             sideFields[theme] = [];
+            for (const mark of landingBackdrops[theme] || []) {
+                const k = bigFrame.h / SETS[theme].h;
+                const x = bigFrame.x + mark.x * k, y = bigFrame.y + mark.y * k;
+                sideFields[theme].push({...mark, side: mark.x < SETS[theme].w / 2 ? -1 : 1,
+                    x, y, originX: x, originY: y, w: mark.w * k, h: mark.h * k, arc: 0,
+                    floatRadius: mark.swim[2] * k});
+            }
             for (const item of pool) {
                 if (used[item.side]++ >= counts[item.side]) continue;
                 const vertical = item.v * 2 - 1;
@@ -339,6 +398,10 @@
                 item.originY = item.source.ty + item.source.sh / 2;
                 item.arc = item.bend * Math.min(36, bigFrame.h * .045);
                 item.floatRadius = item.floatStrength * SETTINGS.iconSideIdleDistance * bigFrame.h / SPRITES.h;
+                if (wordFlight) {
+                    item.swim = [item.floatPhase, item.floatSpeed, SETTINGS.iconSideIdleDistance * item.floatStrength * .72];
+                    item.floatRadius = item.swim[2] * bigFrame.h / SETS[theme].h;
+                }
                 const size = clamp(item.size * bigFrame.h / SPRITES.h * lerp(1, .55, travel), 1.25, 10);
                 const ratio = size / Math.max(item.sprite.gw, item.sprite.gh);
                 item.w = item.sprite.gw * ratio;
@@ -349,10 +412,21 @@
                 item.opacity = item.alpha * verticalFade * outerFade;
                 if (item.opacity > .01) sideFields[theme].push(item);
             }
+            if (wordFlight) {
+                const tiny = iconSets[theme].filter(ic => Math.max(ic.gw, ic.gh) <= 7);
+                if (tiny.length) detailPrints.forEach(([u,v], i) => {
+                    const sprite = tiny[(i * 73 + 19) % tiny.length], k = bigFrame.h / SETS[theme].h;
+                    const x = bigFrame.x + u * bigFrame.w, y = bigFrame.y + v * bigFrame.h;
+                    sideFields[theme].push({sprite, detail: true, side: u < .5 ? -1 : 1, x, y, originX: x, originY: y,
+                        w: sprite.gw * k, h: sprite.gh * k, opacity: .85, arc: 0,
+                        swim: sprite.swim, floatRadius: sprite.swim[2] * k});
+                });
+            }
         }
         sideCacheKey = "";
         // 이미지가 준비된 로드·리사이즈 시점에도 현재 진행도와 부유 위치를 유지합니다.
         paintSideCache();
+        if (wordFlight) window.dispatchEvent(new Event("main-word-layout"));
     }
 
     function disableSideBatch() {
@@ -412,10 +486,11 @@
             }
             let left = W, top = H, right = 0, bottom = 0;
             for (const item of items) {
-                left = Math.min(left, Math.min(item.x, item.originX) - item.floatRadius - item.w / 2);
-                top = Math.min(top, Math.min(item.y, item.originY) - Math.abs(item.arc) - item.floatRadius - item.h / 2);
-                right = Math.max(right, Math.max(item.x, item.originX) + item.floatRadius + item.w / 2);
-                bottom = Math.max(bottom, Math.max(item.y, item.originY) + Math.abs(item.arc) + item.floatRadius + item.h / 2);
+                const reach = item.floatRadius + (item.blurRatio || 0) * Math.min(item.w, item.h) * 3;
+                left = Math.min(left, Math.min(item.x, item.originX) - reach - item.w / 2);
+                top = Math.min(top, Math.min(item.y, item.originY) - Math.abs(item.arc) - reach - item.h / 2);
+                right = Math.max(right, Math.max(item.x, item.originX) + reach + item.w / 2);
+                bottom = Math.max(bottom, Math.max(item.y, item.originY) + Math.abs(item.arc) + reach + item.h / 2);
             }
             left = Math.floor(left) - 1; top = Math.floor(top) - 1;
             const width = Math.ceil(right) - left + 1, height = Math.ceil(bottom) - top + 1;
@@ -436,25 +511,31 @@
         if (batch) batch.clear();
         else context.clearRect(0, 0, layer.width, layer.height);
         for (const item of layer.items) {
-            const p = clamp((elapsed - item.launch) / item.duration);
+            const p = wordFlight ? 1 : clamp((elapsed - item.launch) / item.duration);
             if (p <= 0) continue;
             // 출발·도착 시점을 각자 다르게 두고, 천천히 가속한 뒤 길게 감속합니다.
             const travel = reduced ? 1 : easeGather(p);
             const scale = reduced ? 1 : lerp(.35, 1, travel);
             // 방출 경로에 부유를 처음부터 섞어 도착 후 별도의 이동으로 전환되지 않게 합니다.
-            const phase = sideFloatTime * item.floatSpeed + item.floatPhase;
+            const phase = wordFlight ? 0 : sideFloatTime * item.floatSpeed + item.floatPhase;
             const floatRadius = reduced ? 0 : item.floatRadius * travel;
-            const x = lerp(item.originX, item.x, travel) + Math.sin(phase) * floatRadius;
+            const x = lerp(item.originX, item.x, travel) +
+                (wordFlight ? swimX(item.swim, sideFloatTime) : Math.sin(phase)) * floatRadius;
             const y = lerp(item.originY, item.y, travel) + item.arc * 4 * travel * (1 - travel) +
-                Math.cos(phase * .81 + item.floatPhase) * floatRadius;
+                (wordFlight ? swimY(item.swim, sideFloatTime) : Math.cos(phase * .81 + item.floatPhase)) * floatRadius;
             const w = item.w * scale, h = item.h * scale;
             const ic = item.sprite;
             // 투명도 변화는 출발점의 짧은 구간에만 사용하고, 등장은 이동으로 보여 줍니다.
             const alpha = item.opacity * easeOut(clamp(p / (reduced ? 1 : .14)));
-            if (batch) batch.add(ic, x - w / 2, y - h / 2, w, h, 0, alpha);
+            const blur = (item.blurRatio || 0) * Math.min(w, h);
+            if (batch) batch.add(ic, x - w / 2, y - h / 2, w, h, 0, alpha, blur);
             else {
                 context.globalAlpha = alpha;
-                context.drawImage(atlas, ic.ax, ic.ay, ic.gw, ic.gh,
+                if (blur) {
+                    const tile = prepareFallbackIcon(atlas, ic, w, h, blur);
+                    context.drawImage(tile.source, 0, 0, tile.width, tile.height,
+                        x - w / 2 - layer.left - tile.pad, y - h / 2 - layer.top - tile.pad, tile.width / DPR, tile.height / DPR);
+                } else context.drawImage(atlas, ic.ax, ic.ay, ic.gw, ic.gh,
                     x - w / 2 - layer.left, y - h / 2 - layer.top, w, h);
             }
         }
@@ -472,7 +553,8 @@
         const visible = progress > 0 && opacity > .001 && ready(atlasNow()) && sideFields[themeOf()]?.length;
         const floating = visible && step !== 0 && !reducedMotion.matches;
         // 숨겨진 탭·포스터 단계에서 시간이 지나도 복귀 시 위치가 갑자기 바뀌지 않습니다.
-        if (floating && sideLastTime !== null) sideFloatTime += clamp((time - sideLastTime) / 1000, 0, .05);
+        if (wordFlight) sideFloatTime = swimTime();
+        else if (floating && sideLastTime !== null) sideFloatTime += clamp((time - sideLastTime) / 1000, 0, .05);
         sideLastTime = floating ? time : null;
         if (sideBatchCanvas && !visible) sideBatchCanvas.style.opacity = "0";
         if (visible) {
@@ -521,9 +603,8 @@
                 ic.entryFlight = null;
                 ic.sw = ic.gw * k;
                 ic.sh = ic.gh * k;
-                const foreground = 1 + ic.depth * SETTINGS.iconForegroundScale;
-                ic.scatterW = ic.sw * foreground;
-                ic.scatterH = ic.sh * foreground;
+                ic.scatterW = ic.sw * ic.scatterScale;
+                ic.scatterH = ic.sh * ic.scatterScale;
                 ic.left = ic.sx * W - ic.scatterW / 2;
                 ic.top = ic.sy * H - ic.scatterH / 2;
                 const outward = ic.gatherOutward * SETTINGS.iconGatherOutwardScale;
@@ -1377,9 +1458,9 @@
         }
         const motion = reducedMotion.matches ? 0 : 1;
         const move = easeInOut(clamp(V.move));
-        if (rearGrid) rearGrid.style.opacity = String(1 - move);
         // 결합 직후에는 서서히 움직이고, 축소가 시작되면 현재 흔들림을 멈춰 원래 자리로 돌아갑니다.
-        const idleAmount = easeInOut(clamp(assembledTime / SETTINGS.iconIdleIntro)) * (1 - easeOut(clamp(V.move))) * motion;
+        const idleAmount = (wordFlight ? 1 : easeInOut(clamp(assembledTime / SETTINGS.iconIdleIntro))) * (1 - easeOut(clamp(V.move))) * motion;
+        const clock = wordFlight ? swimTime() : assembledTime;
         const frame = {
             x: lerp(bigFrame.x, smallFrame.x, move),
             y: lerp(bigFrame.y, smallFrame.y, move),
@@ -1445,7 +1526,7 @@
             const tx = frame.x + (gcx + (ic.gx - gcx) * fs + fx0) * kf;
             const ty = frame.y + (gcy + (ic.gy - gcy) * fsy + fy0) * kf;
             const ang = ic.angle * wob;
-            const drift = ic.idleDrift * kf * a * idleAmount;
+            const drift = (wordFlight ? ic.swim[2] : ic.idleDrift) * kf * a * idleAmount;
             const margin = (Math.abs(ang) > .002 ? Math.max(w, h) : 0) + blur * 3;
             let x = tx, y = ty;
             if (!settled) {
@@ -1469,8 +1550,8 @@
                 }
             }
             if (drift) {
-                x += Math.sin(assembledTime * ic.speed + ic.phase) * drift;
-                y += Math.cos(assembledTime * ic.speed * .81 + ic.phase) * drift;
+                x += (wordFlight ? swimX(ic.swim, clock) : Math.sin(clock * ic.speed + ic.phase)) * drift;
+                y += (wordFlight ? swimY(ic.swim, clock) : Math.cos(clock * ic.speed * .81 + ic.phase)) * drift;
             }
             if (x + w + margin < 0 || y + h + margin < 0 || x - margin > W || y - margin > H) continue;
             if (batch) {
@@ -1700,8 +1781,7 @@
                     step=1;busy=false;pendingIntent=0;
                     stage.dataset.step="1";stage.dataset.motion="idle";
                     assembledTime=0;stopAuto();
-                    setNow({fly:1,sideSpread:0,sideOpacity:1,graphic:0,dissolve:0,move:0,reveal:0,text:0,ambient:0});
-                    tween("sideSpread",1,SETTINGS.iconSideSpreadStagger+SETTINGS.iconSideTravelMax,{ease:t=>t});
+                    setNow({fly:1,sideSpread:1,sideOpacity:1,graphic:0,dissolve:0,move:0,reveal:0,text:0,ambient:0});
                 }
                 lockPage();
             }
@@ -1714,8 +1794,11 @@
     if (wordFlight) window.MainWordSurface = {
         get theme() { return themeOf(); },
         get frame() { return {...bigFrame}; },
-        getSource(theme) { return {set:SETS[theme], image:atlases[theme]}; },
-        inspect:()=>({step,busy,locked})
+        get time() { return swimTime(); },
+        get motionEnabled() { return !reducedMotion.matches; },
+        getSource(theme) { return {set:SETS[theme], image:atlases[theme], prints:flightPrints[theme]}; },
+        getSurroundings(theme) { return sideFields[theme]; },
+        inspect:()=>({step,busy,locked,sideSpread:V.sideSpread})
     };
     else window.MainHeroIntro = {
         attach(items, width, height, motion = entryMotion) {
