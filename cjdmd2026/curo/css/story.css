@@ -1,0 +1,208 @@
+/* ==========================================================================
+   STORY 페이지 (68차) — story.html 전용. main.css + float.css + topnav.css 위에 얹음.
+   시안 기준 1920 폭: 콘텐츠 폭 1360 (왼쪽 280), 영상 보기는 오른쪽 '다음 이야기'까지 1440.
+   화면 전환: html.st-watch 이면 영상 보기, 아니면 목록 (js/episodes.js)
+   ========================================================================== */
+@font-face { font-family: 'BM JUA'; src: url('../assets/fonts/bm-jua.woff') format('woff'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Pretendard'; src: url('../assets/fonts/pretendard-medium.woff') format('woff'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Pretendard'; src: url('../assets/fonts/pretendard-semibold.woff') format('woff'); font-weight: 600; font-style: normal; font-display: swap; }
+
+.st-page {
+  --st-mint: #1EB2A6;
+  --st-dark: #2B2B2B;
+  --st-gutter: max(32px, calc(100px * var(--kfu, 1) + 24px));
+  --st-w: var(--page-w, min(1360px, calc(100vw - 2 * var(--st-gutter))));   /* 70차: 메뉴 라인 (topnav.css --page-w) */
+  scroll-behavior: auto;
+}
+html.st-page, .st-page body { height: auto; background: #FFFFFF; }
+.st-page body { font-family: 'Pretendard', sans-serif; font-synthesis: none; color: var(--st-dark); }
+.st :where(h1, h2, h3, p, ul) { margin: 0; padding: 0; }
+.st a { color: inherit; text-decoration: none; }
+.st-in { width: var(--st-w); margin: 0 auto; }
+
+/* 두 화면 전환 */
+.st-watch-view { display: none; }
+html.st-watch .st-list-view { display: none; }
+html.st-watch .st-watch-view { display: block; }
+
+/* =========================== 1. 목록 =========================== */
+/* 히어로: 배경 그림 전체 폭 (1920 에서 높이 537), 왼쪽만 갈색으로 덮어 글 가독성 */
+/* --hu: 히어로 높이 비율 단위 (1920 에서 1px, 높이 340 하한에서 0.633px) → 글·버튼이 히어로와 함께 줄어듦 */
+.st-hero {
+  --hu: clamp(0.633px, calc(27.97vw / 537), 1px);
+  position: relative; margin-top: var(--nav-h, 0px);
+  height: clamp(340px, 27.97vw, 537px); overflow: hidden; background: #7A5A42;
+  display: flex; align-items: center;
+}
+.st-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 50%; }
+.st-hero::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(90deg, rgba(121, 89, 65, 0.86) 0%, rgba(121, 89, 65, 0.74) 26%, rgba(121, 89, 65, 0.42) 40%, rgba(121, 89, 65, 0) 54%);
+}
+.st-hero-in { position: relative; z-index: 1; color: #FFFFFF; transform: translateY(calc(-22 * var(--hu))); }
+.st-title { font-family: 'BM JUA', sans-serif; font-weight: 400; font-size: calc(57.5 * var(--hu)); line-height: 1.15; color: #FFFFFF; }
+.st-sub { margin-top: calc(22 * var(--hu)) !important; font-size: max(15px, calc(21 * var(--hu))); line-height: 1.4; font-weight: 500; color: #FFFFFF; }
+.st-cta {
+  margin-top: calc(84 * var(--hu)); display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  width: calc(272 * var(--hu)); height: calc(64 * var(--hu)); border-radius: calc(32 * var(--hu)); background: #FFFFFF; color: var(--st-dark) !important;
+  font-size: max(14px, calc(18 * var(--hu))); font-weight: 600; transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.st-cta svg { width: calc(20 * var(--hu)); height: calc(20 * var(--hu)); }
+.st-cta:hover { box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16); transform: translateY(-1px); }
+
+/* 카드 3칸 (430 × 240 썸네일, 칸 사이 36, 줄 사이 58) */
+.st-eps { padding: 151px 0 156px; }
+.st-grid { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 36px; row-gap: 58px; }
+.st-card > a, .st-card > div { display: block; }
+.st-thumb { position: relative; display: block; aspect-ratio: 430 / 240; border-radius: 14px; overflow: hidden; background: #D9D9D9; }
+.st-thumb > img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+.st-thumb-ic { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.st-thumb-ic img { width: 64px; height: 64px; }   /* 293차: 92 → 64 */
+/* 열린 화: 살짝 어둡게 + 재생 아이콘, hover 시 그림 확대 */
+.st-card.is-open .st-thumb-ic { transition: background-color 0.25s ease; }   /* 69차: 썸네일 원본 그대로 (덮개 없음) */
+.st-card.is-open .st-thumb-ic img { transition: transform 0.25s ease; filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.25)); }
+.st-card.is-open a:hover .st-thumb > img { transform: scale(1.04); }
+.st-card.is-open a:hover .st-thumb-ic { background: rgba(0, 0, 0, 0.1); }
+.st-card.is-open a:hover .st-thumb-ic img { transform: scale(1.08); }
+.st-card.is-open a:focus-visible { outline: 3px solid var(--st-mint); outline-offset: 4px; border-radius: 14px; }
+/* 잠긴 화: 회색으로 덮고 자물쇠, 클릭·hover 반응 없음 */
+.st-card.is-locked { cursor: default; pointer-events: none; }
+.st-card.is-locked .st-thumb-ic { background: rgba(0, 0, 0, 0.2); }   /* 69차: 원본 위에 #000 20% 만 */
+.st-card.is-locked .st-thumb-ic img { width: 72px; height: 72px; }   /* 293차: 110 → 72 */
+.st-ct { margin-top: 33px !important; font-size: clamp(18px, 1.25vw, 24px); line-height: 1.25; font-weight: 600; color: var(--st-dark); }
+.st-cd { margin-top: 10px !important; padding-left: 5px; font-size: clamp(15px, 1.042vw, 20px); line-height: 1.65; color: #999999; word-break: keep-all; }   /* 73차: 단어 중간에서 줄 안 바뀌게 */
+
+/* =========================== 2. 영상 보기 =========================== */
+/* 왼쪽 끝 = 목록과 같은 선, 폭 = 목록 폭 × 1440/1360 (영상 1016 | 42 | 다음 이야기 382) */
+.sw { --sw-x: calc((100% - var(--st-w)) / 2); width: min(calc(var(--st-w) * 1440 / 1360), calc(100% - (100% - var(--st-w)) / 2 - 24px)); margin-left: calc((100% - var(--st-w)) / 2); padding: calc(var(--nav-h, 0px) + 128px) 0 120px; box-sizing: content-box; }
+.sw-title { font-family: 'BM JUA', sans-serif; font-weight: 400; font-size: 34px; line-height: 1.15; color: var(--st-dark); }
+.sw-body { margin-top: 27px; display: grid; grid-template-columns: minmax(0, 1016fr) minmax(0, 382fr); column-gap: 2.917%; align-items: stretch; }
+.sw-video { grid-column: 1; grid-row: 1; position: relative; aspect-ratio: 1016 / 571; border-radius: 12px; overflow: hidden; background: #D9D9D9; }
+.sw-video > video, .sw-video > .sw-ph { display: block; width: 100%; height: 100%; object-fit: cover; }
+.sw-desc { grid-column: 1; grid-row: 2; margin-top: 26px !important; padding-left: 5px; font-size: 20px; line-height: 33px; font-weight: 400; color: var(--st-dark); }
+
+/* 다음 이야기: 높이 = 영상 높이 (목록만 안에서 스크롤) */
+.sw-side { grid-column: 2; grid-row: 1; position: relative; min-height: 0; }
+.sw-side-in { position: absolute; inset: 0; display: flex; flex-direction: column; }
+.sw-side-head { flex: none; height: 50px; display: flex; align-items: center; justify-content: space-between; }
+.sw-side-head h2 { font-size: 21px; line-height: 26px; font-weight: 600; }
+.sw-auto { display: inline-flex; align-items: center; gap: 17px; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--st-dark); user-select: none; }
+.sw-auto input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.sw-auto i { position: relative; width: 53px; height: 28px; box-sizing: border-box; border: 1px solid #D9D9D9; border-radius: 14px; background: #FFFFFF; transition: background-color 0.2s ease, border-color 0.2s ease; }
+.sw-auto i::after { content: ''; position: absolute; left: 2px; top: 2px; width: 22px; height: 22px; border-radius: 50%; background: #D9D9D9; transition: transform 0.2s ease, background-color 0.2s ease; }
+.sw-auto input:checked + i { background: var(--st-mint); border-color: var(--st-mint); }
+.sw-auto input:checked + i::after { transform: translateX(25px); background: #FFFFFF; }
+.sw-auto input:focus-visible + i { outline: 2px solid var(--st-mint); outline-offset: 2px; }
+
+/* 192차: 스크롤바가 목록 오른쪽에 붙어 연속재생 스위치와 오른쪽 끝이 어긋나 보이던 것 → 스크롤바 숨김 + 아래쪽만 살짝 흐리게 (더 있다는 표시) */
+.sw-list {
+  flex: 1; min-height: 0; overflow-y: auto; list-style: none; padding: 0 0 28px !important;
+  display: flex; flex-direction: column; gap: 27px;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 56px), transparent); mask-image: linear-gradient(180deg, #000 calc(100% - 56px), transparent);
+}
+.sw-list::-webkit-scrollbar { display: none; }
+.sw-item > a, .sw-item.is-locked { display: flex; align-items: center; gap: clamp(12px, 1.1vw, 21px); }
+.sw-thumb { position: relative; flex: none; width: 43%; max-width: 153px; aspect-ratio: 153 / 86; border-radius: 10px; overflow: hidden; background: #D9D9D9; }
+.sw-thumb > img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.sw-it { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.sw-itt { font-size: clamp(13px, 0.834vw, 16px); line-height: 1.4; word-break: keep-all; font-weight: 500; color: var(--st-dark); }
+.sw-now { font-size: 13px; line-height: 18px; font-weight: 500; color: #999999; }
+.sw-item.is-now .sw-itt { font-weight: 600; }
+.sw-item > a:hover .sw-itt { text-decoration: underline; text-underline-offset: 3px; }
+.sw-item > a:focus-visible { outline: 2px solid var(--st-mint); outline-offset: 3px; border-radius: 10px; }
+/* 잠긴 화: 반응 없음 */
+.sw-item.is-locked { pointer-events: none; cursor: default; }
+.sw-lock { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.2); }
+.sw-lock img { width: 40px; height: 40px; }
+.sw-item.is-locked .sw-itt { color: #999999; }
+
+/* ---------- 70차: 피그마를 그대로 비율 축소 (--u = 1920 기준 1px, topnav.css) ---------- */
+.st-eps { padding: calc(151 * var(--u)) 0 calc(156 * var(--u)); }
+.st-grid { column-gap: calc(36 * var(--u)); row-gap: calc(58 * var(--u)); }
+.st-thumb { border-radius: calc(14 * var(--u)); }
+.st-thumb-ic img { width: calc(64 * var(--u)); height: calc(64 * var(--u)); }
+.st-card.is-locked .st-thumb-ic img { width: calc(72 * var(--u)); height: calc(72 * var(--u)); }
+.st-ct { margin-top: calc(26 * var(--u)) !important; font-size: max(14px, calc(18 * var(--u))); line-height: 1.3; }   /* 83차: 24 → 20 */
+.st-cd { margin-top: calc(8 * var(--u)) !important; padding-left: calc(3 * var(--u)); font-size: max(12px, calc(16 * var(--u))); line-height: 1.65; }   /* 83차: 20 → 16 */
+/* 영상 보기: 왼쪽·오른쪽 끝 모두 메뉴 라인 (피그마 1440 → 1360 안에 같은 비율 959 | 40 | 361) */
+.sw { width: var(--st-w); margin-left: auto; margin-right: auto; padding: calc(var(--nav-h, 0px) + 64 * var(--u)) 0 calc(64 * var(--u)); }   /* 76차: 위 128 → 64, 아래 120 → 64 */
+.sw-title { font-size: max(20px, calc(28 * var(--u))); }   /* 83차: 34 → 28 */
+.sw-body { margin-top: calc(27 * var(--u)); }
+.sw-video { border-radius: calc(12 * var(--u)); }
+.sw-desc { margin-top: calc(22 * var(--u)) !important; padding-left: calc(5 * var(--u)); font-size: max(12px, calc(16 * var(--u))); line-height: 1.65; }   /* 76차: 줄거리 20 → 17, 83차: → 16 */
+.sw-side-head { height: auto; padding-bottom: calc(18 * var(--u)); }
+.sw-side-head h2 { font-size: max(14px, calc(18 * var(--u))); line-height: 1.25; }
+.sw-auto { gap: calc(14 * var(--u)); font-size: max(11px, calc(13 * var(--u))); }
+.sw-list { gap: calc(27 * var(--u)); padding-right: calc(18 * var(--u)) !important; }
+.sw-item > a, .sw-item.is-locked { gap: calc(21 * var(--u)); }
+.sw-thumb { width: 40%; max-width: none; border-radius: calc(10 * var(--u)); }
+.sw-itt { font-size: max(12px, calc(14 * var(--u))); }
+
+/* ---------- 좁은 화면 (모바일 상세는 나중) ---------- */
+@media (max-width: 1100px) {
+  .st-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sw { width: var(--st-w); }
+  .sw-body { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
+  .sw-side { grid-column: 1; grid-row: 3; margin-top: 48px; }
+  .sw-side-in { position: static; }
+  .sw-list { max-height: 420px; }
+}
+@media (max-width: 700px) {
+  .st-grid { grid-template-columns: minmax(0, 1fr); }
+  .st-title { font-size: 40px; }
+}
+
+/* ==========================================================================
+   184차: 폰(600px 이하) — 180차 모바일 시안 v4
+   배너 그림·첫화 버튼 없음 → 제목 + 설명만 가운데 / 1화 크게 + 나머지 2열
+   ========================================================================== */
+@media (max-width: 600px) {
+  .st-in { width: auto; padding: 0 20px; box-sizing: border-box; }
+  .st-hero { height: auto; margin-top: var(--nav-h, 56px); padding: 48px 20px 6px; background: none; display: block; text-align: center; }
+  .st-hero::after, .st-hero-img, .st-cta { display: none; }
+  .st-hero-in { width: auto; padding: 0; transform: none; color: #2B2B2B; }
+  .st-title { font-size: 34px; line-height: 1.2; color: #2B2B2B; }
+  .st-sub { margin-top: 10px !important; font-size: 14.5px; line-height: 1.6; color: #8A8A8A; }
+  .st-sub br { display: inline; }
+  .st-eps { padding: 36px 20px 56px; }
+  .st-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; row-gap: 26px; }
+  .st-grid > li:first-child { grid-column: 1 / -1; }
+  .st-thumb { border-radius: 12px; }
+  .st-thumb-ic img, .st-card.is-locked .st-thumb-ic img { width: 34px; height: 34px; }
+  .st-grid > li:first-child .st-thumb-ic img { width: 52px; height: 52px; }
+  .st-ct { margin-top: 9px !important; font-size: 13.5px; line-height: 1.35; }
+  .st-cd { margin-top: 3px !important; font-size: 11.5px; line-height: 1.5; color: #9A9A9A; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .st-grid > li:first-child .st-ct { margin-top: 11px !important; font-size: 16px; }
+  .st-grid > li:first-child .st-cd { font-size: 13px; }
+}
+
+/* 189차: 폰 영상 보기 (시안 v5) — 영상 꽉 차게 → 제목 → 줄거리(접힘, 버튼으로 펼침) → 다음 이야기 */
+@media (max-width: 600px) {
+  .sw { width: auto; margin: 0; padding: var(--nav-h, 56px) 0 48px; box-sizing: border-box; display: flex; flex-direction: column; }
+  .sw-body { display: contents; }
+  .sw-video { order: 1; width: 100%; aspect-ratio: 16 / 9; border-radius: 0; }
+  .sw-title { order: 2; padding: 18px 20px 0; font-size: 21px; line-height: 1.3; }
+  .sw-more { order: 3; align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; margin: 10px 20px 0; padding: 0; border: 0; background: none; font: inherit; font-size: 13px; font-weight: 600; color: #8A8A8A; cursor: pointer; }
+  .sw-more svg { width: 14px; height: 14px; transition: transform 0.25s ease; }
+  .sw.is-desc-open .sw-more svg { transform: rotate(180deg); }
+  .sw-desc { order: 4; display: grid; grid-template-rows: 0fr; margin: 0 !important; padding: 0 20px 20px; font-size: 13.5px; line-height: 1.7; color: #6B6B6B; word-break: keep-all; border-bottom: 8px solid #F4F4F4; transition: grid-template-rows 0.3s ease, padding 0.3s ease; }
+  .sw-desc > span { overflow: hidden; }
+  .sw.is-desc-open .sw-desc { grid-template-rows: 1fr; padding-top: 8px; padding-bottom: 22px; }
+  .sw-side { order: 5; position: static; margin-top: 0; padding: 22px 20px 0; }
+  .sw-side-in { position: static; display: block; }
+  .sw-side-head { height: auto; align-items: center; margin-bottom: 14px; }
+  .sw-side-head h2 { font-size: 17px; line-height: 24px; }
+  .sw-auto { gap: 8px; font-size: 12.5px; color: #8A8A8A; }
+  .sw-auto i { width: 40px; height: 22px; border-radius: 11px; }
+  .sw-auto i::after { width: 16px; height: 16px; }
+  .sw-auto input:checked + i::after { transform: translateX(18px); }
+  .sw-list { max-height: none !important; height: auto !important; overflow: visible !important; padding: 0 !important; display: flex; flex-direction: column; gap: 14px; }
+  .sw-item > a, .sw-item.is-locked { gap: 12px; }
+  .sw-thumb { width: 132px; max-width: none; border-radius: 8px; }
+  .sw-lock img { width: 26px; height: 26px; }
+  .sw-itt { font-size: 14px; line-height: 1.4; }
+  .sw-now { font-size: 12px; color: var(--st-mint, #1FC8B8); font-weight: 600; }
+  .sw-item.is-now { padding: 8px; margin: -8px; border-radius: 12px; background: #F2FBFA; }
+}
+@media (min-width: 601px) { .sw-more { display: none; } }

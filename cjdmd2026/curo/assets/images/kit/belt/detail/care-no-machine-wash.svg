@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_설명서" data-name="설명서" xmlns="http://www.w3.org/2000/svg" width="93.1" height="93.1" viewBox="0 0 93.1 93.1">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #2b2b2b;
+      }
+
+      .cls-1, .cls-2 {
+        stroke-width: 0px;
+      }
+
+      .cls-2 {
+        fill: #c35b5c;
+      }
+    </style>
+  </defs>
+  <path class="cls-1" d="M93.1,93.1H0V0h93.1v93.1ZM3,90.1h87.1V3H3v87.1Z"/>
+  <path class="cls-1" d="M46.55,93.1C20.88,93.1,0,72.21,0,46.55S20.88,0,46.55,0s46.55,20.88,46.55,46.55-20.88,46.55-46.55,46.55ZM46.55,3C22.54,3,3,22.54,3,46.55s19.54,43.55,43.55,43.55,43.55-19.54,43.55-43.55S70.56,3,46.55,3Z"/>
+  <rect class="cls-2" x="45.05" y="-15.78" width="3" height="124.65" transform="translate(-19.28 46.55) rotate(-45)"/>
+  <rect class="cls-2" x="-15.78" y="45.05" width="124.65" height="3" transform="translate(-19.28 46.55) rotate(-45)"/>
+</svg>

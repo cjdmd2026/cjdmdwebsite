@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko" class="fr-page" data-page="friends">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CURO — FRIENDS</title>
+  <link rel="preload" href="assets/fonts/pretendard-regular.woff" as="font" type="font/woff" crossorigin>
+  <link rel="preload" href="assets/fonts/pretendard-bold.woff" as="font" type="font/woff" crossorigin>
+  <link rel="preload" href="assets/fonts/bm-jua.woff" as="font" type="font/woff" crossorigin>
+  <!-- 공통 토큰·폰트·햄버거 = main.css, floating = float.css, FRIENDS 전용 = friends.css -->
+  <link rel="stylesheet" href="css/main.css?v=287">
+  <link rel="stylesheet" href="css/float.css?v=280">
+  <link rel="stylesheet" href="css/consult.css?v=271">   <!-- 141차: 상담 패널 = 렌탈 상담 신청 흐름 (js/apply.js) -->
+  <link rel="stylesheet" href="css/friends.css?v=263">
+  <link rel="stylesheet" href="css/friends-burst.css?v=230">   <!-- 148차: 친구 등장 효과 -->
+  <link rel="stylesheet" href="css/topnav.css?v=287">
+  <link rel="stylesheet" href="css/footer.css?v=286">
+  <link rel="stylesheet" href="css/tablet.css?v=238">   <!-- 233차: 태블릿 (PROGRAM · 캐릭터 상세 · FRIENDS) -->
+</head>
+<body>
+  <!-- =========================================================
+       FRIENDS (94차) — 두 화면 (js/friends.js)
+       (117차: 소개 화면 없앰 — 들어오면 바로 친구 소개)
+       친구 소개: 캐릭터 고르면 배경·무대 색이 누른 쪽에서부터 번지듯 바뀜, 글·영문 이름은 사라졌다 나타남
+       내용·색 = js/friends.js 의 FRIENDS
+       ========================================================= -->
+  <main class="fr" id="fr">
+    <section class="fr-sec fr-meet" id="fr-meet" aria-label="친구 소개">
+      <div class="fr-layers" id="fr-layers"></div>
+      <div class="fr-frame fr-meet-f">
+        <p class="fr-mark" id="fr-mark" aria-hidden="true"></p>
+        <!-- 146차: 무대 위 캐릭터 = 사용자 영상 (assets/videos/friends/*-idle.webm 반복 · *-hi.webm 한 번). 누르면 인사 → 다시 반복 -->
+        <button class="fr-char" id="fr-char" type="button" aria-label="인사하기">
+          <video class="fr-vid fr-vid-idle" id="fr-idle" muted playsinline loop preload="auto" aria-hidden="true"></video>
+          <video class="fr-vid fr-vid-hi" id="fr-hi" muted playsinline preload="auto" aria-hidden="true"></video>
+          <img class="fr-vid fr-vid-still" id="fr-still" alt="" hidden>
+        </button>
+        <div class="fr-info" id="fr-info" aria-live="polite">
+          <h2 class="fr-name" id="fr-name"></h2>
+          <p class="fr-tag" id="fr-tag"></p>
+          <button class="fr-sound" id="fr-sound" type="button"><i aria-hidden="true"></i><span class="fr-sound-t" id="fr-sound-t">인사하기</span></button>
+          <p class="fr-desc" id="fr-desc"></p>
+          <blockquote class="fr-quote" id="fr-quote"></blockquote>
+          <!-- 174차: 알아보기 버튼 = 글 아래 왼쪽 (사용자 시안) -->
+          <a class="fr-cta" id="fr-cta" href="#"><span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </div>
+        <ul class="fr-pick" id="fr-pick" aria-label="친구 고르기"></ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================
+       floating UI (공통, kit.html 과 같은 마크업) — css/float.css · js/float.js
+       ========================================================= -->
+  <div class="k-float" id="k-float">
+    <!-- 77차: '위로 가기' 대신 '동화 보러가기' (STORY 페이지로 이동). 모양·hover 는 상담 버튼과 같음 -->
+    <a class="k-fab k-story" href="story.html" aria-label="함께 보는 동화 · 동화 보러가기">
+      <span class="k-consult-pill" aria-hidden="true"></span>
+      <span class="k-consult-txt" aria-hidden="true"><small>함께 보는 동화</small><strong>동화 보러가기</strong></span>
+      <span class="k-consult-ic" aria-hidden="true"><img data-icon="book" alt=""></span>
+    </a>
+    <button class="k-fab k-consult" type="button" aria-label="1:1 무료 상담 · 학습 상담 예약" aria-expanded="false" aria-controls="k-chat">
+      <span class="k-consult-pill" aria-hidden="true"></span>
+      <span class="k-consult-txt" aria-hidden="true"><small>1:1 무료 상담</small><strong>학습 상담 예약</strong></span>
+      <span class="k-consult-ic" aria-hidden="true"><img data-icon="consult" alt=""></span>
+    </button>
+  </div>
+
+  <section class="k-chat" id="k-chat" role="dialog" aria-modal="false" aria-labelledby="k-chat-title" aria-hidden="true">
+    <header class="k-chat-head">
+      <span class="k-chat-head-ic" aria-hidden="true"><img data-icon="consult" alt=""></span>
+      <div class="k-chat-head-t">
+        <h2 id="k-chat-title">학습 상담 예약</h2>
+        <p>우리 아이에게 맞는 제품을 추천드려요</p>
+      </div>
+      <!-- 닫기 X: export 된 아이콘이 없어 임시 inline SVG (파일이 생기면 <img data-icon="close"> 로 교체) -->
+      <button class="k-chat-close" type="button" aria-label="상담 창 닫기">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M21 3L3 21" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </header>
+    <div class="k-chat-body">
+      <div class="k-chat-msg">
+        <span class="k-chat-avatar" aria-hidden="true"><img data-icon="consult" alt=""></span>
+        <p class="k-chat-bubble">안녕하세요! CURO 렌탈을 도와드릴게요.<br>몇 가지만 선택하면 상담 신청이 완료돼요 :)</p>
+      </div>
+      <!-- 질문 · 선택 카드 단계 (내용 확정 후 구현) -->
+      <div class="k-chat-steps" id="k-chat-steps"></div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       MENU (Index 와 같은 마크업 · main.js 가 처리)
+       ========================================================= -->
+  <button class="hamburger" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="menu-panel">
+    <span class="hamburger__line"></span>
+    <span class="hamburger__line"></span>
+    <span class="hamburger__line"></span>
+  </button>
+  <div class="menu-backdrop" aria-hidden="true"></div>
+  <nav id="menu-panel" class="menu-panel" aria-label="사이트 메뉴" inert>
+    <ul class="menu-group">
+      <li class="menu-item"><a class="menu-link" href="program.html"><span class="menu-label">PROGRAM<img class="menu-icon" src="assets/icons/program.svg" width="200" height="200" alt="" aria-hidden="true"></span></a></li>
+      <li class="menu-item"><a class="menu-link" href="kit.html"><span class="menu-label">CURO KIT<img class="menu-icon" src="assets/icons/curo-kit.svg" width="200" height="200" alt="" aria-hidden="true"></span></a></li>
+      <li class="menu-item"><a class="menu-link" href="story.html"><span class="menu-label">STORY<img class="menu-icon" src="assets/icons/story.svg" width="200" height="200" alt="" aria-hidden="true"></span></a></li>
+      <li class="menu-item"><a class="menu-link" href="friends.html"><span class="menu-label">FRIENDS<img class="menu-icon" src="assets/icons/friends.svg" width="200" height="200" alt="" aria-hidden="true"></span></a></li>
+    </ul>
+  </nav>
+
+  <script src="js/config.js?v=47"></script>
+  <script src="js/main.js?v=119"></script>
+  <script src="js/topnav.js?v=192"></script>
+  <script src="js/footer.js?v=194"></script>
+  <script src="js/float.js?v=268"></script>
+  <script src="js/apply.js?v=283"></script>
+  <script src="js/friends.js?v=291"></script>
+  <script src="js/friends-burst.js?v=296"></script>
+</body>
+</html>

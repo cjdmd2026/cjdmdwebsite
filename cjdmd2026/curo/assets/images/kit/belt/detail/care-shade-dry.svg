@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_설명서" data-name="설명서" xmlns="http://www.w3.org/2000/svg" width="93.1" height="93.1" viewBox="0 0 93.1 93.1">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #2b2b2b;
+        stroke-width: 0px;
+      }
+    </style>
+  </defs>
+  <path class="cls-1" d="M46.55,86.75c-22.17,0-40.2-18.03-40.2-40.2S24.38,6.35,46.55,6.35s40.2,18.03,40.2,40.2-18.03,40.2-40.2,40.2ZM46.55,8.84c-20.79,0-37.71,16.92-37.71,37.71s16.92,37.71,37.71,37.71,37.71-16.92,37.71-37.71S67.34,8.84,46.55,8.84Z"/>
+  <rect class="cls-1" x="45.3" y=".04" width="2.49" height="8.2"/>
+  <rect class="cls-1" x="15.32" y="12.46" width="2.49" height="8.2" transform="translate(-6.86 16.56) rotate(-45)"/>
+  <rect class="cls-1" x=".04" y="45.3" width="8.2" height="2.49"/>
+  <rect class="cls-1" x="12.46" y="75.29" width="8.2" height="2.49" transform="translate(-49.27 34.13) rotate(-45)"/>
+  <rect class="cls-1" x="45.3" y="84.86" width="2.49" height="8.2"/>
+  <rect class="cls-1" x="75.29" y="72.44" width="2.49" height="8.2" transform="translate(-31.7 76.54) rotate(-45)"/>
+  <rect class="cls-1" x="84.86" y="45.3" width="8.2" height="2.49"/>
+  <rect class="cls-1" x="72.44" y="15.31" width="8.2" height="2.49" transform="translate(10.71 58.97) rotate(-45)"/>
+  <rect class="cls-1" x="3.03" y="39.4" width="76.26" height="2.49" transform="translate(-16.64 38.34) rotate(-42.36)"/>
+  <rect class="cls-1" x="-.52" y="33.88" width="72.14" height="2.49" transform="translate(-14.38 33.12) rotate(-42.36)"/>
+  <rect class="cls-1" x="-.5" y="27.87" width="61.97" height="2.49" transform="translate(-11.66 28.14) rotate(-42.36)"/>
+  <rect class="cls-1" x="2.21" y="21.94" width="46.26" height="2.49" transform="translate(-9 23.13) rotate(-42.36)"/>
+</svg>

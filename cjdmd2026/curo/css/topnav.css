@@ -1,0 +1,78 @@
+/* ==========================================================================
+   상단 메뉴 (54차) — MAIN 을 제외한 페이지(PROGRAM · CURO KIT · 이후 STORY/FRIENDS)의 PC 메뉴
+   마크업은 js/topnav.js 가 만든다 (메뉴 항목·아이콘·링크 = topnav.js 의 ITEMS 한 곳).
+   좌우 = 메뉴 라인 (70차: 피그마 1920 에서 280 / 1640, 화면 비율로 축소) — 모든 페이지 콘텐츠가 이 선에 맞춤
+   모바일(900px 이하)은 추후 — 지금은 상단 메뉴를 숨기고 기존 햄버거 메뉴를 그대로 쓴다.
+   ========================================================================== */
+:root {
+  --nav-h: 66px;   /* 263차: 76 → 66 (조금 낮게) */
+  --nav-gutter: max(32px, calc(100px * var(--kfu, 1) + 24px));
+  /* 70차: 피그마 1920 프레임 기준 — 좌우 280, 콘텐츠 1360. 1920 보다 좁으면 같은 비율로 축소, 넓으면 1360 가운데.
+     --u = 1920 기준 1px 이 지금 화면에서 몇 px 인지(최대 1px), --page-w = 메뉴 라인(로고 왼쪽 ~ 메뉴 오른쪽) = 모든 콘텐츠 기준선 */
+  --u: min(1px, calc(100vw / 1920));
+  --page-w: calc(1360 * var(--u));
+  --nav-w: var(--page-w);
+}
+.site-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 25; height: var(--nav-h);
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+  /* 161차: 아주 연한 회색 바탕 → 162차: 더 밝게 (있는 듯 없는 듯) */
+  background: rgba(255, 255, 255, 0.94);   /* 197차: 모든 페이지 같은 바 (KIT 처럼 흰 바탕 + 아래 선 + 아주 옅은 그림자 → 흰 배경과 구분) */
+  -webkit-backdrop-filter: blur(14px) saturate(1.15); backdrop-filter: blur(14px) saturate(1.15);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.055), 0 3px 10px rgba(0, 0, 0, 0.022);   /* 198차: 그림자 더 옅게 */
+}
+/* 스크롤하면 반투명 + blur + 얇은 하단선 */
+.site-nav.is-scrolled {
+  background: rgba(255, 255, 255, 0.94);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15); backdrop-filter: blur(14px) saturate(1.15);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.055), 0 3px 10px rgba(0, 0, 0, 0.022);   /* 198차: 그림자 더 옅게 */
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .site-nav, .site-nav.is-scrolled { background: rgba(255, 255, 255, 0.97); }
+}
+.site-nav-in {
+  width: var(--nav-w); height: 100%; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.site-nav-in > nav { height: 100%; }
+.site-nav-logo { display: block; flex: none; border-radius: 4px; }
+.site-nav-logo img { display: block; height: calc(34 * var(--u)); min-height: 24px; width: auto; }   /* 피그마: 로고 높이 34 */
+.site-nav-menu { display: flex; align-items: center; gap: calc(66 * var(--u)); height: 100%; margin: 0; padding: 0; list-style: none; }
+.site-nav-menu li { height: 100%; }
+.site-nav-menu a {
+  position: relative; display: flex; align-items: center; height: 100%;
+  font-family: 'Pretendard', sans-serif; font-synthesis: none; font-size: max(13px, calc(18 * var(--u))); font-weight: 600; letter-spacing: 0.02em;
+  color: #2B2B2B; text-decoration: none;   /* 119차: 옅은 회색(#8A8A8A) → 다른 메뉴도 진하게 */ white-space: nowrap; transition: color 0.2s ease;
+}
+/* 메뉴 아이콘: 글자 왼쪽에 겹쳐 띄움 (메뉴 간격은 아이콘과 무관하게 일정) — 현재 페이지·hover 때만 */
+.site-nav-menu a img {
+  position: absolute; right: calc(100% + 6px); top: 50%; width: calc(28 * var(--u)); height: calc(28 * var(--u));
+  opacity: 0; transform: translateY(-50%) scale(0.8); transition: opacity 0.2s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+/* 287차: 현재 메뉴 = 기본색(#2B2B2B), 나머지는 옅게 · hover 하면 기본색 (예전 119차: hover·현재 = 민트 #3CB5AC) */
+.site-nav-menu:has(a[aria-current="page"]) a:not([aria-current="page"]) { color: #ADADAD; }
+.site-nav-menu a:hover, .site-nav-menu a[aria-current="page"] { color: #2B2B2B !important; }
+.site-nav-menu a:hover img, .site-nav-menu a[aria-current="page"] img { opacity: 1; transform: translateY(-50%); }
+.site-nav-menu a:focus-visible, .site-nav-logo:focus-visible { outline: 2px solid #1EB2A6; outline-offset: 4px; border-radius: 4px; }
+
+/* PC: 상단 메뉴가 있으면 햄버거 메뉴는 쓰지 않음 */
+@media (min-width: 901px) {
+  html.has-topnav .hamburger,
+  html.has-topnav .menu-panel,
+  html.has-topnav .menu-backdrop { display: none !important; }
+}
+/* 179차: 폰(600 이하) = 위 56px 얇은 바 (로고 왼쪽 · 오른쪽은 기존 햄버거 버튼), 메뉴 글자는 햄버거 안에서
+   192차: 상단 메뉴가 숨는 좁은 PC 창(601~900)도 같은 바 (햄버거가 글 위에 크게 떠 있던 것) */
+@media (max-width: 900px) {
+  :root { --nav-h: 56px; }
+  .site-nav { display: block; height: 56px; }
+  .site-nav-in { width: auto; padding: 0 20px; }
+  .site-nav-in > nav { display: none; }
+  .site-nav-logo img { height: 20px; min-height: 0; }
+  /* 185차: 햄버거 = 위 바와 같은 크기·정렬 (24px, 오른쪽 20 · 가운데 28) — main.js 가 넣는 값보다 우선 */
+  :root { --hb-size: 24px !important; --hb-lw: 22px !important; --hb-gap: 7px !important; --hb-stroke: 2px !important; --hb-xw: 22px !important; --hb-top: 16px !important; --hb-right: 19px !important; }
+  /* 185차: 화면 밖에 숨겨 둔 메뉴 패널 등 때문에 좁은 화면에서 좌우로 밀리지 않게 */
+  html, body { overflow-x: clip; }
+  @supports not (overflow: clip) { html, body { overflow-x: hidden; } }
+}

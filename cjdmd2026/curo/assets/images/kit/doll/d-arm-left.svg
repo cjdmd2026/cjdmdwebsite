@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_레이어_1" data-name="레이어 1" xmlns="http://www.w3.org/2000/svg" width="87.02" height="131.51" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 87.02 131.51">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+        opacity: .8;
+      }
+
+      .cls-1, .cls-2 {
+        stroke-width: 0px;
+      }
+
+      .cls-2 {
+        fill: url(#_무제_그라디언트_8);
+      }
+
+      .cls-3 {
+        stroke-dasharray: 0 4;
+      }
+
+      .cls-3, .cls-4 {
+        fill: none;
+        stroke: #2b2b2b;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+    </style>
+    <linearGradient id="_무제_그라디언트_8" data-name="무제 그라디언트 8" x1=".48" y1="87.87" x2="58.49" y2="87.87" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#231815" stop-opacity=".12"/>
+      <stop offset=".64" stop-color="#fafafa" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <path class="cls-1" d="M58.91,86.86c-4.04,6.96-8.64,14.48-13.87,22.63-8.17,12.72-24.9,27.2-38.6,19.26-21.26-12.31,21.43-83.95,21.43-83.95,0,0,20.93-31.36,32.46-39.18s19.66-5.15,22.6-1.99c2.66,2.86,13.8,18.14-24.01,83.23Z"/>
+  <path class="cls-2" d="M27.7,44.81S-14.83,116.44,6.44,128.75c13.7,7.93,29.27-7.37,38.6-19.26l5.55-15.38,7.9-16.64-17.35-1.32-4.1-3.49-5.97-14.42-3.36-13.43Z"/>
+  <path class="cls-3" d="M6.44,127.63C1.96,101.89,29.92,52.58,29.92,52.58c0,0,32.81-50.34,43.88-52.06"/>
+  <path class="cls-4" d="M58.91,86.86c-4.04,6.96-8.64,14.48-13.87,22.63-8.17,12.72-24.9,27.2-38.6,19.26-21.26-12.31,21.43-83.95,21.43-83.95,0,0,20.93-31.36,32.46-39.18s19.66-5.15,22.6-1.99c2.66,2.86,13.8,18.14-24.01,83.23Z"/>
+</svg>

@@ -1,0 +1,154 @@
+/* ==========================================================================
+   FRIENDS (94차) — friends.html 전용. main.css · float.css · topnav.css · footer.css 위에 얹음.
+   1920×1080 시안 좌표를 .fr-frame 안에 그대로 쓰고, 프레임을 화면에 맞춰 배율 --fs 로 줄임 (js/friends.js).
+   글 왼쪽 끝 = 메뉴 라인 (--fline), 배경은 화면 전체.
+   ========================================================================== */
+@font-face { font-family: 'BM JUA'; src: url('../assets/fonts/bm-jua.woff') format('woff'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Pretendard'; src: url('../assets/fonts/pretendard-regular.woff') format('woff'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Pretendard'; src: url('../assets/fonts/pretendard-medium.woff') format('woff'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Pretendard'; src: url('../assets/fonts/pretendard-semibold.woff') format('woff'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Pretendard'; src: url('../assets/fonts/pretendard-bold.woff') format('woff'); font-weight: 700; font-style: normal; font-display: swap; }
+
+html.fr-page, .fr-page body { background: #FFFFFF; }
+.fr-page body { font-family: 'Pretendard', sans-serif; font-synthesis: none; margin: 0; }
+.fr :where(h1, h2, p, ul, blockquote) { margin: 0; padding: 0; }
+.fr-sec { position: relative; height: 100vh; height: var(--fvh, 100vh); overflow: hidden; }
+/* 1920×1080 디자인 프레임 (메뉴 포함 좌표) */
+.fr-frame {
+  position: absolute; left: 0; top: 0; width: 1920px; height: 1080px;
+  transform-origin: 0 0; transform: translate3d(var(--fx, 0px), var(--fy, 0px), 0) scale(var(--fs, 1));
+}
+.fr-frame > * { position: absolute; }
+
+/* 117차: 소개 화면(fr-intro) 없앰 — 관련 스타일 삭제 */
+/* 95차: 메뉴는 다른 페이지처럼 뒤 배경이 비치는 흐림 유리 (스크롤 안 해도) */
+/* 197차: 메뉴 바탕은 topnav.css 하나로 통일 (페이지별 덮어쓰기 없앰) */
+
+/* ---------- 친구 소개 ---------- */
+.fr-meet { background: #FFFFFF; }
+/* 배경 층: 친구마다 하나 (세로 그라데이션 + 아래 둥근 언덕 + 무대). 새 층이 누른 쪽에서부터 번지듯 덮음 */
+.fr-layers { position: absolute; inset: 0; }
+.fr-layer {
+  position: absolute; inset: 0; overflow: hidden;
+  background: linear-gradient(180deg, var(--c-top) 0%, var(--c-bot) 100%);
+  -webkit-mask-image: linear-gradient(var(--dir, 90deg), #000 0%, #000 40%, transparent 60%, transparent 100%);
+          mask-image: linear-gradient(var(--dir, 90deg), #000 0%, #000 40%, transparent 60%, transparent 100%);
+  -webkit-mask-size: 300% 100%; mask-size: 300% 100%;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: 0 0; mask-position: 0 0;
+}
+.fr-layer.is-from { -webkit-mask-position: 100% 0; mask-position: 100% 0; }
+/* 오른쪽에서부터: 마스크 방향을 뒤집고 시작·끝 위치도 반대 */
+.fr-layer.from-r { --dir: 270deg; -webkit-mask-position: 100% 0; mask-position: 100% 0; }
+.fr-layer.from-r.is-from { -webkit-mask-position: 0 0; mask-position: 0 0; }
+.fr-layer.is-go { transition: -webkit-mask-position 0.9s cubic-bezier(0.45, 0, 0.25, 1), mask-position 0.9s cubic-bezier(0.45, 0, 0.25, 1); }
+/* 언덕 + 무대는 프레임 좌표 (같은 배율) */
+.fr-layer .fr-frame { pointer-events: none; }
+.fr-hill { left: -900px; top: 815px; width: 3720px; height: 1400px; border-radius: 50%; background: var(--c-hill); }
+.fr-stage { left: 657px; top: 711px; width: 606px; height: auto; }
+.fr-pose, .fr-lmark { display: none; }   /* 무대 위 캐릭터 · 캐릭터 뒤 영문 이름 (제안에서만 보임) */
+
+.fr-meet-f { pointer-events: none; }
+.fr-meet-f > * { pointer-events: auto; }
+.fr-mark {
+  left: 0; width: 1920px; top: 410px; text-align: center; pointer-events: none !important;
+  font-family: 'Pretendard', sans-serif; font-weight: 700; font-size: 190px; line-height: 1; letter-spacing: -0.01em;
+  color: rgba(255, 255, 255, 0.38); white-space: nowrap;
+}
+.fr-info { left: var(--fline, 280px); top: 268px; width: 640px; color: var(--c-ink); }
+.fr-name { font-family: 'BM JUA', sans-serif; font-weight: 400; font-size: 70px; line-height: 84px; color: var(--c-ink); }
+.fr-tag { margin-top: 4px !important; font-size: 21px; line-height: 30px; font-weight: 600; color: var(--c-ink); }
+.fr-sound {
+  /* 236차: 소리 아이콘 + 글 (무슨 버튼인지 알 수 있게) — 둥근 알약 버튼 (238차: 237차 원 밖 글 → 다시 알약) */
+  display: inline-flex; align-items: center; gap: 2px; margin-top: 22px; height: 54px; padding: 0 22px 0 0; border: 0; border-radius: 999px; cursor: pointer;
+  background: rgba(255, 255, 255, 0.72); transition: transform 0.2s ease, background-color 0.2s ease;
+  font-family: 'Pretendard', sans-serif; font-synthesis: none; font-size: 17px; font-weight: 600; color: var(--c-ink); white-space: nowrap;
+}
+.fr-sound i {
+  flex: none; display: block; width: 54px; height: 54px; background: var(--c-ink);
+  -webkit-mask: url('../assets/icons/sound.svg') center / 76% no-repeat; mask: url('../assets/icons/sound.svg') center / 76% no-repeat;
+}
+.fr-sound:hover { transform: scale(1.04); background: rgba(255, 255, 255, 0.9); }
+.fr-desc { margin-top: 26px !important; font-size: 20.5px; line-height: 37px;   /* 193차: 23 → 20.5 */ font-weight: 500; color: var(--c-ink); }
+.fr-quote {
+  margin-top: 24px !important; padding-left: 18px; border-left: 3px solid var(--c-accent);
+  font-family: 'BM JUA', sans-serif; font-size: 22px; line-height: 37px; color: var(--c-accent); text-align: left;
+}
+.fr-q { font-family: 'Pretendard', sans-serif; font-weight: 700; margin: 0 1px; }
+/* 글·영문 이름: 사라졌다 나타남 */
+.fr-info, .fr-mark { transition: opacity 0.35s ease; }
+.fr-meet.is-swap .fr-info, .fr-meet.is-swap .fr-mark, .fr-meet.is-swap .fr-char { opacity: 0; }
+
+/* 친구 고르기 (110 원 4개) */
+.fr-pick { left: 735px; top: 928px; display: flex; gap: 22px; list-style: none; }
+.fr-pick button {
+  position: relative; display: block; width: 96px; height: 96px; padding: 0; border: 0; background: none; border-radius: 50%; cursor: pointer;
+  transition: transform 0.25s ease;
+}
+.fr-pick button img { display: block; width: 100%; height: 100%; }
+/* 116차: 고르지 않은 친구 = 친구 색 30% 를 원 위에 덮음 (베어리 #925725 · 엘리 #286369 · 래비 #813350 · 미오 #7C471B), 고른 친구 = 덮개 없음 */
+.fr-pick button::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: var(--dim); opacity: 0.3; transition: opacity 0.3s ease; pointer-events: none; }
+.fr-pick button:hover { transform: translateY(-3px); }
+.fr-pick button:hover::after { opacity: 0.15; }
+.fr-pick button[aria-pressed="true"]::after { opacity: 0; }
+.fr-pick button:focus-visible, .fr-cta:focus-visible, .fr-sound:focus-visible { outline: 3px solid #FFFFFF; outline-offset: 4px; }
+
+/* 알아보기 버튼: 174차 — 글(이름·소개·대사) 아래 왼쪽 (사용자 시안), 색은 바로 바뀜 */
+.fr-cta {
+  position: relative; margin-top: 38px; width: 244px; height: 58px; border-radius: 999px; box-sizing: border-box;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  background: var(--c-btn); color: #FFFFFF; text-decoration: none; font-size: 17.5px; font-weight: 700;
+  transition: filter 0.2s ease;
+}
+.fr-cta svg { width: 20px; height: 20px; }
+.fr-cta:hover { filter: brightness(1.08); }
+@media (prefers-reduced-motion: reduce) { .fr-layer.is-go { transition-duration: 0.01s; } }
+
+/* ---------- 146차: 무대 위 캐릭터 영상 ----------
+   영상 800×800(투명 배경, 캐릭터 발 = 영상 아래 끝). 위치·크기는 친구마다 사용자 시안에 맞춤 (js/friends.js FRIENDS.v) */
+.fr-char { left: var(--v-x, 700px); top: var(--v-y, 200px); width: var(--v-s, 520px); height: var(--v-s, 520px);
+  padding: 0; border: 0; background: none; cursor: pointer; transition: opacity 0.35s ease; -webkit-tap-highlight-color: transparent; }
+.fr-vid { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: contain; pointer-events: none; }
+.fr-char video.fr-vid { opacity: 0; }   /* 263차: 화면에는 캔버스(.fr-cv)만 — 영상 두 개는 투명하게 뒤에서 재생, 캔버스에 그림 */
+.fr-char:focus-visible { outline: 3px solid #FFFFFF; outline-offset: -20px; border-radius: 24px; }
+.fr-meet-f > .fr-info { pointer-events: none; }   /* 글 상자 빈 곳이 캐릭터 누르기를 막지 않게 */
+.fr-info > * { pointer-events: auto; }
+.fr-vid[hidden] { display: none; }
+
+/* ==========================================================================
+   179차: 폰(600px 이하) — 178차 모바일 시안 그대로. 1920 프레임 배율 대신 화면 기준 배치
+   위 = 이름·소리·태그·소개·대사 / 가운데 = 영문 이름 글자·무대·캐릭터 / 아래 = 친구 고르기 · 알아보기 버튼
+   아래쪽 묶음은 화면 아래 기준이라 화면 높이가 달라도 겹치지 않음 (캐릭터 크기 = 남는 높이에 맞춤)
+   ========================================================================== */
+@media (max-width: 600px), (max-width: 1024px) and (orientation: portrait) {   /* 233차: 세로 태블릿도 폰 배치 (크기는 tablet.css) */
+  .fr-sec { height: var(--fvh, 100svh); min-height: 640px; }
+  .fr-frame { width: 100%; height: 100%; transform: none; }
+  .fr-hill { left: -260px; right: -260px; width: auto; top: calc(100% - 232px); height: 700px; }
+  .fr-stage { left: 50%; top: auto; bottom: 170px; width: 270px; margin-left: -135px; }
+  .fr-mark { left: 0; right: 0; width: auto; top: auto; bottom: 300px; font-size: 104px; }
+  .fr-meet-f > .fr-info { position: static; width: auto; padding: 76px 20px 0; }
+  .fr-name { font-size: 42px; line-height: 46px; padding-right: 56px; }
+  .fr-tag { margin-top: 6px !important; font-size: 15px; line-height: 22px; }
+  .fr-sound { position: absolute; right: 20px; top: 78px; margin-top: 0; height: 40px; padding-right: 14px; font-size: 13.5px; gap: 0; }
+  .fr-sound i { width: 40px; height: 40px; }
+  .fr-desc { margin-top: 12px !important; font-size: 14px; line-height: 23px; }
+  .fr-quote { margin-top: 12px !important; padding-left: 12px; font-size: 15px; line-height: 23px; }
+  .fr-cta { position: absolute; left: 20px; right: 20px; bottom: 24px; width: auto; height: 52px; margin: 0; font-size: 15px; }
+  .fr-pick { left: 0; right: 0; top: auto; bottom: 96px; justify-content: center; gap: 14px; }
+  .fr-pick button { width: 54px; height: 54px; }
+  .fr-char { left: 50%; top: auto; bottom: 222px;
+    width: calc(clamp(170px, var(--fvh, 844px) - 560px, 290px) * var(--v-k, 1)); height: calc(clamp(170px, var(--fvh, 844px) - 560px, 290px) * var(--v-k, 1));
+    transform: none; translate: -50% 0; }   /* 190차: transform 대신 translate — 등장 효과(scale 애니메이션)가 가운데 정렬을 덮어 오른쪽에서 오던 것 수정 */
+  .fr-char:focus-visible { outline-offset: -8px; }
+  .fb-layer { width: 100%; height: 100%; overflow: hidden; }   /* 187차: 등장 효과도 폰에서 (PC 와 같게, 위치는 friends-burst.js 가 실제 화면에서 잼) */
+  html.fr-page .k-float { display: none; }          /* 시안처럼 플로팅 버튼 없음 (친구 고르기·버튼과 겹침) */
+}
+
+/* 259차: 터치 안내 아이콘 — 캐릭터 몸 위 (캐릭터 상자 기준 %), 살짝 위아래로 톡톡 */
+.fr-touch { position: absolute; left: 58%; top: 70%; width: 104px; height: 104px; margin: -52px 0 0 -52px; pointer-events: none;   /* 위치 = friends.js TOUCH_AT */
+  opacity: 0; transform: scale(0.6); transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.3, 1.5, 0.6, 1); z-index: 2; }
+.fr-touch img { display: block; width: 100%; height: 100%; animation: frTap 1.4s ease-in-out infinite; }
+.fr-touch.is-on { opacity: 0.82; transform: scale(1); }   /* 260차: 살짝 투명하게 */
+@keyframes frTap { 0%, 100% { transform: translateY(0) scale(1); } 45% { transform: translateY(6%) scale(0.92); } 60% { transform: translateY(0) scale(1); } }
+@media (prefers-reduced-motion: reduce) { .fr-touch img { animation: none; } }
+@media (max-width: 600px), (max-width: 1024px) and (orientation: portrait) { .fr-touch { width: 58px; height: 58px; margin: -29px 0 0 -29px; } }

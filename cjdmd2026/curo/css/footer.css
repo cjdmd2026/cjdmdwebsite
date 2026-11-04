@@ -1,0 +1,46 @@
+/* ==========================================================================
+   푸터 (78차) — MAIN 제외 페이지 공통. 마크업 = js/footer.js 가 페이지 맨 끝에 붙임.
+   피그마 1920 기준: 높이 154, 좌우 = 메뉴 라인(--page-w), 크기는 --u 비율로 축소 (topnav.css 의 --u / --page-w)
+   색: 로고 글자색 #2B2E31 (브랜드 다크) 바탕 + 흰 글자, 보조 글자는 연회색
+   ========================================================================== */
+.site-foot {
+  position: relative; z-index: 1;
+  background: #2B2E31; color: #FFFFFF;
+  font-family: 'Pretendard', sans-serif; font-synthesis: none; font-weight: 400;
+  font-size: max(10px, calc(12 * var(--u, 1px)));   /* 286차: 14 → 12 */ line-height: 1.45;   /* 123차: 16 → 14 (82차: 20 → 16) */
+}
+.site-foot-in {
+  width: var(--page-w, min(1360px, calc(100vw - 64px))); margin: 0 auto;
+  min-height: calc(76 * var(--u, 1px));   /* 286차: 92 → 76 */ box-sizing: border-box;   /* 123차: 128 → 92 */
+  padding: calc(18 * var(--u, 1px)) 0 calc(18 * var(--u, 1px));   /* 286차: 22 → 18 */   /* 123차: 34/32 → 22/22 (82차: 높이 154 → 128) */
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; column-gap: 24px;
+}
+.site-foot p { margin: 0; }
+.site-foot-brand { justify-self: start; }
+/* 로고 = 사용자 export(assets/icons/curo-logo.svg) 를 흰색으로만 바꿔 씀 (모양 그대로) */
+.site-foot-logo { display: block; height: max(14px, calc(18 * var(--u, 1px)));   /* 286차: 22 → 18 */ width: auto; filter: brightness(0) invert(1); }
+.site-foot-tag { margin-top: calc(4 * var(--u, 1px)) !important; color: #C9CDD0; }
+.site-foot-copy { justify-self: center; text-align: center; color: #C9CDD0; white-space: nowrap; }   /* 82차: 화면 가운데 */
+.site-foot-team { justify-self: end; text-align: right; }
+.site-foot-team span { display: block; }
+.site-foot-team span + span { color: #C9CDD0; }
+@media (max-width: 760px) {
+  .site-foot-in { grid-template-columns: 1fr; row-gap: 18px; align-items: start; padding: 32px 0; }
+  .site-foot-copy, .site-foot-team { justify-self: start; text-align: left; transform: none; }
+}
+
+/* 191차: 폰 푸터 = 시안 B (가운데 3줄: 로고 / 팀 · 이름 / 저작권). 하단 고정 바 있는 페이지는 아래 여백 96 */
+@media (max-width: 600px) {
+  .site-foot { font-size: 10.5px; line-height: 1.5; }
+  .site-foot-in { width: auto; min-height: 0; padding: 24px 20px 22px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0; }
+  .site-foot-brand { justify-self: auto; display: flex; flex-direction: column; align-items: center; }
+  .site-foot-logo { height: 15px; } .site-foot-tag { display: none; }
+  .site-foot-team { order: 2; margin-top: 12px !important; justify-self: auto; text-align: center; }
+  .site-foot-team span { display: inline; } .site-foot-team span + span::before { content: ' · '; color: #6F757A; }
+  .site-foot-copy { order: 3; margin-top: 4px !important; justify-self: auto; text-align: center; font-size: 10px; color: #9EA3A7; }
+  body:has(.pg-mcta, .km-bar:not([hidden])) .site-foot-in { padding-bottom: 96px; }
+}
+
+/* 194차: 내용이 짧은 화면(영상 보기 등)에서도 푸터가 화면 맨 아래에 붙게 (--foot-h = js/footer.js) */
+main { min-height: calc(100vh - var(--foot-h, 0px)); box-sizing: border-box; }
+@supports (height: 100svh) { main { min-height: calc(100svh - var(--foot-h, 0px)); } }

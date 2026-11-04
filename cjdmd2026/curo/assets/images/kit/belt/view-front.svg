@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_상단" data-name="상단" xmlns="http://www.w3.org/2000/svg" width="185" height="127" viewBox="0 0 185 127">
+  <defs>
+    <style>
+      .cls-1 {
+        stroke-linecap: round;
+      }
+
+      .cls-1, .cls-2 {
+        fill: none;
+        stroke: #888;
+        stroke-miterlimit: 10;
+      }
+    </style>
+  </defs>
+  <g>
+    <path class="cls-2" d="M93,126.5h-27.65c-21.85,0-32.85-15-43.85-15h-3.7c-9.56,0-17.3-7.75-17.3-17.3V18.34c0-1.57,1.27-2.84,2.84-2.84,0,0,13.66-.5,19.66-.5,9,0,22.5-14.5,41.75-14.5h28.25"/>
+    <path class="cls-2" d="M3,15.5h0c0-.83.67-1.5,1.5-1.5h7c.83,0,1.5.67,1.5,1.5h0"/>
+    <path class="cls-2" d="M92.55,107c-11.55,0-19.05,9-34.55,9S15,92.49,15,63.5h0c0-29,23.51-52.5,52.5-52.5h25.3"/>
+  </g>
+  <g>
+    <path class="cls-2" d="M92,126.5h27.65c21.85,0,32.85-15,43.85-15h3.7c9.56,0,17.3-7.75,17.3-17.3V18.34c0-1.57-1.27-2.84-2.84-2.84,0,0-13.66-.5-19.66-.5-9,0-22.5-14.5-41.75-14.5h-27.25"/>
+    <path class="cls-2" d="M182,15.5h0c0-.83-.67-1.5-1.5-1.5h-7c-.83,0-1.5.67-1.5,1.5h0"/>
+    <path class="cls-2" d="M92.45,107c11.55,0,19.05,9,34.55,9,15.5,0,43-23.51,43-52.5h0c0-29-23.51-52.5-52.5-52.5h-25.3"/>
+  </g>
+  <circle class="cls-2" cx="55" cy="89" r="4"/>
+  <circle class="cls-2" cx="93" cy="89" r="5"/>
+  <circle class="cls-2" cx="131" cy="89" r="4"/>
+  <circle class="cls-2" cx="55" cy="64" r="4"/>
+  <circle class="cls-2" cx="93" cy="64" r="4"/>
+  <circle class="cls-2" cx="131" cy="64" r="4"/>
+  <circle class="cls-2" cx="55" cy="39" r="4"/>
+  <circle class="cls-2" cx="93" cy="39" r="4"/>
+  <circle class="cls-2" cx="131" cy="39" r="4"/>
+  <line class="cls-1" x1="91.5" y1="87.5" x2="94.5" y2="90.5"/>
+  <line class="cls-1" x1="94.5" y1="87.5" x2="91.5" y2="90.5"/>
+</svg>

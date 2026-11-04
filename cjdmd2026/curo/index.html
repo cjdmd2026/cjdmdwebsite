@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CURO</title>
+  <link rel="preload" href="assets/fonts/pretendard-regular.woff" as="font" type="font/woff" crossorigin>
+  <link rel="preload" href="assets/fonts/pretendard-bold.woff" as="font" type="font/woff" crossorigin>
+  <link rel="preload" href="assets/fonts/ownglyph-daisy.woff" as="font" type="font/woff" crossorigin>
+  <link rel="preload" href="assets/fonts/kyobo-handwriting.woff" as="font" type="font/woff" crossorigin>
+  <link rel="stylesheet" href="css/main.css?v=287">
+  <link rel="stylesheet" href="css/main-mobile.css?v=231">   <!-- 203차: 폰 메인 -->
+  <link rel="stylesheet" href="css/book.css?v=32">
+  <link rel="stylesheet" href="css/main10.css?v=131">
+</head>
+<body>
+  <!-- Index3 (후보): 11차 책 열기 방식 (표지 펼침 → 책 안 Main2 → 확대 진입). 책 열기만 js/book.js + js/config-book.js + css/book.css 로 다르고 나머지는 같다. -->
+
+  <!-- =========================================================
+       STORY (Main2) — 처음부터 최종 fullscreen 위치에 깔려 있고, MAIN 이 걷히면 드러난다
+       .story-stage  : viewport clipping (z: MAIN 아래)
+       .story-camera : Main2 fullscreen camera (translate + scale 전용)
+       .main2-scene  : Main2 2397×1080 좌표계, 레이어 6개 공통 좌표
+       ========================================================= -->
+  <section id="story" class="story-stage" aria-label="STORY" aria-hidden="true">
+    <!-- .story-world : 하나의 긴 가로 world (24차). 장면은 자르지 않고, 자르는 곳은 #story(viewport) 하나뿐.
+         연결 구간은 별도 요소 없이 #story 배경색(config story.transitions)으로 보인다 (41차). 45차: Main2·3·4·5·6·7·8·9 panel (Main10 책 덮임은 아직 없음) -->
+    <div class="story-world">
+      <div class="story-panel" data-page="story-1">
+        <div class="story-camera">
+          <div class="main2-scene" id="main2-scene">
+            <div class="m2-layer" data-m2="distant"><img src="assets/images/main/main2/distant-view.webp?v=43" width="1434" height="728" alt="" decoding="async"></div>
+            <div class="m2-layer" data-m2="character2"><img data-src="assets/images/main/main2/character2.webp?v=43" width="279" height="373" alt="" decoding="async"></div>
+            <div class="m2-layer" data-m2="middle"><img src="assets/images/main/main2/middle-view.webp?v=43" width="2021" height="1080" alt="" decoding="async"></div>
+            <div class="m2-layer" data-m2="close"><img src="assets/images/main/main2/close-view.webp?v=43" width="2397" height="1080" alt="" decoding="async"></div>
+            <div class="m2-layer" data-m2="character"><div class="anim"><img src="assets/images/main/main2/character.webp?v=284" width="2397" height="1080" alt="" decoding="async"></div></div>
+            <div class="m2-layer" data-m2="recentL"><img src="assets/images/main/main2/recent-view-left.webp?v=43" width="388" height="393" alt="" decoding="async"></div>
+            <div class="m2-layer" data-m2="recentR"><img src="assets/images/main/main2/recent-view-right.webp?v=43" width="501" height="393" alt="" decoding="async"></div>
+          </div>
+        </div>
+      </div>
+      <div class="story-panel" data-page="story-3">
+        <!-- Main3 : 1998×1080 scene 좌표계, camera = config main3.camera (story.js). 이미지는 현재 장면 근처일 때만 data-src → src (story.js) -->
+        <div class="story-camera story-camera--scene">
+          <div class="story-scene" data-scene="main3">
+            <div class="sc-layer" data-layer="distant"><img data-src="assets/images/main/main3/distant-view.webp?v=45" width="1710" height="912" alt="" decoding="async"></div>
+            <div class="sc-layer" data-layer="recent"><img data-src="assets/images/main/main3/recent-view.webp?v=45" width="1714" height="91" alt="" decoding="async"></div>
+            <div class="sc-layer" data-layer="middle"><img data-src="assets/images/main/main3/middle-view.webp?v=284" width="1998" height="1080" alt="" decoding="async"></div>
+            <div class="sc-layer" data-layer="close"><img data-src="assets/images/main/main3/close-view.webp?v=45" width="490" height="341" alt="" decoding="async"></div>
+          </div>
+        </div>
+      </div>
+      <div class="story-panel" data-page="story-4">
+        <!-- Main4 : 2156×1080 scene 좌표계, camera = config main4.camera (story.js). 이미지는 현재 장면 근처일 때만 data-src → src (story.js) -->
+        <div class="story-camera story-camera--scene">
+          <div class="story-scene" data-scene="main4">
+            <div class="sc-layer" data-layer="distant"><img data-src="assets/images/main/main4/distant-view.webp?v=45" width="2156" height="1080" alt="" decoding="async"></div>
+            <div class="sc-layer" data-layer="character"><div class="anim"><img data-src="assets/images/main/main4/character.webp?v=284" width="1068" height="976" alt="" decoding="async"></div></div>
+            <div class="sc-layer" data-layer="close"><img data-src="assets/images/main/main4/close-view.webp?v=45" width="1623" height="242" alt="" decoding="async"></div>
+          </div>
+        </div>
+      </div>
+      <div class="story-panel" data-page="story-5">
+        <!-- Main5 : 2533×1080 좌표계, fullscreen camera = --m5-s/x/y (story.js) -->
+        <div class="story-camera story-camera--m5">
+          <div class="main5-scene" id="main5-scene">
+            <div class="m5-layer" data-m5="distant"><img data-src="assets/images/main/main5/distant-view.webp?v=43" width="2533" height="1080" alt="" decoding="async"></div>
+            <div class="m5-layer" data-m5="character"><div class="anim"><img data-src="assets/images/main/main5/character.webp?v=43" width="862" height="1080" alt="" decoding="async"></div></div>
+            <div class="m5-layer" data-m5="middle"><img data-src="assets/images/main/main5/middle-view.webp?v=43" width="2533" height="1080" alt="" decoding="async"></div>
+            <div class="m5-layer" data-m5="close"><img data-src="assets/images/main/main5/close-view.webp?v=43" width="2533" height="1080" alt="" decoding="async"></div>
+            <div class="m5-layer" data-m5="recent"><img data-src="assets/images/main/main5/recent-view.webp?v=43" width="2533" height="1080" alt="" decoding="async"></div>
+          </div>
+        </div>
+      </div>
+      <div class="story-panel" data-page="story-6">
+        <!-- Main6 : 2077×1080 scene 좌표계, camera = config main6.camera (story.js). 이미지는 현재 장면 근처일 때만 data-src → src (story.js) -->
+        <div class="story-camera story-camera--scene">
+          <div class="story-scene" data-scene="main6">
+            <div class="sc-layer" data-layer="distant"><img data-src="assets/images/main/main6/distant-view.webp?v=45" width="2077" height="1080" alt="" decoding="async"></div>
+            <div class="sc-layer" data-layer="middle"><img data-src="assets/images/main/main6/middle-view.webp?v=45" width="1616" height="573" alt="" decoding="async"></div>
+            <div class="sc-layer" data-layer="character"><div class="anim"><img data-src="assets/images/main/main6/character.webp?v=284" width="1022" height="838" alt="" decoding="async"></div></div>
+            <div class="sc-layer" data-layer="recent"><img data-src="assets/images/main/main6/recent-view.webp?v=45" width="833" height="289" alt="" decoding="async"></div>
+          </div>
+        </div>
+      </div>
+      <div class="story-panel" data-page="story-7">
+        <!-- Main7 : 2210×1080 scene 좌표계, camera = config main7.camera (story.js). 이미지는 현재 장면 근처일 때만 data-src → src (story.js) -->
+        <div class="story-camera story-camera--scene">
+          <div class="story-scene" data-scene="main7">
+            <div class="sc-layer" data-layer="distant"><img data-src="assets/images/main/main7/distant-view.webp?v=45" width="1949" height="590" alt="" decoding="async"></div>
+            <div class="sc-layer" data-layer="middle"><img data-src="assets/images/main/main7/middle-view.webp?v=45" width="2210" height="1080" alt="" decoding="async"></div>
+            <div class="sc-layer" data-layer="character"><div class="anim"><img data-src="assets/images/main/main7/character.webp?v=45" width="582" height="996" alt="" decoding="async"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="story-panel" data-page="story-8">
+        <!-- Main8 : 2246×1080 scene 좌표계, camera = config main8.camera (story.js). 이미지는 현재 장면 근처일 때만 data-src → src (story.js) -->
+        <div class="story-camera story-camera--scene">
+          <div class="story-scene" data-scene="main8">
+            <div class="sc-layer" data-layer="distant"><img data-src="assets/images/main/main8/distant-view.webp?v=45" width="1815" height="574" alt="" decoding="async"></div>
+            <div class="sc-layer" data-layer="middle"><img data-src="assets/images/main/main8/middle-view.webp?v=45" width="2246" height="1080" alt="" decoding="async"></div>
+            <div class="sc-layer" data-layer="character"><div class="anim"><img data-src="assets/images/main/main8/character.webp?v=45" width="1052" height="936" alt="" decoding="async"></div></div>
+            <div class="sc-layer" data-layer="close"><img data-src="assets/images/main/main8/close-view.webp?v=45" width="2044" height="311" alt="" decoding="async"></div>
+          </div>
+        </div>
+      </div>
+      <div class="story-panel" data-page="story-9">
+        <!-- Main9 : 1808×941 scene 좌표계, camera = config main9.camera (story.js). 이미지는 현재 장면 근처일 때만 data-src → src (story.js) -->
+        <div class="story-camera story-camera--scene">
+          <div class="story-scene" data-scene="main9">
+            <div class="sc-layer" data-layer="distant"><img data-src="assets/images/main/main9/distant-view.webp?v=45" width="1326" height="562" alt="" decoding="async"></div>
+            <div class="sc-layer" data-layer="middle"><img data-src="assets/images/main/main9/middle-view.webp?v=45" width="1808" height="941" alt="" decoding="async"></div>
+            <div class="sc-layer" data-layer="close"><img data-src="assets/images/main/main9/close-view.webp?v=45" width="577" height="385" alt="" decoding="async"></div>
+            <div class="sc-layer" data-layer="recent"><img data-src="assets/images/main/main9/recent-view.webp?v=45" width="1808" height="348" alt="" decoding="async"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- STORY 텍스트 (24차): 장면 정착 후 등장, 이동 시작 시 fade-out (story-text.js). 좌표 = 1920×1080 디자인 시안 px -->
+    <div class="story-texts">
+      <div class="story-text story-text--m2" data-page="story-1">
+        <!-- 164차: "안녕?" · 새싹 장식 일단 없앰 (다시 쓰려면 HANDOFF 164차 참고) -->
+        <h2 class="st-el st-title" data-st="title"><span class="st-hl">콩이</span>는 주사가<br>조금 낯설어요</h2>
+        <p class="st-el st-body" data-st="body">주사기를 마주하면 괜히 망설여지는 콩이.<br>혼자 해내는 일은 아직 조금 어려워요.</p>
+        <button class="st-el st-arrow" data-st="arrow" type="button" aria-label="다음 장면"><svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="29.25" fill="none" stroke="#8C837B" stroke-width="1.5"/><path d="M18.5 30 H41 M33 22 L41 30 L33 38" fill="none" stroke="#5F5853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="story-text story-text--m5" data-page="story-5">
+        <div class="st-el st-pill" data-st="kicker"><span class="st-kicker">1단계</span></div>
+        <h2 class="st-el st-title" data-st="title">주사와 <span class="st-hl">천천히</span><br>익숙해져요</h2>
+        <p class="st-el st-body" data-st="body">귀여운 친구와 함께<br>주사와 조금씩 가까워져봐요</p>
+        <button class="st-el st-arrow" data-st="arrow" type="button" aria-label="다음 장면"><svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="29.25" fill="none" stroke="#8C837B" stroke-width="1.5"/><path d="M18.5 30 H41 M33 22 L41 30 L33 38" fill="none" stroke="#5F5853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <!-- 47차: Main3·Main4 = Main2 텍스트 구조 재사용 (.story-text--m2 좌표계 + 장면별 class 로 위치만 조정) -->
+      <div class="story-text story-text--m2 story-text--m3" data-page="story-3">
+        <h2 class="st-el st-title" data-st="title">콩이를 도우러<br><span class="st-hl">큐로 가디언즈</span>가<br>찾아왔어요!</h2>
+        <p class="st-el st-body" data-st="body">이제 혼자가 아니야,<br>우리 함께 천천히 해보자!</p>
+        <button class="st-el st-arrow" data-st="arrow" type="button" aria-label="다음 장면"><svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="29.25" fill="none" stroke="#8C837B" stroke-width="1.5"/><path d="M18.5 30 H41 M33 22 L41 30 L33 38" fill="none" stroke="#5F5853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="story-text story-text--m2 story-text--m4" data-page="story-4">
+        <p class="st-el st-kicker" data-st="kicker">가디언즈를 만난 콩이는</p>
+        <h2 class="st-el st-title" data-st="title"><span class="st-hl">용기</span>를 내 주사를<br>배우기로 했어요</h2>
+        <p class="st-el st-body" data-st="body">콩이는 친구들과 함께,<br>하나씩 배워보기로 했어요.</p>
+        <button class="st-el st-arrow" data-st="arrow" type="button" aria-label="다음 장면"><svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="29.25" fill="none" stroke="#8C837B" stroke-width="1.5"/><path d="M18.5 30 H41 M33 22 L41 30 L33 38" fill="none" stroke="#5F5853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <!-- 47차: Main6·7·8 = Main5 단계 페이지 구조 재사용 (.story-text--step = .story-text--m5 와 같은 좌표) -->
+      <div class="story-text story-text--step story-text--m6" data-page="story-6">
+        <div class="st-el st-pill" data-st="kicker"><span class="st-kicker">2단계</span></div>
+        <h2 class="st-el st-title" data-st="title"><span class="st-hl">인형</span>과<br>연습해봐요</h2>
+        <p class="st-el st-body" data-st="body">내 몸에 하기 전 연습 인형에<br>주사를 놓아보며 주사과정에 익숙해져요</p>
+        <button class="st-el st-arrow" data-st="arrow" type="button" aria-label="다음 장면"><svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="29.25" fill="none" stroke="#8C837B" stroke-width="1.5"/><path d="M18.5 30 H41 M33 22 L41 30 L33 38" fill="none" stroke="#5F5853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="story-text story-text--step story-text--m7" data-page="story-7">
+        <div class="st-el st-pill" data-st="kicker"><span class="st-kicker">3단계</span></div>
+        <h2 class="st-el st-title" data-st="title">실제처럼<br><span class="st-hl">연습</span>해요</h2>
+        <p class="st-el st-body" data-st="body">인형에게 충분히 연습했다면,<br>이제 벨트를 착용하고 연습해봐요.</p>
+        <button class="st-el st-arrow" data-st="arrow" type="button" aria-label="다음 장면"><svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="29.25" fill="none" stroke="#8C837B" stroke-width="1.5"/><path d="M18.5 30 H41 M33 22 L41 30 L33 38" fill="none" stroke="#5F5853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="story-text story-text--step story-text--m8" data-page="story-8">
+        <div class="st-el st-pill" data-st="kicker"><span class="st-kicker">4단계</span></div>
+        <h2 class="st-el st-title" data-st="title">스스로<br><span class="st-hl">해냈어요!</span></h2>
+        <p class="st-el st-body" data-st="body">반복한 연습이 자신감이 되어,<br>이제 스스로 자가주사에 도전해요.</p>
+        <button class="st-el st-arrow" data-st="arrow" type="button" aria-label="다음 장면"><svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="29.25" fill="none" stroke="#8C837B" stroke-width="1.5"/><path d="M18.5 30 H41 M33 22 L41 30 L33 38" fill="none" stroke="#5F5853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <!-- 47차: Main9 = 사용자 시안 기준 (오른쪽 가운데, 가운데 정렬). 밝은 카드 없음 — 배경 그림 위에 글자만. 로고 = 기존 asset icons/CUROLogo.png -->
+      <div class="story-text story-text--m9" data-page="story-9">
+        <p class="st-el st-kicker" data-st="kicker">아이의 첫 자가주사,</p>
+        <h2 class="st-el st-title" data-st="title">천천히 함께<br><span class="st-hl">시작해보세요!</span></h2>
+        <p class="st-el st-body" data-st="body">작은 연습이 모여,<br>아이가 스스로 해낼 수 있는 힘이 됩니다.<br>CURO가 그 여정을 함께 할게요</p>
+        <img class="st-el st-logo" data-st="logo" data-src="assets/images/main/main1/logo.svg?v=271" width="525" height="140" alt="CURO" decoding="async">
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       MAIN (Main1)
+       .main-stage   : viewport clipping (유일한 clipping)
+       .scene-fit    : responsive scale + frame 중앙 정렬 (JS가 --fit-x/--fit-y/--fit-s 설정)
+       .scene        : 2076×1080 scene 좌표계 (origin 0,0)
+       .layer        : 레이어 슬롯 (나중에 parallax offset 전용) — 지금은 transform 없음
+       이미지는 원본 px 크기 그대로. 개별 fit / object-fit 금지.
+       ========================================================= -->
+  <main id="main" class="main-stage" aria-label="CURO 메인">
+    <div class="scene-fit">
+      <div class="scene scene--main1">
+
+        <div class="layer" data-layer="background">
+          <img src="assets/images/main/main1/background.webp?v=118" data-box="background" width="1920" height="1080" alt="" decoding="async">
+        </div>
+
+
+        <div class="layer" data-layer="character">
+          <div class="anim"><!-- 캐릭터 애니메이션 전용 슬롯 (미사용) -->
+            <img src="assets/images/main/main1/character.webp?v=118" data-box="character" width="1105" height="704" alt="" decoding="async">
+          </div>
+        </div>
+
+        <div class="layer" data-layer="book">
+          <!-- book-slot : 책 자리의 종이색 면. 표지가 떠난 순간 아래 Character 일부가 보이지 않도록 가림.
+               표지 자체는 Main1 reveal mask 의 영향을 받지 않도록 .cover-layer 로 분리했다. -->
+          <div class="book-slot" data-box="bookSlot" aria-hidden="true"><div class="book-page"></div></div>
+        </div>
+
+
+        <!-- scene UI : scene 좌표로 배치 (책과의 관계 유지) -->
+        <div class="scene-ui">
+          <h1 class="main-logo">
+            <img src="assets/images/main/main1/logo.svg?v=269" width="345" height="94" alt="CURO">
+            <span class="main-logo-sub">우리 아이의 첫 자가주사가 따뜻한 시작이 되도록</span>   <!-- 162차 -->
+          </h1>
+          <!-- cta-group : 세로 crop 시 UI compress 전용 transform (1920×1080 에서는 transform 없음) -->
+          <div class="cta-group">
+            <p class="cta-text">CLICK TO OPEN</p>
+            <img class="cta-arrow cta-mouse" src="assets/icons/mouse.svg?v=162" width="36" height="36" alt="" aria-hidden="true">   <!-- 162차: 화살표 → 마우스 (임시 SVG) -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- =========================================================
+       COVER (책 표지) — Main1 reveal mask 밖의 별도 layer, Main1 과 같은 scene 좌표를 공유
+       .cover-fit        : MAIN responsive 와 같은 translate + scale (--fit-x/y/s)
+       .cover-scene      : 2076×1080 scene 좌표계
+       .book-position    : 책 위치/크기 (scene 711,419 500×500) + 클릭 trigger
+       .book-perspective : perspective 전용 (카메라 fov 에 맞춘 값, JS)
+       .book-cover       : translateZ + rotateY 전용 (hinge = 왼쪽 가운데)
+       ========================================================= -->
+  <div class="cover-layer">
+    <div class="cover-fit">
+      <div class="cover-scene">
+        <div class="book-position" role="button" tabindex="0" aria-label="책 열기">
+          <div class="book-perspective">
+            <div class="book-cover" aria-label="책 표지: 콩이와 큐로 가디언즈">
+              <img class="book-face book-face--front" src="assets/images/main/main1/front-cover.webp?v=118" data-box="cover" data-box-rel="book" width="488" height="506" alt="콩이와 큐로 가디언즈 책 표지" decoding="async">
+              <div class="book-face book-face--back" data-box="cover" data-box-rel="book" aria-hidden="true"><div class="book-back-paper"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       MAIN10 (119차) — 책 뒤표지 + 'CURO 를 더 만나볼까요?' + 푸터. css/main10.css · js/main10.js · config main10
+       Main9 에서 아래로 = 책이 닫히며(Main1 ⇄ Main2 의 반대) 등장 / 맨 위에서 위로 = 뒤표지를 열고 Main9 로
+       .m10-stage  : 화면 고정 창. .m10-move 가 첫 화면 → 둘째 화면 → 푸터로 통째로 내려감 (KIT 처럼)
+       .m10-fit    : 1920×2160 scene (main10-BG.webp 좌표)
+       .m10-cover-layer : 뒤표지 (Main9 창보다 위). 같은 배율·스크롤을 js 가 맞춤
+       ========================================================= -->
+  <section class="m10-stage" id="m10" aria-hidden="true" aria-label="CURO 를 더 만나보기">
+    <div class="m10-move">
+      <div class="m10-fit">
+        <img class="m10-bg" src="assets/images/main/main10/bg.webp?v=119" width="1920" height="2160" alt="" decoding="async">
+        <img class="m10-char" src="assets/images/main/main10/character.webp?v=119" width="1100" height="700" alt="" decoding="async">
+        <!-- 120차: 뒤표지 안쪽 종이 = 뒤표지 모양 그대로(main10-BookSlot.png), 캐릭터 위 — 표지가 열려도 아래 캐릭터(베어리 손 등)·배경이 비치지 않게 -->
+        <img class="m10-slot" src="assets/images/main/main10/book-slot.webp?v=120" width="472" height="493" alt="" aria-hidden="true">
+        <!-- 131차: Main1 과 같은 상단 로고 (같은 이미지·크기, 캐릭터와의 간격도 Main1 과 같게) -->
+        <img class="m10-logo" src="assets/images/main/main1/logo.svg?v=269" width="345" height="94" alt="CURO">
+        <div class="m10-more">
+          <h2 class="m10-title"><img src="assets/icons/curo-logo.svg" alt="CURO" width="173" height="47"><span>를 더 만나볼까요?</span></h2>
+          <ul class="m10-nav">
+            <li><a href="program.html"><span class="m10-ic"><img src="assets/icons/program.svg" alt="" width="150" height="150"><img class="is-hover" src="assets/icons/program-hover.svg" alt="" width="150" height="150"></span><b>PROGRAM</b><small>렌탈 보러 가기</small></a></li>
+            <li><a href="kit.html"><span class="m10-ic"><img src="assets/icons/curo-kit.svg" alt="" width="150" height="150"><img class="is-hover" src="assets/icons/curo-kit-hover.svg" alt="" width="150" height="150"></span><b>CURO KIT</b><small>제품 알아보기</small></a></li>
+            <li><a href="story.html"><span class="m10-ic"><img src="assets/icons/story.svg" alt="" width="150" height="150"><img class="is-hover" src="assets/icons/story-hover.svg" alt="" width="150" height="150"></span><b>STORY</b><small>동화 보기</small></a></li>
+            <li><a href="friends.html"><span class="m10-ic"><img src="assets/icons/friends.svg" alt="" width="150" height="150"><img class="is-hover" src="assets/icons/friends-hover.svg" alt="" width="150" height="150"></span><b>FRIENDS</b><small>친구들 만나기</small></a></li>
+          </ul>
+        </div>
+      </div>
+      <footer class="m10-foot">
+        <div class="m10-foot-in">
+          <div class="m10-foot-brand"><img src="assets/icons/curo-logo.svg" alt="CURO" width="173" height="47"><p>Companion for U’r Routine</p></div>
+          <p class="m10-foot-copy">© 2026 CURO. All Rights Reserved.</p>
+          <p class="m10-foot-team"><span>TEAM. 화양연화</span><span>박윤아 유혜진 주보민</span></p>
+        </div>
+      </footer>
+    </div>
+  </section>
+  <div class="m10-cover-layer" aria-hidden="true">
+    <div class="m10-cover-fit">
+      <div class="m10-cover-pos" role="button" tabindex="-1" aria-label="책 열기 (Main9 로)">
+        <div class="m10-persp">
+          <div class="m10-cover">
+            <img class="m10-face m10-face--front" src="assets/images/main/main10/back-cover.webp?v=119" width="472" height="493" alt="콩이와 큐로 가디언즈 책 뒤표지" decoding="async">
+            <div class="m10-face m10-face--back"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       MENU (viewport 기준)
+       ========================================================= -->
+  <button class="hamburger" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="menu-panel">
+    <span class="hamburger__line"></span>
+    <span class="hamburger__line"></span>
+    <span class="hamburger__line"></span>
+  </button>
+
+  <div class="menu-backdrop" aria-hidden="true"></div>
+
+  <nav id="menu-panel" class="menu-panel" aria-label="사이트 메뉴" inert>
+    <ul class="menu-group">
+      <li class="menu-item"><a class="menu-link" href="program.html"><span class="menu-label">PROGRAM<img class="menu-icon" src="assets/icons/program.svg" width="200" height="200" alt="" aria-hidden="true"></span></a></li>
+      <li class="menu-item"><a class="menu-link" href="kit.html"><span class="menu-label">CURO KIT<img class="menu-icon" src="assets/icons/curo-kit.svg" width="200" height="200" alt="" aria-hidden="true"></span></a></li>
+      <li class="menu-item"><a class="menu-link" href="story.html"><span class="menu-label">STORY<img class="menu-icon" src="assets/icons/story.svg" width="200" height="200" alt="" aria-hidden="true"></span></a></li>
+      <li class="menu-item"><a class="menu-link" href="friends.html"><span class="menu-label">FRIENDS<img class="menu-icon" src="assets/icons/friends.svg" width="200" height="200" alt="" aria-hidden="true"></span></a></li>
+    </ul>
+    <!-- 166차: 배경 음악 끄기/켜기 (js/bgm.js) — 아이콘 = assets/icons/sound.svg · assets/icons/mute.svg -->
+    <button class="menu-sound" id="menu-sound" type="button" aria-pressed="true" aria-label="배경 음악 끄기">
+      <span class="menu-sound-ic" aria-hidden="true"><i></i></span><span class="menu-sound-t">음악 끄기</span>
+    </button>
+  </nav>
+
+  <!-- GSAP core 는 js/anim.js 가 assets/vendor/gsap.min.js 를 로컬에서 불러온다 (CDN 없음).
+       파일이 없으면 anim.js 의 내장 timeline(같은 API 부분집합)으로 동작한다. -->
+  <script src="js/config.js?v=224"></script>
+  <script src="js/anim.js?v=40"></script>
+  <script src="js/main.js?v=119"></script>
+  <script src="js/bgm.js?v=168"></script>
+  <script src="js/config-book.js?v=5"></script>
+  <script src="js/book.js?v=4"></script>
+  <script src="js/story.js?v=119"></script>
+  <script src="js/story-text.js?v=47"></script>
+  <script src="js/main-mobile.js?v=284"></script>
+  <script src="js/main10.js?v=121"></script>
+  <script src="js/pages.js?v=203"></script>
+</body>
+</html>

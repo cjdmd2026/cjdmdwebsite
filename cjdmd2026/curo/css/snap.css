@@ -1,0 +1,51 @@
+/* ==========================================================================
+   한 화면 단위(full-screen snap) 섹션 공통 반응형 기준 (58차) — MAIN 제외 페이지 공용
+   section 전체를 transform: scale 로 통째로 줄이지 않는다.
+   1920×1080 시안 좌표(디자인 px)를 그대로 쓰되, 축마다 다른 '단위'로 화면에 옮긴다.
+
+   입력 (JS 가 실제 값으로 넣음, 없으면 vw/vh):
+     --kvw  화면 폭(px, scrollbar 제외)   --kvh  화면 높이(px)   --nav-h  상단 메뉴 높이(topnav.css)
+   공통 단위 (모두 길이, 1920×1080 + 메뉴 76 에서 1px):
+     --sx  가로 위치 단위 = 콘텐츠 폭 / 1920         (콘텐츠 폭 = min(화면 폭, 1920) → 큰 화면에서 무한정 커지지 않음)
+     --sy  세로 위치 단위 = (화면 높이 − 메뉴) / 1004 (1004 = 1080 − 76, 사용 가능한 높이)
+     --su  크기 단위(제품 이미지·원·간격) = min(sx, sy) → 폭이든 높이든 작은 쪽에 맞춰 줄어듦
+     --st  글자 단위 = su 보다 덜 줄어듦 (0.72 ~ 1), 높이가 아주 낮으면 sy 를 넘지 않게
+     --sg  요소 사이 간격 단위 = su (간격은 글자보다 먼저 줄어듦)
+     --sun su 의 숫자 값 (transform: scale 용, JS)
+   59차 — F11 전체화면에서는 아래 html.is-fs 규칙이 su / sy / top 을 바꾼다 (일반 창은 그대로).
+   위치 쓰는 법 (디자인 좌표 x, y):
+     가로  calc(var(--cx0) + x * var(--sx))          (--cx0 = 1920 보다 넓은 화면에서 가운데 정렬 여백)
+     세로  calc(var(--top) + (y - 76) * var(--sy))    (y = 76 이 메뉴 바로 아래, y = 1080 이 화면 아래 끝)
+     크기  calc(w * var(--su)) / 글자 calc(px * var(--st))
+   ========================================================================== */
+.snap-section {
+  --vw0: var(--kvw, 100vw);
+  --vh0: var(--kvh, 100vh);
+  --top0: var(--nav-h, 0px);
+  --top: var(--top0);
+  --cw: min(var(--vw0), 1920px);
+  --cx0: calc((var(--vw0) - var(--cw)) / 2);
+  --sx: calc(var(--cw) / 1920);
+  --sy0: min(1px, calc((var(--vh0) - var(--top0)) / 1004));
+  --sy: var(--sy0);
+  --su: min(var(--sx), var(--sy));
+  --st: min(1px, max(0.72px, calc(0.3px + 0.7 * var(--su))), calc(var(--sy) * 1.15));
+  --sg: var(--su);
+  position: relative;
+  height: var(--vh0);
+  overflow: hidden;
+}
+/* 59차 — F11 전체화면(html.is-fs, kit.js 가 판정)일 때만:
+   크기 단위를 사용 가능한 높이의 0.87 배로 잡아(--fs-k, 일반 브라우저 창과 비슷한 크기),
+   남는 세로 공간(--oy)을 위아래로 반씩 나눠 구성 전체를 메뉴 아래 가운데로 내린다.
+   일반 창에서는 이 규칙이 적용되지 않으므로 58차와 픽셀 동일. 값은 화면 크기에 따라 계속 계산됨(고정 px 아님). */
+html.is-fs .snap-section {
+  --fs-k: 0.87;
+  --su: min(var(--sx), calc(var(--sy0) * var(--fs-k)));
+  --sy: var(--su);
+  --oy: max(0px, calc((var(--vh0) - var(--top0) - 1004 * var(--su)) / 2));
+  --top: calc(var(--top0) + var(--oy));
+}
+/* 섹션 안 왼쪽 글 묶음: 첫 요소 위치만 정하고 나머지는 흐름(간격 = sg, 크기 = st) */
+.snap-section .k-col { position: absolute; display: flex; flex-direction: column; align-items: flex-start; }
+.snap-section .k-col > * { position: static; margin: 0; }
