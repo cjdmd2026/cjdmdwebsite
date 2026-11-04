@@ -1,0 +1,90 @@
+/* ==========================================================================
+   203차: 메인 폰(600px 이하) — 시안 v9 cover2(첫 화면) + v8(이야기). 마크업·동작 = js/main-mobile.js (#mm)
+   PC 장면(.main-stage · .cover-layer · .story-stage)은 숨기고 이 화면만 씀. 글 내용은 PC 의 .story-text 를 그대로 복사해 씀
+   ========================================================================== */
+#mm { display: none; }
+@media (max-width: 600px) {
+  .main-stage, .cover-layer, .story-stage, .m10-stage, .m10-cover-layer { display: none !important; }   /* Index3 = m10 도 */
+  html, body { background: #F6E8D2; overflow: hidden; }
+  :root { --hb-size: 24px !important; --hb-lw: 22px !important; --hb-gap: 7px !important; --hb-stroke: 2px !important; --hb-xw: 22px !important; --hb-top: 16px !important; --hb-right: 19px !important; }
+  .hamburger { z-index: 40; }
+
+  #mm { display: block; position: fixed; inset: 0; overflow: hidden; font-family: 'Pretendard', sans-serif; color: #6B645F; -webkit-tap-highlight-color: transparent; }
+
+  /* ---------- 첫 화면: 390×844 기준 무대를 화면에 맞춰 배율 (--mms) ---------- */
+  .mm-cover { position: absolute; inset: 0; background: linear-gradient(#F2F0E6 0%, #F6E8D2 60%); cursor: pointer; }
+  .mm-stage { position: absolute; left: 50%; top: 50%; width: 390px; height: 844px; transform: translate(-50%, -50%) scale(var(--mms, 1)); }
+  .mm-bg { position: absolute; left: -615px; top: -106px; height: 877px; max-width: none;
+    -webkit-mask-image: linear-gradient(#000 88%, transparent); mask-image: linear-gradient(#000 88%, transparent); }
+  .mm-logo { position: absolute; left: 50%; top: 150px; width: 236px; transform: translateX(-50%); }
+  .mm-tag { position: absolute; left: 0; right: 0; top: 228px; margin: 0; text-align: center; font-family: 'Ownglyph daisy', sans-serif; font-size: 17px; color: #6B645F; }
+  .mm-zoom { position: absolute; inset: 0; }
+  .mm-grp { position: absolute; left: 10px; right: 10px; top: 436px; }   /* 223차: 412 → 436 (책 아래 = 길의 그림자 줄) */
+  .mm-grp > img { display: block; width: 100%; height: auto; }
+  /* 205차: 책 = 안쪽 페이지(첫 장면) + 표지(왼쪽 경첩으로 펼쳐짐) — PC 책 열기와 같은 흐름 */
+  .mm-book { position: absolute; left: 27.06%; top: 24.29%; width: 44.34%; aspect-ratio: 488 / 506; perspective: 900px; filter: drop-shadow(0 6px 14px rgba(90, 60, 30, 0.18)); }
+  .mm-page { position: absolute; inset: 2% 0.6% 3.2% 3.3%; overflow: hidden; border-radius: 2px 8px 8px 2px; background: #FEF9ED; box-shadow: inset 6px 0 8px -6px rgba(80, 60, 40, 0.35); }   /* 214차: 표지 그림 테두리와 딱 맞게 (틈 없앰) · 216차: 왼쪽은 경첩까지 (펼친 뒤 책등 틈 안 보이게) */
+  /* 책 안 = 이야기 1장 축소본: 390 × 404 (책 비율) 를 페이지 폭에 맞춰 줄임 */
+  #mm:not(.is-opening) .mm-page { visibility: hidden; }
+  /* 217차: 표지가 막 들릴 때 그림이 표지 가장자리로 비치지 않게 — 처음엔 종이색만, 표지가 반쯤 열린 뒤 그림 */
+  /* 221차: 책등 고정 방식이라 그림 늦게 보이기(217차) 없앰 */
+  /* 218차: 처음엔 책등(뒤 그림) 자리를 비워 둠 — 표지가 거의 다 넘어간 뒤에 경첩까지 채움 (누르자마자 책등이 사라지던 것) */
+   /* 213차: 표지가 열리기 전엔 책 안이 비치지 않게 */
+  .mm-mini { position: absolute; left: 0; top: 0; overflow: hidden; background: #FEF9ED; transform-origin: 0 0; }   /* 208차: 실제 화면(위 바 + 1장 그림) 축소 — 크기·배율 = js */
+  /* 219차: 책등은 제자리(고정), 앞표지만 책등 오른쪽 경첩(3.3%)에서 넘어감 — 진짜 책처럼 */
+  .mm-spine { position: absolute; inset: 0; width: 100%; height: 100%; clip-path: inset(0 96.6% 0 0); z-index: 2; pointer-events: none; }
+  .mm-cv-f { clip-path: inset(0 0 0 3.3%); }
+  .mm-cv { position: absolute; inset: 0; transform-origin: 3.3% 50%; transform-style: preserve-3d; transition: transform 0.9s cubic-bezier(0.45, 0, 0.2, 1); }
+  .mm-cv-f, .mm-cv-b { position: absolute; inset: 0; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+  .mm-cv-b { transform: rotateY(180deg); background: #F4ECDD; border-radius: 4px; clip-path: inset(0 3.3% 0 0); }
+  #mm.is-opening .mm-cv { transform: rotateY(-168deg); }
+  #mm.is-opening .mm-open { animation: none; opacity: 0; transition: opacity 0.3s ease; }
+  .mm-open { position: absolute; left: 0; right: 0; bottom: 40px; margin: 0; text-align: center; font-size: 13px; letter-spacing: 0.08em; color: #4D4741; text-shadow: 0 1px 6px rgba(255, 255, 255, 0.75); }
+  .mm-open { animation: mmPulse 2.8s ease-in-out infinite; }   /* PC CLICK TO OPEN 과 같은 숨쉬기 */
+  @keyframes mmPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+  /* 231차: 손 아이콘 = 사용자 파일 assets/icons/tap-hand.svg (mask 로 글자색) */
+  .mm-tap { display: block; margin: 6px auto 0; width: 28px; height: 28px; background: #4D4741; -webkit-mask: url('../assets/icons/tap-hand.svg') center / contain no-repeat; mask: url('../assets/icons/tap-hand.svg') center / contain no-repeat; animation: mmTap 2.8s ease-in-out infinite; }
+  @keyframes mmTap { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+  #mm.is-in .mm-cover { opacity: 0; visibility: hidden; pointer-events: none; }
+  #mm.is-story .mm-cover { pointer-events: none; }
+
+  /* ---------- 이야기: 옆으로 넘기는 8장 ---------- */
+  .mm-story { position: absolute; inset: 0; background: #FEF9ED; visibility: hidden; transform-origin: 0 0; }
+  #mm.is-story .mm-story { visibility: visible; overflow: hidden; }
+  .mm-story .mm-bar { opacity: 0; transition: opacity 0.35s ease; }
+  #mm.is-in .mm-story .mm-bar { opacity: 1; }   /* 210차: 위 바는 화면이 자리 잡은 뒤 */
+  .mm-bar { position: absolute; left: 0; right: 0; top: 0; height: 56px; z-index: 5; display: flex; align-items: center; padding: 0 20px;
+    background: rgba(254, 249, 237, 0.55); -webkit-backdrop-filter: blur(12px) saturate(1.1); backdrop-filter: blur(12px) saturate(1.1); box-shadow: 0 1px 0 rgba(107, 100, 95, 0.08); }
+  .mm-bar button { border: 0; padding: 0; background: none; cursor: pointer; }
+  .mm-bar img { display: block; height: 20px; }
+  .mm-track { position: absolute; inset: 0; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
+  .mm-track::-webkit-scrollbar { display: none; }
+  .mm-slide { position: relative; flex: none; width: 100%; height: 100%; scroll-snap-align: start; scroll-snap-stop: always; overflow: hidden; }
+  .mm-img { position: absolute; left: 0; right: 0; top: 0; height: min(61%, calc(100vw * 1.318)); }
+  .mm-img img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+  .mm-img::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 90px; background: linear-gradient(rgba(254, 249, 237, 0), #FEF9ED); }
+  .mm-tx { position: absolute; left: 28px; right: 28px; top: calc(min(61%, 100vw * 1.318) + 12px); bottom: 96px; }
+  .mm-slide.is-end .mm-tx { text-align: center; }
+  .mm-pill { display: inline-flex; height: 30px; padding: 0 14px; align-items: center; border: 1.5px solid #6B645F; border-radius: 99px; font-family: 'Kyobo Handwriting 2024 psw', sans-serif; font-size: 17px; margin-bottom: 10px; }
+  .mm-kick { margin: 0 0 6px; font-family: 'Kyobo Handwriting 2024 psw', sans-serif; font-size: 18px; }
+  .mm-ttl { margin: 0; font-family: 'Ownglyph daisy', sans-serif; font-weight: 400; font-synthesis: none; font-size: clamp(30px, 9.7vw, 38px); line-height: 1.1; color: #6B645F; }
+  .mm-ttl .st-hl { color: #7AAA9E; }
+  .mm-bd { margin: 14px 0 0; font-size: 15px; line-height: 1.75; color: #6E675F; word-break: keep-all; }
+  .mm-slide.is-end .mm-tx { left: 16px; right: 16px; }
+  .mm-slide.is-end .mm-bd { font-size: 13.5px; letter-spacing: -0.3px; }
+  .mm-slide.is-end .mm-cta { margin-top: 34px; }
+  .mm-cta { display: inline-flex; margin-top: 18px; height: 46px; padding: 0 22px; align-items: center; gap: 6px; border-radius: 99px; background: #7AAA9E; color: #FFFFFF; font-weight: 700; font-size: 15px; text-decoration: none; }
+  .mm-nav { position: absolute; left: 28px; right: 28px; bottom: calc(28px + env(safe-area-inset-bottom, 0px)); z-index: 4; display: flex; align-items: center; justify-content: flex-end; height: 48px; transition: opacity 0.3s ease; }
+  .mm-dots { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }   /* 206차: 진행 점 가운데, n/8 없앰 */
+  .mm-dots { display: flex; gap: 6px; }
+  .mm-dots i { width: 6px; height: 6px; border-radius: 3px; background: #D8CFC4; transition: width 0.3s ease, background-color 0.3s ease; }
+  .mm-dots i.on { width: 20px; background: #7AAA9E; }
+  .mm-next { width: 48px; height: 48px; padding: 0; border: 1.5px solid #8C837B; border-radius: 50%; background: rgba(254, 249, 237, 0.8); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .mm-next svg { width: 20px; height: 20px; }
+  #mm.is-last .mm-nav { opacity: 0; pointer-events: none; }
+}
+@media (max-width: 600px) and (prefers-reduced-motion: reduce) {
+  .mm-cv { transition-duration: 0.01s !important; }
+  .mm-open { animation: none; }
+  .mm-tap { animation: none; }
+}

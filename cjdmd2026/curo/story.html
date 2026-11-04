@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko" class="st-page" data-page="story">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CURO — STORY</title>
+  <link rel="preload" href="assets/fonts/pretendard-regular.woff" as="font" type="font/woff" crossorigin>
+  <link rel="preload" href="assets/fonts/pretendard-bold.woff" as="font" type="font/woff" crossorigin>
+  <link rel="preload" href="assets/fonts/bm-jua.woff" as="font" type="font/woff" crossorigin>
+  <!-- 공통 토큰·폰트·햄버거 = main.css, floating = float.css, STORY 전용 = story.css -->
+  <link rel="stylesheet" href="css/main.css?v=287">
+  <link rel="stylesheet" href="css/float.css?v=280">
+  <link rel="stylesheet" href="css/consult.css?v=271">   <!-- 141차: 상담 패널 = 렌탈 상담 신청 흐름 (js/apply.js) -->
+  <link rel="stylesheet" href="css/story.css?v=293">
+  <link rel="stylesheet" href="css/topnav.css?v=287">
+  <link rel="stylesheet" href="css/footer.css?v=286">
+</head>
+<body>
+  <!-- =========================================================
+       STORY (68차) — 상단 메뉴 STORY 페이지. 두 화면 (js/episodes.js)
+       1. 목록: 히어로 + 1~7화 카드   2. 영상 보기 (#ep-N): 영상 + 줄거리 + 다음 이야기
+       ========================================================= -->
+  <main class="st">
+    <!-- ---------- 1. 목록 ---------- -->
+    <div class="st-list-view">
+      <section class="st-hero" aria-labelledby="st-title">
+        <img class="st-hero-img" src="assets/images/story/hero-2.webp?v=285" width="1920" height="537" alt="" decoding="async">
+        <div class="st-in st-hero-in">
+          <h1 class="st-title" id="st-title">큐로 가디언즈</h1>
+          <p class="st-sub">콩이와 가디언즈가 함께하는<br>주사와 친해지는 특별한 여정!</p>
+          <a class="st-cta" href="#ep-1">첫화 보러가기 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </div>
+      </section>
+      <section class="st-in st-eps" aria-label="에피소드 목록">
+        <ul class="st-grid" id="st-grid"></ul>
+      </section>
+    </div>
+
+    <!-- ---------- 2. 영상 보기 ---------- -->
+    <div class="st-watch-view">
+      <div class="sw">
+        <h1 class="sw-title" id="sw-title"></h1>
+        <div class="sw-body">
+          <div class="sw-video" id="sw-video"></div>
+          <aside class="sw-side" aria-label="다음 이야기">
+            <div class="sw-side-in">
+              <div class="sw-side-head">
+                <h2>다음 이야기</h2>
+                <label class="sw-auto"><span>연속재생</span><input type="checkbox" id="sw-auto" role="switch"><i aria-hidden="true"></i></label>
+              </div>
+              <ul class="sw-list" id="sw-list"></ul>
+            </div>
+          </aside>
+          <p class="sw-desc" id="sw-desc"></p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- =========================================================
+       floating UI (공통, kit.html 과 같은 마크업) — css/float.css · js/float.js
+       ========================================================= -->
+  <div class="k-float" id="k-float">
+    <!-- 77차: '위로 가기' 대신 '동화 보러가기' (STORY 페이지로 이동). 모양·hover 는 상담 버튼과 같음 -->
+    <a class="k-fab k-story" href="story.html" aria-label="함께 보는 동화 · 동화 보러가기">
+      <span class="k-consult-pill" aria-hidden="true"></span>
+      <span class="k-consult-txt" aria-hidden="true"><small>함께 보는 동화</small><strong>동화 보러가기</strong></span>
+      <span class="k-consult-ic" aria-hidden="true"><img data-icon="book" alt=""></span>
+    </a>
+    <button class="k-fab k-consult" type="button" aria-label="1:1 무료 상담 · 학습 상담 예약" aria-expanded="false" aria-controls="k-chat">
+      <span class="k-consult-pill" aria-hidden="true"></span>
+      <span class="k-consult-txt" aria-hidden="true"><small>1:1 무료 상담</small><strong>학습 상담 예약</strong></span>
+      <span class="k-consult-ic" aria-hidden="true"><img data-icon="consult" alt=""></span>
+    </button>
+  </div>
+
+  <section class="k-chat" id="k-chat" role="dialog" aria-modal="false" aria-labelledby="k-chat-title" aria-hidden="true">
+    <header class="k-chat-head">
+      <span class="k-chat-head-ic" aria-hidden="true"><img data-icon="consult" alt=""></span>
+      <div class="k-chat-head-t">
+        <h2 id="k-chat-title">학습 상담 예약</h2>
+        <p>우리 아이에게 맞는 제품을 추천드려요</p>
+      </div>
+      <!-- 닫기 X: export 된 아이콘이 없어 임시 inline SVG (파일이 생기면 <img data-icon="close"> 로 교체) -->
+      <button class="k-chat-close" type="button" aria-label="상담 창 닫기">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M21 3L3 21" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </header>
+    <div class="k-chat-body">
+      <div class="k-chat-msg">
+        <span class="k-chat-avatar" aria-hidden="true"><img data-icon="consult" alt=""></span>
+        <p class="k-chat-bubble">안녕하세요! CURO 렌탈을 도와드릴게요.<br>몇 가지만 선택하면 상담 신청이 완료돼요 :)</p>
+      </div>
+      <!-- 질문 · 선택 카드 단계 (내용 확정 후 구현) -->
+      <div class="k-chat-steps" id="k-chat-steps"></div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       MENU (Index 와 같은 마크업 · main.js 가 처리)
+       ========================================================= -->
+  <button class="hamburger" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="menu-panel">
+    <span class="hamburger__line"></span>
+    <span class="hamburger__line"></span>
+    <span class="hamburger__line"></span>
+  </button>
+  <div class="menu-backdrop" aria-hidden="true"></div>
+  <nav id="menu-panel" class="menu-panel" aria-label="사이트 메뉴" inert>
+    <ul class="menu-group">
+      <li class="menu-item"><a class="menu-link" href="program.html"><span class="menu-label">PROGRAM<img class="menu-icon" src="assets/icons/program.svg" width="200" height="200" alt="" aria-hidden="true"></span></a></li>
+      <li class="menu-item"><a class="menu-link" href="kit.html"><span class="menu-label">CURO KIT<img class="menu-icon" src="assets/icons/curo-kit.svg" width="200" height="200" alt="" aria-hidden="true"></span></a></li>
+      <li class="menu-item"><a class="menu-link" href="story.html"><span class="menu-label">STORY<img class="menu-icon" src="assets/icons/story.svg" width="200" height="200" alt="" aria-hidden="true"></span></a></li>
+      <li class="menu-item"><a class="menu-link" href="friends.html"><span class="menu-label">FRIENDS<img class="menu-icon" src="assets/icons/friends.svg" width="200" height="200" alt="" aria-hidden="true"></span></a></li>
+    </ul>
+  </nav>
+
+  <script src="js/config.js?v=47"></script>
+  <script src="js/main.js?v=119"></script>
+  <script src="js/topnav.js?v=192"></script>
+  <script src="js/footer.js?v=194"></script>
+  <script src="js/float.js?v=268"></script>
+  <script src="js/apply.js?v=283"></script>
+  <script src="js/episodes.js?v=189"></script>
+</body>
+</html>

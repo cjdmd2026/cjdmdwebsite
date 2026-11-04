@@ -1,0 +1,63 @@
+/* ==========================================================================
+   233차: 태블릿 (601~1279) — tablet-proposal/v1 시안 중 PROGRAM · 캐릭터 상세 · FRIENDS(세로 768) 만 반영
+   기준선: 양옆 여백 --side (601~900 = 40px, 901~1279 = 40px → 1280 의 PC 여백까지 이어짐), --page-w = 화면 − 양옆
+   ========================================================================== */
+@media (min-width: 601px) and (max-width: 900px) { html.pg-page, html.cp-page, html.fr-page { --side: 40px; } }
+@media (min-width: 901px) and (max-width: 1279px) { html.pg-page, html.cp-page, html.fr-page { --side: calc(40px + (100vw - 900px) * 0.3865); } }
+@media (min-width: 601px) and (max-width: 1279px) {
+  html.pg-page, html.cp-page { --page-w: calc(100vw - 2 * var(--side)); }
+}
+@media (min-width: 601px) and (max-width: 900px) {
+  html.pg-page .site-nav-in, html.cp-page .site-nav-in, html.fr-page .site-nav-in { padding: 0 var(--side); }
+  html.pg-page, html.cp-page, html.fr-page { --hb-right: calc(var(--side) - 2px) !important; }
+}
+
+/* ---------- FRIENDS: 세로 태블릿 = 폰 배치를 크게 (friends.css 폰 규칙이 세로 태블릿까지 적용됨) ---------- */
+@media (min-width: 601px) and (max-width: 1024px) and (orientation: portrait) {
+  .fr-meet-f > .fr-info { padding: 96px var(--side) 0; max-width: 620px; }
+  .fr-name { font-size: 56px; line-height: 62px; }
+  .fr-tag { font-size: 18px; line-height: 26px; }
+  .fr-sound { right: var(--side); top: 100px; height: 50px; padding-right: 20px; font-size: 16px; }
+  .fr-sound i { width: 50px; height: 50px; }
+  .fr-desc { font-size: 17px; line-height: 28px; margin-top: 16px !important; }
+  .fr-quote { font-size: 19px; line-height: 28px; margin-top: 16px !important; }
+  .fr-cta { left: 50%; right: auto; width: 400px; margin-left: -200px; bottom: 40px; height: 58px; font-size: 17px; }
+  .fr-pick { bottom: 124px; gap: 20px; } .fr-pick button { width: 72px; height: 72px; }
+  .fr-hill { top: calc(100% - 300px); }
+  .fr-stage { bottom: 216px; width: 380px; margin-left: -190px; }
+  .fr-mark { bottom: 400px; font-size: 150px; }
+  .fr-char { bottom: 284px;
+    width: calc(clamp(240px, var(--fvh, 1024px) - 640px, 440px) * var(--v-k, 1)); height: calc(clamp(240px, var(--fvh, 1024px) - 640px, 440px) * var(--v-k, 1)); }
+}
+
+/* ==========================================================================
+   PROGRAM (601~1279): 기준선에 맞춤 + 세로 태블릿에서도 사진 | 정보 두 단 (사진만 왼쪽에 붙어 오른쪽이 비던 것)
+   ========================================================================== */
+@media (min-width: 601px) and (max-width: 1199px) {
+  .pg-page { --pg-gutter: var(--side); --pg-w: var(--page-w); }
+}
+@media (min-width: 601px) and (max-width: 900px) {
+  .pg-sum { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 32px; padding-top: 96px; align-items: stretch; }
+  .pg-hero { max-width: none; }
+  .pg-info { display: flex; flex-direction: column; }
+  .pg-title { font-size: 24px; line-height: 32px; }
+  .pg-desc { font-size: 15px; line-height: 23px; }
+  .pg-spec { margin-top: 18px; padding-top: 16px; }
+  .pg-spec > div { grid-template-columns: 96px 1fr; padding: 3px 0; }
+  .pg-spec dt, .pg-spec dd { font-size: 14px; }
+  .pg-buy { margin-top: auto; padding-top: 16px; display: block; }
+  .pg-price strong { font-size: 22px; }
+  .pg-cta { display: flex; width: 100%; margin-top: 14px; }
+  .pg-detail { margin-top: 56px; }
+}
+
+/* ==========================================================================
+   CHARACTER (601~1279): 가운데 기둥(1100 기준)을 기준선 폭으로 → 전체를 그 비율로 키움 (좁은 기둥에 작게 몰려 있던 것)
+   동화 속 장면: 폭이 제각각인 두 줄 → 같은 크기 3 × 2 (세로 줄이 맞게)
+   ========================================================================== */
+@media (min-width: 601px) and (max-width: 1279px) {
+  .cp { --u: min(1px, calc((100vw - 2 * var(--side)) / 1100)); }
+  .cp-col { width: var(--page-w); }
+  .cp-gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .cp-gallery figure { width: auto; aspect-ratio: 4 / 3; }
+}

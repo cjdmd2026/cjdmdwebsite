@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_뚜껑" data-name="뚜껑" xmlns="http://www.w3.org/2000/svg" width="25.31" height="33.34" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 25.31 33.34">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+        opacity: .8;
+      }
+
+      .cls-1, .cls-2 {
+        stroke-width: 0px;
+      }
+
+      .cls-2 {
+        fill: url(#_무제_그라디언트_156);
+      }
+
+      .cls-3 {
+        stroke: #2b2b2b;
+      }
+
+      .cls-3, .cls-4 {
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .cls-4 {
+        stroke: #c4c4c4;
+      }
+    </style>
+    <linearGradient id="_무제_그라디언트_156" data-name="무제 그라디언트 156" x1="29.6" y1="7.52" x2="6.42" y2="11.61" gradientTransform="translate(-3.4 11.33) rotate(.64)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#231815" stop-opacity=".12"/>
+      <stop offset=".7" stop-color="#fafafa" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <polygon class="cls-1" points="6.31 1.87 3.7 3.28 1.1 5.55 .83 8.91 1.51 14.55 2.25 15.92 4.09 28.95 5.1 30.35 7.5 30.55 7.7 31.93 14.19 32.82 20.43 31.43 20.45 29.7 21.64 30.52 24.14 28.5 25 26.28 24.2 8.04 24.5 5.77 21.94 2.74 15.88 .38 10.43 .8 6.31 1.87"/>
+  <path class="cls-2" d="M2.46,12.12l3.22,1.5,6.93.83,6.65-1.63s3.84-2.61,3.87-2.65,1.16-2.06,1.16-2.06l.73,18.63-3.21,3.83-1.67-.75.06,1.48-6.33,1.5-6.21-.65-.13-2.16-1.99,1.21-1.77-2.93L1.73,11.6l.74.52Z"/>
+  <path class="cls-4" d="M3.98,28.46c-.33-2.98,4.04-5.91,9.76-6.53s10.62,1.28,10.94,4.27"/>
+  <path class="cls-4" d="M.95,13c-.33-3.82,4.74-7.38,11.33-7.94,6.59-.57,12.19,2.07,12.52,5.89"/>
+  <path class="cls-4" d="M.93,11.52c-.33-3.82,4.74-7.38,11.33-7.94,6.59-.57,12.19,2.07,12.52,5.89"/>
+  <ellipse class="cls-3" cx="12.44" cy="7.49" rx="11.97" ry="6.94" transform="translate(-.6 1.09) rotate(-4.92)"/>
+  <path class="cls-3" d="M24.76,10.66c.01.09.03.19.03.29.33,3.82-4.74,7.38-11.33,7.94-6.59.57-12.19-2.07-12.52-5.89-.06-.69.06-1.38.33-2.04"/>
+  <path class="cls-3" d="M5.86,31.15c-.99-.7-1.77-1.7-1.88-2.7"/>
+  <path class="cls-3" d="M20.09,31.45c-1.51.66-3.2,1.06-5.16,1.28-2.76.3-5.32.01-7.28-.7"/>
+  <path class="cls-3" d="M24.69,26.19c.17,1.59-.99,3.16-2.97,4.38"/>
+  <path class="cls-3" d="M24.37,7.99c.23.47.37.96.41,1.48.33,3.82-4.74,7.38-11.33,7.94S1.26,15.34.93,11.52c-.04-.44,0-.88.1-1.32"/>
+  <ellipse class="cls-3" cx="12.29" cy="5.81" rx="8.53" ry="4.61" transform="translate(-.45 1.08) rotate(-4.92)"/>
+  <line class="cls-3" x1="3.94" y1="28.37" x2="1.69" y2="11.32"/>
+  <line class="cls-3" x1="24.73" y1="26.68" x2="23.99" y2="9.17"/>
+  <line class="cls-3" x1="19.52" y1="17.67" x2="20.11" y2="31.43"/>
+  <polyline class="cls-3" points="21.25 16.71 21.64 30.52 20.21 29.79"/>
+  <polyline class="cls-3" points="4.71 17.55 6.13 30.95 7.11 30.34"/>
+  <line class="cls-3" x1="7.65" y1="31.93" x2="6.13" y2="18.17"/>
+</svg>

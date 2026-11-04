@@ -1,0 +1,8 @@
+/* FRIENDS 등장 효과 (147차 시안) — friends-burst-proposal.html 전용, 동작 = js/friends-burst.js */
+.fb-layer { left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none !important; }
+.fb-item { position: absolute; display: block; opacity: 0; will-change: transform, opacity; }
+.fb-item svg, .fb-item img { display: block; width: 100%; height: 100%; overflow: visible; user-select: none; -webkit-user-drag: none; }   /* 230차: 그림 = svg 파일 */
+.fb-item.is-keep svg, .fb-item.is-keep img { animation: fbBob 3.2s ease-in-out infinite alternate; }
+@keyframes fbBob { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+.fr-char { transform-origin: 50% 100%; }
+@media (prefers-reduced-motion: reduce) { .fb-layer { display: none; } }

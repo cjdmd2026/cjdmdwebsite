@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ko" class="kit-page" data-page="kit">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CURO — CURO KIT</title>
+  <link rel="preload" href="assets/fonts/pretendard-regular.woff" as="font" type="font/woff" crossorigin>
+  <link rel="preload" href="assets/fonts/pretendard-bold.woff" as="font" type="font/woff" crossorigin>
+  <!-- 공통 토큰·폰트·햄버거 메뉴 = main.css 그대로, KIT 전용 = kit.css -->
+  <link rel="stylesheet" href="css/main.css?v=287">
+  <link rel="stylesheet" href="css/snap.css?v=59">
+  <link rel="stylesheet" href="css/kit.css?v=291">
+  <link rel="stylesheet" href="css/float.css?v=280">
+  <link rel="stylesheet" href="css/consult.css?v=271">   <!-- 141차: 상담 패널 = 렌탈 상담 신청 흐름 (js/apply.js) -->
+  <link rel="stylesheet" href="css/topnav.css?v=287">
+  <link rel="stylesheet" href="css/footer.css?v=286">
+</head>
+<body>
+  <!-- =========================================================
+       CURO KIT (49차)
+       1 → 2 → 3 : 한 화면씩 세로 full-page snap (kit.js)
+       4         : 일반 문서 스크롤 (3 에서 아래로 → 4 맨 위, 4 맨 위에서 위로 → 3)
+       각 섹션 안 .kf = 1920×1080 디자인 frame (좌표 = 시안 px, 배율은 kit.js)
+       ========================================================= -->
+  <main class="kit" id="kit">
+    <!-- 184차: 폰(600 이하) 전용 화면 — js/kit-mobile.js 가 채움 (목록 벤토 그리드 → 제품 상세). PC 섹션(k0~k4)은 폰에서 숨김 -->
+    <section class="km" id="km" hidden aria-label="CURO 키트"></section>
+
+    <!-- ---------- 0. CURO 키트 안에 무엇이 들어있을까? (80차, 피그마 '프로덕트 제안1/2') ----------
+         평소 = 동화풍 그림, 제품에 마우스를 올리면 실물 사진 + 동그라미 → 돋보기 + 제품 이름. 누르면 1번에서 그 제품.
+         81차: 여기서는 스크롤해도 넘어가지 않음 — 제품을 눌러야 1번으로.
+         장면·제품 = js/kit-products.js 가 kit-config.js 의 products 로 채움 -->
+    <section class="ks snap-section ks-0" id="k0" data-snap="0" aria-label="CURO 키트 구성">
+      <div class="k0-back" aria-hidden="true"></div>
+      <div class="k0-stage" id="k0-stage">
+        <!-- 83차: 배경도 제품과 같은 배율 (배경에 그려진 그림자와 제품 위치가 맞게). 88차: 항상 화면을 덮음 -->
+        <div class="k0-scene" aria-hidden="true"><img src="assets/images/kit/products/room.webp?v=89" alt="" decoding="async"></div>
+        <div class="k0-items" id="k0-items"></div>
+        <div class="k0-shade" aria-hidden="true"></div>
+        <div class="k0-spots" id="k0-spots" aria-hidden="true"></div>
+        <h2 class="k0-title">CURO 키트 안에<br>무엇이 들어있을까?</h2>
+        <!-- 83차: 안내 문구 = 피그마 자리(가운데), 글자 아래선을 제목 둘째 줄 아래선에 맞춤. 마우스 아이콘 = export 없어 임시 inline SVG -->
+        <p class="k0-hint">제품을 눌러 확인해보세요</p>
+        <svg class="k0-mouse" viewBox="0 0 36 36" aria-hidden="true"><rect x="10" y="5" width="16" height="26" rx="8" fill="none" stroke="#fff" stroke-width="2"/><path d="M18 10v5" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+    </section>
+
+    <!-- ---------- 1. 제품 (80차: 피그마 '프로덕트 레이아웃' 5종 — 같은 틀, 내용만 바뀜) ----------
+         기본(스크립트 전) = 벨트. 벨트 외 제품은 아래 상세가 아직 없어 2번으로 내려가지 않음 -->
+    <section class="ks snap-section ks-1" id="k1" data-snap="1" aria-label="제품">
+      <div class="kf">
+        <div class="k-col k1-col">
+          <h1 class="k-title k1-title" id="k1-title">큐로 가디언즈<br>주사 연습 벨트</h1>
+          <p class="k-body k1-body" id="k1-body">주사 위치와 유지 시간을 연습하고,<br>실시간 피드백으로 올바른 주사 습관을 익혀요.</p>
+          <p class="k1-label" id="k1-label">기본 제공품</p>
+          <p class="k1-price is-empty" id="k1-price"><span>판매가</span><strong></strong></p>
+          <a class="k1-btn" href="#" role="button">
+            <span>렌탈 하러가기</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+        <!-- 81차: 원 + 제품 카드 (가운데 / 오른쪽 끝 다음 제품) — js/kit-products.js 가 만들고 옮김 -->
+        <div class="k1-anchor k1-anchor-main" id="k1-anchor-main" aria-hidden="true"></div>
+        <div class="k1-anchor k1-anchor-peek" id="k1-anchor-peek" aria-hidden="true"></div>
+        <div class="k1-cards" id="k1-cards"></div>
+        <button class="k1-next" id="k1-next" type="button" aria-label="다음 제품"><svg viewBox="0 0 30 52" aria-hidden="true"><path d="M2 2l25 24L2 50" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <ol class="k1-dots" id="k1-dots" aria-label="제품 목록"></ol>
+      </div>
+    </section>
+
+    <!-- ---------- 2. 안전한 설계 (시안 product2 / 2-1 / 2-2) ---------- -->
+    <section class="ks snap-section ks-2" id="k2" data-snap="2" aria-label="안전한 설계">
+      <div class="kf">
+        <div class="k-col k2-col">
+          <h2 class="k-title k2-title"><span class="k2-title-s">아이의 첫 연습을 위한</span><br>안전한 설계</h2>
+          <p class="k-body k2-body kp-belt">아이의 복부에 안정적으로 착용되는 구조와<br>주사 연습을 위한 고정 장치를 적용했어요</p>
+          <p class="k-body k2-body kp-cap">아이의 복부에 안정적으로 착용되는 구조와<br>주사 연습을 위한 고정 장치를 적용했어요</p>
+          <p class="k-body k2-body kp-assist">아이의 복부에 안정적으로 착용되는 구조와<br>주사 연습을 위한 고정 장치를 적용했어요</p>
+          <p class="k-body k2-body kp-doll">아이가 품에 안고 편안하게 연습할 수 있도록<br>움직이는 관절을 적용해 자세를 자유롭게 조절할 수 있어요.</p>
+        </div>
+
+        <!-- 3면도 -->
+        <img class="k2-view kp-belt" src="assets/images/kit/belt/view-side.svg" style="--rx:302;--ry:0;--w:73;--h:127" alt="" aria-hidden="true">
+        <img class="k2-view kp-belt" src="assets/images/kit/belt/view-front.svg" style="--rx:185;--ry:0;--w:185;--h:127" alt="" aria-hidden="true">
+        <img class="k2-view kp-belt" src="assets/images/kit/belt/view-top.svg" style="--rx:186;--ry:169;--w:185;--h:74.04" alt="" aria-hidden="true">
+        <!-- 246차: 주사 보조 캡 3면도 (사용자 파일 1배) -->
+        <img class="k2-view kp-cap" src="assets/images/kit/cap/view-front.svg?v=246" style="--rx:98;--ry:0;--w:28;--h:127.5" alt="" aria-hidden="true">
+        <img class="k2-view kp-cap" src="assets/images/kit/cap/view-side.svg?v=246" style="--rx:27;--ry:0;--w:26;--h:127.5" alt="" aria-hidden="true">
+        <img class="k2-view kp-cap" src="assets/images/kit/cap/view-bottom.svg?v=246" style="--rx:27;--ry:170;--w:26;--h:28" alt="" aria-hidden="true">
+        <!-- 242차: 주사 각도 가이드 3면도 (사용자 파일 × 1.04 = 시안 크기) -->
+        <img class="k2-view kp-assist" src="assets/images/kit/assist/view-side.svg?v=242" style="--rx:412;--ry:0;--w:184.08;--h:108.65" alt="" aria-hidden="true">
+        <img class="k2-view kp-assist" src="assets/images/kit/assist/view-front.svg?v=242" style="--rx:186;--ry:0;--w:184.08;--h:108.65" alt="" aria-hidden="true">
+        <img class="k2-view kp-assist" src="assets/images/kit/assist/view-bottom.svg?v=242" style="--rx:186;--ry:151;--w:184.08;--h:184.08" alt="" aria-hidden="true">
+        <!-- 238차: 인형 3면도 (사용자 파일 웹/프로덕트/4/인형 → assets/images/kit/doll/) -->
+        <img class="k2-view kp-doll" src="assets/images/kit/doll/view-side.svg?v=238" style="--rx:216;--ry:1;--w:76.87;--h:126.67" alt="" aria-hidden="true">
+        <img class="k2-view kp-doll" src="assets/images/kit/doll/view-front.svg?v=238" style="--rx:96;--ry:0;--w:94.73;--h:126.5" alt="" aria-hidden="true">
+        <img class="k2-view kp-doll" src="assets/images/kit/doll/view-bottom.svg?v=238" style="--rx:94;--ry:169;--w:93.4;--h:72.32" alt="" aria-hidden="true">
+
+        <!-- 가운데 제품: 완성 외형 + 부품별 SVG + 부품 설명 콜아웃 (kit.js 가 kit-config.js 로 채움) -->
+        <div class="k2-stage" id="k2-stage" aria-label="제품 내부 구조"></div>
+
+        <div class="k2-spec k2-spec-w kp-belt"><strong>645g</strong><span>실제 제품 기준 측정 무게</span></div>
+        <div class="k2-spec k2-spec-s kp-belt"><strong>18.8X11cm</strong><span>아동의 체형을 고려한 크기 구성</span></div>
+        <div class="k2-spec k2-spec-w kp-cap"><strong>150g</strong><span>실제 제품 기준 측정 무게</span></div>
+        <div class="k2-spec k2-spec-s kp-cap"><strong>34X162mm</strong><span>편안한 그립감을 고려한 크기 설계</span></div>
+        <div class="k2-spec k2-spec-w kp-assist"><strong>50g</strong><span>실제 제품 기준 측정 무게</span></div>
+        <div class="k2-spec k2-spec-s kp-assist"><strong>42X42mm</strong><span>주사캡 사용에 최적화된 크기</span></div>
+        <div class="k2-spec k2-spec-w kp-doll"><strong>350g</strong><span>실제 제품 기준 측정 무게</span></div>
+        <div class="k2-spec k2-spec-s kp-doll"><strong>23X50cm</strong><span>아이의 품에 쏙 들어오는 크기</span></div>
+      </div>
+    </section>
+
+    <!-- ---------- 3. #01 실리콘 연습 패드 (시안 product3.png) ---------- -->
+    <section class="ks snap-section ks-3" id="k3" data-snap="3" aria-label="제품 특징" aria-roledescription="carousel">
+      <div class="kf">
+        <!-- 63차: #01~#03 같은 구조, 내용은 kit-config.js k3.slides 에서 바뀜 (아래는 #01 기본값) -->
+        <div class="k-col k3-col">
+          <div class="k3-text" aria-live="polite">
+            <p class="k3-num"><span class="k3-dot" aria-hidden="true"></span><span class="k3-num-t">#01</span></p>
+            <h2 class="k-title k3-title"><span class="k3-title-s">부드러운 촉감으로 구현한,</span><br><span class="k-hl">실리콘 연습 패드</span></h2>
+            <p class="k-body k3-body">부드러운 실리콘 소재를 적용해 실제 사용 상황에<br>가까운 촉감으로 반복해서 연습할 수 있도록 제작했어요.</p>
+          </div>
+          <ul class="k3-thumbs">
+            <li><img src="assets/images/kit/pad/pad-thumb-1.webp" width="112" height="112" alt="패드 측면"></li>
+            <li><img src="assets/images/kit/pad/pad-thumb-2.webp" width="112" height="112" alt="손가락으로 누른 패드"></li>
+            <li><img src="assets/images/kit/pad/pad-thumb-3.webp" width="112" height="112" alt="패드와 케이스"></li>
+          </ul>
+        </div>
+        <div class="k3-right">
+          <div class="k3-circle" aria-hidden="true"></div>
+          <img class="k3-photo" src="assets/images/kit/pad/pad-main.webp?v=235" width="1327" height="1185" alt="손가락으로 실리콘 패드를 누르는 모습" decoding="async">
+        </div>
+        <!-- 마우스를 따라다니는 PREV / NEXT (kit.js, 아이콘 = 사용자 export Icon/Left·Right Arrow.svg) -->
+        <div class="k3-cursor" aria-hidden="true">
+          <span class="k3-cursor-ic"><img class="k3-cursor-prev" data-icon="prev" alt=""><img class="k3-cursor-next" data-icon="next" alt=""></span>
+          <span class="k3-cursor-t">NEXT</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- 4. 일반 스크롤 영역 (시안 product4.png → 75차 수정 시안, 1920 폭 기준, 높이 2845) ---------- -->
+    <section class="k4" id="k4" aria-label="제품 상세">
+      <div class="k4f kp-belt">
+        <h2 class="k-title k4-title"><span class="k-hl k4-hl">안심</span>하고 사용할 수 있도록</h2>
+        <p class="k-title k4-sub">이런 부분을 고려했어요</p>
+        <span class="k4-rule" aria-hidden="true"></span>
+
+        <!-- 135차: 사용자 이미지·아이콘 (웹/프로덕트/4/벨트 → assets/images/kit/belt/detail/, 영어 이름으로) -->
+        <img class="k4-ph-main" src="assets/images/kit/belt/detail/belt-safety.webp?v=135" width="437" height="400" alt="아이 배에 CURO 벨트를 착용한 모습" decoding="async" loading="lazy">
+        <ul class="k4-checks">
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">복부 쿠션 패드로 배에 닿는 부분을 부드럽게 만들었어요</li>
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">벨트 커버를 쉽게 분리해 깨끗하게 세척하고 관리해요</li>
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">스트랩 길이를 조절해 아이의 체형에 맞게 착용해요</li>
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">커버의 결합 방향을 바꿔 왼손잡이도 편리하게 사용해요</li>
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">바늘 보호판으로 바늘이 깊이 들어가지 않도록 했어요</li>
+        </ul>
+
+        <h3 class="k4-h k4-h-use">제품 사용 방법</h3>
+        <ol class="k4-steps">
+          <li><img src="assets/images/kit/belt/detail/manual-1.webp?v=136" width="438" height="348" alt="" loading="lazy" decoding="async"><b>Step 1</b><p>포장을 열고 벨트의 구성품이 모두 들어 있는지<br>확인해 주세요.</p></li>
+          <li><img src="assets/images/kit/belt/detail/manual-2.webp?v=136" width="438" height="348" alt="" loading="lazy" decoding="async"><b>Step 2</b><p>벨트 본체 연결부에 패브릭 커버를 방향에<br>맞게 끼워 주세요.</p></li>
+          <li><img src="assets/images/kit/belt/detail/manual-3.webp?v=136" width="438" height="348" alt="" loading="lazy" decoding="async"><b>Step 3</b><p>연결부에 원기둥 고정 부품을 끼운 후 뚜껑을 닫아<br>주세요.</p></li>
+          <li><img src="assets/images/kit/belt/detail/manual-4.webp?v=136" width="438" height="348" alt="" loading="lazy" decoding="async"><b>Step 4</b><p>벨트를 아이의 복부에 착용시키고 스트랩 길이를<br>알맞게 조절해 주세요.</p></li>
+          <li><img src="assets/images/kit/belt/detail/manual-5.webp?v=136" width="438" height="348" alt="" loading="lazy" decoding="async"><b>Step 5</b><p>벨트 본체의 전원 연결부에 5V 전원 케이블을<br>꽂아 주세요.</p></li>
+          <li><img src="assets/images/kit/belt/detail/manual-6.webp?v=136" width="438" height="348" alt="" loading="lazy" decoding="async"><b>Step 6</b><p>CURO 학습 콘텐츠의 안내에 따라 아이와 함께<br>주사 연습을 시작해 주세요.</p></li>
+        </ol>
+        <div class="k4-note">
+          <p class="k4-note-t">사용 전 주의사항</p>
+          <ol>
+            <li>아이가 안전하게 연습할 수 있도록 보호자가 곁에서 함께 지도해 주세요.</li>
+            <li>고장을 방지하기 위해 전원 연결부와 전자 부품에 물이 닿지 않도록 해주세요.</li>
+            <li>세척 전에는 반드시 전원을 분리하고, 분리한 패브릭 커버만 세탁해 주세요.</li>
+          </ol>
+        </div>
+
+        <h3 class="k4-h k4-h-info">제품 정보</h3>
+        <table class="k4-table">
+          <tbody>
+            <tr><th>제품명</th><td>CURO 주사 연습 벨트</td></tr>
+            <tr><th>품목명</th><td>어린이용 주사 연습 보조기기</td></tr>
+            <tr><th>보관방법</th><td>습기를 피해 서늘하고 건조한 곳에 보관</td></tr>
+            <tr class="is-2l"><th>소재</th><td>실리콘, 플라스틱, 패브릭,<br>3D 에어 메쉬, 스펀지</td></tr>
+            <tr><th>색상 및 사이즈</th><td>브라운, 60x40x800</td></tr>
+            <tr><th>판매자명</th><td>CURO</td></tr>
+            <tr><th>제조국</th><td>한국</td></tr>
+            <tr><th>제조사</th><td>제품 내 별도 표기</td></tr>
+          </tbody>
+        </table>
+        <p class="k4-care-t">취급 상 주의사항</p>
+        <ul class="k4-care">
+          <li><img src="assets/images/kit/belt/detail/care-hand-wash.svg?v=135" width="93" height="93" alt="" loading="lazy">손세탁</li>
+          <li><img src="assets/images/kit/belt/detail/care-no-machine-wash.svg?v=135" width="93" height="93" alt="" loading="lazy">기계 세탁 금지</li>
+          <li><img src="assets/images/kit/belt/detail/care-no-bleach.svg?v=135" width="93" height="93" alt="" loading="lazy">표백 금지</li>
+          <li><img src="assets/images/kit/belt/detail/care-no-hot-wash.svg?v=135" width="93" height="93" alt="" loading="lazy">고온 세탁 금지</li>
+          <li><img src="assets/images/kit/belt/detail/care-no-ironing.svg?v=135" width="93" height="93" alt="" loading="lazy">다림질 금지</li>
+          <li><img src="assets/images/kit/belt/detail/care-shade-dry.svg?v=135" width="93" height="93" alt="" loading="lazy">그늘 건조</li>
+        </ul>
+      </div>
+
+      <!-- 238차: 인형 상세 4번 (사용자 시안, 이미지 = 웹/프로덕트/4/인형 → assets/images/kit/doll/detail/) — 사용 방법 3개 한 줄 -->
+      <div class="k4f kp-doll">
+        <h2 class="k-title k4-title"><span class="k-hl k4-hl">안심</span>하고 사용할 수 있도록</h2>
+        <p class="k-title k4-sub">이런 부분을 고려했어요</p>
+        <span class="k4-rule" aria-hidden="true"></span>
+        <img class="k4-ph-main" src="assets/images/kit/doll/detail/doll-safety.webp?v=242" width="444" height="444" alt="아이가 주사 연습 인형을 안고 연습하는 모습" decoding="async" loading="lazy">
+        <ul class="k4-checks">
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">50cm 크기로 제작해 아이가 품에 안고 편안하게 연습해요.</li>
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">플라스틱 안전 관절로 팔을 자유롭게 움직일 수 있어요.</li>
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">실리콘 패드를 분리해 간편하게 세척할 수 있어요.</li>
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">인형을 별도로 세탁해 위생적으로 관리할 수 있어요.</li>
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">부드러운 실리콘 패드로 반복적인 주사 연습이 가능해요.</li>
+        </ul>
+
+        <h3 class="k4-h k4-h-use">제품 사용 방법</h3>
+        <ol class="k4-steps">
+          <li><img src="assets/images/kit/doll/detail/manual-1.webp?v=238" width="439" height="348" alt="" loading="lazy" decoding="async"><b>Step 1</b><p>포장을 열고 주사 연습 인형의 구성품이 모두 들어 있는지 확인해 주세요.</p></li>
+          <li><img src="assets/images/kit/doll/detail/manual-2.webp?v=238" width="439" height="348" alt="" loading="lazy" decoding="async"><b>Step 2</b><p>CURO 학습 콘텐츠의 안내에 따라 인형을 안고 주사 연습을 시작해 주세요.</p></li>
+          <li><img src="assets/images/kit/doll/detail/manual-3.webp?v=238" width="439" height="348" alt="" loading="lazy" decoding="async"><b>Step 3</b><p>연습이 끝나면 실리콘 패드를 깨끗이 닦고 충분히 건조한 후 보관해 주세요.</p></li>
+        </ol>
+        <div class="k4-note">
+          <p class="k4-note-t">사용 전 주의사항</p>
+          <ol>
+            <li>아이가 안전하게 연습할 수 있도록 보호자가 곁에서 함께 지도해 주세요.</li>
+            <li>세탁 전 실리콘 패드를 분리하고, 인형 본체는 세탁 안내에 따라 관리해 주세요.</li>
+          </ol>
+        </div>
+
+        <h3 class="k4-h k4-h-info">제품 정보</h3>
+        <table class="k4-table">
+          <tbody>
+            <tr><th>제품명</th><td>CURO 주사 연습 인형</td></tr>
+            <tr><th>품목명</th><td>교육용 주사 연습 인형</td></tr>
+            <tr><th>보관방법</th><td>직사광선을 피해 건조한 곳에 보관</td></tr>
+            <tr><th>소재</th><td>패브릭, 솜, 실리콘, 플라스틱</td></tr>
+            <tr class="is-2l"><th>색상 및 사이즈</th><td>오렌지<br>23×50cm</td></tr>
+            <tr><th>판매자명</th><td>CURO</td></tr>
+            <tr><th>제조국</th><td>한국</td></tr>
+            <tr><th>제조사</th><td>제품 내 별도 표기</td></tr>
+          </tbody>
+        </table>
+        <p class="k4-care-t">취급 상 주의사항</p>
+        <ul class="k4-care">
+          <li><img src="assets/images/kit/belt/detail/care-hand-wash.svg?v=135" width="93" height="93" alt="" loading="lazy">손세탁</li>
+          <li><img src="assets/images/kit/belt/detail/care-no-machine-wash.svg?v=135" width="93" height="93" alt="" loading="lazy">기계 세탁 금지</li>
+          <li><img src="assets/images/kit/belt/detail/care-no-bleach.svg?v=135" width="93" height="93" alt="" loading="lazy">표백 금지</li>
+          <li><img src="assets/images/kit/belt/detail/care-no-hot-wash.svg?v=135" width="93" height="93" alt="" loading="lazy">고온 세탁 금지</li>
+          <li><img src="assets/images/kit/belt/detail/care-no-ironing.svg?v=135" width="93" height="93" alt="" loading="lazy">다림질 금지</li>
+          <li><img src="assets/images/kit/belt/detail/care-shade-dry.svg?v=135" width="93" height="93" alt="" loading="lazy">그늘 건조</li>
+        </ul>
+      </div>
+
+      <!-- 246차: 주사 보조 캡 상세 4번 (사용자 시안 — 벨트처럼 사용 방법 6개 두 줄 · 주의사항 3줄, 세탁 기호 없음. 이미지 = 웹/프로덕트/4/주사캡 → assets/images/kit/cap/detail/) -->
+      <div class="k4f kp-cap">
+        <h2 class="k-title k4-title"><span class="k-hl k4-hl">안심</span>하고 사용할 수 있도록</h2>
+        <p class="k-title k4-sub">이런 부분을 고려했어요</p>
+        <span class="k4-rule" aria-hidden="true"></span>
+        <img class="k4-ph-main" src="assets/images/kit/cap/detail/cap-safety.webp?v=246" width="444" height="444" alt="아이가 주사 보조 캡을 끼운 주사 펜을 잡고 있는 모습" decoding="async" loading="lazy">
+        <ul class="k4-checks">
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">바늘이 보이지 않도록 설계해 두려움을 줄였어요.</li>
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">잡기 쉬운 그립으로 편안하게 사용할 수 있어요.</li>
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">실제 인슐린 펜에 결합해 연습할 수 있어요.</li>
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">분리형 구조로 손쉽게 분리하고 위생적으로 관리해요.</li>
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">보호용 뚜껑으로 깔끔하게 보관할 수 있어요.</li>
+        </ul>
+
+        <h3 class="k4-h k4-h-use">제품 사용 방법</h3>
+        <ol class="k4-steps">
+          <li><img src="assets/images/kit/cap/detail/manual-1.webp?v=246" width="439" height="348" alt="" loading="lazy" decoding="async"><b>Step 1</b><p>포장을 열고 주사보조캡의 구성품이 모두 들어 있는지 확인해 주세요.</p></li>
+          <li><img src="assets/images/kit/cap/detail/manual-2.webp?v=246" width="439" height="348" alt="" loading="lazy" decoding="async"><b>Step 2</b><p>인슐린 펜에 상단 커버를 아래에서 위로 밀어 올려 올바른 위치에 끼워 주세요.</p></li>
+          <li><img src="assets/images/kit/cap/detail/manual-3.webp?v=246" width="439" height="348" alt="" loading="lazy" decoding="async"><b>Step 3</b><p>하단 커버를 딸깍 소리가 날 때까지 밀어 올려 결합해 주세요.</p></li>
+          <li><img src="assets/images/kit/cap/detail/manual-4.webp?v=246" width="439" height="348" alt="" loading="lazy" decoding="async"><b>Step 4</b><p>보호자가 인슐린 펜에 바늘을 장착하고, 바늘 보호캡을 제거한 후 필요한 부분을 소독해 주세요.</p></li>
+          <li><img src="assets/images/kit/cap/detail/manual-5.webp?v=246" width="439" height="348" alt="" loading="lazy" decoding="async"><b>Step 5</b><p>바늘 가림 부품을 결합하고 CURO 학습 콘텐츠에 따라 연습해 주세요.</p></li>
+          <li><img src="assets/images/kit/cap/detail/manual-6.webp?v=246" width="439" height="348" alt="" loading="lazy" decoding="async"><b>Step 6</b><p>연습이 끝나면 주사캡을 깨끗이 닦아 소독하고, 충분히 건조한 뒤 보호용 뚜껑을 닫아 보관해 주세요.</p></li>
+        </ol>
+        <div class="k4-note">
+          <p class="k4-note-t">사용 전 주의사항</p>
+          <ol>
+            <li>아이가 안전하게 연습할 수 있도록 보호자가 곁에서 함께 지도해 주세요.</li>
+            <li>사용 전 주사캡의 결합 상태와 파손 여부를 확인해 주세요.</li>
+            <li>사용 후에는 주사캡을 깨끗하게 관리하고 보호용 뚜껑을 닫아 보관해 주세요.</li>
+          </ol>
+        </div>
+
+        <h3 class="k4-h k4-h-info">제품 정보</h3>
+        <table class="k4-table">
+          <tbody>
+            <tr><th>제품명</th><td>CURO 주사 보조 캡</td></tr>
+            <tr><th>품목명</th><td>교육용 주사 연습 보조 도구</td></tr>
+            <tr><th>보관방법</th><td>습기를 피해 서늘하고 건조한 곳에 보관</td></tr>
+            <tr><th>소재</th><td>플라스틱, 실리콘, 네오디뮴 자석</td></tr>
+            <tr><th>색상 및 사이즈</th><td>베이지, 34x34x162</td></tr>
+            <tr><th>판매자명</th><td>CURO</td></tr>
+            <tr><th>제조국</th><td>한국</td></tr>
+            <tr><th>제조사</th><td>제품 내 별도 표기</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 242차: 주사 각도 가이드 상세 4번 (사용자 시안 — 인형과 같은 구성, 세탁 기호 없음. 이미지 = 웹/프로덕트/4/각도 가이드 → assets/images/kit/assist/detail/) -->
+      <div class="k4f kp-assist">
+        <h2 class="k-title k4-title"><span class="k-hl k4-hl">안심</span>하고 사용할 수 있도록</h2>
+        <p class="k-title k4-sub">이런 부분을 고려했어요</p>
+        <span class="k4-rule" aria-hidden="true"></span>
+        <img class="k4-ph-main" src="assets/images/kit/assist/detail/assist-safety.webp?v=242" width="444" height="444" alt="주사 각도 가이드를 끼운 주사 펜으로 인형에 연습하는 모습" decoding="async" loading="lazy">
+        <ul class="k4-checks">
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">90° 각도를 일정하게 유지하도록 설계했어요.</li>
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">하단 실리콘으로 미끄러짐을 줄여 안정적으로 사용할 수 있어요.</li>
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">주사 펜에 간편하게 결합할 수 있도록 제작했어요.</li>
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">올바른 주사 자세를 반복해서 연습할 수 있어요.</li>
+        </ul>
+
+        <h3 class="k4-h k4-h-use">제품 사용 방법</h3>
+        <ol class="k4-steps">
+          <li><img src="assets/images/kit/assist/detail/manual-1.webp?v=242" width="438" height="348" alt="" loading="lazy" decoding="async"><b>Step 1</b><p>포장을 열고 주사 각도 가이드의 구성품이 모두 들어 있는지 확인해 주세요.</p></li>
+          <li><img src="assets/images/kit/assist/detail/manual-2.webp?v=242" width="438" height="348" alt="" loading="lazy" decoding="async"><b>Step 2</b><p>주사 펜에 주사 각도 가이드를 올바른 방향으로 결합해 주세요.</p></li>
+          <li><img src="assets/images/kit/assist/detail/manual-3.webp?v=242" width="438" height="348" alt="" loading="lazy" decoding="async"><b>Step 3</b><p>CURO 학습 콘텐츠의 안내에 따라 주사 연습을 시작해 주세요.</p></li>
+        </ol>
+        <div class="k4-note">
+          <p class="k4-note-t">사용 전 주의사항</p>
+          <ol>
+            <li>보호자의 지도 아래 올바른 주사 각도와 사용 방법을 익혀 주세요.</li>
+            <li>사용 전 고정기의 결합 상태와 파손 여부를 확인해 주세요.</li>
+          </ol>
+        </div>
+
+        <h3 class="k4-h k4-h-info">제품 정보</h3>
+        <table class="k4-table">
+          <tbody>
+            <tr><th>제품명</th><td>CURO 주사 각도 가이드</td></tr>
+            <tr><th>품목명</th><td>주사 각도 보조 기구</td></tr>
+            <tr><th>보관방법</th><td>직사광선을 피해 건조한 곳에 보관</td></tr>
+            <tr><th>소재</th><td>플라스틱, 실리콘</td></tr>
+            <tr><th>색상 및 사이즈</th><td>베이지, 42×42×25</td></tr>
+            <tr><th>판매자명</th><td>CURO</td></tr>
+            <tr><th>제조국</th><td>한국</td></tr>
+            <tr><th>제조사</th><td>제품 내 별도 표기</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 238차: 동화책 상세 4번 (사용자 시안 — 안심 + 제품 정보만, 이미지 = 웹/프로덕트/4/동화책 → assets/images/kit/book/detail/) -->
+      <div class="k4f kp-book">
+        <h2 class="k-title k4-title"><span class="k-hl k4-hl">안심</span>하고 사용할 수 있도록</h2>
+        <p class="k-title k4-sub">이런 부분을 고려했어요</p>
+        <span class="k4-rule" aria-hidden="true"></span>
+        <img class="k4-ph-main" src="assets/images/kit/book/detail/book-safety.webp?v=242" width="444" height="444" alt="아이가 동화책을 읽는 모습" decoding="async" loading="lazy">
+        <ul class="k4-checks">
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">아이의 눈높이에 맞춰 주사 이야기를 쉽게 풀어냈어요.</li>
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">따뜻한 색감과 친근한 그림으로 몰입감을 높였어요.</li>
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">이야기를 통해 주사 연습의 과정을 자연스럽게 익혀요.</li>
+          <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">동화 애니메이션과 연계해 더욱 생생하게 즐길 수 있어요.</li>
+        </ul>
+
+        <h3 class="k4-h k4-h-info">제품 정보</h3>
+        <table class="k4-table">
+          <tbody>
+            <tr><th>제품명</th><td>콩이와 큐로 가디언즈 동화책</td></tr>
+            <tr><th>품목명</th><td>어린이 주사 교육용 그림책</td></tr>
+            <tr><th>보관방법</th><td>직사광선을 피해 건조한 곳에 보관</td></tr>
+            <tr><th>소재</th><td>종이</td></tr>
+            <tr><th>색상 및 사이즈</th><td>컬러, 200x200</td></tr>
+            <tr><th>페이지 수</th><td>34페이지</td></tr>
+            <tr><th>판매자명</th><td>CURO</td></tr>
+            <tr><th>제조국</th><td>한국</td></tr>
+            <tr><th>제조사</th><td>제품 내 별도 표기</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================
+       floating UI (50차) — 우측 하단 '동화 보러가기'(77차) + '상담' 버튼, 상담 패널
+       아이콘 = 사용자 export 파일 (Icon/*.svg). 경로는 js/float.js 의 CFG.icons 에서 한 번에 교체 (공통: css/float.css · js/float.js).
+       이벤트는 .k-float / .k-chat 안에서만 처리 (kit.js 의 snap wheel/key/touch 는 여기서 무시)
+       ========================================================= -->
+  <div class="k-float" id="k-float">
+    <!-- 77차: '위로 가기' 대신 '동화 보러가기' (STORY 페이지로 이동). 모양·hover 는 상담 버튼과 같음 -->
+    <a class="k-fab k-story" href="story.html" aria-label="함께 보는 동화 · 동화 보러가기">
+      <span class="k-consult-pill" aria-hidden="true"></span>
+      <span class="k-consult-txt" aria-hidden="true"><small>함께 보는 동화</small><strong>동화 보러가기</strong></span>
+      <span class="k-consult-ic" aria-hidden="true"><img data-icon="book" alt=""></span>
+    </a>
+    <button class="k-fab k-consult" type="button" aria-label="1:1 무료 상담 · 학습 상담 예약" aria-expanded="false" aria-controls="k-chat">
+      <span class="k-consult-pill" aria-hidden="true"></span>
+      <span class="k-consult-txt" aria-hidden="true"><small>1:1 무료 상담</small><strong>학습 상담 예약</strong></span>
+      <span class="k-consult-ic" aria-hidden="true"><img data-icon="consult" alt=""></span>
+    </button>
+  </div>
+
+  <section class="k-chat" id="k-chat" role="dialog" aria-modal="false" aria-labelledby="k-chat-title" aria-hidden="true">
+    <header class="k-chat-head">
+      <span class="k-chat-head-ic" aria-hidden="true"><img data-icon="consult" alt=""></span>
+      <div class="k-chat-head-t">
+        <h2 id="k-chat-title">학습 상담 예약</h2>
+        <p>우리 아이에게 맞는 제품을 추천드려요</p>
+      </div>
+      <!-- 닫기 X: export 된 아이콘이 없어 임시 inline SVG (파일이 생기면 <img data-icon="close"> 로 교체) -->
+      <button class="k-chat-close" type="button" aria-label="상담 창 닫기">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M21 3L3 21" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </header>
+    <div class="k-chat-body">
+      <div class="k-chat-msg">
+        <span class="k-chat-avatar" aria-hidden="true"><img data-icon="consult" alt=""></span>
+        <p class="k-chat-bubble">안녕하세요! CURO 렌탈을 도와드릴게요.<br>몇 가지만 선택하면 상담 신청이 완료돼요 :)</p>
+      </div>
+      <!-- 질문 · 선택 카드 단계 (내용 확정 후 구현) -->
+      <div class="k-chat-steps" id="k-chat-steps"></div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       MENU (Index 와 같은 마크업 · main.js 가 처리)
+       ========================================================= -->
+  <button class="hamburger" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="menu-panel">
+    <span class="hamburger__line"></span>
+    <span class="hamburger__line"></span>
+    <span class="hamburger__line"></span>
+  </button>
+  <div class="menu-backdrop" aria-hidden="true"></div>
+  <nav id="menu-panel" class="menu-panel" aria-label="사이트 메뉴" inert>
+    <ul class="menu-group">
+      <li class="menu-item"><a class="menu-link" href="program.html"><span class="menu-label">PROGRAM<img class="menu-icon" src="assets/icons/program.svg" width="200" height="200" alt="" aria-hidden="true"></span></a></li>
+      <li class="menu-item"><a class="menu-link" href="kit.html"><span class="menu-label">CURO KIT<img class="menu-icon" src="assets/icons/curo-kit.svg" width="200" height="200" alt="" aria-hidden="true"></span></a></li>
+      <li class="menu-item"><a class="menu-link" href="story.html"><span class="menu-label">STORY<img class="menu-icon" src="assets/icons/story.svg" width="200" height="200" alt="" aria-hidden="true"></span></a></li>
+      <li class="menu-item"><a class="menu-link" href="friends.html"><span class="menu-label">FRIENDS<img class="menu-icon" src="assets/icons/friends.svg" width="200" height="200" alt="" aria-hidden="true"></span></a></li>
+    </ul>
+  </nav>
+
+  <script src="js/config.js?v=47"></script>
+  <script src="js/main.js?v=119"></script>
+  <script src="js/topnav.js?v=192"></script>
+  <script src="js/footer.js?v=194"></script>
+  <script src="js/kit-config.js?v=272"></script>
+  <script src="js/float.js?v=268"></script>
+  <script src="js/apply.js?v=283"></script>
+  <script src="js/kit-masks.js?v=81"></script>
+  <script src="js/kit-mobile.js?v=291"></script>
+  <script src="js/kit-others.js?v=292"></script>
+  <script src="js/kit-products.js?v=240"></script>
+  <script src="js/kit.js?v=272"></script>
+</body>
+</html>

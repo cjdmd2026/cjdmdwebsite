@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_레이어_1" data-name="레이어 1" xmlns="http://www.w3.org/2000/svg" width="85.62" height="85.92" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 85.62 85.92">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#_무제_그라디언트_18);
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4, .cls-5 {
+        stroke-width: 0px;
+      }
+
+      .cls-6 {
+        opacity: .8;
+      }
+
+      .cls-2 {
+        fill: #000;
+        opacity: .12;
+      }
+
+      .cls-3 {
+        fill: url(#_무제_그라디언트_17);
+      }
+
+      .cls-7 {
+        stroke: #2b2b2b;
+      }
+
+      .cls-7, .cls-8 {
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .cls-4 {
+        fill: #fff;
+      }
+
+      .cls-5 {
+        fill: url(#_무제_그라디언트_17-2);
+      }
+
+      .cls-8 {
+        stroke: #c4c4c4;
+      }
+    </style>
+    <linearGradient id="_무제_그라디언트_18" data-name="무제 그라디언트 18" x1="-568.79" y1="-1240.83" x2="-644.48" y2="-1240.83" gradientTransform="translate(-733.65 1192.63) rotate(59.97)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#231815" stop-opacity=".12"/>
+      <stop offset=".7" stop-color="#fafafa" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="_무제_그라디언트_17" data-name="무제 그라디언트 17" x1="-638.27" y1="-1243.39" x2="-572.56" y2="-1243.39" gradientTransform="translate(-733.65 1192.63) rotate(59.97)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#231815" stop-opacity=".08"/>
+      <stop offset=".7" stop-color="#fafafa" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="_무제_그라디언트_17-2" data-name="무제 그라디언트 17" x1="-582.52" y1="-1269.71" x2="-582.5" y2="-1269.71" xlink:href="#_무제_그라디언트_17"/>
+  </defs>
+  <g class="cls-6">
+    <path class="cls-4" d="M37.95,2.08C34.34,4.4,4.43,23.6,4.43,23.6c-7.52,5.38-3.94,23.24,7.98,39.89,11.92,16.64,27.68,25.77,35.2,20.39l.03-.02.07-.05,32.96-21.15.41-.26c7.64-5.3,4.08-23.24-7.89-39.95S46.15-2.97,38.47,1.74l-.17.11-.35.23Z"/>
+  </g>
+  <path class="cls-1" d="M47.33,84.07c-7.62,4.96-23.14-4.15-34.91-20.59C.49,46.84-3.08,28.98,4.43,23.6c0,0,30.41-19.52,33.6-21.57-.02.01-.03.02-.03.02-7.52,5.38-3.94,23.24,7.98,39.89s27.49,25.66,35.06,20.49c-.22.14-.37.23-.37.23l-32.96,21.15s-.04.02-.07.05l-.03.02c-.09.07-.19.13-.29.2Z"/>
+  <g>
+    <path class="cls-3" d="M18.27,60.35c-10.6-14.8-13.42-30.94-6.3-36.04,3.26-2.34,8.05-1.95,13.3.58,2.51-1.05,4.21-2.26,4.21-2.26l15.46-10.91c-5.1,3.66-2.68,15.79,5.42,27.09,7.83,10.93,18.1,17.09,23.38,14.17l-15.66,9.86s-1.92,1.26-3.85,3.41c.41,5.01-.67,9.07-3.42,11.33-.14.12-.28.24-.43.35-7.12,5.1-21.5-2.76-32.11-17.57Z"/>
+    <path class="cls-5" d="M74.25,52.65c-.17.12-.34.23-.52.32l.52-.32Z"/>
+  </g>
+  <ellipse class="cls-8" cx="31.17" cy="51.11" rx="15.87" ry="32.97" transform="translate(-23.93 27.72) rotate(-35.62)"/>
+  <path class="cls-8" d="M44.94,11.72l-15.46,10.9s-10.27,7.27-17.5,1.69"/>
+  <path class="cls-8" d="M74.26,52.65l-16.18,10.18s-9.7,6.36-7.26,14.74"/>
+  <ellipse class="cls-8" cx="26.94" cy="53.59" rx="10.37" ry="27.53" transform="translate(-26.17 25.71) rotate(-35.62)"/>
+  <ellipse class="cls-7" cx="59.6" cy="32.18" rx="16.74" ry="37.07" transform="translate(-7.59 40.73) rotate(-35.62)"/>
+  <ellipse class="cls-7" cx="59.6" cy="32.18" rx="11.37" ry="25.18" transform="translate(-7.59 40.73) rotate(-35.62)"/>
+  <path class="cls-8" d="M4.43,23.6c7.52-5.38,23.27,3.75,35.2,20.39,11.92,16.64,15.5,34.5,7.98,39.89"/>
+  <path class="cls-7" d="M47.61,83.87c-7.52,5.38-23.27-3.75-35.2-20.39C.49,46.84-3.08,28.98,4.43,23.6"/>
+  <line class="cls-7" x1="38.31" y1="1.85" x2="4.43" y2="23.6"/>
+  <line class="cls-7" x1="80.68" y1="62.65" x2="47.72" y2="83.8"/>
+  <ellipse class="cls-2" cx="59.6" cy="32.18" rx="11.37" ry="25.18" transform="translate(-7.59 40.73) rotate(-35.62)"/>
+</svg>

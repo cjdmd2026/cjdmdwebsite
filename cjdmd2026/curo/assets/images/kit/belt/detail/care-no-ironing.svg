@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_설명서" data-name="설명서" xmlns="http://www.w3.org/2000/svg" width="93.1" height="93.1" viewBox="0 0 93.1 93.1">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #2b2b2b;
+        stroke-width: 0px;
+      }
+    </style>
+  </defs>
+  <path class="cls-1" d="M93.1,78.89H0l6.44-24.2c2.44-9.15,10.74-15.53,20.2-15.53h.08l55.95.23-4.6-23.49H8.66v-2.63h71.59l12.85,65.63ZM3.43,76.25h86.47l-6.7-34.23-56.48-.23h-.07c-8.27,0-15.53,5.57-17.66,13.57l-5.56,20.89Z"/>
+  <rect class="cls-1" x="44.98" y="-6.79" width="2.63" height="106.68" transform="translate(-19.35 46.37) rotate(-45)"/>
+  <rect class="cls-1" x="-6.93" y="45.23" width="106.68" height="2.63" transform="translate(-19.32 46.45) rotate(-45)"/>
+</svg>

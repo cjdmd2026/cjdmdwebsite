@@ -1,0 +1,84 @@
+/* ==========================================================================
+   MAIN10 (119차) — Index3 전용. 마크업 = index.html 의 .m10-stage / .m10-cover-layer, 동작 = js/main10.js
+   좌표 = main10-BG.webp (1920×2160) px. 배율·위치·스크롤은 js 가 CSS 변수로 넣음
+     --m10-s  : 배율 (첫 화면을 cover 로 채움)      --m10-x : 가로 위치      --m10-y : 지금 스크롤 (px, 위로 올라간 양)
+   쌓는 순서: Main1(z1) < Main10 stage(z1, DOM 뒤) < Main9 창 #story(z2) < Main1 표지(z3) < 뒤표지(z4) < 메뉴(z10+)
+   ========================================================================== */
+.m10-stage {
+  position: fixed; inset: 0; z-index: 1; overflow: hidden;
+  background: #F6EDE0; visibility: hidden; transform-origin: 0 0;
+}
+html.is-m10 .m10-stage, html.is-m10-moving .m10-stage { visibility: visible; }
+/* Main10 에 있는 동안 Main9(#story) 는 숨김 — 링크를 누를 수 있게 */
+html.is-m10 .story-stage { visibility: hidden; }
+.m10-move { position: absolute; left: 0; top: 0; width: 100%; height: calc(2160px * var(--m10-s, 1)); transform: translate3d(0, calc(-1 * var(--m10-y, 0px)), 0); will-change: transform; }
+.m10-fit {
+  position: absolute; left: 0; top: 0; width: 1920px; height: 2160px;
+  transform-origin: 0 0; transform: translate3d(var(--m10-x, 0px), 0, 0) scale(var(--m10-s, 1));
+}
+.m10-fit > * { position: absolute; }
+.m10-bg { left: 0; top: 0; width: 1920px; height: 2160px; display: block; }
+/* 뒤표지가 열리면 보이는 안쪽 종이 (뒤표지 불투명 사각형 = config main10.book) */
+/* 120차: 안쪽 종이 = 뒤표지 실루엣(main10-BookSlot.png) 을 캐릭터 위에 — 책이 움직이는 동안만 보임 (Main1 book-slot 과 같은 방식) */
+.m10-slot { left: 716px; top: 442px; width: 472px; height: 493px; display: block; visibility: hidden; }
+html.is-m10-moving .m10-slot { visibility: visible; }
+/* 131차: 상단 로고 = Main1 로고와 같은 크기(525 폭). Main1 은 로고 아래 ↔ 캐릭터 그림 위 = 27px → 여기서도 같은 간격 */
+.m10-logo { left: 695px; top: 95px; width: 525px; height: 143.04px; display: block; }
+.m10-char { left: 438px; top: 265px; width: 1100px; height: 700px; display: block; }
+
+/* ---------- 둘째 화면: CURO 를 더 만나볼까요? + 메뉴 4개 (기준.png 위치) ---------- */
+.m10-more { left: 0; top: var(--m10-more-top, 1333px); width: 1920px; }   /* 121차: js 가 마지막 화면의 푸터 위 보이는 영역 가운데로 (1920×1080 = 1333) */
+.m10-title {
+  margin: 0; display: flex; align-items: center; justify-content: center; gap: 30px; height: 79px;
+  font-family: 'Ownglyph daisy', sans-serif; font-weight: 400; font-size: 72px; line-height: 1; color: #2B2E31; opacity: 0.7;
+}
+.m10-title img { display: block; height: 74px; width: auto; }
+.m10-title span { transform: translateY(2px); letter-spacing: 0; }
+.m10-nav { list-style: none; margin: 105px 0 0; padding: 0 20px 0 0; display: flex; justify-content: center; gap: 108px; }
+.m10-nav li { width: 175px; display: flex; justify-content: center; }
+.m10-nav a { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #505050; border-radius: 16px; }
+.m10-ic { position: relative; display: block; width: 190px; height: 190px; margin: -15px 0; transition: transform 0.25s ease; }
+.m10-ic img { position: absolute; inset: 0; width: 100%; height: 100%; transition: opacity 0.2s ease; }
+.m10-ic .is-hover { opacity: 0; }
+.m10-nav b { margin-top: 29px; font-family: 'Pretendard', sans-serif; font-weight: 700; font-size: 36px; line-height: 1; letter-spacing: 0.01em; white-space: nowrap; transition: color 0.2s ease; }
+.m10-nav small { margin-top: 18px; font-family: 'Pretendard', sans-serif; font-weight: 400; font-size: 24px; line-height: 1; white-space: nowrap; }
+/* 마우스를 올리면 사용자 hover 아이콘으로 바뀌고 살짝 올라옴 (120차: 글자 색은 그대로) */
+@media (hover: hover) {
+  .m10-nav a:hover .m10-ic { transform: translateY(-6px); }
+  .m10-nav a:hover .m10-ic img:not(.is-hover) { opacity: 0; }
+  .m10-nav a:hover .m10-ic .is-hover { opacity: 1; }
+}
+.m10-nav a:focus-visible { outline: 3px solid #3CB5AC; outline-offset: 8px; }
+
+/* ---------- 푸터: 그림 맨 아래 풀숲 위에 겹침 (122차: 위쪽 그라데이션 없앰) ---------- */
+.m10-foot {
+  position: absolute; left: 0; right: 0; bottom: 0;   /* 121차: 그림 맨 아래 위에 겹침 (그림 뒤에 붙지 않음) */
+  background: linear-gradient(180deg, #5A7A58 0%, #4B6849 100%); color: #FFFFFF;
+  font-family: 'Pretendard', sans-serif; font-synthesis: none; font-size: max(11px, calc(14 * var(--m10-u, 1px))); line-height: 1.45;   /* 123차: 푸터 낮춤 (모든 페이지 푸터와 같은 값) */
+}
+.m10-foot p { margin: 0; }
+.m10-foot-in {
+  width: calc(1360 * var(--m10-u, 1px)); margin: 0 auto; min-height: calc(92 * var(--m10-u, 1px)); box-sizing: border-box;
+  padding: calc(22 * var(--m10-u, 1px)) 0 calc(22 * var(--m10-u, 1px));
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; column-gap: 24px;
+}
+.m10-foot-brand img { display: block; height: max(17px, calc(22 * var(--m10-u, 1px))); width: auto; filter: brightness(0) invert(1); }
+.m10-foot-brand p { margin-top: calc(5 * var(--m10-u, 1px)) !important; color: rgba(255, 255, 255, 0.78); }
+.m10-foot-copy { justify-self: center; color: rgba(255, 255, 255, 0.78); white-space: nowrap; }
+.m10-foot-team { justify-self: end; text-align: right; }
+.m10-foot-team span { display: block; }
+.m10-foot-team span + span { color: rgba(255, 255, 255, 0.78); }
+
+/* ---------- 뒤표지 (Main9 창보다 위) ---------- */
+.m10-cover-layer { position: fixed; inset: 0; z-index: 4; overflow: hidden; pointer-events: none; visibility: hidden; transform-origin: 0 0; }
+html.is-m10 .m10-cover-layer, html.is-m10-moving .m10-cover-layer { visibility: visible; }
+.m10-cover-fit { position: absolute; left: 0; top: 0; width: 1920px; height: 2160px; transform-origin: 0 0; transform: translate3d(var(--m10-x, 0px), calc(-1 * var(--m10-y, 0px)), 0) scale(var(--m10-s, 1)); }
+/* 뒤표지 그림 = 716,442 472×493 / 불투명 사각형(책) = 718,452 468×478 → pos 는 책 사각형, 그림은 그 안에서 offset */
+.m10-cover-pos { position: absolute; left: 718px; top: 452px; width: 468px; height: 478px; cursor: pointer; }
+html.is-m10.m10-at-top .m10-cover-pos { pointer-events: auto; }
+.m10-persp { position: absolute; inset: 0; perspective: var(--m10-persp, 2400px); perspective-origin: 50% 50%; }
+.m10-cover { position: absolute; inset: 0; transform-style: preserve-3d; transform-origin: 100% 50%; }   /* hinge = 오른쪽 변 (책등) */
+.m10-face { position: absolute; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.m10-face--front { left: -2px; top: -10px; width: 472px; height: 493px; display: block; }
+/* 128차: 안쪽 색 = Main1 표지 뒷면 종이(--c-paper #F6EFE3) 와 같게 */
+.m10-face--back { inset: 0; transform: rotateY(180deg); background: #F6EFE3; border-radius: 0 4px 4px 0; box-shadow: inset 10px 0 22px rgba(120, 90, 60, 0.22); }   /* 129차: Main1 과 같이 조금 진하게 */

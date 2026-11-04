@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko" class="ch-page cp-page" data-page="friends">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CURO — FRIENDS · 캐릭터</title>
+  <link rel="preload" href="assets/fonts/pretendard-regular.woff" as="font" type="font/woff" crossorigin>
+  <link rel="preload" href="assets/fonts/pretendard-bold.woff" as="font" type="font/woff" crossorigin>
+  <link rel="preload" href="assets/fonts/bm-jua.woff" as="font" type="font/woff" crossorigin>
+  <!-- 공통 토큰·폰트·햄버거 = main.css, floating = float.css, 캐릭터 상세 = character.css -->
+  <link rel="stylesheet" href="css/main.css?v=287">
+  <link rel="stylesheet" href="css/float.css?v=280">
+  <link rel="stylesheet" href="css/consult.css?v=271">   <!-- 141차: 상담 패널 = 렌탈 상담 신청 흐름 (js/apply.js) -->
+  <link rel="stylesheet" href="css/character.css?v=193">
+  <link rel="stylesheet" href="css/topnav.css?v=287">
+  <link rel="stylesheet" href="css/footer.css?v=286">
+  <link rel="stylesheet" href="css/tablet.css?v=233">   <!-- 233차: 태블릿 (PROGRAM · 캐릭터 상세 · FRIENDS) -->
+</head>
+<body>
+  <!-- =========================================================
+       캐릭터 상세 (99차) — character.html?c=beary|ellie|rabby|mio  (FRIENDS 의 '○○ 알아보기' 에서 이동)
+       1. 이름·대사·소개·태그 + 대표 그림   2. 변신 전 / 변신 후 (앞·옆·뒤)
+       3. Character Lineup · Basic color   4. 장면 6컷
+       내용·이미지 = js/character.js 의 CHARACTERS
+       ========================================================= -->
+  <!-- 108차: 사용자 시안(캐릭터 상세 목업) 기준 정리 — css/character-proposal.css · js/character-proposal.js (미적용 미리보기)
+       ① 배너: 한글 이름(BM JUA, 흰 글자+그림자) · 영문 · 대사 / 오른쪽 자유 포즈 크게
+       ② 캐릭터 소개: 그림 칸 + 이름·역할·성격 · 대사 · 소개 · 기본 색(캐릭터 얼굴 모양)
+       ③ 삼면도: 토글(오른쪽 위) + 큰 캐릭터 + 판 안 앞·옆·뒤
+       ④ 동화 속 장면 + 동화 보러가기 버튼   ⑤ 다른 친구도 만나볼까요? (네 친구 아이콘)
+       가로 기준 = 가운데 1100u 기둥 (배너 글만 메뉴 라인) -->
+  <main class="cp" id="cp">
+    <section class="cp-banner">
+      <!-- 172차: 배너 구름 (흰색 반투명, 친구 색 그라데이션 위) · 작은 장식(친구별 그림 = js) -->
+      <svg class="cp-cloud cp-cloud-l" viewBox="0 0 640 300" preserveAspectRatio="xMinYMax meet" aria-hidden="true">
+        <g fill="#FFFFFF" opacity="0.32"><circle cx="70" cy="200" r="96"/><circle cx="215" cy="214" r="84"/><circle cx="318" cy="268" r="54"/><circle cx="-6" cy="122" r="74"/><circle cx="128" cy="128" r="62"/><rect x="-20" y="230" width="338" height="80"/></g>
+        <g fill="#FFFFFF" opacity="0.55"><circle cx="30" cy="268" r="74"/><circle cx="150" cy="262" r="64"/><circle cx="262" cy="288" r="52"/><circle cx="-10" cy="214" r="50"/><rect x="-20" y="276" width="282" height="40"/></g>
+      </svg>
+      <svg class="cp-cloud cp-cloud-r" viewBox="0 0 560 340" preserveAspectRatio="xMaxYMax meet" aria-hidden="true">
+        <g fill="#FFFFFF" opacity="0.30"><circle cx="560" cy="96" r="104"/><circle cx="452" cy="150" r="78"/><circle cx="568" cy="232" r="120"/><circle cx="356" cy="262" r="70"/><circle cx="460" cy="292" r="84"/><rect x="356" y="290" width="234" height="60"/></g>
+        <g fill="#FFFFFF" opacity="0.5"><circle cx="560" cy="250" r="82"/><circle cx="462" cy="304" r="60"/><circle cx="374" cy="320" r="40"/><rect x="360" y="318" width="220" height="30"/></g>
+      </svg>
+      <div class="cp-deco" id="cp-deco" aria-hidden="true"></div>
+      <div class="cp-col cp-banner-in">
+        <div class="cp-banner-t">
+          <div class="cp-name"><h1 class="cp-big" id="cp-big"></h1><p class="cp-en" id="cp-en"></p></div>
+          <p class="cp-bquote" id="cp-bquote"></p>
+        </div>
+      </div>
+      <img class="cp-banner-img" id="cp-banner-img" alt="">
+    </section>
+
+    <section class="cp-sec">
+      <h2 class="cp-title">캐릭터 소개</h2>
+      <div class="cp-col cp-intro">
+        <div class="cp-tile"><img id="cp-tile" alt=""></div>
+        <div class="cp-info">
+          <dl class="cp-dl" id="cp-dl"></dl>
+          <p class="cp-quote" id="cp-quote"></p>
+          <div class="cp-desc" id="cp-desc"></div>
+          <ul class="cp-colors" id="cp-colors" aria-label="기본 색"></ul>
+        </div>
+      </div>
+      <div class="cp-col cp-turnwrap">
+        <div class="cp-toggle" id="cp-toggle" role="tablist" aria-label="변신 전 후 보기">
+          <button type="button" role="tab" aria-selected="true" data-v="before">변신 전</button>
+          <button type="button" role="tab" aria-selected="false" data-v="after">변신 후</button>
+        </div>
+        <div class="cp-views" id="cp-views"></div>
+      </div>
+    </section>
+
+    <section class="cp-sec">
+      <h2 class="cp-title">동화 속 장면</h2>
+      <div class="cp-col cp-gallery" id="cp-gallery"></div>
+      <p class="cp-more"><a class="cp-btn" href="story.html"><span>동화 보러가기</span><img src="assets/icons/right-arrow.svg" alt=""></a></p>
+    </section>
+
+    <section class="cp-others">
+      <div class="cp-col cp-others-in">
+        <div><h2 class="cp-title">다른 친구도 만나볼까요?</h2><p class="cp-others-sub">큐로 친구들의 이야기를 더 만나보세요</p></div>
+        <ul class="cp-friends" id="cp-friends"></ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================
+       floating UI (공통, kit.html 과 같은 마크업) — css/float.css · js/float.js
+       ========================================================= -->
+  <div class="k-float" id="k-float">
+    <!-- 77차: '위로 가기' 대신 '동화 보러가기' (STORY 페이지로 이동). 모양·hover 는 상담 버튼과 같음 -->
+    <a class="k-fab k-story" href="story.html" aria-label="함께 보는 동화 · 동화 보러가기">
+      <span class="k-consult-pill" aria-hidden="true"></span>
+      <span class="k-consult-txt" aria-hidden="true"><small>함께 보는 동화</small><strong>동화 보러가기</strong></span>
+      <span class="k-consult-ic" aria-hidden="true"><img data-icon="book" alt=""></span>
+    </a>
+    <button class="k-fab k-consult" type="button" aria-label="1:1 무료 상담 · 학습 상담 예약" aria-expanded="false" aria-controls="k-chat">
+      <span class="k-consult-pill" aria-hidden="true"></span>
+      <span class="k-consult-txt" aria-hidden="true"><small>1:1 무료 상담</small><strong>학습 상담 예약</strong></span>
+      <span class="k-consult-ic" aria-hidden="true"><img data-icon="consult" alt=""></span>
+    </button>
+  </div>
+
+  <section class="k-chat" id="k-chat" role="dialog" aria-modal="false" aria-labelledby="k-chat-title" aria-hidden="true">
+    <header class="k-chat-head">
+      <span class="k-chat-head-ic" aria-hidden="true"><img data-icon="consult" alt=""></span>
+      <div class="k-chat-head-t">
+        <h2 id="k-chat-title">학습 상담 예약</h2>
+        <p>우리 아이에게 맞는 제품을 추천드려요</p>
+      </div>
+      <!-- 닫기 X: export 된 아이콘이 없어 임시 inline SVG (파일이 생기면 <img data-icon="close"> 로 교체) -->
+      <button class="k-chat-close" type="button" aria-label="상담 창 닫기">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M21 3L3 21" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </header>
+    <div class="k-chat-body">
+      <div class="k-chat-msg">
+        <span class="k-chat-avatar" aria-hidden="true"><img data-icon="consult" alt=""></span>
+        <p class="k-chat-bubble">안녕하세요! CURO 렌탈을 도와드릴게요.<br>몇 가지만 선택하면 상담 신청이 완료돼요 :)</p>
+      </div>
+      <!-- 질문 · 선택 카드 단계 (내용 확정 후 구현) -->
+      <div class="k-chat-steps" id="k-chat-steps"></div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       MENU (Index 와 같은 마크업 · main.js 가 처리)
+       ========================================================= -->
+  <button class="hamburger" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="menu-panel">
+    <span class="hamburger__line"></span>
+    <span class="hamburger__line"></span>
+    <span class="hamburger__line"></span>
+  </button>
+  <div class="menu-backdrop" aria-hidden="true"></div>
+  <nav id="menu-panel" class="menu-panel" aria-label="사이트 메뉴" inert>
+    <ul class="menu-group">
+      <li class="menu-item"><a class="menu-link" href="program.html"><span class="menu-label">PROGRAM<img class="menu-icon" src="assets/icons/program.svg" width="200" height="200" alt="" aria-hidden="true"></span></a></li>
+      <li class="menu-item"><a class="menu-link" href="kit.html"><span class="menu-label">CURO KIT<img class="menu-icon" src="assets/icons/curo-kit.svg" width="200" height="200" alt="" aria-hidden="true"></span></a></li>
+      <li class="menu-item"><a class="menu-link" href="story.html"><span class="menu-label">STORY<img class="menu-icon" src="assets/icons/story.svg" width="200" height="200" alt="" aria-hidden="true"></span></a></li>
+      <li class="menu-item"><a class="menu-link" href="friends.html"><span class="menu-label">FRIENDS<img class="menu-icon" src="assets/icons/friends.svg" width="200" height="200" alt="" aria-hidden="true"></span></a></li>
+    </ul>
+  </nav>
+
+  <script src="js/config.js?v=47"></script>
+  <script src="js/main.js?v=119"></script>
+  <script src="js/topnav.js?v=192"></script>
+  <script src="js/footer.js?v=194"></script>
+  <script src="js/float.js?v=268"></script>
+  <script src="js/apply.js?v=283"></script>
+  <script src="js/character.js?v=289"></script>
+</body>
+</html>

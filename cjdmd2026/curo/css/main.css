@@ -1,0 +1,818 @@
+/* ==========================================================================
+   CURO — MAIN (정적) + MENU
+   규칙: 같은 scene 의 레이어는 하나의 좌표계 + 하나의 scale 을 공유한다.
+         레이어별 width:100% / object-fit:cover 금지. 투명 여백 crop 금지.
+         한 element 에는 transform 책임을 하나만 둔다.
+   좌표 값은 js/config.js → CSS custom property 로 주입된다.
+   ========================================================================== */
+
+/* ---------- Font (self-host, CDN 없음) ---------- */
+/* 24차: STORY 텍스트용 (원본: 웹/폰트 — 복사본을 웹 폰트로 변환)
+   Ownglyph daisy : 온글잎 데이지.ttf 전체 글자 → woff
+   Kyobo Handwriting 2024 psw : KYOBOHANDWRITING2024PSW.TTF(13MB) → KS X 1001 한글 2,350자 + 영문·숫자·기호만 남긴 woff (약 0.8MB).
+     여기에 없는 글자를 쓰게 되면 subset 을 다시 만들어야 함 (HANDOFF §23-8) */
+@font-face {
+  font-family: 'Ownglyph daisy';
+  src: url('../assets/fonts/ownglyph-daisy.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Kyobo Handwriting 2024 psw';
+  src: url('../assets/fonts/kyobo-handwriting.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Pretendard';
+  src: url('../assets/fonts/pretendard-regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+/* 메뉴 = Figma: Pretendard Bold 40. 실제 Bold 파일을 700 으로 등록 (synthetic bold 방지) */
+@font-face {
+  font-family: 'Pretendard';
+  src: url('../assets/fonts/pretendard-bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---------- Tokens ---------- */
+:root {
+  --font-ui: 'Pretendard', system-ui, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+
+  --c-ink: #61523F;          /* hamburger, X, CLICK TO OPEN, arrow (SVG fill 과 동일) */
+  --c-menu-text: #505050;    /* 메뉴 목업 측정값 */
+  --c-panel: #FCF6EE;        /* 메뉴 목업 측정값 (warm off-white) */
+  --c-paper: #F6EFE3;        /* 표지 뒷면 임시 종이색 */
+  --c-stage: #F4F0E8;        /* 이미지 로딩 전 배경 */
+
+  --menu-shadow: -20px 25px 50.8px 0 rgba(86, 71, 46, 0.10);
+
+  /* JS 가 설정 */
+  --fit-x: 0px;
+  --fit-y: 0px;
+  --fit-s: 1;
+  --ui: 1;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--c-stage);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+}
+
+html.is-scroll-locked,
+html.is-scroll-locked body { overflow: hidden; }
+
+img { display: block; }
+
+h1, p, ul { margin: 0; padding: 0; }
+
+/* ==========================================================================
+   MAIN stage
+   ========================================================================== */
+.main-stage {
+  position: relative;
+  z-index: 2;                    /* STORY(z1) 위, COVER(z3) 아래 */
+  width: 100vw;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;              /* MAIN 의 유일한 clipping */
+  background: var(--c-stage);
+}
+
+/* responsive fit : transform 책임 = translate + scale (frame 을 cover 로 맞춤) */
+.scene-fit {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--scene-w);
+  height: var(--scene-h);
+  transform-origin: 0 0;
+  transform: translate(var(--fit-x), var(--fit-y)) scale(var(--fit-s));
+}
+
+/* scene 좌표계 : 2076×1080, origin (0,0). transform 없음 */
+.scene {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--scene-w);
+  height: var(--scene-h);
+}
+
+/* 레이어 슬롯 : 향후 parallax offset 전용 (지금은 transform 없음) */
+.layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--scene-w);
+  height: var(--scene-h);
+  pointer-events: none;
+}
+.layer > img,
+.layer > .anim > img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--scene-w);        /* = 원본 px. scale 은 .scene-fit 한 곳에서만 */
+  height: var(--scene-h);
+  max-width: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.anim {
+  position: absolute;
+  inset: 0;
+}
+
+/* ---------- Book slot (Main1 안) ----------
+   표지 자리의 종이색 면. 표지가 떠나는 순간 아래 Character 일부가 드러나지 않도록 가린다. */
+.book-slot {
+  position: absolute;           /* 31차: 위치·크기 = config main1.assets.bookSlot (main.js, data-box) */
+  /* 표지의 불투명 실루엣 그대로 (둥근 오른쪽 모서리 포함) → 표지가 가리던 곳만 가림 */
+  -webkit-mask: url(../assets/images/main/main1/book-slot-mask.webp?v=42) 0 0 / 100% 100% no-repeat;
+          mask: url(../assets/images/main/main1/book-slot-mask.webp?v=42) 0 0 / 100% 100% no-repeat;
+}
+/* 31차: 닫힌 상태에서는 숨김 → 표지 가장자리 반투명 픽셀이 reference 와 똑같이 뒤 그림과 섞임. 열리기 시작하면 보임 */
+.book-slot { visibility: hidden; }
+.is-book-opening .book-slot,
+.is-book-arrived .book-slot { visibility: visible; }
+.book-page {
+  position: absolute;
+  inset: 0;
+  background: var(--c-paper);
+}
+
+/* ---------- Main1 reveal mask (책 열기 중에만) ----------
+   19차: 구멍이 원 하나가 아니라 여러 개의 부드러운 타원(blob)을 합친 불규칙한 구름 모양으로 퍼진다.
+   mask-image 는 book.js 가 매 프레임 inline 으로 쓰고 (타원 N개 = mask layer N개),
+   여기서는 layer 들을 intersect 로 합성한다 → 각 타원의 '구멍'이 합쳐진 모양 (union of holes). */
+.is-book-opening .main-stage {
+  -webkit-mask-composite: source-in;
+          mask-composite: intersect;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+}
+
+/* ---------- COVER layer (Main1 mask 밖, 같은 scene 좌표) ---------- */
+.cover-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  overflow: hidden;              /* 날아가는 표지는 viewport 에서만 clip */
+  pointer-events: none;
+}
+/* cover-fit : MAIN .scene-fit 과 같은 responsive transform (같은 CSS 변수) */
+.cover-fit {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--scene-w);
+  height: var(--scene-h);
+  transform-origin: 0 0;
+  transform: translate(var(--fit-x), var(--fit-y)) scale(var(--fit-s));
+}
+.cover-scene {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--scene-w);
+  height: var(--scene-h);
+}
+
+/* ---------- Book (표지) ---------- */
+/* book-position : scene 좌표 위치/크기 + 클릭 trigger */
+.book-position {
+  position: absolute;
+  left: var(--book-x);
+  top: var(--book-y);
+  width: var(--book-w);
+  height: var(--book-h);
+  pointer-events: auto;
+  cursor: pointer;
+  outline: none;
+}
+.book-position:focus-visible { outline: 3px solid var(--c-ink); outline-offset: 8px; }
+.is-book-opening .book-position,
+.is-book-arrived .book-position { cursor: default; pointer-events: none; }
+
+/* book-perspective : perspective 전용. 값과 origin(=화면 중심 = 카메라)은 book.js 가 계산 */
+.book-perspective {
+  position: absolute;
+  inset: 0;
+  perspective: var(--book-perspective, 700px);
+  perspective-origin: var(--book-perspective-origin, 50% 50%);
+  pointer-events: none;
+}
+/* book-cover : translateZ + rotateY 전용 (hinge = 왼쪽 가운데). 값은 book.js 가 inline transform 으로만 쓴다 */
+.book-cover {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0% 50%;
+  transform-style: preserve-3d;
+  transform: translateZ(0px) rotateY(0deg);
+}
+
+/* ---------- STORY horizontal world (story.js) ----------
+   #story(.story-stage) = STORY viewport — 유일하게 자르는 곳 (overflow:hidden).
+   .story-world 안에 장면(panel)과 연결 구간(connector)이 놓인다. 장면은 자르지 않는다 (bleed 가 이웃 공간으로 넘어감).
+   각 panel 의 translateX(장면 위치 − cam) 는 story.js 가 준다. 레이어별 depth parallax 도 story.js. */
+.story-world {
+  position: absolute;
+  inset: 0;
+}
+.story-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+/* 41차: 장면 사이 연결 구간 레이어(.story-connector: 색 띠 2장 + mask + scaleX) 제거.
+   빈 공간에는 #story(.story-stage) 배경색만 보이고, 색은 story.js 가 config story.transitions 의 구간별 background 로 바꾼다 */
+.story-camera.story-camera--m5 {
+  transform: translate(var(--m5-x, 0px), var(--m5-y, 0px)) scale(var(--m5-s, 1));
+}
+.is-story-moving .hamburger { pointer-events: none; }
+/* 25차: 장면 가장자리 fade 는 CSS mask 대신 이미지 복사본에 구워 넣음 (tools/bake_edge_fade.py).
+   mask-image 가 걸린 레이어는 매 프레임 offscreen 합성(render surface)이 필요해 이동 중 GPU 부담이 컸다. */
+/* 이동하는 레이어만 compositor layer 로 유지 (story.js 가 STORY 에 있는 동안 현재·이웃 장면에만 .is-live 를 붙임).
+   정지 ↔ 이동 때마다 layer 가 생겼다 사라지며 큰 이미지를 다시 raster 하던 문제 방지 */
+.story-panel.is-live,
+.story-panel.is-live .is-depth { will-change: transform; }
+/* 27차: 같은 depth 레이어 묶음 (story.js 가 만듦) — scene 좌표 그대로 */
+.story-group {
+  position: absolute;          /* left/top/width/height = 구성원 box 합집합 (story.js) */
+  pointer-events: none;
+}
+
+/* ---------- Main5 scene (2533×1080, 레이어 5개 공통 좌표) ---------- */
+.main5-scene,
+.m5-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--m5-w);
+  height: var(--m5-h);
+  pointer-events: none;
+}
+.m5-layer[hidden] { display: none; }
+.m5-layer > img,
+.m5-layer > .anim > img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--m5-w);
+  height: var(--m5-h);
+  max-width: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ---------- 45차: Main3·4·6~9 일반 장면 (Main5 와 같은 구조) ----------
+   .story-camera--scene : cover camera — transform 은 story.js 가 장면별로 직접 씀 (config mainN.camera)
+   .story-scene / .sc-layer : scene 좌표계. 크기·위치는 story.js 가 config scene / layers[].box 로 지정 */
+.story-scene,
+.sc-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+}
+.sc-layer[hidden] { display: none; }
+/* 45차: 창밖 하늘 등 방보다 느린 레이어를 scene canvas 안으로 자르는 틀 (story.js, config mainN.frame). 그림 없음 → texture 없음 */
+.sc-frame {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.sc-frame-in { position: absolute; left: 0; top: 0; pointer-events: none; }   /* 48차: 틀 안쪽 좌표 보정 (left = −inset, story.js) */
+.sc-layer > img,
+.sc-layer > .anim > img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  max-width: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ---------- Main2 scene ---------- */
+.main2-scene {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--m2-w);
+  height: var(--m2-h);
+}
+.m2-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--m2-w);
+  height: var(--m2-h);
+  pointer-events: none;
+}
+.m2-layer[hidden] { display: none; }
+.m2-layer > img,
+.m2-layer > .anim > img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--m2-w);
+  height: var(--m2-h);
+  max-width: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ---------- STORY stage (Main2) : 처음부터 최종 fullscreen 위치, MAIN 아래 ---------- */
+.story-stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;              /* STORY 의 유일한 clipping */
+  background: var(--m2-bg, #FFFAF1);
+  z-index: 1;
+}
+.story-camera {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  transform: translate(var(--story-x, 0px), var(--story-y, 0px)) scale(var(--story-s, 1));
+}
+.is-book-arrived .main-stage,
+.is-book-arrived .cover-layer { visibility: hidden; }
+/* 27차: STORY 에 있는 동안(화면에 안 보임) Main1 CTA animation 3개 정지 → MAIN 으로 돌아오면 다시 시작 */
+.is-book-arrived .cta-text,
+.is-book-arrived .cta-arrow { animation: none; }
+/* 책 열기 중에만: MAIN UI 가 살짝 위로 빠짐 (평소에는 transform 없음 → MAIN 렌더 그대로) */
+.is-book-opening .scene-ui { transform: translateY(var(--main-ui-y, 0px)); }
+.book-face {
+  position: absolute;            /* 31차: 위치·크기 = config main1.assets.cover (책 hinge 사각형 기준 offset, main.js) */
+  max-width: none;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.book-face--back {
+  transform: rotateY(180deg);
+}
+/* 31차: 뒷면 = 앞면과 같은 실루엣의 종이. 뒷면 박스는 rotateY(180deg) 로 좌우가 뒤집혀 보이므로
+   안쪽 종이를 scaleX(-1) 로 한 번 더 뒤집어 → 앞에서 볼 때 앞면과 같은 자리·모양 (넘어간 뒤에는 실제 책처럼 거울상) */
+.book-back-paper {
+  position: absolute;
+  inset: 0;
+  background: var(--c-paper);
+  box-shadow: inset 10px 0 22px rgba(120, 90, 60, 0.22);   /* 128차 그림자 → 129차 조금 진하게 (Main10 과 같은 값) */
+  transform: scaleX(-1);
+  -webkit-mask: url(../assets/images/main/main1/book-slot-mask.webp?v=42) 0 0 / 100% 100% no-repeat;
+          mask: url(../assets/images/main/main1/book-slot-mask.webp?v=42) 0 0 / 100% 100% no-repeat;
+}
+
+/* ---------- Scene UI (scene 좌표) ---------- */
+.scene-ui {
+  position: absolute;
+  inset: 0;
+  opacity: var(--main-ui-opacity, 1);   /* 책 열기 시 book.js 가 1 → 0 */
+
+  pointer-events: none;
+}
+
+.main-logo {
+  position: absolute;
+  left: var(--logo-x);
+  top: var(--logo-y);
+  width: var(--logo-w);
+  height: var(--logo-h);
+  margin: 0;
+  /* UI compress 전용 (세로 crop 시에만 값이 생김. 1920×1080 → translateY(0) scale(1)) */
+  transform-origin: 50% 0;
+  transform: translateY(var(--logo-dy, 0px)) scale(var(--uic-f, 1));
+}
+
+/* CTA + arrow 묶음 : UI compress 전용 transform (arrow 아래 끝 기준) */
+.cta-group {
+  position: absolute;
+  inset: 0;
+  transform-origin: var(--cta-anchor-x) var(--cta-anchor-y);
+  transform: translateY(var(--cta-group-dy, 0px)) scale(var(--uic-f, 1));
+}
+.main-logo img {
+  width: 100%;
+  height: 100%;
+}
+/* 162차: 로고 아래 한 줄 문구 — 로고 가로폭보다 좁게(약 80%), 로고와 함께 움직임 */
+.main-logo-sub {
+  position: absolute; left: 50%; top: calc(100% + var(--logo-w) * 0.055);   /* 169차: 로고와 간격 조금 더 (0.03 → 0.055) */
+  transform: translateX(-50%);
+  margin: 0; white-space: nowrap;
+  font-family: 'Ownglyph daisy', 'Pretendard', sans-serif; font-weight: 400;   /* 163차: 온글잎 데이지 */
+  font-size: calc(var(--logo-w) * 0.055); line-height: 1.2; letter-spacing: 0.01em;
+  color: #9A8D80;   /* 169차: 로고보다 덜 튀게 연하게 (#61523F → #9A8D80) */
+}
+
+/* CLICK TO OPEN : (cx, cy) = 대문자 높이의 중심 */
+.cta-text {
+  position: absolute;
+  left: var(--cta-cx);
+  top: var(--cta-cy);
+  font-family: var(--font-ui);
+  font-weight: 400;
+  font-size: var(--cta-fs);
+  line-height: 1;
+  letter-spacing: var(--cta-ls, 0px);
+  color: var(--c-ink);
+  white-space: nowrap;
+  /* translate(-50%) = 가로 중앙. 세로는 line box 중심 → cap 중심 보정(--cta-dy) */
+  transform: translate(-50%, calc(-50% + var(--cta-dy, 0px)));
+  animation: cta-pulse 2.8s ease-in-out infinite;
+}
+
+.cta-arrow {
+  position: absolute;
+  left: var(--arrow-x);
+  top: var(--arrow-y);
+  width: var(--arrow-size);
+  height: var(--arrow-size);
+  animation: cta-pulse 2.8s ease-in-out infinite, arrow-bob 2.8s ease-in-out infinite;
+}
+
+/* 부드러운 opacity pulse (완전히 사라지지 않음) */
+@keyframes cta-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.5; }
+}
+@keyframes arrow-bob {
+  0%, 100% { translate: 0 0; }
+  50%      { translate: 0 4px; }
+}
+
+/* ==========================================================================
+   Hamburger (viewport 우상단 기준, HTML/CSS)
+   ========================================================================== */
+/* 로드 직후 첫 배치 전에는 transition 을 끈다 (main.js 가 is-ready 추가) */
+html:not(.is-ready) .hamburger__line,
+html:not(.is-ready) .menu-panel { transition: none !important; }
+
+/* hamburger 는 페이지가 바뀌어도 항상 유지 (책 전환 중에만 클릭 잠금) */
+.is-book-opening .hamburger { pointer-events: none; }
+.hamburger {
+  /* 8차: hamburger 와 X 가 공유하는 하나의 정사각형 아이콘 영역 (--hb-size × --hb-size).
+     크기/위치는 main.js 가 uiScale 을 곱한 뒤 정수 px(크기는 짝수)로 스냅한다.
+     선 두께는 uiScale 과 무관하게 항상 2px. 열림/닫힘 모두 이 박스의 width/height 는 변하지 않는다. */
+  position: fixed;
+  z-index: 30;
+  top: var(--hb-top);
+  right: var(--hb-right);
+  width: var(--hb-size);
+  height: var(--hb-size);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+/* 클릭 영역 확장 (보이는 크기는 그대로) */
+.hamburger::before {
+  content: '';
+  position: absolute;
+  inset: -12px;
+}
+.hamburger:focus-visible { outline: 2px solid var(--c-menu-ink, var(--c-ink)); outline-offset: 8px; border-radius: 4px; }
+
+/* 선 3개 : 2px, round cap (border-radius 999px), 같은 색, 같은 길이, 박스 가로 중앙.
+   기준 위치 = 박스 정중앙 (top = (size − stroke)/2). 위/아래 선은 translateY(∓gap) 로 벌린다 → 간격 균일.
+   transform = 이동 + 회전만 (scale 없음 → round cap 이 찌그러지지 않음).
+   선 길이 변화는 width/left 로 (항상 박스 가로 중앙 유지). */
+.hamburger__line {
+  position: absolute;
+  top: calc((var(--hb-size) - var(--hb-stroke)) / 2);
+  left: calc((var(--hb-size) - var(--hb-lw)) / 2);
+  width: var(--hb-lw);
+  height: var(--hb-stroke);
+  background: var(--c-menu-ink, var(--c-ink));
+  border-radius: 999px;
+  transform-origin: 50% 50%;
+  transition:
+    transform 0.45s var(--ease-out),
+    width 0.45s var(--ease-out),
+    left 0.45s var(--ease-out),
+    opacity 0.25s ease;
+}
+.hamburger__line:nth-child(1) { transform: translateY(calc(var(--hb-gap) * -1)); }
+.hamburger__line:nth-child(2) { transform: none; }
+.hamburger__line:nth-child(3) { transform: translateY(var(--hb-gap)); }
+
+/* open → X : 위/아래 선이 박스 중심으로 모여(translateY 0) ±45° 교차. 가운데 선 opacity 0.
+   X 선 길이 --hb-xw 는 X 의 bbox(둥근 끝 포함)가 size × xExtent 가 되도록 main.js 가 계산 → 정사각형 밖으로 나가지 않음.
+   회전 중심 = 박스 중심 → hamburger 와 X 의 중심이 정확히 같다. */
+.is-menu-open .hamburger__line:nth-child(1),
+.is-menu-open .hamburger__line:nth-child(3) {
+  width: var(--hb-xw);
+  left: calc((var(--hb-size) - var(--hb-xw)) / 2);
+}
+.is-menu-open .hamburger__line:nth-child(1) { transform: translateY(0) rotate(var(--hb-x-angle)); }
+.is-menu-open .hamburger__line:nth-child(2) { opacity: 0; }
+.is-menu-open .hamburger__line:nth-child(3) { transform: translateY(0) rotate(calc(var(--hb-x-angle) * -1)); }
+
+/* ==========================================================================
+   Menu panel (오른쪽에서 slide-in)
+   ========================================================================== */
+/* 메뉴 색 theme (52차) — 같은 메뉴 컴포넌트에서 색만 분기. 크기·위치·간격·애니메이션·hover 동작은 공통.
+   MAIN 화면       : 기본 (베이지 패널 #FCF6EE, 글자 #505050, 아이콘 #61523F) — 변경 없음
+   그 외 (PROGRAM · CURO KIT · STORY · FRIENDS) : html.menu-theme-light (main.js 가 현재 페이지로 판단)
+   hover(나머지 70%)·focus underline 은 currentColor 를 따르므로 #2B2B2B 계열로 함께 바뀐다. */
+html.menu-theme-light {
+  --c-menu-panel: #FFFFFF;
+  --c-menu-text: #2B2B2B;
+  --c-menu-ink: #2B2B2B;
+}
+.menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: transparent;
+  visibility: hidden;
+}
+.is-menu-open .menu-backdrop { visibility: visible; }
+
+.menu-panel {
+  position: fixed;
+  z-index: 20;
+  top: 0;
+  right: 0;
+  width: calc(var(--menu-w0) * var(--ui));
+  height: 100vh;
+  height: 100dvh;
+  background: var(--c-menu-panel, var(--c-panel));
+  box-shadow: none;
+  transform: translateX(100%);
+  visibility: hidden;
+  transition: transform 0.55s var(--ease-out), box-shadow 0.55s ease, visibility 0s linear 0.55s;
+  display: flex;
+  align-items: center;           /* menu group : 세로 중앙 */
+  justify-content: center;       /* menu group : 가로 중앙 */
+}
+.is-menu-open .menu-panel {
+  transform: translateX(0);
+  box-shadow: var(--menu-shadow);
+  visibility: visible;
+  transition: transform 0.55s var(--ease-out), box-shadow 0.55s ease, visibility 0s;
+}
+
+/* menu group : 5개 항목을 하나의 덩어리로 묶는다. (Figma: group width 267)
+   - 덩어리 폭 = 267 × ui 고정
+   - 덩어리 전체는 패널의 가로/세로 중앙 (.menu-panel 의 flex center) 에서
+     config.menu.groupOffsetX 만큼 이동 (position:relative + left → transform 을 쓰지 않음)
+   - 덩어리 내부 항목은 LEFT ALIGN → 모든 항목의 시작 X 가 동일
+   - 아이콘은 absolute 라 폭/위치에 영향 없음 */
+.menu-group {
+  position: relative;
+  left: calc(var(--menu-group-dx0) * var(--ui));
+  width: calc(var(--menu-group-w0) * var(--ui));
+  flex: none;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+}
+/* menu item : group 폭 전체 (항목 높이/간격 담당) */
+.menu-item {
+  position: relative;
+  height: calc(var(--menu-pitch0) * var(--ui));   /* 항목 중심 간격 일정 */
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.menu-link {
+  display: inline-block;             /* hover 영역 = 텍스트 */
+  color: var(--c-menu-text);
+  text-decoration: none;
+  font-weight: 700;                  /* Figma: Bold */
+  font-synthesis: none;              /* 실제 Bold 파일만 사용 (가짜 bold 금지) */
+  font-size: calc(var(--menu-fs0) * var(--ui));
+  line-height: 1;
+  letter-spacing: 0;
+  transition: opacity 0.25s ease;
+  outline: none;
+}
+
+/* 텍스트 박스 = 실제 rendered 텍스트 폭. 아이콘의 기준 박스 (position:relative)
+   → 아이콘은 각 텍스트의 오른쪽 끝 + gap 에 absolute 로 붙는다 (텍스트/그룹 위치 영향 없음) */
+.menu-label {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.menu-icon {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + var(--menu-icon-gap0) * var(--ui));   /* 해당 메뉴 텍스트의 오른쪽 끝 + gap (.menu-label 기준) */
+  width: calc(var(--menu-icon0) * var(--ui));
+  height: calc(var(--menu-icon0) * var(--ui));
+  max-width: none;
+  opacity: 0;
+  transform: translate(-6px, -50%) scale(0.9);
+  transition: opacity 0.25s ease, transform 0.35s var(--ease-out);
+  pointer-events: none;
+}
+
+/* 119차: hover · 현재 페이지 = #3CB5AC, 나머지 항목을 옅게 하는 효과 없음 */
+.menu-link { transition: color 0.25s ease; }
+@media (hover: hover) {
+  .menu-link:hover { color: var(--c-menu-text) !important; }
+  .menu-link:hover .menu-icon { opacity: 1; transform: translate(0, -50%) scale(1); }
+}
+.menu-link[aria-current="page"] { color: var(--c-menu-text); }
+.menu-group:has(.menu-link[aria-current="page"]) .menu-link:not([aria-current="page"]) { color: #ADADAD; }   /* 287차: 현재 메뉴 = 기본색, 나머지 옅게 */
+.menu-link[aria-current="page"] .menu-icon { opacity: 1; transform: translate(0, -50%) scale(1); }   /* 186차: 현재 페이지 메뉴 = 아이콘도 보임 */
+.menu-link:focus-visible { color: var(--c-menu-text) !important; }
+.menu-link:focus-visible .menu-icon { opacity: 1; transform: translate(0, -50%) scale(1); }
+.menu-link:focus-visible .menu-label { text-decoration: underline; text-underline-offset: 0.25em; text-decoration-thickness: 2px; }
+
+/* ==========================================================================
+   Reduced motion
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .cta-text,
+  .cta-arrow { animation: none; }
+  .hamburger__line,
+  .menu-panel,
+  .menu-icon,
+  .menu-link { transition-duration: 0.01s; }
+}
+
+
+/* ==========================================================================
+   STORY 텍스트 (24차) — 장면 정착 후 등장. 배경 그림과 따로 움직이지 않도록 viewport 기준 layer
+   .story-text = 1920×1080 디자인 frame (좌표 = 디자인 시안 px). contain 배율(--st-u)로 화면 가운데 정렬.
+   등장/퇴장은 story-text.js 가 .is-in 을 붙였다 뗀다. 시간·거리·ease 는 config (mainN.text, story.text)
+   ========================================================================== */
+.story-texts {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+.story-text {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 1080px;
+  transform-origin: 0 0;
+  /* 30차: 위치(--st-tx/--st-ty)는 story-text.js 가 계산 — 그림(cover)을 따라가되 글자 크기는 contain(--st-u) */
+  transform: translate(var(--st-tx, 0px), var(--st-ty, 0px)) scale(var(--st-u, 1));
+  color: #6B645F;
+  --st-dark: #6B645F;
+  --st-teal: #7AAA9E;
+  --st-body: #6E675F;
+}
+.st-el {
+  margin: 0;
+  position: absolute;
+  opacity: 0;
+  transform: translate(var(--st-x0, 0px), var(--st-y0, 0px));
+  transition: opacity var(--st-out, 0.25s) ease-out, transform var(--st-out, 0.25s) ease-out;
+  white-space: nowrap;
+}
+.story-text.is-in .st-el {
+  opacity: 1;
+  transform: none;
+  transition: opacity var(--st-dur) var(--st-ease) var(--st-delay), transform var(--st-dur) var(--st-ease) var(--st-delay);
+}
+.st-kicker {
+  font-family: 'Kyobo Handwriting 2024 psw', sans-serif;
+  font-weight: 400;
+  font-synthesis: none;
+  color: var(--st-dark);
+}
+.st-title {
+  font-family: 'Ownglyph daisy', sans-serif;
+  /* 28차: 타이틀은 <h2> 라 브라우저 기본값 font-weight: bold(700) 가 걸려 있었다.
+     온글잎 데이지는 Regular(400) 파일 하나뿐 → Chrome 이 획을 인위적으로 두껍게 만든 가짜 bold(synthetic bold)로 그렸음.
+     400 으로 되돌리고, 혹시 모를 합성도 막는다 (Rendered Font = Ownglyph_daisy-Rg 그대로) */
+  font-weight: 400;
+  font-synthesis: none;
+  color: var(--st-dark);
+  letter-spacing: 0;
+}
+.st-title .st-hl { color: var(--st-teal); }
+.st-body {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-synthesis: none;
+  color: var(--st-body);
+  letter-spacing: 0;
+}
+.st-pill {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--st-dark);
+  border-radius: 999px;
+}
+.st-arrow {
+  box-sizing: border-box;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  pointer-events: none;
+}
+.story-text.is-in .st-arrow { pointer-events: auto; }
+.st-arrow svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.st-arrow:focus-visible { outline: 2px solid var(--st-dark); outline-offset: 4px; border-radius: 50%; }
+
+/* Main2 (디자인 시안 3번 기준, 1920×1080) */
+.story-text--m2 .st-kicker { left: 1289px; top: 291px; font-size: 30px; line-height: 1; transform-origin: 0 100%; rotate: -12deg; }
+.story-text--m2 .st-deco   { left: 1383px; top: 265px; width: 48px; height: 34px; }
+.story-text--m2 .st-title  { left: 1331px; top: 334px; font-size: 95px; line-height: 88px; }
+.story-text--m2 .st-body   { left: 1331px; top: 535px; font-size: 32px; line-height: 50px; }
+.story-text--m2 .st-arrow  { left: 1740px; top: 700px; }
+
+/* Main5 (디자인 시안 2번 기준) · 47차: Main6·7·8 단계 페이지(.story-text--step)도 같은 값 그대로 사용 */
+.story-text--m5 .st-pill,   .story-text--step .st-pill   { left: 1310px; top: 246px; width: 144px; height: 56px; }
+.story-text--m5 .st-pill .st-kicker, .story-text--step .st-pill .st-kicker { position: static; font-size: 30px; line-height: 1; opacity: 1; transform: none; }
+.story-text--m5 .st-title,  .story-text--step .st-title  { left: 1306px; top: 334px; font-size: 95px; line-height: 88px; }
+.story-text--m5 .st-body,   .story-text--step .st-body   { left: 1306px; top: 533px; font-size: 32px; line-height: 51px; }
+.story-text--m5 .st-arrow,  .story-text--step .st-arrow  { left: 1675px; top: 665px; }
+
+/* 47차: Main3 — Main2 구조(.story-text--m2) 재사용. 제목 3줄, kicker 없음. 블록 전체를 Main2 보다 화면 가운데 쪽(왼쪽)으로 --m3-dx 만큼.
+   세로: 제목 3줄(88×3)만큼 길어진 블록이 Main2 블록과 같은 높이 중심에 오도록 제목 top 334 → 290, 제목–본문 간격(25)·본문–화살표 간격은 Main2 와 같음 */
+.story-text--m3 { --m3-dx: -120px; }
+.story-text--m3 .st-title  { left: calc(1331px + var(--m3-dx)); top: 290px; }
+.story-text--m3 .st-body   { left: calc(1331px + var(--m3-dx)); top: 579px; }
+.story-text--m3 .st-arrow  { left: calc(1740px + var(--m3-dx)); top: 744px; }
+
+/* 47차: Main4 — Main2 구조 재사용 + 위쪽 작은 문구(kicker) 추가. 제목·본문·화살표 위치는 Main2 그대로.
+   kicker 는 Main2 "안녕?" 과 같은 글꼴·크기(교보 손글씨 30px)이되 기울이지 않고 제목 왼쪽 끝에 맞춤 */
+.story-text--m4 .st-kicker { left: 1335px; top: 284px; rotate: none; }
+
+/* 47차: Main9 — 사용자 시안(1327×748 화면 캡처 → 기준 이미지와 정합해 1920 좌표로 환산) 기준. 모든 줄 가운데 정렬, 중심 x 1372.
+   kicker 52px(교보 손글씨) · 제목 95px/90 · 본문 Pretendard 24px/40 · 로고 170×45.3 (icons/CUROLogo.png 525×140 비율 그대로) */
+.story-text--m9 .st-kicker,
+.story-text--m9 .st-title,
+.story-text--m9 .st-body   { left: 1072px; width: 600px; text-align: center; }
+.story-text--m9 .st-kicker { top: 227px; font-size: 52px; line-height: 1; }
+.story-text--m9 .st-title  { top: 321px; font-size: 95px; line-height: 90px; }
+.story-text--m9 .st-body   { top: 533px; font-size: 24px; line-height: 40px; }
+.story-text--m9 .st-logo   { left: 1289px; top: 717px; width: 170px; height: 45.33px; }
+
+/* 162차: CLICK TO OPEN 아이콘 = 마우스 — 위아래로 흔들지 않음 (아이콘 안 휠만 움직임) */
+.cta-group .cta-arrow.cta-mouse { animation: cta-pulse 2.8s ease-in-out infinite; }
+.is-book-arrived .cta-group .cta-arrow.cta-mouse { animation: none; }
+@media (prefers-reduced-motion: reduce) { .cta-group .cta-arrow.cta-mouse { animation: none; } }
+
+/* 166차: 햄버거 메뉴 안 '음악 끄기 / 켜기' (동작 = js/bgm.js). 메뉴 항목 왼쪽 선에 맞춰 패널 아래쪽
+   167차: 민트·동그라미 없앰 — 아이콘·글씨 모두 글씨 색(#8A8A8A), 끈 상태 = 비활성 색(#C8C8C8) */
+.menu-sound {
+  position: absolute;
+  left: calc(50% + var(--menu-group-dx0) * var(--ui) - var(--menu-group-w0) * var(--ui) / 2);
+  bottom: calc(64px * var(--ui));
+  display: inline-flex; align-items: center; gap: calc(6px * var(--ui));
+  padding: 0; border: 0; background: none; cursor: pointer;
+  font-family: 'Pretendard', sans-serif; font-weight: 700; font-synthesis: none;
+  font-size: max(13px, calc(16px * var(--ui))); line-height: 1; color: #8A8A8A;
+  transition: color 0.25s ease;
+}
+.menu-sound-ic {
+  position: relative; flex: none; margin-left: calc(-8px * var(--ui));   /* 아이콘 파일 왼쪽 여백만큼 당겨 메뉴 선에 맞춤 */
+  width: calc(44px * var(--ui)); height: calc(44px * var(--ui)); min-width: 34px; min-height: 34px;
+}
+.menu-sound-ic i {
+  position: absolute; inset: 0; background: currentColor; transition: background-color 0.25s ease;
+  -webkit-mask: url('../assets/icons/sound.svg') center / 100% no-repeat; mask: url('../assets/icons/sound.svg') center / 100% no-repeat;
+}
+.menu-sound.is-muted { color: #C8C8C8; }
+.menu-sound.is-muted .menu-sound-ic i {
+  -webkit-mask-image: url('../assets/icons/mute.svg'); mask-image: url('../assets/icons/mute.svg');
+}
+@media (hover: hover) {
+  .menu-sound:hover { color: #6B6B6B; }
+  .menu-sound.is-muted:hover { color: #AFAFAF; }
+}
+.menu-sound:focus-visible { outline: 2px solid #8A8A8A; outline-offset: 4px; border-radius: 4px; }

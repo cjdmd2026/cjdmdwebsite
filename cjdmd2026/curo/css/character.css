@@ -1,0 +1,167 @@
+/* ==========================================================================
+   캐릭터 상세 (110차, 새 레이아웃) — character.html 전용 (예전 레이아웃 = character-old.css)
+   사용자 시안 기준. 가로 기준 = 가운데 1100u 기둥(.cp-col), 배너 글만 메뉴 라인(--page-w)
+   세로 간격 규칙: 구역 위 140 / 제목 → 내용 60 / 내용 덩어리 사이 120
+   캐릭터 색(--c-*)은 js 가 넣음
+   ========================================================================== */
+@font-face { font-family: 'Pretendard'; src: url('../assets/fonts/pretendard-regular.woff') format('woff'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Pretendard'; src: url('../assets/fonts/pretendard-medium.woff') format('woff'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Pretendard'; src: url('../assets/fonts/pretendard-semibold.woff') format('woff'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Pretendard'; src: url('../assets/fonts/pretendard-bold.woff') format('woff'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'BM JUA'; src: url('../assets/fonts/bm-jua.woff') format('woff'); font-weight: 400; font-style: normal; font-display: swap; }
+
+html.cp-page, .cp-page body { background: #FFFFFF; }
+.cp-page body { margin: 0; font-family: 'Pretendard', sans-serif; font-synthesis: none; color: #2B2B2B; }
+.cp :where(h1, h2, h3, p, ul, dl, dd) { margin: 0; padding: 0; }
+.cp ul { list-style: none; }
+.cp-in { width: var(--page-w); margin: 0 auto; }
+.cp-col { width: calc(1100 * var(--u)); margin-left: auto; margin-right: auto; }
+.cp-q { font-family: 'Pretendard', sans-serif; font-weight: 600; }   /* BM JUA 에 따옴표 모양이 없어서 */
+
+/* ---------- ① 배너 ---------- */
+/* 172차: 사용자 시안 — 높이 500 → 370 (메뉴 아래), 글 = 가운데 1100 기둥 왼쪽, 한글 이름 옆에 영문 이름, 오른쪽 캐릭터는 아래가 잘림
+   구름 = 흰색 반투명 SVG (왼쪽 아래·오른쪽), 작은 장식 = 친구별 그림 5개 (js) */
+.cp-banner { position: relative; overflow: hidden; height: calc(var(--nav-h, 0px) + 370 * var(--u)); background: linear-gradient(90deg, var(--c-top) 0%, var(--c-bot) 100%); }
+.cp-banner-in { position: relative; z-index: 3; height: 100%; display: flex; align-items: center; padding-top: var(--nav-h, 0px); box-sizing: border-box; }
+.cp-name { display: flex; align-items: baseline; gap: calc(22 * var(--u)); }
+.cp-big { font-family: 'BM JUA', sans-serif; font-weight: 400; font-size: max(48px, calc(104 * var(--u))); line-height: 1; letter-spacing: 0.01em; color: #FFFFFF; text-shadow: calc(4 * var(--u)) calc(5 * var(--u)) 0 var(--c-btn); }   /* 173차: 아래로 간 만큼 오른쪽으로도 (입체) */
+.cp-en { margin: 0 !important; font-size: max(16px, calc(28 * var(--u))); font-weight: 700; letter-spacing: 0.02em; color: var(--c-btn); }
+.cp-bquote { margin-top: calc(22 * var(--u)) !important;   /* 173차: 이름과 간격 40 → 22 */ font-family: 'BM JUA', sans-serif; font-size: max(16px, calc(26 * var(--u))); color: var(--c-accent); }   /* 193차: 29 → 26 */
+.cp-banner-img { position: absolute; z-index: 2; right: calc((100% - 1100 * var(--u)) / 2 + 20 * var(--u)); bottom: calc(var(--bb, -290) * var(--u)); height: calc(var(--bh, 640) * var(--u)); width: auto; }
+.cp-cloud { position: absolute; z-index: 1; bottom: 0; pointer-events: none; }
+.cp-cloud-l { left: 0; width: calc(640 * var(--u)); height: calc(300 * var(--u)); }   /* 175차: 크기 원래대로, 글 쪽 오른쪽 끝 동그라미만 줄여 글과 떨어지게 (character.html) */
+.cp-cloud-r { right: 0; width: calc(560 * var(--u)); height: calc(340 * var(--u)); }
+.cp-deco { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.cp-deco span { position: absolute; display: block; transform: translate(-50%, -50%) rotate(var(--r, 0deg)); }
+.cp-deco svg { display: block; width: 100%; height: 100%; overflow: visible; animation: cpTwinkle var(--d, 5s) ease-in-out var(--dl, 0s) infinite alternate; }
+@keyframes cpTwinkle { from { transform: translateY(0) scale(1); } to { transform: translateY(calc(-8 * var(--u))) scale(0.92); } }
+@media (prefers-reduced-motion: reduce) { .cp-deco svg { animation: none; } }
+
+/* ---------- 공통 ---------- */
+.cp-sec { padding-top: calc(140 * var(--u)); }
+.cp-title { text-align: center; font-size: max(20px, calc(32 * var(--u)));   /* 193차: 36 → 32 */ font-weight: 600; letter-spacing: -0.01em; color: #2B2B2B; }
+
+/* ---------- ② 캐릭터 소개 ---------- */
+.cp-intro { margin-top: calc(60 * var(--u)); display: grid; grid-template-columns: calc(340 * var(--u)) 1fr; column-gap: calc(81 * var(--u)); align-items: start; }   /* 174차: 사용자 시안 — 글 덩어리를 그림 칸 위에 맞추고 간격 좁게 */
+.cp-info { padding-top: calc(14 * var(--u)); }
+.cp-tile { height: calc(428 * var(--u)); border-radius: calc(36 * var(--u)); background: var(--c-bot); display: flex; align-items: center; justify-content: center; }
+.cp-tile img { height: 78%; width: auto; }
+.cp-dl { display: grid; grid-template-columns: auto 1fr; gap: calc(12 * var(--u)) calc(26 * var(--u)); font-size: max(13px, calc(18 * var(--u))); line-height: 1.5; }   /* 193차: 20 → 18 (소개 글과 같게) */
+.cp-dl dt { font-weight: 600; color: var(--c-accent); }
+.cp-dl dd { font-weight: 500; color: #333333; }
+.cp-quote { margin-top: calc(18 * var(--u)) !important; font-family: 'BM JUA', sans-serif; font-size: max(17px, calc(27 * var(--u))); line-height: 1.35; color: var(--c-accent); }
+.cp-desc { margin-top: calc(25 * var(--u)); }
+.cp-desc p { font-size: max(12px, calc(18 * var(--u))); line-height: 1.78; color: #3A3A3A; }   /* 174차: 사용자 시안 (18 / 줄 간격 32) */
+/* 기본 색: 캐릭터 얼굴 모양 (임시 inline SVG — 내보낸 얼굴 모양 파일이 생기면 교체) */
+.cp-colors { margin-top: calc(38 * var(--u)) !important; display: flex; gap: calc(22 * var(--u)); }
+.cp-colors li { position: relative; width: calc(96 * var(--u)); height: calc(84 * var(--u)); }
+.cp-colors svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.cp-colors span { position: absolute; left: 0; right: 0; bottom: 26%; text-align: center; font-size: max(9px, calc(12 * var(--u))); font-weight: 600; letter-spacing: 0.02em; }
+
+/* 110차: export 된 얼굴 모양(color/{id}.svg, 93×72) — js 가 path 에 색을 채움 */
+.cp-colors { align-items: flex-end; }
+.cp-colors li.is-shape { width: calc(var(--w, 93) * var(--u)); height: calc(var(--h, 72) * var(--u)); }   /* 172차: 친구마다 실루엣 비율대로 */
+.cp-colors li.is-shape span { font-size: max(8px, calc(var(--fs, 12) * var(--u))); bottom: var(--lb, 30%); left: 50%; right: auto; transform: translateX(-50%); white-space: nowrap; line-height: 1.25; }
+
+/* ---------- ③ 삼면도 (토글 = 판 오른쪽 위, 큰 캐릭터 머리 높이) ---------- */
+.cp-turnwrap { position: relative; margin-top: calc(160 * var(--u)); }   /* 112차: 시안 간격(그림 칸 아래 → 토글 위 ≈ 160) */
+.cp-toggle { position: absolute; z-index: 3; top: 0; right: 0; display: inline-flex; padding: calc(5 * var(--u)); border-radius: 999px; background: var(--c-bot); }
+/* 115차: 선택 표시 = 둥근 박스가 버튼 사이를 미끄러지듯 이동 (위치·폭은 js 가 --x·--w 로) */
+.cp-toggle::before { content: ''; position: absolute; top: calc(5 * var(--u)); bottom: calc(5 * var(--u)); left: 0; width: var(--w, 0px); transform: translateX(var(--x, 0px)); border-radius: 999px; background: var(--tg, var(--c-btn)); transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), width 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
+.cp-toggle.no-anim::before { transition: none; }
+.cp-toggle button { position: relative; z-index: 1; border: 0; padding: calc(11 * var(--u)) calc(26 * var(--u)); border-radius: 999px; background: none; font: inherit; font-size: max(13px, calc(16 * var(--u))); font-weight: 600; color: rgba(0, 0, 0, 0.3); cursor: pointer; transition: color 0.35s ease; }
+.cp-toggle button:hover { color: rgba(0, 0, 0, 0.6); }
+.cp-toggle button[aria-selected="true"] { color: #FFFFFF; }
+.cp-toggle button:focus-visible { outline: 2px solid #1EB2A6; outline-offset: 3px; }
+.cp-views { display: grid; }
+/* 114차: 전/후 전환 = 움직임 없이 바로 바뀜 */
+.cp-view { position: relative; grid-area: 1 / 1; padding-top: calc(91 * var(--u)); visibility: hidden; }
+.cp-view.is-on { visibility: visible; }
+.cp-plate { margin-left: calc(var(--pl, 170) * var(--u)); height: calc(330 * var(--u)); border-radius: 0 calc(30 * var(--u)) calc(30 * var(--u)) 0; background: var(--plate); display: grid; grid-template-columns: repeat(3, 1fr); align-items: end; padding: 0 calc(140 * var(--u)) calc(38 * var(--u)) calc(var(--pp, 136) * var(--u)); box-sizing: border-box; }   /* 174차: 앞·옆·뒤 가운데 = 기둥에서 415 / 633 / 852 · 175차: 판 왼쪽 끝은 캐릭터 가운데(뒤로 묻힘, 왼쪽 모서리 각지게) */
+.cp-plate figure { margin: 0; display: flex; flex-direction: column; align-items: center; }
+.cp-plate img { height: calc(206 * var(--u)); width: auto; max-width: 100%; }
+.cp-plate figcaption { margin-top: calc(10 * var(--u)); font-size: max(11px, calc(15 * var(--u))); font-weight: 600; color: #434343; }   /* 176차: 앞·옆·뒤 글자 색 통일 */
+.cp-hero-fig { position: absolute; left: calc(var(--hl, 0) * var(--u)); bottom: calc(var(--hb, -6) * var(--u)); height: calc(var(--hh, 410) * var(--u)); width: auto; }   /* 172차: 더 크게 + 발끝 = 판 아래 끝 (--hh·--hb = js 가 그림 여백을 빼고 계산) */
+
+/* ---------- ④ 동화 속 장면 (그림 원래 비율, 한 줄 폭 합 1303) ---------- */
+.cp-gallery { margin-top: calc(60 * var(--u)); --gap: calc(16 * var(--u)); display: flex; flex-wrap: wrap; gap: var(--gap); }
+.cp-gallery figure { margin: 0; width: calc((100% - 2 * var(--gap)) * var(--w) / 1303); aspect-ratio: var(--w) / 406; border-radius: calc(12 * var(--u)); overflow: hidden; background: #F1EEE8; border: 1px solid #DDDDDD; box-sizing: border-box; }   /* 113차: 얇은 테두리 #DDD */
+.cp-gallery img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+.cp-gallery figure:hover img { transform: scale(1.04); }
+.cp-more { margin-top: calc(56 * var(--u)) !important; text-align: center; }
+.cp-btn { display: inline-flex; align-items: center; justify-content: center; gap: calc(12 * var(--u)); min-width: calc(270 * var(--u)); height: calc(58 * var(--u)); padding: 0 calc(32 * var(--u)); box-sizing: border-box; border-radius: 999px; background: var(--c-btn); color: #FFFFFF; text-decoration: none; font-size: max(14px, calc(17 * var(--u))); font-weight: 600; transition: filter 0.2s ease, transform 0.2s ease; }
+.cp-btn img { width: calc(20 * var(--u)); height: calc(20 * var(--u)); }
+.cp-btn:hover { filter: brightness(1.08); transform: translateY(calc(-2 * var(--u))); }
+
+/* ---------- ⑤ 다른 친구 ---------- */
+/* 127차: 다른 친구 = 낮은 한 줄 띠 (제목 왼쪽 · 친구 오른쪽, 동그라미·글씨 축소) */
+.cp-others { margin-top: calc(140 * var(--u)); padding: calc(48 * var(--u)) 0; background: #F7F7F7; }
+.cp-others-in { display: flex; align-items: center; justify-content: space-between; gap: calc(40 * var(--u)); }
+.cp-others .cp-title { text-align: left; font-size: max(17px, calc(22 * var(--u))); }
+.cp-others-sub { margin: calc(8 * var(--u)) 0 0; font-size: max(13px, calc(15 * var(--u))); color: #8A8A8A; }
+.cp-friends { margin: 0 !important; padding: 0; list-style: none; display: flex; gap: calc(24 * var(--u)); }
+.cp-friends li { display: flex; flex-direction: column; align-items: center; }
+.cp-friends-name { margin-top: calc(8 * var(--u)); font-size: max(12px, calc(14 * var(--u))); font-weight: 500; color: #8A8A8A; }
+.cp-friends li:has(a[aria-current="page"]) .cp-friends-name { color: #2B2B2B; font-weight: 600; }
+.cp-friends a { position: relative; display: block; border-radius: 50%; transition: transform 0.2s ease; }
+.cp-friends img { display: block; width: calc(76 * var(--u)); height: calc(76 * var(--u)); }
+/* 116차: FRIENDS 친구 고르기와 같은 표시 — 지금 친구 = 덮개 없음(누르지 않음), 다른 친구 = 친구 색 30% 덮개 */
+.cp-friends a::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: var(--dim); opacity: 0.3; transition: opacity 0.3s ease; pointer-events: none; }
+.cp-friends a:hover { transform: translateY(calc(-5 * var(--u))); }
+.cp-friends a:hover::after { opacity: 0.15; }
+.cp-friends a[aria-current="page"] { pointer-events: none; }
+.cp-friends a[aria-current="page"]::after { opacity: 0; }
+.cp-friends a:focus-visible { outline: 2px solid #1EB2A6; outline-offset: 4px; }
+.cp-desc p span { display: block; text-wrap: balance; word-break: keep-all; }   /* 긴 줄이 넘칠 때 한 글자만 내려가지 않게 */
+
+/* ==========================================================================
+   184차: 폰(600px 이하) — 183차 모바일 시안
+   배너 없음 · 소개(그림 위, 글 아래) · 앞옆뒤 판 + 아래 가운데 변신 토글(큰 캐릭터 없음) · 장면 2열 · 다른 친구
+   ========================================================================== */
+@media (max-width: 600px) {
+  .cp-banner { display: none; }
+  .cp-col { width: auto; margin: 0; padding: 0 20px; box-sizing: border-box; }
+  .cp-sec { padding-top: 64px; }
+  .cp-banner + .cp-sec { padding-top: calc(var(--nav-h, 56px) + 40px); }
+  .cp-title { font-size: 20px; font-weight: 700; }
+  .cp-intro { display: block; margin-top: 22px; }
+  .cp-tile { height: 260px; border-radius: 24px; }
+  .cp-tile img { height: 80%; }
+  .cp-info { padding-top: 24px; }
+  .cp-dl { gap: 10px 18px; font-size: 15px; }
+  .cp-quote { margin-top: 18px !important; font-size: 20px; }
+  .cp-desc { margin-top: 10px; }
+  .cp-desc p { font-size: 14px; line-height: 1.75; }
+  .cp-desc p span { display: inline; }
+  .cp-desc p span + span::before { content: ' '; }
+  .cp-colors { --u: 0.62px; margin-top: 22px !important; flex-wrap: wrap; justify-content: center; gap: 10px; }   /* 187차: 가운데 + 작게 */
+  .cp-colors:has(li:nth-child(5)) { gap: 16px; }   /* 래비(5개, 세로로 긴 모양)는 양옆 간격 조금 더 */
+  .cp-colors li.is-shape span { font-size: 7.5px; }
+  /* 삼면도: 판 + 아래 가운데 토글 */
+  .cp-turnwrap { display: flex; flex-direction: column; margin-top: 64px; }
+  .cp-views { order: 1; }
+  .cp-toggle { order: 2; position: relative; top: auto; right: auto; align-self: center; margin-top: 16px; padding: 4px; }
+  .cp-toggle::before { top: 4px; bottom: 4px; }
+  .cp-toggle button { padding: 8px 18px; font-size: 13.5px; }
+  .cp-view { padding-top: 0; }
+  .cp-hero-fig { display: none; }
+  .cp-plate { margin-left: 0 !important; height: auto; border-radius: 22px; padding: 30px 14px 20px !important; gap: 4px; align-items: end; }
+  .cp-plate figure { min-width: 0; }
+  .cp-plate img { height: 136px; width: 100%; max-width: 100%; object-fit: contain; }
+  .cp-plate figcaption { margin-top: 8px; font-size: 12px; }
+  /* 동화 속 장면: 첫·마지막 넓게, 나머지 2열 */
+  .cp-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 20px; }
+  .cp-gallery figure { width: auto; aspect-ratio: 4 / 3; border-radius: 10px; }
+  .cp-gallery figure:first-child, .cp-gallery figure:last-child { grid-column: 1 / -1; aspect-ratio: 16 / 9; }
+  .cp-more { margin-top: 24px !important; }
+  .cp-btn { min-width: 200px; height: 50px; padding: 0 28px; gap: 8px; font-size: 15px; }
+  .cp-btn img { width: 16px; height: 16px; }
+  /* 다른 친구 */
+  .cp-others { margin-top: 64px; padding: 30px 0 32px; }
+  .cp-others-in { display: block; text-align: center; }
+  .cp-others .cp-title { text-align: center; font-size: 17px; }
+  .cp-others-sub { margin-top: 6px; font-size: 13px; }
+  .cp-friends { justify-content: center; gap: 16px; margin-top: 18px !important; }
+  .cp-friends img { width: 58px; height: 58px; }
+  .cp-friends-name { margin-top: 6px; font-size: 11.5px; }
+}
