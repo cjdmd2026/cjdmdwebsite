@@ -1,0 +1,130 @@
+[
+  {
+    "name": "figma",
+    "rows": [
+      {
+        "text": "우리는 고유한 매력을 지닌",
+        "accent": "매력",
+        "width": 515.828125
+      },
+      {
+        "text": "다채로운 개성들의 집합입니다.",
+        "accent": "집합",
+        "width": 606.328125
+      },
+      {
+        "text": "어울리지 않을 듯 어우러진 조화는,",
+        "accent": "조화",
+        "width": 672.390625
+      },
+      {
+        "text": "어떤 환경에서도 유연하게 적응하는",
+        "accent": "적응",
+        "width": 691.453125
+      },
+      {
+        "text": "우리의 방법입니다.",
+        "accent": "방법",
+        "width": 375.84375
+      }
+    ],
+    "forwardAndReverse": true,
+    "errors": []
+  },
+  {
+    "name": "desktop",
+    "rows": [
+      {
+        "text": "우리는 고유한 매력을 지닌",
+        "accent": "매력",
+        "width": 386.796875
+      },
+      {
+        "text": "다채로운 개성들의 집합입니다.",
+        "accent": "집합",
+        "width": 454.65625
+      },
+      {
+        "text": "어울리지 않을 듯 어우러진 조화는,",
+        "accent": "조화",
+        "width": 504.203125
+      },
+      {
+        "text": "어떤 환경에서도 유연하게 적응하는",
+        "accent": "적응",
+        "width": 518.484375
+      },
+      {
+        "text": "우리의 방법입니다.",
+        "accent": "방법",
+        "width": 281.828125
+      }
+    ],
+    "forwardAndReverse": true,
+    "errors": []
+  },
+  {
+    "name": "mobile",
+    "rows": [
+      {
+        "text": "우리는 고유한 매력을 지닌",
+        "accent": "매력",
+        "width": 208.90625
+      },
+      {
+        "text": "다채로운 개성들의 집합입니다.",
+        "accent": "집합",
+        "width": 245.5625
+      },
+      {
+        "text": "어울리지 않을 듯 어우러진 조화는,",
+        "accent": "조화",
+        "width": 272.328125
+      },
+      {
+        "text": "어떤 환경에서도 유연하게 적응하는",
+        "accent": "적응",
+        "width": 280.03125
+      },
+      {
+        "text": "우리의 방법입니다.",
+        "accent": "방법",
+        "width": 152.21875
+      }
+    ],
+    "forwardAndReverse": true,
+    "errors": []
+  },
+  {
+    "name": "small-mobile",
+    "rows": [
+      {
+        "text": "우리는 고유한 매력을 지닌",
+        "accent": "매력",
+        "width": 171.453125
+      },
+      {
+        "text": "다채로운 개성들의 집합입니다.",
+        "accent": "집합",
+        "width": 201.546875
+      },
+      {
+        "text": "어울리지 않을 듯 어우러진 조화는,",
+        "accent": "조화",
+        "width": 223.5
+      },
+      {
+        "text": "어떤 환경에서도 유연하게 적응하는",
+        "accent": "적응",
+        "width": 229.828125
+      },
+      {
+        "text": "우리의 방법입니다.",
+        "accent": "방법",
+        "width": 124.9375
+      }
+    ],
+    "forwardAndReverse": true,
+    "errors": []
+  }
+]

@@ -1,0 +1,20 @@
+const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=require('node:path');
+const {chromium}=require('C:/Users/tph06/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const root=path.resolve(__dirname,'..'),report={};
+(async()=>{const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe'});try{
+for(const [name,width,height] of [['desktop',1440,900],['mobile',390,844]]){
+const page=await browser.newPage({viewport:{width,height}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+await page.route('**/*',async route=>{const url=new URL(route.request().url());if(url.hostname!=='committee.test')return route.fulfill({contentType:'text/javascript',body:''});try{let file=path.resolve(root,'.'+decodeURIComponent(url.pathname));if(!file.startsWith(root+path.sep))throw Error('unsafe');if((await fs.stat(file)).isDirectory())file=path.join(file,'index.html');await route.fulfill({path:file});}catch{await route.fulfill({status:404,body:''});}});
+await page.goto('http://committee.test/main/');await page.waitForFunction(()=>window.heroStudio?.ready&&window.MainIntroLoading?.inspect().phase==='done',null,{timeout:90000});
+await page.evaluate(()=>{const section=document.getElementById('committee');scrollTo({top:scrollY+section.getBoundingClientRect().top+parseFloat(getComputedStyle(section).paddingTop)-110,behavior:'instant'});});
+await page.mouse.move(width/2,height/2);await page.waitForTimeout(500);
+const geometry=await page.evaluate(()=>{const photo=document.getElementById('committeeSlider'),members=document.getElementById('committeeMembers'),tabs=document.getElementById('committeeTabs');const read=()=>{const p=photo.getBoundingClientRect();return{top:p.top,bottom:p.bottom,left:p.left,right:p.right,width:p.width,height:p.height,membersTop:members.getBoundingClientRect().top,tabsBottom:tabs.getBoundingClientRect().bottom};};photo.style.transform='none';const before=read();photo.style.removeProperty('transform');return{before,after:read()};});
+assert.ok(Math.abs(geometry.after.width/geometry.before.width-1.05)<.001);assert.ok(Math.abs(geometry.after.bottom-geometry.before.bottom)<.1,'Photo bottom remains anchored');assert.ok(Math.abs(geometry.after.membersTop-geometry.before.membersTop)<.1,'Member list must not move down');assert.ok(geometry.after.top<geometry.before.top);assert.ok(geometry.after.top>geometry.after.tabsBottom,'Photo must not overlap the tabs');assert.ok(geometry.after.left>=0&&geometry.after.right<=width,'Photo stays within the viewport');
+const checkColors=()=>page.evaluate(()=>{const colors=new Map(DESIGNER_ICON_PROJECTS.flatMap(p=>Object.entries(p.studentColors||{}))),probe=document.createElement('span');document.body.append(probe);const result=[...document.querySelectorAll('[data-ambient="committee"] .ambient__icon')].map(icon=>{probe.style.color=colors.get(icon.dataset.designerId);return{id:icon.dataset.designerId,color:getComputedStyle(icon).color,expected:getComputedStyle(probe).color};});probe.remove();return result;});
+const initial=await checkColors();assert.ok(initial.length>0);assert.ok(initial.every(icon=>icon.color===icon.expected),'Side icons use their owners original colors');
+await page.screenshot({path:path.join(root,`output/committee-${name}.png`)});
+await page.getByRole('tab',{name:'기획부',exact:true}).click();await page.mouse.move(width/2,height/2);await page.waitForTimeout(2100);const next=await checkColors();assert.ok(next.every(icon=>icon.color===icon.expected),'Department changes keep original colors');
+assert.deepEqual(errors,[]);report[name]={geometry,icons:initial.length,departmentIcons:next.length,colors:[...new Set(initial.map(i=>i.color))],errors};console.log(JSON.stringify({name,...report[name]}));await page.close();
+}
+await fs.writeFile(path.join(root,'output/committee-validation.json'),JSON.stringify(report,null,2));
+}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

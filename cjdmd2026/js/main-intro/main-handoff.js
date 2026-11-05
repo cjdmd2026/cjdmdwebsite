@@ -1,14 +1,18 @@
 export const HANDOFF_VIEWPORTS=.85;
 const clamp=value=>Math.max(0,Math.min(1,value));
-const smooth=t=>t*t*t*(t*(t*6-15)+10);
+// Ease into a steady dolly instead of building to a short, fast burst halfway.
+function smooth(t){
+  const ramp=.22;
+  if(t>1-ramp)return 1-smooth(1-t);
+  if(t>=ramp)return (t-ramp/2)/(1-ramp);
+  const u=t/ramp;
+  return ramp*(u*u*u-.5*u*u*u*u)/(1-ramp);
+}
 const lenisInstance=()=>typeof lenis==='undefined'?null:lenis;
 const gatherStart=.56;
-// The zoom eases to rest cubically. Undo that slowdown for the gather so
-// the icons keep travelling through the last seconds of the camera move.
-function gatherAtZoom(progress){
-  const remaining=clamp((1-progress)/(1-gatherStart));
-  return 1-Math.cbrt(remaining);
-}
+// Restore the original forward timing: the loose field travels first, then
+// gathers during the latter part of the zoom out.
+const forwardGather=progress=>1-Math.cbrt(clamp((1-progress)/(1-gatherStart)));
 
 // One deliberate gesture, as in designer-icon-slide. Scrollbar dragging can
 // also scrub the same distance directly without starting an automatic step.
@@ -16,9 +20,54 @@ export function createMainHandoff(host,onProgress){
   const state=window.MainIntro, stage=host.closest('.animation-stage');
   const range=()=>host.clientHeight*HANDOFF_VIEWPORTS;
   const gridTop=()=>state.anchor()-range();
+  // Catch the continuing gesture while the pattern is still pulling back,
+  // rather than stopping at the flat grid and restarting the same camera.
+  const approach=()=>host.clientHeight*.18;
   let frame=0,sequence=0,wheelTotal=0,lastWheel=-Infinity,lastDirection=0;
-  function setPose(progress){
-    onProgress(progress,gatherAtZoom(progress));
+  let previousProgress=0,previousGather=0,direction=1,originProgress=0,originGather=0;
+  let previousDetail={progress:0,gather:0,travel:1},originDetail=previousDetail;
+  function setPose(progress,requestedDirection){
+    progress=clamp(progress);
+    const nextDirection=requestedDirection??(progress>previousProgress+1e-6?1:
+      progress<previousProgress-1e-6?-1:direction);
+    if(nextDirection!==direction){
+      // Reversing a partially scrubbed transition starts from its current
+      // assembly, rather than jumping between the two timing curves.
+      originProgress=previousProgress;originGather=previousGather;originDetail=previousDetail;direction=nextDirection;
+    }
+    let gather;
+    if(progress===0||progress===1)gather=progress;
+    else if(direction<0){
+      // Only the return zoom unwinds over the whole remaining trip to the grid.
+      gather=originProgress>0?originGather*clamp(progress/originProgress):progress;
+    }else{
+      const start=forwardGather(originProgress);
+      gather=originGather+(1-originGather)*clamp((forwardGather(progress)-start)/Math.max(1e-8,1-start));
+    }
+    let detail;
+    if(progress===0||progress===1)detail={progress,gather,travel:1};
+    else if(direction<0){
+      // Let the small marks respond a little earlier, retaining zero initial
+      // velocity and a gradual acceleration into the unfolding.
+      const returning=originProgress>0?clamp(1-progress/originProgress):1;
+      const remaining=1-Math.pow(returning,1.8);
+      // Shorten the tiny marks' routes as they start unfolding. Keep the
+      // current amount on a direction change so scrubbing cannot snap them.
+      const retreat=originProgress>0?clamp((originProgress-progress)/(originProgress*.26)):1;
+      const settle=retreat*retreat*(3-2*retreat);
+      detail={progress:originDetail.progress*remaining,gather:originDetail.gather*remaining,
+        travel:originDetail.travel+(.12-originDetail.travel)*settle};
+    }else{
+      const start=forwardGather(originProgress);
+      const advance=clamp((progress-originProgress)/Math.max(1e-8,1-originProgress));
+      detail={
+        progress:originDetail.progress+(1-originDetail.progress)*advance,
+        gather:originDetail.gather+(1-originDetail.gather)*clamp((forwardGather(progress)-start)/Math.max(1e-8,1-start)),
+        travel:originDetail.travel+(1-originDetail.travel)*advance*advance*(3-2*advance)
+      };
+    }
+    previousProgress=progress;previousGather=gather;previousDetail=detail;state.zoomingIn=direction<0;
+    onProgress(progress,gather,detail);
   }
   function update(progress,gather){
     const wasComplete=state.complete;
@@ -37,7 +86,7 @@ export function createMainHandoff(host,onProgress){
   }
   async function travel(forward){
     const offset=scrollY-gridTop(),length=range();
-    const from=offset>=length-1?1:offset<=1?0:clamp(offset/length);
+    const from=offset>=length-1?1:Math.abs(offset)<=1?0:Math.max(-approach()/length,Math.min(1,offset/length));
     const to=forward?1:0;
     if(from===to && !state.moving)return;
     const id=++sequence;
@@ -48,15 +97,15 @@ export function createMainHandoff(host,onProgress){
     if(img && !img.complete){try{await img.decode();}catch{/* The native poster still exposes its text and download. */}}
     if(id!==sequence)return;
     const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const duration=(reduced?240:4450)*Math.abs(to-from);
+    const duration=(reduced?240:6200)*Math.abs(to-from);
     const start=performance.now();
     function tick(now){
       if(id!==sequence)return;
       const elapsed=now-start;
       const t=duration?clamp(elapsed/duration):1;
-      const p=clamp(from+(to-from)*smooth(t));
+      const p=t===1?to:from+(to-from)*smooth(t);
       const y=gridTop()+range()*p;
-      window.scrollTo({top:y,behavior:'instant'});setPose(p);
+      window.scrollTo({top:y,behavior:'instant'});setPose(p,forward?1:-1);
       if(elapsed<duration){frame=requestAnimationFrame(tick);return;}
       state.moving=false;state.inputUntil=performance.now()+300;
       driver?.scrollTo(y,{immediate:true,force:true});driver?.start();
@@ -70,7 +119,7 @@ export function createMainHandoff(host,onProgress){
   function owns(direction){
     if(state.moving)return true;
     const offset=scrollY-gridTop();
-    return direction>0 ? offset>=-2 && offset<range()-1 : offset>1 && offset<=range()+2;
+    return direction>0 ? offset>=-approach() && offset<range()-1 : offset>1 && offset<=range()+2;
   }
   const consume=e=>{e.preventDefault();e.stopImmediatePropagation();};
   addEventListener('wheel',e=>{

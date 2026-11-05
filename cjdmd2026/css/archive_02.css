@@ -301,27 +301,14 @@ img {
     position: absolute;
     top: var(--hero-title-top);
     left: 50%;
-
+    width: min(21.6rem, 38.4vh, 100%);
     transform: translateX(-50%);
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
 }
 
-.hero .title h1 {
-    font-size: 6rem;
-    font-weight: 400;
-    line-height: 1.2;
-    text-align: center;
-
-    font-family: 'NohHaeChan', sans-serif;
-}
-
-.hero .title .long {
-    letter-spacing: 0.7em;
-    padding-left: 0.7em;
+.hero .title img {
+    display: block;
+    width: 100%;
+    height: auto;
 }
 
 
@@ -588,7 +575,8 @@ img {
     opacity: 0;
 }
 
-.history .card-wrap:has(.history-item:is(:hover, :focus-within))
+/* All exhibitions except ON dim neighboring posters. */
+.history .card-wrap:has(.history-item:is(:hover, :focus-within) .history-card:not(.history-card--unavailable))
 .history-item:not(:hover, :focus-within) :is(.history-card, .history-meta) {
     opacity: 0.4;
 }

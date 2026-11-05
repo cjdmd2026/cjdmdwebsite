@@ -1,0 +1,66 @@
+[
+  {
+    "name": "mobile",
+    "rows": [
+      {
+        "text": "우리는 고유한 매력을 지닌",
+        "accent": "매력",
+        "width": 243.765625
+      },
+      {
+        "text": "다채로운 개성들의 집합입니다.",
+        "accent": "집합",
+        "width": 286.546875
+      },
+      {
+        "text": "어울리지 않을 듯 어우러진 조화는,",
+        "accent": "조화",
+        "width": 317.765625
+      },
+      {
+        "text": "어떤 환경에서도 유연하게 적응하는",
+        "accent": "적응",
+        "width": 326.765625
+      },
+      {
+        "text": "우리의 방법입니다.",
+        "accent": "방법",
+        "width": 177.625
+      }
+    ],
+    "forwardAndReverse": true,
+    "errors": []
+  },
+  {
+    "name": "small-mobile",
+    "rows": [
+      {
+        "text": "우리는 고유한 매력을 지닌",
+        "accent": "매력",
+        "width": 200.09375
+      },
+      {
+        "text": "다채로운 개성들의 집합입니다.",
+        "accent": "집합",
+        "width": 235.203125
+      },
+      {
+        "text": "어울리지 않을 듯 어우러진 조화는,",
+        "accent": "조화",
+        "width": 260.828125
+      },
+      {
+        "text": "어떤 환경에서도 유연하게 적응하는",
+        "accent": "적응",
+        "width": 268.21875
+      },
+      {
+        "text": "우리의 방법입니다.",
+        "accent": "방법",
+        "width": 145.796875
+      }
+    ],
+    "forwardAndReverse": true,
+    "errors": []
+  }
+]

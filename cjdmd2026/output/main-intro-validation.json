@@ -1,35 +1,37 @@
 {
   "desktop": {
-    "meanPixelError": 6.847593954248366,
-    "ink": 28.25640931372549,
+    "meanPixelError": 6.3584354575163395,
+    "ink": 29.672769607843136,
     "wordStep": 1,
     "portrait": true,
     "fixedGrid": {
       "count": 2832,
       "anchored": 1,
-      "contrast": 0.5951761555049075
+      "contrast": 0.6991070081062484
     },
-    "flightDrift": 3.8577962962962964,
-    "portraitDrift": 3.145423611111111,
-    "filledPixels": 9230,
-    "zoomFrames": 610,
+    "flightDrift": 4.150178240740741,
+    "portraitDrift": 0.7526574074074074,
+    "filledPixels": 10006,
+    "zoomFrames": 336,
+    "reverseFrames": 462,
     "forwardAndReverse": true,
     "errors": []
   },
   "mobile": {
-    "meanPixelError": 7.328778594771242,
-    "ink": 28.415931372549018,
+    "meanPixelError": 7.328803104575163,
+    "ink": 28.415870098039214,
     "wordStep": 1,
     "portrait": true,
     "fixedGrid": {
       "count": 238,
-      "anchored": 1,
-      "contrast": 0.6046705356399078
+      "anchored": 0.9957983193277311,
+      "contrast": 0.709938077916308
     },
     "flightDrift": 0,
     "portraitDrift": 0,
-    "filledPixels": 1898,
-    "zoomFrames": 26,
+    "filledPixels": 1904,
+    "zoomFrames": 14,
+    "reverseFrames": 15,
     "forwardAndReverse": true,
     "errors": []
   }

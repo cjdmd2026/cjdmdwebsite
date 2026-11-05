@@ -1,0 +1,128 @@
+[
+  {
+    "name": "desktop",
+    "levels": [
+      {
+        "level": 1,
+        "size": 22,
+        "blur": 3.2,
+        "count": 22
+      },
+      {
+        "level": 2,
+        "size": 34,
+        "blur": 2.4,
+        "count": 22
+      },
+      {
+        "level": 3,
+        "size": 46,
+        "blur": 1.6,
+        "count": 22
+      },
+      {
+        "level": 4,
+        "size": 60,
+        "blur": 0.9,
+        "count": 22
+      },
+      {
+        "level": 5,
+        "size": 76,
+        "blur": 0.35,
+        "count": 21
+      },
+      {
+        "level": 6,
+        "size": 94,
+        "blur": 0,
+        "count": 21
+      }
+    ],
+    "errors": []
+  },
+  {
+    "name": "mobile",
+    "levels": [
+      {
+        "level": 1,
+        "size": 22,
+        "blur": 3.2,
+        "count": 12
+      },
+      {
+        "level": 2,
+        "size": 34,
+        "blur": 2.4,
+        "count": 12
+      },
+      {
+        "level": 3,
+        "size": 46,
+        "blur": 1.6,
+        "count": 12
+      },
+      {
+        "level": 4,
+        "size": 60,
+        "blur": 0.9,
+        "count": 12
+      },
+      {
+        "level": 5,
+        "size": 76,
+        "blur": 0.35,
+        "count": 12
+      },
+      {
+        "level": 6,
+        "size": 94,
+        "blur": 0,
+        "count": 12
+      }
+    ],
+    "errors": []
+  },
+  {
+    "name": "small-mobile",
+    "levels": [
+      {
+        "level": 1,
+        "size": 19.4688,
+        "blur": 2.83234,
+        "count": 12
+      },
+      {
+        "level": 2,
+        "size": 30.0781,
+        "blur": 2.12426,
+        "count": 12
+      },
+      {
+        "level": 3,
+        "size": 40.7031,
+        "blur": 1.41617,
+        "count": 11
+      },
+      {
+        "level": 4,
+        "size": 53.0938,
+        "blur": 0.796596,
+        "count": 11
+      },
+      {
+        "level": 5,
+        "size": 67.2656,
+        "blur": 0.309787,
+        "count": 11
+      },
+      {
+        "level": 6,
+        "size": 83.1875,
+        "blur": 0,
+        "count": 11
+      }
+    ],
+    "errors": []
+  }
+]

@@ -1,0 +1,66 @@
+[
+  {
+    "name": "desktop",
+    "after": {
+      "photoTop": 232.5758056640625,
+      "photoBottom": 624.078125,
+      "tabsTop": 173.54412841796875,
+      "tabsBottom": 205.21600341796875,
+      "titleTop": 110.125,
+      "titleBottom": 140.359375,
+      "membersTop": 651.4375
+    },
+    "previous": {
+      "photoTop": 232.5758056640625,
+      "photoBottom": 624.078125,
+      "tabsTop": 192.1875,
+      "tabsBottom": 223.859375,
+      "titleTop": 110.125,
+      "titleBottom": 140.359375,
+      "membersTop": 651.4375
+    },
+    "original": {
+      "photoTop": 251.21875,
+      "photoBottom": 624.078125,
+      "tabsTop": 192.1875,
+      "tabsBottom": 223.859375,
+      "titleTop": 110.125,
+      "titleBottom": 140.359375,
+      "membersTop": 651.4375
+    },
+    "opacity": "0.45",
+    "errors": []
+  },
+  {
+    "name": "mobile",
+    "after": {
+      "photoTop": 194.77423095703125,
+      "photoBottom": 434.453125,
+      "tabsTop": 153.17970275878906,
+      "tabsBottom": 178.77345275878906,
+      "titleTop": 110.203125,
+      "titleBottom": 139,
+      "membersTop": 453.640625
+    },
+    "previous": {
+      "photoTop": 194.77423095703125,
+      "photoBottom": 434.453125,
+      "tabsTop": 164.59375,
+      "tabsBottom": 190.1875,
+      "titleTop": 110.203125,
+      "titleBottom": 139,
+      "membersTop": 453.640625
+    },
+    "original": {
+      "photoTop": 206.1875,
+      "photoBottom": 434.453125,
+      "tabsTop": 164.59375,
+      "tabsBottom": 190.1875,
+      "titleTop": 110.203125,
+      "titleBottom": 139,
+      "membersTop": 453.640625
+    },
+    "opacity": "0.45",
+    "errors": []
+  }
+]

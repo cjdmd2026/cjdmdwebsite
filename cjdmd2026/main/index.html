@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>유연한 결합: 청주대학교 디지털미디어디자인</title>
-    <link rel="stylesheet" href="../css/main.css?v=20261025-10">
+    <link rel="stylesheet" href="../css/main.css?v=20261106-committee-spacing">
     <link rel="stylesheet" href="../css/header-logo.css?v=20261024-1">
     <script>
         if (sessionStorage.getItem('stamp-page-transition') === '1') {
@@ -12,11 +12,13 @@
         }
         // 메인은 항상 맨 위(인트로 첫 화면)에서 시작합니다.
         if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+        document.documentElement.classList.add('intro-loading');
     </script>
 
-    <link rel="stylesheet" href="../css/main-intro.css?v=20261104-depth-passage">
+    <link rel="stylesheet" href="../css/main-intro.css?v=20261106-revised-copy">
     <script>window.MainIntro={complete:false,progress:0,headerProgress:0,inputUntil:0,anchor:()=>{const hero=document.getElementById("hero");return hero?hero.getBoundingClientRect().top+scrollY:0;}};</script>
     <!-- Scripts:S -->
+    <script src="../js/main-intro-loading.js?v=20261106-icon-loader-v3" defer onerror="document.documentElement.classList.remove('intro-loading')"></script>
     <script src="../js/stamp-effect-transition.js" defer></script>
     <script src="../js/page-transition.js?v=20261030-perf-1"></script>
     <script src="../js/student-mouse-effect.js?v=20261023-35" defer></script>
@@ -29,9 +31,9 @@
     <script src="../js/main-scroll-input.js?v=20261030-1" defer></script>
     <script src="../js/main-section-scroll.js?v=20261104-depth-passage" defer></script>
     <script src="../js/main-hero-sprite-batch.js?v=20261104-solid-travel" defer></script>
-    <script src="../js/main-hero.js?v=20261104-auto-gather" defer></script>
-    <script src="../js/main-intro.js?v=20261104-zoom-gather" defer></script>
-    <script src="../js/main.js?v=20261030-menu-1" defer></script>
+    <script src="../js/main-hero.js?v=20261104-glyph-rest" defer></script>
+    <script src="../js/main-intro.js?v=20261106-earlier-icon-motion" defer onerror="window.MainIntroLoadFailed=true;window.MainIntroLoading?.fail()"></script>
+    <script src="../js/main.js?v=20261106-committee-photo-color" defer></script>
 
     <script src="https://unpkg.com/lenis@1.3.15/dist/lenis.min.js"></script>
     <script>
@@ -55,7 +57,7 @@
     <header class="header">
         <div class="container">
             <!-- 로고 -->
-            <h1 class="logo"><a href="../main/" page-transition><img src="../assets/images/icons/logo_wv.svg" width="160" height="31" alt="유연한 결합"></a></h1>
+            <h1 class="logo"><a href="../index.html" page-transition><img src="../assets/images/icons/logo_wv.svg" width="160" height="31" alt="유연한 결합"></a></h1>
 
             <!-- 네비게이션 -->
             <nav class="nav" aria-label="주요 메뉴">
@@ -82,6 +84,17 @@
     </header>
     <!-- Header:E -->
 
+    <div id="introLoader" class="intro-loader" role="progressbar" aria-label="3D 콘텐츠 로딩" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <div class="intro-loader-mark">
+        <svg viewBox="-14 -14 268 268" aria-hidden="true" focusable="false">
+          <defs><g id="intro-loader-shape"></g></defs>
+          <use href="#intro-loader-shape" class="intro-loader-outline"/>
+          <use href="#intro-loader-shape" class="intro-loader-fill"/>
+        </svg>
+        <span class="intro-loader-percent" data-loading-percent aria-hidden="true">0%</span>
+      </div>
+    </div>
+
     <!-- Main:S -->
     <main class="main">
         <div id="mainIntro" aria-label="졸업 전시 인트로">
@@ -95,14 +108,13 @@
       </h1>
     </section>
 
-    <section id="content01" class="intro-section content-one dotted-surface" aria-labelledby="individuality-title" data-node-id="1:53">
-      <h2 id="individuality-title" class="individuality-title" data-node-id="1:54">
-        <span class="reading-line" data-keyword="like"><span class="reading-copy" data-read data-read-accent="것">좋아하는 것도</span></span>
-        <span class="reading-line" data-keyword="thought"><span class="reading-copy" data-read data-read-accent="방식">생각하는 방식도</span></span>
-        <span class="reading-line" data-keyword="inspiration"><span class="reading-copy" data-read data-read-accent="순간">영감을 얻는 순간도</span></span>
-        <span class="reading-line" data-keyword="idea"><span class="reading-copy" data-read data-read-accent="아이디어">떠올리는 아이디어도</span></span>
-        <span class="reading-line" data-keyword="future"><span class="reading-copy" data-read data-read-accent="모습">꿈꾸는 미래의 모습도</span></span>
-        <span class="reading-line"><span data-read>우리는 저마다 다릅니다.</span></span>
+    <section id="content01" class="intro-section content-one dotted-surface" aria-labelledby="individuality-title" data-node-id="20:2">
+      <h2 id="individuality-title" class="individuality-title" data-node-id="20:3">
+        <span class="reading-line" data-keyword="charm"><span class="reading-copy" data-read data-read-accent="매력">우리는 고유한 매력을 지닌</span></span>
+        <span class="reading-line" data-keyword="collection"><span class="reading-copy" data-read data-read-accent="집합">다채로운 개성들의 집합입니다.</span></span>
+        <span class="reading-line reading-paragraph-start" data-keyword="harmony"><span class="reading-copy" data-read data-read-accent="조화">어울리지 않을 듯 어우러진 조화는,</span></span>
+        <span class="reading-line" data-keyword="adaptation"><span class="reading-copy" data-read data-read-accent="적응">어떤 환경에서도 유연하게 적응하는</span></span>
+        <span class="reading-line reading-paragraph-start" data-keyword="method"><span class="reading-copy" data-read data-read-accent="방법">우리의 방법입니다.</span></span>
       </h2>
     </section>
       <div class="year-track">
@@ -120,15 +132,15 @@
           </h2>
           <h2 class="section-heading scene-caption" data-caption="1" data-node-id="1:73" aria-hidden="true">
             <span class="heading-lead">각자의 개성을</span>
-            <span class="heading-main">아이콘으로 만들어 보았어요.</span>
+            <span class="heading-main">아이콘으로 만들어 보았습니다.</span>
           </h2>
           <h2 class="section-heading scene-caption" data-caption="2" data-node-id="1:74" aria-hidden="true">
             <span class="heading-lead">서로 다른 모양은 우리가 세상을</span>
-            <span class="heading-main">바라보는 다양한 <span class="caption-keyword-wrap"><span class="caption-keyword" data-caption-keyword>시선</span>을</span> 의미해요.</span>
+            <span class="heading-main">바라보는 다양한 <span class="caption-keyword-wrap"><span class="caption-keyword" data-caption-keyword>시선</span>을</span> 의미합니다.</span>
           </h2>
           <h2 class="section-heading scene-caption" data-caption="3" data-node-id="1:77" aria-hidden="true">
             <span class="heading-lead">같은 순간을 마주해도</span>
-            <span class="heading-main">다르게 느끼는 <span class="caption-keyword-wrap"><span class="caption-keyword" data-caption-keyword>감각</span>을</span> 담았어요.</span>
+            <span class="heading-main">다르게 느끼는 <span class="caption-keyword-wrap"><span class="caption-keyword" data-caption-keyword>감각</span>을</span> 담았습니다.</span>
           </h2>
         </div>
         <div class="construction-bar" data-node-id="5:83" role="toolbar" aria-label="아이콘 도구" aria-hidden="true" inert>

@@ -15,7 +15,7 @@ export function createContentOne(section,reducedMotion){
   });
   const closing=section.querySelector('.reading-line:not([data-keyword]) [data-read]');
   createReadingHover(section.querySelector('.individuality-title'),reducedMotion);
-  const duration=rows.length+.7;
+  const duration=rows.length+(closing ? .7 : 0);
   let target=0,current=0,frame=0,lastTime=0,initialized=false,active=null;
 
   function clear(entry){
@@ -56,7 +56,7 @@ export function createContentOne(section,reducedMotion){
       }
       if(text===1)entry.row.dataset.phase=entry.animation?'pop':'complete';
     });
-    closing.style.setProperty('--read-fill',`${clamp((timeline-rows.length)/.7)*100}%`);
+    closing?.style.setProperty('--read-fill',`${clamp((timeline-rows.length)/.7)*100}%`);
   }
   function tick(time){
     const dt=Math.min(.05,(time-lastTime)/1000||1/60);lastTime=time;

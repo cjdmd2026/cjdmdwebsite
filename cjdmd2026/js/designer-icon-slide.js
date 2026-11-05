@@ -35,7 +35,7 @@
     const assemblyCanvas = document.createElement('canvas');
     const assemblyCtx = assemblyCanvas.getContext('2d');
     // 회색 장식도 글자를 구성하던 원본 조각이 확대되어 남는 자리입니다.
-    const GALLERY_AMBIENT = { maxPerSide: 18, clusterGap: 18, pieceGap: 36, topCount: 3, topGap: 24,
+    const GALLERY_AMBIENT = { maxPerSide: 18, teamGap: 70, pieceGap: 36, topCount: 3,
       sourceMinSize: 100, candidatesPerShape: 1, rasterSize: 96, floatX: 3, floatY: 5, floatSpeed: .55 };
     const HIDDEN_ORIGIN = { size: 32, focusX: .45, focusY: .5 };
     // 첫 구성 아이콘은 남고, 같은 팀의 나머지 조각은 한 번에 함께 들어옵니다.
@@ -979,7 +979,7 @@
       if (!width || !height) return;
       const stageBox = stage.getBoundingClientRect();
       const referenceSize = spreadSlots[0]?.size || 0;
-      const topExtra = Math.ceil(referenceSize + GALLERY_AMBIENT.topGap + 18);
+      const topExtra = Math.ceil(referenceSize + GALLERY_AMBIENT.teamGap + 18);
       ambientViewportWidth = document.documentElement.clientWidth;
       ambientStageLeft = stageBox.left;
       if (!spreadSlots.length) return;
@@ -991,8 +991,8 @@
       const clusterTop = Math.min(...spreadSlots.map(slot => slot.y - slot.size * SETTINGS.galleryHoverScale / 2));
       // 팀 아이콘 무리의 전체 가로 폭을 비우고, 좌우 바깥 여백에만 그립니다.
       const bands = [
-        { left: 0, right: Math.max(0, clusterLeft - GALLERY_AMBIENT.clusterGap), outer: 0 },
-        { left: Math.min(ambientViewportWidth, clusterRight + GALLERY_AMBIENT.clusterGap), right: ambientViewportWidth, outer: ambientViewportWidth }
+        { left: 0, right: Math.max(0, clusterLeft - GALLERY_AMBIENT.teamGap), outer: 0 },
+        { left: Math.min(ambientViewportWidth, clusterRight + GALLERY_AMBIENT.teamGap), right: ambientViewportWidth, outer: ambientViewportWidth }
       ];
       const placed = [];
       // 무리 아래쪽 양옆의 빈 포켓도 채우되, 팀 아이콘과 이름 아래 여백을 확보합니다.
@@ -1006,8 +1006,8 @@
           if (candidate.x - radius < 8 || candidate.x + radius > ambientViewportWidth - 8) continue;
           const clearsTeams = spreadSlots.every(slot => {
             const teamX = ambientStageLeft + slot.x, teamRadius = slot.size * SETTINGS.galleryHoverScale / 2;
-            return Math.abs(candidate.x - teamX) >= radius + teamRadius + GALLERY_AMBIENT.pieceGap ||
-              candidate.y - radius >= slot.y + teamRadius + GALLERY_AMBIENT.pieceGap + 24;
+            return Math.abs(candidate.x - teamX) >= radius + teamRadius + GALLERY_AMBIENT.teamGap ||
+              candidate.y - radius >= slot.y + teamRadius + GALLERY_AMBIENT.teamGap + 24;
           });
           const clearsPieces = placed.every(other => Math.max(Math.abs(candidate.x - other.x), Math.abs(candidate.y - other.y)) -
             radius - other.radius >= GALLERY_AMBIENT.pieceGap);
@@ -1055,7 +1055,7 @@
         for (let attempt = 0; attempt < 24; attempt++) {
           const ratio = [.25, .55, .82][i] + (next() - .5) * .07;
           const point = { x: lerp(clusterLeft, clusterRight, ratio),
-            y: clusterTop - GALLERY_AMBIENT.topGap - radius - next() * 18, radius };
+            y: clusterTop - GALLERY_AMBIENT.teamGap - radius - next() * 18, radius };
           if (point.y - radius < -topExtra || point.x - radius < 8 || point.x + radius > ambientViewportWidth - 8) continue;
           const clearsTitle = titleBoxes.every(box => point.x + radius + 18 <= box.left || point.x - radius - 18 >= box.right ||
             stageBox.top + point.y + radius + 18 <= box.top || stageBox.top + point.y - radius - 18 >= box.bottom);

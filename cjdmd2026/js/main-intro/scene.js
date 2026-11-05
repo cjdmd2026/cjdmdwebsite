@@ -22,6 +22,7 @@ import icons from './icons.json' with {type:'json'};
 
 const $=selector=>document.querySelector(selector);
 const host=$('#scene');
+const loading=window.MainIntroLoading;
 const pageStory=createPageStory();
 const settings={angle:38,depth:1,shadow:.64,layout:'grid'};
 const objects=[];
@@ -33,8 +34,11 @@ let handoff;
 let wordFlight;
 let handoffProgress=0;
 let gatherProgress=0;
+let detailMotion={progress:0,gather:0,travel:1};
+let pendingResize=false;
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
 const focus=new THREE.Vector3();
+const patternCamera=new THREE.PerspectiveCamera();
 // Keep the matte finish, with less self-lighting so adjacent faces stay distinct.
 const clayMaterial=new THREE.MeshStandardMaterial({name:'Soft colored clay',color:0xffffff,roughness:.78,metalness:0,emissive:0xffffff,emissiveIntensity:.02,toneMapped:false});
 // Narrow the rounded rim without changing the total extrusion height (50.6).
@@ -45,19 +49,19 @@ function render(time){
   raf=0;if(!renderer||exporting)return;
   const dt=Math.min((time-journey.lastFrame)/1000||.016,.05);journey.lastFrame=time;
   if(window.MainIntro.complete && handoffProgress===1 && gatherProgress===1)return;
-  if(handoffProgress>0)journey.current=STORY_END;
-  else{
-    const difference=journey.target-journey.current;
-    journey.current=reducedMotion.matches||Math.abs(difference)<.001
-      ?journey.target:journey.current+difference*(1-Math.exp(-12*dt));
-  }
-  // The rear grid is already flat. Only the flight camera and the swimming ink change now.
-  if(handoffProgress===0 || camera.userData.timeline!==STORY_END)setCamera(width,height);
-  wordFlight.update(camera,floorPattern.mesh,handoffProgress,camera.userData.ending,gatherProgress);
-  renderer.render(scene,camera);
+  const target=handoffProgress>0?STORY_END:journey.target;
+  const difference=target-journey.current;
+  journey.current=reducedMotion.matches||Math.abs(difference)<.001
+    ?target:journey.current+difference*(1-Math.exp(-12*dt));
+  // Keep the approaching camera alive across the SVG entrance. Rebuild its
+  // base pose before applying the flight offset so no frame snaps to overhead.
+  if(handoffProgress===0 || camera.userData.timeline!==journey.current)setCamera(width,height);
+  else camera.copy(patternCamera,false);
+  wordFlight.update(camera,floorPattern.mesh,handoffProgress,camera.userData.ending,gatherProgress,detailMotion);
+  wordFlight.render(camera);
   handoff?.update(handoffProgress,gatherProgress);
   const swimming=handoffProgress>0 && handoffProgress<1 && !reducedMotion.matches && !document.hidden;
-  if(swimming||(handoffProgress===0&&Math.abs(journey.target-journey.current)>.0001)||objects.some(object=>object.reveal.active&&performance.now()-object.reveal.sparkAt<360)||pattern?.isFlashing())invalidate();
+  if(swimming||Math.abs(target-journey.current)>.0001||objects.some(object=>object.reveal.active&&performance.now()-object.reveal.sparkAt<360)||pattern?.isFlashing())invalidate();
 }
 function invalidate(){if(!raf)raf=requestAnimationFrame(render);}
 
@@ -199,6 +203,7 @@ function setCamera(w,h){
   const phase=solo?'solo':timeline<TOPVIEW_START+.3?'crescendo':'finale';
   const framing=pullback>.99?fieldBounds():screenBounds(objects[index].mesh);
   camera.userData={projection:'cinematic-perspective',framing,position:camera.position.toArray(),focus:focus.toArray(),index,progress:timeline/STORY_END,timeline,yaw,pitch,roll,distance,travelling,pullback,overhead,ending,groundShadows:camera.layers.isEnabled(CONTACT_SHADOW_LAYER),direction:camera.getWorldDirection(new THREE.Vector3()).toArray(),phase,generated,complete,activeReveals,reveal:{...state}};
+  patternCamera.copy(camera,false);
 }
 
 function readScroll(){
@@ -253,9 +258,12 @@ async function createObjects(){
       shadow.name=icon.id+'-contact';shadow.rotation.x=-Math.PI/2;shadow.position.y=.001;shadow.renderOrder=1;scene.add(shadow);
       objects.push({icon,color,mesh,shadow,size,radius,index,shadowSpan,caster,shadowKey:''});
     }catch(error){failures.push({id:icon.id,error:error.message});}
+    loading?.update(5+40*(index+1)/icons.length);
+    await loading?.yieldFrame();
   }
   if(objects.length!==33)throw new Error(`Expected 33 objects, created ${objects.length}: ${JSON.stringify(failures)}`);
   positionObjects();
+  loading?.update(50);
 }
 
 function positionObjects(){
@@ -297,6 +305,13 @@ function resize(){
   readScroll();setCamera(width,height);preparation?.prepare();invalidate();
 }
 
+function requestResize(){
+  if(host.clientWidth===width&&host.clientHeight===height)return;
+  // Finish compiling before a resize replaces geometry/material resources.
+  if(preparation&&!preparation.inspect().ready&&!preparation.inspect().error){pendingResize=true;return;}
+  resize();
+}
+
 async function exportPNG(w=3840,h=2160){
   exporting=true;
   try{
@@ -334,6 +349,7 @@ async function exportGLB(index){
 
 async function init(){
   try{
+    await loading?.yieldFrame();
     renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:true,powerPreference:'high-performance'});
     renderer.setClearColor(0xfafafa);renderer.outputColorSpace=THREE.SRGBColorSpace;
     renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.0;
@@ -346,24 +362,39 @@ async function init(){
     scene.add(keyLight);scene.add(keyLight.target);
     const fill=new THREE.DirectionalLight(0xffffff,.7);fill.position.set(12,16,-8);scene.add(fill);
     floorPattern=createDottedFloor(renderer);scene.add(floorPattern.mesh);
+    loading?.update(5);
     await createObjects();
     window.heroNebula=createHeroNebula($('.hero-art'),objects);
-    objects.forEach((object,index)=>{object.reveal=createReveal(object,undefined,index===0?'viewport':'edge');scene.add(object.reveal.group);});
+    for(const [index,object] of objects.entries()){
+      object.reveal=createReveal(object,undefined,index===0?'viewport':'edge');scene.add(object.reveal.group);
+      loading?.update(50+5*(index+1)/objects.length);
+      if(index%4===3)await loading?.yieldFrame();
+    }
     openingDimension=createOpeningDimension(host,objects[0]);
     openingConstruction=createOpeningConstruction(host,objects[0]);
     openingGuideOverlay=createOpeningGuideOverlay(host,objects[0].reveal);
     pattern=new PatternField(scene,objects,clayMaterial);
-    preparation=createScenePreparation(renderer,scene,camera,invalidate);
-    wordFlight=createWordFlight(scene,invalidate);
+    loading?.update(60);await loading?.yieldFrame();
+    preparation=createScenePreparation(renderer,scene,camera,()=>{
+      if(pendingResize){pendingResize=false;resize();return;}
+      invalidate();loading?.finish();
+    },stats=>{
+      if(stats.error){loading?.fail();return;}
+      loading?.update(70+29*(stats.total?stats.completed/stats.total:1));
+    });
+    wordFlight=createWordFlight(renderer,scene,invalidate,(completed,total)=>loading?.update(60+10*completed/total));
     await wordFlight.ready;
-    handoff=createMainHandoff(host,(progress,gather)=>{
-      handoffProgress=progress;gatherProgress=gather;invalidate();
+    handoff=createMainHandoff(host,(progress,gather,detail)=>{
+      handoffProgress=progress;gatherProgress=gather;detailMotion=detail;invalidate();
     });
     $('#journey').style.height=`${JOURNEY_HEIGHT_SVH+HANDOFF_VIEWPORTS*100}svh`;
-    addEventListener('scroll',readScroll,{passive:true});addEventListener('resize',resize);
+    addEventListener('scroll',readScroll,{passive:true});addEventListener('resize',requestResize);
     resize();renderer.render(scene,camera);host.classList.add('ready');
+    // Scroll locking can change the content width without a window resize.
+    new ResizeObserver(requestResize).observe(host);
     window.heroStudio={ready:true,exportPNG,exportGLB,inspect:()=>({count:objects.length,preparation:preparation.inspect(),pattern:pattern.inspect(),floor:floorPattern.inspect(),dimension:openingDimension.inspect(),errors:failures,settings:{...settings},timelineEnd:timelineEnd(),cameraPath:{poses:journey.poses,wide:journey.wide},wordFlight:wordFlight.inspect(),camera:{...camera.userData,rotation:camera.rotation.toArray(),up:camera.up.toArray()},objects:objects.map(({mesh,icon,reveal,heightFactor,index,radius,cue})=>({id:icon.id,name:icon.name,vertices:mesh.geometry.attributes.position.count,triangles:mesh.geometry.attributes.position.count/3,...mesh.userData,color:mesh.material.color.getHexString(),lineColor:reveal.lines[0].material.color.getHexString(),cue,heightFactor,radius,position:mesh.position.toArray(),baseY:mesh.position.y,rotation:mesh.rotation.toArray(),heightScale:mesh.scale.y,visible:mesh.visible,guide:inspectGuide(reveal),drawingVisible:reveal.group.visible,pointVisible:reveal.group.visible&&reveal.dot.visible,strokeVertices:reveal.lines.reduce((sum,line)=>sum+line.geometry.drawRange.count,0),reveal:{...reveal.state}})),renderer:renderer.info.render})};
   }catch(error){
+    loading?.fail();
     console.warn('Intro unavailable; continuing with the existing main hero.',error);
     window.MainIntro.complete=true;window.MainIntro.progress=1;
     document.body.classList.remove('intro-before-main');

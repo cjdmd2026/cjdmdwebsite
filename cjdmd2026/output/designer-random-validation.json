@@ -1,0 +1,26 @@
+[
+  {
+    "name": "desktop",
+    "count": 130,
+    "captured": 130,
+    "gapVariation": 0.9213203074111259,
+    "randomizedOnReload": 130,
+    "colors": [
+      "#3b82a6"
+    ],
+    "moving": true,
+    "errors": []
+  },
+  {
+    "name": "mobile",
+    "count": 72,
+    "captured": 72,
+    "gapVariation": 1.0229299879270897,
+    "randomizedOnReload": 72,
+    "colors": [
+      "#3b82a6"
+    ],
+    "moving": true,
+    "errors": []
+  }
+]

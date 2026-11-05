@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 // Upload hidden geometry/textures and compile their actual material variants
 // during the introduction, instead of paying that cost at each reveal wave.
-export function createScenePreparation(renderer,scene,camera,onReady){
+export function createScenePreparation(renderer,scene,camera,onReady,onProgress=()=>{}){
   const layer=31,batchSize=12;
   let prepared=new WeakMap(),queue=[],generation=0,scheduled=0,running=false;
   let stats={ready:false,total:0,completed:0,batches:0,maxBatchMs:0,error:null};
@@ -66,10 +66,12 @@ export function createScenePreparation(renderer,scene,camera,onReady){
       stats.maxBatchMs=Math.max(stats.maxBatchMs,performance.now()-start);
       for(const {object} of batch)prepared.set(object,signature(object));
       stats.completed+=batch.length;stats.batches++;
-      if(!queue.length){stats.ready=true;onReady();}
+      if(!queue.length)stats.ready=true;
+      onProgress({...stats});
+      if(stats.ready)onReady();
     }catch(error){
       // Preparation is optional; an unsupported driver must not prevent playback.
-      if(version===generation){stats.error=String(error);queue=[];}
+      if(version===generation){stats.error=String(error);queue=[];onProgress({...stats});}
     }finally{running=false;schedule();}
   }
 
@@ -82,6 +84,8 @@ export function createScenePreparation(renderer,scene,camera,onReady){
     // lines follow. Resizing queues only newly created or changed resources.
     queue.sort((a,b)=>(a.object.isInstancedMesh?0:a.object.isMesh?1:2)-(b.object.isInstancedMesh?0:b.object.isMesh?1:2));
     stats={ready:queue.length===0,total:resources.length,completed:resources.length-queue.length,batches:0,maxBatchMs:0,error:null};
+    onProgress({...stats});
+    if(stats.ready)onReady();
     schedule();
   }
   document.addEventListener('visibilitychange',schedule);

@@ -17,7 +17,7 @@ export function createDottedFloor(renderer){
   // bright studio lighting. The existing contact shadows sit above this surface.
   // This is a backdrop. Projected icons can recede in screen space while
   // their flat meshes still share almost the same depth as the white plane.
-  const material=new THREE.MeshBasicMaterial({name:'White dotted floor',map,color:0xffffff,toneMapped:false,depthWrite:false});
+  const material=new THREE.MeshBasicMaterial({name:'White dotted floor',map,color:0xffffff,toneMapped:false,depthWrite:false,transparent:true});
   material.onBeforeCompile=shader=>{
     shader.uniforms.dotOpacity=opacity;
     shader.fragmentShader='uniform float dotOpacity;\n'+shader.fragmentShader;

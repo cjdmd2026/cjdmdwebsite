@@ -4,8 +4,17 @@
     // archive.js의 흐름 / 터치 효과에 개인 조각의 원래 색상을 적용합니다.
     // 개수, 크기, 속도, 진하기는 여기서 조절합니다.
     const SETTINGS = {
-        density: 12, mobileDensity: 8, tileHeight: 900, maxPieces: 96,
-        minSize: 86, sizeRange: 70, flowSpeed: 18,
+        density: 60, mobileDensity: 34, tileHeight: 900, maxPieces: 400,
+        flowSpeed: 18,
+        // 기존 평균 크기를 3단계로 두고, 작을수록 더 흐리게 표현합니다.
+        depthLevels: [
+            { size: 22, blur: 3.2 },
+            { size: 34, blur: 2.4 },
+            { size: 46, blur: 1.6 },
+            { size: 60, blur: 0.9 },
+            { size: 76, blur: 0.35 },
+            { size: 94, blur: 0 }
+        ],
         opacity: 0.32,
         touchRadius: 360, touchImpulse: 210, drag: 1.5
     };
@@ -119,26 +128,37 @@
             // 페이지 크기에 따라 필요한 개수가 달라질 때만 조각을 다시 배치합니다.
             if (particles.length !== count) {
                 host.replaceChildren();
+                // 여섯 단계를 고르게 섞어 크기와 생성 순서에 규칙이 생기지 않게 합니다.
+                const levels = Array.from({ length: count }, (_, index) => index % SETTINGS.depthLevels.length);
+                for (let index = levels.length - 1; index > 0; index--) {
+                    const other = Math.floor(Math.random() * (index + 1));
+                    [levels[index], levels[other]] = [levels[other], levels[index]];
+                }
                 particles = Array.from({ length: count }, (_, index) => {
                     const element = document.createElement("div");
                     element.className = "designer-floating-background__piece";
+                    element.dataset.depthLevel = levels[index] + 1;
                     element.style.opacity = SETTINGS.opacity + (index % 4) * 0.055;
                     element.append(fragments[index % fragments.length].cloneNode(true));
                     host.append(element);
-                    const inset = 3 + 45 * Math.pow(((index + 1) * 0.61803398875) % 1, 1.8);
                     return {
-                        element, index,
-                        x: (index % 2 ? 100 - inset : inset) / 100 * width,
-                        y: (index + 0.5) / count * height,
-                        phase: index * 2.3999632297, angle: (index * 31) % 92 - 46,
+                        element, level: levels[index],
+                        // 좌우 교차나 세로 등간격 없이, 각 위치를 독립적으로 뽑습니다.
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        phase: Math.random() * Math.PI * 2, angle: Math.random() * 360,
                         vx: 0, vy: -SETTINGS.flowSpeed * 0.7,
                         spin: (index % 2 ? 1 : -1) * (0.7 + index % 5 * 0.22)
                     };
                 });
             }
+            // 가장 큰 단계에 맞춰 전체를 함께 축소해 좁은 화면에서도 6단계를 유지합니다.
+            const sizeScale = Math.min(1, width * 0.26 / SETTINGS.depthLevels.at(-1).size);
             particles.forEach(particle => {
-                particle.size = Math.min(SETTINGS.minSize + particle.index * 13 % SETTINGS.sizeRange, width * 0.22);
+                const level = SETTINGS.depthLevels[particle.level];
+                particle.size = level.size * sizeScale;
                 particle.element.style.width = `${particle.size}px`;
+                particle.element.style.filter = level.blur ? `blur(${level.blur * sizeScale}px)` : "none";
             });
             paint();
         }
@@ -165,10 +185,15 @@
                 particle.y += particle.vy * dt;
                 particle.angle = (particle.angle + particle.spin * dt) % 360;
                 const margin = particle.size * 1.5;
-                if (particle.x < -margin) particle.x += width + margin * 2;
-                if (particle.x > width + margin) particle.x -= width + margin * 2;
-                if (particle.y < -margin) particle.y += height + margin * 2;
-                if (particle.y > height + margin) particle.y -= height + margin * 2;
+                // 완전히 밖으로 나간 뒤 새로운 진입 위치를 골라 같은 줄의 반복을 피합니다.
+                if (particle.x < -margin || particle.x > width + margin) {
+                    particle.x = particle.x < -margin ? width + margin : -margin;
+                    particle.y = Math.random() * height;
+                }
+                if (particle.y < -margin || particle.y > height + margin) {
+                    particle.y = particle.y < -margin ? height + margin : -margin;
+                    particle.x = Math.random() * width;
+                }
             });
             paint();
             frame = requestAnimationFrame(tick);

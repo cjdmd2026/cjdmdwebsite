@@ -1,17 +1,27 @@
 import * as THREE from 'three';
 import {gridNear,gridFalloff,gridInk,gridRecession} from './materials.js';
+import {createGridDefocus} from './grid-defocus.js';
 
 const sizes=[3,6,8,12,16,24,32,44,62];
 // Interior of the horizontal ㄹ stroke in the native 1130 × 1600 portrait.
 const detail={x:570/1130,y:590/1600};
+// Build dolly speed gradually, then keep it steady. Unlike an entrance that
+// catches up to the old curve, this never produces a short acceleration peak.
+function dollyProgress(progress){
+  const ramp=.24;
+  if(progress>=ramp)return (progress-ramp/2)/(1-ramp/2);
+  const t=progress/ramp;
+  return ramp*(t*t*t-.5*t*t*t*t)/(1-ramp/2);
+}
 const vertex=`
 attribute vec4 piece, tile;
 attribute float depthRatio;
-attribute vec3 appearance;
-attribute vec3 swim;
+attribute vec4 appearance; // opacity, recession, blur, small-icon motion weight
+attribute vec4 swim; // phase, speed, travel radius, landed radius (SVG units)
 attribute vec4 scatter;
 attribute vec2 gatherSpan;
 uniform float cameraStart,cameraEnd,cameraNow,units,flight,recession,gather;
+uniform float detailFlight,detailGather,detailTravel;
 uniform float swimTime,swimScale,motionEnabled;
 uniform vec2 wordSize,viewport,endPan,frameOffset;
 varying vec2 uvAt,blurUV;
@@ -26,7 +36,13 @@ void main(){
   float atEnd=units*(cameraEnd-z);
   vec2 cloud=vec2(scatter.x-.5,.5-scatter.y)*viewport;
   vec2 portrait=vec2(piece.x-.5,.5-piece.y)*wordSize+frameOffset;
-  float joined=smoothstep(gatherSpan.x,gatherSpan.x+gatherSpan.y,gather);
+  // During the return zoom, tiny marks separate close to their letter instead
+  // of racing across the whole viewport. Larger icons retain their full route.
+  float travel=mix(1.,detailTravel,appearance.w);
+  cloud=mix(portrait,cloud,travel);
+  float iconGather=mix(gather,detailGather,appearance.w);
+  float iconFlight=mix(flight,detailFlight,appearance.w);
+  float joined=smoothstep(gatherSpan.x,gatherSpan.x+gatherSpan.y,iconGather);
   vec2 route=portrait-cloud;
   float bend=min(1.,min(viewport.x,viewport.y)/max(1.,length(route)))*.04*sin(swim.x);
   vec2 arc=vec2(-route.y,route.x)*bend*4.*joined*(1.-joined)*motionEnabled;
@@ -39,7 +55,7 @@ void main(){
     // Launch outside the *moving* viewport when the lens first clears this plane.
     float entry=max(cameraStart,z/.988);
     float start=log(entry/cameraStart)/log(cameraEnd/cameraStart);
-    float t=clamp((flight-start)/(1.-start),0.,1.);
+    float t=clamp((iconFlight-start)/(1.-start),0.,1.);
     vec2 ray=endPan*((entry-cameraStart)/(cameraEnd-cameraStart));
     vec2 delta=center-ray;
     vec2 heading=vec2(cos(swim.x),sin(swim.x));
@@ -50,15 +66,18 @@ void main(){
     float margin=length(size)*.85+(swim.z+12.)*swimScale*atEnd;
     vec2 origin=ray+dir*max(length(delta)+edge*(.14+.10*sin(swim.x)),extent*1.08+margin);
     // Stagger by depth and individual phase. Both the travel and the extra sway
-    // lose their velocity at the landing point, leaving only the portrait's orbit.
+    // lose their velocity at the landing point.
     float remaining=pow(1.-t,2.25+.55*sin(swim.x));
-    center=mix(center,origin,remaining)
-      +vec2(-dir.y,dir.x)*sin(swim.x*1.9)*edge*.58*t*remaining;
-    extraSway=10.*remaining;
+    center=mix(center,origin,remaining*travel)
+      +vec2(-dir.y,dir.x)*sin(swim.x*1.9)*edge*.58*t*remaining*travel;
+    extraSway=10.*remaining*travel;
   }
   if(motionEnabled>.5){
     vec2 orbit=vec2(sin(swim.x+swimTime*swim.y),-.70*cos(swim.x*1.37+swimTime*swim.y*.81));
-    center+=orbit*(swim.z+extraSway)*swimScale*atEnd;
+    // A sub-pixel drift wakes the small assembled marks before their staggered
+    // routes open. It blends into the unfolding and is absent on zoom out.
+    float wakingDrift=.65*(1.-travel)*joined;
+    center+=orbit*(mix(swim.z*travel,swim.w,joined)+extraSway+wakingDrift)*swimScale*atEnd;
   }
   vec2 screenSize=size/(units*distance);
   // Relative to the grid at z=0: distant marks stay legible while the
@@ -75,7 +94,9 @@ void main(){
   blurUV=blur*tile.zw/max(screenSize,vec2(.01));
   vec2 point=center+corner*size;
   printDetail=vec3(2.*point/(viewport*units*max(cameraStart-z,.001)),passesLens?0.:1.);
-  markInk=appearance.x*(motionEnabled>.5?1.:smoothstep(0.,.045,flight));
+  // Newly exposed planes gain ink gradually, including the peripheral marks.
+  // Switching the group on must never reveal a fully opaque first frame.
+  markInk=appearance.x*smoothstep(0.,.055,flight);
   gl_Position=projectionMatrix*modelViewMatrix*vec4(point,z,1.);
 }`;
 const fragment=`
@@ -106,17 +127,20 @@ void main(){
   gl_FragColor=color;
 }`;
 
-export function createWordFlight(scene,invalidate){
+export function createWordFlight(renderer,scene,invalidate,onLoad=()=>{}){
   const surface=window.MainWordSurface, banks=new Map();
   const group=new THREE.Group();group.name='결합 · size-ordered depth field';scene.add(group);
+  const defocus=createGridDefocus(renderer,scene,group);
+  let gridBlur=0;
   const uniforms={ink:{value:null},cameraStart:{value:1},cameraEnd:{value:8},cameraNow:{value:1},
     units:{value:1},halfTexel:{value:new THREE.Vector2()},endPan:{value:new THREE.Vector2()},
     wordSize:{value:new THREE.Vector2()},viewport:{value:new THREE.Vector2()},
     frameOffset:{value:new THREE.Vector2()},paperInk:{value:0},flight:{value:0},recession:gridRecession,
-    swimTime:{value:0},swimScale:{value:1},motionEnabled:{value:1},gather:{value:0}};
+    swimTime:{value:0},swimScale:{value:1},motionEnabled:{value:1},gather:{value:0},
+    detailFlight:{value:0},detailGather:{value:0},detailTravel:{value:1}};
   const material=new THREE.ShaderMaterial({uniforms,vertexShader:vertex,fragmentShader:fragment,
     transparent:true,premultipliedAlpha:true,depthTest:false,depthWrite:false,toneMapped:false});
-  const baseBackground=scene.background,background=new THREE.Color();
+  const baseBackground=scene.background,background=new THREE.Color(),backgroundTarget=new THREE.Color();
   const up=new THREE.Vector3(),right=new THREE.Vector3(),center=new THREE.Vector3();
   let theme=null,mesh=null,gridCamera=null,width=0,height=0,pose=null;
   function buildGeometry(records){
@@ -124,15 +148,15 @@ export function createWordFlight(scene,invalidate){
     for(const r of records){
       rect.push(...r.rect);tile.push(...r.tile);
       depths.push(r.depthRatio);
-      appearance.push(r.opacity??1,r.backFraction??0,r.blurRatio??0);
+      appearance.push(r.opacity??1,r.backFraction??0,r.blurRatio??0,1-THREE.MathUtils.smoothstep(r.size,8,20));
       swims.push(...r.swim);
       scatter.push(...r.scatter);spans.push(...r.span);
     }
     const geom=new THREE.InstancedBufferGeometry();
     const quad=new THREE.PlaneGeometry(1,1);
     geom.index=quad.index;geom.setAttribute('position',quad.attributes.position);
-    for(const [key,data,n] of [['piece',rect,4],['tile',tile,4],['depthRatio',depths,1],['appearance',appearance,3],
-      ['swim',swims,3],['scatter',scatter,4],['gatherSpan',spans,2]])
+    for(const [key,data,n] of [['piece',rect,4],['tile',tile,4],['depthRatio',depths,1],['appearance',appearance,4],
+      ['swim',swims,4],['scatter',scatter,4],['gatherSpan',spans,2]])
       geom.setAttribute(key,new THREE.InstancedBufferAttribute(new Float32Array(data),n));
     geom.instanceCount=records.length;
     return geom;
@@ -203,22 +227,33 @@ export function createWordFlight(scene,invalidate){
     uniforms.halfTexel.value.set(.5/bank.atlas.image.width,.5/bank.atlas.image.height);
     invalidate();
   }
-  const ready=Promise.all([load('light'),load('dark')]).then(()=>select(surface.theme));
+  let loaded=0;
+  const ready=Promise.all([defocus.ready,...['light','dark'].map(async themeName=>{
+    await load(themeName);onLoad(++loaded,2);
+  })]).then(()=>select(surface.theme));
   window.addEventListener('main-word-layout',invalidate);
   return {
     ready,
     fit(camera,w,h){
       gridCamera=camera.clone();width=w;height=h;
+      defocus.fit(w,h);
     },
-    update(camera,floor,p,ending,gather){
+    update(camera,floor,p,ending,gather,detailMotion){
       select(surface.theme);
-      floor.visible=p===0;
-      uniforms.flight.value=p;
+      const flight=dollyProgress(p),entrance=THREE.MathUtils.smootherstep(p,0,.16);
+      floor.visible=entrance<1;
+      floor.material.opacity=1-entrance;
+      uniforms.flight.value=flight;
       uniforms.gather.value=gather;
-      // Let the first arriving SVG marks overlap the rear pattern before its ink fades.
-      gridInk.value=1-THREE.MathUtils.smootherstep(p,.26,.70);
+      uniforms.detailFlight.value=dollyProgress(detailMotion.progress);
+      uniforms.detailGather.value=detailMotion.gather;
+      uniforms.detailTravel.value=detailMotion.travel;
+      // Hold the softened pattern behind the SVGs longer, then let it dissolve.
+      gridInk.value=1-THREE.MathUtils.smootherstep(p,.38,.88);
+      gridBlur=3.2*THREE.MathUtils.smootherstep(p,.12,.76);
       gridRecession.value=0;
-      background.setScalar(theme==='dark'?1-THREE.MathUtils.smoothstep(p,0,.20):1);
+      background.copy(baseBackground).lerp(backgroundTarget.setHex(theme==='dark'?0x000000:0xffffff),
+        THREE.MathUtils.smootherstep(p,0,theme==='dark'?.20:.16));
       scene.background=p>0?background:baseBackground;
       const bank=banks.get(theme);
       const frame=surface.frame;
@@ -227,9 +262,9 @@ export function createWordFlight(scene,invalidate){
       pose=null;if(!gridCamera||!bank||ending<=0)return;
       const D=gridCamera.position.y-.003,tan=Math.tan(THREE.MathUtils.degToRad(gridCamera.fov/2));
       const maxZoom=THREE.MathUtils.clamp(Math.min(width,height)/12/(12*frame.w/1130),9,19);
-      const end=D*maxZoom,now=D*Math.pow(maxZoom,p),units=2*tan/height;
+      const end=D*maxZoom,now=D*Math.pow(maxZoom,flight),units=2*tan/height;
       gridNear.value=D;
-      gridRecession.value=D*.85*THREE.MathUtils.smootherstep(p,0,.38);
+      // The grid stays in world space: only the camera moves away from it.
       right.setFromMatrixColumn(gridCamera.matrixWorld,0);up.setFromMatrixColumn(gridCamera.matrixWorld,1);
       center.set(gridCamera.position.x,.003,gridCamera.position.z);
       group.position.copy(center);group.quaternion.copy(gridCamera.quaternion);
@@ -242,8 +277,13 @@ export function createWordFlight(scene,invalidate){
       u.endPan.value.set(endX*units*end,endY*units*end);
       if(p>0){
         const pan=(now-D)/(end-D);
-        camera.position.copy(center).addScaledVector(right,endX*units*end*pan).addScaledVector(up,endY*units*end*pan);
-        camera.position.y=.003+now;camera.quaternion.copy(gridCamera.quaternion);
+        // Start from the live pattern camera, not a saved terminal pose. Its
+        // residual tilt and framing settle while this same lens pulls away.
+        camera.position.lerp(gridCamera.position,entrance)
+          .addScaledVector(right,endX*units*end*pan).addScaledVector(up,endY*units*end*pan);
+        camera.position.y+=now-D;
+        camera.quaternion.slerp(gridCamera.quaternion,entrance);
+        if(camera.view?.enabled){camera.view.offsetX*=1-entrance;camera.view.offsetY*=1-entrance;}
         camera.near=Math.max(.05,now*.012);camera.far=end*3+250;camera.updateProjectionMatrix();camera.updateMatrixWorld(true);
         scene.fog.near=now+45;scene.fog.far=now+110;
       }
@@ -251,11 +291,14 @@ export function createWordFlight(scene,invalidate){
       // grid at its optical rate. There is no empty aperture at the focal point.
       u.paperInk.value=1-gridInk.value/(1+gridFalloff*((now+gridRecession.value)/D-1));
       const crossed=now*.988/end;
-      pose={distance:now,zoom:end/now,gather,detail,wordPieces:bank.records.length,printsVisible:group.visible,
-        gridInk:gridInk.value,gridRecession:gridRecession.value,surroundings:bank.field.length,detailPrints:bank.detailCount,
+      pose={distance:now,zoom:end/now,flight,gather,detail,wordPieces:bank.records.length,printsVisible:group.visible,
+        detailFlight:uniforms.detailFlight.value,detailGather:uniforms.detailGather.value,detailTravel:uniforms.detailTravel.value,
+        position:camera.position.toArray(),quaternion:camera.quaternion.toArray(),entrance,
+        gridInk:gridInk.value,gridRecession:gridRecession.value,gridBlur,surroundings:bank.field.length,detailPrints:bank.detailCount,
         layeredPieces:bank.layeredCount,sizeDepthOrdered:bank.ordered,sizeDepths:bank.stops,
         passedSizeStops:bank.stops.filter(stop=>crossed>=stop.depth).map(stop=>stop.size),frame:{...frame},theme};
     },
+    render(camera){defocus.render(camera,gridInk.value>0?gridBlur:0);},
     inspect:()=>pose
   };
 }

@@ -34,13 +34,19 @@ export function createHeroNebula(host,sources){
   camera.position.z=2000;camera.lookAt(0,0,0);
   const lines=new THREE.Scene();
   const random=randomGenerator(210426),pieces=[],assets=sources.map(source=>({source,outline:outlineGeometry(source)}));
+  const variation=randomGenerator(110626);
   const baseNeutral=new THREE.Color('#819098');
   // Two smaller copies per source leave space between the passing forms.
   for(let index=0;index<sources.length*2;index++){
     const asset=assets[(index*13)%assets.length];
     const lineMaterial=new LineMaterial({color:baseNeutral,linewidth:.9,transparent:true,opacity:.55,depthTest:false,depthWrite:false});
     const wire=new LineSegments2(asset.outline,lineMaterial);lines.add(wire);
-    pieces.push({wire,asset,offset:(random()+random()+random()-1.5),size:.64+random()*.95,
+    // Keep neighbours staggered, but mix in off-centre and slightly smaller forms.
+    const offset=(((index*13)%sources.length+.5)/sources.length-.5)*1.8+(random()+random()+random()-1.5)*.24;
+    const breakout=variation()<.36&&Math.abs(offset)>.45?Math.sign(offset)*(.55+variation()*.3):0;
+    const sizeVariation=variation()<.26?.78+variation()*.12:1;
+    const phaseJitter=(variation()-.5)*.6;
+    pieces.push({wire,asset,offset,breakout,phaseJitter,size:(.64+random()*.95)*sizeVariation,
       pitch:(random()-.5)*.85,yaw:(random()-.5)*1.2,roll:(random()-.5)*Math.PI*2,speed:.008+random()*.004,spin:(random()-.5)*.07,seed:random()*Math.PI*2});
   }
   let width=1,height=1,elapsed=0,lastTime=0,raf=0,visible=true,frames=0,manual=false;
@@ -53,10 +59,14 @@ export function createHeroNebula(host,sources){
     pieces.forEach((piece,index)=>{
       const enabled=index<count;
       piece.wire.visible=enabled;if(!enabled)return;
-      const phase=((index+.5)/count+time*piece.speed)%1,t=(phase*(width+margin*2)-margin)/width;
+      // A shared forward pace avoids catch-up clusters; bounded sway keeps the
+      // individual movement without letting the spacing collapse over time.
+      const sway=(Math.sin(time*piece.speed*5+piece.seed)-Math.sin(piece.seed))*.002;
+      const phase=((index+.5+piece.phaseJitter)/count+time*.01+sway)%1,t=(phase*(width+margin*2)-margin)/width;
       const envelope=Math.sin(Math.PI*Math.max(0,Math.min(1,t)));
       const spread=Math.min(height*.20,width*.20)*(.48+.52*envelope);
-      const drift=piece.offset*spread+Math.sin(time*.25+piece.seed)*spread*.1;
+      // A few icons wander beyond the main band, then rejoin near its ends.
+      const drift=(piece.offset+piece.breakout*envelope)*spread+Math.sin(time*.25+piece.seed)*spread*.1;
       const x=width*t-drift*.36;
       const y=height*(.02+.72*t+.035*Math.sin(t*Math.PI*2))+drift;
       const size=baseSize*piece.size*(.8+.2*envelope);

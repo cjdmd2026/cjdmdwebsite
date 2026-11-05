@@ -1,0 +1,64 @@
+{
+  "desktop": {
+    "geometry": {
+      "before": {
+        "top": 251.21875,
+        "bottom": 624.078125,
+        "left": 434.15625,
+        "right": 1005.828125,
+        "width": 571.671875,
+        "height": 372.859375,
+        "membersTop": 651.4375,
+        "tabsBottom": 223.859375
+      },
+      "after": {
+        "top": 232.5758056640625,
+        "bottom": 624.078125,
+        "left": 419.8644714355469,
+        "right": 1020.1198425292969,
+        "width": 600.25537109375,
+        "height": 391.5023193359375,
+        "membersTop": 651.4375,
+        "tabsBottom": 223.859375
+      }
+    },
+    "icons": 28,
+    "departmentIcons": 28,
+    "colors": [
+      "rgb(59, 130, 166)",
+      "rgb(245, 144, 0)"
+    ],
+    "errors": []
+  },
+  "mobile": {
+    "geometry": {
+      "before": {
+        "top": 206.1875,
+        "bottom": 434.453125,
+        "left": 20,
+        "right": 370,
+        "width": 350,
+        "height": 228.265625,
+        "membersTop": 453.640625,
+        "tabsBottom": 190.1875
+      },
+      "after": {
+        "top": 194.77423095703125,
+        "bottom": 434.453125,
+        "left": 11.250015258789062,
+        "right": 378.75001525878906,
+        "width": 367.5,
+        "height": 239.67889404296875,
+        "membersTop": 453.640625,
+        "tabsBottom": 190.1875
+      }
+    },
+    "icons": 28,
+    "departmentIcons": 28,
+    "colors": [
+      "rgb(59, 130, 166)",
+      "rgb(245, 144, 0)"
+    ],
+    "errors": []
+  }
+}

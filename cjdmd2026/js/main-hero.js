@@ -184,6 +184,45 @@
     let bigFrame = { x: 0, y: 0, w: 1, h: 1 };
     let smallFrame = { x: 0, y: 0, w: 1, h: 1 };
 
+    // 확정 포스터(1130 × 1600)의 글자 획만 고정합니다.
+    // 주변 밀도나 큰 아이콘과의 거리에 관계없이 획 사이와 외곽은 떠다닙니다.
+    const glyphSegments = [
+        { r: 40, p: [[320, 195], [610, 195], [610, 300], [585, 355], [480, 390], [320, 390]] }, // ㄱ
+        { r: 42, p: [[810, 190], [810, 400]] }, // ㅕ
+        { r: 38, p: [[710, 250], [810, 250]] },
+        { r: 38, p: [[710, 360], [810, 360]] },
+        { r: 40, p: [[330, 490], [810, 490], [810, 590], [330, 590], [330, 690], [810, 690]] }, // ㄹ
+        { r: 42, p: [[440, 810], [440, 835]] }, // ㅎ의 위쪽 획
+        { r: 40, p: [[310, 875], [590, 875]] },
+        { r: 50, p: [[795, 845], [795, 1170]] }, // ㅏ
+        { r: 40, p: [[795, 995], [850, 995]] },
+        { r: 54, p: [[355, 1230], [355, 1415]] }, // ㅂ
+        { r: 55, p: [[790, 1230], [790, 1415]] },
+        { r: 42, p: [[350, 1415], [810, 1415]] },
+        { r: 40, p: [[350, 1300], [810, 1300]] }
+    ].flatMap(({ r, p }) => p.slice(1).map(([bx, by], i) => {
+        const [ax, ay] = p[i], dx = bx - ax, dy = by - ay;
+        return { ax, ay, dx, dy, lengthSquared: dx * dx + dy * dy, radius: r };
+    }));
+
+    function glyphMotionAt(cx, cy, iconRadius) {
+        let distance = Infinity;
+        for (const { ax, ay, dx, dy, lengthSquared, radius } of glyphSegments) {
+            const t = clamp(((cx - ax) * dx + (cy - ay) * dy) / lengthSquared);
+            distance = Math.min(distance, Math.hypot(cx - ax - t * dx, cy - ay - t * dy) - radius);
+        }
+        // ㅎ의 둥근 획: 안쪽 빈 공간은 고정 영역에서 제외합니다.
+        const outer = Math.hypot((cx - 460) / 165, (cy - 1060) / 130);
+        const inner = Math.hypot((cx - 460) / 90, (cy - 1060) / 60);
+        // 타원 경계까지의 거리는 짧은 반지름을 기준으로 근사합니다.
+        const ringDistance = outer > 1 ? (outer - 1) * 130 : inner < 1 ? (1 - inner) * 60 : 0;
+        distance = Math.min(distance, ringDistance) - iconRadius;
+        if (distance <= 0) return 0;
+        // 획 경계에서는 거의 움직이지 않고, 거리에 따라 기존 진폭까지 부드럽게 커집니다.
+        const proximity = clamp(distance / SETTINGS.iconIdleStrokeFalloff);
+        return proximity * proximity * (3 - 2 * proximity);
+    }
+
     function buildIcons() {
         function scatterPosition() {
             // 좌우 화면 밖까지 조금 겹쳐 배치해 부유 중에도 가장자리에 빈 띠가 생기지 않게 합니다.
@@ -205,52 +244,10 @@
             // 원본 8px 이하: 최대 / 13px: 약 60% / 18px: 약 32% / 24px: 약 13%.
             return Math.pow(t, SETTINGS.iconBlurFalloff);
         };
-        function glyphMotionStrengths(set) {
-            // 확정 포스터(1130 × 1600)의 글자 획만 고정합니다.
-            // 주변 밀도나 큰 아이콘과의 거리에 관계없이 획 사이와 외곽은 떠다닙니다.
-            const strokes = [
-                { r: 40, p: [[320, 195], [610, 195], [610, 300], [585, 355], [480, 390], [320, 390]] }, // ㄱ
-                { r: 42, p: [[810, 190], [810, 400]] }, // ㅕ
-                { r: 38, p: [[710, 250], [810, 250]] },
-                { r: 38, p: [[710, 360], [810, 360]] },
-                { r: 40, p: [[330, 490], [810, 490], [810, 590], [330, 590], [330, 690], [810, 690]] }, // ㄹ
-                { r: 42, p: [[440, 810], [440, 835]] }, // ㅎ의 위쪽 획
-                { r: 40, p: [[310, 875], [590, 875]] },
-                { r: 50, p: [[795, 845], [795, 1170]] }, // ㅏ
-                { r: 40, p: [[795, 995], [850, 995]] },
-                { r: 54, p: [[355, 1230], [355, 1415]] }, // ㅂ
-                { r: 55, p: [[790, 1230], [790, 1415]] },
-                { r: 42, p: [[350, 1415], [810, 1415]] },
-                { r: 40, p: [[350, 1300], [810, 1300]] }
-            ];
-            const segments = strokes.flatMap(({ r, p }) => p.slice(1).map(([bx, by], i) => {
-                const [ax, ay] = p[i], dx = bx - ax, dy = by - ay;
-                return { ax, ay, dx, dy, lengthSquared: dx * dx + dy * dy, radius: r };
-            }));
-            return (set?.s || []).map(([x, y, w, h]) => {
-                const cx = (x + w / 2) * 1130 / set.w, cy = (y + h / 2) * 1600 / set.h;
-                let distance = Infinity;
-                for (const { ax, ay, dx, dy, lengthSquared, radius } of segments) {
-                    const t = clamp(((cx - ax) * dx + (cy - ay) * dy) / lengthSquared);
-                    distance = Math.min(distance, Math.hypot(cx - ax - t * dx, cy - ay - t * dy) - radius);
-                }
-                // ㅎ의 둥근 획: 안쪽 빈 공간은 고정 영역에서 제외합니다.
-                const outer = Math.hypot((cx - 460) / 165, (cy - 1060) / 130);
-                const inner = Math.hypot((cx - 460) / 90, (cy - 1060) / 60);
-                // 타원 경계까지의 거리는 짧은 반지름을 기준으로 근사합니다.
-                const ringDistance = outer > 1 ? (outer - 1) * 130 : inner < 1 ? (1 - inner) * 60 : 0;
-                distance = Math.min(distance, ringDistance);
-                if (distance <= 0) return 0;
-                // 획 경계에서는 거의 움직이지 않고, 거리에 따라 기존 진폭까지 부드럽게 커집니다.
-                const proximity = clamp(distance / SETTINGS.iconIdleStrokeFalloff);
-                return proximity * proximity * (3 - 2 * proximity);
-            });
-        }
         const make = (set, theme) => {
             const sprites = set?.s || [];
             const identities = window.MAIN_POSTER_IDENTITIES;
             const codes = atob(identities?.[theme] || "");
-            const motionStrength = glyphMotionStrengths(set);
             const sizes = sprites.map(s => Math.max(s[2], s[3]));
             const minSize = sizes.reduce((min, size) => Math.min(min, size), Infinity);
             const maxSize = sizes.reduce((max, size) => Math.max(max, size), 0);
@@ -264,6 +261,8 @@
                 const identity = codes.length === sprites.length ? codes.charCodeAt(index) - 1 : -1;
                 const design = identity >> 2;
                 const size = sizes[index];
+                const glyphFreedom = glyphMotionAt((gx + gw / 2) * 1130 / set.w, (gy + gh / 2) * 1600 / set.h,
+                    wordFlight ? Math.max(gw * 1130 / set.w, gh * 1600 / set.h) / 2 : 0);
                 const depth = (size - minSize) / (maxSize - minSize || 1);
                 const gatherOrder = lerp(1 - depth, ranks[index] / lastRank, SETTINGS.iconGatherRankBlend);
                 const gatherStart = gatherOrder * SETTINGS.iconGatherLastStart;
@@ -281,7 +280,8 @@
                     whole: kind === 1,
                     blurStrength: blurStrength(size),
                     pushStrength: pushStrength(size),
-                    idleDrift: motionStrength[index] ? motionStrength[index] * idleStrength(size) * SETTINGS.iconIdleDistance * rand(.6, 1) : 0,
+                    glyphFreedom,
+                    idleDrift: glyphFreedom ? glyphFreedom * idleStrength(size) * SETTINGS.iconIdleDistance * rand(.6, 1) : 0,
                     ...scatterPosition(), // 캔버스는 화면 크기로 유지하고 시작 좌표만 바깥까지 확장
                     delay: Math.random() * .4, // 역방향으로 흩어질 때의 시차
                     phase: Math.random() * Math.PI * 2,
@@ -296,8 +296,8 @@
             if (wordFlight) {
                 flightPrints[theme] = new Array(icons.length);
                 for (const ic of icons) {
-                    // Original SVG units: keep the strokes readable; loose flecks can roam further.
-                    ic.swim = [ic.phase, .38 + ic.speed * .72, 2.6 + 2 * ic.depth + ic.idleDrift * .72];
+                    const radius = 2.6 + 2 * ic.depth + ic.idleDrift * .72;
+                    ic.swim = [ic.phase, .38 + ic.speed * .72, radius, radius * ic.glyphFreedom];
                     flightPrints[theme][ic.sourceIndex] = {
                         swim: ic.swim,
                         scatter: [ic.sx, ic.sy, ic.scatterScale, SETTINGS.iconBlurMax * ic.blurStrength],
@@ -359,7 +359,7 @@
                 marks.push({sprite, ownerIndex: icon.sourceIndex, x: x + Math.cos(angle) * icon.gw * radius,
                     y: y + Math.sin(angle) * icon.gh * radius, w: sprite.gw * scale, h: sprite.gh * scale,
                     opacity: .49 + .08 * Math.cos(seed), blurRatio: .20,
-                    swim: [angle % (Math.PI * 2), sprite.swim[1], size * .045]});
+                    swim: [angle % (Math.PI * 2), sprite.swim[1], size * .045, size * .045 * icon.glyphFreedom]});
             }
         }
         return marks;
@@ -382,7 +382,7 @@
                 const x = bigFrame.x + mark.x * k, y = bigFrame.y + mark.y * k;
                 sideFields[theme].push({...mark, side: mark.x < SETS[theme].w / 2 ? -1 : 1,
                     x, y, originX: x, originY: y, w: mark.w * k, h: mark.h * k, arc: 0,
-                    floatRadius: mark.swim[2] * k});
+                    floatRadius: mark.swim[3] * k});
             }
             for (const item of pool) {
                 if (used[item.side]++ >= counts[item.side]) continue;
@@ -398,14 +398,17 @@
                 item.originY = item.source.ty + item.source.sh / 2;
                 item.arc = item.bend * Math.min(36, bigFrame.h * .045);
                 item.floatRadius = item.floatStrength * SETTINGS.iconSideIdleDistance * bigFrame.h / SPRITES.h;
-                if (wordFlight) {
-                    item.swim = [item.floatPhase, item.floatSpeed, SETTINGS.iconSideIdleDistance * item.floatStrength * .72];
-                    item.floatRadius = item.swim[2] * bigFrame.h / SETS[theme].h;
-                }
                 const size = clamp(item.size * bigFrame.h / SPRITES.h * lerp(1, .55, travel), 1.25, 10);
                 const ratio = size / Math.max(item.sprite.gw, item.sprite.gh);
                 item.w = item.sprite.gw * ratio;
                 item.h = item.sprite.gh * ratio;
+                if (wordFlight) {
+                    const radius = SETTINGS.iconSideIdleDistance * item.floatStrength * .72;
+                    const freedom = glyphMotionAt((item.x - bigFrame.x) * 1130 / bigFrame.w,
+                        (item.y - bigFrame.y) * 1600 / bigFrame.h, (size / 2) * 1600 / bigFrame.h);
+                    item.swim = [item.floatPhase, item.floatSpeed, radius, radius * freedom];
+                    item.floatRadius = item.swim[3] * bigFrame.h / SETS[theme].h;
+                }
                 // 가장자리 일부만 지우지 않고, 분포 전체의 크기·농도를 연속적으로 낮춥니다.
                 const verticalFade = 1 - Math.pow(Math.abs(vertical), 3);
                 const outerFade = (1 - travel) * (1 - travel) * (1 + 2 * travel);
@@ -417,9 +420,11 @@
                 if (tiny.length) detailPrints.forEach(([u,v], i) => {
                     const sprite = tiny[(i * 73 + 19) % tiny.length], k = bigFrame.h / SETS[theme].h;
                     const x = bigFrame.x + u * bigFrame.w, y = bigFrame.y + v * bigFrame.h;
+                    const radius = sprite.swim[2];
+                    const landedRadius = radius * glyphMotionAt(u * 1130, v * 1600, Math.max(sprite.gw, sprite.gh) / 2);
                     sideFields[theme].push({sprite, detail: true, side: u < .5 ? -1 : 1, x, y, originX: x, originY: y,
                         w: sprite.gw * k, h: sprite.gh * k, opacity: .85, arc: 0,
-                        swim: sprite.swim, floatRadius: sprite.swim[2] * k});
+                        swim: [sprite.swim[0], sprite.swim[1], radius, landedRadius], floatRadius: landedRadius * k});
                 });
             }
         }
@@ -1526,7 +1531,7 @@
             const tx = frame.x + (gcx + (ic.gx - gcx) * fs + fx0) * kf;
             const ty = frame.y + (gcy + (ic.gy - gcy) * fsy + fy0) * kf;
             const ang = ic.angle * wob;
-            const drift = (wordFlight ? ic.swim[2] : ic.idleDrift) * kf * a * idleAmount;
+            const drift = (wordFlight ? ic.swim[3] : ic.idleDrift) * kf * a * idleAmount;
             const margin = (Math.abs(ang) > .002 ? Math.max(w, h) : 0) + blur * 3;
             let x = tx, y = ty;
             if (!settled) {

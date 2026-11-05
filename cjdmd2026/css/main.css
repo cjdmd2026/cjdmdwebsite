@@ -407,10 +407,11 @@ body.mobile-menu-open .header {
 /* ============================== 02. Committee ============================== */
 .committee {
     --committee-top-space: calc(16 * var(--u));
+    --committee-photo-lift: calc(max(520px, 39.7 * var(--u)) * 497 / 762 * .05);
     padding-top: var(--committee-top-space);             /* 시안: 히어로 끝 → 제목 307px */
 }
 /* 위쪽 섹션 간 여백을 제외해 아이콘 배치와 출입점의 중심을 콘텐츠에 맞춥니다. */
-.committee > .section-ambient { top: var(--committee-top-space); }
+.committee > .section-ambient { top: var(--committee-top-space); opacity: .45; }
 .committee > :not(.ambient) { position: relative; z-index: 1; }
 
 .committee-tabs {
@@ -421,6 +422,8 @@ body.mobile-menu-open .header {
     flex-wrap: wrap;
     row-gap: .6rem;
     margin-top: calc(3.6 * var(--u));                     /* 제목 → 탭 */
+    /* 확대된 사진의 윗변을 따라 탭만 올려 기존 사진 간격을 유지합니다. */
+    transform: translateY(calc(-1 * var(--committee-photo-lift)));
 }
 
 .committee-tab {
@@ -462,6 +465,9 @@ body.mobile-menu-open .header {
     min-width: min(100%, 520px);
     margin: calc(1.9 * var(--u)) auto 0;                   /* 탭 → 이미지 37px */
     aspect-ratio: 762 / 497;
+    /* 아래쪽 기준으로 확대해 구성원 목록의 위치를 유지합니다. */
+    transform: scale(1.05);
+    transform-origin: center bottom;
     overflow: hidden;
     background: transparent;            /* 슬라이드 경계에 어두운 선이 비치지 않게 */
 }
@@ -798,7 +804,10 @@ body.mobile-menu-open .header {
     .hero-text p br { display: none; }
     .pill-button { height: 42px; width: 104px; font-size: .875rem; }
 
-    .committee { --committee-top-space: 100px; }
+    .committee {
+        --committee-top-space: 100px;
+        --committee-photo-lift: calc((100vw - 2 * var(--mobile-pad)) * 497 / 762 * .05);
+    }
     .committee-tabs {
         flex-wrap: nowrap;
         justify-content: flex-start;

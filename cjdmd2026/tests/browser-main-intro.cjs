@@ -22,6 +22,7 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg
       });
       await page.goto('http://intro.test/main/',{waitUntil:'domcontentloaded'});
       await page.waitForFunction(()=>window.heroStudio && window.MainWordSurface?.getSource('light').image?.complete,null,{timeout:90000});
+      await page.waitForFunction(()=>!window.MainIntroLoading||MainIntroLoading.inspect().phase==='done',null,{timeout:90000});
       assert.equal(await page.evaluate(()=>heroStudio.ready),true);
       assert.equal(await page.evaluate(()=>typeof window.MainHeroIntro),'undefined','The scattered intro renderer is not active');
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
@@ -61,7 +62,9 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg
           return ctx.getImageData(0,0,sample.width,sample.height).data;
         };
         const original=pixels(),grid=heroStudio.inspect().wordFlight;
-        const checkpoint=.14;
+        // Sample after the gentle departure ramp, at the same optical retreat
+        // that previously happened almost immediately after entering the flight.
+        const checkpoint=.24;
         scrollTo(0,gridTop()+(MainIntro.anchor()-gridTop())*checkpoint);
         const started=performance.now();
         while(Math.abs(MainIntro.progress-checkpoint)>.003){
@@ -87,15 +90,21 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg
         return {count,anchored:matches/count,contrast:receded/rest};
       });
       assert.ok(fixedGrid.count>100&&fixedGrid.anchored>.95
-        &&fixedGrid.contrast>.25&&fixedGrid.contrast<.9,`Fixed, distance-faded floor: ${JSON.stringify(fixedGrid)}`);
-      // A held scroll position and a settled portrait should both keep swimming.
-      // Read the rendered pixels; checking a clock alone would not catch a stopped renderer.
-      const movement=async selector=>page.evaluate(async selector=>{
+        &&fixedGrid.contrast>.25&&fixedGrid.contrast<.9,`The whole pattern stays on the floor: ${JSON.stringify(fixedGrid)}`);
+      // Compare rendered pixels while the camera is still, optionally within a native SVG crop.
+      const movement=async (selector,crop)=>page.evaluate(async ({selector,crop})=>{
         const source=document.querySelector(selector),c=document.createElement('canvas');
         c.width=480;c.height=Math.round(c.width*innerHeight/innerWidth);
         const ctx=c.getContext('2d',{willReadFrequently:true});
+        let region=[0,0,source.width,source.height];
+        if(crop){
+          const frame=MainWordSurface.frame,sx=source.width/innerWidth,sy=source.height/innerHeight;
+          const [x,y,w,h]=crop;
+          region=[(frame.x+x*frame.w/1130)*sx,(frame.y+y*frame.h/1600)*sy,w*frame.w/1130*sx,h*frame.h/1600*sy];
+          c.width=Math.max(1,Math.round(region[2]));c.height=Math.max(1,Math.round(region[3]));
+        }
         function snapshot(){
-          ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(source,0,0,c.width,c.height);
+          ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(source,...region,0,0,c.width,c.height);
           return ctx.getImageData(0,0,c.width,c.height).data;
         }
         await new Promise(requestAnimationFrame);
@@ -107,11 +116,13 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg
         let diff=0;
         for(let i=0;i<next.length;i+=4)for(let k=0;k<3;k++)diff+=Math.abs(next[i+k]-first[i+k]);
         return diff/(3*c.width*c.height);
-      },selector);
+      },{selector,crop});
       await page.evaluate(()=>scrollTo(0,gridTop()+.5*(MainIntro.anchor()-gridTop())));
       await page.waitForFunction(()=>Math.abs(MainIntro.progress-.5)<.003);
       const halfwayInk=await page.evaluate(()=>heroStudio.inspect().wordFlight.gridInk);
-      assert.ok(halfwayInk>.3 && halfwayInk<.7,'The rear pattern is still fading halfway through the zoom');
+      assert.ok(halfwayInk>.8 && halfwayInk<1,'The rear pattern keeps its ink longer before the final dissolve');
+      const halfwayBlur=await page.evaluate(()=>heroStudio.inspect().wordFlight.gridBlur);
+      assert.ok(halfwayBlur>1&&halfwayBlur<3.2,'The receding pattern gradually falls out of focus');
       await page.evaluate(()=>scrollTo(0,gridTop()+.68*(MainIntro.anchor()-gridTop())));
       await page.waitForFunction(()=>Math.abs(MainIntro.progress-.68)<.003);
       const flightDrift=await movement('#scene canvas');
@@ -170,7 +181,7 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg
           if(MainIntro.progress>0){
             const {wordFlight:pose,camera}=heroStudio.inspect();
             if(pose){
-              zoomFrames.push([MainIntro.progress,pose.zoom,pose.distance,pose.passedSizeStops.length,camera.groundShadows,pose.gridInk,pose.gridRecession,pose.gather,performance.now()]);
+              zoomFrames.push([MainIntro.progress,pose.zoom,pose.distance,pose.passedSizeStops.length,camera.groundShadows,pose.gridInk,pose.gridRecession,pose.gather,performance.now(),pose.gridBlur]);
               if(pose.gather>.03 && pose.gather<.15 && fieldOutsideWord.scattered===undefined)fieldOutsideWord.scattered=outerInk();
               if(MainIntro.complete)fieldOutsideWord.joined=outerInk();
             }
@@ -194,7 +205,10 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg
         'One scroll pulls the camera back continuously');
       assert.ok(frames[0][3]<frames.at(-1)[3] && frames.every((f,i)=>!i||f[3]>=frames[i-1][3]),'The camera crosses the size planes in increasing order');
       assert.ok(frames.every(f=>!f[4]),'The camera never renders the shadow layer while it recedes');
-      assert.ok(frames.filter(f=>f[0]>=.70).every(f=>f[5]===0)&&frames.at(-1)[6]>field.distance*.8,'The receding grid finishes fading before the word lands');
+      assert.ok(frames.filter(f=>f[0]>=.88).every(f=>f[5]===0)&&frames.every(f=>f[6]===0),
+        'The pattern fades late and never moves separately from the camera');
+      assert.ok(frames.some(f=>f[0]>.70&&f[0]<.82&&f[5]>0&&f[9]>3),
+        'The defocused pattern is still present near the end of the dolly');
       assert.equal(await page.evaluate(()=>MainWordSurface.inspect().sideSpread),1,'Surroundings are already in place on handoff');
       const depthRatio=frames.at(-1)[2]/field.distance;
       assert.ok(depthRatio>=9-1e-6&&depthRatio<=19+1e-6,'The word lands within the shorter grid-to-word distance');
@@ -202,8 +216,12 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg
       const joining=frames.filter(f=>f[7]>.02 && f[7]<.98);
       assert.ok(joining.length>=1 && joining.every(f=>f[0]<1 && f[1]>1),
         'The icons gather while the camera is still zooming out');
+      assert.ok(frames.filter(f=>f[0]<=.56).every(f=>f[7]===0),
+        'The forward camera travels through the loose field before gathering starts');
+      assert.ok(joining[0][0]>.56&&frames.at(-1)[7]===1,
+        'Forward gathering keeps its original late start and reaches the native word');
       if(!mobile)assert.ok(joining.at(-1)[8]-joining[0][8]>1300 && joining.at(-1)[2]>joining[0][2],
-        'The gather develops gradually across a moving zoom');
+        'The original gather develops during the latter part of the zoom out');
       const outerInk=await page.evaluate(()=>fieldOutsideWord);
       if(!mobile)assert.ok(outerInk.scattered>outerInk.joined*2,`Original full-width field contracts into the portrait: ${JSON.stringify(outerInk)}`);
       const result=await page.evaluate(()=>{
@@ -237,7 +255,8 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg
       assert.ok(result.portrait && result.wordStep===1);assert.ok(result.ink>5 && result.meanPixelError<18,
         `The flying fragments land precisely on the original vertical word: ${JSON.stringify(result)}`);
       const portraitDrift=await movement('#heroCanvas');
-      assert.ok(mobile?portraitDrift===0:portraitDrift>.04,`Swimming after landing: ${portraitDrift}`);
+      assert.ok(mobile?portraitDrift===0:portraitDrift>.04,`Loose flecks after landing: ${portraitDrift}`);
+      assert.equal(await movement('#heroCanvas',[420,575,300,30]),0,'Icons on ㄹ stay fixed after the zoom');
       await page.waitForTimeout(500);
       await page.screenshot({path:path.join(root,`output/main-intro-${mobile?'mobile':'desktop'}-word.png`)});
       await page.keyboard.press('PageDown');
@@ -253,16 +272,55 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg
       await page.waitForFunction(()=>Math.abs(scrollY-MainIntro.anchor())<2&&document.querySelector('main').dataset.sectionScrollState==='idle');
       await page.keyboard.press('PageUp');
       await page.waitForFunction(()=>MainWordSurface.inspect().step===1 && !MainWordSurface.inspect().busy);
+      assert.equal(await movement('#heroCanvas',[420,1285,300,30]),0,'Icons on ㅂ stay fixed after returning from the poster');
 
+      await page.evaluate(()=>{
+        window.reverseFrames=[];
+        const record=()=>{
+          const p=MainIntro.progress,pose=heroStudio.inspect().wordFlight;
+          reverseFrames.push([p,pose.gather,pose.detailGather,pose.detailFlight]);
+          if(p>0)requestAnimationFrame(record);
+        };
+        requestAnimationFrame(record);
+      });
       await page.keyboard.press('PageUp');
       await page.waitForFunction(()=>MainIntro.progress===0&&!MainIntro.moving&&Math.abs(scrollY-gridTop())<2,null,{timeout:12000});
+      await page.waitForFunction(()=>reverseFrames.at(-1)?.[0]===0);
+      const reverse=await page.evaluate(()=>reverseFrames);
+      assert.ok(reverse.every(([p,gather],i)=>!i||(p<=reverse[i-1][0]&&gather<=reverse[i-1][1])),
+        'The return zoom and the unfolding both progress without reversal');
+      assert.ok(reverse.every(([p,gather])=>Math.abs(gather-p)<1e-8),
+        'Only zooming in unfolds the word across the full trip to the 2D pattern');
+      if(!mobile)assert.ok(reverse.some(([p,gather])=>p>.03&&p<.3&&gather>0),
+        'The word is still unfolding near the end of the return zoom');
+      assert.equal(reverse.at(-1)[1],0,'Unfolding finishes exactly on the 2D pattern');
+      assert.ok(reverse.filter(([p])=>p>=.8).every(([, ,gather,flight])=>gather>.93&&flight>.93),
+        'Small icons start earlier but still move gently while the camera is far away');
+      if(!mobile){
+        assert.ok(reverse.some(([p,,gather,flight])=>p>.8&&p<.95&&gather<1&&flight<1),
+          'The return starts with subtle movement instead of a frozen opening');
+        const speeds=(low,high)=>reverse.flatMap((frame,i)=>{
+          const before=reverse[i-1],step=before?.[0]-frame[0];
+          return before&&step>1e-5&&frame[0]>low&&before[0]<high?[(before[2]-frame[2])/step]:[];
+        });
+        const average=values=>values.reduce((sum,value)=>sum+value,0)/values.length;
+        const early=average(speeds(.86,.96)),flowing=average(speeds(.4,.6));
+        assert.ok(early>0&&flowing>early*3,'The small marks gradually gain speed as the lens approaches');
+      }
+      assert.ok(reverse.some(([p,,gather,flight])=>p<.6&&p>.1&&gather>0&&gather<1&&flight>0&&flight<1),
+        'The subtle opening grows into scattering and edge movement as the camera approaches');
+      assert.ok(reverse.every((frame,i)=>!i||(frame[2]<=reverse[i-1][2]&&frame[3]<=reverse[i-1][3])),
+        'The gently accelerating small-icon movement remains continuous toward the pattern');
+      assert.deepEqual(reverse.at(-1).slice(2),[0,0]);
+      assert.equal(await page.evaluate(()=>heroStudio.inspect().wordFlight.gridInk),1,
+        'The full pattern is visible again after zooming in');
       await page.waitForTimeout(400);
       assert.equal(await page.evaluate(()=>MainIntro.progress),0,'The grid stays parked after zooming back');
       await page.evaluate(()=>scrollTo(0,0));
       await page.waitForFunction(()=>heroStudio.inspect().camera.timeline===0);
       await page.waitForFunction(()=>!document.querySelector('.header').classList.contains('is-intro-hidden'));
       assert.deepEqual(errors,[]);
-      report[mobile?'mobile':'desktop']={...result,fixedGrid,flightDrift,portraitDrift,filledPixels,zoomFrames:frames.length,forwardAndReverse:true,errors};
+      report[mobile?'mobile':'desktop']={...result,fixedGrid,flightDrift,portraitDrift,filledPixels,zoomFrames:frames.length,reverseFrames:reverse.length,forwardAndReverse:true,errors};
       await page.close();
     }
     await fs.writeFile(path.join(root,'output/main-intro-validation.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));

@@ -38,6 +38,7 @@ a:focus-visible{outline:2px solid #ff3c3c;outline-offset:6px}
 .hero-art.is-ready .hero-nebula-canvas{opacity:1}
 .individuality-title{position:absolute;left:var(--page-gutter);right:var(--page-gutter);top:50%;transform:translateY(-50%);font-size:var(--heading-size);line-height:1.3;letter-spacing:-.02em;font-weight:700}
 .reading-line{display:flex;align-items:center;gap:clamp(12px,1.25vw,24px);white-space:nowrap}
+.reading-paragraph-start{margin-top:1.3em}
 .reading-copy{position:relative;flex:none}
 [data-read]{color:transparent;background:linear-gradient(90deg,#222 var(--read-fill,0%),#ddd var(--read-fill,0%));background-clip:text;-webkit-background-clip:text}
 [data-read].reading-interactive{position:relative;flex:none;background:none}
@@ -49,6 +50,7 @@ a:focus-visible{outline:2px solid #ff3c3c;outline-offset:6px}
 .hero-heading .reading-char{color:inherit;background:none}
 .keyword-pop{position:absolute;left:calc(100% + .14em + var(--read-end-shift,0px));top:.06em;width:clamp(11px,.38em,20px);height:clamp(11px,.38em,20px);color:var(--keyword-color,#222);opacity:0;pointer-events:none;transform-origin:center;will-change:transform,opacity}
 .keyword-pop svg{display:block;width:100%;height:100%}
+.reading-copy[data-read-accent]>.keyword-pop{left:calc(var(--read-accent-end,100%) + .12em + var(--read-accent-shift,0px));top:-.22em}
 .journey{position:relative;height:1089svh}
 .hero{position:sticky;top:0;height:100svh;overflow:hidden;background:#fafafa}
 .story-captions{position:absolute;left:var(--page-gutter);right:var(--page-gutter);bottom:16.66667%;z-index:2;pointer-events:none}
@@ -97,7 +99,7 @@ a:focus-visible{outline:2px solid #ff3c3c;outline-offset:6px}
   .hero-heading .heading-main{max-width:22em;line-height:1.35}
   .hero-heading .heading-lead{margin-bottom:4px}
   .section-year{bottom:7%;font-size:28px}
-  .individuality-title{top:44%;font-size:clamp(24px,7.18vw,35px);line-height:1.5}
+  .individuality-title{top:44%;font-size:clamp(17px,6.3vw,35px);line-height:1.3}
   .reading-line{gap:10px}
   .story-captions{bottom:9%}
   .construction-bar{bottom:max(20px,env(safe-area-inset-bottom))}
@@ -118,3 +120,23 @@ a:focus-visible{outline:2px solid #ff3c3c;outline-offset:6px}
 @media(prefers-reduced-motion:reduce){.main-page .header{transition:none}}
 body.intro-unavailable #mainIntro{display:none}
 body.intro-unavailable #hero{margin-top:0}
+
+/* The loading mark shares the hero's white dotted background. */
+html.intro-loading,html.intro-revealing{overflow:hidden;overscroll-behavior:none;scrollbar-gutter:stable}
+.intro-loader{--loading-fill:0%;position:fixed;inset:0;z-index:30;display:none;place-items:center;pointer-events:none;font-family:"Rajdhani",sans-serif}
+html.intro-loading .intro-loader,html.intro-revealing .intro-loader{display:grid}
+.intro-loader[hidden]{display:none!important}
+.intro-loader-mark{position:relative;width:clamp(110px,9vw,148px);opacity:1;filter:blur(0);transition:opacity .7s ease,filter .85s ease}
+.intro-loader svg{display:block;width:100%;overflow:visible}
+.intro-loader-outline{fill:none;stroke:#819098;stroke-width:1.8;stroke-linejoin:round}
+.intro-loader-fill{fill:var(--loading-color,#e5903a);clip-path:inset(calc(100% - var(--loading-fill)) 0 0);transition:clip-path .22s linear}
+.intro-loader-percent{position:absolute;top:calc(100% + 22px);left:50%;transform:translateX(-50%);font-size:24px;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:.025em;color:#687078}
+.intro-loader.is-leaving .intro-loader-mark{opacity:0;filter:blur(14px)}
+html.intro-loading #mainIntro .hero-art,html.intro-loading #mainIntro .hero-heading,html.intro-loading #mainIntro .section-year{opacity:0!important;filter:blur(18px)!important}
+html.intro-revealing #mainIntro .hero-art,html.intro-revealing #mainIntro .hero-heading,html.intro-revealing #mainIntro .section-year{transition:opacity 1.2s .18s ease,filter 1.5s .18s ease}
+@media(prefers-reduced-motion:reduce){
+  .intro-loader-mark,.intro-loader-fill{transition:none}
+  .intro-loader.is-leaving .intro-loader-mark{filter:none}
+  html.intro-loading #mainIntro .hero-art,html.intro-loading #mainIntro .hero-heading,html.intro-loading #mainIntro .section-year{filter:none!important}
+  html.intro-revealing #mainIntro .hero-art,html.intro-revealing #mainIntro .hero-heading,html.intro-revealing #mainIntro .section-year{transition:opacity .15s ease}
+}
