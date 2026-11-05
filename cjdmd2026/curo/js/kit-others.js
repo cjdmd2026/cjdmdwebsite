@@ -5,17 +5,17 @@
   const P = K.products;
   const css = document.createElement('style');
   css.textContent = `
-.kof { position: fixed; z-index: 14; right: calc(36 * var(--kfu, 1) * 1px); top: 50%; transform: translate(16px, -50%); opacity: 0; pointer-events: none;
-  padding: 12px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.86); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+.kof { --q: calc(var(--kfu, 1) * 1px); position: fixed; z-index: 14; right: calc(40 * var(--q)); top: 50%; transform: translate(16px, -50%); opacity: 0; pointer-events: none;
+  width: calc(60 * var(--q)); box-sizing: border-box; padding: calc(8 * var(--q)); border-radius: 999px; background: rgba(255, 255, 255, 0.86); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
   font-family: 'Pretendard', sans-serif; transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
 .kof.is-on { opacity: 1; transform: translate(0, -50%); pointer-events: auto; }
-.kof ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.kof ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: calc(8 * var(--q)); }   /* 297차: 폭 = 플로팅 버튼 60 */
 .kof li { position: relative; }
-.kof a { position: relative; display: block; width: 48px; height: 48px; border-radius: 50%; background: var(--c); transition: transform 0.2s ease; }
+.kof a { position: relative; display: block; width: calc(44 * var(--q)); height: calc(44 * var(--q)); border-radius: 50%; background: var(--c); transition: transform 0.2s ease; }
 .kof a img { position: absolute; object-fit: contain; }
 .kof a::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: #2B2B2B; opacity: 0.1; transition: opacity 0.25s ease; }
 .kof a:hover { transform: scale(1.08); } .kof a:hover::after { opacity: 0; }
-.kof a[aria-current="page"] { pointer-events: none; box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px #1EB2A6; }
+.kof a[aria-current="page"] { pointer-events: none; box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 3.5px #1EB2A6; }
 .kof a[aria-current="page"]::after { opacity: 0; }
 .kof li span { position: absolute; right: calc(100% + 14px); top: 50%; transform: translate(6px, -50%); opacity: 0; pointer-events: none; white-space: nowrap;
   padding: 6px 12px; border-radius: 999px; background: #2B2B2B; color: #FFFFFF; font-size: 13px; font-weight: 500; transition: opacity 0.2s ease, transform 0.25s ease; }
