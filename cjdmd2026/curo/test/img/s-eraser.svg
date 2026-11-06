@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_작업" data-name="작업" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 396.56 203.36">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #5e98aa;
+      }
+
+      .cls-2 {
+        fill: #fff;
+      }
+
+      .cls-3 {
+        fill: #f2f2f2;
+      }
+
+      .cls-4 {
+        filter: url(#drop-shadow-3);
+      }
+
+      .cls-5 {
+        fill: #caf3ff;
+      }
+
+      .cls-6 {
+        fill: #abe7ff;
+      }
+    </style>
+    <filter id="drop-shadow-3" x="-8.04" y="-8.6" width="427" height="234" filterUnits="userSpaceOnUse">
+      <feOffset dx="7" dy="7"/>
+      <feGaussianBlur result="blur" stdDeviation="5"/>
+      <feFlood flood-color="#000" flood-opacity=".2"/>
+      <feComposite in2="blur" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g class="cls-4">
+    <rect class="cls-2" x=".05" y="4.6" width="132.13" height="194.17" rx="6.13" ry="6.13"/>
+    <rect class="cls-3" x="84.05" y="4.6" width="132.13" height="194.17"/>
+    <path class="cls-1" d="M93.78,0h302.78v203.36H93.78c-1.64,0-2.97-1.33-2.97-2.97V2.97c0-1.64,1.33-2.97,2.97-2.97Z"/>
+    <rect class="cls-5" x="90.81" y="29.11" width="305.74" height="145.15"/>
+    <rect class="cls-6" x="90.81" y="36" width="305.74" height="131.36"/>
+  </g>
+  <path class="cls-3" d="M0,165.45h89.54v33.32H6.19c-3.42,0-6.19-2.77-6.19-6.19v-27.13h0Z"/>
+  <path class="cls-2" d="M0,136.85h84.05v33.32H6.19c-3.42,0-6.19-2.77-6.19-6.19v-27.13h0Z"/>
+</svg>

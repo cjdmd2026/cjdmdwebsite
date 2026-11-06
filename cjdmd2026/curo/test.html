@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<base href="test/">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#FFFBF2">
+<title>CURO 1형 당뇨 테스트</title>
+<link rel="icon" type="image/svg+xml" href="img/symbol.svg?v=313">
+<link rel="stylesheet" href="style.css?v=10">
+</head>
+<body>
+<!-- 화면 = 기기 크기 전체. 가운데 내용(.mid, 1400×876)은 비율 유지해 확대·축소, 가장자리 장식·버튼은 화면 모서리에 붙음 (app.js fit) -->
+<div id="stage" data-bg="paper" data-theme="yellow">
+  <div id="deco" aria-hidden="true">
+    <div class="d d-paper"><i class="pl"></i><i class="ph"></i></div>
+    <div class="d d-yellow"><i class="ring r1"></i><i class="ring r2"></i><i class="dt" style="right:142px;top:22px"></i><i class="dt" style="right:120px;top:177px"></i><i class="dt" style="right:58px;top:296px"></i><i class="dt" style="right:-24px;top:318px"></i><i class="dt b" style="left:12px;bottom:-14px"></i><i class="dt b" style="left:150px;bottom:-38px"></i><i class="dt b" style="left:250px;bottom:126px"></i><i class="dt b" style="left:280px;bottom:-26px"></i></div>
+    <div class="d d-teal"><i class="ring r1"></i><svg class="wave" viewBox="0 0 600 200" preserveAspectRatio="none"><path d="M0 22 C 70 40 120 120 170 160 C 230 205 330 150 420 175 C 480 192 540 196 600 200 L0 200 Z"/></svg><i class="dt" style="left:6px;bottom:224px"></i><i class="dt" style="left:104px;bottom:164px"></i><i class="dt" style="left:184px;bottom:74px"></i><i class="dt" style="left:316px;bottom:90px"></i><i class="dt" style="left:448px;bottom:64px"></i><i class="dt" style="left:538px;bottom:-26px"></i></div>
+    <div class="d d-orange"><i class="ring r1"></i><svg class="zig" viewBox="0 0 58 374"><path d="M0 0 L58 52 L0 104 L58 156 L0 208 L58 260 L0 312 L58 364 L0 374 Z"/></svg><i class="dt" style="left:80px;top:calc(50% + 114px)"></i><i class="dt" style="left:80px;top:calc(50% + 202px)"></i><i class="dt" style="left:80px;top:calc(50% + 292px)"></i></div>
+    <div class="d d-cover"></div>
+    <div class="d d-score"></div>
+  </div>
+
+  <!-- 1. 시작화면 -->
+  <section class="scr" id="s-home">
+    <button class="burger" id="go-records" aria-label="수령 기록"><i></i><i></i><i></i></button>
+    <img class="logo" src="img/logo.svg" alt="CURO">
+    <img class="h-pencil1" src="img/s-pencil.svg" alt="">
+    <img class="h-pencil2" src="img/s-redpencil.svg" alt="">
+    <img class="h-eraser" src="img/s-eraser.svg" alt="">
+    <div class="mid">
+      <img class="h-star" src="img/s-star.webp" alt="">
+      <img class="h-dash" src="img/s-dash.webp" alt="">
+      <h1 class="h-title">도전! 1형 <span>당뇨 테스트</span></h1>
+      <div class="h-cards" id="home-cards"></div>
+      <img class="h-bubble" src="img/s-bubble.webp" alt=""><p class="h-bubble-t">오늘 배운 내용이야!</p>
+    </div>
+  </section>
+
+  <!-- 2. 시작 전 (과목 표지 + 랭킹 + 이름) -->
+  <section class="scr" id="s-intro">
+    <div class="in-panel">
+      <button class="cbtn back" data-go="home"><img src="img/ic-back.webp" alt=""><span>이전</span></button>
+      <div class="in-body">
+        <h2 class="in-title"></h2>
+        <p class="in-sub"></p>
+        <p class="in-rank-h">오늘의 랭킹</p>
+        <ol class="in-rank" id="rank"></ol>
+      </div>
+    </div>
+    <div class="mid">
+      <form class="in-form" id="name-form" autocomplete="off">
+        <input id="name" maxlength="10" placeholder="응시자 이름을 적어주세요" enterkeyhint="go">
+        <button class="btn3d in-start" type="submit">시작하기</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- 3. 문제 / 오답 확인 -->
+  <section class="scr" id="s-quiz">
+    <button class="cbtn home" data-go="home"><img src="img/ic-home.webp" alt=""><span>홈화면</span></button>
+    <button class="cbtn back" id="q-back"><img src="img/ic-back.webp" alt=""><span>이전</span></button>
+    <img class="logo" src="img/logo.svg" alt="CURO">
+    <div class="mid">
+      <div class="timer"><i></i><span id="timer">00 : 00</span><i></i></div>
+      <div class="prog" id="prog"></div>
+      <div class="nb">
+        <div class="tabs"><i></i><i></i></div>
+        <div class="rings"></div>
+        <img class="dd" alt="">
+        <p class="q-ask"></p>
+        <h3 class="q-text"><span class="q-num"><em></em><img class="q-mark" alt=""></span><span class="q-body"></span></h3>
+        <div class="ox">
+          <button class="oxb o" data-a="O"><img class="tape" src="img/ic-oxtape.webp" alt=""><span class="ico"></span><b>맞아요</b></button>
+          <button class="oxb x" data-a="X"><img class="tape" src="img/ic-oxtape.webp" alt=""><span class="ico"></span><b>틀렸어요</b></button>
+        </div>
+        <div class="qnav"><button class="pill" id="q-prev">이전</button><button class="pill" id="q-next">다음</button></div>
+      </div>
+      <div class="expl"><b>해설</b><p id="expl"></p></div>
+    </div>
+  </section>
+
+  <!-- 4. 점수 -->
+  <section class="scr" id="s-score">
+    <img class="logo" src="img/logo.svg" alt="CURO">
+    <div class="mid">
+      <div class="sc-tape"><span id="sc-title"></span></div>
+      <div class="sc-bear"><img src="img/score-bear.webp" alt=""><div class="sc-sign"><small id="sc-level"></small><b id="sc-point"></b></div></div>
+      <div class="sc-btns"><button class="btn3d" id="to-goods">굿즈선택</button><button class="btn3d" data-act="retry">재시험</button><button class="btn3d" id="to-answer">오답확인</button></div>
+    </div>
+  </section>
+
+  <!-- 5. 굿즈 선택 / 키링 고르기 / 수령 기록 (같은 틀) -->
+  <section class="scr" id="s-goods">
+    <button class="cbtn home" data-go="home"><img src="img/ic-home.webp" alt=""><span>홈화면</span></button>
+    <button class="cbtn back" id="g-back"><img src="img/ic-back.webp" alt=""><span>이전</span></button>
+    <img class="logo" src="img/logo.svg" alt="CURO">
+    <div class="mid">
+      <div class="tape-title"><span id="g-title">굿즈 선택</span></div>
+      <div class="gcards" id="gcards"></div>
+      <div class="g-btns"><button class="btn3d" id="g-skip">미수령</button><button class="btn3d" data-act="retry">재시험</button></div>
+    </div>
+    <div class="r-nav"><button class="pill" id="r-prev">이전</button><button class="pill" id="r-next">다음</button></div>
+  </section>
+
+  <!-- 팝업 -->
+  <div class="modal" id="m-alert"><div class="mid"><div class="m-box"><h4>알림</h4><p id="m-msg"></p><div class="m-btns"><button class="btn3d" id="m-no">취소</button><button class="btn3d" id="m-yes">확인</button></div></div></div></div>
+  <div class="modal glist" id="m-list"><div class="glbg"></div><div class="mid"><div class="gl-box"><div class="gl-rings"></div><h4>굿즈 리스트</h4><div class="gl-cols" id="gl-cols"></div><button class="btn3d" id="gl-ok">확인</button></div></div></div>
+
+  <!-- 관리 (수령 기록 제목을 2초 누르면 열림) -->
+  <div class="admin" id="admin"></div>
+</div>
+<script src="data.js?v=3"></script>
+<script src="app.js?v=7"></script>
+</body>
+</html>

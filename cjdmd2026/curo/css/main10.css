@@ -22,17 +22,25 @@ html.is-m10 .story-stage { visibility: hidden; }
 /* 120차: 안쪽 종이 = 뒤표지 실루엣(main10-BookSlot.png) 을 캐릭터 위에 — 책이 움직이는 동안만 보임 (Main1 book-slot 과 같은 방식) */
 .m10-slot { left: 716px; top: 442px; width: 472px; height: 493px; display: block; visibility: hidden; }
 html.is-m10-moving .m10-slot { visibility: visible; }
-/* 131차: 상단 로고 = Main1 로고와 같은 크기(525 폭). Main1 은 로고 아래 ↔ 캐릭터 그림 위 = 27px → 여기서도 같은 간격 */
-.m10-logo { left: 695px; top: 95px; width: 525px; height: 143.04px; display: block; }
+/* 308차: 상단 로고 + 문구 = Main1 화면과 똑같이 (화면 px. --m10-lx/ly/lw = js 가 Main1 로고 자리로 계산) */
+.m10-brand { position: absolute; margin: 0; left: var(--m10-lx, 725px); top: var(--m10-ly, 93px); width: var(--m10-lw, 470px); height: calc(var(--m10-lw, 470px) * 94 / 345); }
+.m10-brand img { display: block; width: 100%; height: 100%; }
+.m10-brand-sub {
+  position: absolute; left: 50%; top: calc(100% + var(--m10-lw, 470px) * 0.055); transform: translateX(-50%);
+  margin: 0; white-space: nowrap;
+  font-family: 'Ownglyph daisy', 'Pretendard', sans-serif; font-weight: 400;
+  font-size: calc(var(--m10-lw, 470px) * 0.055); line-height: 1.2; letter-spacing: 0.01em; color: #9A8D80;
+}
 .m10-char { left: 438px; top: 265px; width: 1100px; height: 700px; display: block; }
 
 /* ---------- 둘째 화면: CURO 를 더 만나볼까요? + 메뉴 4개 (기준.png 위치) ---------- */
 .m10-more { left: 0; top: var(--m10-more-top, 1333px); width: 1920px; }   /* 121차: js 가 마지막 화면의 푸터 위 보이는 영역 가운데로 (1920×1080 = 1333) */
 .m10-title {
   margin: 0; display: flex; align-items: center; justify-content: center; gap: 30px; height: 79px;
-  font-family: 'Ownglyph daisy', sans-serif; font-weight: 400; font-size: 72px; line-height: 1; color: #2B2E31; opacity: 0.7;
+  font-family: 'Ownglyph daisy', sans-serif; font-weight: 400; font-size: 72px; line-height: 1; color: #2B2E31;
 }
-.m10-title img { display: block; height: 74px; width: auto; }
+.m10-title span { opacity: 0.7; }   /* 311차: 투명도는 글씨에만 — 테두리 로고는 불투명(색 = 예전 로고가 보이던 색) */
+.m10-title img { display: block; height: 92px; width: auto; margin: -9px; }   /* 310차: 흰 테두리 로고(assets/icons/curo-logo-border.svg) — 테두리만큼 키우고 margin 으로 빼서 글자 크기·간격은 그대로 */
 .m10-title span { transform: translateY(2px); letter-spacing: 0; }
 .m10-nav { list-style: none; margin: 105px 0 0; padding: 0 20px 0 0; display: flex; justify-content: center; gap: 108px; }
 .m10-nav li { width: 175px; display: flex; justify-content: center; }
@@ -50,24 +58,24 @@ html.is-m10-moving .m10-slot { visibility: visible; }
 }
 .m10-nav a:focus-visible { outline: 3px solid #3CB5AC; outline-offset: 8px; }
 
-/* ---------- 푸터: 그림 맨 아래 풀숲 위에 겹침 (122차: 위쪽 그라데이션 없앰) ---------- */
+/* ---------- 푸터 (308차): 그림 아래에 붙음 → 메뉴 화면에서 한 번 더 내려야 보임. 색·크기 = 다른 페이지 푸터(css/footer.css) ---------- */
 .m10-foot {
-  position: absolute; left: 0; right: 0; bottom: 0;   /* 121차: 그림 맨 아래 위에 겹침 (그림 뒤에 붙지 않음) */
-  background: linear-gradient(180deg, #5A7A58 0%, #4B6849 100%); color: #FFFFFF;
-  font-family: 'Pretendard', sans-serif; font-synthesis: none; font-size: max(11px, calc(14 * var(--m10-u, 1px))); line-height: 1.45;   /* 123차: 푸터 낮춤 (모든 페이지 푸터와 같은 값) */
+  position: absolute; left: 0; right: 0; top: calc(2160px * var(--m10-s, 1));
+  background: #2B2E31; color: #FFFFFF;
+  font-family: 'Pretendard', sans-serif; font-synthesis: none; font-weight: 400; font-size: max(10px, calc(12 * var(--m10-u, 1px))); line-height: 1.45;
 }
 .m10-foot p { margin: 0; }
 .m10-foot-in {
-  width: calc(1360 * var(--m10-u, 1px)); margin: 0 auto; min-height: calc(92 * var(--m10-u, 1px)); box-sizing: border-box;
-  padding: calc(22 * var(--m10-u, 1px)) 0 calc(22 * var(--m10-u, 1px));
+  width: calc(1360 * var(--m10-u, 1px)); margin: 0 auto; min-height: calc(76 * var(--m10-u, 1px)); box-sizing: border-box;
+  padding: calc(18 * var(--m10-u, 1px)) 0 calc(18 * var(--m10-u, 1px));
   display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; column-gap: 24px;
 }
-.m10-foot-brand img { display: block; height: max(17px, calc(22 * var(--m10-u, 1px))); width: auto; filter: brightness(0) invert(1); }
-.m10-foot-brand p { margin-top: calc(5 * var(--m10-u, 1px)) !important; color: rgba(255, 255, 255, 0.78); }
-.m10-foot-copy { justify-self: center; color: rgba(255, 255, 255, 0.78); white-space: nowrap; }
+.m10-foot-brand img { display: block; height: max(14px, calc(18 * var(--m10-u, 1px))); width: auto; filter: brightness(0) invert(1); }
+.m10-foot-brand p { margin-top: calc(4 * var(--m10-u, 1px)) !important; color: #C9CDD0; }
+.m10-foot-copy { justify-self: center; color: #C9CDD0; white-space: nowrap; }
 .m10-foot-team { justify-self: end; text-align: right; }
 .m10-foot-team span { display: block; }
-.m10-foot-team span + span { color: rgba(255, 255, 255, 0.78); }
+.m10-foot-team span + span { color: #C9CDD0; }
 
 /* ---------- 뒤표지 (Main9 창보다 위) ---------- */
 .m10-cover-layer { position: fixed; inset: 0; z-index: 4; overflow: hidden; pointer-events: none; visibility: hidden; transform-origin: 0 0; }
