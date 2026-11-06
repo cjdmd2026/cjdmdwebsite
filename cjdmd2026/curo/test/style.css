@@ -34,9 +34,9 @@ img { display: block; -webkit-user-drag: none; pointer-events: none; }
 .d-orange .dt { width: 28px; height: 28px; background: #FEC9B5; }
 .d-cover { background: var(--cover) center / cover no-repeat; }
 .d-score { background: url('img/bg-score.webp') center / cover no-repeat; }
-#stage[data-theme="yellow"] { --oxl: #FBF4E3; --rk: #3A2E1E; --c: #FFC94D; --cd: #DFA218; --cb: #FFF3D7; --hl: #FFF4DB; --ex: #FFD677; --exf: #FFE8B4; --ext: #75492D; --t1: #FF6183; --t2: #8BD053; --sh: #F8E9CA; }
-#stage[data-theme="teal"] { --oxl: #E3F6F4; --oxs: rgba(30, 178, 166, 0.08); --rk: #fff; --c: #1EB2A6; --cd: #1F8079; --cb: #B9ECE8; --hl: #D0EEEB; --ex: #49CBC0; --exf: #95E1DB; --ext: #144154; --t1: #FFAF36; --t2: #D06253; --sh: #9FDCD5; }
-#stage[data-theme="orange"] { --oxl: #FFEDE5; --oxs: rgba(255, 99, 32, 0.07); --rk: #fff; --c: #FF6320; --cd: #C64610; --cb: #FFE6DB; --hl: #FFE0D2; --ex: #FFAF8C; --exf: #FFD6C4; --ext: #531313; --t1: #FAD933; --t2: #53D0C3; --sh: #F6CDBA; }
+#stage[data-theme="yellow"] { --oxl: #FBF4E3; --pl: #DFCB9F; --rk: #3A2E1E; --c: #FFC94D; --cd: #DFA218; --cb: #FFF3D7; --hl: #FFF4DB; --ex: #FFD677; --exf: #FFE8B4; --ext: #75492D; --t1: #FF6183; --t2: #8BD053; --sh: #F8E9CA; }
+#stage[data-theme="teal"] { --oxl: #E3F6F4; --pl: #9FD3CF; --oxs: rgba(30, 178, 166, 0.08); --rk: #fff; --c: #1EB2A6; --cd: #1F8079; --cb: #B9ECE8; --hl: #D0EEEB; --ex: #49CBC0; --exf: #95E1DB; --ext: #144154; --t1: #FFAF36; --t2: #D06253; --sh: #9FDCD5; }
+#stage[data-theme="orange"] { --oxl: #FFEDE5; --pl: #EEC6B0; --oxs: rgba(255, 99, 32, 0.07); --rk: #fff; --c: #FF6320; --cd: #C64610; --cb: #FFE6DB; --hl: #FFE0D2; --ex: #FFAF8C; --exf: #FFD6C4; --ext: #531313; --t1: #FAD933; --t2: #53D0C3; --sh: #F6CDBA; }
 .t-yellow { --tc: #FFC94D; --tl: #FFF4DB; } .t-teal { --tc: #1EB2A6; --tl: #D0EEEB; } .t-orange { --tc: #FF6320; --tl: #FFE0D2; }
 
 .scr { position: absolute; inset: 0; display: none; }
@@ -51,7 +51,7 @@ img { display: block; -webkit-user-drag: none; pointer-events: none; }
 .btn3d { height: 66px; border-radius: 33px; background: var(--c); box-shadow: 0 6px 0 var(--cd); color: #fff; font-size: 31px; }
 .btn3d:active, .cbtn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--cd); }
 .cbtn:active { transform: translateY(4px); }
-.pill { width: 133px; height: 67px; border-radius: 34px; border: 2px solid #EADCC0; background: #fff; color: #E5D3AE; font-size: 28px; }
+.pill { width: 133px; height: 67px; border-radius: 34px; border: 2px solid var(--pl, #DFCB9F); background: #fff; color: var(--pl, #DFCB9F); font-size: 28px; }   /* 326차: 꺼진 버튼 색 = 과목 색 (시안) */
 .pill.on { border: 0; background: var(--c); color: #fff; box-shadow: 0 6px 0 var(--cd); }
 .pill.on:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--cd); }
 .pill:disabled { cursor: default; }
@@ -178,7 +178,7 @@ img { display: block; -webkit-user-drag: none; pointer-events: none; }
 /* ---------- 5. 굿즈 · 수령 기록 ---------- */
 .tape-title { position: absolute; left: 504px; top: 93px; width: 417px; height: 95px; background: var(--tape) center / 100% 100% no-repeat; }
 #stage[data-theme="yellow"] { --tape: url('img/tape-yellow.webp'); } #stage[data-theme="teal"] { --tape: url('img/tape-teal.webp'); } #stage[data-theme="orange"] { --tape: url('img/tape-orange.webp'); }
-.tape-title span { font-size: 72px; }
+.tape-title span { font-size: 72px; transform: translateY(calc(-46% - 8px)); }   /* 326차: 테이프 흰 부분(아래 그림자 뺀) 기준 세로 가운데 */
 #s-goods .tape-title { left: 516px; } #s-goods .tape-title span { left: -12px; right: 12px; }   /* 315·324차: 굿즈 선택·수령 기록 — 테이프만 오른쪽으로 12 (글자 자리는 그대로) */
 .gcards { position: absolute; left: 0; right: 0; top: 249px; height: 420px; display: flex; justify-content: center; gap: 53px; }
 .gcard { position: relative; width: 337px; height: 415px; border-radius: 26px; background: #fff; box-shadow: 9px 10px 0 var(--sh); }
