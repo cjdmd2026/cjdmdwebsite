@@ -67,7 +67,8 @@ img { display: block; -webkit-user-drag: none; pointer-events: none; }
 .h-pencil2 { position: absolute; left: calc(100% - 157px); top: calc(var(--oy) + 140px); width: 260px; transform: rotate(25deg); transform-origin: 0 0; }
 .h-eraser { position: absolute; left: 182px; top: calc(100% - 98px); width: 205px; transform: rotate(129deg); transform-origin: 0 0; }
 .h-cards { position: absolute; left: 0; top: 0; }
-.hcard { position: absolute; top: 275px; width: 345px; height: 414px; border-radius: 22px; background: var(--cc); box-shadow: 9px 10px 0 var(--cs); color: #fff; text-align: left; }
+.hcard { position: absolute; top: 275px; width: 337.5px; height: 415px; border-radius: 22px; color: #fff; text-align: left; }   /* 323차: 노트 = 사용자 이미지(img/note-*.webp, 731×890 @2x). 버튼 = 노트 몸통, 그림은 고리·탭·그림자만큼 밖으로 */
+.hcard .nb-img { position: absolute; left: -18px; top: -20px; width: 365.5px; height: 445px; max-width: none; pointer-events: none; }
 .hcard svg { position: absolute; inset: 0; width: 345px; height: 414px; border-radius: 22px; }
 .hcard h2 { position: absolute; left: 49px; top: 46px; font-weight: 400; font-size: 46px; line-height: 1; }
 .hcard p { position: absolute; left: 49px; top: 114px; font-size: 18.5px; line-height: 1; }

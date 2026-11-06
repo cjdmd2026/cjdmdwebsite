@@ -60,18 +60,11 @@
   }
 
   /* ---------- 1. 시작화면 ---------- */
-  const DECO = {
-    yellow: '<path d="M0 264 A150 150 0 0 1 150 414 L105 414 A105 105 0 0 0 0 309 Z" fill="#FFAE2B"/><circle cx="46" cy="232" r="16" fill="#FFAE2B"/><circle cx="141" cy="276" r="16" fill="#FFAE2B"/><circle cx="192" cy="375" r="16" fill="#FFAE2B"/>',
-    teal: '<circle cx="338" cy="193" r="69" fill="none" stroke="#179C91" stroke-width="46"/><path d="M0 312 C 52 296 96 360 158 388 C 210 410 262 398 300 414 L0 414 Z" fill="#179C91"/><circle cx="69" cy="316" r="12" fill="#179C91"/><circle cx="108" cy="358" r="12" fill="#13897F"/><circle cx="171" cy="352" r="12" fill="#179C91"/><circle cx="233" cy="364" r="12" fill="#179C91"/><circle cx="276" cy="406" r="12" fill="#179C91"/>',
-    orange: '<circle cx="345" cy="0" r="105" fill="none" stroke="#EB5210" stroke-width="70"/><path d="M0 135 L30 168 L0 202 L30 236 L0 270 L30 304 L0 338 Z" fill="#EB5210"/><circle cx="55" cy="203" r="10" fill="#EB5210"/><circle cx="55" cy="264" r="10" fill="#EB5210"/><circle cx="55" cy="325" r="10" fill="#EB5210"/>'
-  };
   const HC = { yellow: ['#FFC94D', '#E2B03D', '#FF6182', '#8BD053'], teal: ['#1EB2A6', '#2B7C75', '#FFAF36', '#D06253'], orange: ['#FF6320', '#D5460A', '#FAD932', '#53CFC4'] };
   $('#home-cards').innerHTML = Q.cats.map((c, i) => {
     const h = HC[c.theme];
-    const rings = [47, 127, 206, 286, 365].map((y) => `<i class="rg" style="top:${y - 6}px"></i>`).join('');
-    return `<button class="hcard" data-cat="${c.id}" style="left:${142 + i * 390}px;--cc:${h[0]};--cs:${h[1]}">
-      <svg viewBox="0 0 345 414" aria-hidden="true">${DECO[c.theme]}</svg>
-      <i class="tb" style="left:263px;background:${h[2]}"></i><i class="tb" style="left:290px;background:${h[3]}"></i>${rings}
+    return `<button class="hcard" data-cat="${c.id}" style="left:${145.75 + i * 390}px;--cc:${h[0]}">
+      <img class="nb-img" src="img/note-${c.theme}.webp?v=323" alt="" aria-hidden="true">
       <h2>${c.title}</h2><p>${c.sub}</p><span class="go"></span></button>`;
   }).join('');
   $('#home-cards').addEventListener('click', (e) => { const b = e.target.closest('[data-cat]'); if (b) openIntro(b.dataset.cat); });
