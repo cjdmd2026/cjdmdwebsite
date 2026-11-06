@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CURO</title>
+  <link rel="icon" type="image/svg+xml" href="assets/icons/symbol.svg?v=313">
   <link rel="preload" href="assets/fonts/pretendard-regular.woff" as="font" type="font/woff" crossorigin>
   <link rel="preload" href="assets/fonts/pretendard-bold.woff" as="font" type="font/woff" crossorigin>
   <link rel="preload" href="assets/fonts/ownglyph-daisy.woff" as="font" type="font/woff" crossorigin>
@@ -11,7 +12,7 @@
   <link rel="stylesheet" href="css/main.css?v=287">
   <link rel="stylesheet" href="css/main-mobile.css?v=231">   <!-- 203차: 폰 메인 -->
   <link rel="stylesheet" href="css/book.css?v=32">
-  <link rel="stylesheet" href="css/main10.css?v=131">
+  <link rel="stylesheet" href="css/main10.css?v=311">
 </head>
 <body>
   <!-- Index3 (후보): 11차 책 열기 방식 (표지 펼침 → 책 안 Main2 → 확대 진입). 책 열기만 js/book.js + js/config-book.js + css/book.css 로 다르고 나머지는 같다. -->
@@ -256,9 +257,8 @@
         <!-- 120차: 뒤표지 안쪽 종이 = 뒤표지 모양 그대로(main10-BookSlot.png), 캐릭터 위 — 표지가 열려도 아래 캐릭터(베어리 손 등)·배경이 비치지 않게 -->
         <img class="m10-slot" src="assets/images/main/main10/book-slot.webp?v=120" width="472" height="493" alt="" aria-hidden="true">
         <!-- 131차: Main1 과 같은 상단 로고 (같은 이미지·크기, 캐릭터와의 간격도 Main1 과 같게) -->
-        <img class="m10-logo" src="assets/images/main/main1/logo.svg?v=269" width="345" height="94" alt="CURO">
         <div class="m10-more">
-          <h2 class="m10-title"><img src="assets/icons/curo-logo.svg" alt="CURO" width="173" height="47"><span>를 더 만나볼까요?</span></h2>
+          <h2 class="m10-title"><img src="assets/icons/curo-logo-border.svg?v=311" alt="CURO" width="184" height="58"><span>를 더 만나볼까요?</span></h2>
           <ul class="m10-nav">
             <li><a href="program.html"><span class="m10-ic"><img src="assets/icons/program.svg" alt="" width="150" height="150"><img class="is-hover" src="assets/icons/program-hover.svg" alt="" width="150" height="150"></span><b>PROGRAM</b><small>렌탈 보러 가기</small></a></li>
             <li><a href="kit.html"><span class="m10-ic"><img src="assets/icons/curo-kit.svg" alt="" width="150" height="150"><img class="is-hover" src="assets/icons/curo-kit-hover.svg" alt="" width="150" height="150"></span><b>CURO KIT</b><small>제품 알아보기</small></a></li>
@@ -267,6 +267,8 @@
           </ul>
         </div>
       </div>
+      <!-- 308차: 첫 화면 로고 + 문구 = Main1 과 화면에서 같은 자리·크기 (js/main10.js 가 Main1 값으로 계산) -->
+      <h2 class="m10-brand"><img src="assets/images/main/main1/logo.svg?v=269" width="345" height="94" alt="CURO"><span class="m10-brand-sub">우리 아이의 첫 자가주사가 따뜻한 시작이 되도록</span></h2>
       <footer class="m10-foot">
         <div class="m10-foot-in">
           <div class="m10-foot-brand"><img src="assets/icons/curo-logo.svg" alt="CURO" width="173" height="47"><p>Companion for U’r Routine</p></div>
@@ -324,7 +326,7 @@
   <script src="js/story.js?v=119"></script>
   <script src="js/story-text.js?v=47"></script>
   <script src="js/main-mobile.js?v=284"></script>
-  <script src="js/main10.js?v=121"></script>
+  <script src="js/main10.js?v=309"></script>
   <script src="js/pages.js?v=203"></script>
 </body>
 </html>

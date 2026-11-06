@@ -36,14 +36,23 @@
     root.style.setProperty('--m10-s', s.toFixed(6));
     root.style.setProperty('--m10-x', px(x.toFixed(2)));
     root.style.setProperty('--m10-u', px(Math.min(1, vw / 1920).toFixed(4)));
-    // 121차: 두 칸 — 첫 화면 / 맨 아래(그림 아래쪽 + 그 위에 겹친 푸터가 한 화면에). 푸터는 그림 맨 아래를 덮음(그림이 잘려도 됨)
+    // 308차: 세 칸 — 첫 화면 / 그림 맨 아래(메뉴 4개, 푸터 없음) / 그림 아래에 붙은 푸터까지
     const s0 = clamp(M.focusY * s - vh / 2, 0, Math.max(0, M.screenH * s - vh));
     const end = Math.max(0, M.scene.h * s - vh);
     const snaps = [s0];
     if (end - s0 > 4) snaps.push(end);
-    // 121차: 'CURO 를 더 만나볼까요?' 묶음(높이 약 446)을 마지막 화면에서 푸터 위 보이는 영역 가운데에 (화면 비율이 달라도)
-    const fh = el.foot.offsetHeight / s, top = snaps[snaps.length - 1] / s, bottom = M.scene.h - fh;
-    root.style.setProperty('--m10-more-top', px(Math.round((top + bottom) / 2 - 223)));
+    snaps.push(end + el.foot.offsetHeight);
+    // 'CURO 를 더 만나볼까요?' 묶음(높이 약 446)을 둘째 화면 가운데에서 70 위로 (309차)
+    const top = end / s;
+    root.style.setProperty('--m10-more-top', px(Math.round((top + M.scene.h) / 2 - 223 - 70)));
+    // 308차: 로고 + 문구 = Main1 화면에서 보이는 자리·크기 그대로 (main.js fit 이 먼저 CURO_STATE 를 채움)
+    const st = window.CURO_STATE, lg = CFG.main1.logo;
+    if (st && st.fitScale) {
+      const f = (st.uiCompress && st.uiCompress.f) || 1, dy = (st.uiCompress && st.uiCompress.logoDy) || 0, fs = st.fitScale;
+      root.style.setProperty('--m10-lw', px((fs * lg.w * f).toFixed(2)));
+      root.style.setProperty('--m10-lx', px((st.fitX + fs * (lg.x + lg.w * (1 - f) / 2)).toFixed(2)));
+      root.style.setProperty('--m10-ly', px((st.fitY + fs * (lg.y + dy) + s0).toFixed(2)));
+    }
     L = { vw, vh, s, x, snaps };
     return L;
   }

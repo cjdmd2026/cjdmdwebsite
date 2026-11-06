@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_작업" data-name="작업" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1260.74 89.85">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fcb47e;
+      }
+
+      .cls-2 {
+        fill: #e15458;
+      }
+
+      .cls-3 {
+        fill: #ffbe88;
+      }
+
+      .cls-4 {
+        filter: url(#drop-shadow-1);
+      }
+
+      .cls-5 {
+        fill: #ef5e69;
+      }
+    </style>
+    <filter id="drop-shadow-1" x="-8.55" y="-8.95" width="1292" height="121" filterUnits="userSpaceOnUse">
+      <feOffset dx="7" dy="7"/>
+      <feGaussianBlur result="blur" stdDeviation="5"/>
+      <feFlood flood-color="#000" flood-opacity=".2"/>
+      <feComposite in2="blur" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g class="cls-4">
+    <rect class="cls-5" x="109.53" y="29.97" width="1151.22" height="29.88"/>
+    <rect class="cls-2" x="109.53" y=".13" width="1151.22" height="29.93"/>
+    <rect class="cls-2" x="109.53" y="59.82" width="1151.22" height="30"/>
+    <path class="cls-1" d="M121.78,14.77c0,7.52-4.56,13.84-10.6,14.67l-2.94.41h-.02l-80.22,11.13c-.5-2.38-1.46-4.6-2.77-6.55L106.05.78c7.73-3.22,15.73,3.9,15.73,13.99Z"/>
+    <path class="cls-1" d="M121.78,75.01c0,10.13-8.03,17.28-15.79,14.05L25.16,55.4c1.35-1.98,2.33-4.23,2.84-6.65l80.22,11.13c.05.01.09.01.14.01l2.78.39c6.06.84,10.64,7.18,10.64,14.73Z"/>
+    <path class="cls-3" d="M121.78,44.86c0,8.95-6.25,15.93-13.42,15.03-.05,0-.09,0-.14-.01l-80.22-11.13c.26-1.26.4-2.56.4-3.89s-.14-2.63-.4-3.88l80.22-11.13h.02c7.22-.99,13.54,6.02,13.54,15.01Z"/>
+    <path class="cls-5" d="M28.4,44.86c0,1.33-.14,2.63-.4,3.89-.51,2.42-1.49,4.67-2.84,6.65L0,44.93l.24-.1,24.99-10.4c1.31,1.95,2.27,4.17,2.77,6.55.26,1.25.4,2.55.4,3.88Z"/>
+  </g>
+</svg>
