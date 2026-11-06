@@ -178,7 +178,7 @@ img { display: block; -webkit-user-drag: none; pointer-events: none; }
 /* ---------- 5. 굿즈 · 수령 기록 ---------- */
 .tape-title { position: absolute; left: 504px; top: 93px; width: 417px; height: 95px; background: var(--tape) center / 100% 100% no-repeat; }
 #stage[data-theme="yellow"] { --tape: url('img/tape-yellow.webp'); } #stage[data-theme="teal"] { --tape: url('img/tape-teal.webp'); } #stage[data-theme="orange"] { --tape: url('img/tape-orange.webp'); }
-.tape-title span { font-size: 72px; transform: translateY(calc(-46% - 8px)); }   /* 326차: 테이프 흰 부분(아래 그림자 뺀) 기준 세로 가운데 */
+.tape-title span { font-size: 72px; transform: translateY(calc(-46% - 4px)); }   /* 326·327차: 테이프 흰 부분(아래 그림자 뺀) 기준 세로 가운데 */
 #s-goods .tape-title { left: 516px; } #s-goods .tape-title span { left: -12px; right: 12px; }   /* 315·324차: 굿즈 선택·수령 기록 — 테이프만 오른쪽으로 12 (글자 자리는 그대로) */
 .gcards { position: absolute; left: 0; right: 0; top: 249px; height: 420px; display: flex; justify-content: center; gap: 53px; }
 .gcard { position: relative; width: 337px; height: 415px; border-radius: 26px; background: #fff; box-shadow: 9px 10px 0 var(--sh); }
