@@ -1254,7 +1254,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             }
             html[data-project-fluid-view="slide"] .project-info {
                 position:static;
-                width:80%;
+                width:96%;
                 text-align:left;
             }
             @media (max-height:640px) {
