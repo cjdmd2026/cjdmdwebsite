@@ -1235,7 +1235,6 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 width:min(50vw,calc(100vw - var(--project-copy-left) - 3rem));
             }
             .container:has(#slideview:not([hidden])) .project-dial-title {
-                font-size:var(--project-dial-icon-size);
                 white-space:nowrap;
                 text-align:left;
             }
