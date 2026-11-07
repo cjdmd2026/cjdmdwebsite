@@ -89,7 +89,10 @@ a:focus-visible,summary:focus-visible{outline:3px solid #1959db;outline-offset:4
 .case-qr img { width: 100%; height: auto; }
 .case-qr:hover{border-color:currentColor}.case-qr:hover span{text-decoration:underline}
 .case-foot a:hover{text-decoration:underline}
-.case-art{width:min(100%,1920px);margin:auto;container-type:inline-size}
+.case-art {
+    width: 100%;
+    container-type: inline-size;
+}
 .case-section{position:relative;isolation:isolate;overflow:hidden}
 /* Keep image tiles and live text at their original scale inside a trimmed section. */
 .case-source-frame {
@@ -115,7 +118,6 @@ a:focus-visible,summary:focus-visible{outline:3px solid #1959db;outline-offset:4
 .case-mobile{display:none}
 @media(max-width:999px){
   .case-pc{display:none}.case-mobile{display:block}.case-menu .case-mobile{display:flex}
-  .case-art{max-width:650px}
   .case-qr { font-size: .68rem; }
   .case-menu nav { gap: .9rem; }
 }
