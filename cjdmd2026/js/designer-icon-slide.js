@@ -16,6 +16,9 @@
      */
     const scriptURL = document.currentScript?.src || new URL('../js/designer-icon-slide.js', document.baseURI).href;
     const iconBaseURL = new URL('../assets/images/project/icon/', scriptURL);
+    // Keep the original fill attribute as the key that links each shape to its designer.
+    const yearOnSlideTint = '[id$="team-10-ieoon-layer-1"] [fill="#ccbbff"] { fill: #d6c9ff; }';
+    const slideIconStyle = '.icon-layer { animation: none !important; } ' + yearOnSlideTint;
     // 디자이너 목록 HTML 기준 상세 페이지 경로입니다. 개별 주소는 designer-data.js의 href로 지정합니다.
     const DESIGNER_DETAIL_PATH = './profile/';
     const ICON_PROJECTS = window.DESIGNER_ICON_PROJECTS || [];
@@ -201,6 +204,7 @@
         throw new Error('결합 파일이 올바른 SVG가 아닙니다.');
       }
       const root = doc.documentElement, defs = root.querySelector('defs');
+      defs?.querySelector('style')?.append(yearOnSlideTint);
       const [originX, originY, sourceWidth, sourceHeight] = root.getAttribute('viewBox').trim().split(/[\s,]+/).map(Number);
       const marked = [...root.querySelectorAll('[data-formation-team][data-formation-color]')];
       const embedded = new Map(marked.map(node => [
@@ -274,8 +278,7 @@
     }
     async function loadWholeIcons() {
       return Promise.all(source.map(async (icon) => {
-        // Freeze only the source's entrance animation; keep all shapes and colors.
-        const svg = icon.svg.replace("</svg>", '<style>.icon-layer { animation: none !important; }</style></svg>');
+        const svg = icon.svg.replace("</svg>", '<style>' + slideIconStyle + '</style></svg>');
         const image = await loadImage("data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg));
         const full = document.createElement("canvas"); full.width = full.height = 384;
         full.getContext("2d").drawImage(image, 0, 0, 384, 384);
@@ -304,7 +307,7 @@
           // Keep the SVG viewBox, groups and transforms; never split the pixels.
           [...root.querySelectorAll(selector)].filter(el => !el.closest("defs,clipPath,mask")).forEach((el, index) => { if (colors[index] !== color) el.remove(); });
           const frozen = doc.createElementNS("http://www.w3.org/2000/svg", "style");
-          frozen.textContent = ".icon-layer { animation: none !important; }"; root.appendChild(frozen);
+          frozen.textContent = slideIconStyle; root.appendChild(frozen);
           const xml = new XMLSerializer().serializeToString(root);
           jobs.push(loadImage("data:image/svg+xml;charset=utf-8," + encodeURIComponent(xml)).then(image => {
             const group = document.createElement("canvas"); group.width = group.height = 384;

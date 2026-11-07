@@ -1147,6 +1147,9 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                     if(disposed)return;
                     if(xml.querySelector('parsererror'))throw new Error('Invalid SVG');
                     const icon=document.importNode(xml.documentElement,true);
+                    if(projectId==='year-on'){
+                        icon.querySelectorAll('.layer-1 [fill]').forEach(shape=>shape.setAttribute('fill','#F3EFFF'));
+                    }
                     // 원본 SVG에 포함된 등장 애니메이션도 제거합니다.
                     icon.querySelectorAll('style,animate,animateTransform,animateMotion,set').forEach(node=>node.remove());
                     icon.removeAttribute('role');icon.removeAttribute('aria-labelledby');

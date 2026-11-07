@@ -4,22 +4,16 @@ import {LineSegmentsGeometry} from 'three/addons/lines/LineSegmentsGeometry.js';
 import {LineMaterial} from 'three/addons/lines/LineMaterial.js';
 import {randomGenerator} from './scatter.js';
 
-// Trace the source SVG contours at both ends of the existing extrusion. Only
-// corners get connecting edges; curved sides stay clean instead of triangulated.
-function outlineGeometry(source){
-  const vertices=[],height=source.caster.height,half=height/2;
-  const segment=(a,b)=>vertices.push(...a,...b);
-  for(const contour of source.caster.contours){
-    const points=contour.points.filter((p,i,list)=>!i||Math.hypot(p[0]-list[i-1][0],p[1]-list[i-1][1])>1e-5);
-    if(points.length<3)continue;
-    if(Math.hypot(points[0][0]-points.at(-1)[0],points[0][1]-points.at(-1)[1])<1e-5)points.pop();
-    points.forEach((p,i)=>{
-      const previous=points[(i+points.length-1)%points.length],next=points[(i+1)%points.length];
-      for(const y of [-half,half])segment([p[0],y,p[1]],[next[0],y,next[1]]);
-      const a=new THREE.Vector2(p[0]-previous[0],p[1]-previous[1]).normalize();
-      const b=new THREE.Vector2(next[0]-p[0],next[1]-p[1]).normalize();
-      if(a.dot(b)<.78)segment([p[0],-half,p[1]],[p[0],half,p[1]]);
-    });
+// Trace each SVG boundary, including holes, once in the camera's XY plane.
+function outlineGeometry(source) {
+  const vertices = [];
+  for (const {points} of source.caster.contours) {
+    for (let i = 0; i < points.length; i++) {
+      const [x, y] = points[i];
+      const [nextX, nextY] = points[(i + 1) % points.length];
+      if (Math.hypot(nextX - x, nextY - y) < 1e-5) continue;
+      vertices.push(x, -y, 0, nextX, -nextY, 0);
+    }
   }
   return new LineSegmentsGeometry().setPositions(vertices);
 }
@@ -47,7 +41,7 @@ export function createHeroNebula(host,sources){
     const sizeVariation=variation()<.26?.78+variation()*.12:1;
     const phaseJitter=(variation()-.5)*.6;
     pieces.push({wire,asset,offset,breakout,phaseJitter,size:(.64+random()*.95)*sizeVariation,
-      pitch:(random()-.5)*.85,yaw:(random()-.5)*1.2,roll:(random()-.5)*Math.PI*2,speed:.008+random()*.004,spin:(random()-.5)*.07,seed:random()*Math.PI*2});
+      roll:(random()-.5)*Math.PI*2,speed:.008+random()*.004,spin:(random()-.5)*.07,seed:random()*Math.PI*2});
   }
   let width=1,height=1,elapsed=0,lastTime=0,raf=0,visible=true,frames=0,manual=false;
   function place(time){
@@ -70,8 +64,8 @@ export function createHeroNebula(host,sources){
       const x=width*t-drift*.36;
       const y=height*(.02+.72*t+.035*Math.sin(t*Math.PI*2))+drift;
       const size=baseSize*piece.size*(.8+.2*envelope);
-      piece.wire.position.set(x-width/2,height/2-y,Math.sin(piece.seed)*80);
-      piece.wire.rotation.set(Math.PI/2+piece.pitch+Math.sin(time*.13+piece.seed)*.10,piece.yaw,piece.roll+time*piece.spin);
+      piece.wire.position.set(x-width/2,height/2-y,0);
+      piece.wire.rotation.z=piece.roll+time*piece.spin;
       piece.wire.scale.setScalar(size/piece.asset.source.size);
     });
   }
