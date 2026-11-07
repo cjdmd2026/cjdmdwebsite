@@ -568,6 +568,8 @@ body:has(#slideview:not([hidden])) .header .nav ul li {
 }
 
 .container:has(#slideview:not([hidden])) .project-dial {
+    --project-title-bar-width: 5px;
+    --project-title-bar-gap: clamp(12px, 1vw, 20px);
     position: fixed;
 
     top: 0;
@@ -649,6 +651,8 @@ body:has(#slideview:not([hidden])) .header .nav ul li {
 }
 
 .container:has(#slideview:not([hidden])) .project-dial-title {
+    padding-left: var(--project-title-bar-gap);
+    border-left: var(--project-title-bar-width) solid var(--project-title-accent, transparent);
     font-family: 'pretendard', var(--font-main);
     font-size: 5rem;
     font-weight: 800;
@@ -721,8 +725,9 @@ html[data-project-fluid-view="slide"] .project-warp {
 }
 
 .project-info-block {
-    font-size: calc(clamp(1rem, 0.8vw, 1.25rem) + 0.1rem);
+    font-size: 1.15rem;
     line-height: 1.8;
+    letter-spacing: -0.02rem;
     font-weight: 400;
 
     color: rgba(255, 255, 255, 0.68);

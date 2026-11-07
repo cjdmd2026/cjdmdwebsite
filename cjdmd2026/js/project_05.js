@@ -362,6 +362,12 @@ async function captureForeground(target, {includeHidden = false} = {}) {
     if (!element.getClientRects().length) continue;
     const parentStyle = getComputedStyle(element);
     if (!includeHidden && (parentStyle.visibility === 'hidden' || Number(parentStyle.opacity) === 0)) continue;
+    if (element.classList.contains('project-dial-title')) {
+      const rect = element.getBoundingClientRect();
+      const barWidth = parseFloat(parentStyle.borderLeftWidth);
+      ctx.fillStyle = parentStyle.borderLeftColor;
+      ctx.fillRect(rect.left, rect.top, barWidth, rect.height);
+    }
     const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
     while (walker.nextNode()) {
       const node = walker.currentNode;
@@ -708,7 +714,6 @@ async function captureForeground(target, {includeHidden = false} = {}) {
         fluid: 50,          // 세로 전환에서 과한 출렁임을 줄임
         wheelThreshold: 100,  // 미세 휠 입력에 너무 민감하게 반응하지 않도록
         wheelGestureGap: 200, // 휠 입력이 끊긴 뒤 다음 제스처 허용
-        wheelRepeatDelay: 200, // 강한 연속 입력은 제스처가 끝나기 전에도 허용
         pixelRatio: 1.25,
         maxTextureSize: 1920,
         ...window.PROJECT_FLUID_OPTIONS
@@ -1073,8 +1078,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             const reduce=matchMedia('(prefers-reduced-motion: reduce)');
             let index=Math.max(0,cards.findIndex(c=>c.classList.contains('is-active')));
             let engine=null,phase='idle',queuedDirection=null,request=0,disabled=false,disposed=false;
-            let wheelTotal=0,lastWheel=0,searchFrame=0,wheelLocked=false,wheelDirection=0;
-            let lastWheelAmount=0,lastWheelNavigation=0;
+            let wheelTotal=0,lastWheel=0,searchFrame=0,wheelLocked=false;
             let wanted=null,wantedDirection=1,loading=false,prepared=null;
             let initial=true,stoppedLenis=null;
             let searchTarget=null,searchTimer=0;
@@ -1142,6 +1146,8 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                     icon.removeAttribute('role');icon.removeAttribute('aria-labelledby');
                     icon.setAttribute('aria-hidden','true');icon.setAttribute('focusable','false');
                     slot.replaceChildren(icon);
+                    const accent = icon.querySelector('[fill^="#"]')?.getAttribute('fill');
+                    if (accent) item.style.setProperty('--project-title-accent', accent);
                     slot.classList.add('is-icon-loaded');
                     item.classList.add('is-icon-loaded');
                 }catch(error){
@@ -1715,7 +1721,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                     'project-wave-text-pending');
                 delete iconRail.dataset.entryPhase;
                 phase='idle';
-                wheelTotal=0;wheelLocked=false;lastWheel=0;
+                wheelTotal=0;
                 syncIconRail(cards[index]?.dataset.projectId);
                 if(!disposed&&!slideview.hidden){
                     // Keep the description's earlier reveal running through the wave's final tail.
@@ -1995,8 +2001,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 wanted=null;prepared=null;loading=false;phase='idle';queuedDirection=null;
                 iconTransition=null;
                 syncIconRail(cards[index]?.dataset.projectId);
-                wheelTotal=0;lastWheel=0;wheelLocked=false;wheelDirection=0;
-                lastWheelAmount=0;lastWheelNavigation=0;
+                wheelTotal=0;lastWheel=0;wheelLocked=false;
                 engine?.cancel();slideview.classList.remove('is-fluid-transitioning');
             }
             function jump(next,updateText=true){
@@ -2368,22 +2373,16 @@ function settleAsciiContent() {
                 event.lenisStopPropagation=true;
                 const delta=Math.abs(event.deltaY)>=Math.abs(event.deltaX)?event.deltaY:event.deltaX;
                 if(!delta)return;
-                const now=performance.now();
+                const now=event.timeStamp;
                 const direction=Math.sign(delta);
                 const unit=event.deltaMode===1?16:event.deltaMode===2?innerHeight:1;
-                const amount=Math.abs(delta*unit);
-                const threshold=wheelOption('wheelThreshold',100,1,500);
-                // Accept fresh flicks and sustained wheel input, but not a decaying tail.
-                const renewedPush=wheelLocked
-                    && now-lastWheelNavigation>=wheelOption('wheelRepeatDelay',200,80,600)
-                    && ((amount>=12&&amount>lastWheelAmount*1.5)
-                        || (amount>=threshold*.5&&amount>=lastWheelAmount*.98));
-                const newGesture=now-lastWheel>wheelOption('wheelGestureGap',200,80,1000)
-                    || direction!==wheelDirection || renewedPush;
-                if(newGesture){wheelTotal=0;wheelLocked=false;}
+                // Momentum can spike or briefly reverse within a single gesture.
+                // Only a pause since the last wheel event starts another gesture.
+                if(now-lastWheel>wheelOption('wheelGestureGap',200,80,1000)){
+                    wheelTotal=0;
+                    wheelLocked=false;
+                }
                 lastWheel=now;
-                wheelDirection=direction;
-                lastWheelAmount=amount;
                 if(root.classList.contains('project-intro-pending')
                     ||root.classList.contains('project-intro-running')){
                     wheelTotal=0;wheelLocked=true;return;
@@ -2391,14 +2390,14 @@ function settleAsciiContent() {
                 // Locked/inertial events still adjust animation speed without adding slides.
                 window.ProjectWave.updateScrollSpeed(delta*unit);
                 if(wheelLocked)return;
+                if(Math.sign(wheelTotal)!==direction)wheelTotal=0;
                 wheelTotal+=delta*unit;
-                if(Math.abs(wheelTotal)>=threshold){
+                if(Math.abs(wheelTotal)>=wheelOption('wheelThreshold',100,1,500)){
                     wheelTotal=0;
                     navigate(direction);
                     // Set after navigate: reduced motion may synchronously reset state.
                     wheelLocked=true;
-                    lastWheelNavigation=now;
-                    lastWheel=now;wheelDirection=direction;
+                    lastWheel=now;
                 }
             },{passive:false,capture:true});
             listen(document,'keydown',event=>{
