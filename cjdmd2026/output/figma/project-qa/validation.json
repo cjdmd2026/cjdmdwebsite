@@ -1,0 +1,639 @@
+[
+  {
+    "project": "phishing-ddook",
+    "heroOpacity": 1,
+    "cards": [
+      {
+        "course": "interactive",
+        "title": "직접 체험해보는 보이스피싱!",
+        "image": "http://site.test/assets/images/project/submissions/phishing-ddook/interactive.webp?v=41f4f364c216"
+      },
+      {
+        "course": "service",
+        "title": "피싱 뚝!과 함께하는 예방 습관",
+        "image": "http://site.test/assets/images/project/submissions/phishing-ddook/service.webp?v=b79f5efbe4c8"
+      },
+      {
+        "course": "interface",
+        "title": "진짜와 사기, 어디가 다를까?",
+        "image": "http://site.test/assets/images/project/submissions/phishing-ddook/interface.webp?v=0f3306e89061"
+      }
+    ],
+    "overflow": []
+  },
+  {
+    "project": "apuchika",
+    "heroOpacity": 1,
+    "cards": [
+      {
+        "course": "interactive",
+        "title": "아푸치카와 함께하는 양치!",
+        "image": "http://site.test/assets/images/project/submissions/apuchika/interactive.webp?v=12c87ca635c5"
+      },
+      {
+        "course": "service",
+        "title": "집에서 만나는 아푸치카",
+        "image": "http://site.test/assets/images/project/submissions/apuchika/service.webp?v=a827889717f2"
+      },
+      {
+        "course": "interface",
+        "title": "양치별 이야기를 한곳에서 만나요!",
+        "image": "http://site.test/assets/images/project/submissions/apuchika/interface.webp?v=d4fb93e5fa98"
+      }
+    ],
+    "overflow": []
+  },
+  {
+    "project": "curo",
+    "heroOpacity": 1,
+    "cards": [
+      {
+        "course": "interactive",
+        "title": "연습을 실전으로 연결하는 IoT 자가주사 교육 시스템",
+        "image": "http://site.test/assets/images/project/submissions/curo/interactive.webp?v=01321c239e50"
+      },
+      {
+        "course": "service",
+        "title": "동화 속 친구들과 함께하는 첫 주사 교육",
+        "image": "http://site.test/assets/images/project/submissions/curo/service.webp?v=d277296ff6b2"
+      },
+      {
+        "course": "interface",
+        "title": "아이의 건강을 살피고, 배움의 과정을 잇다",
+        "image": "http://site.test/assets/images/project/submissions/curo/interface.webp?v=6e521df2ac68"
+      }
+    ],
+    "overflow": []
+  },
+  {
+    "project": "stylens",
+    "heroOpacity": 1,
+    "cards": [
+      {
+        "course": "interactive",
+        "title": "음성으로 소통하는 스마트미러",
+        "image": "http://site.test/assets/images/project/submissions/stylens/interactive.webp?v=d91f2bfdf9e9"
+      },
+      {
+        "course": "service",
+        "title": "감각으로 연결하는 스타일링 경험",
+        "image": "http://site.test/assets/images/project/submissions/stylens/service.webp?v=70cce13dae14"
+      },
+      {
+        "course": "interface",
+        "title": "나다운 스타일을 전하는 브랜드 웹사이트",
+        "image": "http://site.test/assets/images/project/submissions/stylens/interface.webp?v=ae0ad7865ed0"
+      }
+    ],
+    "overflow": []
+  },
+  {
+    "project": "ilkko",
+    "heroOpacity": 1,
+    "cards": [
+      {
+        "course": "interactive",
+        "title": "집에서 즐기며 학습하는 다감각 재택 훈련 서비스",
+        "image": "http://site.test/assets/images/project/submissions/ilkko/interactive.webp?v=3021a923357a"
+      },
+      {
+        "course": "service",
+        "title": "읽기 모험의 끝, 성장을 선물하다",
+        "image": "http://site.test/assets/images/project/submissions/ilkko/service.webp?v=7b4c5451cab5"
+      },
+      {
+        "course": "interface",
+        "title": "아이와 보호자를 잇는 훈련 첫걸음",
+        "image": "http://site.test/assets/images/project/submissions/ilkko/interface.webp?v=53ae8a17168e"
+      }
+    ],
+    "overflow": []
+  },
+  {
+    "project": "dadeullim",
+    "heroOpacity": 1,
+    "cards": [
+      {
+        "course": "interactive",
+        "title": "소리 대신 진동과 빛으로 도로 위 위험을 전하는 1인칭 주행 체험",
+        "image": "http://site.test/assets/images/project/submissions/dadeullim/interactive.webp?v=a223a114431e"
+      },
+      {
+        "course": "service",
+        "title": "청각장애인을 위한 실시간 주행 정보 차량 서비스",
+        "image": "http://site.test/assets/images/project/submissions/dadeullim/service.webp?v=2fdac4923f25"
+      },
+      {
+        "course": "interface",
+        "title": "소리를 넘어, 모두가 함께하는 주행 경험 웹사이트",
+        "image": "http://site.test/assets/images/project/submissions/dadeullim/interface.webp?v=7c7d9cdfa530"
+      }
+    ],
+    "overflow": []
+  },
+  {
+    "project": "omix",
+    "heroOpacity": 1,
+    "cards": [
+      {
+        "course": "interactive",
+        "title": "OMIX | New K-Buddhism DJ",
+        "image": "http://site.test/assets/images/project/submissions/omix/interactive.webp?v=6b036d4c99cb"
+      },
+      {
+        "course": "service",
+        "title": "OMIX | 체험을 넘어 이어지는 오프라인 서비스디자인",
+        "image": "http://site.test/assets/images/project/submissions/omix/service.webp?v=6b080863246a"
+      },
+      {
+        "course": "interface",
+        "title": "OMIX | 108초를 넘어 이어지는 사운드 아카이브",
+        "image": "http://site.test/assets/images/project/submissions/omix/interface.webp?v=f5bc55d7e198"
+      }
+    ],
+    "overflow": []
+  },
+  {
+    "project": "year-on",
+    "heroOpacity": 1,
+    "cards": [
+      {
+        "course": "interactive",
+        "title": "서로가 이어져 우리가 되는 경험",
+        "image": "http://site.test/assets/images/project/submissions/year-on/interactive.webp?v=094d675286a8"
+      },
+      {
+        "course": "service",
+        "title": "당신 일상 속 우리",
+        "image": "http://site.test/assets/images/project/submissions/year-on/service.webp?v=2bdafbf75239"
+      },
+      {
+        "course": "interface",
+        "title": "시대별 매체로 살펴보는 우리성",
+        "image": "http://site.test/assets/images/project/submissions/year-on/interface.webp?v=65c05b52c7ce"
+      }
+    ],
+    "overflow": []
+  },
+  {
+    "project": "jikji",
+    "heroOpacity": 1,
+    "cards": [
+      {
+        "course": "interactive",
+        "title": "직지잼버리  |  직지 AR 체험",
+        "image": "http://site.test/assets/images/project/submissions/jikji/interactive.webp?v=9600ad3a5abb"
+      },
+      {
+        "course": "service",
+        "title": "직지 잼버리  |  새로운 캐릭터와 스토리를 대입한 서비스디자인",
+        "image": "http://site.test/assets/images/project/submissions/jikji/service.webp?v=27200805a111"
+      },
+      {
+        "course": "interface",
+        "title": "직지 잼버리  |  새로운 세계관을 대입한 프로세스",
+        "image": "http://site.test/assets/images/project/submissions/jikji/interface.webp?v=41c02afaaa86"
+      }
+    ],
+    "overflow": []
+  },
+  {
+    "project": "cheoma",
+    "heroOpacity": 1,
+    "cards": [
+      {
+        "course": "interactive",
+        "title": "AR로 보는 다양한 처마",
+        "image": "http://site.test/assets/images/project/submissions/cheoma/interactive.webp?v=09cfe42113c4"
+      },
+      {
+        "course": "service",
+        "title": "처마 아래, 사람이 머물던 자리",
+        "image": "http://site.test/assets/images/project/submissions/cheoma/service.webp?v=cb88a46fe8b2"
+      },
+      {
+        "course": "interface",
+        "title": "처마 아래의 빛을 따라가다",
+        "image": "http://site.test/assets/images/project/submissions/cheoma/interface.webp?v=0b4157b624ce"
+      }
+    ],
+    "overflow": []
+  },
+  {
+    "project": "cocorang",
+    "heroOpacity": 1,
+    "cards": [
+      {
+        "course": "interactive",
+        "title": "친구를 만나 함께 걷는 코코랑 마을 탐험",
+        "image": "http://site.test/assets/images/project/submissions/cocorang/interactive.webp?v=ed868454aaf0"
+      },
+      {
+        "course": "service",
+        "title": "산책에서 시작되는 새로운 연결",
+        "image": "http://site.test/assets/images/project/submissions/cocorang/service.webp?v=27a63a147237"
+      },
+      {
+        "course": "interface",
+        "title": "우리 동네 산책 이야기를 담은 웹사이트",
+        "image": "http://site.test/assets/images/project/submissions/cocorang/interface.webp?v=13462d2d8742"
+      }
+    ],
+    "overflow": []
+  },
+  {
+    "project": "magmoa",
+    "heroOpacity": 1,
+    "cards": [
+      {
+        "course": "interactive",
+        "title": "여행의 순간을 수집하는 위치 기반 디지털 마그넷 서비스",
+        "image": "http://site.test/assets/images/project/submissions/magmoa/interactive.webp?v=42af3a2f7950"
+      },
+      {
+        "course": "service",
+        "title": "여행의 순간을 모으다",
+        "image": "http://site.test/assets/images/project/submissions/magmoa/service.webp?v=e0cac0528d6f"
+      },
+      {
+        "course": "interface",
+        "title": "여행과 수집을 잇는 웹사이트",
+        "image": "http://site.test/assets/images/project/submissions/magmoa/interface.webp?v=32657b846be1"
+      }
+    ],
+    "overflow": []
+  },
+  {
+    "project": "efact",
+    "heroOpacity": 1,
+    "cards": [
+      {
+        "course": "interactive",
+        "title": "탐험과 선택으로 마주하는 미래 청주의 이야기",
+        "image": "http://site.test/assets/images/project/submissions/efact/interactive.webp?v=875ee95917cf"
+      },
+      {
+        "course": "service",
+        "title": "탐험의 기억을 소장하는 프로젝트 굿즈 컬렉션",
+        "image": "http://site.test/assets/images/project/submissions/efact/service.webp?v=f1441688c788"
+      },
+      {
+        "course": "interface",
+        "title": "E.FACT: 기억에서 연대로 이어지는 인터랙티브 웹사이트",
+        "image": "http://site.test/assets/images/project/submissions/efact/interface.webp?v=6daf58d01154"
+      }
+    ],
+    "overflow": []
+  },
+  {
+    "project": "28",
+    "heroOpacity": 1,
+    "cards": [
+      {
+        "course": "interactive",
+        "title": "당신의 별의 이야기를 듣다",
+        "image": "http://site.test/assets/images/project/submissions/28/interactive.webp?v=0ef9dc7426c5"
+      },
+      {
+        "course": "service",
+        "title": "우리의 별자리를 일상에 담다",
+        "image": "http://site.test/assets/images/project/submissions/28/service.webp?v=c83b79ab1ed1"
+      },
+      {
+        "course": "interface",
+        "title": "별의 이야기가 머무는 곳, 별운관",
+        "image": "http://site.test/assets/images/project/submissions/28/interface.webp?v=2410117065b4"
+      }
+    ],
+    "overflow": []
+  },
+  {
+    "width": 390,
+    "course": 0,
+    "overflow": false,
+    "card": {
+      "x": 24,
+      "y": 1043,
+      "width": 342,
+      "height": 492.53125,
+      "top": 1043,
+      "right": 366,
+      "bottom": 1535.53125,
+      "left": 24
+    },
+    "copy": {
+      "x": 24,
+      "y": 1255.375,
+      "width": 342,
+      "height": 280.15625,
+      "top": 1255.375,
+      "right": 366,
+      "bottom": 1535.53125,
+      "left": 24
+    },
+    "thumb": {
+      "x": 24,
+      "y": 1043,
+      "width": 342,
+      "height": 192.375,
+      "top": 1043,
+      "right": 366,
+      "bottom": 1235.375,
+      "left": 24
+    }
+  },
+  {
+    "width": 390,
+    "course": 1,
+    "overflow": false,
+    "card": {
+      "x": 24,
+      "y": 1551.53125,
+      "width": 342,
+      "height": 521.328125,
+      "top": 1551.53125,
+      "right": 366,
+      "bottom": 2072.859375,
+      "left": 24
+    },
+    "copy": {
+      "x": 24,
+      "y": 1763.90625,
+      "width": 342,
+      "height": 308.953125,
+      "top": 1763.90625,
+      "right": 366,
+      "bottom": 2072.859375,
+      "left": 24
+    },
+    "thumb": {
+      "x": 24,
+      "y": 1551.53125,
+      "width": 342,
+      "height": 192.375,
+      "top": 1551.53125,
+      "right": 366,
+      "bottom": 1743.90625,
+      "left": 24
+    }
+  },
+  {
+    "width": 390,
+    "course": 2,
+    "overflow": false,
+    "card": {
+      "x": 24,
+      "y": 2083.859375,
+      "width": 342,
+      "height": 521.328125,
+      "top": 2083.859375,
+      "right": 366,
+      "bottom": 2605.1875,
+      "left": 24
+    },
+    "copy": {
+      "x": 24,
+      "y": 2296.234375,
+      "width": 342,
+      "height": 308.953125,
+      "top": 2296.234375,
+      "right": 366,
+      "bottom": 2605.1875,
+      "left": 24
+    },
+    "thumb": {
+      "x": 24,
+      "y": 2083.859375,
+      "width": 342,
+      "height": 192.375,
+      "top": 2083.859375,
+      "right": 366,
+      "bottom": 2276.234375,
+      "left": 24
+    }
+  },
+  {
+    "width": 768,
+    "course": 0,
+    "overflow": false,
+    "card": {
+      "x": 24,
+      "y": 1039,
+      "width": 720,
+      "height": 380,
+      "top": 1039,
+      "right": 744,
+      "bottom": 1419,
+      "left": 24
+    },
+    "copy": {
+      "x": 456.6875,
+      "y": 1074.515625,
+      "width": 287.3125,
+      "height": 308.953125,
+      "top": 1074.515625,
+      "right": 744,
+      "bottom": 1383.46875,
+      "left": 456.6875
+    },
+    "thumb": {
+      "x": 24,
+      "y": 1039,
+      "width": 388.6875,
+      "height": 380,
+      "top": 1039,
+      "right": 412.6875,
+      "bottom": 1419,
+      "left": 24
+    }
+  },
+  {
+    "width": 768,
+    "course": 1,
+    "overflow": false,
+    "card": {
+      "x": 24,
+      "y": 1193,
+      "width": 720,
+      "height": 380,
+      "top": 1193,
+      "right": 744,
+      "bottom": 1573,
+      "left": 24
+    },
+    "copy": {
+      "x": 456.6875,
+      "y": 1214.125,
+      "width": 287.3125,
+      "height": 337.75,
+      "top": 1214.125,
+      "right": 744,
+      "bottom": 1551.875,
+      "left": 456.6875
+    },
+    "thumb": {
+      "x": 24,
+      "y": 1193,
+      "width": 388.6875,
+      "height": 380,
+      "top": 1193,
+      "right": 412.6875,
+      "bottom": 1573,
+      "left": 24
+    }
+  },
+  {
+    "width": 768,
+    "course": 2,
+    "overflow": false,
+    "card": {
+      "x": 24,
+      "y": 1345,
+      "width": 720,
+      "height": 380,
+      "top": 1345,
+      "right": 744,
+      "bottom": 1725,
+      "left": 24
+    },
+    "copy": {
+      "x": 456.6875,
+      "y": 1366.125,
+      "width": 287.3125,
+      "height": 337.75,
+      "top": 1366.125,
+      "right": 744,
+      "bottom": 1703.875,
+      "left": 456.6875
+    },
+    "thumb": {
+      "x": 24,
+      "y": 1345,
+      "width": 388.6875,
+      "height": 380,
+      "top": 1345,
+      "right": 412.6875,
+      "bottom": 1725,
+      "left": 24
+    }
+  },
+  {
+    "grid": [
+      {
+        "id": "dadeullim",
+        "background": "url(\"../assets/images/project/submissions/dadeullim/portrait.webp?v=ed47fe59eef4\")"
+      },
+      {
+        "id": "magmoa",
+        "background": "url(\"../assets/images/project/submissions/magmoa/portrait.webp?v=7a894e081fc5\")"
+      },
+      {
+        "id": "28",
+        "background": "url(\"../assets/images/project/submissions/28/portrait.webp?v=12a089508d6e\")"
+      },
+      {
+        "id": "apuchika",
+        "background": "url(\"../assets/images/project/submissions/apuchika/portrait.webp?v=70c1a0ee4590\")"
+      },
+      {
+        "id": "ilkko",
+        "background": "url(\"../assets/images/project/submissions/ilkko/portrait.webp?v=cee3156b8b4f\")"
+      },
+      {
+        "id": "jikji",
+        "background": "url(\"../assets/images/project/submissions/jikji/portrait.webp?v=2fe9c74e7776\")"
+      },
+      {
+        "id": "cheoma",
+        "background": "url(\"../assets/images/project/submissions/cheoma/portrait.webp?v=fa68cf3c9ad6\")"
+      },
+      {
+        "id": "phishing-ddook",
+        "background": "url(\"../assets/images/project/submissions/phishing-ddook/portrait.webp?v=37b69973573f\")"
+      },
+      {
+        "id": "cocorang",
+        "background": "url(\"../assets/images/project/submissions/cocorang/portrait.webp?v=c3426dc562ee\")"
+      },
+      {
+        "id": "curo",
+        "background": "url(\"../assets/images/project/submissions/curo/portrait.webp?v=db4bc2e925bb\")"
+      },
+      {
+        "id": "efact",
+        "background": "url(\"../assets/images/project/submissions/efact/portrait.webp?v=be115698a4e5\")"
+      },
+      {
+        "id": "omix",
+        "background": "url(\"../assets/images/project/submissions/omix/portrait.webp?v=e3365694013c\")"
+      },
+      {
+        "id": "stylens",
+        "background": "url(\"../assets/images/project/submissions/stylens/portrait.webp?v=cbd1cb920e4a\")"
+      },
+      {
+        "id": "year-on",
+        "background": "url(\"../assets/images/project/submissions/year-on/portrait.webp?v=5f677e4211ab\")"
+      }
+    ],
+    "slides": [
+      {
+        "id": "dadeullim",
+        "background": "url(\"../assets/images/project/submissions/dadeullim/landscape.webp?v=51ccbdb0fbfe\")"
+      },
+      {
+        "id": "magmoa",
+        "background": "url(\"../assets/images/project/submissions/magmoa/landscape.webp?v=4be09131a54a\")"
+      },
+      {
+        "id": "28",
+        "background": "url(\"../assets/images/project/submissions/28/landscape.webp?v=9a2e1939de06\")"
+      },
+      {
+        "id": "apuchika",
+        "background": "url(\"../assets/images/project/submissions/apuchika/landscape.webp?v=72935c82ae8b\")"
+      },
+      {
+        "id": "ilkko",
+        "background": "url(\"../assets/images/project/submissions/ilkko/landscape.webp?v=ef8833eaac72\")"
+      },
+      {
+        "id": "jikji",
+        "background": "url(\"../assets/images/project/submissions/jikji/landscape.webp?v=05496fe647a0\")"
+      },
+      {
+        "id": "cheoma",
+        "background": "url(\"../assets/images/project/submissions/cheoma/landscape.webp?v=c87097f5a3a4\")"
+      },
+      {
+        "id": "phishing-ddook",
+        "background": "url(\"../assets/images/project/submissions/phishing-ddook/landscape.webp?v=ab5ae79bdf48\")"
+      },
+      {
+        "id": "cocorang",
+        "background": "url(\"../assets/images/project/submissions/cocorang/landscape.webp?v=90688472dfd3\")"
+      },
+      {
+        "id": "curo",
+        "background": "url(\"../assets/images/project/submissions/curo/landscape.webp?v=3f2bd4f81605\")"
+      },
+      {
+        "id": "efact",
+        "background": "url(\"../assets/images/project/submissions/efact/landscape.webp?v=8d40153a75af\")"
+      },
+      {
+        "id": "omix",
+        "background": "url(\"../assets/images/project/submissions/omix/landscape.webp?v=8ca7c0a49a20\")"
+      },
+      {
+        "id": "stylens",
+        "background": "url(\"../assets/images/project/submissions/stylens/landscape.webp?v=e2a404da47e6\")"
+      },
+      {
+        "id": "year-on",
+        "background": "url(\"../assets/images/project/submissions/year-on/landscape.webp?v=faee87c2a7e0\")"
+      }
+    ],
+    "errors": []
+  }
+]

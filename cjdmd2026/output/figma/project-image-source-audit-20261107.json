@@ -1,0 +1,2761 @@
+[
+  {
+    "id": "29:111",
+    "name": "피싱뚝!_세로대표 · 이미지 채우기",
+    "frame": {
+      "width": 768,
+      "height": 1030
+    },
+    "sources": [
+      {
+        "hash": "a573d05dd6b898d12795bb0cf6be357bf793bbc7",
+        "size": {
+          "width": 1536,
+          "height": 2060
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:117",
+    "name": "피싱뚝!_가로대표 · 이미지 채우기",
+    "frame": {
+      "width": 1456,
+      "height": 819
+    },
+    "sources": [
+      {
+        "hash": "da6b7acd97a119bf5c27f3b9f768dc55ea00b86c",
+        "size": {
+          "width": 1671,
+          "height": 941
+        },
+        "scaleMode": "FIT",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:133",
+    "name": "피싱뚝!_인터랙티브 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "3d7b866230add81698c4f326e883848ce494fcf3",
+        "size": {
+          "width": 1920,
+          "height": 1080
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:142",
+    "name": "피싱뚝!_서비스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "2decb1a53a25cca108ccd7d00fc5d379a5d90b47",
+        "size": {
+          "width": 1920,
+          "height": 942
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:151",
+    "name": "피싱뚝!_인터페이스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "9bf8ffedde0a1cd06a187d170295a53f0677c1ed",
+        "size": {
+          "width": 1920,
+          "height": 1081
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:174",
+    "name": "아푸치카_세로대표 · 이미지 채우기",
+    "frame": {
+      "width": 768,
+      "height": 1030
+    },
+    "sources": [
+      {
+        "hash": "0c00f743980fcc7b04e3921a430d9264d02e560b",
+        "size": {
+          "width": 1536,
+          "height": 2060
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:180",
+    "name": "아푸치카_가로대표 · 이미지 채우기",
+    "frame": {
+      "width": 1456,
+      "height": 819
+    },
+    "sources": [
+      {
+        "hash": "e5089028f342e4ca452d0e75594409df5831847a",
+        "size": {
+          "width": 1920,
+          "height": 1080
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      },
+      {
+        "hash": "47276464b5cd3c5c57633f4cebc3bfa2483d0d6c",
+        "size": {
+          "width": 1920,
+          "height": 1080
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:198",
+    "name": "아푸치카_인터랙티브 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "bc052661587ea61e75581aaf16925602e8e5d101",
+        "size": {
+          "width": 1920,
+          "height": 1080
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:207",
+    "name": "아푸치카_서비스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "5f47b1b75068a2e4508b1879bea56c9c3b010748",
+        "size": {
+          "width": 1920,
+          "height": 1080
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:216",
+    "name": "아푸치카_인터페이스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "bcdf32064e27ac361a2ac2ef4c7c73e594d05c53",
+        "size": {
+          "width": 1920,
+          "height": 1080
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:240",
+    "name": "CURO_세로대표 · 이미지 채우기",
+    "frame": {
+      "width": 768,
+      "height": 1030
+    },
+    "sources": [
+      {
+        "hash": "623a417805cdac279166defcd9de54d4207cde7d",
+        "size": {
+          "width": 1536,
+          "height": 2060
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:246",
+    "name": "CURO_가로대표 · 이미지 채우기",
+    "frame": {
+      "width": 1456,
+      "height": 819
+    },
+    "sources": [
+      {
+        "hash": "3a1f856cd9fd21e4027c7aedf5453ee6d9434237",
+        "size": {
+          "width": 1920,
+          "height": 1080
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:270",
+    "name": "CURO_인터랙티브 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "d1f786cd70424f9d0f6bed01c5f5cfd3338fa7b9",
+        "size": {
+          "width": 1920,
+          "height": 1080
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:279",
+    "name": "CURO_서비스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "d992d76b6186b79f5f751385bdaeb2d493471618",
+        "size": {
+          "width": 1920,
+          "height": 1080
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:288",
+    "name": "CURO_인터페이스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "c41249c38a308a469832af95e7655d0160c7a12d",
+        "size": {
+          "width": 1920,
+          "height": 1080
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:311",
+    "name": "Stylens_세로대표 · 이미지 채우기",
+    "frame": {
+      "width": 768,
+      "height": 1030
+    },
+    "sources": [
+      {
+        "hash": "fcc0f154d4ed645c5c71a9e2ee6e185ff237d403",
+        "size": {
+          "width": 1536,
+          "height": 2060
+        },
+        "scaleMode": "CROP",
+        "transform": [
+          [
+            1,
+            0,
+            -0.00043683304102160037
+          ],
+          [
+            0,
+            1,
+            0.0003257162752561271
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": -0.09000000357627869,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:317",
+    "name": "Stylens_가로대표 · 이미지 채우기",
+    "frame": {
+      "width": 1456,
+      "height": 819
+    },
+    "sources": [
+      {
+        "hash": "db70184fdd878ef2a2eb9e16edcb35d7a6e0a387",
+        "size": {
+          "width": 1920,
+          "height": 1080
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:333",
+    "name": "Stylens_인터랙티브 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "12d46199da72f0cff1bda1375ff9b918c7b787ac",
+        "size": {
+          "width": 1920,
+          "height": 1080
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:342",
+    "name": "Stylens_서비스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "4ef24015c42a89b18298b994aa38e52921e9300d",
+        "size": {
+          "width": 1920,
+          "height": 1080
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:351",
+    "name": "Stylens_인터페이스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "d99f3968dfd30511d511384609671cfae9f1c052",
+        "size": {
+          "width": 1087,
+          "height": 1447
+        },
+        "scaleMode": "CROP",
+        "transform": [
+          [
+            1,
+            0,
+            -0.00031087759998627007
+          ],
+          [
+            0,
+            0.4225552976131439,
+            0.37663787603378296
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:375",
+    "name": "읽:꼬_세로대표 · 이미지 채우기",
+    "frame": {
+      "width": 768,
+      "height": 1030
+    },
+    "sources": [
+      {
+        "hash": "9754f29e6507e6f18d86350d06824905bfa535b0",
+        "size": {
+          "width": 2172,
+          "height": 2896
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:381",
+    "name": "읽:꼬_가로대표 · 이미지 채우기",
+    "frame": {
+      "width": 1456,
+      "height": 819
+    },
+    "sources": [
+      {
+        "hash": "9bd690a64aea5113002e2f2f2e58b632c5c7a7e2",
+        "size": {
+          "width": 3840,
+          "height": 2000
+        },
+        "scaleMode": "CROP",
+        "transform": [
+          [
+            0.9259259104728699,
+            0,
+            0.03703703731298447
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:416",
+    "name": "읽:꼬_인터랙티브 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "7bc93762bead7907db4941a61d1c6962571e096b",
+        "size": {
+          "width": 1536,
+          "height": 1024
+        },
+        "scaleMode": "CROP",
+        "transform": [
+          [
+            1,
+            0,
+            -0.00036934897070750594
+          ],
+          [
+            0,
+            0.84375,
+            0.044428128749132156
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:425",
+    "name": "image 2861",
+    "frame": {
+      "width": 735,
+      "height": 415
+    },
+    "sources": [
+      {
+        "hash": "07e123a3d8d7bd4fd17ebdb851a54c75c5297c6b",
+        "size": {
+          "width": 2103,
+          "height": 748
+        },
+        "scaleMode": "CROP",
+        "transform": [
+          [
+            0.6176502108573914,
+            0,
+            0.06165064498782158
+          ],
+          [
+            0,
+            0.9806512594223022,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:434",
+    "name": "읽:꼬_인터페이스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "f612a19a6980f06df0b3ea43b8e816c0f522e403",
+        "size": {
+          "width": 3744,
+          "height": 4096
+        },
+        "scaleMode": "CROP",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            0.51416015625,
+            0.24486154317855835
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:457",
+    "name": "다들림_세로대표 · 이미지 채우기",
+    "frame": {
+      "width": 768,
+      "height": 1030
+    },
+    "sources": [
+      {
+        "hash": "7a4c52d7ef717464109285778ef6b8d36f82d5f5",
+        "size": {
+          "width": 1086,
+          "height": 1448
+        },
+        "scaleMode": "CROP",
+        "transform": [
+          [
+            0.9902913570404053,
+            0,
+            0.00938511360436678
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:463",
+    "name": "다들림_가로대표 · 이미지 채우기",
+    "frame": {
+      "width": 1456,
+      "height": 819
+    },
+    "sources": [
+      {
+        "hash": "9662a8efda4e5224fc7fe74ad16bfab247c126c5",
+        "size": {
+          "width": 2912,
+          "height": 1632
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:484",
+    "name": "다들림_인터랙티브 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "febe669df4184112486ad69e41f3cc9051ea52cc",
+        "size": {
+          "width": 3161,
+          "height": 4096
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:493",
+    "name": "다들림_서비스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "540fa694240aacd8b8779e6ead2d788af1b1d92c",
+        "size": {
+          "width": 4096,
+          "height": 1924
+        },
+        "scaleMode": "CROP",
+        "transform": [
+          [
+            0.6595996618270874,
+            0,
+            0.01930590718984604
+          ],
+          [
+            0,
+            0.7898741364479065,
+            0.1916794627904892
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0.19999999552965164,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:502",
+    "name": "다들림_인터페이스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "55cbebc8ac6e638e9e60c63521e3c29009f1342c",
+        "size": {
+          "width": 3680,
+          "height": 2070
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0.09999999776482582,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": -0.05999999865889549,
+          "shadows": 0.20999999344348907
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:526",
+    "name": "직지잼버리_세로대표 · 이미지 채우기",
+    "frame": {
+      "width": 768,
+      "height": 1030
+    },
+    "sources": [
+      {
+        "hash": "4d5b1e804e8e9dfe001098966360346d3f7d3bec",
+        "size": {
+          "width": 1084,
+          "height": 1405
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:532",
+    "name": "직지잼버리_가로대표 · 이미지 채우기",
+    "frame": {
+      "width": 1456,
+      "height": 819
+    },
+    "sources": [
+      {
+        "hash": "6ae995ee33f4ebd1217a3821e141b0f2409661b7",
+        "size": {
+          "width": 1978,
+          "height": 1114
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:575",
+    "name": "직지잼버리_인터랙티브 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "a9f021f8cc46aa030b06335fecf82f3182126dbb",
+        "size": {
+          "width": 1921,
+          "height": 1081
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:584",
+    "name": "직지잼버리_서비스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "f4dc6055da126a16145cc577245da9f64f945219",
+        "size": {
+          "width": 1921,
+          "height": 1081
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:593",
+    "name": "직지잼버리_인터페이스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "5c78d5de664df0f764b9b45f4fb5397fa2a26398",
+        "size": {
+          "width": 1921,
+          "height": 1081
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:616",
+    "name": "그늘잡이_세로대표 · 이미지 채우기",
+    "frame": {
+      "width": 768,
+      "height": 1030
+    },
+    "sources": [
+      {
+        "hash": "59ba82ab865db622ab30851ab8e5e14ac9126688",
+        "size": {
+          "width": 1083,
+          "height": 1452
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:622",
+    "name": "그늘잡이_가로대표 · 이미지 채우기",
+    "frame": {
+      "width": 1456,
+      "height": 819
+    },
+    "sources": [
+      {
+        "hash": "cfbe9bf537f4619e78043d8ce09e9390ffc3039c",
+        "size": {
+          "width": 2048,
+          "height": 1152
+        },
+        "scaleMode": "CROP",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:638",
+    "name": "그늘잡이_인터랙티브 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "e3653ba4f67541585810e4c4758e2e52940483ac",
+        "size": {
+          "width": 1024,
+          "height": 1536
+        },
+        "scaleMode": "CROP",
+        "transform": [
+          [
+            1,
+            0,
+            -4.454152602306749e-10
+          ],
+          [
+            0,
+            0.375,
+            0.3396739065647125
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:647",
+    "name": "그늘잡이_서비스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "0a515a904f6970063cbdaa948bf36fd2853e93c1",
+        "size": {
+          "width": 1624,
+          "height": 969
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:656",
+    "name": "그늘잡이_인터페이스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "e89e1bcd91503e5639c635fed6bfe2a18e355590",
+        "size": {
+          "width": 1199,
+          "height": 1312
+        },
+        "scaleMode": "CROP",
+        "transform": [
+          [
+            1,
+            0,
+            0.0006128715467639267
+          ],
+          [
+            0,
+            0.5140529870986938,
+            0.3535091280937195
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:683",
+    "name": "Group 1000006856 1",
+    "frame": {
+      "width": 768,
+      "height": 1031
+    },
+    "sources": [
+      {
+        "hash": "8d91fb740acb95fb2488b812045ce84e5f72735b",
+        "size": {
+          "width": 768,
+          "height": 1031
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:689",
+    "name": "image 6394",
+    "frame": {
+      "width": 1456,
+      "height": 819
+    },
+    "sources": [
+      {
+        "hash": "9676141282796d0ecaa25d234576068bb35be499",
+        "size": {
+          "width": 1920,
+          "height": 1080
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:713",
+    "name": "ChatGPT Image 2026년 9월 25일 오후 09_40_01 1",
+    "frame": {
+      "width": 726,
+      "height": 968
+    },
+    "sources": [
+      {
+        "hash": "0f53b259310dc3835571f488188a8b797ccb635b",
+        "size": {
+          "width": 1086,
+          "height": 1448
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:722",
+    "name": "KakaoTalk_20260930_205947268 1",
+    "frame": {
+      "width": 736,
+      "height": 736
+    },
+    "sources": [
+      {
+        "hash": "49d581e77ef1f5f88594053833adfefc1420a390",
+        "size": {
+          "width": 1254,
+          "height": 1254
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:731",
+    "name": "425868445_03d9213e-c802-432c-9fd8-ee8502494941 2",
+    "frame": {
+      "width": 736,
+      "height": 859
+    },
+    "sources": [
+      {
+        "hash": "1a3ada9a8f58413fad1817e29827829a9cc6edfd",
+        "size": {
+          "width": 1980,
+          "height": 2310
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:754",
+    "name": "YEAR-ON_세로대표 · 이미지 채우기",
+    "frame": {
+      "width": 768,
+      "height": 1030
+    },
+    "sources": [
+      {
+        "hash": "021a90438d8f89f5d12ff7d9389ceee761befb21",
+        "size": {
+          "width": 1536,
+          "height": 2060
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:760",
+    "name": "YEAR-ON_가로대표 · 이미지 채우기",
+    "frame": {
+      "width": 1456,
+      "height": 819
+    },
+    "sources": [
+      {
+        "hash": "4c548b6dd37cb42102472e631cf94e34a084de8b",
+        "size": {
+          "width": 2850,
+          "height": 1772
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:776",
+    "name": "YEAR-ON_인터랙티브 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "720ea11ee8b7ecf91282fdc8cade378583c27aa2",
+        "size": {
+          "width": 1920,
+          "height": 1080
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:785",
+    "name": "YEAR-ON_서비스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "c3dae3fafb776531162f1b0f9f85e6a865a87f90",
+        "size": {
+          "width": 1126,
+          "height": 1397
+        },
+        "scaleMode": "CROP",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            0.4533822536468506,
+            0.2419339418411255
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": -0.16666666915019354,
+          "saturation": 0,
+          "temperature": -0.05999999865889549,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:794",
+    "name": "YEAR-ON_인터페이스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "d8798d7f1685d129042c451e36833c872fc61982",
+        "size": {
+          "width": 1928,
+          "height": 1451
+        },
+        "scaleMode": "CROP",
+        "transform": [
+          [
+            0.7287128567695618,
+            0,
+            0.06638222932815552
+          ],
+          [
+            0,
+            0.5752341151237488,
+            0.21866200864315033
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:818",
+    "name": "COCO LANG_세로대표 · 이미지 채우기",
+    "frame": {
+      "width": 768,
+      "height": 1030
+    },
+    "sources": [
+      {
+        "hash": "fc298359eeccbf79f5d731e7768ae78507598aca",
+        "size": {
+          "width": 1083,
+          "height": 1453
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:824",
+    "name": "COCO LANG_가로대표 · 이미지 채우기",
+    "frame": {
+      "width": 1456,
+      "height": 819
+    },
+    "sources": [
+      {
+        "hash": "589208a3253ce7cc8f90caf29709ac6953e359dd",
+        "size": {
+          "width": 1672,
+          "height": 941
+        },
+        "scaleMode": "CROP",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            0.9994686245918274,
+            0.0002656748110894114
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:885",
+    "name": "COCO LANG_인터랙티브 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "7c0e1c3255115c6c0179fa57c7358a9f9feb9a6e",
+        "size": {
+          "width": 1672,
+          "height": 941
+        },
+        "scaleMode": "CROP",
+        "transform": [
+          [
+            1.000531792640686,
+            0,
+            -0.0002658669836819172
+          ],
+          [
+            0,
+            1,
+            -4.0847808691069076e-8
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:894",
+    "name": "COCO LANG_서비스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "6fba72f021a75a84211db27682611fdbdbcdc682",
+        "size": {
+          "width": 1672,
+          "height": 941
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:903",
+    "name": "COCO LANG_인터페이스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "400acf57bd3207ce1e62646253ad211e40d052f6",
+        "size": {
+          "width": 1672,
+          "height": 941
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:926",
+    "name": "마그모아_세로대표 · 이미지 채우기",
+    "frame": {
+      "width": 768,
+      "height": 1030
+    },
+    "sources": [
+      {
+        "hash": "78e933c4c4174f13be6d98c028832c0dd25fae6e",
+        "size": {
+          "width": 1083,
+          "height": 1452
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            0.7284172773361206,
+            0,
+            0.13168559968471527
+          ],
+          [
+            0,
+            0.48543688654899597,
+            0.11447060853242874
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:932",
+    "name": "마그모아_가로대표 · 이미지 채우기",
+    "frame": {
+      "width": 1456,
+      "height": 819
+    },
+    "sources": [
+      {
+        "hash": "9702e5743a6f85a008df3ad9a735537d42d34288",
+        "size": {
+          "width": 1672,
+          "height": 941
+        },
+        "scaleMode": "CROP",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            0.9994686245918274,
+            0.0002656748110894114
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:952",
+    "name": "마그모아_인터랙티브 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "c1a11e52aacce57044e6eefb65aa1ef132790094",
+        "size": {
+          "width": 1940,
+          "height": 810
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:961",
+    "name": "마그모아_서비스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "16ae146cdca67f0afe69b478cafa3acdb2b99632",
+        "size": {
+          "width": 4096,
+          "height": 2389
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:970",
+    "name": "마그모아_인터페이스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "988fd24a5c51f1c98e2b4fb5cad394dd8dcda2f1",
+        "size": {
+          "width": 1672,
+          "height": 941
+        },
+        "scaleMode": "CROP",
+        "transform": [
+          [
+            0.6292643547058105,
+            0,
+            0.157944917678833
+          ],
+          [
+            0,
+            0.6289308071136475,
+            0.27737802267074585
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:994",
+    "name": "E.FACT_세로대표 · 이미지 채우기",
+    "frame": {
+      "width": 768,
+      "height": 1030
+    },
+    "sources": [
+      {
+        "hash": "b2132175d28b6046446507a727934d639cc1d9ba",
+        "size": {
+          "width": 1083,
+          "height": 1452
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:1000",
+    "name": "E.FACT_가로대표 · 이미지 채우기",
+    "frame": {
+      "width": 1456,
+      "height": 819
+    },
+    "sources": [
+      {
+        "hash": "23beb3887f55831a550c537629987cae848e9454",
+        "size": {
+          "width": 1671,
+          "height": 941
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:1016",
+    "name": "E.FACT_인터랙티브 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "9d00c87fe72f56a6e7cc1f0ecce963cd46b50c8a",
+        "size": {
+          "width": 1670,
+          "height": 941
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:1025",
+    "name": "E.FACT_서비스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "6ac76829dafb83ddedb1a6ccf52f6c4da632db4a",
+        "size": {
+          "width": 1672,
+          "height": 941
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:1034",
+    "name": "E.FACT_인터페이스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "429b8f1734a89e33936633c0981a5119046db965",
+        "size": {
+          "width": 1920,
+          "height": 1080
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:1057",
+    "name": "별운관_세로대표 · 이미지 채우기",
+    "frame": {
+      "width": 768,
+      "height": 1030
+    },
+    "sources": [
+      {
+        "hash": "b11e6a9ad72bd52dfe8152655a4ff3533529ca46",
+        "size": {
+          "width": 1536,
+          "height": 2060
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:1063",
+    "name": "별운관_가로대표 · 이미지 채우기",
+    "frame": {
+      "width": 1456,
+      "height": 819
+    },
+    "sources": [
+      {
+        "hash": "f6ffc96f02c85cb567168e533462af2b682f1016",
+        "size": {
+          "width": 1920,
+          "height": 1080
+        },
+        "scaleMode": "FILL",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:1089",
+    "name": "별운관_인터랙티브 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "f8b8f5f5ddef59c548b074bb5a51b18bea5ac378",
+        "size": {
+          "width": 1920,
+          "height": 1080
+        },
+        "scaleMode": "FIT",
+        "transform": [
+          [
+            1,
+            0,
+            -0.0006709472509101033
+          ],
+          [
+            0,
+            0.3176470696926117,
+            0.3947520852088928
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:1098",
+    "name": "별운관_서비스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "a0b5fcad4c152b60b1966aa76b53050581978177",
+        "size": {
+          "width": 1920,
+          "height": 1080
+        },
+        "scaleMode": "FIT",
+        "transform": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "29:1107",
+    "name": "별운관_인터페이스 · 이미지 채우기",
+    "frame": {
+      "width": 736,
+      "height": 414
+    },
+    "sources": [
+      {
+        "hash": "8a99daf1e577c5ec24c8ea228ef4482a2c02670c",
+        "size": {
+          "width": 1920,
+          "height": 1080
+        },
+        "scaleMode": "FIT",
+        "transform": [
+          [
+            1,
+            0,
+            -0.00000575208650843706
+          ],
+          [
+            0,
+            0.31657445430755615,
+            0.40038731694221497
+          ]
+        ],
+        "filters": {
+          "exposure": 0,
+          "contrast": 0,
+          "saturation": 0,
+          "temperature": 0,
+          "tint": 0,
+          "highlights": 0,
+          "shadows": 0
+        }
+      }
+    ]
+  }
+]

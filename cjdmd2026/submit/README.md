@@ -70,7 +70,7 @@ GitHub 토큰을 `VITE_`, `NEXT_PUBLIC_` 등 브라우저에 공개되는 환경
 | Stylens | `/stylens/` |
 | 직지잼버리 | `/jigjijaembeoli/` |
 | 마그모아 | `/magmoa/` |
-| 그늘잡이 | `/geuneuljab-i/` |
+| 처마 | `/geuneuljab-i/` |
 | YEAR-ON | `/year-on/` |
 | 별운관 | `/byeol-ungwan/` |
 

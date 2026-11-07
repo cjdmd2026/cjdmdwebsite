@@ -508,6 +508,9 @@
                 id: project.id,
                 courseId: course.id,
                 category: course.label,
+                projectTitle: project.title || "",
+                logo: text(project.logo),
+                imageFit: entry.imageFit === "contain" ? "contain" : "cover",
 
                 title:
                     text(entry.title) ||
@@ -559,6 +562,8 @@
 
         image.loading = isFirst ? "eager" : "lazy";
         image.decoding = "async";
+        image.style.objectFit = project.imageFit || "cover";
+        image.dataset.imageFit = project.imageFit || "cover";
 
         if (isFirst) {
             image.setAttribute("fetchpriority", "high");
@@ -611,11 +616,26 @@
             const title = createNode(
                 "div",
                 "hero-title",
-                project.title || ""
+                project.projectTitle || project.title || ""
             );
 
             title.id = "heroTitle";
             title.setAttribute("aria-hidden", "true");
+            title.dataset.projectTitle = project.projectTitle || project.title || "";
+
+            const logoSource = resolveAssetPath(project.logo);
+            if (logoSource) {
+                const logo = createNode("img", "hero-logo");
+                logo.alt = `${title.dataset.projectTitle} 로고`;
+                logo.decoding = "async";
+                const fallback = () => {
+                    title.textContent = title.dataset.projectTitle;
+                };
+                logo.addEventListener("error", fallback, { once: true });
+                renderCleanups.push(() => logo.removeEventListener("error", fallback));
+                logo.src = logoSource;
+                title.replaceChildren(logo);
+            }
 
             media.appendChild(image);
             flyer.append(media, overlay, title);
@@ -1039,7 +1059,8 @@
         }
 
         function fitMedia(width, height) {
-            const scale = Math.max(
+            const fit = image.dataset.imageFit === "contain" ? Math.min : Math.max;
+            const scale = fit(
                 width / sourceWidth,
                 height / sourceHeight
             );
@@ -1099,11 +1120,14 @@
         }
 
         function syncTitle() {
+            // Keep the submitted logo intact during scroll/resize refreshes.
+            if (title?.querySelector(".hero-logo")) return;
+
             const heading = target
                 .closest(".project-card")
                 ?.querySelector(".card-copy h3");
 
-            const text = heading?.textContent.trim();
+            const text = title?.dataset.projectTitle || heading?.textContent.trim();
 
             if (
                 title &&

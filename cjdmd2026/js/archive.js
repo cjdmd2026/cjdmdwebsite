@@ -1275,20 +1275,20 @@ function initExplanationArchiveFade() {
 
     // Replace these entries with your SVG URLs (relative to the HTML page).
     const ICON_URLS = [
-        "../assets/images/project/test/icon/team-01-apuchika.svg",
-        "../assets/images/project/test/icon/team-02-ommix.svg",
-        "../assets/images/project/test/icon/team-03-phishing-ttuk.svg",
-        "../assets/images/project/test/icon/team-04-ilkko.svg",
-        "../assets/images/project/test/icon/team-05-kuro.svg",
-        "../assets/images/project/test/icon/team-06-dadeullim.svg",
-        "../assets/images/project/test/icon/team-07-style-lens.svg",
-        "../assets/images/project/test/icon/team-08-geuneuljabi.svg",
-        "../assets/images/project/test/icon/team-09-magmoa.svg",
-        "../assets/images/project/test/icon/team-10-ieoon.svg",
-        "../assets/images/project/test/icon/team-11-byeolungwan.svg",
-        "../assets/images/project/test/icon/team-12-kokorang.svg",
-        "../assets/images/project/test/icon/team-13-effect.svg",
-        "../assets/images/project/test/icon/team-14-jikji-jamboree.svg"
+        "../assets/images/project/icon/team-01-apuchika.svg",
+        "../assets/images/project/icon/team-02-ommix.svg",
+        "../assets/images/project/icon/team-03-phishing-ttuk.svg",
+        "../assets/images/project/icon/team-04-ilkko.svg",
+        "../assets/images/project/icon/team-05-kuro.svg",
+        "../assets/images/project/icon/team-06-dadeullim.svg",
+        "../assets/images/project/icon/team-07-style-lens.svg",
+        "../assets/images/project/icon/team-08-geuneuljabi.svg",
+        "../assets/images/project/icon/team-09-magmoa.svg",
+        "../assets/images/project/icon/team-10-ieoon.svg",
+        "../assets/images/project/icon/team-11-byeolungwan.svg",
+        "../assets/images/project/icon/team-12-kokorang.svg",
+        "../assets/images/project/icon/team-13-effect.svg",
+        "../assets/images/project/icon/team-14-jikji-jamboree.svg"
     ];
 
     const BACKGROUND = "#ffffff";

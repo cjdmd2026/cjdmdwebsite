@@ -1,0 +1,395 @@
+{
+  "report": [
+    {
+      "id": "phishing-ddook",
+      "url": "http://site.test/assets/images/project/submissions/phishing-ddook/landscape.webp?v=ab5ae79bdf48",
+      "natural": [
+        1673,
+        941
+      ],
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080,
+        "top": 0,
+        "right": 1920,
+        "bottom": 1080,
+        "left": 0
+      },
+      "backgroundSize": "cover",
+      "filter": "none",
+      "opacity": "1",
+      "wave": {
+        "display": "block",
+        "opacity": "1"
+      },
+      "active": true
+    },
+    {
+      "id": "apuchika",
+      "url": "http://site.test/assets/images/project/submissions/apuchika/landscape.webp?v=72935c82ae8b",
+      "natural": [
+        1920,
+        1080
+      ],
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080,
+        "top": 0,
+        "right": 1920,
+        "bottom": 1080,
+        "left": 0
+      },
+      "backgroundSize": "cover",
+      "filter": "none",
+      "opacity": "1",
+      "wave": {
+        "display": "block",
+        "opacity": "1"
+      },
+      "active": true
+    },
+    {
+      "id": "curo",
+      "url": "http://site.test/assets/images/project/submissions/curo/landscape.webp?v=3f2bd4f81605",
+      "natural": [
+        1920,
+        1080
+      ],
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080,
+        "top": 0,
+        "right": 1920,
+        "bottom": 1080,
+        "left": 0
+      },
+      "backgroundSize": "cover",
+      "filter": "none",
+      "opacity": "1",
+      "wave": {
+        "display": "block",
+        "opacity": "1"
+      },
+      "active": true
+    },
+    {
+      "id": "stylens",
+      "url": "http://site.test/assets/images/project/submissions/stylens/landscape.webp?v=e2a404da47e6",
+      "natural": [
+        1920,
+        1080
+      ],
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080,
+        "top": 0,
+        "right": 1920,
+        "bottom": 1080,
+        "left": 0
+      },
+      "backgroundSize": "cover",
+      "filter": "none",
+      "opacity": "1",
+      "wave": {
+        "display": "block",
+        "opacity": "1"
+      },
+      "active": true
+    },
+    {
+      "id": "ilkko",
+      "url": "http://site.test/assets/images/project/submissions/ilkko/landscape.webp?v=ef8833eaac72",
+      "natural": [
+        3556,
+        2000
+      ],
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080,
+        "top": 0,
+        "right": 1920,
+        "bottom": 1080,
+        "left": 0
+      },
+      "backgroundSize": "cover",
+      "filter": "none",
+      "opacity": "1",
+      "wave": {
+        "display": "block",
+        "opacity": "1"
+      },
+      "active": true
+    },
+    {
+      "id": "dadeullim",
+      "url": "http://site.test/assets/images/project/submissions/dadeullim/landscape.webp?v=51ccbdb0fbfe",
+      "natural": [
+        2901,
+        1632
+      ],
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080,
+        "top": 0,
+        "right": 1920,
+        "bottom": 1080,
+        "left": 0
+      },
+      "backgroundSize": "cover",
+      "filter": "none",
+      "opacity": "1",
+      "wave": {
+        "display": "block",
+        "opacity": "1"
+      },
+      "active": true
+    },
+    {
+      "id": "omix",
+      "url": "http://site.test/assets/images/project/submissions/omix/landscape.webp?v=769bef3a0845",
+      "natural": [
+        1920,
+        1080
+      ],
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080,
+        "top": 0,
+        "right": 1920,
+        "bottom": 1080,
+        "left": 0
+      },
+      "backgroundSize": "cover",
+      "filter": "none",
+      "opacity": "1",
+      "wave": {
+        "display": "block",
+        "opacity": "1"
+      },
+      "active": true
+    },
+    {
+      "id": "year-on",
+      "url": "http://site.test/assets/images/project/submissions/year-on/landscape.webp?v=faee87c2a7e0",
+      "natural": [
+        2850,
+        1603
+      ],
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080,
+        "top": 0,
+        "right": 1920,
+        "bottom": 1080,
+        "left": 0
+      },
+      "backgroundSize": "cover",
+      "filter": "none",
+      "opacity": "1",
+      "wave": {
+        "display": "block",
+        "opacity": "1"
+      },
+      "active": true
+    },
+    {
+      "id": "jikji",
+      "url": "http://site.test/assets/images/project/submissions/jikji/landscape.webp?v=05496fe647a0",
+      "natural": [
+        1978,
+        1113
+      ],
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080,
+        "top": 0,
+        "right": 1920,
+        "bottom": 1080,
+        "left": 0
+      },
+      "backgroundSize": "cover",
+      "filter": "none",
+      "opacity": "1",
+      "wave": {
+        "display": "block",
+        "opacity": "1"
+      },
+      "active": true
+    },
+    {
+      "id": "cheoma",
+      "url": "http://site.test/assets/images/project/submissions/cheoma/landscape.webp?v=c87097f5a3a4",
+      "natural": [
+        2048,
+        1152
+      ],
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080,
+        "top": 0,
+        "right": 1920,
+        "bottom": 1080,
+        "left": 0
+      },
+      "backgroundSize": "cover",
+      "filter": "none",
+      "opacity": "1",
+      "wave": {
+        "display": "block",
+        "opacity": "1"
+      },
+      "active": true
+    },
+    {
+      "id": "cocorang",
+      "url": "http://site.test/assets/images/project/submissions/cocorang/landscape.webp?v=90688472dfd3",
+      "natural": [
+        1672,
+        940
+      ],
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080,
+        "top": 0,
+        "right": 1920,
+        "bottom": 1080,
+        "left": 0
+      },
+      "backgroundSize": "cover",
+      "filter": "none",
+      "opacity": "1",
+      "wave": {
+        "display": "block",
+        "opacity": "1"
+      },
+      "active": true
+    },
+    {
+      "id": "magmoa",
+      "url": "http://site.test/assets/images/project/submissions/magmoa/landscape.webp?v=0c79e133e299",
+      "natural": [
+        1672,
+        940
+      ],
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080,
+        "top": 0,
+        "right": 1920,
+        "bottom": 1080,
+        "left": 0
+      },
+      "backgroundSize": "cover",
+      "filter": "none",
+      "opacity": "1",
+      "wave": {
+        "display": "block",
+        "opacity": "1"
+      },
+      "active": true
+    },
+    {
+      "id": "efact",
+      "url": "http://site.test/assets/images/project/submissions/efact/landscape.webp?v=8d40153a75af",
+      "natural": [
+        1671,
+        940
+      ],
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080,
+        "top": 0,
+        "right": 1920,
+        "bottom": 1080,
+        "left": 0
+      },
+      "backgroundSize": "cover",
+      "filter": "none",
+      "opacity": "1",
+      "wave": {
+        "display": "block",
+        "opacity": "1"
+      },
+      "active": true
+    },
+    {
+      "id": "28",
+      "url": "http://site.test/assets/images/project/submissions/28/landscape.webp?v=9a2e1939de06",
+      "natural": [
+        1920,
+        1080
+      ],
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080,
+        "top": 0,
+        "right": 1920,
+        "bottom": 1080,
+        "left": 0
+      },
+      "backgroundSize": "cover",
+      "filter": "none",
+      "opacity": "1",
+      "wave": {
+        "display": "block",
+        "opacity": "1"
+      },
+      "active": true
+    }
+  ],
+  "transition": {
+    "slide": {
+      "view": "slide",
+      "phase": "idle",
+      "index": 13,
+      "projectId": "year-on",
+      "pendingId": null,
+      "queuedDirection": null,
+      "loading": false,
+      "disabled": false,
+      "textureCount": 0,
+      "loadingCount": 0,
+      "activeCount": 0,
+      "wipes": [],
+      "transitionCount": 0,
+      "renderCount": 0,
+      "rgbEnvelope": 0
+    },
+    "wave": {
+      "busy": false,
+      "phase": "idle",
+      "completed": 1,
+      "progress": 1
+    },
+    "overlayVisibility": "hidden"
+  },
+  "errors": []
+}

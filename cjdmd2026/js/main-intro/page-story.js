@@ -8,11 +8,13 @@ import {OPENING_LABEL_START,GUIDE_SWEEP_END} from './reveal-timing.js';
 
 const clamp=value=>Math.max(0,Math.min(1,value));
 const ease=value=>{const t=clamp(value);return t*t*(3-2*t);};
-// Give the different-shapes caption more room by borrowing from the following caption.
-export const CAPTION_CUES=[GUIDE_SWEEP_END,OPENING_LABEL_START,INTRO_CUES[1].start,INTRO_CUES[2].start+1.5];
-export const CAPTION_FADE_START=WAVE_COLOR_END-WAVE_COLOR_DURATION-WAVE_COLOR_SPREAD;
-export const CAPTION_FADE_DURATION=2.4;
+// Finish the two captions as the camera moves on from the opening icon.
+export const CAPTION_CUES=[GUIDE_SWEEP_END,OPENING_LABEL_START];
+export const CAPTION_FADE_START=INTRO_CUES[1].start;
+export const CAPTION_FADE_DURATION=.55;
 export const CAPTION_END=CAPTION_FADE_START+CAPTION_FADE_DURATION;
+const HEADER_FADE_START=WAVE_COLOR_END-WAVE_COLOR_DURATION-WAVE_COLOR_SPREAD;
+const HEADER_FADE_DURATION=2.4;
 
 export function createPageStory(){
   const siteHeader=initSiteHeader();
@@ -45,8 +47,8 @@ export function createPageStory(){
     contentOne.update(reading);
   }
   function update(timeline){
-    // Let the navigation travel over the same scroll interval and easing as the title.
-    siteHeader.setAutoHideProgress(ease((timeline-CAPTION_FADE_START)/CAPTION_FADE_DURATION));
+    // The navigation clears when the first color band begins.
+    siteHeader.setAutoHideProgress(ease((timeline-HEADER_FADE_START)/HEADER_FADE_DURATION));
     // The tool strip belongs to the first icon, between its red sweep and the next guide.
     const barEntering=ease((timeline-GUIDE_SWEEP_END)/.55);
     const barLeaving=ease((timeline-INTRO_CUES[1].start)/.55);
@@ -61,7 +63,7 @@ export function createPageStory(){
     if(timeline>=CAPTION_END)active=-1;
     captions.forEach((caption,index)=>{
       const entering=ease((timeline-CAPTION_CUES[index])/.55);
-      // Dissolve the last caption with the first color band, before the wave fills the field.
+      // Dissolve the last caption as the next icon begins.
       const last=index===captions.length-1;
       const leaving=ease((timeline-(last?CAPTION_FADE_START:CAPTION_CUES[index+1]))/(last?CAPTION_FADE_DURATION:.55));
       const opacity=entering*(1-leaving);

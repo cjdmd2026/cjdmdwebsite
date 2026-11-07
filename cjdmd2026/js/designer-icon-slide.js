@@ -12,10 +12,10 @@
      * 두 학생의 조각을 맞바꾸려면 두 색상 값을 서로 교환하세요.
      * 같은 SVG 안의 색상을 사용하고, 하나의 색상을 여러 학생에게 중복 지정하지 마세요.
      * 생략/오타/중복 값은 남은 조각으로 자동 배정하며, 잘못된 값은 콘솔에 안내합니다.
-     * SVG는 기존 assets/images/project/test/icon 폴더에서 불러옵니다.
+     * SVG는 기존 assets/images/project/icon 폴더에서 불러옵니다.
      */
     const scriptURL = document.currentScript?.src || new URL('../js/designer-icon-slide.js', document.baseURI).href;
-    const iconBaseURL = new URL('../assets/images/project/test/icon/', scriptURL);
+    const iconBaseURL = new URL('../assets/images/project/icon/', scriptURL);
     // 디자이너 목록 HTML 기준 상세 페이지 경로입니다. 개별 주소는 designer-data.js의 href로 지정합니다.
     const DESIGNER_DETAIL_PATH = './profile/';
     const ICON_PROJECTS = window.DESIGNER_ICON_PROJECTS || [];

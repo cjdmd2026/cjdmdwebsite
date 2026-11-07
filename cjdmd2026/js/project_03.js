@@ -856,7 +856,7 @@
                 measureSvg.style.cssText='position:fixed;width:1px;height:1px;visibility:hidden;pointer-events:none';
                 measureSvg.setAttribute('aria-hidden','true');measureSvg.appendChild(measure);
                 try{
-                    const response=await fetch(new URL(`../assets/images/project/test/icon/${file}`,document.baseURI),{signal:events.signal});
+                    const response=await fetch(new URL(`../assets/images/project/icon/${file}`,document.baseURI),{signal:events.signal});
                     if(!response.ok)throw new Error(`SVG ${response.status}`);
                     const xml=new DOMParser().parseFromString(await response.text(),'image/svg+xml');
                     if(disposed)return;

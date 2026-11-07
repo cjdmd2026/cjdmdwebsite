@@ -1,6 +1,6 @@
 /* Project slide variant: horizontal SVG mask blinds (Codrops-inspired independent variant).
  * Replace the existing project controller script with this file (use defer).
- * Required existing files: project-data.js and assets/images/project/test/icon/*.svg.
+ * Required existing files: project-data.js and assets/images/project/icon/*.svg.
  * CSS and overlay markup are inserted automatically. No HTML body or CSS edits.
  */
 (() => {
@@ -11,7 +11,7 @@
       return;
     }
     const iconBaseUrl = new URL(
-      window.PROJECT_WAVE_OPTIONS?.iconBaseUrl || "../assets/images/project/test/icon/",
+      window.PROJECT_WAVE_OPTIONS?.iconBaseUrl || "../assets/images/project/icon/",
       document.baseURI
     );
     const waveStyle = document.createElement("style");

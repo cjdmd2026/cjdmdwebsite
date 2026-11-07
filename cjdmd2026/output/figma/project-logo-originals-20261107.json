@@ -1,0 +1,986 @@
+{
+  "assets": [
+    {
+      "projectId": "phishing-ddook",
+      "teamNodeId": "29:97",
+      "role": "service",
+      "nodeId": "29:142",
+      "format": "png",
+      "output": "assets/images/project/submissions/phishing-ddook/service.webp",
+      "source": "output/figma/project-source/phishing-ddook-service.jpeg",
+      "sourceFormat": "jpeg",
+      "sizeBytes": 1619944
+    },
+    {
+      "projectId": "phishing-ddook",
+      "teamNodeId": "29:97",
+      "role": "interactive",
+      "nodeId": "29:133",
+      "format": "png",
+      "output": "assets/images/project/submissions/phishing-ddook/interactive.webp",
+      "source": "output/figma/project-source/phishing-ddook-interactive.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2295327
+    },
+    {
+      "projectId": "phishing-ddook",
+      "teamNodeId": "29:97",
+      "role": "landscape",
+      "nodeId": "29:117",
+      "format": "png",
+      "output": "assets/images/project/submissions/phishing-ddook/landscape.webp",
+      "source": "output/figma/project-source/phishing-ddook-landscape.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2970373
+    },
+    {
+      "projectId": "phishing-ddook",
+      "teamNodeId": "29:97",
+      "role": "portrait",
+      "nodeId": "29:111",
+      "format": "png",
+      "output": "assets/images/project/submissions/phishing-ddook/portrait.webp",
+      "source": "output/figma/project-source/phishing-ddook-portrait.png",
+      "sourceFormat": "png",
+      "sizeBytes": 3959828
+    },
+    {
+      "projectId": "apuchika",
+      "teamNodeId": "29:160",
+      "role": "portrait",
+      "nodeId": "29:174",
+      "format": "png",
+      "output": "assets/images/project/submissions/apuchika/portrait.webp",
+      "source": "output/figma/project-source/apuchika-portrait.png",
+      "sourceFormat": "png",
+      "sizeBytes": 3779890
+    },
+    {
+      "projectId": "phishing-ddook",
+      "teamNodeId": "29:97",
+      "role": "interface",
+      "nodeId": "29:151",
+      "format": "png",
+      "output": "assets/images/project/submissions/phishing-ddook/interface.webp",
+      "source": "output/figma/project-source/phishing-ddook-interface.jpeg",
+      "sourceFormat": "jpeg",
+      "sizeBytes": 1182315
+    },
+    {
+      "projectId": "phishing-ddook",
+      "teamNodeId": "29:97",
+      "role": "logo",
+      "nodeId": "29:124",
+      "format": "png",
+      "output": "assets/images/project/submissions/phishing-ddook/logo.png",
+      "source": "output/figma/project-source/phishing-ddook-logo.png",
+      "sourceFormat": "png",
+      "sizeBytes": 65656
+    },
+    {
+      "projectId": "apuchika",
+      "teamNodeId": "29:160",
+      "role": "landscape",
+      "nodeId": "29:180",
+      "format": "png",
+      "output": "assets/images/project/submissions/apuchika/landscape.webp",
+      "source": "output/figma/project-source/apuchika-landscape.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2115906
+    },
+    {
+      "projectId": "apuchika",
+      "teamNodeId": "29:160",
+      "role": "interactive",
+      "nodeId": "29:198",
+      "format": "png",
+      "output": "assets/images/project/submissions/apuchika/interactive.webp",
+      "source": "output/figma/project-source/apuchika-interactive.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2208712
+    },
+    {
+      "projectId": "apuchika",
+      "teamNodeId": "29:160",
+      "role": "service",
+      "nodeId": "29:207",
+      "format": "png",
+      "output": "assets/images/project/submissions/apuchika/service.webp",
+      "source": "output/figma/project-source/apuchika-service.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2546605
+    },
+    {
+      "projectId": "apuchika",
+      "teamNodeId": "29:160",
+      "role": "logo",
+      "nodeId": "29:188",
+      "format": "png",
+      "output": "assets/images/project/submissions/apuchika/logo.png",
+      "source": "output/figma/project-source/apuchika-logo.png",
+      "sourceFormat": "png",
+      "sizeBytes": 51487
+    },
+    {
+      "projectId": "apuchika",
+      "teamNodeId": "29:160",
+      "role": "interface",
+      "nodeId": "29:216",
+      "format": "png",
+      "output": "assets/images/project/submissions/apuchika/interface.webp",
+      "source": "output/figma/project-source/apuchika-interface.png",
+      "sourceFormat": "png",
+      "sizeBytes": 1933836
+    },
+    {
+      "projectId": "curo",
+      "teamNodeId": "29:226",
+      "role": "portrait",
+      "nodeId": "29:240",
+      "format": "png",
+      "output": "assets/images/project/submissions/curo/portrait.webp",
+      "source": "output/figma/project-source/curo-portrait.png",
+      "sourceFormat": "png",
+      "sizeBytes": 1319975
+    },
+    {
+      "projectId": "curo",
+      "teamNodeId": "29:226",
+      "role": "landscape",
+      "nodeId": "29:246",
+      "format": "png",
+      "output": "assets/images/project/submissions/curo/landscape.webp",
+      "source": "output/figma/project-source/curo-landscape.png",
+      "sourceFormat": "png",
+      "sizeBytes": 1233631
+    },
+    {
+      "projectId": "curo",
+      "teamNodeId": "29:226",
+      "role": "interactive",
+      "nodeId": "29:270",
+      "format": "png",
+      "output": "assets/images/project/submissions/curo/interactive.webp",
+      "source": "output/figma/project-source/curo-interactive.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2794963
+    },
+    {
+      "projectId": "curo",
+      "teamNodeId": "29:226",
+      "role": "service",
+      "nodeId": "29:279",
+      "format": "png",
+      "output": "assets/images/project/submissions/curo/service.webp",
+      "source": "output/figma/project-source/curo-service.png",
+      "sourceFormat": "png",
+      "sizeBytes": 3163607
+    },
+    {
+      "projectId": "curo",
+      "teamNodeId": "29:226",
+      "role": "interface",
+      "nodeId": "29:288",
+      "format": "png",
+      "output": "assets/images/project/submissions/curo/interface.webp",
+      "source": "output/figma/project-source/curo-interface.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2304588
+    },
+    {
+      "projectId": "curo",
+      "teamNodeId": "29:226",
+      "role": "logo",
+      "nodeId": "29:254",
+      "format": "svg",
+      "output": "assets/images/project/submissions/curo/logo.svg",
+      "source": "output/figma/project-source/curo-logo-isolated.svg",
+      "sourceFormat": "svg",
+      "sizeBytes": 7086,
+      "isolated": true
+    },
+    {
+      "projectId": "stylens",
+      "teamNodeId": "29:297",
+      "role": "portrait",
+      "nodeId": "29:311",
+      "format": "png",
+      "output": "assets/images/project/submissions/stylens/portrait.webp",
+      "source": "output/figma/project-source/stylens-portrait.png",
+      "sourceFormat": "png",
+      "sizeBytes": 3948604
+    },
+    {
+      "projectId": "stylens",
+      "teamNodeId": "29:297",
+      "role": "landscape",
+      "nodeId": "29:317",
+      "format": "png",
+      "output": "assets/images/project/submissions/stylens/landscape.webp",
+      "source": "output/figma/project-source/stylens-landscape.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2877351
+    },
+    {
+      "projectId": "stylens",
+      "teamNodeId": "29:297",
+      "role": "interactive",
+      "nodeId": "29:333",
+      "format": "png",
+      "output": "assets/images/project/submissions/stylens/interactive.webp",
+      "source": "output/figma/project-source/stylens-interactive.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2443151
+    },
+    {
+      "projectId": "stylens",
+      "teamNodeId": "29:297",
+      "role": "service",
+      "nodeId": "29:342",
+      "format": "png",
+      "output": "assets/images/project/submissions/stylens/service.webp",
+      "source": "output/figma/project-source/stylens-service.png",
+      "sourceFormat": "png",
+      "sizeBytes": 3273473
+    },
+    {
+      "projectId": "stylens",
+      "teamNodeId": "29:297",
+      "role": "interface",
+      "nodeId": "29:351",
+      "format": "png",
+      "output": "assets/images/project/submissions/stylens/interface.webp",
+      "source": "output/figma/project-source/stylens-interface.png",
+      "sourceFormat": "png",
+      "sizeBytes": 1919702
+    },
+    {
+      "projectId": "stylens",
+      "teamNodeId": "29:297",
+      "role": "logo",
+      "nodeId": "29:324",
+      "format": "png",
+      "output": "assets/images/project/submissions/stylens/logo.png",
+      "source": "output/figma/project-source/stylens-logo.png",
+      "sourceFormat": "png",
+      "sizeBytes": 19649
+    },
+    {
+      "projectId": "ilkko",
+      "teamNodeId": "29:361",
+      "role": "interactive",
+      "nodeId": "29:416",
+      "format": "png",
+      "output": "assets/images/project/submissions/ilkko/interactive.webp",
+      "source": "output/figma/project-source/ilkko-interactive.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2918884
+    },
+    {
+      "projectId": "ilkko",
+      "teamNodeId": "29:361",
+      "role": "service",
+      "nodeId": "29:425",
+      "format": "png",
+      "output": "assets/images/project/submissions/ilkko/service.webp",
+      "source": "output/figma/project-source/ilkko-service.jpeg",
+      "sourceFormat": "jpeg",
+      "sizeBytes": 542825
+    },
+    {
+      "projectId": "ilkko",
+      "teamNodeId": "29:361",
+      "role": "landscape",
+      "nodeId": "29:381",
+      "format": "png",
+      "output": "assets/images/project/submissions/ilkko/landscape.webp",
+      "source": "output/figma/project-source/ilkko-landscape.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2785330
+    },
+    {
+      "projectId": "ilkko",
+      "teamNodeId": "29:361",
+      "role": "portrait",
+      "nodeId": "29:375",
+      "format": "png",
+      "output": "assets/images/project/submissions/ilkko/portrait.webp",
+      "source": "output/figma/project-source/ilkko-portrait.png",
+      "sourceFormat": "png",
+      "sizeBytes": 4520899
+    },
+    {
+      "projectId": "ilkko",
+      "teamNodeId": "29:361",
+      "role": "logo",
+      "nodeId": "29:388",
+      "format": "svg",
+      "output": "assets/images/project/submissions/ilkko/logo.svg",
+      "source": "output/figma/project-source/ilkko-logo-isolated.svg",
+      "sourceFormat": "svg",
+      "sizeBytes": 14917,
+      "isolated": true
+    },
+    {
+      "projectId": "dadeullim",
+      "teamNodeId": "29:443",
+      "role": "portrait",
+      "nodeId": "29:457",
+      "format": "png",
+      "output": "assets/images/project/submissions/dadeullim/portrait.webp",
+      "source": "output/figma/project-source/dadeullim-portrait.jpeg",
+      "sourceFormat": "jpeg",
+      "sizeBytes": 2397443
+    },
+    {
+      "projectId": "ilkko",
+      "teamNodeId": "29:361",
+      "role": "interface",
+      "nodeId": "29:434",
+      "format": "png",
+      "output": "assets/images/project/submissions/ilkko/interface.webp",
+      "source": "output/figma/project-source/ilkko-interface.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2285082
+    },
+    {
+      "projectId": "dadeullim",
+      "teamNodeId": "29:443",
+      "role": "landscape",
+      "nodeId": "29:463",
+      "format": "png",
+      "output": "assets/images/project/submissions/dadeullim/landscape.webp",
+      "source": "output/figma/project-source/dadeullim-landscape.jpeg",
+      "sourceFormat": "jpeg",
+      "sizeBytes": 1594560
+    },
+    {
+      "projectId": "dadeullim",
+      "teamNodeId": "29:443",
+      "role": "interactive",
+      "nodeId": "29:484",
+      "format": "png",
+      "output": "assets/images/project/submissions/dadeullim/interactive.webp",
+      "source": "output/figma/project-source/dadeullim-interactive.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2253904
+    },
+    {
+      "projectId": "dadeullim",
+      "teamNodeId": "29:443",
+      "role": "logo",
+      "nodeId": "29:471",
+      "format": "svg",
+      "output": "assets/images/project/submissions/dadeullim/logo.svg",
+      "source": "output/figma/project-source/dadeullim-logo-isolated.svg",
+      "sourceFormat": "svg",
+      "sizeBytes": 4398,
+      "isolated": true
+    },
+    {
+      "projectId": "dadeullim",
+      "teamNodeId": "29:443",
+      "role": "interface",
+      "nodeId": "29:502",
+      "format": "png",
+      "output": "assets/images/project/submissions/dadeullim/interface.webp",
+      "source": "output/figma/project-source/dadeullim-interface.png",
+      "sourceFormat": "png",
+      "sizeBytes": 3583747
+    },
+    {
+      "projectId": "dadeullim",
+      "teamNodeId": "29:443",
+      "role": "service",
+      "nodeId": "29:493",
+      "format": "png",
+      "output": "assets/images/project/submissions/dadeullim/service.webp",
+      "source": "output/figma/project-source/dadeullim-service.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2677731
+    },
+    {
+      "projectId": "jikji",
+      "teamNodeId": "29:512",
+      "role": "portrait",
+      "nodeId": "29:526",
+      "format": "png",
+      "output": "assets/images/project/submissions/jikji/portrait.webp",
+      "source": "output/figma/project-source/jikji-portrait.png",
+      "sourceFormat": "png",
+      "sizeBytes": 3537831
+    },
+    {
+      "projectId": "jikji",
+      "teamNodeId": "29:512",
+      "role": "landscape",
+      "nodeId": "29:532",
+      "format": "png",
+      "output": "assets/images/project/submissions/jikji/landscape.webp",
+      "source": "output/figma/project-source/jikji-landscape.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2317946
+    },
+    {
+      "projectId": "jikji",
+      "teamNodeId": "29:512",
+      "role": "service",
+      "nodeId": "29:584",
+      "format": "png",
+      "output": "assets/images/project/submissions/jikji/service.webp",
+      "source": "output/figma/project-source/jikji-service.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2759479
+    },
+    {
+      "projectId": "jikji",
+      "teamNodeId": "29:512",
+      "role": "interactive",
+      "nodeId": "29:575",
+      "format": "png",
+      "output": "assets/images/project/submissions/jikji/interactive.webp",
+      "source": "output/figma/project-source/jikji-interactive.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2693085
+    },
+    {
+      "projectId": "jikji",
+      "teamNodeId": "29:512",
+      "role": "logo",
+      "nodeId": "29:541",
+      "format": "svg",
+      "output": "assets/images/project/submissions/jikji/logo.svg",
+      "source": "output/figma/project-source/jikji-logo-isolated.svg",
+      "sourceFormat": "svg",
+      "sizeBytes": 13892,
+      "isolated": true
+    },
+    {
+      "projectId": "jikji",
+      "teamNodeId": "29:512",
+      "role": "interface",
+      "nodeId": "29:593",
+      "format": "png",
+      "output": "assets/images/project/submissions/jikji/interface.webp",
+      "source": "output/figma/project-source/jikji-interface.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2059743
+    },
+    {
+      "projectId": "cheoma",
+      "teamNodeId": "29:602",
+      "role": "landscape",
+      "nodeId": "29:622",
+      "format": "png",
+      "output": "assets/images/project/submissions/cheoma/landscape.webp",
+      "source": "output/figma/project-source/cheoma-landscape.png",
+      "sourceFormat": "png",
+      "sizeBytes": 1269019
+    },
+    {
+      "projectId": "cheoma",
+      "teamNodeId": "29:602",
+      "role": "interactive",
+      "nodeId": "29:638",
+      "format": "png",
+      "output": "assets/images/project/submissions/cheoma/interactive.webp",
+      "source": "output/figma/project-source/cheoma-interactive.png",
+      "sourceFormat": "png",
+      "sizeBytes": 1595583
+    },
+    {
+      "projectId": "cheoma",
+      "teamNodeId": "29:602",
+      "role": "portrait",
+      "nodeId": "29:616",
+      "format": "png",
+      "output": "assets/images/project/submissions/cheoma/portrait.webp",
+      "source": "output/figma/project-source/cheoma-portrait.png",
+      "sourceFormat": "png",
+      "sizeBytes": 4755081
+    },
+    {
+      "projectId": "cheoma",
+      "teamNodeId": "29:602",
+      "role": "service",
+      "nodeId": "29:647",
+      "format": "png",
+      "output": "assets/images/project/submissions/cheoma/service.webp",
+      "source": "output/figma/project-source/cheoma-service.png",
+      "sourceFormat": "png",
+      "sizeBytes": 618250
+    },
+    {
+      "projectId": "cheoma",
+      "teamNodeId": "29:602",
+      "role": "interface",
+      "nodeId": "29:656",
+      "format": "png",
+      "output": "assets/images/project/submissions/cheoma/interface.webp",
+      "source": "output/figma/project-source/cheoma-interface.png",
+      "sourceFormat": "png",
+      "sizeBytes": 325867
+    },
+    {
+      "projectId": "cheoma",
+      "teamNodeId": "29:602",
+      "role": "logo",
+      "nodeId": "29:629",
+      "format": "png",
+      "output": "assets/images/project/submissions/cheoma/logo.png",
+      "source": "output/figma/project-source/cheoma-logo.png",
+      "sourceFormat": "png",
+      "sizeBytes": 13134
+    },
+    {
+      "projectId": "omix",
+      "teamNodeId": "29:668",
+      "role": "portrait",
+      "nodeId": "29:683",
+      "format": "png",
+      "output": "assets/images/project/submissions/omix/portrait.webp",
+      "source": "output/figma/project-source/omix-portrait.jpeg",
+      "sourceFormat": "jpeg",
+      "sizeBytes": 953470
+    },
+    {
+      "projectId": "omix",
+      "teamNodeId": "29:668",
+      "role": "landscape",
+      "nodeId": "29:689",
+      "format": "png",
+      "output": "assets/images/project/submissions/omix/landscape.webp",
+      "source": "output/figma/project-source/omix-landscape.jpeg",
+      "sourceFormat": "jpeg",
+      "sizeBytes": 1816203
+    },
+    {
+      "projectId": "omix",
+      "teamNodeId": "29:668",
+      "role": "interactive",
+      "nodeId": "29:713",
+      "format": "png",
+      "output": "assets/images/project/submissions/omix/interactive.webp",
+      "source": "output/figma/project-source/omix-interactive.jpeg",
+      "sourceFormat": "jpeg",
+      "sizeBytes": 1383397
+    },
+    {
+      "projectId": "omix",
+      "teamNodeId": "29:668",
+      "role": "logo",
+      "nodeId": "29:696",
+      "format": "svg",
+      "output": "assets/images/project/submissions/omix/logo.svg",
+      "source": "output/figma/project-source/omix-logo-isolated.svg",
+      "sourceFormat": "svg",
+      "sizeBytes": 2604,
+      "isolated": true
+    },
+    {
+      "projectId": "omix",
+      "teamNodeId": "29:668",
+      "role": "interface",
+      "nodeId": "29:731",
+      "format": "png",
+      "output": "assets/images/project/submissions/omix/interface.webp",
+      "source": "output/figma/project-source/omix-interface.jpeg",
+      "sourceFormat": "jpeg",
+      "sizeBytes": 667767
+    },
+    {
+      "projectId": "omix",
+      "teamNodeId": "29:668",
+      "role": "service",
+      "nodeId": "29:722",
+      "format": "png",
+      "output": "assets/images/project/submissions/omix/service.webp",
+      "source": "output/figma/project-source/omix-service.jpeg",
+      "sourceFormat": "jpeg",
+      "sizeBytes": 527553
+    },
+    {
+      "projectId": "year-on",
+      "teamNodeId": "29:740",
+      "role": "service",
+      "nodeId": "29:785",
+      "format": "png",
+      "output": "assets/images/project/submissions/year-on/service.webp",
+      "source": "output/figma/project-source/year-on-service.png",
+      "sourceFormat": "png",
+      "sizeBytes": 333709
+    },
+    {
+      "projectId": "year-on",
+      "teamNodeId": "29:740",
+      "role": "portrait",
+      "nodeId": "29:754",
+      "format": "png",
+      "output": "assets/images/project/submissions/year-on/portrait.webp",
+      "source": "output/figma/project-source/year-on-portrait.png",
+      "sourceFormat": "png",
+      "sizeBytes": 1624114
+    },
+    {
+      "projectId": "year-on",
+      "teamNodeId": "29:740",
+      "role": "interactive",
+      "nodeId": "29:776",
+      "format": "png",
+      "output": "assets/images/project/submissions/year-on/interactive.webp",
+      "source": "output/figma/project-source/year-on-interactive.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2604104
+    },
+    {
+      "projectId": "year-on",
+      "teamNodeId": "29:740",
+      "role": "landscape",
+      "nodeId": "29:760",
+      "format": "png",
+      "output": "assets/images/project/submissions/year-on/landscape.webp",
+      "source": "output/figma/project-source/year-on-landscape.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2547444
+    },
+    {
+      "projectId": "year-on",
+      "teamNodeId": "29:740",
+      "role": "interface",
+      "nodeId": "29:794",
+      "format": "png",
+      "output": "assets/images/project/submissions/year-on/interface.webp",
+      "source": "output/figma/project-source/year-on-interface.png",
+      "sourceFormat": "png",
+      "sizeBytes": 1998903
+    },
+    {
+      "projectId": "year-on",
+      "teamNodeId": "29:740",
+      "role": "logo",
+      "nodeId": "29:767",
+      "format": "png",
+      "output": "assets/images/project/submissions/year-on/logo.png",
+      "source": "output/figma/project-source/year-on-logo.png",
+      "sourceFormat": "png",
+      "sizeBytes": 21872
+    },
+    {
+      "projectId": "cocorang",
+      "teamNodeId": "29:804",
+      "role": "landscape",
+      "nodeId": "29:824",
+      "format": "png",
+      "output": "assets/images/project/submissions/cocorang/landscape.webp",
+      "source": "output/figma/project-source/cocorang-landscape.png",
+      "sourceFormat": "png",
+      "sizeBytes": 3497959
+    },
+    {
+      "projectId": "cocorang",
+      "teamNodeId": "29:804",
+      "role": "portrait",
+      "nodeId": "29:818",
+      "format": "png",
+      "output": "assets/images/project/submissions/cocorang/portrait.webp",
+      "source": "output/figma/project-source/cocorang-portrait.png",
+      "sourceFormat": "png",
+      "sizeBytes": 3795338
+    },
+    {
+      "projectId": "cocorang",
+      "teamNodeId": "29:804",
+      "role": "interactive",
+      "nodeId": "29:885",
+      "format": "png",
+      "output": "assets/images/project/submissions/cocorang/interactive.webp",
+      "source": "output/figma/project-source/cocorang-interactive.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2939953
+    },
+    {
+      "projectId": "cocorang",
+      "teamNodeId": "29:804",
+      "role": "logo",
+      "nodeId": "29:836",
+      "format": "svg",
+      "output": "assets/images/project/submissions/cocorang/logo.svg",
+      "source": "output/figma/project-source/cocorang-logo-isolated.svg",
+      "sourceFormat": "svg",
+      "sizeBytes": 25786,
+      "isolated": true
+    },
+    {
+      "projectId": "cocorang",
+      "teamNodeId": "29:804",
+      "role": "service",
+      "nodeId": "29:894",
+      "format": "png",
+      "output": "assets/images/project/submissions/cocorang/service.webp",
+      "source": "output/figma/project-source/cocorang-service.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2929459
+    },
+    {
+      "projectId": "cocorang",
+      "teamNodeId": "29:804",
+      "role": "interface",
+      "nodeId": "29:903",
+      "format": "png",
+      "output": "assets/images/project/submissions/cocorang/interface.webp",
+      "source": "output/figma/project-source/cocorang-interface.png",
+      "sourceFormat": "png",
+      "sizeBytes": 3626473
+    },
+    {
+      "projectId": "magmoa",
+      "teamNodeId": "29:912",
+      "role": "portrait",
+      "nodeId": "29:926",
+      "format": "png",
+      "output": "assets/images/project/submissions/magmoa/portrait.webp",
+      "source": "output/figma/project-source/magmoa-portrait.jpeg",
+      "sourceFormat": "jpeg",
+      "sizeBytes": 1377535
+    },
+    {
+      "projectId": "magmoa",
+      "teamNodeId": "29:912",
+      "role": "landscape",
+      "nodeId": "29:932",
+      "format": "png",
+      "output": "assets/images/project/submissions/magmoa/landscape.webp",
+      "source": "output/figma/project-source/magmoa-landscape.jpeg",
+      "sourceFormat": "jpeg",
+      "sizeBytes": 1463027
+    },
+    {
+      "projectId": "magmoa",
+      "teamNodeId": "29:912",
+      "role": "interactive",
+      "nodeId": "29:952",
+      "format": "png",
+      "output": "assets/images/project/submissions/magmoa/interactive.webp",
+      "source": "output/figma/project-source/magmoa-interactive.jpeg",
+      "sourceFormat": "jpeg",
+      "sizeBytes": 674872
+    },
+    {
+      "projectId": "magmoa",
+      "teamNodeId": "29:912",
+      "role": "service",
+      "nodeId": "29:961",
+      "format": "png",
+      "output": "assets/images/project/submissions/magmoa/service.webp",
+      "source": "output/figma/project-source/magmoa-service.jpeg",
+      "sourceFormat": "jpeg",
+      "sizeBytes": 661602
+    },
+    {
+      "projectId": "magmoa",
+      "teamNodeId": "29:912",
+      "role": "interface",
+      "nodeId": "29:970",
+      "format": "png",
+      "output": "assets/images/project/submissions/magmoa/interface.webp",
+      "source": "output/figma/project-source/magmoa-interface.jpeg",
+      "sourceFormat": "jpeg",
+      "sizeBytes": 476344
+    },
+    {
+      "projectId": "magmoa",
+      "teamNodeId": "29:912",
+      "role": "logo",
+      "nodeId": "29:940",
+      "format": "svg",
+      "output": "assets/images/project/submissions/magmoa/logo.svg",
+      "source": "output/figma/project-source/magmoa-logo-isolated.svg",
+      "sourceFormat": "svg",
+      "sizeBytes": 13973,
+      "isolated": true
+    },
+    {
+      "projectId": "efact",
+      "teamNodeId": "29:980",
+      "role": "landscape",
+      "nodeId": "29:1000",
+      "format": "png",
+      "output": "assets/images/project/submissions/efact/landscape.webp",
+      "source": "output/figma/project-source/efact-landscape.png",
+      "sourceFormat": "png",
+      "sizeBytes": 3512511
+    },
+    {
+      "projectId": "efact",
+      "teamNodeId": "29:980",
+      "role": "portrait",
+      "nodeId": "29:994",
+      "format": "png",
+      "output": "assets/images/project/submissions/efact/portrait.webp",
+      "source": "output/figma/project-source/efact-portrait.png",
+      "sourceFormat": "png",
+      "sizeBytes": 5118319
+    },
+    {
+      "projectId": "efact",
+      "teamNodeId": "29:980",
+      "role": "interactive",
+      "nodeId": "29:1016",
+      "format": "png",
+      "output": "assets/images/project/submissions/efact/interactive.webp",
+      "source": "output/figma/project-source/efact-interactive.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2902393
+    },
+    {
+      "projectId": "efact",
+      "teamNodeId": "29:980",
+      "role": "service",
+      "nodeId": "29:1025",
+      "format": "png",
+      "output": "assets/images/project/submissions/efact/service.webp",
+      "source": "output/figma/project-source/efact-service.png",
+      "sourceFormat": "png",
+      "sizeBytes": 3682104
+    },
+    {
+      "projectId": "efact",
+      "teamNodeId": "29:980",
+      "role": "logo",
+      "nodeId": "29:1007",
+      "format": "png",
+      "output": "assets/images/project/submissions/efact/logo.png",
+      "source": "output/figma/project-source/efact-logo.png",
+      "sourceFormat": "png",
+      "sizeBytes": 172346
+    },
+    {
+      "projectId": "efact",
+      "teamNodeId": "29:980",
+      "role": "interface",
+      "nodeId": "29:1034",
+      "format": "png",
+      "output": "assets/images/project/submissions/efact/interface.webp",
+      "source": "output/figma/project-source/efact-interface.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2837923
+    },
+    {
+      "projectId": "28",
+      "teamNodeId": "29:1043",
+      "role": "portrait",
+      "nodeId": "29:1057",
+      "format": "png",
+      "output": "assets/images/project/submissions/28/portrait.webp",
+      "source": "output/figma/project-source/28-portrait.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2826459
+    },
+    {
+      "projectId": "28",
+      "teamNodeId": "29:1043",
+      "role": "interactive",
+      "nodeId": "29:1089",
+      "format": "png",
+      "output": "assets/images/project/submissions/28/interactive.webp",
+      "source": "output/figma/project-source/28-interactive.png",
+      "sourceFormat": "png",
+      "sizeBytes": 1657476
+    },
+    {
+      "projectId": "28",
+      "teamNodeId": "29:1043",
+      "role": "service",
+      "nodeId": "29:1098",
+      "format": "png",
+      "output": "assets/images/project/submissions/28/service.webp",
+      "source": "output/figma/project-source/28-service.png",
+      "sourceFormat": "png",
+      "sizeBytes": 3000816
+    },
+    {
+      "projectId": "28",
+      "teamNodeId": "29:1043",
+      "role": "interface",
+      "nodeId": "29:1107",
+      "format": "png",
+      "output": "assets/images/project/submissions/28/interface.webp",
+      "source": "output/figma/project-source/28-interface.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2453583
+    },
+    {
+      "projectId": "28",
+      "teamNodeId": "29:1043",
+      "role": "logo",
+      "nodeId": "29:1071",
+      "format": "svg",
+      "output": "assets/images/project/submissions/28/logo.svg",
+      "source": "output/figma/project-source/28-logo-isolated.svg",
+      "sourceFormat": "svg",
+      "sizeBytes": 8438,
+      "isolated": true
+    },
+    {
+      "projectId": "28",
+      "teamNodeId": "29:1043",
+      "role": "landscape",
+      "nodeId": "29:1063",
+      "format": "png",
+      "output": "assets/images/project/submissions/28/landscape.webp",
+      "source": "output/figma/project-source/28-landscape.png",
+      "sourceFormat": "png",
+      "sizeBytes": 2214510
+    }
+  ],
+  "rawLogos": [
+    {
+      "projectId": "apuchika",
+      "hash": "12bc817a569fe0522ff01b950fc22cbf36ded81d",
+      "sources": [
+        "output/figma/project-source/apuchika-logo-raw-0.png",
+        "output/figma/project-source/apuchika-logo-raw-1.png"
+      ]
+    },
+    {
+      "projectId": "phishing-ddook",
+      "hash": "4b7ee4cacf2ade992b8627ac4d2e171d20066651",
+      "sources": [
+        "output/figma/project-source/phishing-ddook-logo-raw-0.png",
+        "output/figma/project-source/phishing-ddook-logo-raw-1.png"
+      ]
+    },
+    {
+      "projectId": "stylens",
+      "hash": "d0df0d3b129a479d66c8afc3fcfbd7335f498c00",
+      "sources": [
+        "output/figma/project-source/stylens-logo-raw-0.png",
+        "output/figma/project-source/stylens-logo-raw-1.png"
+      ]
+    },
+    {
+      "projectId": "cheoma",
+      "hash": "546ca334c5f31109b7b9d40315d1ce73c3c60463",
+      "sources": [
+        "output/figma/project-source/cheoma-logo-raw-0.png",
+        "output/figma/project-source/cheoma-logo-raw-1.png"
+      ]
+    },
+    {
+      "projectId": "year-on",
+      "hash": "26d03bea3a0ff23a3d8109c4d74fa3ba34e97b46",
+      "sources": [
+        "output/figma/project-source/year-on-logo-raw-0.png",
+        "output/figma/project-source/year-on-logo-raw-1.png"
+      ]
+    },
+    {
+      "projectId": "efact",
+      "hash": "ef6eecbf27456db0269db974776b7b5595092971",
+      "sources": [
+        "output/figma/project-source/efact-logo-raw-0.png",
+        "output/figma/project-source/efact-logo-raw-1.png"
+      ]
+    }
+  ]
+}

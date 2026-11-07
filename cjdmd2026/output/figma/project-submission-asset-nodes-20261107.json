@@ -1,0 +1,1532 @@
+[
+  {
+    "id": "29:297",
+    "name": "Stylens · 자료 제출",
+    "type": "FRAME",
+    "w": 2400,
+    "h": 3571,
+    "images": [],
+    "children": [
+      {
+        "id": "29:302",
+        "name": "01 · 프로젝트 공통 소개",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 198,
+        "images": [],
+        "children": [
+          {
+            "id": "29:305",
+            "name": "Stylens_공통소개글",
+            "type": "INSTANCE",
+            "w": 2272,
+            "h": 88,
+            "images": []
+          }
+        ]
+      },
+      {
+        "id": "29:307",
+        "name": "02 · 대표 이미지와 로고",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 1527,
+        "images": [],
+        "children": [
+          {
+            "id": "29:308",
+            "name": "세로 대표 이미지",
+            "type": "FRAME",
+            "w": 768,
+            "h": 1259,
+            "images": [],
+            "children": [
+              {
+                "id": "29:311",
+                "name": "Stylens_세로대표 · 이미지 채우기",
+                "type": "VECTOR",
+                "w": 768,
+                "h": 1030,
+                "images": [
+                  {
+                    "hash": "fcc0f154d4ed645c5c71a9e2ee6e185ff237d403",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "29:314",
+            "name": "가로 이미지와 로고",
+            "type": "FRAME",
+            "w": 1456,
+            "h": 1527,
+            "images": [],
+            "children": [
+              {
+                "id": "29:317",
+                "name": "Stylens_가로대표 · 이미지 채우기",
+                "type": "VECTOR",
+                "w": 1456,
+                "h": 819,
+                "images": [
+                  {
+                    "hash": "db70184fdd878ef2a2eb9e16edcb35d7a6e0a387",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:321",
+                "name": "로고 · 컬러",
+                "type": "FRAME",
+                "w": 712,
+                "h": 324,
+                "images": [],
+                "children": [
+                  {
+                    "id": "29:322",
+                    "name": "컬러 로고",
+                    "type": "FRAME",
+                    "w": 712,
+                    "h": 324,
+                    "images": [],
+                    "children": [
+                      {
+                        "id": "29:324",
+                        "name": "Stylens_로고_컬러 · 로고를 이 안에 넣기",
+                        "type": "FRAME",
+                        "w": 712,
+                        "h": 240,
+                        "images": [
+                          {
+                            "hash": "d0df0d3b129a479d66c8afc3fcfbd7335f498c00",
+                            "visible": true,
+                            "opacity": 1
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "29:329",
+        "name": "과목별 제출",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 943,
+        "images": [],
+        "children": [
+          {
+            "id": "29:330",
+            "name": "인터랙티브 디자인",
+            "type": "FRAME",
+            "w": 736,
+            "h": 943,
+            "images": [],
+            "children": [
+              {
+                "id": "29:333",
+                "name": "Stylens_인터랙티브 · 이미지 채우기",
+                "type": "RECTANGLE",
+                "w": 736,
+                "h": 414,
+                "images": [
+                  {
+                    "hash": "12d46199da72f0cff1bda1375ff9b918c7b787ac",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:336",
+                "name": "Stylens_인터랙티브_제목",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 80,
+                "images": []
+              },
+              {
+                "id": "29:338",
+                "name": "Stylens_인터랙티브_설명",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 152,
+                "images": []
+              }
+            ]
+          },
+          {
+            "id": "29:339",
+            "name": "서비스 디자인",
+            "type": "FRAME",
+            "w": 736,
+            "h": 943,
+            "images": [],
+            "children": [
+              {
+                "id": "29:342",
+                "name": "Stylens_서비스 · 이미지 채우기",
+                "type": "VECTOR",
+                "w": 736,
+                "h": 414,
+                "images": [
+                  {
+                    "hash": "4ef24015c42a89b18298b994aa38e52921e9300d",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:345",
+                "name": "Stylens_서비스_제목",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 80,
+                "images": []
+              },
+              {
+                "id": "29:347",
+                "name": "Stylens_서비스_설명",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 152,
+                "images": []
+              }
+            ]
+          },
+          {
+            "id": "29:348",
+            "name": "인터페이스 디자인",
+            "type": "FRAME",
+            "w": 736,
+            "h": 911,
+            "images": [],
+            "children": [
+              {
+                "id": "29:351",
+                "name": "Stylens_인터페이스 · 이미지 채우기",
+                "type": "RECTANGLE",
+                "w": 736,
+                "h": 414,
+                "images": [
+                  {
+                    "hash": "d99f3968dfd30511d511384609671cfae9f1c052",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:354",
+                "name": "Stylens_인터페이스_제목",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 80,
+                "images": []
+              },
+              {
+                "id": "29:356",
+                "name": "Stylens_인터페이스_설명",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 120,
+                "images": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "29:357",
+        "name": "최종 확인",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 156,
+        "images": [],
+        "children": []
+      }
+    ]
+  },
+  {
+    "id": "29:361",
+    "name": "읽:꼬 · 자료 제출",
+    "type": "FRAME",
+    "w": 2400,
+    "h": 3633,
+    "images": [],
+    "children": [
+      {
+        "id": "29:366",
+        "name": "01 · 프로젝트 공통 소개",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 198,
+        "images": [],
+        "children": [
+          {
+            "id": "29:369",
+            "name": "읽:꼬_공통소개글",
+            "type": "INSTANCE",
+            "w": 2272,
+            "h": 88,
+            "images": []
+          }
+        ]
+      },
+      {
+        "id": "29:371",
+        "name": "02 · 대표 이미지와 로고",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 1556,
+        "images": [],
+        "children": [
+          {
+            "id": "29:372",
+            "name": "세로 대표 이미지",
+            "type": "FRAME",
+            "w": 768,
+            "h": 1259,
+            "images": [],
+            "children": [
+              {
+                "id": "29:375",
+                "name": "읽:꼬_세로대표 · 이미지 채우기",
+                "type": "RECTANGLE",
+                "w": 768,
+                "h": 1030,
+                "images": [
+                  {
+                    "hash": "9754f29e6507e6f18d86350d06824905bfa535b0",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "29:378",
+            "name": "가로 이미지와 로고",
+            "type": "FRAME",
+            "w": 1456,
+            "h": 1556,
+            "images": [],
+            "children": [
+              {
+                "id": "29:381",
+                "name": "읽:꼬_가로대표 · 이미지 채우기",
+                "type": "RECTANGLE",
+                "w": 1456,
+                "h": 819,
+                "images": [
+                  {
+                    "hash": "9bd690a64aea5113002e2f2f2e58b632c5c7a7e2",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:385",
+                "name": "로고 · 컬러",
+                "type": "FRAME",
+                "w": 712,
+                "h": 353,
+                "images": [],
+                "children": [
+                  {
+                    "id": "29:386",
+                    "name": "컬러 로고",
+                    "type": "FRAME",
+                    "w": 712,
+                    "h": 353,
+                    "images": [],
+                    "children": [
+                      {
+                        "id": "29:388",
+                        "name": "읽꼬 로고_일러레 1",
+                        "type": "FRAME",
+                        "w": 422,
+                        "h": 269,
+                        "images": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "29:412",
+        "name": "과목별 제출",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 976,
+        "images": [],
+        "children": [
+          {
+            "id": "29:413",
+            "name": "인터랙티브 디자인",
+            "type": "FRAME",
+            "w": 736,
+            "h": 943,
+            "images": [],
+            "children": [
+              {
+                "id": "29:416",
+                "name": "읽:꼬_인터랙티브 · 이미지 채우기",
+                "type": "RECTANGLE",
+                "w": 736,
+                "h": 414,
+                "images": [
+                  {
+                    "hash": "7bc93762bead7907db4941a61d1c6962571e096b",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:419",
+                "name": "읽:꼬_인터랙티브_제목",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 80,
+                "images": []
+              },
+              {
+                "id": "29:421",
+                "name": "읽:꼬_인터랙티브_설명",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 152,
+                "images": []
+              }
+            ]
+          },
+          {
+            "id": "29:422",
+            "name": "서비스 디자인",
+            "type": "FRAME",
+            "w": 736,
+            "h": 976,
+            "images": [],
+            "children": [
+              {
+                "id": "29:425",
+                "name": "image 2861",
+                "type": "RECTANGLE",
+                "w": 735,
+                "h": 415,
+                "images": [
+                  {
+                    "hash": "07e123a3d8d7bd4fd17ebdb851a54c75c5297c6b",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:428",
+                "name": "읽:꼬_서비스_제목",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 80,
+                "images": []
+              },
+              {
+                "id": "29:430",
+                "name": "읽:꼬_서비스_설명",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 184,
+                "images": []
+              }
+            ]
+          },
+          {
+            "id": "29:431",
+            "name": "인터페이스 디자인",
+            "type": "FRAME",
+            "w": 736,
+            "h": 943,
+            "images": [],
+            "children": [
+              {
+                "id": "29:434",
+                "name": "읽:꼬_인터페이스 · 이미지 채우기",
+                "type": "RECTANGLE",
+                "w": 736,
+                "h": 414,
+                "images": [
+                  {
+                    "hash": "f612a19a6980f06df0b3ea43b8e816c0f522e403",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:437",
+                "name": "읽:꼬_인터페이스_제목",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 80,
+                "images": []
+              },
+              {
+                "id": "29:439",
+                "name": "읽:꼬_인터페이스_설명",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 152,
+                "images": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "29:440",
+        "name": "최종 확인",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 156,
+        "images": [],
+        "children": []
+      }
+    ]
+  },
+  {
+    "id": "29:512",
+    "name": "직지잼버리 · 자료 제출",
+    "type": "FRAME",
+    "w": 2400,
+    "h": 3603,
+    "images": [],
+    "children": [
+      {
+        "id": "29:517",
+        "name": "01 · 프로젝트 공통 소개",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 230,
+        "images": [],
+        "children": [
+          {
+            "id": "29:520",
+            "name": "직지잼버리_공통소개글",
+            "type": "INSTANCE",
+            "w": 2272,
+            "h": 120,
+            "images": []
+          }
+        ]
+      },
+      {
+        "id": "29:522",
+        "name": "02 · 대표 이미지와 로고",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 1527,
+        "images": [],
+        "children": [
+          {
+            "id": "29:523",
+            "name": "세로 대표 이미지",
+            "type": "FRAME",
+            "w": 768,
+            "h": 1259,
+            "images": [],
+            "children": [
+              {
+                "id": "29:526",
+                "name": "직지잼버리_세로대표 · 이미지 채우기",
+                "type": "RECTANGLE",
+                "w": 768,
+                "h": 1030,
+                "images": [
+                  {
+                    "hash": "4d5b1e804e8e9dfe001098966360346d3f7d3bec",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "29:529",
+            "name": "가로 이미지와 로고",
+            "type": "FRAME",
+            "w": 1456,
+            "h": 1527,
+            "images": [],
+            "children": [
+              {
+                "id": "29:532",
+                "name": "직지잼버리_가로대표 · 이미지 채우기",
+                "type": "RECTANGLE",
+                "w": 1456,
+                "h": 819,
+                "images": [
+                  {
+                    "hash": "6ae995ee33f4ebd1217a3821e141b0f2409661b7",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:536",
+                "name": "로고 · 컬러",
+                "type": "FRAME",
+                "w": 712,
+                "h": 324,
+                "images": [],
+                "children": [
+                  {
+                    "id": "29:537",
+                    "name": "컬러 로고",
+                    "type": "FRAME",
+                    "w": 712,
+                    "h": 324,
+                    "images": [],
+                    "children": [
+                      {
+                        "id": "29:539",
+                        "name": "직지잼버리_로고_컬러 · 로고를 이 안에 넣기",
+                        "type": "FRAME",
+                        "w": 712,
+                        "h": 240,
+                        "images": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "29:571",
+        "name": "과목별 제출",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 943,
+        "images": [],
+        "children": [
+          {
+            "id": "29:572",
+            "name": "인터랙티브 디자인",
+            "type": "FRAME",
+            "w": 736,
+            "h": 879,
+            "images": [],
+            "children": [
+              {
+                "id": "29:575",
+                "name": "직지잼버리_인터랙티브 · 이미지 채우기",
+                "type": "RECTANGLE",
+                "w": 736,
+                "h": 414,
+                "images": [
+                  {
+                    "hash": "a9f021f8cc46aa030b06335fecf82f3182126dbb",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:578",
+                "name": "직지잼버리_인터랙티브_제목",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 80,
+                "images": []
+              },
+              {
+                "id": "29:580",
+                "name": "직지잼버리_인터랙티브_설명",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 88,
+                "images": []
+              }
+            ]
+          },
+          {
+            "id": "29:581",
+            "name": "서비스 디자인",
+            "type": "FRAME",
+            "w": 736,
+            "h": 879,
+            "images": [],
+            "children": [
+              {
+                "id": "29:584",
+                "name": "직지잼버리_서비스 · 이미지 채우기",
+                "type": "VECTOR",
+                "w": 736,
+                "h": 414,
+                "images": [
+                  {
+                    "hash": "f4dc6055da126a16145cc577245da9f64f945219",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:587",
+                "name": "직지잼버리_서비스_제목",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 80,
+                "images": []
+              },
+              {
+                "id": "29:589",
+                "name": "직지잼버리_서비스_설명",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 88,
+                "images": []
+              }
+            ]
+          },
+          {
+            "id": "29:590",
+            "name": "인터페이스 디자인",
+            "type": "FRAME",
+            "w": 736,
+            "h": 943,
+            "images": [],
+            "children": [
+              {
+                "id": "29:593",
+                "name": "직지잼버리_인터페이스 · 이미지 채우기",
+                "type": "RECTANGLE",
+                "w": 736,
+                "h": 414,
+                "images": [
+                  {
+                    "hash": "5c78d5de664df0f764b9b45f4fb5397fa2a26398",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:596",
+                "name": "직지잼버리_인터페이스_제목",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 80,
+                "images": []
+              },
+              {
+                "id": "29:598",
+                "name": "직지잼버리_인터페이스_설명",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 152,
+                "images": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "29:599",
+        "name": "최종 확인",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 156,
+        "images": [],
+        "children": []
+      }
+    ]
+  },
+  {
+    "id": "29:602",
+    "name": "그늘잡이 · 자료 제출",
+    "type": "FRAME",
+    "w": 2400,
+    "h": 3531,
+    "images": [],
+    "children": [
+      {
+        "id": "29:607",
+        "name": "01 · 프로젝트 공통 소개",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 190,
+        "images": [],
+        "children": [
+          {
+            "id": "29:610",
+            "name": "그늘잡이_공통소개글",
+            "type": "INSTANCE",
+            "w": 2272,
+            "h": 80,
+            "images": []
+          }
+        ]
+      },
+      {
+        "id": "29:612",
+        "name": "02 · 대표 이미지와 로고",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 1527,
+        "images": [],
+        "children": [
+          {
+            "id": "29:613",
+            "name": "세로 대표 이미지",
+            "type": "FRAME",
+            "w": 768,
+            "h": 1259,
+            "images": [],
+            "children": [
+              {
+                "id": "29:616",
+                "name": "그늘잡이_세로대표 · 이미지 채우기",
+                "type": "VECTOR",
+                "w": 768,
+                "h": 1030,
+                "images": [
+                  {
+                    "hash": "59ba82ab865db622ab30851ab8e5e14ac9126688",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "29:619",
+            "name": "가로 이미지와 로고",
+            "type": "FRAME",
+            "w": 1456,
+            "h": 1527,
+            "images": [],
+            "children": [
+              {
+                "id": "29:622",
+                "name": "그늘잡이_가로대표 · 이미지 채우기",
+                "type": "RECTANGLE",
+                "w": 1456,
+                "h": 819,
+                "images": [
+                  {
+                    "hash": "cfbe9bf537f4619e78043d8ce09e9390ffc3039c",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:626",
+                "name": "로고 · 컬러",
+                "type": "FRAME",
+                "w": 712,
+                "h": 324,
+                "images": [],
+                "children": [
+                  {
+                    "id": "29:627",
+                    "name": "컬러 로고",
+                    "type": "FRAME",
+                    "w": 712,
+                    "h": 324,
+                    "images": [],
+                    "children": [
+                      {
+                        "id": "29:629",
+                        "name": "그늘잡이_로고_컬러 · 로고를 이 안에 넣기",
+                        "type": "FRAME",
+                        "w": 712,
+                        "h": 240,
+                        "images": [
+                          {
+                            "hash": "546ca334c5f31109b7b9d40315d1ce73c3c60463",
+                            "visible": true,
+                            "opacity": 1
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "29:634",
+        "name": "과목별 제출",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 911,
+        "images": [],
+        "children": [
+          {
+            "id": "29:635",
+            "name": "인터랙티브 디자인",
+            "type": "FRAME",
+            "w": 736,
+            "h": 911,
+            "images": [],
+            "children": [
+              {
+                "id": "29:638",
+                "name": "그늘잡이_인터랙티브 · 이미지 채우기",
+                "type": "RECTANGLE",
+                "w": 736,
+                "h": 414,
+                "images": [
+                  {
+                    "hash": "e3653ba4f67541585810e4c4758e2e52940483ac",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:641",
+                "name": "그늘잡이_인터랙티브_제목",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 80,
+                "images": []
+              },
+              {
+                "id": "29:643",
+                "name": "그늘잡이_인터랙티브_설명",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 120,
+                "images": []
+              }
+            ]
+          },
+          {
+            "id": "29:644",
+            "name": "서비스 디자인",
+            "type": "FRAME",
+            "w": 736,
+            "h": 879,
+            "images": [],
+            "children": [
+              {
+                "id": "29:647",
+                "name": "그늘잡이_서비스 · 이미지 채우기",
+                "type": "RECTANGLE",
+                "w": 736,
+                "h": 414,
+                "images": [
+                  {
+                    "hash": "0a515a904f6970063cbdaa948bf36fd2853e93c1",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:650",
+                "name": "그늘잡이_서비스_제목",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 80,
+                "images": []
+              },
+              {
+                "id": "29:652",
+                "name": "그늘잡이_서비스_설명",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 88,
+                "images": []
+              }
+            ]
+          },
+          {
+            "id": "29:653",
+            "name": "인터페이스 디자인",
+            "type": "FRAME",
+            "w": 736,
+            "h": 911,
+            "images": [],
+            "children": [
+              {
+                "id": "29:656",
+                "name": "그늘잡이_인터페이스 · 이미지 채우기",
+                "type": "RECTANGLE",
+                "w": 736,
+                "h": 414,
+                "images": [
+                  {
+                    "hash": "e89e1bcd91503e5639c635fed6bfe2a18e355590",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:659",
+                "name": "그늘잡이_인터페이스_제목",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 80,
+                "images": []
+              },
+              {
+                "id": "29:661",
+                "name": "그늘잡이_인터페이스_설명",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 120,
+                "images": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "29:662",
+        "name": "최종 확인",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 156,
+        "images": [],
+        "children": []
+      }
+    ]
+  },
+  {
+    "id": "29:668",
+    "name": "OMIX · 자료 제출",
+    "type": "FRAME",
+    "w": 2400,
+    "h": 4308,
+    "images": [],
+    "children": [
+      {
+        "id": "29:674",
+        "name": "01 · 프로젝트 공통 소개",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 198,
+        "images": [],
+        "children": [
+          {
+            "id": "29:677",
+            "name": "OMIX_공통소개글",
+            "type": "INSTANCE",
+            "w": 2272,
+            "h": 88,
+            "images": []
+          }
+        ]
+      },
+      {
+        "id": "29:679",
+        "name": "02 · 대표 이미지와 로고",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 1648,
+        "images": [],
+        "children": [
+          {
+            "id": "29:680",
+            "name": "세로 대표 이미지",
+            "type": "FRAME",
+            "w": 768,
+            "h": 1260,
+            "images": [],
+            "children": [
+              {
+                "id": "29:683",
+                "name": "Group 1000006856 1",
+                "type": "RECTANGLE",
+                "w": 768,
+                "h": 1031,
+                "images": [
+                  {
+                    "hash": "8d91fb740acb95fb2488b812045ce84e5f72735b",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "29:686",
+            "name": "가로 이미지와 로고",
+            "type": "FRAME",
+            "w": 1456,
+            "h": 1648,
+            "images": [],
+            "children": [
+              {
+                "id": "29:689",
+                "name": "image 6394",
+                "type": "RECTANGLE",
+                "w": 1456,
+                "h": 819,
+                "images": [
+                  {
+                    "hash": "9676141282796d0ecaa25d234576068bb35be499",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:693",
+                "name": "로고 · 컬러",
+                "type": "FRAME",
+                "w": 712,
+                "h": 445,
+                "images": [],
+                "children": [
+                  {
+                    "id": "29:694",
+                    "name": "컬러 로고",
+                    "type": "FRAME",
+                    "w": 712,
+                    "h": 445,
+                    "images": [],
+                    "children": [
+                      {
+                        "id": "29:696",
+                        "name": "레드 1",
+                        "type": "FRAME",
+                        "w": 712,
+                        "h": 361,
+                        "images": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "29:709",
+        "name": "과목별 제출",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 1497,
+        "images": [],
+        "children": [
+          {
+            "id": "29:710",
+            "name": "인터랙티브 디자인",
+            "type": "FRAME",
+            "w": 736,
+            "h": 1497,
+            "images": [],
+            "children": [
+              {
+                "id": "29:713",
+                "name": "ChatGPT Image 2026년 9월 25일 오후 09_40_01 1",
+                "type": "RECTANGLE",
+                "w": 726,
+                "h": 968,
+                "images": [
+                  {
+                    "hash": "0f53b259310dc3835571f488188a8b797ccb635b",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:716",
+                "name": "OMIX_인터랙티브_제목",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 80,
+                "images": []
+              },
+              {
+                "id": "29:718",
+                "name": "OMIX_인터랙티브_설명",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 152,
+                "images": []
+              }
+            ]
+          },
+          {
+            "id": "29:719",
+            "name": "서비스 디자인",
+            "type": "FRAME",
+            "w": 736,
+            "h": 1265,
+            "images": [],
+            "children": [
+              {
+                "id": "29:722",
+                "name": "KakaoTalk_20260930_205947268 1",
+                "type": "RECTANGLE",
+                "w": 736,
+                "h": 736,
+                "images": [
+                  {
+                    "hash": "49d581e77ef1f5f88594053833adfefc1420a390",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:725",
+                "name": "OMIX_서비스_제목",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 80,
+                "images": []
+              },
+              {
+                "id": "29:727",
+                "name": "OMIX_서비스_설명",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 152,
+                "images": []
+              }
+            ]
+          },
+          {
+            "id": "29:728",
+            "name": "인터페이스 디자인",
+            "type": "FRAME",
+            "w": 736,
+            "h": 1388,
+            "images": [],
+            "children": [
+              {
+                "id": "29:731",
+                "name": "425868445_03d9213e-c802-432c-9fd8-ee8502494941 2",
+                "type": "RECTANGLE",
+                "w": 736,
+                "h": 859,
+                "images": [
+                  {
+                    "hash": "1a3ada9a8f58413fad1817e29827829a9cc6edfd",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:734",
+                "name": "OMIX_인터페이스_제목",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 80,
+                "images": []
+              },
+              {
+                "id": "29:736",
+                "name": "OMIX_인터페이스_설명",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 152,
+                "images": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "29:737",
+        "name": "최종 확인",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 156,
+        "images": [],
+        "children": []
+      }
+    ]
+  },
+  {
+    "id": "29:804",
+    "name": "COCO LANG · 자료 제출",
+    "type": "FRAME",
+    "w": 2400,
+    "h": 3571,
+    "images": [],
+    "children": [
+      {
+        "id": "29:809",
+        "name": "01 · 프로젝트 공통 소개",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 198,
+        "images": [],
+        "children": [
+          {
+            "id": "29:812",
+            "name": "COCO LANG_공통소개글",
+            "type": "INSTANCE",
+            "w": 2272,
+            "h": 88,
+            "images": []
+          }
+        ]
+      },
+      {
+        "id": "29:814",
+        "name": "02 · 대표 이미지와 로고",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 1527,
+        "images": [],
+        "children": [
+          {
+            "id": "29:815",
+            "name": "세로 대표 이미지",
+            "type": "FRAME",
+            "w": 768,
+            "h": 1259,
+            "images": [],
+            "children": [
+              {
+                "id": "29:818",
+                "name": "COCO LANG_세로대표 · 이미지 채우기",
+                "type": "VECTOR",
+                "w": 768,
+                "h": 1030,
+                "images": [
+                  {
+                    "hash": "fc298359eeccbf79f5d731e7768ae78507598aca",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "29:821",
+            "name": "가로 이미지와 로고",
+            "type": "FRAME",
+            "w": 1456,
+            "h": 1527,
+            "images": [],
+            "children": [
+              {
+                "id": "29:824",
+                "name": "COCO LANG_가로대표 · 이미지 채우기",
+                "type": "RECTANGLE",
+                "w": 1456,
+                "h": 819,
+                "images": [
+                  {
+                    "hash": "589208a3253ce7cc8f90caf29709ac6953e359dd",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:828",
+                "name": "로고 · 컬러",
+                "type": "FRAME",
+                "w": 712,
+                "h": 324,
+                "images": [],
+                "children": [
+                  {
+                    "id": "29:829",
+                    "name": "컬러 로고",
+                    "type": "FRAME",
+                    "w": 712,
+                    "h": 324,
+                    "images": [],
+                    "children": [
+                      {
+                        "id": "29:831",
+                        "name": "COCO LANG_로고_컬러 · 로고를 이 안에 넣기",
+                        "type": "FRAME",
+                        "w": 712,
+                        "h": 240,
+                        "images": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "29:881",
+        "name": "과목별 제출",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 943,
+        "images": [],
+        "children": [
+          {
+            "id": "29:882",
+            "name": "인터랙티브 디자인",
+            "type": "FRAME",
+            "w": 736,
+            "h": 943,
+            "images": [],
+            "children": [
+              {
+                "id": "29:885",
+                "name": "COCO LANG_인터랙티브 · 이미지 채우기",
+                "type": "RECTANGLE",
+                "w": 736,
+                "h": 414,
+                "images": [
+                  {
+                    "hash": "7c0e1c3255115c6c0179fa57c7358a9f9feb9a6e",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:888",
+                "name": "COCO LANG_인터랙티브_제목",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 80,
+                "images": []
+              },
+              {
+                "id": "29:890",
+                "name": "COCO LANG_인터랙티브_설명",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 152,
+                "images": []
+              }
+            ]
+          },
+          {
+            "id": "29:891",
+            "name": "서비스 디자인",
+            "type": "FRAME",
+            "w": 736,
+            "h": 943,
+            "images": [],
+            "children": [
+              {
+                "id": "29:894",
+                "name": "COCO LANG_서비스 · 이미지 채우기",
+                "type": "RECTANGLE",
+                "w": 736,
+                "h": 414,
+                "images": [
+                  {
+                    "hash": "6fba72f021a75a84211db27682611fdbdbcdc682",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:897",
+                "name": "COCO LANG_서비스_제목",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 80,
+                "images": []
+              },
+              {
+                "id": "29:899",
+                "name": "COCO LANG_서비스_설명",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 152,
+                "images": []
+              }
+            ]
+          },
+          {
+            "id": "29:900",
+            "name": "인터페이스 디자인",
+            "type": "FRAME",
+            "w": 736,
+            "h": 943,
+            "images": [],
+            "children": [
+              {
+                "id": "29:903",
+                "name": "COCO LANG_인터페이스 · 이미지 채우기",
+                "type": "VECTOR",
+                "w": 736,
+                "h": 414,
+                "images": [
+                  {
+                    "hash": "400acf57bd3207ce1e62646253ad211e40d052f6",
+                    "visible": true,
+                    "opacity": 1
+                  }
+                ]
+              },
+              {
+                "id": "29:906",
+                "name": "COCO LANG_인터페이스_제목",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 80,
+                "images": []
+              },
+              {
+                "id": "29:908",
+                "name": "COCO LANG_인터페이스_설명",
+                "type": "INSTANCE",
+                "w": 736,
+                "h": 152,
+                "images": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "29:909",
+        "name": "최종 확인",
+        "type": "FRAME",
+        "w": 2272,
+        "h": 156,
+        "images": [],
+        "children": []
+      }
+    ]
+  }
+]

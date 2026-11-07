@@ -1,6 +1,6 @@
 /* Project slide variant: scene-colored personal icon matrix dissolve (independent alternative to the white wave).
  * Replace the existing project controller script with this file (use defer).
- * Required data: project-data.js, designer-data.js, designer-icon-data.js and assets/images/project/test/icon/*.svg.
+ * Required data: project-data.js, designer-data.js, designer-icon-data.js and assets/images/project/icon/*.svg.
  * Transition overlays are inserted automatically. The entry gate/cover live in project/index.html and project_03.css.
  */
 (() => {
@@ -11,7 +11,7 @@
       return;
     }
     const iconBaseUrl = new URL(
-      window.PROJECT_WAVE_OPTIONS?.iconBaseUrl || "../assets/images/project/test/icon/",
+      window.PROJECT_WAVE_OPTIONS?.iconBaseUrl || "../assets/images/project/icon/",
       document.baseURI
     );
     // Keep each color's original viewBox, paths and group transforms so pieces reassemble exactly.
@@ -128,6 +128,7 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
     uniform sampler2D imageA, imageB, iconAtlas, foreground, nextForeground;
     uniform vec2 resolution, sizeA, sizeB, iconGrid;
     uniform vec4 sceneTint;
+    uniform vec3 sceneScrim;
     uniform float slideProgress, trailFade, direction, cellSize, codeTime, iconCount, fromBlank, toBlank;
     float random(vec2 p) {
       return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);
@@ -168,8 +169,10 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
       float alpha=content.a*copyMask.x+nextContent.a*copyMask.y;
       vec3 premultiplied=content.rgb*content.a*copyMask.x+nextContent.rgb*nextContent.a*copyMask.y;
       // Keep the intro background untinted; subsequent slides share the usual scrim.
-      vec3 background=mix(mix(a,sceneTint.rgb,sceneTint.a*(1.-fromBlank)),
-        mix(b,sceneTint.rgb,sceneTint.a*(1.-toBlank)),incoming);
+      float scrimAlpha=sceneScrim.x*(1.-clamp((p.x-sceneScrim.y)/max(.001,sceneScrim.z-sceneScrim.y),0.,1.));
+      vec3 shadedA=mix(a,sceneTint.rgb,sceneTint.a)*(1.-scrimAlpha);
+      vec3 shadedB=mix(b,sceneTint.rgb,sceneTint.a)*(1.-scrimAlpha);
+      vec3 background=mix(mix(a,shadedA,1.-fromBlank),mix(b,shadedB,1.-toBlank),incoming);
       return background*(1.-alpha)+premultiplied;
     }
     void main() {
@@ -323,7 +326,7 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
     const position = gl.getAttribLocation(program, 'position');
     gl.enableVertexAttribArray(position);
     gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-    uniforms = Object.fromEntries(['imageA','imageB','iconAtlas','foreground','nextForeground','resolution','sizeA','sizeB','sceneTint','slideProgress','trailFade','direction','cellSize','codeTime','iconCount','iconGrid','fromBlank','toBlank']
+    uniforms = Object.fromEntries(['imageA','imageB','iconAtlas','foreground','nextForeground','resolution','sizeA','sizeB','sceneTint','sceneScrim','slideProgress','trailFade','direction','cellSize','codeTime','iconCount','iconGrid','fromBlank','toBlank']
       .map(name => [name, gl.getUniformLocation(program, name)]));
     atlas = texture(icons.sheet);
     atlasCount = icons.count;
@@ -479,6 +482,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
     gl.uniform2f(uniforms.sizeA, job.from.naturalWidth, job.from.naturalHeight);
     gl.uniform2f(uniforms.sizeB, job.to.naturalWidth, job.to.naturalHeight);
     gl.uniform4fv(uniforms.sceneTint, job.sceneTint);
+    gl.uniform3fv(uniforms.sceneScrim, job.sceneScrim);
     gl.uniform1f(uniforms.fromBlank, job.fromBlank ? 1 : 0);
     gl.uniform1f(uniforms.toBlank, job.toBlank ? 1 : 0);
     gl.uniform1f(uniforms.slideProgress, slideProgress);
@@ -563,6 +567,17 @@ async function captureForeground(target, {includeHidden = false} = {}) {
     const rgba = context.getImageData(0,0,1,1).data;
     return [rgba[0]/255,rgba[1]/255,rgba[2]/255,rgba[3]/255*Number(style.opacity)];
   }
+  function readSceneScrim() {
+    const layer = document.querySelector('.gradient');
+    if (!layer || !layer.getClientRects().length) return [0,0,1];
+    const style = getComputedStyle(layer);
+    if (style.visibility !== 'visible' || style.display === 'none') return [0,0,1];
+    // Use the CSS stops so the transition canvas matches the stationary image.
+    return ['opacity','start','end'].map((name, index) => {
+      const value = parseFloat(style.getPropertyValue(`--project-scrim-${name}`));
+      return Number.isFinite(value) ? value : index === 2 ? 1 : 0;
+    });
+  }
   async function prepareTransition(from, to) {
     const sources = await Promise.all([prepare(from), prepare(to), prepareIconAtlas()]);
     initGL(sources[2]);
@@ -594,6 +609,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
         codeTime: 0, playbackRate: updatePlaybackRate(now),
         durationMs: Math.max(300, Number(durationMs) || 2100),
         sceneTint: sceneTint || readSceneTint(), fromBlank, toBlank, imageOnly,
+        sceneScrim: readSceneScrim(),
         from: sources[0], to: sources[1], swapped: false, elapsed: 0, last: now};
       try {
         job.a = texture(job.from);
@@ -1211,7 +1227,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             html[data-project-fluid-view="slide"] .project-info {
                 left:var(--project-copy-left);
                 top:calc(50vh + var(--project-dial-icon-size) / 2 + 1.5rem);
-                width:min(50vw,calc(100vw - var(--project-copy-left) - 3rem));
+                width:min(30vw,calc(100vw - var(--project-copy-left) - 3rem));
                 text-align:left;
             }
             .project-icon-rail { display:none; }
@@ -2005,7 +2021,9 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             function warm() {
                 if (disposed || slideview.hidden) return;
                 const visible = visibleCards(), at = visible.indexOf(cards[index]);
-                for (const card of [visible[at - 1], cards[index], visible[at + 1]]) {
+                if (at < 0) return;
+                const neighbors = new Set([-1, 0, 1].map(offset => visible[(at + offset + visible.length) % visible.length]));
+                for (const card of neighbors) {
                     if (card) { loadImage(getSource(card)).catch(() => {}); window.ProjectASCII.prepare(getSource(card)).catch(() => {}); }
                 }
             }
@@ -2107,9 +2125,9 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                     root.classList.contains('project-intro-running')
                 ) return;
 
-                const list=visibleCards();if(!list.length||slideview.hidden)return;
+                const list=visibleCards();if(list.length<2||slideview.hidden)return;
                 const at=list.indexOf(cards[wanted??index]);
-                const next=at<0?list[0]:list[at+direction];
+                const next=at<0?list[0]:list[(at+direction+list.length)%list.length];
                 if(phase!=='idle'){
                     // Keep only the latest requested step, never a long scroll backlog.
                     queuedDirection=next?direction:null;

@@ -81,7 +81,7 @@ window.DESIGNER_ICON_PROJECTS = [
         {
             "projectId": "cheoma",
             "file": "team-08-geuneuljabi.svg",
-            "title": "그늘잡이",
+            "title": "처마",
             "topic": "한국 문화 소개",
             "studentColors": {
                 "kim-minjae": "#b5b5b5", // 김민재

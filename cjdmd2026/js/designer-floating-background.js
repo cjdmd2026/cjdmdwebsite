@@ -19,7 +19,7 @@
         touchRadius: 360, touchImpulse: 210, drag: 1.5
     };
     const scriptURL = document.currentScript.src;
-    const iconBaseURL = new URL("../assets/images/project/test/icon/", scriptURL);
+    const iconBaseURL = new URL("../assets/images/project/icon/", scriptURL);
     const SVG_NS = "http://www.w3.org/2000/svg";
     const SHAPES = "path, rect, circle, ellipse, polygon, polyline, line";
     const GEOMETRY = [

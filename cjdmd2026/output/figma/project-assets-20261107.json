@@ -1,0 +1,1916 @@
+[
+  {
+    "projectId": "phishing-ddook",
+    "teamNodeId": "29:97",
+    "role": "service",
+    "nodeId": "29:142",
+    "format": "png",
+    "output": "assets/images/project/submissions/phishing-ddook/service.webp",
+    "source": "output/figma/project-source/originals/phishing-ddook-service-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2361947,
+    "renderSource": "output/figma/project-source/phishing-ddook-service.jpeg",
+    "originalImageHash": "2decb1a53a25cca108ccd7d00fc5d379a5d90b47",
+    "originalDimensions": [
+      1920,
+      942
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1675,
+      942
+    ],
+    "optimizedBytes": 303080,
+    "contentHash": "b79f5efbe4c8"
+  },
+  {
+    "projectId": "phishing-ddook",
+    "teamNodeId": "29:97",
+    "role": "interactive",
+    "nodeId": "29:133",
+    "format": "png",
+    "output": "assets/images/project/submissions/phishing-ddook/interactive.webp",
+    "source": "output/figma/project-source/originals/phishing-ddook-interactive-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2278104,
+    "renderSource": "output/figma/project-source/phishing-ddook-interactive.png",
+    "originalImageHash": "3d7b866230add81698c4f326e883848ce494fcf3",
+    "originalDimensions": [
+      1920,
+      1080
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "optimizedBytes": 236250,
+    "contentHash": "41f4f364c216"
+  },
+  {
+    "projectId": "phishing-ddook",
+    "teamNodeId": "29:97",
+    "role": "landscape",
+    "nodeId": "29:117",
+    "format": "png",
+    "output": "assets/images/project/submissions/phishing-ddook/landscape.webp",
+    "source": "output/figma/project-source/originals/phishing-ddook-landscape-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2163087,
+    "renderSource": "output/figma/project-source/phishing-ddook-landscape.png",
+    "originalImageHash": "da6b7acd97a119bf5c27f3b9f768dc55ea00b86c",
+    "originalDimensions": [
+      1671,
+      941
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1673,
+      941
+    ],
+    "optimizedBytes": 324378,
+    "contentHash": "ab5ae79bdf48"
+  },
+  {
+    "projectId": "phishing-ddook",
+    "teamNodeId": "29:97",
+    "role": "portrait",
+    "nodeId": "29:111",
+    "format": "png",
+    "output": "assets/images/project/submissions/phishing-ddook/portrait.webp",
+    "source": "output/figma/project-source/originals/phishing-ddook-portrait-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 3933392,
+    "renderSource": "output/figma/project-source/phishing-ddook-portrait.png",
+    "originalImageHash": "a573d05dd6b898d12795bb0cf6be357bf793bbc7",
+    "originalDimensions": [
+      1536,
+      2060
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1536,
+      2060
+    ],
+    "optimizedBytes": 479958,
+    "contentHash": "37b69973573f"
+  },
+  {
+    "projectId": "apuchika",
+    "teamNodeId": "29:160",
+    "role": "portrait",
+    "nodeId": "29:174",
+    "format": "png",
+    "output": "assets/images/project/submissions/apuchika/portrait.webp",
+    "source": "output/figma/project-source/originals/apuchika-portrait-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 1259381,
+    "renderSource": "output/figma/project-source/apuchika-portrait.png",
+    "originalImageHash": "0c00f743980fcc7b04e3921a430d9264d02e560b",
+    "originalDimensions": [
+      1536,
+      2060
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1536,
+      2060
+    ],
+    "optimizedBytes": 377042,
+    "contentHash": "70c1a0ee4590"
+  },
+  {
+    "projectId": "phishing-ddook",
+    "teamNodeId": "29:97",
+    "role": "interface",
+    "nodeId": "29:151",
+    "format": "png",
+    "output": "assets/images/project/submissions/phishing-ddook/interface.webp",
+    "source": "output/figma/project-source/originals/phishing-ddook-interface-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 1974443,
+    "renderSource": "output/figma/project-source/phishing-ddook-interface.jpeg",
+    "originalImageHash": "9bf8ffedde0a1cd06a187d170295a53f0677c1ed",
+    "originalDimensions": [
+      1920,
+      1081
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "optimizedBytes": 229690,
+    "contentHash": "0f3306e89061"
+  },
+  {
+    "projectId": "phishing-ddook",
+    "teamNodeId": "29:97",
+    "role": "logo",
+    "nodeId": "29:124",
+    "format": "png",
+    "output": "assets/images/project/submissions/phishing-ddook/logo.png",
+    "source": "output/figma/project-source/phishing-ddook-logo-raw-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 1817601,
+    "isolated": true,
+    "imageHash": "4b7ee4cacf2ade992b8627ac4d2e171d20066651",
+    "dimensions": [
+      4096,
+      2511
+    ],
+    "optimizedBytes": 1116787,
+    "contentHash": "5347162bf8a8"
+  },
+  {
+    "projectId": "apuchika",
+    "teamNodeId": "29:160",
+    "role": "landscape",
+    "nodeId": "29:180",
+    "format": "png",
+    "output": "assets/images/project/submissions/apuchika/landscape.webp",
+    "source": "output/figma/project-source/originals/apuchika-landscape-1.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 268745,
+    "renderSource": "output/figma/project-source/apuchika-landscape.png",
+    "originalImageHash": "47276464b5cd3c5c57633f4cebc3bfa2483d0d6c",
+    "originalDimensions": [
+      1920,
+      1080
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "optimizedBytes": 250498,
+    "contentHash": "72935c82ae8b"
+  },
+  {
+    "projectId": "apuchika",
+    "teamNodeId": "29:160",
+    "role": "interactive",
+    "nodeId": "29:198",
+    "format": "png",
+    "output": "assets/images/project/submissions/apuchika/interactive.webp",
+    "source": "output/figma/project-source/originals/apuchika-interactive-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 754214,
+    "renderSource": "output/figma/project-source/apuchika-interactive.png",
+    "originalImageHash": "bc052661587ea61e75581aaf16925602e8e5d101",
+    "originalDimensions": [
+      1920,
+      1080
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "optimizedBytes": 225868,
+    "contentHash": "12c87ca635c5"
+  },
+  {
+    "projectId": "apuchika",
+    "teamNodeId": "29:160",
+    "role": "service",
+    "nodeId": "29:207",
+    "format": "png",
+    "output": "assets/images/project/submissions/apuchika/service.webp",
+    "source": "output/figma/project-source/originals/apuchika-service-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 922805,
+    "renderSource": "output/figma/project-source/apuchika-service.png",
+    "originalImageHash": "5f47b1b75068a2e4508b1879bea56c9c3b010748",
+    "originalDimensions": [
+      1920,
+      1080
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "optimizedBytes": 253360,
+    "contentHash": "a827889717f2"
+  },
+  {
+    "projectId": "apuchika",
+    "teamNodeId": "29:160",
+    "role": "logo",
+    "nodeId": "29:188",
+    "format": "png",
+    "output": "assets/images/project/submissions/apuchika/logo.png",
+    "source": "output/figma/project-source/apuchika-logo-raw-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 187598,
+    "isolated": true,
+    "imageHash": "12bc817a569fe0522ff01b950fc22cbf36ded81d",
+    "dimensions": [
+      2567,
+      942
+    ],
+    "optimizedBytes": 175709,
+    "contentHash": "0e62b57c4e98"
+  },
+  {
+    "projectId": "apuchika",
+    "teamNodeId": "29:160",
+    "role": "interface",
+    "nodeId": "29:216",
+    "format": "png",
+    "output": "assets/images/project/submissions/apuchika/interface.webp",
+    "source": "output/figma/project-source/originals/apuchika-interface-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 689858,
+    "renderSource": "output/figma/project-source/apuchika-interface.png",
+    "originalImageHash": "bcdf32064e27ac361a2ac2ef4c7c73e594d05c53",
+    "originalDimensions": [
+      1920,
+      1080
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "optimizedBytes": 149226,
+    "contentHash": "d4fb93e5fa98"
+  },
+  {
+    "projectId": "curo",
+    "teamNodeId": "29:226",
+    "role": "portrait",
+    "nodeId": "29:240",
+    "format": "png",
+    "output": "assets/images/project/submissions/curo/portrait.webp",
+    "source": "output/figma/project-source/originals/curo-portrait-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 847060,
+    "renderSource": "output/figma/project-source/curo-portrait.png",
+    "originalImageHash": "623a417805cdac279166defcd9de54d4207cde7d",
+    "originalDimensions": [
+      1536,
+      2060
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1536,
+      2060
+    ],
+    "optimizedBytes": 251760,
+    "contentHash": "db4bc2e925bb"
+  },
+  {
+    "projectId": "curo",
+    "teamNodeId": "29:226",
+    "role": "landscape",
+    "nodeId": "29:246",
+    "format": "png",
+    "output": "assets/images/project/submissions/curo/landscape.webp",
+    "source": "output/figma/project-source/originals/curo-landscape-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 745974,
+    "renderSource": "output/figma/project-source/curo-landscape.png",
+    "originalImageHash": "3a1f856cd9fd21e4027c7aedf5453ee6d9434237",
+    "originalDimensions": [
+      1920,
+      1080
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "optimizedBytes": 240190,
+    "contentHash": "3f2bd4f81605"
+  },
+  {
+    "projectId": "curo",
+    "teamNodeId": "29:226",
+    "role": "interactive",
+    "nodeId": "29:270",
+    "format": "png",
+    "output": "assets/images/project/submissions/curo/interactive.webp",
+    "source": "output/figma/project-source/originals/curo-interactive-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 775662,
+    "renderSource": "output/figma/project-source/curo-interactive.png",
+    "originalImageHash": "d1f786cd70424f9d0f6bed01c5f5cfd3338fa7b9",
+    "originalDimensions": [
+      1920,
+      1080
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "optimizedBytes": 395134,
+    "contentHash": "01321c239e50"
+  },
+  {
+    "projectId": "curo",
+    "teamNodeId": "29:226",
+    "role": "service",
+    "nodeId": "29:279",
+    "format": "png",
+    "output": "assets/images/project/submissions/curo/service.webp",
+    "source": "output/figma/project-source/originals/curo-service-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 1314666,
+    "renderSource": "output/figma/project-source/curo-service.png",
+    "originalImageHash": "d992d76b6186b79f5f751385bdaeb2d493471618",
+    "originalDimensions": [
+      1920,
+      1080
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "optimizedBytes": 414834,
+    "contentHash": "d277296ff6b2"
+  },
+  {
+    "projectId": "curo",
+    "teamNodeId": "29:226",
+    "role": "interface",
+    "nodeId": "29:288",
+    "format": "png",
+    "output": "assets/images/project/submissions/curo/interface.webp",
+    "source": "output/figma/project-source/originals/curo-interface-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 977987,
+    "renderSource": "output/figma/project-source/curo-interface.png",
+    "originalImageHash": "c41249c38a308a469832af95e7655d0160c7a12d",
+    "originalDimensions": [
+      1920,
+      1080
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "optimizedBytes": 295020,
+    "contentHash": "6e521df2ac68"
+  },
+  {
+    "projectId": "curo",
+    "teamNodeId": "29:226",
+    "role": "logo",
+    "nodeId": "29:254",
+    "format": "svg",
+    "output": "assets/images/project/submissions/curo/logo.svg",
+    "source": "output/figma/project-source/curo-logo-isolated.svg",
+    "sourceFormat": "svg",
+    "sizeBytes": 7086,
+    "isolated": true,
+    "dimensions": null,
+    "optimizedBytes": 7086,
+    "contentHash": "ad2df2738aed"
+  },
+  {
+    "projectId": "stylens",
+    "teamNodeId": "29:297",
+    "role": "portrait",
+    "nodeId": "29:311",
+    "format": "png",
+    "output": "assets/images/project/submissions/stylens/portrait.webp",
+    "source": "output/figma/project-source/originals/stylens-portrait-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 1504618,
+    "renderSource": "output/figma/project-source/stylens-portrait.png",
+    "originalImageHash": "fcc0f154d4ed645c5c71a9e2ee6e185ff237d403",
+    "originalDimensions": [
+      1536,
+      2060
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1536,
+      2060
+    ],
+    "optimizedBytes": 472672,
+    "contentHash": "cbd1cb920e4a"
+  },
+  {
+    "projectId": "stylens",
+    "teamNodeId": "29:297",
+    "role": "landscape",
+    "nodeId": "29:317",
+    "format": "png",
+    "output": "assets/images/project/submissions/stylens/landscape.webp",
+    "source": "output/figma/project-source/originals/stylens-landscape-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 1127228,
+    "renderSource": "output/figma/project-source/stylens-landscape.png",
+    "originalImageHash": "db70184fdd878ef2a2eb9e16edcb35d7a6e0a387",
+    "originalDimensions": [
+      1920,
+      1080
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "optimizedBytes": 376432,
+    "contentHash": "e2a404da47e6"
+  },
+  {
+    "projectId": "stylens",
+    "teamNodeId": "29:297",
+    "role": "interactive",
+    "nodeId": "29:333",
+    "format": "png",
+    "output": "assets/images/project/submissions/stylens/interactive.webp",
+    "source": "output/figma/project-source/originals/stylens-interactive-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 983107,
+    "renderSource": "output/figma/project-source/stylens-interactive.png",
+    "originalImageHash": "12d46199da72f0cff1bda1375ff9b918c7b787ac",
+    "originalDimensions": [
+      1920,
+      1080
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "optimizedBytes": 308860,
+    "contentHash": "d91f2bfdf9e9"
+  },
+  {
+    "projectId": "stylens",
+    "teamNodeId": "29:297",
+    "role": "service",
+    "nodeId": "29:342",
+    "format": "png",
+    "output": "assets/images/project/submissions/stylens/service.webp",
+    "source": "output/figma/project-source/originals/stylens-service-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 1298696,
+    "renderSource": "output/figma/project-source/stylens-service.png",
+    "originalImageHash": "4ef24015c42a89b18298b994aa38e52921e9300d",
+    "originalDimensions": [
+      1920,
+      1080
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "optimizedBytes": 495990,
+    "contentHash": "70cce13dae14"
+  },
+  {
+    "projectId": "stylens",
+    "teamNodeId": "29:297",
+    "role": "interface",
+    "nodeId": "29:351",
+    "format": "png",
+    "output": "assets/images/project/submissions/stylens/interface.webp",
+    "source": "output/figma/project-source/originals/stylens-interface-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 762045,
+    "renderSource": "output/figma/project-source/stylens-interface.png",
+    "originalImageHash": "d99f3968dfd30511d511384609671cfae9f1c052",
+    "originalDimensions": [
+      1087,
+      1447
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1087,
+      611
+    ],
+    "optimizedBytes": 91746,
+    "contentHash": "ae0ad7865ed0"
+  },
+  {
+    "projectId": "stylens",
+    "teamNodeId": "29:297",
+    "role": "logo",
+    "nodeId": "29:324",
+    "format": "png",
+    "output": "assets/images/project/submissions/stylens/logo.png",
+    "source": "output/figma/project-source/stylens-logo-raw-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 204611,
+    "isolated": true,
+    "imageHash": "d0df0d3b129a479d66c8afc3fcfbd7335f498c00",
+    "dimensions": [
+      4096,
+      647
+    ],
+    "optimizedBytes": 138079,
+    "contentHash": "8f60a4068630"
+  },
+  {
+    "projectId": "ilkko",
+    "teamNodeId": "29:361",
+    "role": "interactive",
+    "nodeId": "29:416",
+    "format": "png",
+    "output": "assets/images/project/submissions/ilkko/interactive.webp",
+    "source": "output/figma/project-source/originals/ilkko-interactive-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2202672,
+    "renderSource": "output/figma/project-source/ilkko-interactive.png",
+    "originalImageHash": "7bc93762bead7907db4941a61d1c6962571e096b",
+    "originalDimensions": [
+      1536,
+      1024
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1536,
+      864
+    ],
+    "optimizedBytes": 281080,
+    "contentHash": "3021a923357a"
+  },
+  {
+    "projectId": "ilkko",
+    "teamNodeId": "29:361",
+    "role": "service",
+    "nodeId": "29:425",
+    "format": "png",
+    "output": "assets/images/project/submissions/ilkko/service.webp",
+    "source": "output/figma/project-source/originals/ilkko-service-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2887230,
+    "renderSource": "output/figma/project-source/ilkko-service.jpeg",
+    "originalImageHash": "07e123a3d8d7bd4fd17ebdb851a54c75c5297c6b",
+    "originalDimensions": [
+      2103,
+      748
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1299,
+      733
+    ],
+    "optimizedBytes": 262148,
+    "contentHash": "7b4c5451cab5"
+  },
+  {
+    "projectId": "ilkko",
+    "teamNodeId": "29:361",
+    "role": "landscape",
+    "nodeId": "29:381",
+    "format": "png",
+    "output": "assets/images/project/submissions/ilkko/landscape.webp",
+    "source": "output/figma/project-source/originals/ilkko-landscape-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 4452357,
+    "renderSource": "output/figma/project-source/ilkko-landscape.png",
+    "originalImageHash": "9bd690a64aea5113002e2f2f2e58b632c5c7a7e2",
+    "originalDimensions": [
+      3840,
+      2000
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      3556,
+      2000
+    ],
+    "optimizedBytes": 976560,
+    "contentHash": "ef8833eaac72"
+  },
+  {
+    "projectId": "ilkko",
+    "teamNodeId": "29:361",
+    "role": "portrait",
+    "nodeId": "29:375",
+    "format": "png",
+    "output": "assets/images/project/submissions/ilkko/portrait.webp",
+    "source": "output/figma/project-source/originals/ilkko-portrait-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 1102127,
+    "renderSource": "output/figma/project-source/ilkko-portrait.png",
+    "originalImageHash": "9754f29e6507e6f18d86350d06824905bfa535b0",
+    "originalDimensions": [
+      2172,
+      2896
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      2159,
+      2896
+    ],
+    "optimizedBytes": 938304,
+    "contentHash": "cee3156b8b4f"
+  },
+  {
+    "projectId": "ilkko",
+    "teamNodeId": "29:361",
+    "role": "logo",
+    "nodeId": "29:388",
+    "format": "svg",
+    "output": "assets/images/project/submissions/ilkko/logo.svg",
+    "source": "output/figma/project-source/ilkko-logo-isolated.svg",
+    "sourceFormat": "svg",
+    "sizeBytes": 14917,
+    "isolated": true,
+    "dimensions": null,
+    "optimizedBytes": 14917,
+    "contentHash": "9707cb55a69d"
+  },
+  {
+    "projectId": "dadeullim",
+    "teamNodeId": "29:443",
+    "role": "portrait",
+    "nodeId": "29:457",
+    "format": "png",
+    "output": "assets/images/project/submissions/dadeullim/portrait.webp",
+    "source": "output/figma/project-source/originals/dadeullim-portrait-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2113364,
+    "renderSource": "output/figma/project-source/dadeullim-portrait.jpeg",
+    "originalImageHash": "7a4c52d7ef717464109285778ef6b8d36f82d5f5",
+    "originalDimensions": [
+      1086,
+      1448
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1075,
+      1442
+    ],
+    "optimizedBytes": 285170,
+    "contentHash": "ed47fe59eef4"
+  },
+  {
+    "projectId": "ilkko",
+    "teamNodeId": "29:361",
+    "role": "interface",
+    "nodeId": "29:434",
+    "format": "png",
+    "output": "assets/images/project/submissions/ilkko/interface.webp",
+    "source": "output/figma/project-source/originals/ilkko-interface-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 11276785,
+    "renderSource": "output/figma/project-source/ilkko-interface.png",
+    "originalImageHash": "f612a19a6980f06df0b3ea43b8e816c0f522e403",
+    "originalDimensions": [
+      3744,
+      4096
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      3744,
+      2106
+    ],
+    "optimizedBytes": 746114,
+    "contentHash": "53ae8a17168e"
+  },
+  {
+    "projectId": "dadeullim",
+    "teamNodeId": "29:443",
+    "role": "landscape",
+    "nodeId": "29:463",
+    "format": "png",
+    "output": "assets/images/project/submissions/dadeullim/landscape.webp",
+    "source": "output/figma/project-source/originals/dadeullim-landscape-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 6131680,
+    "renderSource": "output/figma/project-source/dadeullim-landscape.jpeg",
+    "originalImageHash": "9662a8efda4e5224fc7fe74ad16bfab247c126c5",
+    "originalDimensions": [
+      2912,
+      1632
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      2901,
+      1632
+    ],
+    "optimizedBytes": 1007006,
+    "contentHash": "51ccbdb0fbfe"
+  },
+  {
+    "projectId": "dadeullim",
+    "teamNodeId": "29:443",
+    "role": "interactive",
+    "nodeId": "29:484",
+    "format": "png",
+    "output": "assets/images/project/submissions/dadeullim/interactive.webp",
+    "source": "output/figma/project-source/originals/dadeullim-interactive-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 15525892,
+    "renderSource": "output/figma/project-source/dadeullim-interactive.png",
+    "originalImageHash": "febe669df4184112486ad69e41f3cc9051ea52cc",
+    "originalDimensions": [
+      3161,
+      4096
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      3161,
+      1778
+    ],
+    "optimizedBytes": 389386,
+    "contentHash": "a223a114431e"
+  },
+  {
+    "projectId": "dadeullim",
+    "teamNodeId": "29:443",
+    "role": "logo",
+    "nodeId": "29:471",
+    "format": "svg",
+    "output": "assets/images/project/submissions/dadeullim/logo.svg",
+    "source": "output/figma/project-source/dadeullim-logo-isolated.svg",
+    "sourceFormat": "svg",
+    "sizeBytes": 4398,
+    "isolated": true,
+    "dimensions": null,
+    "optimizedBytes": 4398,
+    "contentHash": "01dc3d6e7fd2"
+  },
+  {
+    "projectId": "dadeullim",
+    "teamNodeId": "29:443",
+    "role": "interface",
+    "nodeId": "29:502",
+    "format": "png",
+    "output": "assets/images/project/submissions/dadeullim/interface.webp",
+    "source": "output/figma/project-source/originals/dadeullim-interface-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 12045671,
+    "renderSource": "output/figma/project-source/dadeullim-interface.png",
+    "originalImageHash": "55cbebc8ac6e638e9e60c63521e3c29009f1342c",
+    "originalDimensions": [
+      3680,
+      2070
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      3680,
+      2070
+    ],
+    "optimizedBytes": 2531286,
+    "contentHash": "7c7d9cdfa530"
+  },
+  {
+    "projectId": "dadeullim",
+    "teamNodeId": "29:443",
+    "role": "service",
+    "nodeId": "29:493",
+    "format": "png",
+    "output": "assets/images/project/submissions/dadeullim/service.webp",
+    "source": "output/figma/project-source/originals/dadeullim-service-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 12665519,
+    "renderSource": "output/figma/project-source/dadeullim-service.png",
+    "originalImageHash": "540fa694240aacd8b8779e6ead2d788af1b1d92c",
+    "originalDimensions": [
+      4096,
+      1924
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      2702,
+      1520
+    ],
+    "optimizedBytes": 615452,
+    "contentHash": "2fdac4923f25"
+  },
+  {
+    "projectId": "jikji",
+    "teamNodeId": "29:512",
+    "role": "portrait",
+    "nodeId": "29:526",
+    "format": "png",
+    "output": "assets/images/project/submissions/jikji/portrait.webp",
+    "source": "output/figma/project-source/originals/jikji-portrait-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 384194,
+    "renderSource": "output/figma/project-source/jikji-portrait.png",
+    "originalImageHash": "4d5b1e804e8e9dfe001098966360346d3f7d3bec",
+    "originalDimensions": [
+      1084,
+      1405
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1048,
+      1405
+    ],
+    "optimizedBytes": 320958,
+    "contentHash": "2fe9c74e7776"
+  },
+  {
+    "projectId": "jikji",
+    "teamNodeId": "29:512",
+    "role": "landscape",
+    "nodeId": "29:532",
+    "format": "png",
+    "output": "assets/images/project/submissions/jikji/landscape.webp",
+    "source": "output/figma/project-source/originals/jikji-landscape-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 407361,
+    "renderSource": "output/figma/project-source/jikji-landscape.png",
+    "originalImageHash": "6ae995ee33f4ebd1217a3821e141b0f2409661b7",
+    "originalDimensions": [
+      1978,
+      1114
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1978,
+      1113
+    ],
+    "optimizedBytes": 292780,
+    "contentHash": "05496fe647a0"
+  },
+  {
+    "projectId": "jikji",
+    "teamNodeId": "29:512",
+    "role": "service",
+    "nodeId": "29:584",
+    "format": "png",
+    "output": "assets/images/project/submissions/jikji/service.webp",
+    "source": "output/figma/project-source/originals/jikji-service-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 453542,
+    "renderSource": "output/figma/project-source/jikji-service.png",
+    "originalImageHash": "f4dc6055da126a16145cc577245da9f64f945219",
+    "originalDimensions": [
+      1921,
+      1081
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1921,
+      1081
+    ],
+    "optimizedBytes": 392628,
+    "contentHash": "27200805a111"
+  },
+  {
+    "projectId": "jikji",
+    "teamNodeId": "29:512",
+    "role": "interactive",
+    "nodeId": "29:575",
+    "format": "png",
+    "output": "assets/images/project/submissions/jikji/interactive.webp",
+    "source": "output/figma/project-source/originals/jikji-interactive-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 448369,
+    "renderSource": "output/figma/project-source/jikji-interactive.png",
+    "originalImageHash": "a9f021f8cc46aa030b06335fecf82f3182126dbb",
+    "originalDimensions": [
+      1921,
+      1081
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1921,
+      1081
+    ],
+    "optimizedBytes": 355014,
+    "contentHash": "9600ad3a5abb"
+  },
+  {
+    "projectId": "jikji",
+    "teamNodeId": "29:512",
+    "role": "logo",
+    "nodeId": "29:541",
+    "format": "svg",
+    "output": "assets/images/project/submissions/jikji/logo.svg",
+    "source": "output/figma/project-source/jikji-logo-isolated.svg",
+    "sourceFormat": "svg",
+    "sizeBytes": 13892,
+    "isolated": true,
+    "dimensions": null,
+    "optimizedBytes": 13892,
+    "contentHash": "514c02a802de"
+  },
+  {
+    "projectId": "jikji",
+    "teamNodeId": "29:512",
+    "role": "interface",
+    "nodeId": "29:593",
+    "format": "png",
+    "output": "assets/images/project/submissions/jikji/interface.webp",
+    "source": "output/figma/project-source/originals/jikji-interface-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 375469,
+    "renderSource": "output/figma/project-source/jikji-interface.png",
+    "originalImageHash": "5c78d5de664df0f764b9b45f4fb5397fa2a26398",
+    "originalDimensions": [
+      1921,
+      1081
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1921,
+      1081
+    ],
+    "optimizedBytes": 263524,
+    "contentHash": "41c02afaaa86"
+  },
+  {
+    "projectId": "cheoma",
+    "teamNodeId": "29:602",
+    "role": "landscape",
+    "nodeId": "29:622",
+    "format": "png",
+    "output": "assets/images/project/submissions/cheoma/landscape.webp",
+    "source": "output/figma/project-source/originals/cheoma-landscape-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 3532247,
+    "renderSource": "output/figma/project-source/cheoma-landscape.png",
+    "originalImageHash": "cfbe9bf537f4619e78043d8ce09e9390ffc3039c",
+    "originalDimensions": [
+      2048,
+      1152
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      2048,
+      1152
+    ],
+    "optimizedBytes": 602230,
+    "contentHash": "c87097f5a3a4"
+  },
+  {
+    "projectId": "cheoma",
+    "teamNodeId": "29:602",
+    "role": "interactive",
+    "nodeId": "29:638",
+    "format": "png",
+    "output": "assets/images/project/submissions/cheoma/interactive.webp",
+    "source": "output/figma/project-source/originals/cheoma-interactive-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 285580,
+    "renderSource": "output/figma/project-source/cheoma-interactive.png",
+    "originalImageHash": "e3653ba4f67541585810e4c4758e2e52940483ac",
+    "originalDimensions": [
+      1024,
+      1536
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1024,
+      576
+    ],
+    "optimizedBytes": 98046,
+    "contentHash": "09cfe42113c4"
+  },
+  {
+    "projectId": "cheoma",
+    "teamNodeId": "29:602",
+    "role": "portrait",
+    "nodeId": "29:616",
+    "format": "png",
+    "output": "assets/images/project/submissions/cheoma/portrait.webp",
+    "source": "output/figma/project-source/originals/cheoma-portrait-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2600271,
+    "renderSource": "output/figma/project-source/cheoma-portrait.png",
+    "originalImageHash": "59ba82ab865db622ab30851ab8e5e14ac9126688",
+    "originalDimensions": [
+      1083,
+      1452
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1083,
+      1452
+    ],
+    "optimizedBytes": 467380,
+    "contentHash": "fa68cf3c9ad6"
+  },
+  {
+    "projectId": "cheoma",
+    "teamNodeId": "29:602",
+    "role": "service",
+    "nodeId": "29:647",
+    "format": "png",
+    "output": "assets/images/project/submissions/cheoma/service.webp",
+    "source": "output/figma/project-source/originals/cheoma-service-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 2443653,
+    "renderSource": "output/figma/project-source/cheoma-service.png",
+    "originalImageHash": "0a515a904f6970063cbdaa948bf36fd2853e93c1",
+    "originalDimensions": [
+      1624,
+      969
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1624,
+      913
+    ],
+    "optimizedBytes": 357406,
+    "contentHash": "cb88a46fe8b2"
+  },
+  {
+    "projectId": "cheoma",
+    "teamNodeId": "29:602",
+    "role": "interface",
+    "nodeId": "29:656",
+    "format": "png",
+    "output": "assets/images/project/submissions/cheoma/interface.webp",
+    "source": "output/figma/project-source/originals/cheoma-interface-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 2449996,
+    "renderSource": "output/figma/project-source/cheoma-interface.png",
+    "originalImageHash": "e89e1bcd91503e5639c635fed6bfe2a18e355590",
+    "originalDimensions": [
+      1199,
+      1312
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1199,
+      674
+    ],
+    "optimizedBytes": 183172,
+    "contentHash": "0b4157b624ce"
+  },
+  {
+    "projectId": "cheoma",
+    "teamNodeId": "29:602",
+    "role": "logo",
+    "nodeId": "29:629",
+    "format": "png",
+    "output": "assets/images/project/submissions/cheoma/logo.png",
+    "source": "output/figma/project-source/cheoma-logo-raw-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 8773,
+    "isolated": true,
+    "imageHash": "546ca334c5f31109b7b9d40315d1ce73c3c60463",
+    "dimensions": [
+      915,
+      494
+    ],
+    "optimizedBytes": 6658,
+    "contentHash": "70e5d5ad3652"
+  },
+  {
+    "projectId": "omix",
+    "teamNodeId": "29:668",
+    "role": "portrait",
+    "nodeId": "29:683",
+    "format": "png",
+    "output": "assets/images/project/submissions/omix/portrait.webp",
+    "source": "output/figma/project-source/originals/omix-portrait-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 1312160,
+    "renderSource": "output/figma/project-source/omix-portrait.jpeg",
+    "originalImageHash": "8d91fb740acb95fb2488b812045ce84e5f72735b",
+    "originalDimensions": [
+      768,
+      1031
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      768,
+      1031
+    ],
+    "optimizedBytes": 220216,
+    "contentHash": "e3365694013c"
+  },
+  {
+    "projectId": "omix",
+    "teamNodeId": "29:668",
+    "role": "landscape",
+    "nodeId": "29:689",
+    "format": "png",
+    "output": "assets/images/project/submissions/omix/landscape.webp",
+    "source": "output/figma/project-source/originals/omix-landscape-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 3876844,
+    "renderSource": "output/figma/project-source/omix-landscape.jpeg",
+    "originalImageHash": "9676141282796d0ecaa25d234576068bb35be499",
+    "originalDimensions": [
+      1920,
+      1080
+    ],
+    "encoding": "original-pixels-webp-lossless-v1",
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "optimizedBytes": 2467060,
+    "contentHash": "769bef3a0845"
+  },
+  {
+    "projectId": "omix",
+    "teamNodeId": "29:668",
+    "role": "interactive",
+    "nodeId": "29:713",
+    "format": "png",
+    "output": "assets/images/project/submissions/omix/interactive.webp",
+    "source": "output/figma/project-source/originals/omix-interactive-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 3249034,
+    "renderSource": "output/figma/project-source/omix-interactive.jpeg",
+    "originalImageHash": "0f53b259310dc3835571f488188a8b797ccb635b",
+    "originalDimensions": [
+      1086,
+      1448
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1086,
+      1448
+    ],
+    "optimizedBytes": 746584,
+    "contentHash": "6b036d4c99cb"
+  },
+  {
+    "projectId": "omix",
+    "teamNodeId": "29:668",
+    "role": "logo",
+    "nodeId": "29:696",
+    "format": "svg",
+    "output": "assets/images/project/submissions/omix/logo.svg",
+    "source": "output/figma/project-source/omix-logo-isolated.svg",
+    "sourceFormat": "svg",
+    "sizeBytes": 2604,
+    "isolated": true,
+    "dimensions": null,
+    "optimizedBytes": 2604,
+    "contentHash": "c38afbace78c"
+  },
+  {
+    "projectId": "omix",
+    "teamNodeId": "29:668",
+    "role": "interface",
+    "nodeId": "29:731",
+    "format": "png",
+    "output": "assets/images/project/submissions/omix/interface.webp",
+    "source": "output/figma/project-source/originals/omix-interface-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 5520735,
+    "renderSource": "output/figma/project-source/omix-interface.jpeg",
+    "originalImageHash": "1a3ada9a8f58413fad1817e29827829a9cc6edfd",
+    "originalDimensions": [
+      1980,
+      2310
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1979,
+      2310
+    ],
+    "optimizedBytes": 551936,
+    "contentHash": "f5bc55d7e198"
+  },
+  {
+    "projectId": "omix",
+    "teamNodeId": "29:668",
+    "role": "service",
+    "nodeId": "29:722",
+    "format": "png",
+    "output": "assets/images/project/submissions/omix/service.webp",
+    "source": "output/figma/project-source/originals/omix-service-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 1830400,
+    "renderSource": "output/figma/project-source/omix-service.jpeg",
+    "originalImageHash": "49d581e77ef1f5f88594053833adfefc1420a390",
+    "originalDimensions": [
+      1254,
+      1254
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "optimizedBytes": 234124,
+    "contentHash": "6b080863246a"
+  },
+  {
+    "projectId": "year-on",
+    "teamNodeId": "29:740",
+    "role": "service",
+    "nodeId": "29:785",
+    "format": "png",
+    "output": "assets/images/project/submissions/year-on/service.webp",
+    "source": "output/figma/project-source/year-on-service-original-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 2188219,
+    "renderSource": "output/figma/project-source/year-on-service.png",
+    "originalImageHash": "c3dae3fafb776531162f1b0f9f85e6a865a87f90",
+    "originalDimensions": [
+      1126,
+      1397
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1126,
+      633
+    ],
+    "optimizedBytes": 140262,
+    "contentHash": "2bdafbf75239"
+  },
+  {
+    "projectId": "year-on",
+    "teamNodeId": "29:740",
+    "role": "portrait",
+    "nodeId": "29:754",
+    "format": "png",
+    "output": "assets/images/project/submissions/year-on/portrait.webp",
+    "source": "output/figma/project-source/originals/year-on-portrait-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 1624753,
+    "renderSource": "output/figma/project-source/year-on-portrait.png",
+    "originalImageHash": "021a90438d8f89f5d12ff7d9389ceee761befb21",
+    "originalDimensions": [
+      1536,
+      2060
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1536,
+      2060
+    ],
+    "optimizedBytes": 332406,
+    "contentHash": "5f677e4211ab"
+  },
+  {
+    "projectId": "year-on",
+    "teamNodeId": "29:740",
+    "role": "interactive",
+    "nodeId": "29:776",
+    "format": "png",
+    "output": "assets/images/project/submissions/year-on/interactive.webp",
+    "source": "output/figma/project-source/originals/year-on-interactive-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2604089,
+    "renderSource": "output/figma/project-source/year-on-interactive.png",
+    "originalImageHash": "720ea11ee8b7ecf91282fdc8cade378583c27aa2",
+    "originalDimensions": [
+      1920,
+      1080
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "optimizedBytes": 271748,
+    "contentHash": "094d675286a8"
+  },
+  {
+    "projectId": "year-on",
+    "teamNodeId": "29:740",
+    "role": "landscape",
+    "nodeId": "29:760",
+    "format": "png",
+    "output": "assets/images/project/submissions/year-on/landscape.webp",
+    "source": "output/figma/project-source/originals/year-on-landscape-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2351061,
+    "renderSource": "output/figma/project-source/year-on-landscape.png",
+    "originalImageHash": "4c548b6dd37cb42102472e631cf94e34a084de8b",
+    "originalDimensions": [
+      2850,
+      1772
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      2850,
+      1603
+    ],
+    "optimizedBytes": 469240,
+    "contentHash": "faee87c2a7e0"
+  },
+  {
+    "projectId": "year-on",
+    "teamNodeId": "29:740",
+    "role": "interface",
+    "nodeId": "29:794",
+    "format": "png",
+    "output": "assets/images/project/submissions/year-on/interface.webp",
+    "source": "output/figma/project-source/originals/year-on-interface-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 939514,
+    "renderSource": "output/figma/project-source/year-on-interface.png",
+    "originalImageHash": "d8798d7f1685d129042c451e36833c872fc61982",
+    "originalDimensions": [
+      1928,
+      1451
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1405,
+      790
+    ],
+    "optimizedBytes": 120714,
+    "contentHash": "65c05b52c7ce"
+  },
+  {
+    "projectId": "year-on",
+    "teamNodeId": "29:740",
+    "role": "logo",
+    "nodeId": "29:767",
+    "format": "png",
+    "output": "assets/images/project/submissions/year-on/logo.png",
+    "source": "output/figma/project-source/year-on-logo-raw-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 27030,
+    "isolated": true,
+    "imageHash": "26d03bea3a0ff23a3d8109c4d74fa3ba34e97b46",
+    "dimensions": [
+      1425,
+      481
+    ],
+    "optimizedBytes": 24138,
+    "contentHash": "a3078539bcdc"
+  },
+  {
+    "projectId": "cocorang",
+    "teamNodeId": "29:804",
+    "role": "landscape",
+    "nodeId": "29:824",
+    "format": "png",
+    "output": "assets/images/project/submissions/cocorang/landscape.webp",
+    "source": "output/figma/project-source/originals/cocorang-landscape-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2555899,
+    "renderSource": "output/figma/project-source/cocorang-landscape.png",
+    "originalImageHash": "589208a3253ce7cc8f90caf29709ac6953e359dd",
+    "originalDimensions": [
+      1672,
+      941
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1672,
+      940
+    ],
+    "optimizedBytes": 440186,
+    "contentHash": "90688472dfd3"
+  },
+  {
+    "projectId": "cocorang",
+    "teamNodeId": "29:804",
+    "role": "portrait",
+    "nodeId": "29:818",
+    "format": "png",
+    "output": "assets/images/project/submissions/cocorang/portrait.webp",
+    "source": "output/figma/project-source/originals/cocorang-portrait-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 1994935,
+    "renderSource": "output/figma/project-source/cocorang-portrait.png",
+    "originalImageHash": "fc298359eeccbf79f5d731e7768ae78507598aca",
+    "originalDimensions": [
+      1083,
+      1453
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1083,
+      1452
+    ],
+    "optimizedBytes": 306716,
+    "contentHash": "c3426dc562ee"
+  },
+  {
+    "projectId": "cocorang",
+    "teamNodeId": "29:804",
+    "role": "interactive",
+    "nodeId": "29:885",
+    "format": "png",
+    "output": "assets/images/project/submissions/cocorang/interactive.webp",
+    "source": "output/figma/project-source/originals/cocorang-interactive-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2167477,
+    "renderSource": "output/figma/project-source/cocorang-interactive.png",
+    "originalImageHash": "7c0e1c3255115c6c0179fa57c7358a9f9feb9a6e",
+    "originalDimensions": [
+      1672,
+      941
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1673,
+      941
+    ],
+    "optimizedBytes": 317798,
+    "contentHash": "ed868454aaf0"
+  },
+  {
+    "projectId": "cocorang",
+    "teamNodeId": "29:804",
+    "role": "logo",
+    "nodeId": "29:836",
+    "format": "svg",
+    "output": "assets/images/project/submissions/cocorang/logo.svg",
+    "source": "output/figma/project-source/cocorang-logo-isolated.svg",
+    "sourceFormat": "svg",
+    "sizeBytes": 25786,
+    "isolated": true,
+    "dimensions": null,
+    "optimizedBytes": 25786,
+    "contentHash": "3a1b3ea69e11"
+  },
+  {
+    "projectId": "cocorang",
+    "teamNodeId": "29:804",
+    "role": "service",
+    "nodeId": "29:894",
+    "format": "png",
+    "output": "assets/images/project/submissions/cocorang/service.webp",
+    "source": "output/figma/project-source/originals/cocorang-service-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2109305,
+    "renderSource": "output/figma/project-source/cocorang-service.png",
+    "originalImageHash": "6fba72f021a75a84211db27682611fdbdbcdc682",
+    "originalDimensions": [
+      1672,
+      941
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1672,
+      940
+    ],
+    "optimizedBytes": 304708,
+    "contentHash": "27a63a147237"
+  },
+  {
+    "projectId": "cocorang",
+    "teamNodeId": "29:804",
+    "role": "interface",
+    "nodeId": "29:903",
+    "format": "png",
+    "output": "assets/images/project/submissions/cocorang/interface.webp",
+    "source": "output/figma/project-source/originals/cocorang-interface-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2586480,
+    "renderSource": "output/figma/project-source/cocorang-interface.png",
+    "originalImageHash": "400acf57bd3207ce1e62646253ad211e40d052f6",
+    "originalDimensions": [
+      1672,
+      941
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1672,
+      940
+    ],
+    "optimizedBytes": 472064,
+    "contentHash": "13462d2d8742"
+  },
+  {
+    "projectId": "magmoa",
+    "teamNodeId": "29:912",
+    "role": "portrait",
+    "nodeId": "29:926",
+    "format": "png",
+    "output": "assets/images/project/submissions/magmoa/portrait.webp",
+    "source": "output/figma/project-source/originals/magmoa-portrait-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2512223,
+    "renderSource": "output/figma/project-source/magmoa-portrait.jpeg",
+    "originalImageHash": "78e933c4c4174f13be6d98c028832c0dd25fae6e",
+    "originalDimensions": [
+      1083,
+      1452
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1083,
+      1452
+    ],
+    "optimizedBytes": 528248,
+    "contentHash": "7a894e081fc5"
+  },
+  {
+    "projectId": "magmoa",
+    "teamNodeId": "29:912",
+    "role": "landscape",
+    "nodeId": "29:932",
+    "format": "png",
+    "output": "assets/images/project/submissions/magmoa/landscape.webp",
+    "source": "output/figma/project-source/originals/magmoa-landscape-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2275579,
+    "renderSource": "output/figma/project-source/magmoa-landscape.jpeg",
+    "originalImageHash": "9702e5743a6f85a008df3ad9a735537d42d34288",
+    "originalDimensions": [
+      1672,
+      941
+    ],
+    "encoding": "original-pixels-webp-lossless-v1",
+    "dimensions": [
+      1672,
+      940
+    ],
+    "optimizedBytes": 1769084,
+    "contentHash": "0c79e133e299"
+  },
+  {
+    "projectId": "magmoa",
+    "teamNodeId": "29:912",
+    "role": "interactive",
+    "nodeId": "29:952",
+    "format": "png",
+    "output": "assets/images/project/submissions/magmoa/interactive.webp",
+    "source": "output/figma/project-source/originals/magmoa-interactive-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2727752,
+    "renderSource": "output/figma/project-source/magmoa-interactive.jpeg",
+    "originalImageHash": "c1a11e52aacce57044e6eefb65aa1ef132790094",
+    "originalDimensions": [
+      1940,
+      810
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1440,
+      810
+    ],
+    "optimizedBytes": 400148,
+    "contentHash": "42af3a2f7950"
+  },
+  {
+    "projectId": "magmoa",
+    "teamNodeId": "29:912",
+    "role": "service",
+    "nodeId": "29:961",
+    "format": "png",
+    "output": "assets/images/project/submissions/magmoa/service.webp",
+    "source": "output/figma/project-source/originals/magmoa-service-0.jpeg",
+    "sourceFormat": "jpeg",
+    "sizeBytes": 9214470,
+    "renderSource": "output/figma/project-source/magmoa-service.jpeg",
+    "originalImageHash": "16ae146cdca67f0afe69b478cafa3acdb2b99632",
+    "originalDimensions": [
+      4096,
+      2389
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      4096,
+      2304
+    ],
+    "optimizedBytes": 1783156,
+    "contentHash": "e0cac0528d6f"
+  },
+  {
+    "projectId": "magmoa",
+    "teamNodeId": "29:912",
+    "role": "interface",
+    "nodeId": "29:970",
+    "format": "png",
+    "output": "assets/images/project/submissions/magmoa/interface.webp",
+    "source": "output/figma/project-source/originals/magmoa-interface-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2362476,
+    "renderSource": "output/figma/project-source/magmoa-interface.jpeg",
+    "originalImageHash": "988fd24a5c51f1c98e2b4fb5cad394dd8dcda2f1",
+    "originalDimensions": [
+      1672,
+      941
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1052,
+      592
+    ],
+    "optimizedBytes": 203792,
+    "contentHash": "32657b846be1"
+  },
+  {
+    "projectId": "magmoa",
+    "teamNodeId": "29:912",
+    "role": "logo",
+    "nodeId": "29:940",
+    "format": "svg",
+    "output": "assets/images/project/submissions/magmoa/logo.svg",
+    "source": "output/figma/project-source/magmoa-logo-isolated.svg",
+    "sourceFormat": "svg",
+    "sizeBytes": 13973,
+    "isolated": true,
+    "dimensions": null,
+    "optimizedBytes": 13973,
+    "contentHash": "ee1b4f3539b7"
+  },
+  {
+    "projectId": "efact",
+    "teamNodeId": "29:980",
+    "role": "landscape",
+    "nodeId": "29:1000",
+    "format": "png",
+    "output": "assets/images/project/submissions/efact/landscape.webp",
+    "source": "output/figma/project-source/originals/efact-landscape-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2495237,
+    "renderSource": "output/figma/project-source/efact-landscape.png",
+    "originalImageHash": "23beb3887f55831a550c537629987cae848e9454",
+    "originalDimensions": [
+      1671,
+      941
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1671,
+      940
+    ],
+    "optimizedBytes": 458838,
+    "contentHash": "8d40153a75af"
+  },
+  {
+    "projectId": "efact",
+    "teamNodeId": "29:980",
+    "role": "portrait",
+    "nodeId": "29:994",
+    "format": "png",
+    "output": "assets/images/project/submissions/efact/portrait.webp",
+    "source": "output/figma/project-source/originals/efact-portrait-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2708884,
+    "renderSource": "output/figma/project-source/efact-portrait.png",
+    "originalImageHash": "b2132175d28b6046446507a727934d639cc1d9ba",
+    "originalDimensions": [
+      1083,
+      1452
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1083,
+      1452
+    ],
+    "optimizedBytes": 522960,
+    "contentHash": "be115698a4e5"
+  },
+  {
+    "projectId": "efact",
+    "teamNodeId": "29:980",
+    "role": "interactive",
+    "nodeId": "29:1016",
+    "format": "png",
+    "output": "assets/images/project/submissions/efact/interactive.webp",
+    "source": "output/figma/project-source/originals/efact-interactive-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2069154,
+    "renderSource": "output/figma/project-source/efact-interactive.png",
+    "originalImageHash": "9d00c87fe72f56a6e7cc1f0ecce963cd46b50c8a",
+    "originalDimensions": [
+      1670,
+      941
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1670,
+      939
+    ],
+    "optimizedBytes": 355086,
+    "contentHash": "875ee95917cf"
+  },
+  {
+    "projectId": "efact",
+    "teamNodeId": "29:980",
+    "role": "service",
+    "nodeId": "29:1025",
+    "format": "png",
+    "output": "assets/images/project/submissions/efact/service.webp",
+    "source": "output/figma/project-source/originals/efact-service-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2744875,
+    "renderSource": "output/figma/project-source/efact-service.png",
+    "originalImageHash": "6ac76829dafb83ddedb1a6ccf52f6c4da632db4a",
+    "originalDimensions": [
+      1672,
+      941
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1672,
+      940
+    ],
+    "optimizedBytes": 545644,
+    "contentHash": "f1441688c788"
+  },
+  {
+    "projectId": "efact",
+    "teamNodeId": "29:980",
+    "role": "logo",
+    "nodeId": "29:1007",
+    "format": "png",
+    "output": "assets/images/project/submissions/efact/logo.png",
+    "source": "output/figma/project-source/efact-logo-raw-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 1226531,
+    "isolated": true,
+    "imageHash": "ef6eecbf27456db0269db974776b7b5595092971",
+    "dimensions": [
+      1983,
+      793
+    ],
+    "optimizedBytes": 1213186,
+    "contentHash": "ef91273a96de"
+  },
+  {
+    "projectId": "efact",
+    "teamNodeId": "29:980",
+    "role": "interface",
+    "nodeId": "29:1034",
+    "format": "png",
+    "output": "assets/images/project/submissions/efact/interface.webp",
+    "source": "output/figma/project-source/originals/efact-interface-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 3857363,
+    "renderSource": "output/figma/project-source/efact-interface.png",
+    "originalImageHash": "429b8f1734a89e33936633c0981a5119046db965",
+    "originalDimensions": [
+      1920,
+      1080
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "optimizedBytes": 379710,
+    "contentHash": "6daf58d01154"
+  },
+  {
+    "projectId": "28",
+    "teamNodeId": "29:1043",
+    "role": "portrait",
+    "nodeId": "29:1057",
+    "format": "png",
+    "output": "assets/images/project/submissions/28/portrait.webp",
+    "source": "output/figma/project-source/originals/28-portrait-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2922573,
+    "renderSource": "output/figma/project-source/28-portrait.png",
+    "originalImageHash": "b11e6a9ad72bd52dfe8152655a4ff3533529ca46",
+    "originalDimensions": [
+      1536,
+      2060
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1536,
+      2060
+    ],
+    "optimizedBytes": 364856,
+    "contentHash": "12a089508d6e"
+  },
+  {
+    "projectId": "28",
+    "teamNodeId": "29:1043",
+    "role": "interactive",
+    "nodeId": "29:1089",
+    "format": "png",
+    "output": "assets/images/project/submissions/28/interactive.webp",
+    "source": "output/figma/project-source/originals/28-interactive-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 1999579,
+    "renderSource": "output/figma/project-source/28-interactive.png",
+    "originalImageHash": "f8b8f5f5ddef59c548b074bb5a51b18bea5ac378",
+    "originalDimensions": [
+      1920,
+      1080
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "optimizedBytes": 197212,
+    "contentHash": "0ef9dc7426c5"
+  },
+  {
+    "projectId": "28",
+    "teamNodeId": "29:1043",
+    "role": "service",
+    "nodeId": "29:1098",
+    "format": "png",
+    "output": "assets/images/project/submissions/28/service.webp",
+    "source": "output/figma/project-source/originals/28-service-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 3136201,
+    "renderSource": "output/figma/project-source/28-service.png",
+    "originalImageHash": "a0b5fcad4c152b60b1966aa76b53050581978177",
+    "originalDimensions": [
+      1920,
+      1080
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "optimizedBytes": 424896,
+    "contentHash": "c83b79ab1ed1"
+  },
+  {
+    "projectId": "28",
+    "teamNodeId": "29:1043",
+    "role": "interface",
+    "nodeId": "29:1107",
+    "format": "png",
+    "output": "assets/images/project/submissions/28/interface.webp",
+    "source": "output/figma/project-source/originals/28-interface-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2716936,
+    "renderSource": "output/figma/project-source/28-interface.png",
+    "originalImageHash": "8a99daf1e577c5ec24c8ea228ef4482a2c02670c",
+    "originalDimensions": [
+      1920,
+      1080
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "optimizedBytes": 353684,
+    "contentHash": "2410117065b4"
+  },
+  {
+    "projectId": "28",
+    "teamNodeId": "29:1043",
+    "role": "logo",
+    "nodeId": "29:1071",
+    "format": "svg",
+    "output": "assets/images/project/submissions/28/logo.svg",
+    "source": "output/figma/project-source/28-logo-isolated.svg",
+    "sourceFormat": "svg",
+    "sizeBytes": 8438,
+    "isolated": true,
+    "dimensions": null,
+    "optimizedBytes": 8438,
+    "contentHash": "f6d495c0951a"
+  },
+  {
+    "projectId": "28",
+    "teamNodeId": "29:1043",
+    "role": "landscape",
+    "nodeId": "29:1063",
+    "format": "png",
+    "output": "assets/images/project/submissions/28/landscape.webp",
+    "source": "output/figma/project-source/originals/28-landscape-0.png",
+    "sourceFormat": "png",
+    "sizeBytes": 2246904,
+    "renderSource": "output/figma/project-source/28-landscape.png",
+    "originalImageHash": "f6ffc96f02c85cb567168e533462af2b682f1016",
+    "originalDimensions": [
+      1920,
+      1080
+    ],
+    "encoding": "original-pixels-webp95-v1",
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "optimizedBytes": 272324,
+    "contentHash": "9a2e1939de06"
+  }
+]
