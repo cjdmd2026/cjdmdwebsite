@@ -1219,7 +1219,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             html[data-project-fluid-view="slide"] {
                 --project-dial-icon-size:clamp(3rem,5vw,5rem);
                 --project-icon-left:clamp(2rem,4.5vw,5rem);
-                --project-copy-bottom:10%;
+                --project-copy-bottom:15vh;
                 --project-copy-width:max(30vw,22rem);
                 --project-copy-left:calc(var(--project-icon-left) + var(--project-dial-icon-size) + 2rem);
                 --project-dial-title-duration:800ms;
