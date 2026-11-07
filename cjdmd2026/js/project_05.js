@@ -2473,7 +2473,14 @@ function settleAsciiContent() {
                 }else warm();
             });
             listen(window,'pagehide',()=>finishIntro(true));
-            markActive(index,true);changeView('slide');
+            const returning = window.projectListReturn;
+            if (returning) {
+                const savedIndex = cards.findIndex(card => card.dataset.projectId === returning.projectId);
+                if (savedIndex !== -1) index = savedIndex;
+                // The desktop slide can show any project even with a search term in the field.
+                cards.forEach(card => { card.hidden = false; });
+            }
+            markActive(index,true);changeView(returning?.view || 'slide');
             window.ProjectFluidSlide={
                 next:()=>navigate(1),prev:()=>navigate(-1),
                 focusSearch,

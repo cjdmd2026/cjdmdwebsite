@@ -72,10 +72,12 @@
     const clipStyle = [...style.sheet.cssRules].find(rule => rule.selectorText === 'html.page-transition-native::view-transition-new(root)')?.style || document.createElement('div').style;
     const blurStyle = [...style.sheet.cssRules].find(rule => rule.selectorText === 'html.page-transition-native::view-transition-old(root)')?.style || document.createElement('div').style;
 
-    function readArrival() {
+    function readArrival(fromCache = false) {
         try {
             const value = JSON.parse(sessionStorage.getItem(STORAGE_KEY));
-            return value?.version === 2 && value.href === location.href && Date.now() - value.time < 15000;
+            if (value?.version !== 2 || Date.now() - value.time >= 15000) return false;
+            if (value.traverse) return fromCache || performance.getEntriesByType('navigation')[0]?.type === 'back_forward';
+            return value.href === location.href;
         } catch { return false; }
     }
     function clearArrival() {
@@ -287,6 +289,12 @@
         window.addEventListener('resize', current.resize, {passive: true});
         return current;
     }
+    function skipTransition(transition) {
+        if (!transition) return;
+        // Skipping before the snapshot is ready rejects ready with AbortError.
+        transition.ready.catch(() => {});
+        transition.skipTransition();
+    }
     function cleanup() {
         const current = scene;
         scene = null;
@@ -294,7 +302,7 @@
             cancelAnimationFrame(current.frame); clearTimeout(current.timeout);
             window.removeEventListener('resize', current.resize);
             current.animations?.forEach(animation => animation.cancel());
-            current.transition?.skipTransition();
+            skipTransition(current.transition);
             current.layer.remove();
         }
         clearTimeout(navigationTimer); clearTimeout(arrivalTimer);
@@ -395,7 +403,7 @@
         if (!transition) { void domReady.then(fallbackArrival); return; }
         if (scene) cleanup();
         if (reduced.matches || !document.body) {
-            transition.skipTransition(); cleanup(); clearArrival();
+            skipTransition(transition); cleanup(); clearArrival();
             void domReady.then(showPageContent);
             return;
         }
@@ -412,7 +420,7 @@
     });
     window.addEventListener('pageswap', event => {
         const traverse = event.activation?.navigationType === 'traverse';
-        if (reduced.matches || (!leaving && !traverse)) event.viewTransition?.skipTransition();
+        if (reduced.matches || (!leaving && !traverse)) skipTransition(event.viewTransition);
         // The BFCache must retain an interactive page, not an outgoing busy state.
         clearTimeout(navigationTimer);
         leaving = false;
@@ -432,7 +440,16 @@
                 button?.setAttribute('aria-label', '메뉴 열기');
                 heldMenu = null;
             }
-            cleanup(); clearArrival();
+            // A cached document does not rerun the head script. Pick up the
+            // current navigation request and let pagereveal handle it if available.
+            if (!scene) {
+                cleanup();
+                if (readArrival(true) && !reduced.matches) {
+                    prepareArrival();
+                    if (nativeNavigation) arrivalTimer = setTimeout(fallbackArrival, 1000);
+                    else fallbackArrival();
+                } else clearArrival();
+            }
         }
     });
     window.addEventListener('pagehide', () => {
@@ -443,7 +460,31 @@
         if (reduced.matches && scene) { cleanup(); showPageContent(); }
     });
 
-    async function handleLinkClick(event) {
+    async function navigate(destination, commit, menu = null) {
+        if (leaving || arriving) return;
+        leaving = true;
+        if (menu && !menu.hidden) {
+            heldMenu = menu;
+            root.classList.add('page-transition-menu-hold');
+            menu.classList.add('is-open');
+        }
+        setActive(true);
+        if (!reduced.matches) {
+            try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify({version: 2, ...destination, time: Date.now()})); } catch { /* Native transitions do not require storage. */ }
+        }
+        // Navigate immediately. The browser keeps the old document until the new one is ready.
+        // No outgoing cover pass, DOM replacement, or re-execution of page scripts is needed.
+        navigationTimer = setTimeout(() => { cleanup(); clearArrival(); }, 12000);
+        if (!nativeNavigation && !reduced.matches && document.body.animate) {
+            exitBlur = document.body.animate([{filter: 'blur(0px)'}, {filter: 'blur(12px)'}], {duration: 200, fill: 'both'});
+            await exitBlur.finished.catch(() => {});
+        }
+        commit();
+    }
+    window.PageTransition = {
+        back(steps) { return navigate({traverse: true}, () => history.go(-steps)); }
+    };
+    function handleLinkClick(event) {
         const link = event.target.closest?.('[page-transition]');
         if (!link?.href || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey
             || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
@@ -454,26 +495,7 @@
             return;
         }
         event.preventDefault();
-        if (leaving || arriving) return;
-        leaving = true;
-        const menu = mobile.matches ? link.closest('.mobile-menu') : null;
-        if (menu && !menu.hidden) {
-            heldMenu = menu;
-            root.classList.add('page-transition-menu-hold');
-            menu.classList.add('is-open');
-        }
-        setActive(true);
-        if (!reduced.matches) {
-            try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify({version: 2, href: url.href, time: Date.now()})); } catch { /* Native transitions do not require storage. */ }
-        }
-        // Navigate immediately. The browser keeps the old document until the new one is ready.
-        // No outgoing cover pass, DOM replacement, or re-execution of page scripts is needed.
-        navigationTimer = setTimeout(() => { cleanup(); clearArrival(); }, 12000);
-        if (!nativeNavigation && !reduced.matches && document.body.animate) {
-            exitBlur = document.body.animate([{filter: 'blur(0px)'}, {filter: 'blur(12px)'}], {duration: 200, fill: 'both'});
-            await exitBlur.finished.catch(() => {});
-        }
-        location.assign(url.href);
+        return navigate({href: url.href}, () => location.assign(url.href), mobile.matches ? link.closest('.mobile-menu') : null);
     }
     // Menu link handlers otherwise start their close/fade before document bubbling.
     // Claim only menu navigation early; other links retain their existing order.
@@ -484,9 +506,10 @@
 
     const expectedArrival = readArrival();
     root.classList.remove('page-transition-preload');
-    if (expectedArrival && !reduced.matches) {
+    function prepareArrival() {
         arriving = true; setActive(true); root.classList.add('page-transition-pending');
     }
+    if (expectedArrival && !reduced.matches) prepareArrival();
     if (!reduced.matches) void loadSprites();
     function fallbackArrival() {
         if (scene) return;

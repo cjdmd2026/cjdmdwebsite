@@ -728,8 +728,8 @@ html[data-project-fluid-view="slide"] .project-warp {
     /* Scale the description with the heading, using 1.05rem for a 4.5rem heading. */
     font-size: calc(var(--project-dial-icon-size, 4.5rem) * 1.05 / 4.5);
     line-height: 1.5;
-    letter-spacing: -0.02rem;
-    font-weight: 400;
+    letter-spacing: -0.015rem;
+    font-weight: 300;
     text-shadow: 0 1px 3px rgb(0 0 0 / 12%);
 
     color: rgba(255, 255, 255, 0.68);
@@ -767,14 +767,33 @@ html[data-project-fluid-view="slide"]
     top: auto;
 
     transition:
-        width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+        width 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        scale 180ms ease;
 }
 
 html[data-project-fluid-view="slide"]
 .project-warp .search-bar input {
     padding: 0;
-
     cursor: pointer;
+    transition:
+        padding 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 0.3s ease,
+        background-color 180ms ease;
+}
+
+html[data-project-fluid-view="slide"] .project-warp .search-bar:hover {
+    scale: 0.95;
+}
+
+html[data-project-fluid-view="slide"] .project-warp .search-bar:hover input {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html[data-project-fluid-view="slide"] .project-warp .search-bar,
+    html[data-project-fluid-view="slide"] .project-warp .search-bar :is(input, img) {
+        transition: none;
+    }
 }
 
 /* 원형 상태에서는 검색 아이콘을 정확히 중앙에 */

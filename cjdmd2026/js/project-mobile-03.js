@@ -224,6 +224,11 @@
     enhanceCards();
     ensureMobileGrid();
     updateResults();
+    const savedSheet = window.projectListReturn?.sheetId;
+    if (mobile.matches && savedSheet) {
+        const card = cards.find(item => item.dataset.projectId === savedSheet);
+        if (card) openSheet(card);
+    }
     document.addEventListener("DOMContentLoaded", () => {
         ensureMobileGrid();
         updateResults();

@@ -1,0 +1,27 @@
+@font-face {
+    font-family: Gosanja;
+    src: url("../apuchika/assets/fonts/Gosanja-full-v18.woff") format("woff");
+    font-weight: 400;
+    font-display: swap;
+}
+
+.apuchika-art .case-ink {
+    transform: none;
+}
+
+/* Display lettering from the submitted artwork, with live text for selection and reading. */
+.apuchika-art .case-glyphs {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+}
+
+.apuchika-art .case-outlined .case-line,
+.apuchika-art .case-outlined .case-line span {
+    color: transparent !important;
+    -webkit-text-stroke: 0;
+    text-shadow: none;
+}
