@@ -726,8 +726,6 @@ img {
     pointer-events: none;
 }
 
-/* ============================== Card Copy ============================== */
-
 .hero-logo {
     display: block;
     width: auto;
@@ -737,6 +735,8 @@ img {
     object-fit: contain;
     object-position: left bottom;
 }
+
+/* ============================== Card Copy ============================== */
 
 .card-copy {
     min-width: 0;

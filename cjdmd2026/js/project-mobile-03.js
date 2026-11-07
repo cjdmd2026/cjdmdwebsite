@@ -44,7 +44,7 @@
                 ['.card-category', project.category],
                 ['.card-title', project.title],
                 ['.card-members', (project.members || []).join(' / ')],
-                ['.card-description', project.description]
+                ['.card-description', project.gridDescription || project.description]
             ]) {
                 const field = card.querySelector(selector);
                 if (field) field.textContent = value || '';
@@ -114,7 +114,7 @@
         sheet.querySelector(".mobile-sheet-category").textContent = project.category || "";
         sheet.querySelector(".mobile-sheet-members").textContent = (project.members || []).join(" / ");
         sheet.querySelector("#mobile-sheet-title-03").textContent = project.title || "";
-        sheet.querySelector(".mobile-sheet-description").textContent = project.description || "";
+        sheet.querySelector(".mobile-sheet-description").textContent = project.gridDescription || project.description || "";
         const image = sheet.querySelector(".mobile-sheet-image");
         image.src = project.slideImage || project.image || "";
         image.alt = `${project.title} 대표 이미지`;

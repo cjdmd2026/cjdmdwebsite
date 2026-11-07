@@ -706,9 +706,9 @@ async function captureForeground(target, {includeHidden = false} = {}) {
         rgbRelease: 0.18,    // 안전용 잔여값. 실제 Fluid 해제는 wipe 마지막 구간 안에서 끝냄
         rgb: 5,              // RGB를 한 단계 부드럽게
         fluid: 50,          // 세로 전환에서 과한 출렁임을 줄임
-        wheelThreshold: 90,  // 미세 휠 입력에 너무 민감하게 반응하지 않도록
-        wheelGestureGap: 180, // 휠 입력이 끊긴 뒤 다음 제스처 허용
-        wheelRepeatDelay: 160, // 강한 연속 입력은 제스처가 끝나기 전에도 허용
+        wheelThreshold: 100,  // 미세 휠 입력에 너무 민감하게 반응하지 않도록
+        wheelGestureGap: 200, // 휠 입력이 끊긴 뒤 다음 제스처 허용
+        wheelRepeatDelay: 200, // 강한 연속 입력은 제스처가 끝나기 전에도 허용
         pixelRatio: 1.25,
         maxTextureSize: 1920,
         ...window.PROJECT_FLUID_OPTIONS
@@ -918,7 +918,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                     }
                     if (description) {
                         description.textContent =
-                            project.description;
+                            project.gridDescription || project.description;
                     }
                 }
             );
@@ -1226,7 +1226,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             }
             html[data-project-fluid-view="slide"] .project-info {
                 left:var(--project-copy-left);
-                top:calc(50vh + var(--project-dial-icon-size) / 2 + 1.5rem);
+                top:calc(50vh + var(--project-dial-icon-size) / 2 + 3rem);
                 width:min(30vw,calc(100vw - var(--project-copy-left) - 3rem));
                 text-align:left;
             }
@@ -2372,13 +2372,13 @@ function settleAsciiContent() {
                 const direction=Math.sign(delta);
                 const unit=event.deltaMode===1?16:event.deltaMode===2?innerHeight:1;
                 const amount=Math.abs(delta*unit);
-                const threshold=wheelOption('wheelThreshold',90,1,500);
+                const threshold=wheelOption('wheelThreshold',100,1,500);
                 // Accept fresh flicks and sustained wheel input, but not a decaying tail.
                 const renewedPush=wheelLocked
-                    && now-lastWheelNavigation>=wheelOption('wheelRepeatDelay',160,80,600)
+                    && now-lastWheelNavigation>=wheelOption('wheelRepeatDelay',200,80,600)
                     && ((amount>=12&&amount>lastWheelAmount*1.5)
                         || (amount>=threshold*.5&&amount>=lastWheelAmount*.98));
-                const newGesture=now-lastWheel>wheelOption('wheelGestureGap',180,80,1000)
+                const newGesture=now-lastWheel>wheelOption('wheelGestureGap',200,80,1000)
                     || direction!==wheelDirection || renewedPush;
                 if(newGesture){wheelTotal=0;wheelLocked=false;}
                 lastWheel=now;

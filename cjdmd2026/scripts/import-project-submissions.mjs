@@ -64,7 +64,7 @@ await writeFile(dataPath, header + 'window.PROJECTS = ' + serialized + ';\n');
 for (const name of ['project/index.html', 'project/test01.html', 'project/test02.html', 'designer/profile/index.html']) {
     const file = path.join(root, name);
     let html = await readFile(file, 'utf8');
-    html = html.replace(/project-data\.js\?v=[^"']+/g, 'project-data.js?v=20261107-landscape-quality');
+    html = html.replace(/project-data\.js\?v=[^"']+/g, 'project-data.js?v=20261107-grid-copy');
     if (name === 'designer/profile/index.html') {
         html = html.replace('designer-detail.css"', 'designer-detail.css?v=20261107-submissions"')
             .replace('designer-detail.js"', 'designer-detail.js?v=20261107-submissions"');

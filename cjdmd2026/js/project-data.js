@@ -13,6 +13,7 @@ window.PROJECTS = [
     {
         id: "phishing-ddook",
         title: "피싱뚝!",
+        gridDescription: "어르신이 AI 모의 통화로 보이스피싱을 알아차리고 대처하는 법을 익힙니다.",
         members: [
             "남나영",
             "김지유",
@@ -46,6 +47,7 @@ window.PROJECTS = [
     {
         id: "apuchika",
         title: "아푸치카",
+        gridDescription: "아이가 교구로 칫솔질을 연습하고 AR 안내를 따라 직접 이를 닦습니다.",
         members: [
             "윤태균",
             "안나경",
@@ -79,6 +81,7 @@ window.PROJECTS = [
     {
         id: "curo",
         title: "CURO",
+        gridDescription: "1형 당뇨를 앓는 아이들이 30일 동안 캐릭터와 함께 자가 주사를 연습합니다.",
         members: [
             "주보민",
             "유혜진",
@@ -112,6 +115,7 @@ window.PROJECTS = [
     {
         id: "stylens",
         title: "Stylens",
+        gridDescription: "저시력자가 스마트미러의 음성 안내로 옷을 구분하고 코디를 고릅니다.",
         members: [
             "김다현",
             "김하원"
@@ -144,6 +148,7 @@ window.PROJECTS = [
     {
         id: "ilkko",
         title: "읽:꼬",
+        gridDescription: "난독증 아동이 집에서 아이패드와 교구로 놀며 한글 읽기를 연습합니다.",
         members: [
             "서연우",
             "조은교",
@@ -177,6 +182,7 @@ window.PROJECTS = [
     {
         id: "dadeullim",
         title: "다들림",
+        gridDescription: "도로 위 소리를 빛과 진동으로 바꿔 청각장애 운전자에게 위험을 알립니다.",
         members: [
             "윤지원",
             "김도연",
@@ -210,6 +216,7 @@ window.PROJECTS = [
     {
         id: "omix",
         title: "OMIX",
+        gridDescription: "108초 동안 불교의 소리를 직접 믹싱해 나만의 음악을 만듭니다.",
         members: [
             "노민영",
             "함대연",
@@ -246,6 +253,7 @@ window.PROJECTS = [
     {
         id: "year-on",
         title: "YEAR-ON",
+        gridDescription: "김홍도의 풍속화 속 인물을 손끝으로 연결하며 그림에 담긴 공동체 문화를 만납니다.",
         members: [
             "민지호",
             "권민성"
@@ -278,6 +286,7 @@ window.PROJECTS = [
     {
         id: "jikji",
         title: "직지잼버리",
+        gridDescription: "아이들이 캐릭터를 따라 AR로 금속활자 제작을 체험하며 직지의 역사를 배웁니다.",
         members: [
             "김주연"
         ],
@@ -309,6 +318,7 @@ window.PROJECTS = [
     {
         id: "cheoma",
         title: "처마",
+        gridDescription: "처마 모양에 따라 달라지는 빛과 그림자를 비교하며 한옥의 생활환경을 살펴봅니다.",
         members: [
             "김민재",
             "조우성"
@@ -341,6 +351,7 @@ window.PROJECTS = [
     {
         id: "cocorang",
         title: "COCO LANG",
+        gridDescription: "반려견의 성향에 맞는 산책 친구를 동네 지도에서 찾습니다.",
         members: [
             "김지유",
             "김지윤"
@@ -373,6 +384,7 @@ window.PROJECTS = [
     {
         id: "magmoa",
         title: "마그모아",
+        gridDescription: "여행지에서 디지털 마그넷을 모아 나만의 여행 지도를 채웁니다.",
         members: [
             "송유진",
             "손예진"
@@ -405,6 +417,7 @@ window.PROJECTS = [
     {
         id: "efact",
         title: "E.FACT",
+        gridDescription: "게임을 통해 청주에 밀집한 소각시설이 지역 환경에 미치는 영향을 살펴봅니다.",
         members: [
             "고비주",
             "김혜진"
@@ -437,6 +450,7 @@ window.PROJECTS = [
     {
         id: "28",
         title: "별운관",
+        gridDescription: "생년월일로 전통 별자리인 28수 중 내 별자리를 찾고 그 이야기와 운세를 알아봅니다.",
         members: [
             "박윤지",
             "주예진"

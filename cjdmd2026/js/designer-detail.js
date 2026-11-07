@@ -7,7 +7,8 @@
         designerId: "",
         fullMode: "ratio",       // "ratio" 또는 "viewport"
         travelScreens: 3.1,
-        expandEnd: 0.22,
+        expandLeadScreens: 0.65, // 섹션이 상단에 닿기 전부터 확대를 시작합니다.
+        expandEnd: 0.05,
         shrinkStart: 0.52,
         bannerHeight: 0.36,
         bannerRadius: 0,
@@ -1371,10 +1372,14 @@
             let radius = "0px";
             let flyerOpacity = 1;
 
-            if (progress < CONFIG.expandEnd) {
-                const p = smooth(
-                    clamp(progress / CONFIG.expandEnd)
-                );
+            const expandLead = vh * CONFIG.expandLeadScreens;
+            const expandProgress = clamp(
+                (window.scrollY - sectionTop + expandLead) /
+                (expandLead + range * CONFIG.expandEnd)
+            );
+
+            if (expandProgress < 1) {
+                const p = smooth(expandProgress);
 
                 height = lerp(
                     initialHeight,
@@ -1450,12 +1455,7 @@
 
             fitMedia(width, height);
 
-            const titleIn = smooth(
-                clamp(
-                    (progress - CONFIG.expandEnd * 0.6) /
-                    (CONFIG.expandEnd * 0.4)
-                )
-            );
+            const titleIn = smooth(clamp((expandProgress - 0.6) / 0.4));
 
             const titleOut =
                 1 - smooth(
