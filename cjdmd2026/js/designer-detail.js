@@ -160,9 +160,7 @@
                     return;
                 }
 
-                const progress = clamp(
-                    (now - startedAt) / Math.max(1, CONFIG.stepDuration)
-                );
+                const progress = clamp((now - startedAt) / CONFIG.stepDuration);
 
                 // 매 프레임 도착 위치를 읽어 화면 크기 변경도 반영.
                 scrollInstantly(lerp(from, stops[index], smooth(progress)));
@@ -983,6 +981,7 @@
         let sourceWidth = 0;
         let sourceHeight = 0;
 
+        const fullStopProgress = (CONFIG.expandEnd + CONFIG.shrinkStart) / 2;
         const stepScroller = createStepScroller(() => {
             if (
                 dead || !active || reducedMotion.matches ||
@@ -998,11 +997,9 @@
                 ? Math.max(0, intro.getBoundingClientRect().top + window.scrollY - headerHeight)
                 : 0;
 
-            // 최대 크기가 유지되는 구간의 중앙에서 멈춤.
-            const fullProgress = (CONFIG.expandEnd + CONFIG.shrinkStart) / 2;
             return [
                 profileTop,
-                geometry.sectionTop + geometry.range * fullProgress,
+                geometry.sectionTop + geometry.range * fullStopProgress,
                 Math.ceil(geometry.endScroll)
             ];
         });
@@ -1458,27 +1455,17 @@
 
             const titleIn = smooth(clamp((expandProgress - 0.6) / 0.4));
 
-            const titleOut =
-                1 - smooth(
-                    clamp(
-                        (progress - CONFIG.shrinkStart) /
-                        0.22
-                    )
-                );
-
-            const opacity = String(
-                titleIn * titleOut
-            );
-
             if (title) {
-                title.style.opacity = opacity;
-
-                title.style.transform =
-                    `translateY(${lerp(18, 0, titleIn)}px)`;
+                const logoExit = smooth(clamp(
+                    (progress - fullStopProgress) / (CONFIG.shrinkStart - fullStopProgress)
+                ));
+                title.style.opacity = String(titleIn * (1 - logoExit));
+                title.style.transform = `translateY(${lerp(18, 0, titleIn) + 32 * logoExit}px)`;
             }
 
             if (overlay) {
-                overlay.style.opacity = opacity;
+                const overlayOut = 1 - smooth(clamp((progress - CONFIG.shrinkStart) / 0.22));
+                overlay.style.opacity = String(titleIn * overlayOut);
             }
 
             if (cardTransitions.size) {

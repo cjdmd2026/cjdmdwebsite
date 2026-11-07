@@ -986,7 +986,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             }
             if (description) {
                 description.textContent =
-                    project.description;
+                    project.gridDescription || project.description;
             }
             const projectInfo = description?.closest(
                 ".project-info"
@@ -1093,6 +1093,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             // 이전 프로젝트(-1) : 리스트가 위 -> 아래로 이동
             // =========================================================
             const projectDial=document.querySelector('.project-dial');
+            const copyGroup=document.querySelector('.project-description .project-visual');
             const projectDialList=projectDial?.querySelector('.project-dial-list')||null;
             const projectDialItems=projectDialList
                 ? [...projectDialList.querySelectorAll('.project-dial-item[data-project-id]')]
@@ -1217,7 +1218,9 @@ async function captureForeground(target, {includeHidden = false} = {}) {
 
             html[data-project-fluid-view="slide"] {
                 --project-dial-icon-size:clamp(3rem,5vw,5rem);
-                --project-icon-left:clamp(2rem,6vw,6rem);
+                --project-icon-left:clamp(2rem,4.5vw,5rem);
+                --project-copy-bottom:10%;
+                --project-copy-width:max(30vw,22rem);
                 --project-copy-left:calc(var(--project-icon-left) + var(--project-dial-icon-size) + 2rem);
                 --project-dial-title-duration:800ms;
             }
@@ -1230,11 +1233,24 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 white-space:nowrap;
                 text-align:left;
             }
-            html[data-project-fluid-view="slide"] .project-info {
+            html[data-project-fluid-view="slide"] .project-description .project-visual {
+                position:absolute;
                 left:var(--project-copy-left);
-                top:calc(50vh + var(--project-dial-icon-size) / 2 + 3rem);
-                width:min(30vw,calc(100vw - var(--project-copy-left) - 3rem));
+                bottom:var(--project-copy-bottom);
+                width:min(var(--project-copy-width),calc(100vw - var(--project-copy-left) - var(--project-icon-left)));
+                height:auto;
+                /* Reserve the heading row and its gap above the flowing description. */
+                padding-top:calc(var(--project-dial-icon-size) + 3rem);
+            }
+            html[data-project-fluid-view="slide"] .project-info {
+                position:static;
+                width:100%;
                 text-align:left;
+            }
+            @media (max-height:640px) {
+                html[data-project-fluid-view="slide"] {
+                    --project-copy-width:max(30vw,34rem);
+                }
             }
             .project-icon-rail { display:none; }
             html[data-project-fluid-view="slide"] .project-icon-rail {
@@ -1386,6 +1402,11 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             const dialClamp=(value,min,max)=>Math.max(min,Math.min(max,value));
             const dialLerp=(a,b,t)=>a+(b-a)*t;
 
+            function slideHeadingCenterY(){
+                // Layout coordinates stay stable while the view transition scales the layers.
+                return copyGroup.offsetTop + iconRail.offsetWidth / 2;
+            }
+
             function syncIconRail(projectId){
                 const ids=visibleCards().map(card=>String(card.dataset.projectId))
                     .filter(id=>dialIcons.has(id));
@@ -1395,9 +1416,9 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 const active=ids.indexOf(String(projectId));
                 const progress=moving?dialClamp(iconTransition.progress,0,1):0;
                 const height=iconRail.clientHeight;
-                // 제목과 같은 화면 중앙에 현재 아이콘을 두고, 나머지는 위아래 공간에 맞춥니다.
-                // Fixed layout coordinates stay stable while the view transition scales the rail.
-                const center=dialClamp(window.innerHeight/2-iconRail.offsetTop,0,height);
+                const headingY=slideHeadingCenterY();
+                const railY=moving?dialLerp(iconTransition.fromY,headingY,progress):headingY;
+                const center=dialClamp(railY-iconRail.offsetTop,0,height);
                 const size=Math.min(iconRail.clientWidth,2*Math.min(center,height-center));
                 iconRail.style.setProperty('--project-rail-icon-size',`${size.toFixed(2)}px`);
                 const layoutAt=(activeIndex,itemIndex)=>{
@@ -1467,7 +1488,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             function applyDialVisual(position){
                 if(!projectDial||!projectDialList||!projectDialItems.length)return;
 
-                const centerInsideDial=window.innerHeight/2-projectDial.offsetTop;
+                const centerInsideDial=slideHeadingCenterY()-projectDial.offsetTop;
                 const itemCenter=getDialItemCenterAt(position);
 
                 projectDialList.style.transform=
@@ -2050,7 +2071,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                     if(current!==request||disposed||slideview.hidden||cards[next].hidden)return;
                     loading=false;
                     phase = 'animating';
-                    iconTransition={fromId:String(cards[index].dataset.projectId),
+                    iconTransition={fromId:String(cards[index].dataset.projectId),fromY:slideHeadingCenterY(),
                         toId:String(cards[next].dataset.projectId),progress:0};
                     const finished = await window.ProjectWave.transition({
                         direction,
@@ -2172,6 +2193,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             }
 // Resolve the real DOM underneath the canvas to the incoming texture's final pose.
 function captureAsciiContent(target, options = {}) {
+    alignSlideContent();
     return window.ProjectASCII.captureForeground(target,options);
 }
 
@@ -2417,14 +2439,21 @@ function settleAsciiContent() {
                 const delta=Math.abs(dy)>Math.abs(dx)?dy:dx;if(Math.abs(delta)>45)navigate(Math.sign(delta));
             },{passive:true});
             listen(document,'touchcancel',()=>{touch=null;},{passive:true});
+            function alignSlideContent(){
+                if(slideview.hidden)return;
+                if(dialPosition===null){
+                    syncProjectDial(cards[index]?.dataset.projectId,0,true);
+                    return;
+                }
+                applyDialVisual(dialPosition);
+                syncIconRail(cards[index]?.dataset.projectId);
+            }
+            const copySizeObserver=new ResizeObserver(alignSlideContent);
+            copySizeObserver.observe(copyGroup);
             listen(window,'resize',()=>{
                 finishIntro(true);
                 syncFluidSurfaceBounds(cards[wanted??index]||cards[index]);
-                syncIconRail(cards[index]?.dataset.projectId);
-
-                // 화면 크기가 바뀌어도 현재 이동 중인 위치를 유지한 채 중앙 재계산
-                if(dialPosition!==null)applyDialVisual(dialPosition);
-                else syncProjectDial(cards[index]?.dataset.projectId,0,true);
+                alignSlideContent();
             });
             listen(reduce,'change',()=>{
                 if(reduce.matches){
@@ -2458,6 +2487,7 @@ function settleAsciiContent() {
                     dialIcons.clear();
                     iconRail.remove();
                     projectDial?.classList.remove('has-project-icons');
+                    copySizeObserver.disconnect();
                     observer.disconnect();events.abort();engine?.destroy();engine=null;host.remove();style.remove();
                     if(stoppedLenis)stoppedLenis.start();
                     if(originalView===null)root.removeAttribute('data-project-fluid-view');else root.setAttribute('data-project-fluid-view',originalView);
