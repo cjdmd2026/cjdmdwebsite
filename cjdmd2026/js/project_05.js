@@ -1224,6 +1224,12 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 --project-copy-left:calc(var(--project-icon-left) + var(--project-dial-icon-size) + 2rem);
                 --project-dial-title-duration:800ms;
             }
+            /* Continue smoothly from the standard 5rem heading at 110rem viewport width. */
+            @media (min-width:110rem) {
+                html[data-project-fluid-view="slide"] {
+                    --project-dial-icon-size:min(12rem,calc(100vw / 22));
+                }
+            }
             .container:has(#slideview:not([hidden])) .project-dial.has-project-icons {
                 left:var(--project-copy-left);
                 width:min(50vw,calc(100vw - var(--project-copy-left) - 3rem));
