@@ -116,6 +116,9 @@
         function resize() {
             const nextWidth = Math.max(1, main.clientWidth);
             const nextHeight = Math.max(1, main.clientHeight);
+            // Animated grid rows can round the same total height up or down by one pixel.
+            if (particles.length && nextWidth === width && Math.abs(nextHeight - height) <= 1) return;
+
             const density = nextWidth < 750 ? SETTINGS.mobileDensity : SETTINGS.density;
             const count = Math.min(SETTINGS.maxPieces, Math.max(density,
                 Math.ceil(nextHeight / SETTINGS.tileHeight * density)));
@@ -125,32 +128,36 @@
             });
             width = nextWidth;
             height = nextHeight;
-            // 페이지 크기에 따라 필요한 개수가 달라질 때만 조각을 다시 배치합니다.
-            if (particles.length !== count) {
-                host.replaceChildren();
-                // 여섯 단계를 고르게 섞어 크기와 생성 순서에 규칙이 생기지 않게 합니다.
-                const levels = Array.from({ length: count }, (_, index) => index % SETTINGS.depthLevels.length);
+            // Keep existing pieces and their motion when the page needs a different count.
+            if (particles.length > count) {
+                for (const particle of particles.splice(count)) particle.element.remove();
+            } else if (particles.length < count) {
+                const first = particles.length;
+                const levels = Array.from({ length: count - first }, (_, i) => (first + i) % SETTINGS.depthLevels.length);
                 for (let index = levels.length - 1; index > 0; index--) {
                     const other = Math.floor(Math.random() * (index + 1));
                     [levels[index], levels[other]] = [levels[other], levels[index]];
                 }
-                particles = Array.from({ length: count }, (_, index) => {
+                const additions = document.createDocumentFragment();
+                for (const level of levels) {
+                    const index = particles.length;
                     const element = document.createElement("div");
                     element.className = "designer-floating-background__piece";
-                    element.dataset.depthLevel = levels[index] + 1;
+                    element.dataset.depthLevel = level + 1;
                     element.style.opacity = SETTINGS.opacity + (index % 4) * 0.055;
                     element.append(fragments[index % fragments.length].cloneNode(true));
-                    host.append(element);
-                    return {
-                        element, level: levels[index],
+                    additions.append(element);
+                    particles.push({
+                        element, level,
                         // 좌우 교차나 세로 등간격 없이, 각 위치를 독립적으로 뽑습니다.
                         x: Math.random() * width,
                         y: Math.random() * height,
                         phase: Math.random() * Math.PI * 2, angle: Math.random() * 360,
                         vx: 0, vy: -SETTINGS.flowSpeed * 0.7,
                         spin: (index % 2 ? 1 : -1) * (0.7 + index % 5 * 0.22)
-                    };
-                });
+                    });
+                }
+                host.append(additions);
             }
             // 가장 큰 단계에 맞춰 전체를 함께 축소해 좁은 화면에서도 6단계를 유지합니다.
             const sizeScale = Math.min(1, width * 0.26 / SETTINGS.depthLevels.at(-1).size);

@@ -194,6 +194,16 @@ img {
     -webkit-backdrop-filter: blur(11.9px);
 
     border: 1px solid rgba(255, 255, 255, 0.35);
+    transition: transform 0.4s cubic-bezier(.22, 1, .36, 1);
+}
+
+.header.is-full-image-hidden:not(:focus-within) {
+    transform: translateY(calc(-100% - 1px));
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .header { transition: none; }
 }
 
 .header .container {
@@ -325,6 +335,22 @@ img {
     padding: 0;
     
     margin: 0 3rem;
+}
+
+@media (min-width: 80rem) {
+    .main .intro .container {
+        /* Give laptop portraits a 34rem target, with room above and below on shorter screens. */
+        --portrait-width: min(max(34rem, calc(66vh * 3 / 4)), calc(84vh * 3 / 4), 44vw);
+        width: min(calc(100% - 6rem), calc(var(--portrait-width) + 2rem + 45rem));
+    }
+
+    .profile {
+        grid-template-columns: var(--portrait-width) minmax(0, 1fr);
+    }
+
+    .main .intro .text-wrap {
+        width: auto;
+    }
 }
 
 .profile .image {

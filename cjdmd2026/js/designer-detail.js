@@ -17,7 +17,8 @@
 
         // 프로필 ↔ 최대 확대 이미지 ↔ 카드 목록 시작
         stepScroll: true,
-        stepDuration: 1500,       // 한 단계 이동 시간(ms)
+        stepDuration: 1500,       // 전체 화면 ↔ 카드 목록(ms)
+        profileStepDuration: 2200, // 프로필 ↔ 전체 화면(ms)
         wheelThreshold: 12,      // 작을수록 가벼운 스크롤에도 반응
         gestureIdle: 0         // 다음 제스처로 판단할 입력 간격(ms)
     };
@@ -49,6 +50,7 @@
     const lerp = (a, b, t) => a + (b - a) * t;
 
     const smooth = t => t * t * (3 - 2 * t);
+    const easeInOutSine = t => (1 - Math.cos(Math.PI * t)) / 2;
 
     let controller = null;
     let mountFrame = 0;
@@ -142,8 +144,11 @@
             event.stopPropagation();
         }
 
-        function moveTo(index) {
+        function moveTo(index, fullImageTop) {
             const from = window.scrollY;
+            const profileStep = index === 0 || (index === 1 && from < fullImageTop);
+            const duration = profileStep ? CONFIG.profileStepDuration : CONFIG.stepDuration;
+            const ease = profileStep ? easeInOutSine : smooth;
             const startedAt = performance.now();
             moving = true;
             restingIndex = null;
@@ -160,10 +165,10 @@
                     return;
                 }
 
-                const progress = clamp((now - startedAt) / CONFIG.stepDuration);
+                const progress = clamp((now - startedAt) / duration);
 
                 // 매 프레임 도착 위치를 읽어 화면 크기 변경도 반영.
-                scrollInstantly(lerp(from, stops[index], smooth(progress)));
+                scrollInstantly(lerp(from, stops[index], ease(progress)));
 
                 if (progress < 1) {
                     animationFrame = requestAnimationFrame(tick);
@@ -238,7 +243,7 @@
             consumeWheel(event);
             if (Math.sign(wheelTotal) !== direction) wheelTotal = 0;
             wheelTotal += delta;
-            if (Math.abs(wheelTotal) >= CONFIG.wheelThreshold) moveTo(next);
+            if (Math.abs(wheelTotal) >= CONFIG.wheelThreshold) moveTo(next, stops[1]);
         }
 
         function onResize() {
@@ -972,6 +977,9 @@
         } = nodes;
 
         const listeners = [];
+        const header = document.querySelector('.header');
+        let fullImageVisible = false;
+        let pointerNearHeader = header?.matches(':hover') ?? false;
 
         let frame = 0;
         let dead = false;
@@ -991,8 +999,7 @@
             if (needsMeasure || !geometry) measure();
 
             const intro = document.querySelector(".intro");
-            const headerHeight = document.querySelector(".header")
-                ?.getBoundingClientRect().height || 0;
+            const headerHeight = header?.offsetHeight || 0;
             const profileTop = intro
                 ? Math.max(0, intro.getBoundingClientRect().top + window.scrollY - headerHeight)
                 : 0;
@@ -1039,7 +1046,13 @@
             if (overlay) overlay.style.opacity = "0";
         }
 
+        function syncHeader(fullImage = fullImageVisible) {
+            fullImageVisible = fullImage;
+            header?.classList.toggle('is-full-image-hidden', fullImage && !pointerNearHeader);
+        }
+
         function dock() {
+            syncHeader(false);
             if (flyer.parentElement !== target) {
                 target.appendChild(flyer);
             }
@@ -1336,6 +1349,8 @@
                         range
                     );
 
+            syncHeader(progress >= CONFIG.expandEnd && progress < CONFIG.shrinkStart);
+
             if (progress >= 1) {
                 dock();
                 fitMedia(localWidth, localHeight);
@@ -1531,7 +1546,7 @@
             list,
             document.body,
             document.querySelector(".intro"),
-            document.querySelector(".header"),
+            header,
             document.querySelector(".footer")
         ]
             .filter(Boolean)
@@ -1547,6 +1562,19 @@
         );
 
         listen(window, "resize", requestMeasure);
+        if (header) {
+            listen(document, 'pointermove', event => {
+                if (event.pointerType === 'touch') return;
+                const near = event.clientY <= header.offsetHeight + (pointerNearHeader ? 16 : 0);
+                if (near === pointerNearHeader) return;
+                pointerNearHeader = near;
+                syncHeader();
+            }, { passive: true });
+            listen(document, 'pointerleave', () => {
+                pointerNearHeader = false;
+                syncHeader();
+            }, { passive: true });
+        }
         listen(window, "pageshow", refresh);
         listen(image, "load", refresh);
         listen(image, "error", requestMeasure);
@@ -1613,6 +1641,7 @@
 
             destroy() {
                 dead = true;
+                syncHeader(false);
                 stepScroller.destroy();
 
                 if (frame) {
