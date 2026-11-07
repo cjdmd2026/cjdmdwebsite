@@ -727,7 +727,7 @@ html[data-project-fluid-view="slide"] .project-warp {
 
 .project-info-block {
     /* Scale the description with the heading, using 1.15rem for a 4.5rem heading. */
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     line-height: 1.6;
     letter-spacing: -0.015rem;
     font-weight: 400;
