@@ -725,9 +725,9 @@ html[data-project-fluid-view="slide"] .project-warp {
 }
 
 .project-info-block {
-    /* Scale the description with the heading, using 1.15rem for a 4.5rem heading. */
-    font-size: calc(var(--project-dial-icon-size, 4.5rem) * 1.15 / 4.5);
-    line-height: 1.8;
+    /* Scale the description with the heading, using 1.05rem for a 4.5rem heading. */
+    font-size: calc(var(--project-dial-icon-size, 4.5rem) * 1.05 / 4.5);
+    line-height: 1.5;
     letter-spacing: -0.02rem;
     font-weight: 400;
     text-shadow: 0 1px 3px rgb(0 0 0 / 12%);
@@ -904,10 +904,8 @@ body:has(#slideview:not([hidden])) .footer {
     gap: 8px;
 }
 
-.view-buttons button {
-    color: var(--color-white);
-    text-align: center;
-
+.view-buttons button,
+.slide-detail-link {
     display: flex;
     align-items: center;
 
@@ -917,9 +915,27 @@ body:has(#slideview:not([hidden])) .footer {
     background: rgba(255, 255, 255, 0.36);
     backdrop-filter: blur(11.9px);
     -webkit-backdrop-filter: blur(11.9px);
-    padding: 0.1rem;
-
     cursor: pointer;
+    transition: transform 180ms ease, background-color 180ms ease;
+}
+
+.view-buttons button:hover,
+.slide-detail-link:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+    transform: scale(0.95);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .view-buttons button,
+    .slide-detail-link {
+        transition: none;
+    }
+}
+
+.view-buttons button {
+    color: var(--color-white);
+    text-align: center;
+    padding: 0.1rem;
 }
 
 .view-button img {

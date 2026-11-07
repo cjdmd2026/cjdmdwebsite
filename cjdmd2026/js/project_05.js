@@ -1250,7 +1250,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 width:min(var(--project-copy-width),calc(100vw - var(--project-copy-left) - var(--project-icon-left)));
                 height:auto;
                 /* Reserve the heading row and its gap above the flowing description. */
-                padding-top:calc(var(--project-dial-icon-size) + 3rem);
+                padding-top:calc(var(--project-dial-icon-size) + 2rem);
             }
             html[data-project-fluid-view="slide"] .project-info {
                 position:static;
