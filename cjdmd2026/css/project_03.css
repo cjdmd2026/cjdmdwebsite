@@ -655,7 +655,7 @@ body:has(#slideview:not([hidden])) .header .nav ul li {
     border-left: var(--project-title-bar-width) solid var(--project-title-accent, transparent);
     font-family: 'pretendard', var(--font-main);
     font-size: 5rem;
-    font-weight: 800;
+    font-weight: 700;
     line-height: 1;
 
     color: rgba(255, 255, 255, 0.9);
