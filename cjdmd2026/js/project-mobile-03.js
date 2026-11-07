@@ -169,6 +169,7 @@
     cards.forEach(card => {
         card.addEventListener("click", () => openSheet(card));
         card.addEventListener("keydown", event => {
+            if (!mobile.matches || event.target !== card) return;
             if (event.key === "Enter" || event.key === " ") {
                 event.preventDefault();
                 openSheet(card);

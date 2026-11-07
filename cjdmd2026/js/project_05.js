@@ -958,6 +958,11 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             const description = document.querySelector(
                 ".project-description .project-info-block:first-child p"
             );
+            const detailLink = document.querySelector(".slide-detail-link");
+            if (detailLink && project.url) {
+                detailLink.href = project.url;
+                detailLink.setAttribute("aria-label", project.title + " 작품 상세 보기");
+            }
             // =====================================================
             // 기존 Writer 중지
             // =====================================================
@@ -1219,7 +1224,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             html[data-project-fluid-view="slide"] {
                 --project-dial-icon-size:clamp(3rem,5vw,5rem);
                 --project-icon-left:clamp(2rem,4.5vw,5rem);
-                --project-copy-bottom:15vh;
+                --project-copy-bottom:20vh;
                 --project-copy-width:max(30vw,22rem);
                 --project-copy-left:calc(var(--project-icon-left) + var(--project-dial-icon-size) + 2rem);
                 --project-dial-title-duration:800ms;
@@ -1686,6 +1691,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 // Keep the outgoing copy above the canvas while the real description updates.
                 const outgoing=info.cloneNode(true);
                 outgoing.className='project-info-exit';
+                outgoing.inert=true;
                 outgoing.setAttribute('aria-hidden','true');
                 for(const property of style)outgoing.style.setProperty(property,style.getPropertyValue(property));
                 Object.assign(outgoing.style,{

@@ -1,0 +1,47 @@
+@font-face{font-family:ExhibitionText;src:url("../assets/main-intro/fonts/project-detail-kr.woff2") format("woff2");font-weight:100 900;font-display:swap}
+*{box-sizing:border-box}
+html{color:#202020;background:white;scroll-padding-top:1rem}
+body{margin:0;font-family:ExhibitionText,Pretendard,"Malgun Gothic",sans-serif;-webkit-text-size-adjust:100%}
+a{color:inherit;text-decoration:none}
+a:focus-visible,summary:focus-visible{outline:3px solid #1959db;outline-offset:4px}
+.case-shell{width:min(100% - 9vw,1440px);margin-inline:auto}
+.case-top{border-bottom:1px solid #dedede}
+.case-top nav,.case-foot nav{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.case-top nav{min-height:60px;font-size:.88rem;font-weight:600}
+.case-top .wordmark{display:flex;align-items:center}
+.case-top .wordmark img{display:block;width:123px;height:auto}
+.case-intro{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:clamp(1rem,5vw,5rem);align-items:start;padding-block:clamp(25px,3.6vw,62px)}
+.case-kicker{margin:0 0 .7rem;color:#626262;font-weight:650;font-size:.76rem;letter-spacing:.09em}
+.case-intro h1{margin:0;font-size:clamp(2rem,4.7vw,5rem);line-height:1.07;letter-spacing:-.055em;overflow-wrap:anywhere}
+.case-intro .summary{max-width:65ch;margin:.8rem 0 0;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+.case-members{line-height:1.5;margin:.65rem 0 0;font-size:.87rem;color:#575757}
+.case-members strong{color:#222;margin-right:.5em}
+.case-qr{display:grid;justify-items:center;gap:.4rem;align-self:start;padding:.42rem .42rem .6rem;border:1px solid #d6d6d6;border-radius:10px;background:white;font-size:.75rem;font-weight:650;white-space:nowrap}
+.case-qr img{width:clamp(82px,7.6vw,118px);height:auto;display:block}
+.case-qr:hover{border-color:currentColor}.case-qr:hover span{text-decoration:underline}
+.case-menu{border-block:1px solid #e9e9e9}
+.case-menu nav{display:flex;flex-wrap:wrap;gap:.32rem 1.05rem;padding-block:.65rem;font-size:.8rem;color:#555}
+.case-menu a{padding:.32rem 0}.case-menu a:hover,.case-foot a:hover{text-decoration:underline}
+.case-art{width:min(100%,1920px);margin:auto;container-type:inline-size}
+.case-section{position:relative;isolation:isolate;overflow:hidden;scroll-margin-top:1rem}
+.case-tile{position:absolute;left:0;right:0;display:block;pointer-events:none}
+.case-tile img{display:block;width:100%;height:100%;object-fit:fill}
+.case-copy{position:absolute;z-index:1;margin:0;padding:0;border:0;letter-spacing:normal;font-family:ExhibitionText,Pretendard,"Malgun Gothic",sans-serif;font-style:normal;font-weight:400;line-height:1;overflow:visible}
+.case-line{position:absolute;display:block;text-align:left;white-space:pre}
+.case-ink{display:inline-block;white-space:pre;transform:scaleX(var(--fit,1));transform-origin:left center}
+.case-foot{border-top:1px solid #dedede;background:#fafafa}
+.case-foot nav{min-height:88px;flex-wrap:wrap;font-size:.9rem;font-weight:600}
+.case-skip{position:absolute;top:.5rem;left:.5rem;z-index:5;background:#111;color:white;padding:.65rem;transform:translateY(-150%)}
+.case-skip:focus{transform:none}
+.case-mobile{display:none}
+@media(max-width:999px){
+  .case-pc{display:none}.case-mobile{display:block}.case-menu .case-mobile{display:flex}
+  .case-art{max-width:650px}
+  .case-top nav{min-height:50px}.case-top .wordmark img{width:105px}
+  .case-intro .summary{font-size:.9rem}.case-members{font-size:.78rem}
+  .case-qr{font-size:.68rem}.case-menu nav{font-size:.76rem;gap:.16rem .9rem}
+}
+@media(min-width:1000px){.case-menu .case-mobile{display:none}}
+@media(max-width:999px){.case-menu .case-pc{display:none}}
+@media(max-width:440px){.case-intro{column-gap:12px}.case-qr img{width:76px}.case-foot nav{gap:.85rem;font-size:.82rem}}
+@media print{.case-top,.case-menu,.case-foot,.case-skip{display:none}.case-pc{display:none}.case-mobile{display:block}.case-section{break-inside:avoid}}

@@ -8,17 +8,17 @@ export function createReadingHover(heading,reducedMotion,textSelector='[data-rea
     const source=document.createElement('span'),letters=document.createElement('span');
     source.className='reading-source';source.textContent=text;
     letters.className='reading-letters';letters.setAttribute('aria-hidden','true');
-    const accent=word.dataset.readAccent||'',accentStart=accent?text.indexOf(accent):-1;
-    const chars=Array.from(text,(char,index)=>{
+    const hasScrollFill=word.hasAttribute('data-read');
+    const chars=Array.from(text,char=>{
       const element=document.createElement('span');
-      element.className='reading-char';element.textContent=char;letters.append(element);
-      if(accentStart>=0&&index>=accentStart&&index<accentStart+accent.length)element.classList.add('reading-accent');
+      element.className='reading-char';element.textContent=char;
+      if(hasScrollFill)element.dataset.glyph=char;
+      letters.append(element);
       return {element,center:0,x:0,velocity:0,target:0};
     });
     for(const node of [...word.childNodes])if(node.nodeType===Node.TEXT_NODE)node.remove();
     word.prepend(source,letters);word.classList.add('reading-interactive');
-    const accentEnd=chars.findLast(char=>char.element.classList.contains('reading-accent'));
-    return {word,letters,chars,accentEnd,fontSize:0};
+    return {word,letters,chars,fontSize:0};
   });
   let frame=0,lastTime=0;
 
@@ -34,8 +34,6 @@ export function createReadingHover(heading,reducedMotion,textSelector='[data-rea
         }else moving=true;
         char.element.style.transform=`translate3d(${char.x.toFixed(3)}px,0,0)`;
       }
-      row.word.style.setProperty('--read-end-shift',`${row.chars.at(-1).x.toFixed(3)}px`);
-      if(row.accentEnd)row.word.style.setProperty('--read-accent-shift',`${row.accentEnd.x.toFixed(3)}px`);
     }
     frame=moving?requestAnimationFrame(tick):0;
   }
@@ -48,10 +46,6 @@ export function createReadingHover(heading,reducedMotion,textSelector='[data-rea
       for(const char of row.chars){
         char.target=0;
         if(immediate){char.x=0;char.velocity=0;char.element.style.transform='none';}
-      }
-      if(immediate){
-        row.word.style.setProperty('--read-end-shift','0px');
-        row.word.style.setProperty('--read-accent-shift','0px');
       }
     }
     if(immediate){cancelAnimationFrame(frame);frame=0;}else start();
@@ -97,7 +91,6 @@ export function createReadingHover(heading,reducedMotion,textSelector='[data-rea
         const glyph=char.element.getBoundingClientRect(),left=glyph.left-bounds.left-char.x;
         char.center=left+glyph.width/2;
         char.element.style.setProperty('--char-left',`${left}px`);
-        if(char===row.accentEnd)row.word.style.setProperty('--read-accent-end',`${left+glyph.width}px`);
       }
     }
     updateTargets();

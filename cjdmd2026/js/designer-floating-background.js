@@ -5,7 +5,7 @@
     // 개수, 크기, 속도, 진하기는 여기서 조절합니다.
     const SETTINGS = {
         density: 60, mobileDensity: 34, tileHeight: 900, maxPieces: 400,
-        flowSpeed: 18,
+        flowSpeed: 18, idleFps: 30, interactionFps: 60,
         // 기존 평균 크기를 3단계로 두고, 작을수록 더 흐리게 표현합니다.
         depthLevels: [
             { size: 22, blur: 3.2 },
@@ -57,9 +57,7 @@
         svg.setAttribute("viewBox", source.getAttribute("viewBox") || "-14 -14 268 268");
         svg.setAttribute("aria-hidden", "true");
         svg.setAttribute("focusable", "false");
-        svg.dataset.color = color;
-        svg.dataset.projectId = project.projectId;
-        svg.style.color = color;
+        svg.setAttribute("fill", color);
         source.querySelectorAll(SHAPES).forEach(shape => {
             if (shape.closest("defs, clipPath, mask, symbol, pattern, marker") ||
                 fillColor(shape, source) !== color) return;
@@ -79,7 +77,13 @@
             svg.append(branch);
         });
         if (!svg.childElementCount) throw new Error(`No ${color} shapes: ${project.file}`);
-        return svg;
+        const image = new Image();
+        image.alt = "";
+        image.draggable = false;
+        image.className = "designer-floating-background__piece";
+        image.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(svg));
+        await image.decode();
+        return image;
     }
 
     function mount(main, designer) {
@@ -98,18 +102,38 @@
         host.setAttribute("inert", "");
         let particles = [], fragments = [];
         let width = 1, height = 1, elapsed = 0, frame = 0, lastTime = null;
+        let sizeScale = 1, lastInteraction = -Infinity;
         let pageActive = true;
         let observer = null;
         const pointers = new Map();
 
+        function sizePiece(particle) {
+            const level = SETTINGS.depthLevels[particle.level];
+            particle.size = level.size * sizeScale;
+            if (particle.element) {
+                particle.element.style.width = `${particle.size}px`;
+                particle.element.style.filter = level.blur ? `blur(${level.blur * sizeScale}px)` : "none";
+            }
+        }
+
         function paint() {
-            const top = host.getBoundingClientRect().top;
-            particles.forEach(particle => {
-                const visible = particle.y + top > -particle.size &&
-                    particle.y + top < window.innerHeight + particle.size;
-                particle.element.style.visibility = visible ? "visible" : "hidden";
-                if (visible) particle.element.style.transform =
-                    `translate3d(${particle.x}px, ${particle.y}px, 0) translate(-50%, -50%) rotate(${particle.angle}deg)`;
+            // Keep a small scroll buffer; offscreen pieces retain their place and velocity in memory.
+            const buffer = 120;
+            const top = -host.getBoundingClientRect().top;
+            const bottom = top + window.innerHeight;
+            particles.forEach((particle, index) => {
+                if (particle.y < top - buffer - particle.size || particle.y > bottom + buffer + particle.size) {
+                    if (particle.element?.parentNode) particle.element.remove();
+                    return;
+                }
+                if (!particle.element) {
+                    particle.element = fragments[index % fragments.length].cloneNode(false);
+                    particle.element.style.opacity = SETTINGS.opacity + (index % 4) * 0.055;
+                    sizePiece(particle);
+                }
+                if (!particle.element.parentNode) host.append(particle.element);
+                particle.element.style.transform =
+                    `translate3d(${particle.x.toFixed(2)}px, ${particle.y.toFixed(2)}px, 0) translate(-50%, -50%) rotate(${particle.angle.toFixed(2)}deg)`;
             });
         }
 
@@ -130,7 +154,7 @@
             height = nextHeight;
             // Keep existing pieces and their motion when the page needs a different count.
             if (particles.length > count) {
-                for (const particle of particles.splice(count)) particle.element.remove();
+                for (const particle of particles.splice(count)) particle.element?.remove();
             } else if (particles.length < count) {
                 const first = particles.length;
                 const levels = Array.from({ length: count - first }, (_, i) => (first + i) % SETTINGS.depthLevels.length);
@@ -138,17 +162,10 @@
                     const other = Math.floor(Math.random() * (index + 1));
                     [levels[index], levels[other]] = [levels[other], levels[index]];
                 }
-                const additions = document.createDocumentFragment();
                 for (const level of levels) {
                     const index = particles.length;
-                    const element = document.createElement("div");
-                    element.className = "designer-floating-background__piece";
-                    element.dataset.depthLevel = level + 1;
-                    element.style.opacity = SETTINGS.opacity + (index % 4) * 0.055;
-                    element.append(fragments[index % fragments.length].cloneNode(true));
-                    additions.append(element);
                     particles.push({
-                        element, level,
+                        element: null, level,
                         // 좌우 교차나 세로 등간격 없이, 각 위치를 독립적으로 뽑습니다.
                         x: Math.random() * width,
                         y: Math.random() * height,
@@ -157,16 +174,10 @@
                         spin: (index % 2 ? 1 : -1) * (0.7 + index % 5 * 0.22)
                     });
                 }
-                host.append(additions);
             }
             // 가장 큰 단계에 맞춰 전체를 함께 축소해 좁은 화면에서도 6단계를 유지합니다.
-            const sizeScale = Math.min(1, width * 0.26 / SETTINGS.depthLevels.at(-1).size);
-            particles.forEach(particle => {
-                const level = SETTINGS.depthLevels[particle.level];
-                particle.size = level.size * sizeScale;
-                particle.element.style.width = `${particle.size}px`;
-                particle.element.style.filter = level.blur ? `blur(${level.blur * sizeScale}px)` : "none";
-            });
+            sizeScale = Math.min(1, width * 0.26 / SETTINGS.depthLevels.at(-1).size);
+            particles.forEach(sizePiece);
             paint();
         }
 
@@ -179,7 +190,12 @@
         function tick(time) {
             frame = 0;
             if (!canMove()) { lastTime = null; return; }
-            const dt = lastTime === null ? 0 : Math.min((time - lastTime) / 1000, 0.05);
+            const fps = time - lastInteraction < 1200 ? SETTINGS.interactionFps : SETTINGS.idleFps;
+            if (lastTime !== null && time - lastTime < 1000 / fps - 0.5) {
+                frame = requestAnimationFrame(tick);
+                return;
+            }
+            const dt = lastTime === null ? 0 : Math.min((time - lastTime) / 1000, 0.1);
             lastTime = time;
             elapsed += dt;
             const drag = Math.exp(-SETTINGS.drag * dt);
@@ -220,6 +236,7 @@
             const rect = host.getBoundingClientRect();
             const x = event.clientX - rect.left, y = event.clientY - rect.top;
             if (x < 0 || x > width || y < 0 || y > height) return;
+            lastInteraction = performance.now();
             const radius = Math.min(SETTINGS.touchRadius, width * 0.55);
             particles.forEach(particle => {
                 const dx = particle.x - x, dy = particle.y - y;
