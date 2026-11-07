@@ -725,7 +725,7 @@ html[data-project-fluid-view="slide"] .project-warp {
 }
 
 .project-info-block {
-    font-size: 1.2rem;
+    font-size: calc(1.1rem + clamp(0rem, (100vw - 90rem) / 120, 0.8rem));
     line-height: 1.5;
     letter-spacing: -0.015rem;
     font-weight: 300;
