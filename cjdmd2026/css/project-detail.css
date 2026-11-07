@@ -3,6 +3,7 @@
 html {
     --case-inline-inset: max(var(--mobile-pad, 20px), calc((100% - var(--container-width)) / 2));
     --case-qr-width: clamp(98px, calc(7.6vw + 16px), 134px);
+    --case-qr-right: calc(1rem + env(safe-area-inset-right, 0px));
     --case-header-height: var(--header-height);
     --case-header-offset: 0px;
     --case-visible-header: calc(var(--case-header-height) - var(--case-header-offset));
@@ -70,8 +71,8 @@ a:focus-visible,summary:focus-visible{outline:3px solid #1959db;outline-offset:4
 }
 .case-qr {
     position: fixed;
-    inset-inline-end: var(--case-inline-inset);
-    bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
+    right: var(--case-qr-right);
+    bottom: calc(3rem + env(safe-area-inset-bottom, 0px));
     width: var(--case-qr-width);
     z-index: 2;
     display: grid;
@@ -108,7 +109,7 @@ a:focus-visible,summary:focus-visible{outline:3px solid #1959db;outline-offset:4
 .case-foot nav {
     min-height: 88px;
     padding-block: .75rem;
-    padding-inline-end: calc(var(--case-qr-width) + 1rem);
+    padding-inline-end: max(0px, calc(var(--case-qr-right) + var(--case-qr-width) + 1rem - var(--case-inline-inset)));
     flex-wrap: wrap;
     font-size: .9rem;
     font-weight: 600;
