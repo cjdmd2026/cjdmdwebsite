@@ -730,12 +730,13 @@ html[data-project-fluid-view="slide"] .project-warp {
     line-height: 1.8;
     letter-spacing: -0.02rem;
     font-weight: 400;
+    text-shadow: 0 1px 3px rgb(0 0 0 / 12%);
 
     color: rgba(255, 255, 255, 0.68);
 }
 
 .project-info-block:first-child {
-    color: rgba(255, 255, 255, 0.82);
+    color: rgba(255, 255, 255, 0.95);
 }
 
 
