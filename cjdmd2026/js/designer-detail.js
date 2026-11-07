@@ -627,6 +627,7 @@
             const logoSource = resolveAssetPath(project.logo);
             if (logoSource) {
                 const logo = createNode("img", "hero-logo");
+                logo.dataset.projectId = project.id;
                 logo.alt = `${title.dataset.projectTitle} 로고`;
                 logo.decoding = "async";
                 const fallback = () => {

@@ -727,6 +727,7 @@ img {
 }
 
 .hero-logo {
+    --logo-shadow: drop-shadow(0 2px 70px rgb(255 255 255 / 40%));
     display: block;
     width: auto;
     height: auto;
@@ -734,6 +735,11 @@ img {
     max-height: min(22vh, 200px);
     object-fit: contain;
     object-position: left bottom;
+    filter: var(--logo-shadow);
+}
+
+.hero-logo:is([data-project-id="cheoma"], [data-project-id="omix"]) {
+    filter: brightness(0) invert(1) var(--logo-shadow);
 }
 
 /* ============================== Card Copy ============================== */
