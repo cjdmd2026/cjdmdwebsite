@@ -2,17 +2,17 @@
 .grid-detail-link:focus-visible{outline:3px solid white;outline-offset:-5px;box-shadow:inset 0 0 0 6px #333}
 .slide-detail-link {
     width: fit-content;
-    min-height: 45px;
+    min-height: 44px;
     margin-top: 4rem;
-    padding: 0 1.1rem;
-    gap: 0.45rem;
+    padding: 0 1.25rem;
     color: #fff;
     border-color: #fff;
     background-color: transparent;
+    opacity: 0.8;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
     pointer-events: auto;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     font-weight: 500;
     line-height: 1.2;
     text-decoration: none;
@@ -20,10 +20,12 @@
     white-space: nowrap;
 }
 .slide-detail-link:hover {
+    opacity: 1;
     color: #111;
     font-weight: 600;
 }
 .slide-detail-link:focus-visible {
+    opacity: 1;
     outline: 2px solid currentColor;
     outline-offset: -4px;
 }
