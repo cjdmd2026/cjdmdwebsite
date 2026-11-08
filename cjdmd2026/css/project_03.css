@@ -331,10 +331,17 @@ body:has(#slideview:not([hidden])) .header .logo {
 }
 
 .header .nav {
+    --nav-color: rgb(0 0 0 / 70%);
+    --nav-idle-opacity: 0.3;
     display: flex;
     align-items: center;
+}
 
-    
+html[data-project-fluid-view="slide"] .header .nav:is(
+    [data-wave-backdrop="dark"], [data-slide-backdrop="dark"]:not([data-wave-backdrop])
+) {
+    --nav-color: white;
+    --nav-idle-opacity: 0.5;
 }
 
 .header .nav ul {
@@ -345,19 +352,12 @@ body:has(#slideview:not([hidden])) .header .logo {
 .header .nav ul li {
     font-size: 0.95rem;
     font-weight: 500;
-    color: rgba(0, 0, 0, 0.75);
-    mix-blend-mode: difference;
-
-    font-family: 'paperozi', sans-serif;
-}
-
-
-body:has(#slideview:not([hidden])) .header .nav ul li {
-    color: rgba(255, 255, 255, 1);
+    color: var(--nav-color);
+    font-family: 'Paperozi', sans-serif;
 }
 
 .header .nav ul li a {
-    opacity: 0.5;
+    opacity: var(--nav-idle-opacity);
     transition: opacity 0.3s ease;
 }
 
@@ -659,6 +659,7 @@ body:has(#slideview:not([hidden])) .header .nav ul li {
     line-height: 1;
 
     color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 2px 14px rgb(0 0 0 / 22%);
 }
 
 
@@ -736,6 +737,10 @@ html[data-project-fluid-view="slide"] .project-warp {
 
 .project-info-block:first-child {
     color: rgba(255, 255, 255, 0.95);
+}
+
+.project-info-block > p {
+    text-shadow: 0 1px 6px rgb(0 0 0 / 18%), 0 2px 12px rgb(0 0 0 / 12%);
 }
 
 
@@ -847,9 +852,9 @@ html[data-project-fluid-view="slide"]
 /* ============================== Slide View Background ============================== */
 
 .container:has(#slideview:not([hidden])) .gradient {
-    --project-scrim-opacity: 0.65;
-    --project-scrim-start: 0.12;
-    --project-scrim-end: 0.78;
+    --project-scrim-opacity: 0.60;
+    --project-scrim-start: 0.06;
+    --project-scrim-end: 0.58;
 
     width: 100vw;
     height: 100vh;
@@ -857,8 +862,7 @@ html[data-project-fluid-view="slide"]
     margin: 0;
     padding: 0;
 
-    background: var(--gradient-color);
-    background-image: linear-gradient(90deg,
+    background: linear-gradient(90deg,
         rgb(0 0 0 / var(--project-scrim-opacity)) calc(var(--project-scrim-start) * 100%),
         rgb(0 0 0 / 0) calc(var(--project-scrim-end) * 100%));
 

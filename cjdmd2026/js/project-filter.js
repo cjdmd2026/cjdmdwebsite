@@ -8,14 +8,14 @@
     // =========================================================
 
     const CATEGORY_MAP = {
-        all: null,
-        health: "건강",
-        education: "교육",
-        environment: "환경",
-        culture: "문화",
-        leisure: "여가",
-        welfare: "복지",
-        life: "생활"
+        health: ["건강"],
+        education: ["교육"],
+        environment: ["환경"],
+        culture: ["문화"],
+        "leisure-life": ["여가", "생활"],
+        welfare: ["복지"],
+        leisure: ["여가"],
+        life: ["생활"]
     };
 
 
@@ -406,10 +406,7 @@
 
         function applyResults() {
 
-            const selectedCategory =
-                CATEGORY_MAP[
-                    activeFilter
-                ];
+            const selectedCategories = CATEGORY_MAP[activeFilter] || [];
 
 
 
@@ -435,11 +432,7 @@
 
 
                     // 카테고리
-                    const categoryMatch =
-                        activeFilter === "all"
-                            ||
-                        project.category ===
-                        selectedCategory;
+                    const categoryMatch = activeFilter === "all" || selectedCategories.includes(project.category);
 
 
 

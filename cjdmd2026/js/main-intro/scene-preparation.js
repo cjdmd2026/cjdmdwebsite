@@ -56,7 +56,15 @@ export function createScenePreparation(renderer,scene,camera,onReady,onProgress=
   async function run(){
     scheduled=0;if(running||document.hidden)return;
     running=true;
-    const version=generation,batch=queue.splice(0,batchSize);
+    // Keep large texture and vertex uploads from entering the GPU queue in a
+    // single burst. Small line and guide buffers can still share a batch.
+    const version=generation;
+    let count=1,bytes=queue[0].bytes;
+    while(count<queue.length && count<batchSize && bytes+queue[count].bytes<=4*1024*1024){
+      bytes+=queue[count].bytes;
+      count++;
+    }
+    const batch=queue.splice(0,count);
     try{
       // Compile without changing the live scene's visibility while waiting for
       // KHR_parallel_shader_compile. Rendering can continue in the meantime.
@@ -79,7 +87,16 @@ export function createScenePreparation(renderer,scene,camera,onReady,onProgress=
     generation++;
     const resources=[];
     scene.traverse(object=>{if(object.material&&(object.isMesh||object.isLine||object.isPoints||object.isSprite))resources.push(object);});
-    queue=resources.filter(object=>prepared.get(object)!==signature(object)).map(object=>({object}));
+    queue=resources.filter(object=>prepared.get(object)!==signature(object)).map(object=>{
+      const geometry=object.geometry;
+      let bytes=geometry?.index?.array.byteLength||0;
+      for(const attribute of Object.values(geometry?.attributes||{}))bytes+=attribute.array.byteLength;
+      for(const material of materials(object)){
+        const image=material.map?.image;
+        if(image?.width && image.height)bytes+=4*image.width*image.height;
+      }
+      return {object,bytes};
+    });
     // Solids and their shadow atlases go first; the much smaller construction
     // lines follow. Resizing queues only newly created or changed resources.
     queue.sort((a,b)=>(a.object.isInstancedMesh?0:a.object.isMesh?1:2)-(b.object.isInstancedMesh?0:b.object.isMesh?1:2));

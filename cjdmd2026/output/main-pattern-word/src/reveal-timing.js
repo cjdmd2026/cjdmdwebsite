@@ -1,0 +1,26 @@
+export const GUIDE_DURATION=3.00;
+export const GUIDE_SWEEP_END=GUIDE_DURATION*.8;
+export const OPENING_MEASURE_START=GUIDE_DURATION;
+export const OPENING_MEASURE_DURATION=1.20;
+export const OPENING_MEASURE_END=OPENING_MEASURE_START+OPENING_MEASURE_DURATION;
+export const OPENING_LABEL_START=OPENING_MEASURE_START+OPENING_MEASURE_DURATION*.68;
+// Hold the completed opening box while its SVG dimensions are measured.
+export function openingRevealTime(time){
+  if(time<OPENING_MEASURE_START)return time;
+  if(time<OPENING_MEASURE_END)return GUIDE_DURATION-.000001;
+  return time-OPENING_MEASURE_DURATION;
+}
+export const POINT_START=GUIDE_DURATION;
+export const POINT_END=POINT_START+.04;
+export const OPENING_OUTLINE_START=POINT_END+OPENING_MEASURE_DURATION;
+export const OPENING_DIMENSION_FADE=.42;
+export const OUTLINE_DURATION=2.10;
+export const FILL_START=POINT_END+OUTLINE_DURATION;
+export const EXTRUSION_START=FILL_START+.08;
+// Trade part of the color fade for a slower rise without extending each intro.
+export const EXTRUSION_DURATION=.90;
+export const SOLID_START=EXTRUSION_START+EXTRUSION_DURATION;
+export const COLOR_START=SOLID_START+.08;
+export const COLOR_DURATION=.84;
+export const COLOR_END=COLOR_START+COLOR_DURATION;
+export const REVEAL_DURATION=COLOR_END+.05;

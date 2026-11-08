@@ -1,13 +1,13 @@
 /* No desktop script URLs are requested until the desktop layout is available. */
 (() => {
     'use strict';
-    const desktop = matchMedia('(min-width: 760px)');
+    const compact = matchMedia(document.currentScript?.dataset.compactLayout || '(width < 760px)');
     const root = document.documentElement;
     let started = false;
     root.dataset.desktopFeatures = 'idle';
 
     function load() {
-        if (!desktop.matches || started) return;
+        if (compact.matches || started) return;
         started = true;
         root.dataset.desktopFeatures = 'loading';
         // Download together, but execute in document order to preserve dependencies.
@@ -32,6 +32,6 @@
             });
     }
 
-    desktop.addEventListener('change', load);
+    compact.addEventListener('change', load);
     load();
 })();

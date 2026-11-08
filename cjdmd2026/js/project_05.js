@@ -14,6 +14,38 @@
       window.PROJECT_WAVE_OPTIONS?.iconBaseUrl || "../assets/images/project/icon/",
       document.baseURI
     );
+    const headerNav = document.querySelector('.header .nav');
+    function navigationBackdrop(image, card) {
+      if (!image || !headerNav) return 'light';
+      const frame = card.getBoundingClientRect();
+      const nav = headerNav.getBoundingClientRect();
+      if (!frame.width || !frame.height || !nav.width || !nav.height) return 'light';
+
+      // Map the menu onto the same centered cover crop used by the slide and its wave.
+      const scale = Math.max(frame.width / image.naturalWidth, frame.height / image.naturalHeight);
+      const left = (frame.width - image.naturalWidth * scale) / 2 + frame.left;
+      const top = (frame.height - image.naturalHeight * scale) / 2 + frame.top;
+      const menuY = nav.top - headerNav.closest('.header').getBoundingClientRect().top;
+      const sample = document.createElement('canvas');
+      sample.width = 32;
+      sample.height = 4;
+      const ctx = sample.getContext('2d', {willReadFrequently: true});
+      if (!ctx) return 'light';
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, sample.width, sample.height);
+      try {
+        ctx.drawImage(image, (nav.left - left) / scale, (menuY - top) / scale,
+          nav.width / scale, nav.height / scale, 0, 0, sample.width, sample.height);
+        const pixels = ctx.getImageData(0, 0, sample.width, sample.height).data;
+        let brightness = 0;
+        for (let i = 0; i < pixels.length; i += 4) {
+          brightness += .2126 * pixels[i] + .7152 * pixels[i + 1] + .0722 * pixels[i + 2];
+        }
+        return brightness / (sample.width * sample.height) < 136 ? 'dark' : 'light';
+      } catch {
+        return 'light';
+      }
+    }
     // Keep each color's original viewBox, paths and group transforms so pieces reassemble exactly.
     function splitIconColors(svg) {
       const shapes = root => [...root.querySelectorAll('path,rect,circle,ellipse,polygon,polyline,line')]
@@ -465,6 +497,11 @@ async function captureForeground(target, {includeHidden = false} = {}) {
     syncBounds();
     // Reveal the new scene first, then let the remaining pale icons dissipate.
     const {slideProgress, trailFade} = waveTiming(progress, job.fromBlank && !job.imageOnly);
+    // The wave reaches the top late when rising, early when descending.
+    if (job.incomingBackdrop && slideProgress >= (job.direction > 0 ? .78 : .18)) {
+      headerNav.dataset.waveBackdrop = job.incomingBackdrop;
+      job.incomingBackdrop = null;
+    }
     // Reuse the cached copy throughout the code transition.
     for (const [source, value, incoming] of [[job.contentSource,job.content,false],[job.nextSource,job.nextContent,true]]) {
       if (!source?.renderCodeFrame || progress === job.paintedProgress) continue;
@@ -509,6 +546,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
     if (!job) return;
     const previous = job;
     job = null;
+    if (headerNav) delete headerNav.dataset.waveBackdrop;
     gl?.deleteTexture(previous.a);
     gl?.deleteTexture(previous.b);
     gl?.deleteTexture(previous.content);
@@ -624,6 +662,10 @@ async function captureForeground(target, {includeHidden = false} = {}) {
         job.content = texture(content);
         job.contentSource = content;
         job.nextContent = texture(document.createElement('canvas'));
+        if (headerNav) {
+          headerNav.dataset.waveBackdrop = navigationBackdrop(fromBlank ? null : job.from, target);
+          job.incomingBackdrop = navigationBackdrop(toBlank ? null : job.to, target);
+        }
         overlay.dataset.incomingText = '0';
         overlay.dataset.incomingIcons = '0';
         overlay.dataset.foregroundText = String(content.codeContent?.textRuns || 0);
@@ -1658,6 +1700,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
 
                 cards.forEach((c,i)=>c.classList.toggle('is-active',i===next));
                 index=next;
+                if (!initial) syncNavigationBackdrop();
 
                 // 이미지 슬라이드와 Dial을 같은 project-id 기준으로 동기화
                 syncProjectDial(cards[next]?.dataset.projectId,direction,instant);
@@ -2045,6 +2088,15 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 queueMicrotask(warm);
             }
             const imageLoads = new Map();
+            async function syncNavigationBackdrop() {
+                if (!headerNav || disposed || slideview.hidden) return;
+                const card = cards[index];
+                const source = getSource(card);
+                const image = source ? await window.ProjectASCII.prepare(source).catch(() => null) : null;
+                if (!disposed && !slideview.hidden && card === cards[index]) {
+                    headerNav.dataset.slideBackdrop = navigationBackdrop(image, card);
+                }
+            }
             function loadImage(source) {
                 if (!source) return Promise.reject(new Error('Missing project image'));
                 const url = new URL(source, document.baseURI).href;
@@ -2370,6 +2422,7 @@ function settleAsciiContent() {
                 document.dispatchEvent(new CustomEvent('project-view-change',{detail:{view}}));
 
                 if(view==='slide'){
+                    syncNavigationBackdrop();
                     queueMicrotask(warm);
                 }
             }
@@ -2468,6 +2521,7 @@ function settleAsciiContent() {
                 finishIntro(true);
                 syncFluidSurfaceBounds(cards[wanted??index]||cards[index]);
                 alignSlideContent();
+                syncNavigationBackdrop();
             });
             listen(reduce,'change',()=>{
                 if(reduce.matches){
@@ -2507,6 +2561,7 @@ function settleAsciiContent() {
                     });
                     dialIcons.clear();
                     iconRail.remove();
+                    if (headerNav) delete headerNav.dataset.slideBackdrop;
                     projectDial?.classList.remove('has-project-icons');
                     copySizeObserver.disconnect();
                     observer.disconnect();events.abort();engine?.destroy();engine=null;host.remove();style.remove();

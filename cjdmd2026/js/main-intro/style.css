@@ -124,19 +124,20 @@ body.intro-unavailable #hero{margin-top:0}
 
 /* The loading mark shares the hero's white dotted background. */
 html.intro-loading,html.intro-revealing{overflow:hidden;overscroll-behavior:none;scrollbar-gutter:stable}
-.intro-loader{--loading-fill:0%;position:fixed;inset:0;z-index:30;display:none;place-items:center;pointer-events:none;font-family:"Rajdhani",sans-serif}
+.intro-loader{position:fixed;inset:0;z-index:30;display:none;place-items:center;pointer-events:none;font-family:"Rajdhani",sans-serif}
 html.intro-loading .intro-loader,html.intro-revealing .intro-loader{display:grid}
 .intro-loader[hidden]{display:none!important}
-.intro-loader-mark{position:relative;width:clamp(110px,9vw,148px);opacity:1;filter:blur(0);transition:opacity .7s ease,filter .85s ease}
-.intro-loader svg{display:block;width:100%;overflow:visible}
-.intro-loader-outline{fill:none;stroke:#819098;stroke-width:1.8;stroke-linejoin:round}
-.intro-loader-fill{fill:var(--loading-color,#e5903a);clip-path:inset(calc(100% - var(--loading-fill)) 0 0);transition:clip-path .22s linear}
+.intro-loader-mark{position:relative;width:min(86vw,60svh,400px);opacity:1;transition:opacity .7s ease,filter .85s ease}
+.intro-loader-stage{position:relative;aspect-ratio:1}
+.intro-loader-field,.intro-loader-strip svg{display:block;width:100%;height:100%}
+.intro-loader-tile{position:absolute;overflow:hidden;will-change:transform}
+.intro-loader-strip{height:100%;will-change:transform}
 .intro-loader-percent{position:absolute;top:calc(100% + 22px);left:50%;transform:translateX(-50%);font-size:24px;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:.025em;color:#687078}
 .intro-loader.is-leaving .intro-loader-mark{opacity:0;filter:blur(14px)}
 html.intro-loading #mainIntro .hero-art,html.intro-loading #mainIntro .hero-heading,html.intro-loading #mainIntro .section-year{opacity:0!important;filter:blur(18px)!important}
 html.intro-revealing #mainIntro .hero-art,html.intro-revealing #mainIntro .hero-heading,html.intro-revealing #mainIntro .section-year{transition:opacity 1.2s .18s ease,filter 1.5s .18s ease}
 @media(prefers-reduced-motion:reduce){
-  .intro-loader-mark,.intro-loader-fill{transition:none}
+  .intro-loader-mark{transition:none}
   .intro-loader.is-leaving .intro-loader-mark{filter:none}
   html.intro-loading #mainIntro .hero-art,html.intro-loading #mainIntro .hero-heading,html.intro-loading #mainIntro .section-year{filter:none!important}
   html.intro-revealing #mainIntro .hero-art,html.intro-revealing #mainIntro .hero-heading,html.intro-revealing #mainIntro .section-year{transition:opacity .15s ease}

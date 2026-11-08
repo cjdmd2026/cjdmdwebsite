@@ -8,13 +8,14 @@
 
     if (saved) {
         const view = mobile.matches ? "grid" : saved.view;
-        window.projectListReturn = { ...saved, view };
+        const filter = ["leisure", "life"].includes(saved.filter) ? "leisure-life" : saved.filter;
+        window.projectListReturn = { ...saved, view, filter };
         document.documentElement.classList.remove("project-intro-pending");
         document.documentElement.dataset.projectFluidView = view;
         document.getElementById("gridview").hidden = view !== "grid";
         document.getElementById("slideview").hidden = view !== "slide";
         searchFields.forEach(field => { field.value = saved.query; });
-        filters.forEach(button => button.setAttribute("aria-pressed", String(button.dataset.filter === saved.filter)));
+        filters.forEach(button => button.setAttribute("aria-pressed", String(button.dataset.filter === filter)));
         window.addEventListener("pageshow", event => {
             if (!event.persisted && view === "grid") {
                 requestAnimationFrame(() => window.scrollTo({ top: saved.scrollY, behavior: "instant" }));

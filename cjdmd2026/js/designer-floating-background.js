@@ -77,13 +77,24 @@
             svg.append(branch);
         });
         if (!svg.childElementCount) throw new Error(`No ${color} shapes: ${project.file}`);
-        const image = new Image();
-        image.alt = "";
-        image.draggable = false;
-        image.className = "designer-floating-background__piece";
-        image.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(svg));
-        await image.decode();
-        return image;
+        // Rasterize the six depth levels once, including their blur. Every
+        // moving copy then draws the same small bitmap at its own rotation.
+        const ratio = Math.min(window.devicePixelRatio || 1, 2);
+        return Promise.all(SETTINGS.depthLevels.map(async ({size, blur}) => {
+            const pad = Math.ceil(blur * 3) + 1, span = size + pad * 2;
+            const bitmap = document.createElement("canvas");
+            bitmap.width = bitmap.height = Math.ceil(span * ratio);
+            const filter = blur ? `<filter id="soft" filterUnits="userSpaceOnUse" x="-${pad}" y="-${pad}" width="${span}" height="${span}"><feGaussianBlur stdDeviation="${blur}"/></filter>` : "";
+            svg.setAttribute("width", size);
+            svg.setAttribute("height", size);
+            const artwork = new XMLSerializer().serializeToString(svg);
+            const source = `<svg xmlns="${SVG_NS}" width="${bitmap.width}" height="${bitmap.height}" viewBox="-${pad} -${pad} ${span} ${span}"><defs>${filter}</defs><g${blur ? ' filter="url(#soft)"' : ""}>${artwork}</g></svg>`;
+            const image = new Image();
+            image.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(source);
+            await image.decode();
+            bitmap.getContext("2d").drawImage(image, 0, 0);
+            return {bitmap, span};
+        }));
     }
 
     function mount(main, designer) {
@@ -100,48 +111,61 @@
         host.dataset.designerId = designer.id;
         host.setAttribute("aria-hidden", "true");
         host.setAttribute("inert", "");
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return null;
+        host.append(canvas);
         let particles = [], fragments = [];
         let width = 1, height = 1, elapsed = 0, frame = 0, lastTime = null;
         let sizeScale = 1, lastInteraction = -Infinity;
-        let pageActive = true;
-        let observer = null;
+        let pageActive = true, inView = true;
+        let observer = null, visibilityObserver = null;
+        let mainTop = 0, origin = -1, canvasHeight = 0, ratio = 1;
+        const buffer = 160;
         const pointers = new Map();
 
         function sizePiece(particle) {
             const level = SETTINGS.depthLevels[particle.level];
             particle.size = level.size * sizeScale;
-            if (particle.element) {
-                particle.element.style.width = `${particle.size}px`;
-                particle.element.style.filter = level.blur ? `blur(${level.blur * sizeScale}px)` : "none";
-            }
+        }
+
+        function sliceOrigin() {
+            return Math.max(0, Math.min(height - canvasHeight,
+                Math.floor((window.scrollY - mainTop - buffer) / buffer) * buffer));
         }
 
         function paint() {
-            // Keep a small scroll buffer; offscreen pieces retain their place and velocity in memory.
-            const buffer = 120;
-            const top = -host.getBoundingClientRect().top;
-            const bottom = top + window.innerHeight;
+            // Anchor this buffered slice to the document so native scrolling
+            // moves the painted pieces even between simulation frames.
+            const next = sliceOrigin();
+            if (next !== origin) {
+                origin = next;
+                canvas.style.transform = `translateY(${origin}px)`;
+            }
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles.forEach((particle, index) => {
-                if (particle.y < top - buffer - particle.size || particle.y > bottom + buffer + particle.size) {
-                    if (particle.element?.parentNode) particle.element.remove();
-                    return;
-                }
-                if (!particle.element) {
-                    particle.element = fragments[index % fragments.length].cloneNode(false);
-                    particle.element.style.opacity = SETTINGS.opacity + (index % 4) * 0.055;
-                    sizePiece(particle);
-                }
-                if (!particle.element.parentNode) host.append(particle.element);
-                particle.element.style.transform =
-                    `translate3d(${particle.x.toFixed(2)}px, ${particle.y.toFixed(2)}px, 0) translate(-50%, -50%) rotate(${particle.angle.toFixed(2)}deg)`;
+                const y = particle.y - origin;
+                if (y < -particle.size || y > canvasHeight + particle.size) return;
+                const {bitmap, span} = fragments[index % fragments.length][particle.level];
+                const side = span * sizeScale, angle = particle.angle * Math.PI / 180;
+                const cos = Math.cos(angle) * ratio, sin = Math.sin(angle) * ratio;
+                ctx.setTransform(cos, sin, -sin, cos, particle.x * ratio, y * ratio);
+                ctx.globalAlpha = SETTINGS.opacity + (index % 4) * 0.055;
+                ctx.drawImage(bitmap, -side / 2, -side / 2, side, side);
             });
         }
 
         function resize() {
             const nextWidth = Math.max(1, main.clientWidth);
             const nextHeight = Math.max(1, main.clientHeight);
+            const nextCanvasHeight = Math.min(nextHeight, window.innerHeight + 2 * buffer);
+            const nextRatio = Math.min(window.devicePixelRatio || 1, 2,
+                Math.sqrt(2_000_000 / (nextWidth * nextCanvasHeight)));
+            mainTop = host.getBoundingClientRect().top + window.scrollY;
             // Animated grid rows can round the same total height up or down by one pixel.
-            if (particles.length && nextWidth === width && Math.abs(nextHeight - height) <= 1) return;
+            if (particles.length && nextWidth === width && Math.abs(nextHeight - height) <= 1 &&
+                nextCanvasHeight === canvasHeight && nextRatio === ratio) return;
 
             const density = nextWidth < 750 ? SETTINGS.mobileDensity : SETTINGS.density;
             const count = Math.min(SETTINGS.maxPieces, Math.max(density,
@@ -152,9 +176,15 @@
             });
             width = nextWidth;
             height = nextHeight;
+            ratio = nextRatio;
+            canvasHeight = nextCanvasHeight;
+            canvas.style.height = `${canvasHeight}px`;
+            const pixelWidth = Math.round(width * ratio), pixelHeight = Math.round(canvasHeight * ratio);
+            if (canvas.width !== pixelWidth) canvas.width = pixelWidth;
+            if (canvas.height !== pixelHeight) canvas.height = pixelHeight;
             // Keep existing pieces and their motion when the page needs a different count.
             if (particles.length > count) {
-                for (const particle of particles.splice(count)) particle.element?.remove();
+                particles.length = count;
             } else if (particles.length < count) {
                 const first = particles.length;
                 const levels = Array.from({ length: count - first }, (_, i) => (first + i) % SETTINGS.depthLevels.length);
@@ -165,7 +195,7 @@
                 for (const level of levels) {
                     const index = particles.length;
                     particles.push({
-                        element: null, level,
+                        level,
                         // 좌우 교차나 세로 등간격 없이, 각 위치를 독립적으로 뽑습니다.
                         x: Math.random() * width,
                         y: Math.random() * height,
@@ -182,7 +212,7 @@
         }
 
         function canMove() {
-            return !signal.aborted && pageActive && !document.hidden &&
+            return !signal.aborted && pageActive && inView && !document.hidden &&
                 !reducedMotion.matches && host.isConnected &&
                 !document.documentElement.classList.contains('page-transition-active');
         }
@@ -227,7 +257,7 @@
             frame = 0;
             lastTime = null;
             pointers.clear();
-            if (host.isConnected) paint();
+            if (host.isConnected && inView && pageActive && !document.hidden) paint();
             if (canMove()) frame = requestAnimationFrame(tick);
         }
 
@@ -260,6 +290,7 @@
             abort.abort();
             cancelAnimationFrame(frame);
             observer?.disconnect();
+            visibilityObserver?.disconnect();
             pointers.clear();
             host.remove();
             main.classList.remove("has-designer-background");
@@ -276,8 +307,16 @@
                 resize();
                 observer = new ResizeObserver(resize);
                 observer.observe(main);
+                visibilityObserver = new IntersectionObserver(([entry]) => {
+                    if (entry.isIntersecting === inView) return;
+                    inView = entry.isIntersecting;
+                    syncMotion();
+                });
+                visibilityObserver.observe(main);
                 listen(window, "resize", resize, { passive: true });
-                listen(window, "scroll", () => { if (reducedMotion.matches) paint(); }, { passive: true });
+                listen(window, "scroll", () => {
+                    if (reducedMotion.matches && inView && pageActive && !document.hidden && sliceOrigin() !== origin) paint();
+                }, { passive: true });
                 listen(document, "visibilitychange", syncMotion);
                 listen(document, "page-transition:change", syncMotion);
                 listen(reducedMotion, "change", syncMotion);

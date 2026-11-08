@@ -12,20 +12,10 @@ export function createGridExtension(grid,minCol,maxCol,minRow,maxRow,sources,cop
   const canvas=document.createElement('canvas');
   canvas.width=cols*pixels;canvas.height=rows*pixels;
   const ctx=canvas.getContext('2d');
-  const paths=sources.map(source=>{
-    const path=new Path2D();
-    for(const {points} of source.caster.contours){
-      if(points.length<3)continue;
-      path.moveTo(...points[0]);
-      for(let i=1;i<points.length;i++)path.lineTo(...points[i]);
-      path.closePath();
-    }
-    return path;
-  });
   const sx=pixels/stepX,sz=pixels/stepZ;
   function stamp(x,z,index){
     ctx.setTransform(sx,0,0,sz,(x-left)*sx,(z-back)*sz);
-    ctx.fillStyle=sources[index].color;ctx.fill(paths[index]);
+    ctx.fillStyle=sources[index].color;ctx.fill(sources[index].caster.path);
   }
   sources.forEach(({mesh},index)=>stamp(mesh.position.x,mesh.position.z,index));
   copies.forEach(({x,z,sourceIndex})=>stamp(x,z,sourceIndex));

@@ -160,7 +160,11 @@
       2511
     ],
     "optimizedBytes": 1116787,
-    "contentHash": "5347162bf8a8"
+    "contentHash": "5347162bf8a8",
+    "profileLogo": {
+      "output": "assets/images/project/submissions/phishing-ddook/logo-profile.webp",
+      "contentHash": "59c14069b025"
+    }
   },
   {
     "projectId": "apuchika",
@@ -251,7 +255,11 @@
       942
     ],
     "optimizedBytes": 175709,
-    "contentHash": "0e62b57c4e98"
+    "contentHash": "0e62b57c4e98",
+    "profileLogo": {
+      "output": "assets/images/project/submissions/apuchika/logo-profile.webp",
+      "contentHash": "fa01bfd3dfc8"
+    }
   },
   {
     "projectId": "apuchika",
@@ -549,7 +557,11 @@
       647
     ],
     "optimizedBytes": 138079,
-    "contentHash": "8f60a4068630"
+    "contentHash": "8f60a4068630",
+    "profileLogo": {
+      "output": "assets/images/project/submissions/stylens/logo-profile.webp",
+      "contentHash": "8341f3f4dbe9"
+    }
   },
   {
     "projectId": "ilkko",
@@ -972,13 +984,13 @@
       2048,
       1152
     ],
-    "encoding": "original-pixels-webp95-v1",
+    "encoding": "icc-srgb-webp95-v1",
     "dimensions": [
       2048,
       1152
     ],
-    "optimizedBytes": 602230,
-    "contentHash": "c87097f5a3a4"
+    "optimizedBytes": 594484,
+    "contentHash": "34e93ed79aee"
   },
   {
     "projectId": "cheoma",
@@ -1367,7 +1379,11 @@
       481
     ],
     "optimizedBytes": 24138,
-    "contentHash": "a3078539bcdc"
+    "contentHash": "a3078539bcdc",
+    "profileLogo": {
+      "output": "assets/images/project/submissions/year-on/logo-profile.webp",
+      "contentHash": "456159aa190a"
+    }
   },
   {
     "projectId": "cocorang",
@@ -1752,7 +1768,11 @@
       793
     ],
     "optimizedBytes": 1213186,
-    "contentHash": "ef91273a96de"
+    "contentHash": "ef91273a96de",
+    "profileLogo": {
+      "output": "assets/images/project/submissions/efact/logo-profile.webp",
+      "contentHash": "b1b199e2e2cc"
+    }
   },
   {
     "projectId": "efact",

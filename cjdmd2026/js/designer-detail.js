@@ -30,6 +30,7 @@
     ];
 
     const root = document.documentElement;
+    const compactLayout = matchMedia(document.querySelector("script[data-compact-layout]")?.dataset.compactLayout || "(max-width: 759px)");
 
     const scriptUrl =
         document.currentScript?.src ||
@@ -56,6 +57,7 @@
     let mountFrame = 0;
     let stopped = false;
     let renderCleanups = [];
+    let profileLenis = null;
 
     /* ==================== Lenis ==================== */
 
@@ -71,6 +73,20 @@
 
     function resizeLenis() {
         getLenis()?.resize?.();
+    }
+
+    function syncSmoothScroll() {
+        if (compactLayout.matches || stopped) {
+            profileLenis?.destroy();
+            if (window.lenis === profileLenis) window.lenis = null;
+            profileLenis = null;
+            return;
+        }
+        window.DesktopFeaturesReady?.then(() => {
+            if (compactLayout.matches || stopped || !window.Lenis || getLenis()) return;
+            profileLenis = new window.Lenis({duration: 1, smoothWheel: true, wheelMultiplier: 0.75, autoRaf: true});
+            window.lenis = profileLenis;
+        });
     }
 
     function scrollInstantly(top) {
@@ -514,6 +530,7 @@
                 category: course.label,
                 projectTitle: project.title || "",
                 logo: text(project.logo),
+                profileLogo: text(project.profileLogo),
                 imageFit: entry.imageFit === "contain" ? "contain" : "cover",
 
                 title:
@@ -548,7 +565,7 @@
                 : "project-card"
         );
 
-        card.setAttribute("tabindex", "0");
+        if (!compactLayout.matches) card.tabIndex = 0;
 
         card.setAttribute(
             "aria-label",
@@ -570,6 +587,8 @@
         image.dataset.imageFit = project.imageFit || "cover";
 
         if (isFirst) {
+            thumb.id = "firstProjectThumb";
+            image.id = "projectImage";
             image.setAttribute("fetchpriority", "high");
         }
 
@@ -598,9 +617,7 @@
 
         if (primary) image.src = primary;
 
-        if (isFirst) {
-            thumb.id = "firstProjectThumb";
-
+        if (isFirst && !compactLayout.matches) {
             const flyer = createNode(
                 "div",
                 "hero-flyer is-docked"
@@ -610,8 +627,6 @@
 
             const media = createNode("div", "media-frame");
             media.id = "mediaFrame";
-
-            image.id = "projectImage";
 
             const overlay = createNode("div", "hero-overlay");
             overlay.id = "heroOverlay";
@@ -633,12 +648,17 @@
                 logo.dataset.projectId = project.id;
                 logo.alt = `${title.dataset.projectTitle} 로고`;
                 logo.decoding = "async";
+                const preview = resolveAssetPath(project.profileLogo);
                 const fallback = () => {
+                    if (preview && logo.src !== logoSource) {
+                        logo.src = logoSource;
+                        return;
+                    }
                     title.textContent = title.dataset.projectTitle;
                 };
-                logo.addEventListener("error", fallback, { once: true });
+                logo.addEventListener("error", fallback);
                 renderCleanups.push(() => logo.removeEventListener("error", fallback));
-                logo.src = logoSource;
+                logo.src = preview || logoSource;
                 title.replaceChildren(logo);
             }
 
@@ -734,6 +754,11 @@
         controller = null;
 
         root.classList.remove("motion-ready");
+        const listTitle = container.querySelector(".list-title");
+        const projectLink = container.querySelector(".profile-project-link");
+        listTitle.textContent = "전시 목록";
+        projectLink.hidden = true;
+        projectLink.removeAttribute("href");
 
         renderCleanups.forEach(cleanup => cleanup());
         renderCleanups = [];
@@ -858,6 +883,13 @@
         }
 
         const courseCards = getCourseCards(project);
+        if (compactLayout.matches) {
+            listTitle.textContent = project.title || "전시 목록";
+            if (project.url) {
+                projectLink.href = new URL(project.url, new URL("project/", siteRoot)).href;
+                projectLink.hidden = false;
+            }
+        }
 
         const cards = courseCards.map(
             (courseCard, index) =>
@@ -872,8 +904,10 @@
 
         container.appendChild(fragment);
 
-        bindActiveCards(cards);
-        mount();
+        if (!compactLayout.matches) {
+            bindActiveCards(cards);
+            mount();
+        }
         resizeLenis();
 
         return true;
@@ -939,7 +973,7 @@
     }
 
     function mount() {
-        if (stopped) return;
+        if (stopped || compactLayout.matches) return;
 
         const nodes = findElements();
 
@@ -998,17 +1032,7 @@
 
             if (needsMeasure || !geometry) measure();
 
-            const intro = document.querySelector(".intro");
-            const headerHeight = header?.offsetHeight || 0;
-            const profileTop = intro
-                ? Math.max(0, intro.getBoundingClientRect().top + window.scrollY - headerHeight)
-                : 0;
-
-            return [
-                profileTop,
-                geometry.sectionTop + geometry.range * fullStopProgress,
-                Math.ceil(geometry.endScroll)
-            ];
+            return geometry.stops;
         });
 
         const projectCard = target.closest(".project-card");
@@ -1063,6 +1087,7 @@
                 width: "100%",
                 height: "100%",
                 transform: "none",
+                clipPath: "none",
                 borderRadius: "inherit",
                 opacity: "1"
             });
@@ -1248,6 +1273,10 @@
             const fullCardHeight =
                 reservedHeight || localHeight;
 
+            const intro = document.querySelector(".intro");
+            const profileTop = intro
+                ? Math.max(0, intro.getBoundingClientRect().top + window.scrollY - (header?.offsetHeight || 0))
+                : 0;
             geometry = {
                 vw,
                 vh,
@@ -1257,7 +1286,9 @@
                 radii,
                 localWidth,
                 localHeight,
-                fullCardHeight
+                hasCardSize: card.width > 0 && card.height > 0,
+                fullCardHeight,
+                stops: [profileTop, sectionTop + range * fullStopProgress, Math.ceil(endScroll)]
             };
 
             needsMeasure = false;
@@ -1322,13 +1353,6 @@
                 measure();
             }
 
-            const card = target.getBoundingClientRect();
-
-            if (card.width <= 0 || card.height <= 0) {
-                dock();
-                return;
-            }
-
             const {
                 vw,
                 vh,
@@ -1341,6 +1365,10 @@
                 fullCardHeight
             } = geometry;
 
+            if (!geometry.hasCardSize) {
+                dock();
+                return;
+            }
             const progress =
                 window.scrollY >= endScroll
                     ? 1
@@ -1356,15 +1384,6 @@
                 fitMedia(localWidth, localHeight);
                 return;
             }
-
-            if (flyer.parentElement !== stage) {
-                stage.appendChild(flyer);
-            }
-
-            flyer.classList.remove("is-docked");
-
-            const stageRect =
-                stage.getBoundingClientRect();
 
             const fullHeight =
                 CONFIG.fullMode === "viewport"
@@ -1405,6 +1424,8 @@
                 radius =
                     `${lerp(CONFIG.bannerRadius, 0, p)}px`;
             } else if (progress >= CONFIG.shrinkStart) {
+                const card = target.getBoundingClientRect();
+                const stageRect = stage.getBoundingClientRect();
                 const t = clamp(
                     (progress - CONFIG.shrinkStart) /
                     (1 - CONFIG.shrinkStart)
@@ -1458,11 +1479,18 @@
                 );
             }
 
+            if (flyer.parentElement !== stage) stage.appendChild(flyer);
+            flyer.classList.remove("is-docked");
+            // Crop a stable surface. Resizing its layout box every scroll frame
+            // also forces layout for the image, gradient, and logo inside it.
+            const surfaceWidth = Math.max(vw, width);
+            const surfaceHeight = Math.max(fullHeight, height);
             Object.assign(flyer.style, {
-                width: `${width}px`,
-                height: `${height}px`,
+                width: `${surfaceWidth}px`,
+                height: `${surfaceHeight}px`,
                 transform: `translate3d(${x}px, ${y}px, 0)`,
-                borderRadius: radius,
+                clipPath: `inset(0 ${surfaceWidth - width}px ${surfaceHeight - height}px 0 round ${radius})`,
+                borderRadius: "0",
                 opacity: String(flyerOpacity)
             });
 
@@ -1475,12 +1503,13 @@
                     (progress - fullStopProgress) / (CONFIG.shrinkStart - fullStopProgress)
                 ));
                 title.style.opacity = String(titleIn * (1 - logoExit));
-                title.style.transform = `translateY(${lerp(18, 0, titleIn) + 32 * logoExit}px)`;
+                title.style.transform = `translateY(${height - surfaceHeight + lerp(18, 0, titleIn) + 32 * logoExit}px)`;
             }
 
             if (overlay) {
                 const overlayOut = 1 - smooth(clamp((progress - CONFIG.shrinkStart) / 0.22));
                 overlay.style.opacity = String(titleIn * overlayOut);
+                overlay.style.transform = `scale(${width / surfaceWidth}, ${height / surfaceHeight})`;
             }
 
             if (cardTransitions.size) {
@@ -1680,6 +1709,22 @@
 
     /* ==================== 공개 API / 초기 실행 ==================== */
 
+    function changeLayout() {
+        syncSmoothScroll();
+        renderDetail();
+    }
+
+    const backLink = document.querySelector(".back-button");
+    function returnToDesigners(event) {
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        if (!document.referrer || !backLink || history.length < 2) return;
+        const previous = new URL(document.referrer);
+        if (previous.origin !== location.origin || previous.pathname.replace(/index\.html$/, "") !== new URL(backLink.href).pathname) return;
+        event.preventDefault();
+        if (window.PageTransition) window.PageTransition.back(1);
+        else history.back();
+    }
+
     if (
         typeof window.DesignerDetail?.destroy === "function"
     ) {
@@ -1690,6 +1735,9 @@
 
     function destroy() {
         stopped = true;
+        syncSmoothScroll();
+        compactLayout.removeEventListener("change", changeLayout);
+        backLink?.removeEventListener("click", returnToDesigners);
 
         if (mountFrame) {
             cancelAnimationFrame(mountFrame);
@@ -1726,6 +1774,10 @@
         render: renderDetail,
         destroy
     };
+
+    syncSmoothScroll();
+    compactLayout.addEventListener("change", changeLayout);
+    backLink?.addEventListener("click", returnToDesigners);
 
     window.addEventListener(
         "popstate",

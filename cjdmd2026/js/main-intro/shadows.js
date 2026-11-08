@@ -7,16 +7,21 @@ const ATLAS_COLUMNS = 4;
 const FRAME_COUNT = 16;
 const TILE_SIZE = 256;
 
-export function createShadowAtlas(caster, span, depth, rotation = 0) {
+// Each step draws one light sample. The caller can yield the main thread
+// between samples; the texture is returned only after all frames are drawn.
+export function* renderShadowAtlas(caster, span, depth, rotation = 0) {
   const atlas = document.createElement('canvas');
   atlas.width = atlas.height = ATLAS_COLUMNS * TILE_SIZE;
-  const output = atlas.getContext('2d');
+  // These offscreen surfaces are baked once and read back for texture upload.
+  // Prefer CPU backing so their raster work doesn't queue ahead of loader frames.
+  const bakeContext = {willReadFrequently:true};
+  const output = atlas.getContext('2d', bakeContext);
   const mask = document.createElement('canvas');
   mask.width = mask.height = TILE_SIZE;
-  const ctx = mask.getContext('2d');
+  const ctx = mask.getContext('2d', bakeContext);
   const tile = document.createElement('canvas');
   tile.width = tile.height = TILE_SIZE;
-  const soft = tile.getContext('2d');
+  const soft = tile.getContext('2d', bakeContext);
   const scale = TILE_SIZE / span;
   const cos = Math.cos(rotation), sin = Math.sin(rotation);
   const project = (x, z, y, lightX, lightZ) => [
@@ -57,18 +62,24 @@ export function createShadowAtlas(caster, span, depth, rotation = 0) {
   });
   for (let frame = 0; frame < FRAME_COUNT; frame++) {
     const height = caster.height * depth * frame / (FRAME_COUNT - 1);
-    soft.clearRect(0, 0, TILE_SIZE, TILE_SIZE);
-    soft.globalCompositeOperation = 'lighter';
-    soft.globalAlpha = .72 / samples.length;
-    soft.filter = `blur(${(.018 + height * .018) * scale}px)`;
-    for (const [lightX, lightZ] of samples) {
-      ctx.clearRect(0, 0, TILE_SIZE, TILE_SIZE);
-      ctx.fillStyle = '#ffffff';ctx.fill(silhouette(height, lightX, lightZ));
-      soft.drawImage(mask, 0, 0);
-    }
+    // Every light sample at this height uses the same blur. Accumulate their
+    // coverage first and filter the mask once per height frame.
     ctx.clearRect(0, 0, TILE_SIZE, TILE_SIZE);
+    ctx.fillStyle = '#fff';
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = .72 / samples.length;
+    for (const [lightX, lightZ] of samples) {
+      ctx.fill(silhouette(height, lightX, lightZ));
+      yield 1 / (FRAME_COUNT * samples.length);
+    }
+    soft.clearRect(0, 0, TILE_SIZE, TILE_SIZE);
+    soft.globalAlpha = 1;
+    soft.filter = `blur(${(.018 + height * .018) * scale}px)`;
+    soft.drawImage(mask, 0, 0);
+    ctx.clearRect(0, 0, TILE_SIZE, TILE_SIZE);
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
     ctx.fill(footprint);
-    soft.globalCompositeOperation = 'source-over';
     soft.globalAlpha = .35;
     soft.filter = `blur(${.035 * scale}px)`;
     soft.drawImage(mask, 0, 0);

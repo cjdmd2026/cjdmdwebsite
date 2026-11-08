@@ -34,6 +34,9 @@ for (const project of projects) {
     project.image = url('portrait');
     project.slideImage = url('landscape');
     project.logo = url('logo');
+    const preview = asset('logo').profileLogo;
+    if (preview) project.profileLogo = `../${preview.output}?v=${preview.contentHash}`;
+    else delete project.profileLogo;
     for (const [key, label] of Object.entries(courses)) {
         const [width, height] = asset(key).dimensions;
         project.courseCards[key] = {

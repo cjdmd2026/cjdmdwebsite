@@ -49,8 +49,51 @@ footer.addEventListener("click", handleProjectReturn);
 
 const header = document.querySelector(".header");
 const sectionMenu = document.querySelector(".case-menu");
+const qrCard = document.querySelector(".case-qr");
+const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+const qrMaxOffset = 25;
+const qrFollowMs = 115;
+const qrReturnMs = 330;
 let hiddenHeight = 0;
 let lastScrollY = window.scrollY;
+
+let qrOffset = 0;
+let qrTarget = 0;
+let qrFrame = 0;
+let qrLastTime = 0;
+
+function resetQrMotion() {
+    cancelAnimationFrame(qrFrame);
+    qrFrame = 0;
+    qrOffset = qrTarget = 0;
+    qrCard?.style.removeProperty("transform");
+}
+
+function animateQr(time) {
+    const elapsed = Math.max(0, time - qrLastTime);
+    qrLastTime = time;
+    qrOffset += (qrTarget - qrOffset) * (1 - Math.exp(-elapsed / qrFollowMs));
+    qrTarget *= Math.exp(-elapsed / qrReturnMs);
+    if (Math.abs(qrTarget) < .1 && Math.abs(qrOffset) < .1) {
+        resetQrMotion();
+        return;
+    }
+    qrCard.style.transform = `translateY(${qrOffset}px)`;
+    qrFrame = requestAnimationFrame(animateQr);
+}
+
+function trailQr(delta) {
+    if (!qrCard || reducedMotion.matches || !delta) return;
+    // Let the card travel a little with the content, even on a large section jump.
+    qrTarget = Math.max(-qrMaxOffset, Math.min(qrMaxOffset, qrTarget - delta * .27));
+    if (!qrFrame) {
+        qrLastTime = performance.now();
+        qrFrame = requestAnimationFrame(animateQr);
+    }
+}
+
+reducedMotion.addEventListener("change", resetQrMotion);
+window.addEventListener("pagehide", resetQrMotion);
 
 function setHiddenHeight(value) {
     const next = Math.min(header.offsetHeight, Math.max(0, value));
@@ -64,6 +107,7 @@ function followScroll() {
     const y = Math.max(0, Math.min(window.scrollY, maxScroll));
     const delta = y - lastScrollY;
     lastScrollY = y;
+    trailQr(delta);
     if (y === 0 || document.body.classList.contains("mobile-menu-open") || header.querySelector(":focus-visible")) {
         setHiddenHeight(0);
         return;

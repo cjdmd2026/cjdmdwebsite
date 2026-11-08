@@ -46,8 +46,8 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg
       await page.goto('http://loading.test/main/',{waitUntil:'commit'});
       if(scenario!=='script-failure'){
         await page.waitForFunction(()=>window.MainIntroLoading?.inspect().phase==='loading');
-        const start=await page.evaluate(()=>({state:MainIntroLoading.inspect(),fill:getComputedStyle(document.querySelector('.intro-loader-fill')).clipPath,heroOpacity:getComputedStyle(document.querySelector('.hero-art')).opacity}));
-        assert.equal(start.state.progress,0);assert.equal(start.heroOpacity,'0');assert.match(start.fill,/100%/);
+        const start=await page.evaluate(()=>({state:MainIntroLoading.inspect(),parts:document.querySelectorAll('.intro-loader-tile').length,heroOpacity:getComputedStyle(document.querySelector('.hero-art')).opacity}));
+        assert.equal(start.state.progress,0);assert.equal(start.heroOpacity,'0');assert(start.parts>1);
         if(scenario==='desktop')await page.screenshot({path:path.join(output,'main-loading-0.png')});
         await page.mouse.wheel(0,700);await page.keyboard.press('PageDown');
         assert.equal(await page.evaluate(()=>scrollY),0);
@@ -56,6 +56,8 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg
       if(scenario==='desktop'){
         await page.waitForFunction(()=>MainIntroLoading.inspect().progress>=25&&MainIntroLoading.inspect().phase==='loading',null,{timeout:90000});
         await page.screenshot({path:path.join(output,'main-loading-progress.png')});
+        await page.waitForFunction(()=>window.heroNebula?.inspect().ready && MainIntroLoading.inspect().phase==='loading');
+        assert(await page.evaluate(()=>heroNebula.inspect().paused),'The hidden hero must not compete with the loader for frames');
       }
       if(scenario==='resize'){
         await page.waitForFunction(()=>window.heroStudio?.ready&&!heroStudio.inspect().preparation.ready,null,{timeout:90000});
@@ -69,6 +71,7 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg
         await page.screenshot({path:path.join(output,'main-loading-reveal.png')});
       }
       await page.waitForFunction(()=>window.MainIntroLoading?.inspect().phase==='done',null,{timeout:90000});
+      if(!scenario.endsWith('failure'))await page.waitForFunction(()=>getComputedStyle(document.querySelector('.hero-art')).filter==='none');
       // Unlocking scroll can requeue resources for the final viewport width.
       if(scenario==='gpu-failure')await page.waitForFunction(()=>heroStudio.inspect().preparation.error);
       const result=await page.evaluate(()=>({state:MainIntroLoading.inspect(),hidden:document.getElementById('introLoader').hidden,inert:document.querySelector('main').inert,busy:document.querySelector('main').getAttribute('aria-busy'),samples:loadingSamples,overflow:document.documentElement.scrollWidth>innerWidth,heroOpacity:getComputedStyle(document.querySelector('.hero-art')).opacity,heroBlur:getComputedStyle(document.querySelector('.hero-art')).filter,ready:window.heroStudio?.ready,preparation:window.heroStudio?.inspect?.().preparation,fallback:document.body.classList.contains('intro-unavailable')}));
@@ -80,7 +83,9 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg
         else assert(result.preparation.error);
       }else{
         assert.equal(result.state.progress,100);assert.equal(result.ready,true);assert.equal(result.heroOpacity,'1');assert.equal(result.heroBlur,'none');
+        if(scenario==='desktop')assert(await page.evaluate(()=>heroNebula.inspect().elapsed>0),'The revealed hero resumes its motion');
         assert(result.samples.some(sample=>sample.value>0&&sample.value<70));
+        assert(result.samples.some(sample=>sample.value>45&&sample.value<50),'Shadow preparation reports intermediate progress');
         assert(result.samples.some(sample=>sample.value>=70&&sample.value<100));
         assert(result.samples.filter(sample=>sample.value===100).every(sample=>sample.prepared));
         if(mobile||scenario==='desktop')await page.screenshot({path:path.join(output,`main-loaded-${scenario}.png`)});

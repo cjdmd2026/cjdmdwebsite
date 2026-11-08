@@ -7,7 +7,7 @@ import {createWordFlight} from './word-flight.js';
 import {PatternField} from './pattern.js';
 import {sampleCamera} from './camera-motion.js';
 import {timelineAtScroll,SCROLL_DURATION,JOURNEY_HEIGHT_SVH,journeyScrollRange} from './scroll-timing.js';
-import {createShadowAtlas,createShadowMaterial,KEY_LIGHT_POSITION,CONTACT_SHADOW_LAYER} from './shadows.js';
+import {renderShadowAtlas,createShadowMaterial,KEY_LIGHT_POSITION,CONTACT_SHADOW_LAYER} from './shadows.js';
 import {applyFlatColorFinish,flatFinish} from './materials.js';
 import {createDottedFloor} from './floor-pattern.js';
 import {createOpeningDimension} from './opening-dimension.js';
@@ -35,7 +35,7 @@ let wordFlight;
 let handoffProgress=0;
 let gatherProgress=0;
 let detailMotion={progress:0,gather:0,travel:1};
-let pendingResize=false;
+let pendingResize=false, canDrawScene=false;
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
 const focus=new THREE.Vector3();
 const patternCamera=new THREE.PerspectiveCamera();
@@ -63,7 +63,13 @@ function render(time){
   const swimming=handoffProgress>0 && handoffProgress<1 && !reducedMotion.matches && !document.hidden;
   if(swimming||Math.abs(target-journey.current)>.0001||objects.some(object=>object.reveal.active&&performance.now()-object.reveal.sparkAt<360)||pattern?.isFlashing())invalidate();
 }
-function invalidate(){if(!raf)raf=requestAnimationFrame(render);}
+function invalidate(){if(canDrawScene&&!raf)raf=requestAnimationFrame(render);}
+
+function showPreparedScene(){
+  canDrawScene=true;
+  host.classList.add('ready');
+  invalidate();
+}
 
 // A pitch-aligned up vector stays stable even when looking exactly straight down.
 function placeCamera(w,h,center,distance,shiftX=0,shiftY=0,yaw=38,pitch=44,roll=0,fov=34){
@@ -91,6 +97,23 @@ function screenBounds(mesh){
   return bounds;
 }
 
+// With a fixed camera angle the field shrinks as the camera backs away.
+// Find the first fitting step on the same distance scale without projecting
+// all 33 meshes at every intervening step.
+function fitDistance(start, factor, limit, fits){
+  let low=-1, high=0;
+  while(high<limit && !fits(start * factor ** high)){
+    low=high;
+    high=Math.min(limit,2*high+1);
+  }
+  while(high-low>1){
+    const middle=Math.floor((low+high)/2);
+    if(fits(start * factor ** middle))high=middle;
+    else low=middle;
+  }
+  return start * factor ** high;
+}
+
 function fitPoses(w,h){
   const scales=objects.map(({mesh})=>mesh.scale.y);
   objects.forEach(({mesh,heightFactor})=>{mesh.scale.y=settings.depth*heightFactor;});scene.updateMatrixWorld(true);
@@ -98,13 +121,12 @@ function fitPoses(w,h){
     const center=new THREE.Box3().setFromObject(mesh).getCenter(new THREE.Vector3());
     center.y=mesh.position.y;
     const yaw=index===0?0:settings.angle+(index===1?-8:12),pitch=index===0?90:index===1?48:58;
-    let distance=4,bounds;
-    for(let i=0;i<80;i++){
-      placeCamera(w,h,center,distance,0,0,yaw,pitch);bounds=screenBounds(mesh);
-      if(bounds.right-bounds.left<(w/h<1?.78:.52)&&bounds.bottom-bounds.top<.45)break;
-      distance*=1.035;
-    }
-    return {center,distance,yaw,pitch,shiftX:(bounds.left+bounds.right)/2-.5,shiftY:(bounds.top+bounds.bottom)/2-.5};
+    const distance=fitDistance(4,1.035,80,candidate=>{
+      placeCamera(w,h,center,candidate,0,0,yaw,pitch);
+      const bounds=screenBounds(mesh);
+      return bounds.right-bounds.left<(w/h<1?.78:.52)&&bounds.bottom-bounds.top<.45;
+    });
+    return {center,distance,yaw,pitch};
   });
   // Use one lens and one dolly distance for the opening three forms.
   const soloDistance=Math.max(...journey.poses.map(pose=>pose.distance));
@@ -123,19 +145,17 @@ function fitPoses(w,h){
   const fullBox=new THREE.Box3();objects.forEach(({mesh})=>fullBox.expandByObject(mesh));
   const center=fullBox.getCenter(new THREE.Vector3()),yaw=settings.angle,pitch=54;
   center.y=.003;
-  let distance=14,bounds;
-  for(let i=0;i<90;i++){
-    placeCamera(w,h,center,distance,0,0,yaw,pitch,0,34);bounds=fieldBounds();
-    if(bounds.right-bounds.left<.94&&bounds.bottom-bounds.top<(w/h<.8?.72:.76))break;
-    distance*=1.045;
-  }
+  const distance=fitDistance(14,1.045,90,candidate=>{
+    placeCamera(w,h,center,candidate,0,0,yaw,pitch,0,34);
+    const bounds=fieldBounds();
+    return bounds.right-bounds.left<.94&&bounds.bottom-bounds.top<(w/h<.8?.72:.76);
+  });
   const finalYaw=90+settings.angle-38;
-  let finalDistance=distance*1.65;
-  for(let i=0;i<60;i++){
-    placeCamera(w,h,center,finalDistance,0,0,finalYaw,90);const finalBounds=fieldBounds();
-    if(finalBounds.right-finalBounds.left<.90&&finalBounds.bottom-finalBounds.top<.76)break;
-    finalDistance*=1.045;
-  }
+  const finalDistance=fitDistance(distance*1.65,1.045,60,candidate=>{
+    placeCamera(w,h,center,candidate,0,0,finalYaw,90);
+    const bounds=fieldBounds();
+    return bounds.right-bounds.left<.90&&bounds.bottom-bounds.top<.76;
+  });
   journey.wide={center,distance:finalDistance,yaw:finalYaw,pitch:90,fov:34,shiftX:0,shiftY:0};
   // Include the entire dolly-and-tilt route, so turning overhead never reveals a bare edge.
   const coverageCameras=[];
@@ -253,6 +273,14 @@ async function createObjects(){
       const caster={svgBounds,height:(extrusionGeometry.depth+extrusionGeometry.bevelThickness*2)*scale,contours:shapes.flatMap(shape=>[
         {hole:false,points:shape.getPoints(16)},...shape.holes.map(hole=>({hole:true,points:hole.getPoints(16)}))
       ]).map(contour=>({hole:contour.hole,points:contour.points.map(p=>[(p.x-center.x)*scale,(p.y-center.z)*scale])}))};
+      // Share the projected SVG contours between the opening stream and the floor texture.
+      caster.path=new Path2D();
+      for(const {points} of caster.contours){
+        if(!points.length)continue;
+        caster.path.moveTo(...points[0]);
+        for(let i=1;i<points.length;i++)caster.path.lineTo(...points[i]);
+        caster.path.closePath();
+      }
       const shadow=new THREE.Mesh(new THREE.PlaneGeometry(shadowSpan,shadowSpan),createShadowMaterial());
       shadow.layers.set(CONTACT_SHADOW_LAYER);
       shadow.name=icon.id+'-contact';shadow.rotation.x=-Math.PI/2;shadow.position.y=.001;shadow.renderOrder=1;scene.add(shadow);
@@ -262,14 +290,23 @@ async function createObjects(){
     await loading?.yieldFrame();
   }
   if(objects.length!==33)throw new Error(`Expected 33 objects, created ${objects.length}: ${JSON.stringify(failures)}`);
-  positionObjects();
+  let completedAtlases=0, sliceStart=performance.now();
+  for(const fraction of placeObjectsAndRenderShadows()){
+    completedAtlases+=fraction;
+    if(performance.now()-sliceStart<12)continue;
+    loading?.update(45+5*completedAtlases/objects.length);
+    if(globalThis.scheduler?.yield)await globalThis.scheduler.yield();
+    else await new Promise(resolve=>setTimeout(resolve,0));
+    sliceStart=performance.now();
+  }
   loading?.update(50);
+  await loading?.yieldFrame();
 }
 
-function positionObjects(){
+function* placeObjectsAndRenderShadows(){
   const portrait=host.clientWidth/host.clientHeight<.8,coordinates=fieldPositions(portrait,settings.layout,objects.map(object=>object.radius));
   journey.layoutMode=portrait?'portrait':'landscape';
-  objects.forEach(object=>{
+  for(const object of objects){
     const {index,mesh,shadow}=object,base=coordinates[index];
     const x=base.x,z=base.z;
     // Keep the grid and every SVG upright; only the designs assigned to cells vary.
@@ -281,28 +318,33 @@ function positionObjects(){
     const shadowKey=`${depth}:${rotation}`;
     if(object.shadowKey!==shadowKey){
       const previous=shadow.material.map;
-      if(object.patternShadow&&object.patternShadow!==previous)object.patternShadow.dispose();
-      shadow.material.map=createShadowAtlas(object.caster,object.shadowSpan,depth,rotation);
-      // Originals and copies share height frames; only their reveal progress differs.
-      object.patternShadow=rotation===0?shadow.material.map:createShadowAtlas(object.caster,object.shadowSpan,depth,0);
+      const atlas=yield* renderShadowAtlas(object.caster,object.shadowSpan,depth,rotation);
+      // All tiles are upright, so the originals and pattern copies share the atlas.
+      shadow.material.map=object.patternShadow=atlas;
       shadow.material.needsUpdate=true;previous?.dispose();object.shadowKey=shadowKey;
     }
     shadow.material.opacity=settings.shadow;
-  });
+  }
   scene.updateMatrixWorld(true);
 }
 
 function resize(){
   if(!renderer||exporting)return;
   width=host.clientWidth;height=host.clientHeight;
-  if(journey.layoutMode!==(width/height<.8?'portrait':'landscape'))positionObjects();
+  if(journey.layoutMode!==(width/height<.8?'portrait':'landscape')){
+    // A live layout change must install all textures before rendering the new pose.
+    const placement=placeObjectsAndRenderShadows();
+    while(!placement.next().done){ /* finish this layout synchronously */ }
+  }
   // Supersample lower-density displays too, keeping small silhouettes well defined.
-  renderer.setPixelRatio(2);renderer.setSize(width,height,false);
+  renderer.setDrawingBufferSize(width,height,2);
   fitPoses(width,height);
   const terminal=journey.wide;
   placeCamera(width,height,terminal.center,terminal.distance,0,0,terminal.yaw,90,0,terminal.fov);
   wordFlight.fit(camera,width,height);
-  readScroll();setCamera(width,height);preparation?.prepare();invalidate();
+  readScroll();setCamera(width,height);
+  wordFlight.update(camera,floorPattern.mesh,handoffProgress,camera.userData.ending,gatherProgress,detailMotion);
+  preparation?.prepare();invalidate();
 }
 
 function requestResize(){
@@ -377,9 +419,9 @@ async function init(){
     loading?.update(60);await loading?.yieldFrame();
     preparation=createScenePreparation(renderer,scene,camera,()=>{
       if(pendingResize){pendingResize=false;resize();return;}
-      invalidate();loading?.finish();
+      showPreparedScene();loading?.finish();
     },stats=>{
-      if(stats.error){loading?.fail();return;}
+      if(stats.error){showPreparedScene();loading?.fail();return;}
       loading?.update(70+29*(stats.total?stats.completed/stats.total:1));
     });
     wordFlight=createWordFlight(renderer,scene,invalidate,(completed,total)=>loading?.update(60+10*completed/total));
@@ -389,7 +431,7 @@ async function init(){
     });
     $('#journey').style.height=`${JOURNEY_HEIGHT_SVH+HANDOFF_VIEWPORTS*100}svh`;
     addEventListener('scroll',readScroll,{passive:true});addEventListener('resize',requestResize);
-    resize();renderer.render(scene,camera);host.classList.add('ready');
+    resize();
     // Scroll locking can change the content width without a window resize.
     new ResizeObserver(requestResize).observe(host);
     window.heroStudio={ready:true,exportPNG,exportGLB,inspect:()=>({count:objects.length,preparation:preparation.inspect(),pattern:pattern.inspect(),floor:floorPattern.inspect(),dimension:openingDimension.inspect(),errors:failures,settings:{...settings},timelineEnd:timelineEnd(),cameraPath:{poses:journey.poses,wide:journey.wide},wordFlight:wordFlight.inspect(),camera:{...camera.userData,rotation:camera.rotation.toArray(),up:camera.up.toArray()},objects:objects.map(({mesh,icon,reveal,heightFactor,index,radius,cue})=>({id:icon.id,name:icon.name,vertices:mesh.geometry.attributes.position.count,triangles:mesh.geometry.attributes.position.count/3,...mesh.userData,color:mesh.material.color.getHexString(),lineColor:reveal.lines[0].material.color.getHexString(),cue,heightFactor,radius,position:mesh.position.toArray(),baseY:mesh.position.y,rotation:mesh.rotation.toArray(),heightScale:mesh.scale.y,visible:mesh.visible,guide:inspectGuide(reveal),drawingVisible:reveal.group.visible,pointVisible:reveal.group.visible&&reveal.dot.visible,strokeVertices:reveal.lines.reduce((sum,line)=>sum+line.geometry.drawRange.count,0),reveal:{...reveal.state}})),renderer:renderer.info.render})};

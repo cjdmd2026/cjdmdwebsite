@@ -1,16 +1,32 @@
 """Convert the captured Figma artwork to WebP; keep vector/raster logo formats."""
 import json
 import hashlib
+from io import BytesIO
 import shutil
 from pathlib import Path
 
-from PIL import Image, ImageChops, ImageStat
+from PIL import Image, ImageChops, ImageCms, ImageStat
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / 'output/figma/project-downloads-20261107.json'
 ENCODING = 'original-pixels-webp95-v1'
 # Saturated lettering and neon edges lose detail with WebP's lossy chroma sampling.
 LOSSLESS_LANDSCAPES = {'magmoa', 'omix'}
+
+
+def save_profile_logo(original, target):
+    """The profile overlay displays at up to 420 x 200 CSS pixels."""
+    preview = original.convert('RGBA')
+    preview.thumbnail((840, 400), Image.Resampling.LANCZOS)
+    encoded = BytesIO()
+    preview.save(encoded, format='WEBP', lossless=True, method=6)
+    data = encoded.getvalue()
+    if len(data) >= target.stat().st_size:
+        return None
+    path = target.with_name('logo-profile.webp')
+    path.write_bytes(data)
+    return {'output': path.relative_to(ROOT).as_posix(),
+            'contentHash': hashlib.sha256(data).hexdigest()[:12]}
 
 
 def render_original(image, node, paint):
@@ -58,6 +74,11 @@ def get_original_image(asset, node, candidates, reference):
         with Image.open(ROOT / source_path) as source_image:
             if list(source_image.size) != [paint['size']['width'], paint['size']['height']]:
                 raise ValueError(f'Original size mismatch: {source_path}')
+            # Convert the full-resolution print artwork before cropping for a screen.
+            profile = source_image.info.get('icc_profile') if asset['role'] == 'landscape' and source_image.mode == 'CMYK' else None
+            if profile:
+                source_image = ImageCms.profileToProfile(source_image, ImageCms.ImageCmsProfile(BytesIO(profile)),
+                                                        ImageCms.createProfile('sRGB'), outputMode='RGB')
             rendered = render_original(source_image, node, paint)
         # Some nodes contain two opaque fills; retain the one visible in the submission.
         score = 0
@@ -65,7 +86,7 @@ def get_original_image(asset, node, candidates, reference):
             with Image.open(reference) as old_image:
                 difference = ImageChops.difference(rendered.convert('RGB').resize((96, 96)), old_image.convert('RGB').resize((96, 96)))
                 score = sum(ImageStat.Stat(difference).mean)
-        choices.append((score, rendered, source_path, paint))
+        choices.append((score, rendered, source_path, paint, bool(profile)))
     return min(choices, key=lambda choice: choice[0])[1:]
 
 
@@ -108,15 +129,20 @@ def main():
                 with Image.open(source) as image:
                     image.save(target, format='PNG', optimize=True)
                     size = list(image.size)
+                    preview = save_profile_logo(image, target)
+                    if preview:
+                        asset = {**asset, 'profileLogo': preview}
         else:
             lossless = asset['role'] == 'landscape' and asset['projectId'] in LOSSLESS_LANDSCAPES
             encoding = 'original-pixels-webp-lossless-v1' if lossless else ENCODING
             if image_sources:
                 if asset['nodeId'] not in image_sources:
                     raise ValueError(f'Original image not downloaded: {asset["nodeId"]}')
-                image, original_path, paint = get_original_image(asset, source_nodes[asset['nodeId']], image_sources[asset['nodeId']]['candidates'], source)
-                source = ROOT / original_path
-                asset = {**asset, 'renderSource': asset['source'], 'source': original_path,
+                image, pixel_source, paint, converted_profile = get_original_image(asset, source_nodes[asset['nodeId']], image_sources[asset['nodeId']]['candidates'], source)
+                if converted_profile:
+                    encoding = 'icc-srgb-' + encoding.removeprefix('original-pixels-')
+                source = ROOT / pixel_source
+                asset = {**asset, 'renderSource': asset['source'], 'source': pixel_source,
                          'sourceFormat': source.suffix[1:], 'sizeBytes': source.stat().st_size,
                          'originalImageHash': paint['hash'], 'originalDimensions': [paint['size']['width'], paint['size']['height']],
                          'encoding': encoding}

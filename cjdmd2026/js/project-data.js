@@ -43,7 +43,8 @@ window.PROJECTS = [
                 image: "../assets/images/project/submissions/phishing-ddook/interface.webp?v=0f3306e89061"
             }
         },
-        logo: "../assets/images/project/submissions/phishing-ddook/logo.png?v=5347162bf8a8"
+        logo: "../assets/images/project/submissions/phishing-ddook/logo.png?v=5347162bf8a8",
+        profileLogo: "../assets/images/project/submissions/phishing-ddook/logo-profile.webp?v=59c14069b025"
     },
     {
         id: "apuchika",
@@ -78,7 +79,8 @@ window.PROJECTS = [
                 image: "../assets/images/project/submissions/apuchika/interface.webp?v=d4fb93e5fa98"
             }
         },
-        logo: "../assets/images/project/submissions/apuchika/logo.png?v=0e62b57c4e98"
+        logo: "../assets/images/project/submissions/apuchika/logo.png?v=0e62b57c4e98",
+        profileLogo: "../assets/images/project/submissions/apuchika/logo-profile.webp?v=fa01bfd3dfc8"
     },
     {
         id: "curo",
@@ -147,7 +149,8 @@ window.PROJECTS = [
                 image: "../assets/images/project/submissions/stylens/interface.webp?v=ae0ad7865ed0"
             }
         },
-        logo: "../assets/images/project/submissions/stylens/logo.png?v=8f60a4068630"
+        logo: "../assets/images/project/submissions/stylens/logo.png?v=8f60a4068630",
+        profileLogo: "../assets/images/project/submissions/stylens/logo-profile.webp?v=8341f3f4dbe9"
     },
     {
         id: "ilkko",
@@ -289,7 +292,8 @@ window.PROJECTS = [
                 image: "../assets/images/project/submissions/year-on/interface.webp?v=65c05b52c7ce"
             }
         },
-        logo: "../assets/images/project/submissions/year-on/logo.png?v=a3078539bcdc"
+        logo: "../assets/images/project/submissions/year-on/logo.png?v=a3078539bcdc",
+        profileLogo: "../assets/images/project/submissions/year-on/logo-profile.webp?v=456159aa190a"
     },
     {
         id: "jikji",
@@ -337,7 +341,7 @@ window.PROJECTS = [
         topic: "한국 문화 소개",
         description: "본 프로젝트는 처마를 동일한 조건에서 비교하고 시간에 따라 달라지는 빛과 그림자를 관찰할 수 있게 합니다. 이를 통해 고궁과 한옥을 방문하는 외국인 관람객이 처마의 외형 뿐 아니라 처마가 주변공간과 함께 한옥의 생활환경을 형성한 방식까지 이해하도록 돕습니다.",
         image: "../assets/images/project/submissions/cheoma/portrait.webp?v=fa68cf3c9ad6",
-        slideImage: "../assets/images/project/submissions/cheoma/landscape.webp?v=c87097f5a3a4",
+        slideImage: "../assets/images/project/submissions/cheoma/landscape.webp?v=34e93ed79aee",
         slideOrder: 11,
         courseCards: {
             interactive: {
@@ -367,7 +371,7 @@ window.PROJECTS = [
             "김지유",
             "김지윤"
         ],
-        category: "생활",
+        category: "여가",
         topic: "반려동물",
         description: "COCO LANG은 반려견과 함께 산책하는 보호자를 위한 지역 기반 산책 매칭 서비스입니다. 산책 중 낯선 보호자에게 먼저 다가가기 어렵고, 반려견의 성향과 교류 의사를 알기 힘든 문제를 해결하고자 합니다.\n성향 기반 매칭과 지도 탐색, 산책 기록을 통해 일상적인 산책을 새로운 만남과 소통의 경험으로 확장합니다.",
         image: "../assets/images/project/submissions/cocorang/portrait.webp?v=c3426dc562ee",
@@ -458,7 +462,8 @@ window.PROJECTS = [
                 image: "../assets/images/project/submissions/efact/interface.webp?v=6daf58d01154"
             }
         },
-        logo: "../assets/images/project/submissions/efact/logo.png?v=ef91273a96de"
+        logo: "../assets/images/project/submissions/efact/logo.png?v=ef91273a96de",
+        profileLogo: "../assets/images/project/submissions/efact/logo-profile.webp?v=b1b199e2e2cc"
     },
     {
         id: "28",
