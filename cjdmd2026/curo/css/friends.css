@@ -3,11 +3,11 @@
    1920×1080 시안 좌표를 .fr-frame 안에 그대로 쓰고, 프레임을 화면에 맞춰 배율 --fs 로 줄임 (js/friends.js).
    글 왼쪽 끝 = 메뉴 라인 (--fline), 배경은 화면 전체.
    ========================================================================== */
-@font-face { font-family: 'BM JUA'; src: url('../assets/fonts/bm-jua.woff') format('woff'); font-weight: 400; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Pretendard'; src: url('../assets/fonts/pretendard-regular.woff') format('woff'); font-weight: 400; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Pretendard'; src: url('../assets/fonts/pretendard-medium.woff') format('woff'); font-weight: 500; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Pretendard'; src: url('../assets/fonts/pretendard-semibold.woff') format('woff'); font-weight: 600; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Pretendard'; src: url('../assets/fonts/pretendard-bold.woff') format('woff'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'BM JUA'; src: url('../assets/fonts/bm-jua.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Pretendard'; src: url('../assets/fonts/pretendard-regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Pretendard'; src: url('../assets/fonts/pretendard-medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Pretendard'; src: url('../assets/fonts/pretendard-semibold.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Pretendard'; src: url('../assets/fonts/pretendard-bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
 
 html.fr-page, .fr-page body { background: #FFFFFF; }
 .fr-page body { font-family: 'Pretendard', sans-serif; font-synthesis: none; margin: 0; }
@@ -125,7 +125,7 @@ html.fr-page, .fr-page body { background: #FFFFFF; }
   .fr-frame { width: 100%; height: 100%; transform: none; }
   .fr-hill { left: -260px; right: -260px; width: auto; top: calc(100% - 232px); height: 700px; }
   .fr-stage { left: 50%; top: auto; bottom: 170px; width: 270px; margin-left: -135px; }
-  .fr-mark { left: 0; right: 0; width: auto; top: auto; bottom: 300px; font-size: 104px; }
+  .fr-mark { left: 0; right: 0; width: auto; top: auto; bottom: min(300px, calc(100% - var(--qb, 0px) - 110px)); font-size: 104px; }   /* 348차: 낮은 화면에서 글(대사) 아래로 */
   .fr-meet-f > .fr-info { position: static; width: auto; padding: 76px 20px 0; }
   .fr-name { font-size: 42px; line-height: 46px; padding-right: 56px; }
   .fr-tag { margin-top: 6px !important; font-size: 15px; line-height: 22px; }
@@ -137,7 +137,7 @@ html.fr-page, .fr-page body { background: #FFFFFF; }
   .fr-pick { left: 0; right: 0; top: auto; bottom: 96px; justify-content: center; gap: 14px; }
   .fr-pick button { width: 54px; height: 54px; }
   .fr-char { left: 50%; top: auto; bottom: 222px;
-    width: calc(clamp(170px, var(--fvh, 844px) - 560px, 290px) * var(--v-k, 1)); height: calc(clamp(170px, var(--fvh, 844px) - 560px, 290px) * var(--v-k, 1));
+    width: calc(min(clamp(170px, var(--fvh, 844px) - 560px, 290px), max(var(--fvh, 844px), 640px) - var(--qb, 0px) - 226px) * var(--v-k, 1)); height: calc(min(clamp(170px, var(--fvh, 844px) - 560px, 290px), max(var(--fvh, 844px), 640px) - var(--qb, 0px) - 226px) * var(--v-k, 1));   /* 348차: 낮은 화면은 글(대사) 아래 남는 높이만큼 */
     transform: none; translate: -50% 0; }   /* 190차: transform 대신 translate — 등장 효과(scale 애니메이션)가 가운데 정렬을 덮어 오른쪽에서 오던 것 수정 */
   .fr-char:focus-visible { outline-offset: -8px; }
   .fb-layer { width: 100%; height: 100%; overflow: hidden; }   /* 187차: 등장 효과도 폰에서 (PC 와 같게, 위치는 friends-burst.js 가 실제 화면에서 잼) */

@@ -90,3 +90,7 @@ html.is-m10.m10-at-top .m10-cover-pos { pointer-events: auto; }
 .m10-face--front { left: -2px; top: -10px; width: 472px; height: 493px; display: block; }
 /* 128차: 안쪽 색 = Main1 표지 뒷면 종이(--c-paper #F6EFE3) 와 같게 */
 .m10-face--back { inset: 0; transform: rotateY(180deg); background: #F6EFE3; border-radius: 0 4px 4px 0; box-shadow: inset 10px 0 22px rgba(120, 90, 60, 0.22); }   /* 129차: Main1 과 같이 조금 진하게 */
+
+/* 342차: 뒤표지 첫 화면 'SCROLL DOWN' (화면 아래 가운데, Main2 안내와 같은 자리·크기). 뒤표지가 자리 잡은 뒤 나타나고, 메뉴 칸으로 내려가면 사라짐 */
+.m10-hint { position: absolute; left: 50%; bottom: calc(40px * var(--st-u, 1)); width: 600px; margin-left: -300px; z-index: 2; transform: scale(var(--st-u, 1)); transform-origin: 50% 100%; opacity: 0; transition: opacity 0.25s ease-out; }
+html.is-m10.m10-at-top .m10-hint { opacity: 1; transition: opacity 0.6s ease-out 0.6s; }

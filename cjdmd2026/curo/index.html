@@ -5,14 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CURO</title>
   <link rel="icon" type="image/svg+xml" href="assets/icons/symbol.svg?v=313">
-  <link rel="preload" href="assets/fonts/pretendard-regular.woff" as="font" type="font/woff" crossorigin>
-  <link rel="preload" href="assets/fonts/pretendard-bold.woff" as="font" type="font/woff" crossorigin>
-  <link rel="preload" href="assets/fonts/ownglyph-daisy.woff" as="font" type="font/woff" crossorigin>
-  <link rel="preload" href="assets/fonts/kyobo-handwriting.woff" as="font" type="font/woff" crossorigin>
-  <link rel="stylesheet" href="css/main.css?v=287">
-  <link rel="stylesheet" href="css/main-mobile.css?v=231">   <!-- 203차: 폰 메인 -->
+  <link rel="preload" href="assets/fonts/pretendard-regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/pretendard-bold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/ownglyph-daisy.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/kyobo-handwriting.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/main.css?v=344">
+  <link rel="stylesheet" href="css/main-mobile.css?v=348">   <!-- 203차: 폰 메인 -->
   <link rel="stylesheet" href="css/book.css?v=32">
-  <link rel="stylesheet" href="css/main10.css?v=311">
+  <link rel="stylesheet" href="css/main10.css?v=342">
+  <link rel="stylesheet" href="css/float.css?v=280">   <!-- 343차: 오른쪽 아래 동화 · 상담 버튼 -->
+  <link rel="stylesheet" href="css/consult.css?v=341">
 </head>
 <body>
   <!-- Index3 (후보): 11차 책 열기 방식 (표지 펼침 → 책 안 Main2 → 확대 진입). 책 열기만 js/book.js + js/config-book.js + css/book.css 로 다르고 나머지는 같다. -->
@@ -125,10 +127,12 @@
         <p class="st-el st-body" data-st="body">주사기를 마주하면 괜히 망설여지는 콩이.<br>혼자 해내는 일은 아직 조금 어려워요.</p>
         <button class="st-el st-arrow" data-st="arrow" type="button" aria-label="다음 장면"><svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="29.25" fill="none" stroke="#8C837B" stroke-width="1.5"/><path d="M18.5 30 H41 M33 22 L41 30 L33 38" fill="none" stroke="#5F5853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       </div>
+      <!-- 337차: Main2 아래 'SCROLL DOWN' 안내 — 화면 가로 가운데 (글 묶음과 따로, 창 크기와 관계없이) -->
+      <div class="st-scroll st-hint st-hint--m2" aria-hidden="true"><p>SCROLL DOWN</p><img src="assets/icons/mouse.svg?v=162" width="36" height="36" alt=""></div>
       <div class="story-text story-text--m5" data-page="story-5">
         <div class="st-el st-pill" data-st="kicker"><span class="st-kicker">1단계</span></div>
         <h2 class="st-el st-title" data-st="title">주사와 <span class="st-hl">천천히</span><br>익숙해져요</h2>
-        <p class="st-el st-body" data-st="body">귀여운 친구와 함께<br>주사와 조금씩 가까워져봐요</p>
+        <p class="st-el st-body" data-st="body">귀여운 친구와 함께<br>주사와 조금씩 가까워져봐요.</p>
         <button class="st-el st-arrow" data-st="arrow" type="button" aria-label="다음 장면"><svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="29.25" fill="none" stroke="#8C837B" stroke-width="1.5"/><path d="M18.5 30 H41 M33 22 L41 30 L33 38" fill="none" stroke="#5F5853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       </div>
       <!-- 47차: Main3·Main4 = Main2 텍스트 구조 재사용 (.story-text--m2 좌표계 + 장면별 class 로 위치만 조정) -->
@@ -147,7 +151,7 @@
       <div class="story-text story-text--step story-text--m6" data-page="story-6">
         <div class="st-el st-pill" data-st="kicker"><span class="st-kicker">2단계</span></div>
         <h2 class="st-el st-title" data-st="title"><span class="st-hl">인형</span>과<br>연습해봐요</h2>
-        <p class="st-el st-body" data-st="body">내 몸에 하기 전 연습 인형에<br>주사를 놓아보며 주사과정에 익숙해져요</p>
+        <p class="st-el st-body" data-st="body">내 몸에 하기 전 연습 인형에<br>주사를 놓아보며 주사과정에 익숙해져요.</p>
         <button class="st-el st-arrow" data-st="arrow" type="button" aria-label="다음 장면"><svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="29.25" fill="none" stroke="#8C837B" stroke-width="1.5"/><path d="M18.5 30 H41 M33 22 L41 30 L33 38" fill="none" stroke="#5F5853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       </div>
       <div class="story-text story-text--step story-text--m7" data-page="story-7">
@@ -166,8 +170,9 @@
       <div class="story-text story-text--m9" data-page="story-9">
         <p class="st-el st-kicker" data-st="kicker">아이의 첫 자가주사,</p>
         <h2 class="st-el st-title" data-st="title">천천히 함께<br><span class="st-hl">시작해보세요!</span></h2>
-        <p class="st-el st-body" data-st="body">작은 연습이 모여,<br>아이가 스스로 해낼 수 있는 힘이 됩니다.<br>CURO가 그 여정을 함께 할게요</p>
+        <p class="st-el st-body" data-st="body">작은 연습이 모여,<br>아이가 스스로 해낼 수 있는 힘이 됩니다.<br>CURO가 그 여정을 함께 할게요.</p>
         <img class="st-el st-logo" data-st="logo" data-src="assets/images/main/main1/logo.svg?v=271" width="525" height="140" alt="CURO" decoding="async">
+        <div class="st-el st-scroll" data-st="arrow" aria-hidden="true"><p>SCROLL</p><img src="assets/icons/mouse.svg?v=162" width="36" height="36" alt=""></div>   <!-- 329차: 아래로 내리라는 안내 (Main1 CLICK TO OPEN 과 같은 모양) -->
       </div>
     </div>
   </section>
@@ -277,6 +282,8 @@
         </div>
       </footer>
     </div>
+    <!-- 342차: 뒤표지 첫 화면에서 아래(메뉴 4개)로 내리라는 안내 — Main2 SCROLL DOWN 과 같은 모양, 메뉴로 내려가면 사라짐 -->
+    <div class="st-scroll m10-hint" aria-hidden="true"><p>SCROLL DOWN</p><img src="assets/icons/mouse.svg?v=162" width="36" height="36" alt=""></div>
   </section>
   <div class="m10-cover-layer" aria-hidden="true">
     <div class="m10-cover-fit">
@@ -294,6 +301,45 @@
   <!-- =========================================================
        MENU (viewport 기준)
        ========================================================= -->
+  <!-- =========================================================
+       343차: floating UI (공통, kit.html 과 같은 마크업 — 메인에도 동화 · 상담 버튼) — css/float.css · js/float.js
+       ========================================================= -->
+  <div class="k-float" id="k-float">
+    <!-- 77차: '위로 가기' 대신 '동화 보러가기' (STORY 페이지로 이동). 모양·hover 는 상담 버튼과 같음 -->
+    <a class="k-fab k-story" href="story.html" aria-label="함께 보는 동화 · 동화 보러가기">
+      <span class="k-consult-pill" aria-hidden="true"></span>
+      <span class="k-consult-txt" aria-hidden="true"><small>함께 보는 동화</small><strong>동화 보러가기</strong></span>
+      <span class="k-consult-ic" aria-hidden="true"><img data-icon="book" alt=""></span>
+    </a>
+    <button class="k-fab k-consult" type="button" aria-label="1:1 무료 상담 · 학습 상담 예약" aria-expanded="false" aria-controls="k-chat">
+      <span class="k-consult-pill" aria-hidden="true"></span>
+      <span class="k-consult-txt" aria-hidden="true"><small>1:1 무료 상담</small><strong>학습 상담 예약</strong></span>
+      <span class="k-consult-ic" aria-hidden="true"><img data-icon="consult" alt=""></span>
+    </button>
+  </div>
+
+  <section class="k-chat" id="k-chat" role="dialog" aria-modal="false" aria-labelledby="k-chat-title" aria-hidden="true">
+    <header class="k-chat-head">
+      <span class="k-chat-head-ic" aria-hidden="true"><img data-icon="consult" alt=""></span>
+      <div class="k-chat-head-t">
+        <h2 id="k-chat-title">학습 상담 예약</h2>
+        <p>우리 아이에게 맞는 제품을 추천드려요</p>
+      </div>
+      <!-- 닫기 X: export 된 아이콘이 없어 임시 inline SVG (파일이 생기면 <img data-icon="close"> 로 교체) -->
+      <button class="k-chat-close" type="button" aria-label="상담 창 닫기">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M21 3L3 21" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </header>
+    <div class="k-chat-body">
+      <div class="k-chat-msg">
+        <span class="k-chat-avatar" aria-hidden="true"><img data-icon="consult" alt=""></span>
+        <p class="k-chat-bubble">안녕하세요! CURO 렌탈을 도와드릴게요.<br>몇 가지만 선택하면 상담 신청이 완료돼요 :)</p>
+      </div>
+      <!-- 질문 · 선택 카드 단계 (내용 확정 후 구현) -->
+      <div class="k-chat-steps" id="k-chat-steps"></div>
+    </div>
+  </section>
+
   <button class="hamburger" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="menu-panel">
     <span class="hamburger__line"></span>
     <span class="hamburger__line"></span>
@@ -320,13 +366,15 @@
   <script src="js/config.js?v=224"></script>
   <script src="js/anim.js?v=40"></script>
   <script src="js/main.js?v=119"></script>
-  <script src="js/bgm.js?v=168"></script>
+  <script src="js/bgm.js?v=333"></script>
   <script src="js/config-book.js?v=5"></script>
   <script src="js/book.js?v=4"></script>
   <script src="js/story.js?v=119"></script>
-  <script src="js/story-text.js?v=47"></script>
+  <script src="js/story-text.js?v=328"></script>
   <script src="js/main-mobile.js?v=284"></script>
   <script src="js/main10.js?v=309"></script>
-  <script src="js/pages.js?v=203"></script>
+  <script src="js/pages.js?v=343"></script>
+  <script src="js/float.js?v=268"></script>   <!-- 343차 -->
+  <script src="js/apply.js?v=332"></script>
 </body>
 </html>

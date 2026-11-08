@@ -24,7 +24,7 @@
   /* ---------- 목록 타일 (폰 전용 값: 배경색 · 짧은 설명 · 그림 위치) ---------- */
   const TILE = {
     belt:   { cls: 'is-wide', bg: '#F6F0E6', sub: '위치·유지 시간 실시간 피드백', img: 'assets/images/kit/products/belt-layout.webp?v=81', st: 'width:250px;right:-14px;bottom:10px' },
-    book:   { cls: 'is-tall', bg: '#DCEEE9', sub: '콩이와 큐로 가디언즈', img: 'assets/images/kit/products/book-real.webp?v=284', st: 'width:200px;left:10px;bottom:4px' },
+    book:   { cls: 'is-tall', bg: '#DCEEE9', sub: '콩이와 큐로 가디언즈', img: 'assets/images/kit/products/book-real.webp?v=332', st: 'width:200px;left:10px;bottom:4px' },
     doll:   { cls: '', bg: '#F8EDDD', sub: '', img: 'assets/images/kit/products/doll-real.webp?v=80', st: 'width:92px;right:4px;bottom:-16px' },
     cap:    { cls: '', bg: '#FFF5E5', sub: '', img: 'assets/images/kit/products/cap-layout.webp?v=80', st: 'width:96px;right:-2px;bottom:-20px' },
     assist: { cls: 'is-wide is-short', bg: '#E1EEF2', sub: '', img: 'assets/images/kit/products/assist-real.webp?v=80', st: 'width:118px;right:58px;bottom:2px' }

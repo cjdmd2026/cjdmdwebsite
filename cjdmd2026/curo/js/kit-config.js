@@ -46,8 +46,8 @@ window.CURO_KIT = {
   products: [
     { id: 'book', name: '동화책', detail: true, cy: 539.5, qy: 570, ay: 14,
       title: '콩이와 큐로 가디언즈<br>동화책 단행본', body: '콩이와 가디언즈의 모험을 따라가며,<br>낯설고 두려운 주사와 자연스럽게 친해져요.', label: '기본 제공품', price: '',
-      img: 'assets/images/kit/products/book-mockup.webp?v=89', color: '#B8DCD3', box: [-222.5, -153.5, 446, 462], peek: [62, 59, 175, 182],
-      k0: { box: [290, 231, 688, 568], spot: [562, 495], z: 2, ill: 'assets/images/kit/products/book-illust.webp?v=80', real: 'assets/images/kit/products/book-real.webp?v=80' } },
+      img: 'assets/images/kit/products/book-mockup.webp?v=332', color: '#B8DCD3', box: [-222.5, -153.5, 446, 462], peek: [62, 59, 175, 182],
+      k0: { box: [290, 231, 688, 568], spot: [562, 495], z: 2, ill: 'assets/images/kit/products/book-illust.webp?v=332', real: 'assets/images/kit/products/book-real.webp?v=332' } },
     { id: 'doll', name: '주사 연습 인형', detail: true, cy: 539.5,
       title: '큐로 가디언즈<br>주사 연습 인형', body: '귀여운 인형으로 재미있고 안전하게,<br>아이에게 맞춘 최적의 주사 연습을 제공합니다.', label: '기본 제공품', price: '',
       img: 'assets/images/kit/products/doll-real.webp?v=80', color: '#F8E9D5', box: [-242.5, -210.5, 485, 524], peek: [54, 46, 193, 208],

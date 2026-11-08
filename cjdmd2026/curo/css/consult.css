@@ -109,10 +109,11 @@
 .ap-price em { font-style: normal; padding: 4px 10px; border-radius: 999px; background: #F1F1F1; color: #9A9A9A; font-size: 13px; font-weight: 600; }
 .ap-note { margin: 10px 0 0; font-size: 12.5px; color: var(--sub); }
 /* STEP 6: 상품 목록 */
-.ap-prods { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.ap-prods { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; margin: 0; padding: 0; list-style: none; }   /* 341차: 폰에서 카드가 오른쪽으로 넘치지 않게 */
 .ap-prod { display: block; gap: 14px; padding: 12px 14px 12px 12px; border: 1px solid #ECECEC; border-radius: 16px; background: #FFFFFF; transition: border-color 0.2s ease, background-color 0.2s ease; }
 .ap-prod.is-on { border: 2px solid var(--mint); background: #F4FBFA; padding: 11px 13px 11px 11px; }
 .ap-prod-top { display: flex; align-items: center; gap: 14px; }
+.ap-prod-t { flex: 1 1 auto; min-width: 0; }   /* 341차 */
 .ap-base { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin-bottom: 10px; padding: 12px 14px; border-radius: 14px; background: var(--mint-l); font-size: 13.5px; color: var(--mint-d); }
 .ap-base b { font-weight: 700; }
 .ap-prod { position: relative; }
@@ -348,3 +349,8 @@
 .ap-post-x { width: 40px; height: 40px; padding: 0; border: 0; background: none; font-size: 26px; line-height: 1; color: #8A8A8A; cursor: pointer; }
 .ap-post-body { position: relative; flex: 1 1 auto; min-height: 0; }
 .ap-post-msg { margin: 0; padding: 40px 20px; text-align: center; font-size: 14px; line-height: 22px; color: #8A8A8A; }
+
+/* 341차: 폰 — 추가 구매 카드는 말풍선 들여쓰기 없이 화면 폭 전체 사용 (글·수량 버튼이 잘리지 않게) */
+@media (max-width: 600px) {
+  .k-chat .ap-ans-products { margin-left: 0; }
+}

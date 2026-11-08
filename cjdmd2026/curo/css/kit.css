@@ -8,25 +8,25 @@
    ========================================================================== */
 
 /* ---------- 폰트 ----------
-   제목(둥근 글씨) = BM JUA (사용자 지정). 파일: assets/fonts/bm-jua.woff (사용자 BMJUA.ttf 를 WOFF 로 변환. ttf 원본은 같은 폴더에 그대로 둠)
+   제목(둥근 글씨) = BM JUA (사용자 지정). 파일: assets/fonts/bm-jua.woff2 (사용자 BMJUA.ttf 를 WOFF 로 변환. ttf 원본은 같은 폴더에 그대로 둠)
    본문 = Pretendard (main.css 의 400/700 + 여기서 500/600 추가) */
 @font-face {
   font-family: 'BM JUA';
-  src: url('../assets/fonts/bm-jua.woff') format('woff');
+  src: url('../assets/fonts/bm-jua.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Pretendard';
-  src: url('../assets/fonts/pretendard-medium.woff') format('woff');
+  src: url('../assets/fonts/pretendard-medium.woff2') format('woff2');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Pretendard';
-  src: url('../assets/fonts/pretendard-semibold.woff') format('woff');
+  src: url('../assets/fonts/pretendard-semibold.woff2') format('woff2');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -76,7 +76,7 @@ html.kit-page,
 /* ---------- 0. CURO 키트 안에 무엇이 들어있을까? (80차, 피그마 '프로덕트 제안1/2') ----------
    88차: 배경·제품·글 같은 배율 --k0s, 항상 화면을 덮음(cover, 남는 부분 잘림) (js/kit-products.js) */
 .ks-0 { background: #FFFFFF; }
-.k0-back { position: absolute; inset: 0; background: #E9D9C2; }   /* 88차: 흐린 배경 확장 없앰 — 장면이 항상 화면을 덮음 */
+.k0-back { position: absolute; inset: 0; background: #E9D9C2 url('data:image/webp;base64,UklGRhQBAABXRUJQVlA4IAgBAABwBgCdASooABYAPrVOoUsnJCMhqqoA4BaJQBS1gkivRj4UEA4JkJMNO+q+/qxrCI10oHtv54fIgX80MQAA/u4UvqkEbPeA5XL1R0iYpxVNFrfNV1vymVKJRwNyAJcT/umcXyq/7W8VxnHD0yKJ/8dC6geMVYyXxCUxe9EqdUgIPnbRcibv/IpdtnQGAB45R3PoRbPGMespPnxde/I+y7p2sGspogyk27Ti+EjjaA7qEg3Bzy9h5EKh70cG/Cf3rXU7rdvgRDib4e6VNwP1UbnmeYJ+mwndHXG0i8v8gSu05jRSJi4yGsXRZzUfeLwsaZWKdfQBQliXNCWuHawL1T98JgA1e2pxAAA=') center / cover no-repeat; filter: blur(12px); transform: scale(1.06); }   /* 329차: 그림이 오기 전 = 방 그림을 아주 작게 흐리게 (빈 베이지 화면 대신) */   /* 88차: 흐린 배경 확장 없앰 — 장면이 항상 화면을 덮음 */
 /* 장면 배경 (피그마 1920×1080, 제품과 같은 배율) */
 .k0-scene { left: 0; top: 0; width: 1920px; height: 1081px; }
 .k0-scene img { display: block; width: 100%; height: 100%; max-width: none; }
@@ -92,6 +92,9 @@ html.kit-page,
 }
 .k0-stage > * { position: absolute; margin: 0; }
 .k0-items { inset: 0; }
+/* 329차: 배경·제품 그림이 다 준비되면 함께 나타남 (js/kit-products.js .is-loaded) */
+.k0-stage .k0-scene, .k0-stage .k0-items { opacity: 0; transition: opacity 0.25s ease; }
+.k0-stage.is-loaded .k0-scene, .k0-stage.is-loaded .k0-items { opacity: 1; }
 /* 87차: hover 때 장면 어둡게 하는 것(86차)은 뺌 */
 .k0-item {
   position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); z-index: var(--z);

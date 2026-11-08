@@ -620,5 +620,12 @@
   window.scrollTo(0, 0);
   arrive(0);
 
+  // 328차: '렌탈 하러가기' (PC 왼쪽 버튼 · 폰 아래 바) → 오른쪽 아래 학습 상담 열기
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('.k1-btn, .km-cta');
+    if (!b || !window.CURO_FLOAT) return;
+    e.preventDefault(); window.CURO_FLOAT.setChat(true);
+  });
+
   window.CURO_KIT_API = { go, k3, current: () => cur, state: () => state, setFocus, resetExplode, startExplode, setChat: (on) => window.CURO_FLOAT && window.CURO_FLOAT.setChat(!!on) };
 })();

@@ -12,7 +12,7 @@
       tags: ['용기', '공감', '다정함', '수호대의 리더'], colors: ['#E5A673', '#FFE9AF', '#F6D9B1', '#F0555B'],
       c: { top: '#FFCACB', bot: '#FFF3F3', ink: '#9E2F33', accent: '#E04A50', btn: '#D9575C' } },
     ellie: { name: '엘리', en: 'Ellie', quote: '걱정마. 내가 곁에 있을게.',
-      desc: ['차분하고 다정한 수호대의 든든한 친구. 말수는 적지만 누구보다 따뜻한 마음을 가졌다.',
+      desc: ['차분하고 다정한 수호대의 든든한 지킴이. 말수는 적지만 누구보다 따뜻한 마음을 가졌다.',
              '콩이가 주사 앞에서 긴장하거나 망설일 때면 조용히 곁을 지키며 마음을 편안하게 해주고, 콩이의 속도에 맞춰 천천히 연습을 도와준다.'],
       tags: ['든든함', '용기', '천하장사', '수호대의 지킴이'], colors: ['#BFEAF3', '#FFE9AF', '#FEDDB0', '#F55B5D'],
       c: { top: '#FFE188', bot: '#FFF6DE', ink: '#7A5A0C', accent: '#CC9A0E', btn: '#DDA824' } },
@@ -25,10 +25,10 @@
       lines: ['호기심 많고 에너지가 넘치는 수호대의 발명왕. 새로운 것에 도전하는 걸 좋아한다.', '장난기 넘치는 모습으로 친구들을 즐겁게 하지만, 주사 각도와 유지 시간처럼', '정확함이 필요할 땐 누구보다 꼼꼼하게 연습을 도와준다.'],
       c: { top: '#BFE3F7', bot: '#EEF8FE', ink: '#1D5F82', accent: '#2590C5', btn: '#2E8BBF' } },
     mio: { name: '미오', en: 'Mio', quote: '방금 정말 잘했어!',
-      desc: ['똑똑하고 세심한 관찰력을 가진 수호대의 친구. 침착한 성격으로 주변의 작은 변화도 놓치지 않는다.',
+      desc: ['똑똑하고 세심한 관찰력을 가진 수호대의 기록가. 침착한 성격으로 주변의 작은 변화도 놓치지 않는다.',
              '콩이의 주사 연습 과정을 꼼꼼하게 살펴보고, 작은 노력과 성취도 가장 먼저 발견해 구체적인 칭찬으로 자신감을 북돋아 준다.'],
       tags: ['꼼꼼함', '관찰력', '칭찬왕', '수호대의 기록가'], colors: ['#FCF8F0', '#FFE9AF', '#FFC890', '#4F4F4F'],
-      lines: ['똑똑하고 세심한 관찰력을 가진 수호대의 친구. 침착한 성격으로 주변의', '작은 변화도 놓치지 않는다. 콩이의 주사 연습 과정을 꼼꼼하게 살펴보고,', '작은 노력과 성취도 가장 먼저 발견해 구체적인 칭찬으로 자신감을 북돋아 준다.'],   // 175차: 3줄
+      lines: ['똑똑하고 세심한 관찰력을 가진 수호대의 기록가. 침착한 성격으로 주변의', '작은 변화도 놓치지 않는다. 콩이의 주사 연습 과정을 꼼꼼하게 살펴보고,', '작은 노력과 성취도 가장 먼저 발견해 구체적인 칭찬으로 자신감을 북돋아 준다.'],   // 175차: 3줄
       c: { top: '#D8EAAF', bot: '#F5FAE8', ink: '#4E6327', accent: '#77953A', btn: '#86A24C' } }
   };
   const ORDER = ['beary', 'ellie', 'rabby', 'mio'];
@@ -44,7 +44,7 @@
   };
 
   const DIM = { beary: '#9E2F33', ellie: '#7A5A0C', rabby: '#1D5F82', mio: '#4E6327' };   // 274차: 새 버튼 색 계열   // 116차: 고르지 않은 친구 덮개 색 (30%, FRIENDS 와 같음)
-  const ICON = { beary: 'assets/icons/beary-select.svg?v=273', ellie: 'assets/icons/ellie-select.svg?v=273', rabby: 'assets/icons/rabby-select.svg?v=273', mio: 'assets/icons/mio-select.svg?v=273' };
+  const ICON = { beary: 'assets/icons/beary-select.webp?v=333', ellie: 'assets/icons/ellie-select.webp?v=333', rabby: 'assets/icons/rabby-select.webp?v=333', mio: 'assets/icons/mio-select.webp?v=333' };
   const PAGE = 'character.html';
   const SCENE_W = [527, 370, 406, 397, 529, 377];
   const id = ORDER.includes((new URLSearchParams(location.search).get('c') || '').toLowerCase()) ? new URLSearchParams(location.search).get('c').toLowerCase() : 'beary';

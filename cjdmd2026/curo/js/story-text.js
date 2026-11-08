@@ -41,8 +41,8 @@
       el.style.setProperty('--st-x0', x0 + 'px');
       el.style.setProperty('--st-y0', y0 + 'px');
     });
-    const arrow = b.querySelector('.st-arrow');
-    if (arrow) arrow.addEventListener('click', () => window.CURO_PAGES && window.CURO_PAGES.next());
+    // 328차: → 다음 장면 / ← 이전 장면 (.st-prev)
+    b.querySelectorAll('.st-arrow').forEach((arrow) => arrow.addEventListener('click', () => window.CURO_PAGES && (arrow.classList.contains('st-prev') ? window.CURO_PAGES.prev() : window.CURO_PAGES.next())));
   });
 
   // 30차: 크기 u = contain(min), 위치 = 그림(cover, max 배율)의 anchor 지점을 따라감 → 가로로 넓은/낮은 창에서 텍스트가 가운데로 몰리지 않음

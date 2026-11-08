@@ -196,6 +196,13 @@
   const MAG = '<svg class="k0-mag" viewBox="0 0 62 66" aria-hidden="true"><circle class="k0-mag-c" cx="24" cy="24" r="19.5"/><path class="k0-mag-h" d="M39.5 40.5L52 55"/></svg>';
   spotsEl.innerHTML = P.map((p) => `<span class="k0-spot" style="--cx:${p.k0.spot[0]}px;--cy:${p.k0.spot[1]}px">${MAG}<span class="k0-name">${esc(p.name)}</span></span>`).join('');
   const items = Array.from(itemsEl.children), spots = Array.from(spotsEl.children);
+  // 329차: 배경과 제품 그림이 다 준비된 뒤 한 번에 보이게 (제품이 늦게 '툭' 나타나 깜빡여 보이던 것)
+  (function () {
+    const st = $('k0-stage'), imgs = [s0.querySelector('.k0-scene img'), ...itemsEl.querySelectorAll('.k0-ill')].filter(Boolean);
+    const done = () => st && st.classList.add('is-loaded');
+    Promise.all(imgs.map((im) => (im.decode ? im.decode().catch(() => {}) : Promise.resolve()))).then(done);
+    setTimeout(done, 1500);
+  })();
 
   // 88차 배율: 장면(배경+제품+글)은 항상 화면을 빈틈없이 덮음(cover) — 흐린 배경으로 늘리는 것 없음, 남는 부분은 잘림.
   //   세로 위치: 인형 위(피그마 y 199)가 메뉴 아래 30 이상 띄고, 마우스 아이콘 아래(1045)가 화면 안에 들어오게.

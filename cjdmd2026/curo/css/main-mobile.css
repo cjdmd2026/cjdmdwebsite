@@ -88,3 +88,20 @@
   .mm-open { animation: none; }
   .mm-tap { animation: none; }
 }
+
+/* 345차: 폰 메인에서는 오른쪽 아래 동화 · 상담 버튼 숨김 (다른 페이지는 그대로) */
+@media (max-width: 600px) {
+  .k-float, .k-chat { display: none !important; }
+}
+
+/* 348차: 낮은 폰 화면 — 글·버튼이 다 보이도록 그림 높이가 줄어듦 (그림 = 남는 높이, 최대 61%) */
+@media (max-width: 600px) {
+  .mm-slide { display: flex; flex-direction: column; }
+  .mm-img { position: relative; flex: 0 1 auto; min-height: 28%; }
+  .mm-tx { position: relative; left: auto; right: auto; top: auto; bottom: auto; flex: none; margin: 12px 28px 0; padding-bottom: 96px; }
+  .mm-slide.is-end .mm-tx { left: auto; right: auto; margin: 12px 16px 0; padding-bottom: 28px; }
+  @media (max-height: 700px) {
+    .mm-slide.is-end .mm-cta { margin-top: 20px; }
+    .mm-bd { margin-top: 10px; }
+  }
+}

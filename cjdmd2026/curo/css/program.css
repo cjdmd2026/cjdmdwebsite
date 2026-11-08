@@ -8,12 +8,12 @@
 
 @font-face {
   font-family: 'Pretendard';
-  src: url('../assets/fonts/pretendard-medium.woff') format('woff');
+  src: url('../assets/fonts/pretendard-medium.woff2') format('woff2');
   font-weight: 500; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: 'Pretendard';
-  src: url('../assets/fonts/pretendard-semibold.woff') format('woff');
+  src: url('../assets/fonts/pretendard-semibold.woff2') format('woff2');
   font-weight: 600; font-style: normal; font-display: swap;
 }
 

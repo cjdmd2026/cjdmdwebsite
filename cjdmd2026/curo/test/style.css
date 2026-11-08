@@ -1,6 +1,6 @@
 /* CURO 1형 당뇨 테스트 — 시안 2800×1752 의 절반(1400×876) 좌표.
    #stage = 기기 화면 전체(설계 px 로 환산, app.js fit). 가운데 내용 .mid(1400×876)는 화면 가운데, 배경·장식·모서리 버튼은 화면 가장자리에 붙음 → 비율이 달라도 잘리거나 어긋나지 않음 */
-@font-face { font-family: 'Jua'; src: url('fonts/jua.woff') format('woff'); font-display: block; }
+@font-face { font-family: 'Jua'; src: url('fonts/jua.woff2') format('woff2'); font-display: block; }
 @font-face { font-family: 'PretendardSB'; src: url('fonts/pretendard-sb.woff') format('woff'); font-display: swap; }
 @font-face { font-family: 'Pretendard'; src: url('fonts/pretendard.woff') format('woff'); font-weight: 400; font-display: swap; }
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }

@@ -56,11 +56,11 @@
   // 138차: 추가 구매 = 동화책 · 주사 보조캡(캐릭터별) · 주사 각도 가이드(구매 전용).
   //   139차: 친구별로 있는 건 주사 보조캡만. 렌탈 기본 포함(대여) = 동화책 1권 + 고른 친구 보조캡 1개 — 그 외는 구매
   const PRODUCTS = [
-    { id: 'book', name: '동화책', desc: '콩이와 가디언즈의 모험으로<br>주사와 친해져요', perChar: false, price: 13000, img: 'assets/images/kit/products/book-real.webp' },
+    { id: 'book', name: '동화책', desc: '콩이와 가디언즈의 모험으로<br>주사와 친해져요', perChar: false, price: 13000, img: 'assets/images/kit/products/book-real.webp?v=332' },
     { id: 'cap', name: '주사 보조캡', desc: '바늘을 가려 주사에 대한<br>부담을 덜어 줘요', perChar: true, price: 28000, img: 'assets/images/kit/products/cap-real.webp' },
     { id: 'assist', name: '주사 각도 가이드', desc: '올바른 각도로 주사할 수<br>있도록 도와줘요', perChar: false, buyOnly: true, price: 12000, img: 'assets/images/kit/products/assist-real.webp' },
   ];
-  const CHAR_ICON = { beary: 'assets/icons/beary-select.svg?v=273', ellie: 'assets/icons/ellie-select.svg?v=273', rabby: 'assets/icons/rabby-select.svg?v=273', mio: 'assets/icons/mio-select.svg?v=273' };
+  const CHAR_ICON = { beary: 'assets/icons/beary-select.webp?v=333', ellie: 'assets/icons/ellie-select.webp?v=333', rabby: 'assets/icons/rabby-select.webp?v=333', mio: 'assets/icons/mio-select.webp?v=333' };
   const STEPS = [
     { key: 'diag', type: 'single', layout: 'grid2', q: '아이는 언제 1형 당뇨를 진단받았나요?', help: '정확하지 않아도 괜찮아요.', short: '진단 시기',
       opts: [['m1', '1개월 이내', 'd1'], ['m3', '1~3개월 전', 'd2'], ['m6', '3~6개월 전', 'd3'], ['m6p', '6개월 이상', 'd4']] },
