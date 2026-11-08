@@ -86,7 +86,8 @@
       let dx = Math.cos(a) * dist * 1.2;
       if (!phone) dx = Math.max(dx, 660 - cx);   // 왼쪽 글(이름·소개) 위로는 안 넘어가게 (프레임 x 660 까지) — 폰은 글이 위에 있어 제한 없음
       else {   // 192차: 폰 = 마지막 자리가 화면 안 (좌우 끝·위 글·아래 버튼에 안 걸리게)
-        const W = frame.offsetWidth, m = size / 2 + 10, yTop = cy - vs * 0.75, yBot = cy + vs * 0.25;
+        const q = document.getElementById('fr-quote'), qTop = q ? (q.getBoundingClientRect().bottom - fr.top) / sc : 0;   // 348차: 글(대사) 아래로만
+        const W = frame.offsetWidth, m = size / 2 + 10, yTop = Math.max(cy - vs * 0.75, qTop + m), yBot = cy + vs * 0.25;
         const ex = Math.min(W - m, Math.max(m, cx + dx * 1.05)), ey = Math.min(yBot, Math.max(yTop, cy + dy * 1.05 - 12));
         dx = (ex - cx) / 1.05; dy = (ey + 12 - cy) / 1.05;
       }

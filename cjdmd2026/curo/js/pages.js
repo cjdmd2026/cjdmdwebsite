@@ -65,6 +65,8 @@
   window.addEventListener('wheel', (e) => {
     if (window.CURO_MOBILE_MAIN) return;                    // 203차: 폰 메인은 js/main-mobile.js 가 따로
     if (menuOpen()) return;                                 // 메뉴가 열려 있으면 main.js 가 막는다
+    if (e.target && e.target.closest && e.target.closest('.k-chat')) return;   // 343차: 상담 패널 안 스크롤은 패널이 처리 (float.js)
+    if (window.CURO_FLOAT && window.CURO_FLOAT.isChatOpen()) { e.preventDefault(); return; }   // 343차: 상담 중에는 장면 넘김 없음
     e.preventDefault();                                     // 페이지 자체 scroll 은 쓰지 않는다
     if (busy || (window.CURO_BOOK && window.CURO_BOOK.isBusy()) || (window.CURO_BOOK10 && window.CURO_BOOK10.isBusy()) || (window.CURO_STORY && window.CURO_STORY.isBusy()) || performance.now() < coolUntil) { sum = 0; return; }
     const now = performance.now();
@@ -78,14 +80,15 @@
   /* ---------- keys ---------- */
   document.addEventListener('keydown', (e) => {
     if (window.CURO_MOBILE_MAIN || menuOpen()) return;
-    if (e.target && e.target.closest && e.target.closest('.menu-panel, .hamburger, .book-position, input, textarea')) return;
+    if (e.target && e.target.closest && e.target.closest('.menu-panel, .hamburger, .book-position, input, textarea, .k-chat, .k-float')) return;   // 343차: 상담 패널 · 버튼 추가
+    if (window.CURO_FLOAT && window.CURO_FLOAT.isChatOpen()) return;
     if (PG.keysNext.includes(e.key)) { e.preventDefault(); go(+1, 'key'); }
     else if (PG.keysPrev.includes(e.key)) { e.preventDefault(); go(-1, 'key'); }
   });
 
   /* ---------- touch ---------- */
   let ty = null;
-  window.addEventListener('touchstart', (e) => { ty = window.CURO_MOBILE_MAIN ? null : e.touches[0].clientY; }, { passive: true });
+  window.addEventListener('touchstart', (e) => { ty = window.CURO_MOBILE_MAIN || (e.target.closest && e.target.closest('.k-chat, .k-float')) || (window.CURO_FLOAT && window.CURO_FLOAT.isChatOpen()) ? null : e.touches[0].clientY; }, { passive: true });   // 343차: 상담 패널 안 터치는 장면 넘김 없음
   window.addEventListener('touchmove', (e) => {
     if (ty == null) return;
     const d = ty - e.touches[0].clientY;

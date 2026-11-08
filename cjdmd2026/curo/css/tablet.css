@@ -4,7 +4,8 @@
    ========================================================================== */
 @media (min-width: 601px) and (max-width: 900px) { html.pg-page, html.cp-page, html.fr-page { --side: 40px; } }
 @media (min-width: 901px) and (max-width: 1279px) { html.pg-page, html.cp-page, html.fr-page { --side: calc(40px + (100vw - 900px) * 0.3865); } }
-@media (min-width: 601px) and (max-width: 1279px) {
+/* 330차: 901~1279 는 내용 폭 = 상단 메뉴 폭(다른 메뉴와 같게). 메뉴가 바(햄버거)로 바뀌는 601~900 만 화면 − 양옆 */
+@media (min-width: 601px) and (max-width: 900px) {
   html.pg-page, html.cp-page { --page-w: calc(100vw - 2 * var(--side)); }
 }
 @media (min-width: 601px) and (max-width: 900px) {

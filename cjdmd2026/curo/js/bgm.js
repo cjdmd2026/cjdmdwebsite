@@ -7,7 +7,7 @@
    ========================================================================== */
 (function () {
   'use strict';
-  const SRC = 'assets/audio/main-bgm.mp3?v=166';
+  const SRC = 'assets/audio/main-bgm.mp3?v=333';
   const VOL = 0.45;              // 최대 음량 (0~1)
   const FADE = 1200;             // 켜질 때·꺼질 때 서서히 (ms)
   const KEY = 'curo-bgm';

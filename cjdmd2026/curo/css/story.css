@@ -3,9 +3,9 @@
    시안 기준 1920 폭: 콘텐츠 폭 1360 (왼쪽 280), 영상 보기는 오른쪽 '다음 이야기'까지 1440.
    화면 전환: html.st-watch 이면 영상 보기, 아니면 목록 (js/episodes.js)
    ========================================================================== */
-@font-face { font-family: 'BM JUA'; src: url('../assets/fonts/bm-jua.woff') format('woff'); font-weight: 400; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Pretendard'; src: url('../assets/fonts/pretendard-medium.woff') format('woff'); font-weight: 500; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Pretendard'; src: url('../assets/fonts/pretendard-semibold.woff') format('woff'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'BM JUA'; src: url('../assets/fonts/bm-jua.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Pretendard'; src: url('../assets/fonts/pretendard-medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Pretendard'; src: url('../assets/fonts/pretendard-semibold.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
 
 .st-page {
   --st-mint: #1EB2A6;

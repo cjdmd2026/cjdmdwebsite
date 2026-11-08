@@ -1,22 +1,30 @@
 <!DOCTYPE html>
-<html lang="ko" class="kit-page" data-page="kit">
+<html lang="ko" class="kit-page has-topnav" data-page="kit">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CURO — CURO KIT</title>
   <link rel="icon" type="image/svg+xml" href="assets/icons/symbol.svg?v=313">
-  <link rel="preload" href="assets/fonts/pretendard-regular.woff" as="font" type="font/woff" crossorigin>
-  <link rel="preload" href="assets/fonts/pretendard-bold.woff" as="font" type="font/woff" crossorigin>
+  <!-- 329차: 첫 화면 그림(방·제품 5개)을 먼저 받아 둠 — 메뉴 이동 때 그림이 늦게 나타나 깜빡이던 것 -->
+  <link rel="preload" as="image" media="(min-width: 601px)" href="assets/images/kit/products/room.webp?v=89" fetchpriority="high">
+  <link rel="preload" as="image" media="(min-width: 601px)" href="assets/images/kit/products/book-illust.webp?v=332">
+  <link rel="preload" as="image" media="(min-width: 601px)" href="assets/images/kit/products/doll-illust.webp?v=80">
+  <link rel="preload" as="image" media="(min-width: 601px)" href="assets/images/kit/products/belt-illust.webp?v=80">
+  <link rel="preload" as="image" media="(min-width: 601px)" href="assets/images/kit/products/cap-illust.webp?v=80">
+  <link rel="preload" as="image" media="(min-width: 601px)" href="assets/images/kit/products/assist-illust.webp?v=80">
+  <link rel="preload" href="assets/fonts/pretendard-regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/pretendard-bold.woff2" as="font" type="font/woff2" crossorigin>
   <!-- 공통 토큰·폰트·햄버거 메뉴 = main.css 그대로, KIT 전용 = kit.css -->
-  <link rel="stylesheet" href="css/main.css?v=287">
+  <link rel="stylesheet" href="css/main.css?v=333">
   <link rel="stylesheet" href="css/snap.css?v=59">
-  <link rel="stylesheet" href="css/kit.css?v=291">
+  <link rel="stylesheet" href="css/kit.css?v=333">
   <link rel="stylesheet" href="css/float.css?v=280">
-  <link rel="stylesheet" href="css/consult.css?v=271">   <!-- 141차: 상담 패널 = 렌탈 상담 신청 흐름 (js/apply.js) -->
-  <link rel="stylesheet" href="css/topnav.css?v=287">
+  <link rel="stylesheet" href="css/consult.css?v=341">   <!-- 141차: 상담 패널 = 렌탈 상담 신청 흐름 (js/apply.js) -->
+  <link rel="stylesheet" href="css/topnav.css?v=329">
   <link rel="stylesheet" href="css/footer.css?v=286">
 </head>
 <body>
+  <script src="js/topnav.js?v=328"></script>   <!-- 328차: 상단 메뉴를 그림 그리기 전에 바로 넣음 (메뉴가 늦게 나타나며 깜빡이던 것) -->
   <!-- =========================================================
        CURO KIT (49차)
        1 → 2 → 3 : 한 화면씩 세로 full-page snap (kit.js)
@@ -344,7 +352,7 @@
         <h2 class="k-title k4-title"><span class="k-hl k4-hl">안심</span>하고 사용할 수 있도록</h2>
         <p class="k-title k4-sub">이런 부분을 고려했어요</p>
         <span class="k4-rule" aria-hidden="true"></span>
-        <img class="k4-ph-main" src="assets/images/kit/book/detail/book-safety.webp?v=242" width="444" height="444" alt="아이가 동화책을 읽는 모습" decoding="async" loading="lazy">
+        <img class="k4-ph-main" src="assets/images/kit/book/detail/book-safety.webp?v=332" width="444" height="444" alt="아이가 동화책을 읽는 모습" decoding="async" loading="lazy">
         <ul class="k4-checks">
           <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">아이의 눈높이에 맞춰 주사 이야기를 쉽게 풀어냈어요.</li>
           <li><img class="k4-check-ic" data-icon="check" alt="" aria-hidden="true">따뜻한 색감과 친근한 그림으로 몰입감을 높였어요.</li>
@@ -431,15 +439,14 @@
 
   <script src="js/config.js?v=47"></script>
   <script src="js/main.js?v=119"></script>
-  <script src="js/topnav.js?v=192"></script>
   <script src="js/footer.js?v=194"></script>
-  <script src="js/kit-config.js?v=272"></script>
+  <script src="js/kit-config.js?v=332"></script>
   <script src="js/float.js?v=268"></script>
-  <script src="js/apply.js?v=283"></script>
+  <script src="js/apply.js?v=332"></script>
   <script src="js/kit-masks.js?v=81"></script>
-  <script src="js/kit-mobile.js?v=291"></script>
-  <script src="js/kit-others.js?v=302"></script>
-  <script src="js/kit-products.js?v=240"></script>
-  <script src="js/kit.js?v=272"></script>
+  <script src="js/kit-mobile.js?v=332"></script>
+  <script src="js/kit-others.js?v=332"></script>
+  <script src="js/kit-products.js?v=329"></script>
+  <script src="js/kit.js?v=328"></script>
 </body>
 </html>

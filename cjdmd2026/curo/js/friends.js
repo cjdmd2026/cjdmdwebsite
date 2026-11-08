@@ -12,22 +12,22 @@
   const FRIENDS = [
     { id: 'beary', dim: '#9E2F33', name: '베어리', en: 'BEARY', tag: '다정한 리더 · 용기',
       desc: ['언제나 옆에서 든든하게', '응원해주는 다정한 리더에요'], quote: ["'처음이 무서워도,", "천천히 해보면 할 수 있어!'"],
-      icon: 'assets/icons/beary-select.svg?v=273', stage: 'assets/images/friends/stage-beary.svg?v=276', pose: 'assets/images/friends/pose-beary.svg?v=95',
+      icon: 'assets/icons/beary-select.webp?v=333', stage: 'assets/images/friends/stage-beary.svg?v=276', pose: 'assets/images/friends/pose-beary.svg?v=95',
       v: { x: 681, y: 188, s: 560 }, idle: 'assets/videos/friends/beary-idle.webm?v=146', hi: 'assets/videos/friends/beary-hi.webm?v=146',
       c: { top: '#FFCACB', bot: '#FFF0F0', hill: '#FFF9F9', ink: '#9E2F33', accent: '#E04A50', btn: '#D9575C' } },
     { id: 'ellie', dim: '#7A5A0C', name: '엘리', en: 'Ellie', tag: '든든한 지킴이 · 안심',
       desc: ['말없이 곁을 지키며', '마음을 편안하게 해주는 지킴이에요'], quote: ["'걱정하지 마, 내가 옆에서", "든든하게 지켜줄게!'"],
-      icon: 'assets/icons/ellie-select.svg?v=273', stage: 'assets/images/friends/stage-ellie.svg?v=290', pose: 'assets/images/friends/pose-ellie.svg?v=95',
+      icon: 'assets/icons/ellie-select.webp?v=333', stage: 'assets/images/friends/stage-ellie.svg?v=290', pose: 'assets/images/friends/pose-ellie.svg?v=95',
       v: { x: 635, y: 113, s: 652 }, idle: 'assets/videos/friends/ellie-idle.webm?v=146', hi: 'assets/videos/friends/ellie-hi.webm?v=146',
       c: { top: '#FFE188', bot: '#FFF5D8', hill: '#FFFCF0', ink: '#7A5A0C', accent: '#CC9A0E', btn: '#DDA824' } },
     { id: 'rabby', dim: '#1D5F82', name: '래비', en: 'Rabby', tag: '쾌활한 발명가 · 도전',
       desc: ['새로운 방법을 찾아내며', '연습을 즐겁게 만들어주는 발명왕이에요'], quote: ["'어렵게 느껴진다면,", "우리 다른 방법으로 해볼까?'"],
-      icon: 'assets/icons/rabby-select.svg?v=273', stage: 'assets/images/friends/stage-rabby.svg?v=277', pose: 'assets/images/friends/pose-rabby.svg?v=95',
+      icon: 'assets/icons/rabby-select.webp?v=333', stage: 'assets/images/friends/stage-rabby.svg?v=277', pose: 'assets/images/friends/pose-rabby.svg?v=95',
       v: { x: 745, y: 326, s: 439 }, idle: 'assets/videos/friends/rabby-idle.webm?v=146', hi: 'assets/videos/friends/rabby-hi.webm?v=146',
       c: { top: '#BFE3F7', bot: '#E9F6FD', hill: '#F8FCFF', ink: '#1D5F82', accent: '#2590C5', btn: '#2E8BBF' } },
     { id: 'mio', dim: '#4E6327', name: '미오', en: 'Mio', tag: '꼼꼼한 기록가 · 칭찬',
       desc: ['작은 노력도 놓치지 않고', '하나하나 기억해주는 기록가예요'], quote: ["'오늘도 해냈네!", "너의 노력을 모두 기억하고 있어!'"],
-      icon: 'assets/icons/mio-select.svg?v=273', stage: 'assets/images/friends/stage-mio.svg?v=277', pose: 'assets/images/friends/pose-mio.svg?v=283',
+      icon: 'assets/icons/mio-select.webp?v=333', stage: 'assets/images/friends/stage-mio.svg?v=277', pose: 'assets/images/friends/pose-mio.svg?v=283',
       v: { x: 738, y: 306, s: 446 }, idle: 'assets/videos/friends/mio-idle.webm?v=146', hi: 'assets/videos/friends/mio-hi.webm?v=266',
       c: { top: '#D8EAAF', bot: '#F2F8E2', hill: '#FBFDF5', ink: '#4E6327', accent: '#77953A', btn: '#86A24C' } }
   ];
@@ -52,6 +52,11 @@
   }
   window.addEventListener('resize', layout);
   layout();
+  // 348차: 폰 — 대사(글) 아래 끝 위치를 --qb 로 (영문 이름 글자가 글 위로 올라가지 않게, css 폰 구간에서 씀)
+  const qbSet = () => { const q = $('fr-quote'), sec = $('fr-meet'); if (!q || !sec) return;
+    root.style.setProperty('--qb', Math.round(q.getBoundingClientRect().bottom - sec.getBoundingClientRect().top) + 'px'); };
+  if ('ResizeObserver' in window) new ResizeObserver(qbSet).observe($('fr-info'));
+  window.addEventListener('resize', qbSet);
 
   /* ---------- 2. 친구 소개 ---------- */
   const layers = $('fr-layers'), pick = $('fr-pick');
@@ -97,7 +102,7 @@
     if (typeof placeTouch === 'function') placeTouch(f.id);
     // 187차: Safari(아이폰 포함)는 투명 webm 대신 움직이는 webp (assets/images/friends/anim/{id}-idle·hi.webp, 영상에서 변환) — 그림만 보이던 것 대신 PC 처럼 움직임
     if (noAlpha) { vIdle.hidden = vHi.hidden = cv.hidden = true; still.hidden = false; still.src = ANIM(f.id, 'idle'); const pre = new Image(); pre.src = ANIM(f.id, 'hi'); if (done) done(); return; }
-    cur = null; onSwitch = null; cx.clearRect(0, 0, cv.width, cv.height);   // 친구가 바뀌면 이전 친구 그림은 지움 (이때는 사라졌다 나타나는 중)
+    cur = null; onSwitch = null; if (SWAP_FADE) cx.clearRect(0, 0, cv.width, cv.height);   // 329차: 바로 바뀜 모드면 새 그림이 그려질 때까지 이전 그림을 둠 (빈 화면 안 보이게)   // 친구가 바뀌면 이전 친구 그림은 지움 (이때는 사라졌다 나타나는 중)
     let fin = false; const end = () => { if (!fin) { fin = true; if (done) done(); } };
     onDraw = end; setTimeout(end, 900);                      // 새 친구 첫 장면이 그려지면 나타남 (늦어도 0.9초)
     vHi.pause(); vHi.src = f.hi; vHi.load();
@@ -162,6 +167,8 @@
   charBtn.addEventListener('click', sayHi);
   $('fr-sound').addEventListener('click', sayHi);   // 255차: 목소리는 sayHi 안에서 (speak)
 
+  /* 329차: 친구를 바꿀 때 글·캐릭터 — false = 바로 바뀜 / true = 천천히 사라졌다 나타남 (328차까지) */
+  const SWAP_FADE = true;
   let sel = -1, swapT = 0;
   function fillText(f) {
     $('fr-name').textContent = f.name;
@@ -173,13 +180,13 @@
     $('fr-sound-t').textContent = `${f.name}와 인사하기`;   // 236차: 소리 버튼이 무엇인지 글로 (이름이 모두 받침 없음 → '와')
     // 98차: 글 색은 글이 바뀌는 순간에 같이 (사라지기 전에 색이 먼저 바뀌지 않게)
     ['ink', 'accent'].forEach((k) => $('fr-info').style.setProperty('--c-' + k, f.c[k]));
+    // 328차: '알아보기' 버튼 색·글도 글과 함께 (사라졌다 나타날 때 바뀜. 예전엔 누르는 순간 바로 바뀜)
+    meet.style.setProperty('--c-btn', f.c.btn);
+    const cta = $('fr-cta'); cta.querySelector('span').textContent = `${f.name} 알아보기`; cta.href = `character.html?c=${f.id}`;   // 99차: 캐릭터 상세로
   }
   function select(i) {
     if (i === sel) return;
     const f = FRIENDS[i], prev = sel; sel = i;
-    // 버튼 색·고른 원: 바로 (글 색은 fillText 에서 글과 함께)
-    meet.style.setProperty('--c-btn', f.c.btn);
-    const cta = $('fr-cta'); cta.querySelector('span').textContent = `${f.name} 알아보기`; cta.href = `character.html?c=${f.id}`;   // 99차: 캐릭터 상세로
     pick.querySelectorAll('button').forEach((b, j) => b.setAttribute('aria-pressed', String(j === i)));
     if (prev < 0) { makeLayer(f); fillText(f); setChar(f); return; }
     // 배경: 누른 쪽에서부터 번지듯
@@ -189,6 +196,8 @@
     void el.offsetWidth;
     el.classList.add('is-go'); el.classList.remove('is-from');
     el.addEventListener('transitionend', () => { while (layers.firstChild !== el) layers.firstChild.remove(); }, { once: true });
+    // 329차: 바로 바뀜 (SWAP_FADE = false). 예전처럼 사라졌다 나타나게 하려면 위 SWAP_FADE 를 true 로
+    if (!SWAP_FADE) { clearTimeout(swapT); meet.classList.remove('is-swap'); fillText(f); setChar(f); return; }
     // 글·영문 이름: 사라졌다 나타남
     clearTimeout(swapT);
     meet.classList.add('is-swap');

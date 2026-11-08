@@ -34,7 +34,7 @@ html.kit-phone .kof { display: none; }
 .ko-m li:has(a[aria-current="page"]) span { color: #2B2B2B; font-weight: 500; }`;
   document.head.appendChild(css);
   const REAL = { belt: ['belt-real', 10], book: ['book-real', 19], doll: ['doll-real', 20], cap: ['cap-real', 9], assist: ['assist-real', 21] };
-  const pic = (p) => { const r = REAL[p.id]; return r ? `<img src="assets/images/kit/products/${r[0]}.webp?v=284" alt="" style="inset:${r[1]}%;width:${100 - 2 * r[1]}%;height:${100 - 2 * r[1]}%">` : `<img src="${p.k0.ill}" alt="">`; };
+  const pic = (p) => { const r = REAL[p.id]; return r ? `<img src="assets/images/kit/products/${r[0]}.webp?v=332" alt="" style="inset:${r[1]}%;width:${100 - 2 * r[1]}%;height:${100 - 2 * r[1]}%">` : `<img src="${p.k0.ill}" alt="">`; };
   const cur = () => document.documentElement.dataset.kitProduct || 'belt';
   const items = (href) => P.map((p) => `<li><a href="${href(p)}" data-id="${p.id}" style="--c:${p.color}"${p.id === cur() ? ' aria-current="page"' : ''} aria-label="${p.name}">${pic(p)}</a><span>${p.name}</span></li>`).join('');
   const HEAD = '<h2>다른 제품도 둘러볼까요?</h2><p class="ko-sub">CURO 키트의 다른 제품을 더 만나보세요</p>';
