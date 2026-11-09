@@ -1349,7 +1349,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 pointer-events:auto;
                 /* One hover curve drives brightness and zoom while the slide controls base opacity. */
                 opacity:calc(var(--project-icon-opacity,1) + (1 - var(--project-icon-opacity,1)) * var(--project-icon-hover-progress));
-                transition:--project-icon-hover-progress 480ms ease-in-out;
+                transition:--project-icon-hover-progress 300ms ease-in-out;
                 transform-origin:center;
                 will-change:transform,opacity;
             }
