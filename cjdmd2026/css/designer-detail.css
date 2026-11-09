@@ -719,7 +719,7 @@ img {
     position: absolute;
 
     left: clamp(24px, 5vw, 80px);
-    bottom: 20vh;
+    bottom: 10vh;
 
     margin: 0;
     max-width: calc(100% - 48px);

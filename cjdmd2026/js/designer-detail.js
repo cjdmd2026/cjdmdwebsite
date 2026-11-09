@@ -1391,6 +1391,7 @@
                     : vw * fullCardHeight / localWidth;
 
             const fullY = (vh - fullHeight) / 2;
+            const stageRect = stage.getBoundingClientRect();
 
             const initialHeight = Math.min(
                 vh * CONFIG.bannerHeight,
@@ -1425,7 +1426,6 @@
                     `${lerp(CONFIG.bannerRadius, 0, p)}px`;
             } else if (progress >= CONFIG.shrinkStart) {
                 const card = target.getBoundingClientRect();
-                const stageRect = stage.getBoundingClientRect();
                 const t = clamp(
                     (progress - CONFIG.shrinkStart) /
                     (1 - CONFIG.shrinkStart)
@@ -1502,8 +1502,10 @@
                 const logoExit = smooth(clamp(
                     (progress - fullStopProgress) / (CONFIG.shrinkStart - fullStopProgress)
                 ));
+                // Measure the CSS bottom inset from the visible edge when the image extends below the viewport.
+                const visibleBottom = Math.min(height, vh - stageRect.top - y);
                 title.style.opacity = String(titleIn * (1 - logoExit));
-                title.style.transform = `translateY(${height - surfaceHeight + lerp(18, 0, titleIn) + 32 * logoExit}px)`;
+                title.style.transform = `translateY(${visibleBottom - surfaceHeight + lerp(18, 0, titleIn) + 32 * logoExit}px)`;
             }
 
             if (overlay) {
