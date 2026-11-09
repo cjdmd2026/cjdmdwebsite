@@ -140,7 +140,7 @@
   const FRAME_INSET = 2;   // 48차: 틀 좌우 안쪽 여백 (scene px)
   SC.panels.forEach((id, i) => {
     const sc = SCENES[id], panel = panels[i];
-    if (!sc || !panel || !sc.camEl || !sc.cfg.frame) return;
+    if (!sc || !panel || !(sc.camEl || sc.cfg.frameBox) || !sc.cfg.frame) return;
     const fF = factorOf(sc, sc.cfg.frame);
     const inner = sc.cfg.layers.filter((l) => factorOf(sc, l.depth) < fF).map((l) => panel.querySelector(sc.sel(l.key))).filter(Boolean);
     if (!inner.length) return;
@@ -148,12 +148,14 @@
        clip 은 px 단위로 잘려 그 1px 뒤로 틀 안의 하늘이 비쳐 '얇은 세로선'이 보였다 (Main3 y<912, Main7 <590, Main8 <574, Main9 <645 에서만).
        2px 안쪽에서 자르면 그 1px 뒤에는 하늘 대신 빈 공간 배경만 남는다. 정지 화면에서는 canvas 끝 2px 가 화면 밖이라 변화 없음 */
     const ins = FRAME_INSET;
+    /* 355차: frameBox [x, w] = 틀을 canvas 전체 대신 방 레이어의 불투명한 가로 범위로 (Main2: 하늘이 이동 중 벽 오른쪽 fade·빈 공간으로 삐져나와 세로 띠로 보이던 것) */
+    const fb = sc.cfg.frameBox, fx0 = fb ? fb[0] : ins, fw = fb ? fb[1] : sc.cfg.scene.w - ins * 2;
     const fr = document.createElement('div');
     fr.className = 'sc-frame';
-    fr.style.left = px(ins); fr.style.width = px(sc.cfg.scene.w - ins * 2); fr.style.height = px(sc.cfg.scene.h);
+    fr.style.left = px(fx0); fr.style.width = px(fw); fr.style.height = px(sc.cfg.scene.h);
     const frIn = document.createElement('div');            // 안쪽 레이어 좌표를 canvas 기준으로 되돌리는 wrapper (그림 없음)
     frIn.className = 'sc-frame-in';
-    frIn.style.left = px(-ins);
+    frIn.style.left = px(-fx0);
     fr.appendChild(frIn);
     inner[0].parentNode.insertBefore(fr, inner[0]);
     inner.forEach((el) => frIn.appendChild(el));
@@ -201,7 +203,7 @@
     const sc = SCENES[id];
     if (!sc) return [];
     const k = coverCamera(sc.cfg.camera, vw, vh);          // Main2 = 책 열기 끝의 fullscreen camera 와 같은 계산
-    const fF = sc.cfg.frame ? factorOf(sc, sc.cfg.frame) : null;
+    const fF = sc.cfg.frame && !sc.cfg.frameBox ? factorOf(sc, sc.cfg.frame) : null;   // 355차: frameBox 장면은 간격 계산을 예전 그대로 (그림 box 기준)
     const out = [];
     sc.cfg.layers.forEach((l) => {
       if (!l.enabled || !l.box) return;

@@ -169,6 +169,7 @@
 
   /* 329차: 친구를 바꿀 때 글·캐릭터 — false = 바로 바뀜 / true = 천천히 사라졌다 나타남 (328차까지) */
   const SWAP_FADE = true;
+  const PHONE = window.matchMedia('(max-width: 600px), (max-width: 1024px) and (orientation: portrait)');
   let sel = -1, swapT = 0;
   function fillText(f) {
     $('fr-name').textContent = f.name;
@@ -201,6 +202,7 @@
     // 글·영문 이름: 사라졌다 나타남
     clearTimeout(swapT);
     meet.classList.add('is-swap');
+    if (PHONE.matches) { meet.style.setProperty('--c-btn', f.c.btn); const cta = $('fr-cta'); cta.querySelector('span').textContent = `${f.name} 알아보기`; cta.href = `character.html?c=${f.id}`; }   // 349차: 폰 = 알아보기 버튼은 사라지지 않고 색만 바로 바뀜
     swapT = setTimeout(() => { fillText(f); setChar(f, () => { if (FRIENDS[sel] === f) meet.classList.remove('is-swap'); }); }, 350);   // 263차: 새 친구 첫 장면이 그려진 뒤 나타남
   }
   pick.addEventListener('click', (e) => { const b = e.target.closest('button[data-i]'); if (!b || +b.dataset.i === sel) return; appear(FRIENDS[+b.dataset.i].id); select(+b.dataset.i); });   // 277차: 이미 고른 친구를 다시 누르면 효과음·목소리 없음   // 256차: 원 누르면 등장 효과음 + 소개 목소리

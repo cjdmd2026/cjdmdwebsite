@@ -111,7 +111,10 @@ window.CURO_CONFIG = {
       coverRect: { x: 263, y: 0, w: 1919, h: 1080 },
       focus: { x: 1222.5, y: 540 }               // core 중심
     },
-    background: '#FFFAF1'                        // Main2 오른쪽 벽색 (stage 배경)
+    background: '#FFFAF1',                       // Main2 오른쪽 벽색 (stage 배경)
+    // 355차: 창밖 하늘(far)을 벽(mid)과 함께 움직이는 틀 안으로 자름. 틀 = MiddleView 불투명 범위 x 263–2074 (오른쪽 210px fade 전까지)
+    //   → 다음 장면으로 넘길 때 하늘 오른쪽 끝이 벽 밖(빈 공간)으로 세로 띠처럼 보이던 것 (창 크기에 따라 보임) 방지
+    frame: 'mid', frameBox: [263, 1811]
   },
 
   // ---- Main5 (STORY 5번째 장면 — Main3·4 는 아직 없음) ----
