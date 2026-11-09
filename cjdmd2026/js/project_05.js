@@ -1128,7 +1128,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             let wheelTotal=0,lastWheel=0,searchFrame=0,wheelLocked=false;
             let wanted=null,wantedDirection=1,loading=false,prepared=null;
             let initial=true,stoppedLenis=null;
-            let searchTarget=null,searchTimer=0;
+            let focusTarget=null,focusTimer=0;
             let descriptionExit=null;
             const root=document.documentElement;
             let intro=null;
@@ -1164,9 +1164,9 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 'jikji':'team-14-jikji-jamboree.svg'
             };
             const dialIcons=new Map();
-            const iconRail=document.createElement('div');
+            const iconRail=document.createElement('nav');
             iconRail.className='project-icon-rail';
-            iconRail.setAttribute('aria-hidden','true');
+            iconRail.setAttribute('aria-label','프로젝트 바로가기');
             const header=document.querySelector('.header');
             const headerZ=parseInt(header?getComputedStyle(header).zIndex:'1000',10);
             // Same stacking level as the wave, inserted later so icons stay above it.
@@ -1177,9 +1177,15 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 const projectId=String(item.dataset.projectId),file=projectIconFiles[projectId];
                 const title=item.querySelector('.project-dial-title');
                 if(!file||!title)return;
-                const slot=document.createElement('span');
-                slot.className='project-dial-icon';slot.setAttribute('aria-hidden','true');
+                const slot=document.createElement('button');
+                slot.type='button';
+                slot.className='project-dial-icon';
+                slot.setAttribute('aria-label',title.textContent.trim()+' 프로젝트로 이동');
                 slot.dataset.projectId=projectId;
+                listen(slot,'click',()=>{
+                    if(slot.getAttribute('aria-current')==='true'||window.ProjectViewTransition?.busy)return;
+                    focusProject(projectId,{immediate:true});
+                });
                 iconRail.append(slot);item.classList.add('has-project-icon');
                 dialIcons.set(projectId,{item,slot});
                 try{
@@ -1309,13 +1315,15 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             }
             .project-icon-rail { display:none; }
             html[data-project-fluid-view="slide"] .project-icon-rail {
+                --project-icon-hover-scale:1.5;
                 display:block;
                 position:fixed;
                 left:var(--project-icon-left);
                 top:calc(var(--header-height,70px) + 1rem);
                 bottom:2rem;
                 width:var(--project-dial-icon-size);
-                overflow:hidden;
+                overflow:clip;
+                overflow-clip-margin:max(1rem,calc(var(--project-dial-icon-size) * (var(--project-icon-hover-scale) - 1) / 2));
                 pointer-events:none;
             }
             .project-icon-rail .project-dial-icon {
@@ -1327,14 +1335,45 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 height:var(--project-rail-icon-size,0px);
                 max-width:none;
                 visibility:hidden;
-                pointer-events:none;
+                appearance:none;
+                padding:0;
+                border:0;
+                background:transparent;
+                overflow:visible;
+                cursor:pointer;
+                pointer-events:auto;
+                opacity:var(--project-icon-opacity,1);
                 transform-origin:center;
                 will-change:transform,opacity;
             }
             .project-icon-rail .project-dial-icon[hidden] { display:none; }
             .project-dial-icon svg { display:block; width:100%; height:100%; }
-            .project-dial-icon svg,
             .project-dial-icon svg * { animation:none!important; transition:none!important; }
+            .project-dial-icon > svg {
+                transform:scale(var(--project-icon-zoom,1));
+                transition:transform 480ms ease-in-out;
+            }
+            .project-icon-rail .project-dial-icon[aria-current="true"] { cursor:default; }
+            @media (hover:hover) {
+                .project-icon-rail .project-dial-icon:not([aria-current="true"]):hover {
+                    --project-icon-zoom:var(--project-icon-hover-scale);
+                    z-index:1;
+                    opacity:1;
+                }
+            }
+            .project-icon-rail .project-dial-icon:not([aria-current="true"]):focus-visible {
+                --project-icon-zoom:var(--project-icon-hover-scale);
+                z-index:1;
+                opacity:1;
+            }
+            .project-icon-rail .project-dial-icon:focus-visible {
+                outline:2px solid currentColor;
+                outline-offset:2px;
+            }
+            @media (prefers-reduced-motion:reduce) {
+                .project-dial-icon > svg { transition:none; }
+                .project-dial-icon > svg { transition:none; }
+            }
             .project-icon-rail .project-dial-icon.is-icon-loaded {
                 visibility:visible;
             }
@@ -1503,7 +1542,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                     const scale=dialLerp(before.size,after.size,progress)/Math.max(1,size);
                     const y=dialLerp(before.center,after.center,progress)-size/2;
                     slot.style.transform=`translate3d(0,${y.toFixed(2)}px,0) scale(${scale.toFixed(4)})`;
-                    slot.style.opacity=dialLerp(before.opacity,after.opacity,progress).toFixed(3);
+                    slot.style.setProperty('--project-icon-opacity',dialLerp(before.opacity,after.opacity,progress).toFixed(3));
                 });
             }
 
@@ -1515,6 +1554,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 projectDialItems.forEach((item,i)=>{
                     const distance=Math.abs(i-activeIndex);
                     item.classList.toggle('is-active',distance===0);
+                    dialIcons.get(item.dataset.projectId)?.slot.setAttribute('aria-current',String(distance===0));
                     item.classList.toggle('is-near',distance===1);
                     item.classList.toggle('is-far',distance===2);
                     item.classList.toggle('is-none',distance>2);
@@ -1805,7 +1845,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                     // Keep the description's earlier reveal running through the wave's final tail.
                     if(cancel||!entry.copyRevealed)updateSlideInfo(cards[index].dataset.projectId,false);
                     forceTextVisible();
-                    flushSearchFocus();
+                    flushProjectFocus();
                 }
             }
             async function playEntryIntro(){
@@ -1816,7 +1856,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                     return;
                 }
                 // Keep header navigation interactive as soon as its entrance reveals it.
-                const entry={animations:[],pieces:[],fragmentSlots:[],inert:[...document.querySelectorAll('.main,.footer')]
+                const entry={animations:[],pieces:[],fragmentSlots:[],inert:[...document.querySelectorAll('.main,.footer'),iconRail]
                     .map(element=>[element,element.inert])};
                 intro=entry;
                 phase='intro';
@@ -1896,7 +1936,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                     const poses=slots.map((slot,i)=>{
                         const x=originX+(i-(slots.length-1)/2)*pitch;
                         const y=originY;
-                        const pose={slot,transform:slot.style.transform,opacity:slot.style.opacity,
+                        const pose={slot,transform:slot.style.transform,opacity:getComputedStyle(slot).opacity,
                             assembled:`translate3d(${x}px,${y}px,0) scale(${scale})`,
                             centerX:innerWidth/2+x-originX,centerY:innerHeight/2+y-originY};
                         // Hold the real slot at its assembly position while its individual colors travel.
@@ -2068,7 +2108,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 }
             }
             function clearTransition(){
-                cancelSearchFocus();
+                cancelProjectFocus();
                 window.ProjectViewTransition?.cancel();
                 finishIntro(true);
                 cancelDescriptionExit();
@@ -2203,15 +2243,15 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                         const queued = queuedDirection;
                         queuedDirection = null;
                         warm();
-                        if (searchTarget !== null) {
-                            if (!searchTimer) flushSearchFocus();
+                        if (focusTarget !== null) {
+                            if (!focusTimer) flushProjectFocus();
                         } else if (queued !== null) navigate(queued);
                     }
                 }
             }
             function navigate(direction){
                 if (disposed || window.ProjectViewTransition?.busy) return;
-                cancelSearchFocus();
+                cancelProjectFocus();
                 if(
                     root.classList.contains('project-intro-pending') ||
                     root.classList.contains('project-intro-running')
@@ -2233,29 +2273,29 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 if(next)void transitionTo(cards.indexOf(next),direction);
             }
 
-            function cancelSearchFocus(){
-                clearTimeout(searchTimer);
-                searchTimer=0;
-                searchTarget=null;
+            function cancelProjectFocus(){
+                clearTimeout(focusTimer);
+                focusTimer=0;
+                focusTarget=null;
             }
-            function flushSearchFocus(){
-                if(searchTarget===null||searchTimer||disposed||slideview.hidden)return;
+            function flushProjectFocus(){
+                if(focusTarget===null||focusTimer||disposed||slideview.hidden)return;
                 if(phase!=='idle'||window.ProjectViewTransition?.busy
                     ||root.classList.contains('project-intro-pending')
                     ||root.classList.contains('project-intro-running'))return;
-                const next=searchTarget;
-                searchTarget=null;
+                const next=focusTarget;
+                focusTarget=null;
                 if(next!==index&&!cards[next].hidden)void transitionTo(next,next<index?-1:1);
             }
-            function focusSearch(projectId,{immediate=false}={}){
-                cancelSearchFocus();
+            function focusProject(projectId,{immediate=false}={}){
+                cancelProjectFocus();
                 queuedDirection=null;
                 if(projectId===null||disposed||slideview.hidden)return;
                 const next=cards.findIndex(card=>String(card.dataset.projectId)===String(projectId));
                 if(next<0||cards[next].hidden)return;
-                searchTarget=next;
-                if(immediate)flushSearchFocus();
-                else searchTimer=setTimeout(()=>{searchTimer=0;flushSearchFocus();},250);
+                focusTarget=next;
+                if(immediate)flushProjectFocus();
+                else focusTimer=setTimeout(()=>{focusTimer=0;flushProjectFocus();},250);
             }
 // Resolve the real DOM underneath the canvas to the incoming texture's final pose.
 function captureAsciiContent(target, options = {}) {
@@ -2309,7 +2349,7 @@ function settleAsciiContent() {
                 });
                 if(disposed)return;
                 if(slideview.hidden)resumeGridScroll();
-                flushSearchFocus();
+                flushProjectFocus();
                 if(focusedButton){
                     const scope=slideview.hidden?'.title-section':'.project-warp';
                     document.querySelector(`${scope} .view-button:not([hidden])`)?.focus({preventScroll:true});
@@ -2540,7 +2580,7 @@ function settleAsciiContent() {
             markActive(index,true);changeView(returning?.view || 'slide');
             window.ProjectFluidSlide={
                 next:()=>navigate(1),prev:()=>navigate(-1),
-                focusSearch,
+                focusSearch:focusProject,
                 goTo(projectId){const next=cards.findIndex(c=>String(c.dataset.projectId)===String(projectId));if(next>=0)void transitionTo(next,next<index?-1:1);},
                 setOptions(options){Object.assign(settings,options);engine?.setOptions(options);if(engine&&!slideview.hidden)engine.resize();},
                 changeView,

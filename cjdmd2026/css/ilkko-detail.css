@@ -1,0 +1,57 @@
+/* Equal ascent and descent place the middle of a line box at its font baseline. */
+@font-face {
+    font-family: IlkkoText;
+    src: url("../assets/main-intro/fonts/project-detail-kr.woff2") format("woff2");
+    font-weight: 100 900;
+    ascent-override: 50%;
+    descent-override: 50%;
+    line-gap-override: 0%;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: IlkkoMaple;
+    src: url("../assets/images/project/details/ilkko/fonts/Maplestory OTF Light.otf") format("opentype");
+    font-weight: 300;
+    ascent-override: 50%;
+    descent-override: 50%;
+    line-gap-override: 0%;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: IlkkoMaple;
+    src: url("../assets/images/project/details/ilkko/fonts/Maplestory OTF Bold.otf") format("opentype");
+    font-weight: 700;
+    ascent-override: 50%;
+    descent-override: 50%;
+    line-gap-override: 0%;
+    font-display: swap;
+}
+
+.ilkko-art .case-copy {
+    font-family: IlkkoText, Pretendard, sans-serif;
+    transform-origin: top left;
+}
+
+.ilkko-run {
+    position: absolute;
+    display: block;
+    white-space: pre;
+    line-height: 1;
+    transform: translateY(-50%);
+}
+
+.ilkko-maple { font-family: IlkkoMaple, IlkkoText, sans-serif; }
+.ilkko-art a.ilkko-run { text-decoration: underline; }
+
+.ilkko-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
