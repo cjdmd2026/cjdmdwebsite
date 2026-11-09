@@ -1313,6 +1313,11 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                     --project-copy-width:max(30vw,34rem);
                 }
             }
+            @property --project-icon-hover-progress {
+                syntax:'<number>';
+                inherits:true;
+                initial-value:0;
+            }
             .project-icon-rail { display:none; }
             html[data-project-fluid-view="slide"] .project-icon-rail {
                 --project-icon-hover-scale:1.5;
@@ -1342,7 +1347,9 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 overflow:visible;
                 cursor:pointer;
                 pointer-events:auto;
-                opacity:var(--project-icon-opacity,1);
+                /* One hover curve drives brightness and zoom while the slide controls base opacity. */
+                opacity:calc(var(--project-icon-opacity,1) + (1 - var(--project-icon-opacity,1)) * var(--project-icon-hover-progress));
+                transition:--project-icon-hover-progress 480ms ease-in-out;
                 transform-origin:center;
                 will-change:transform,opacity;
             }
@@ -1350,29 +1357,25 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             .project-dial-icon svg { display:block; width:100%; height:100%; }
             .project-dial-icon svg * { animation:none!important; transition:none!important; }
             .project-dial-icon > svg {
-                transform:scale(var(--project-icon-zoom,1));
-                transition:transform 480ms ease-in-out;
+                transform:scale(calc(1 + (var(--project-icon-hover-scale) - 1) * var(--project-icon-hover-progress)));
             }
             .project-icon-rail .project-dial-icon[aria-current="true"] { cursor:default; }
             @media (hover:hover) {
                 .project-icon-rail .project-dial-icon:not([aria-current="true"]):hover {
-                    --project-icon-zoom:var(--project-icon-hover-scale);
+                    --project-icon-hover-progress:1;
                     z-index:1;
-                    opacity:1;
                 }
             }
             .project-icon-rail .project-dial-icon:not([aria-current="true"]):focus-visible {
-                --project-icon-zoom:var(--project-icon-hover-scale);
+                --project-icon-hover-progress:1;
                 z-index:1;
-                opacity:1;
             }
             .project-icon-rail .project-dial-icon:focus-visible {
                 outline:2px solid currentColor;
                 outline-offset:2px;
             }
             @media (prefers-reduced-motion:reduce) {
-                .project-dial-icon > svg { transition:none; }
-                .project-dial-icon > svg { transition:none; }
+                .project-icon-rail .project-dial-icon { transition:none; }
             }
             .project-icon-rail .project-dial-icon.is-icon-loaded {
                 visibility:visible;
