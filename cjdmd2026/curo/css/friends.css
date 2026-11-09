@@ -152,3 +152,11 @@ html.fr-page, .fr-page body { background: #FFFFFF; }
 @keyframes frTap { 0%, 100% { transform: translateY(0) scale(1); } 45% { transform: translateY(6%) scale(0.92); } 60% { transform: translateY(0) scale(1); } }
 @media (prefers-reduced-motion: reduce) { .fr-touch img { animation: none; } }
 @media (max-width: 600px), (max-width: 1024px) and (orientation: portrait) { .fr-touch { width: 58px; height: 58px; margin: -29px 0 0 -29px; } }
+
+/* 349차: 폰 · 세로 태블릿 — 친구를 바꿀 때 '알아보기' 버튼은 사라지지 않고 색만 바뀜 (PC 는 글과 함께 사라졌다 나타남) */
+@media (max-width: 600px), (max-width: 1024px) and (orientation: portrait) {
+  .fr-meet.is-swap .fr-info { opacity: 1; }
+  .fr-info > :not(.fr-cta) { transition: opacity 0.35s ease; }
+  .fr-meet.is-swap .fr-info > :not(.fr-cta) { opacity: 0; }
+  .fr-cta { transition: background-color 0.45s ease, filter 0.2s ease; }
+}

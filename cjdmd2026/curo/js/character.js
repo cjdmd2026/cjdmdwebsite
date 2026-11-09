@@ -169,7 +169,7 @@
   });
 
   // ④ 동화 속 장면
-  $('cp-gallery').innerHTML = SCENE_W.map((w, i) => `<figure style="--w:${w}"><img src="assets/images/friends/scene/${id}-${i + 1}.webp?v=100" alt="" loading="lazy"></figure>`).join('');
+  $('cp-gallery').innerHTML = SCENE_W.map((w, i) => `<figure style="--w:${w}"><img src="assets/images/friends/scene/${id}-${i + 1}.webp?v=352" alt="" loading="lazy"></figure>`).join('');
 
   // ⑤ 다른 친구 (네 친구 모두, 지금 친구는 누르지 않음)
   $('cp-friends').innerHTML = ORDER.map((k) =>
