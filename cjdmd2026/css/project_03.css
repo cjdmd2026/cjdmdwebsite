@@ -1,5 +1,12 @@
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
 
+@font-face {
+    font-family: ExhibitionText;
+    src: url("../assets/main-intro/fonts/project-detail-kr.woff2") format("woff2");
+    font-weight: 100 900;
+    font-display: swap;
+}
+
 /* View switching reveals the full copy together with its depth fade. */
 html.project-view-transitioning[data-project-fluid-view="slide"] :is(
     .project-dial-item.is-active .project-dial-title, .project-info
@@ -938,12 +945,19 @@ body:has(#slideview:not([hidden])) .footer {
     backdrop-filter: blur(11.9px);
     -webkit-backdrop-filter: blur(11.9px);
     cursor: pointer;
-    transition: transform 180ms ease, background-color 180ms ease;
+    transition: transform 180ms ease;
+}
+
+.view-buttons button {
+    transition-property: transform, background-color;
+}
+
+.view-buttons button:hover {
+    background-color: rgba(255, 255, 255, 0.9);
 }
 
 .view-buttons button:hover,
 .slide-detail-link:hover {
-    background-color: rgba(255, 255, 255, 0.9);
     transform: scale(0.95);
 }
 
@@ -1510,7 +1524,25 @@ html[data-project-fluid-view="slide"] .project-warp .search-bar input:focus {
     .container .grid-view .filter::-webkit-scrollbar { display: none; }
     .container .grid-view .filter .filter-indicator,
     .container .grid-view .filter .filter-reset { display: none; }
-    .container .grid-view .filter button { flex: 0 0 auto; min-height: 44px; padding: 6px 14px; scroll-snap-align: center; border: 1px solid #ebebed; border-radius: 999px; background: #fff; color: #6b6b70; opacity: 1; font-size: 13.5px; font-weight: 500; }
+    .container .grid-view .filter button[data-filter] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        min-height: 44px;
+        /* Center the visible letters within the pill's 44px touch target. */
+        padding: 6.5px 14px 5.5px;
+        scroll-snap-align: center;
+        border: 1px solid #ebebed;
+        border-radius: 999px;
+        background: #fff;
+        color: #6b6b70;
+        opacity: 1;
+        font-family: ExhibitionText, "Pretendard Variable", var(--font-main);
+        font-size: 13.5px;
+        font-weight: 500;
+        line-height: 1.3333;
+    }
     .container .grid-view .filter button[aria-pressed="true"] { background: #000; border-color: #000; color: #fff; font-weight: 700; }
 
     .container .grid-view .content { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 10px; padding: 24px var(--mobile-pad) 0; }
