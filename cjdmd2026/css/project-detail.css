@@ -16,7 +16,7 @@ html {
     scroll-behavior: auto;
     scroll-padding-top: calc(var(--case-visible-header) + var(--case-menu-height));
 }
-body{margin:0;color:#202020;background:white;font-family:ExhibitionText,Pretendard,"Malgun Gothic",sans-serif;-webkit-text-size-adjust:100%}
+body{margin:0;color:#202020;background:white;font-family:ExhibitionText,Pretendard,"Malgun Gothic",sans-serif;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 main { padding-top: var(--case-header-height); }
 .header { top: calc(0px - var(--case-header-offset)); }
 .header .container { max-width: calc(100% - 40px); }
@@ -107,8 +107,49 @@ a:focus-visible,summary:focus-visible{outline:3px solid #1959db;outline-offset:4
 .case-tile{position:absolute;left:0;right:0;display:block;pointer-events:none}
 .case-tile img{display:block;width:100%;height:100%;object-fit:fill}
 .case-copy{position:absolute;z-index:1;margin:0;padding:0;border:0;letter-spacing:normal;font-family:ExhibitionText,Pretendard,"Malgun Gothic",sans-serif;font-style:normal;font-weight:400;line-height:1;overflow:visible}
-.case-line{position:absolute;display:block;text-align:left;white-space:pre}
-.case-ink{display:inline-block;white-space:pre;transform:scaleX(var(--fit,1));transform-origin:left center}
+/* Scale each text box and its Figma baselines together, including during font swaps. */
+.case-copy > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    white-space: pre;
+}
+/* The artwork and its lettering share the section's coordinate system. */
+[data-fixed-type] > .case-lettering {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+[data-fixed-type] > .case-copy { z-index: 2; }
+
+/* Keep the text selectable and the source links active over the visible outlines. */
+[data-fixed-type]:not([data-type-fallback]) > .case-copy :is(text, tspan) {
+    fill: transparent !important;
+    stroke: none !important;
+    text-shadow: none;
+    text-decoration: none;
+}
+
+[data-fixed-type] > .case-copy svg ::selection {
+    fill: HighlightText !important;
+    background-color: Highlight;
+}
+
+[data-type-fallback] > .case-lettering { visibility: hidden; }
+
+@supports not (aspect-ratio: 1 / 1) {
+    .case-section::before, .case-source-frame::before {
+        content: "";
+        display: block;
+        padding-top: var(--case-height);
+    }
+}
+
 .case-foot{border-top:1px solid #dedede;background:#fafafa}
 .case-foot nav {
     min-height: 88px;
@@ -120,14 +161,20 @@ a:focus-visible,summary:focus-visible{outline:3px solid #1959db;outline-offset:4
 }
 .case-skip{position:fixed;top:.5rem;left:.5rem;z-index:1001;background:#111;color:white;padding:.65rem;transform:translateY(-150%)}
 .case-skip:focus{transform:none}
-.case-mobile{display:none}
-@media(max-width:999px){
-  .case-pc{display:none}.case-mobile{display:block}.case-menu .case-mobile{display:flex}
-  .case-qr { font-size: .68rem; }
-  .case-menu nav { gap: .9rem; }
+.case-pc, .case-menu .case-pc { display: none; }
+.case-mobile { display: block; }
+.case-menu .case-mobile { display: flex; }
+
+@media (min-width: 1000px) {
+    .case-pc { display: block; }
+    .case-menu .case-pc { display: flex; }
+    .case-mobile, .case-menu .case-mobile { display: none; }
 }
-@media(min-width:1000px){.case-menu .case-mobile{display:none}}
-@media(max-width:999px){.case-menu .case-pc{display:none}}
+
+@media not all and (min-width: 1000px) {
+    .case-qr { font-size: .68rem; }
+    .case-menu nav { gap: .9rem; }
+}
 @media (max-width: 759px) {
     html {
         --case-header-height: var(--mobile-header);

@@ -2,6 +2,14 @@ import { initSiteHeader } from "./main-intro/site-header.js";
 
 initSiteHeader();
 
+// If a lettering file fails to load, show the selectable text in the same boxes.
+for (const image of document.querySelectorAll("[data-fixed-type] > .case-lettering")) {
+    const frame = image.parentElement;
+    image.addEventListener("error", () => frame.setAttribute("data-type-fallback", ""));
+    image.addEventListener("load", () => frame.removeAttribute("data-type-fallback"));
+    if (image.complete && !image.naturalWidth) frame.setAttribute("data-type-fallback", "");
+}
+
 // Count detail pages and section fragments from the page that opened the first work.
 // Keep the count on each entry so Back, Forward and reload preserve the same destination.
 const footer = document.querySelector(".case-foot");
@@ -128,27 +136,3 @@ sectionMenu.addEventListener("click", event => {
     const distance = target.getBoundingClientRect().top - sectionMenu.getBoundingClientRect().bottom;
     if (Math.abs(distance) > 1) setHiddenHeight(distance > 0 ? header.offsetHeight : 0);
 });
-
-// Preserve the original line breaks and widths when a designer's display font is unavailable.
-// The copy itself lives in HTML and remains readable before fonts or JavaScript load.
-(() => {
-    if (document.querySelector("#artwork[data-native-type]")) return;
-    const media = matchMedia("(max-width: 999px)");
-    function fit() {
-        const art = document.querySelector(media.matches ? ".case-art.case-mobile" : ".case-art.case-pc");
-        if (!art) return;
-        const lines = [...art.querySelectorAll(".case-line")];
-        const ratios = lines.map(line => {
-            const ink = line.firstElementChild;
-            const natural = ink.offsetWidth;
-            return natural > 0 ? line.getBoundingClientRect().width / natural : 1;
-        });
-        lines.forEach((line, i) => line.firstElementChild.style.setProperty("--fit", ratios[i].toFixed(4)));
-    }
-    let queued;
-    const schedule = () => { cancelAnimationFrame(queued); queued = requestAnimationFrame(fit); };
-    document.fonts?.ready.then(schedule);
-    window.addEventListener("resize", schedule, { passive: true });
-    media.addEventListener("change", schedule);
-    schedule();
-})();

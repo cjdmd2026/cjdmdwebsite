@@ -1,0 +1,7 @@
+.omix-comment {
+    position: absolute;
+    isolation: isolate;
+    border-radius: 1.041667cqw;
+    background: var(--card-fill, #333);
+    box-shadow: inset 0 0 0 .052083cqw #606060;
+}

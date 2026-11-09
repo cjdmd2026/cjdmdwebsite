@@ -403,14 +403,8 @@
             nameEn.hidden = !designer?.nameEn;
         }
 
-        const defaultStatement = `저에게 졸업전시는 미래에 대한 걱정이 자신감으로 바뀌는 과정이었던 것 같습니다. 너무나도 원했던 전공이었고, 공부하고 싶었던 분야인 만큼 매 순간에 최선을 다하여 임했다고 생각합니다. 앞으로 맞이할 날들 속에서도 디미디 5기 모두가 날개를 펼치고 훨훨 날아다니기를!`;
-
-        const statement = designer
-            ? (
-                typeof designer.sentence === "string"
-                    ? designer.sentence.trim()
-                    : ""
-            ) || defaultStatement
+        const statement = typeof designer?.sentence === "string"
+            ? designer.sentence.trim()
             : "";
 
         if (sentence) {
