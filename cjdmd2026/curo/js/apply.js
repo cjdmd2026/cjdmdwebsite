@@ -332,10 +332,10 @@
   });
   /* 268차: 주소 검색 = 카카오(다음) 우편번호 서비스 (무료 · 키 필요 없음). 처음 누를 때 스크립트를 불러와 패널 위에 검색 창을 띄움.
      고르면 우편번호 · 기본 주소를 채우고 상세 주소 칸으로. 불러오지 못하면 직접 입력 안내 */
-  const POSTCODE_SRC = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+  const POSTCODE_SRC = 'https://t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
   let postLoad = null;
   function loadPostcode() {
-    if (window.daum && window.daum.Postcode) return Promise.resolve();
+    if (window.kakao?.Postcode) return Promise.resolve();
     if (!postLoad) postLoad = new Promise((ok, no) => {
       const sc = document.createElement('script');
       sc.src = POSTCODE_SRC; sc.async = true; sc.onload = ok; sc.onerror = () => { postLoad = null; no(); };
@@ -357,7 +357,7 @@
     loadPostcode().then(() => {
       if (!lay.isConnected) return;
       body.innerHTML = '';
-      new window.daum.Postcode({
+      new window.kakao.Postcode({
         width: '100%', height: '100%',
         oncomplete: (d) => {
           const road = d.userSelectedType !== 'J';

@@ -539,7 +539,7 @@
         // Ease in/out over a longer scroll interval, settling gently at both ends.
         const cueTime = clamp(spread / .4, 0, 1);
         const cueProgress = cueTime * cueTime * cueTime * (cueTime * (6 * cueTime - 15) + 10);
-        const cueOpacity = loaded && viewActive ? 1 - cueProgress : 0;
+        const cueOpacity = loaded && viewActive ? 0.7 * (1 - cueProgress) : 0;
         scrollCue.hidden = cueOpacity <= .001;
         scrollCue.style.opacity = String(cueOpacity);
         scrollCue.style.setProperty('--formation-scroll-offset', (motionReduced ? 0 : 64 * cueProgress) + 'px');

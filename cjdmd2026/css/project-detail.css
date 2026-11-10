@@ -127,6 +127,31 @@ a:focus-visible,summary:focus-visible{outline:3px solid #1959db;outline-offset:4
 
 [data-fixed-type] > .case-copy { z-index: 2; }
 
+/* The original lettering includes the old introduction. Cut out that paragraph
+   so the submitted copy can wrap over the original background. */
+.case-revised-intro > .case-lettering {
+    --intro-right: calc(var(--intro-left) + var(--intro-width));
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%,
+        0 var(--intro-old-bottom), var(--intro-right) var(--intro-old-bottom),
+        var(--intro-right) var(--intro-top), 0 var(--intro-top));
+}
+
+.case-intro-copy {
+    left: var(--intro-left);
+    top: var(--intro-top);
+    width: var(--intro-width);
+    color: #2a2a2a;
+    font-size: 1.04cqw;
+    line-height: 1.2;
+    letter-spacing: -.02em;
+}
+
+.case-mobile .case-intro-copy {
+    font-size: 3.07cqw;
+    line-height: 1.33;
+    letter-spacing: normal;
+}
+
 /* Keep the text selectable and the source links active over the visible outlines. */
 [data-fixed-type]:not([data-type-fallback]) > .case-copy :is(text, tspan) {
     fill: transparent !important;

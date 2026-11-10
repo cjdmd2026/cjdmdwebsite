@@ -14,7 +14,7 @@ window.PROJECTS = [
         id: "phishing-ddook",
         url: "./phishing-ddook/",
         title: "피싱뚝!",
-        gridDescription: "어르신을 위한 보이스피싱 예방 교육입니다. 가족이나 기관을 사칭한 AI와 모의 통화를 하며 대처법을 익힙니다.",
+        gridDescription: "‘피싱 뚝!’은 70대 이상 고령층이 보이스피싱 위험을 직접 체험하고, 스스로 판단해 대응하는 능력을 기르는 예방 교육입니다.",
         members: [
             "남나영",
             "김지유",
@@ -50,7 +50,7 @@ window.PROJECTS = [
         id: "apuchika",
         url: "./apuchika/",
         title: "아푸치카",
-        gridDescription: "아이들이 아푸의 이를 닦아 주며 양치법을 배우는 구강교육입니다. 놀이로 익힌 칫솔질을 AR 안내에 따라 실제 양치로 이어갑니다.",
+        gridDescription: "아푸치카는 유아기 아동이 애니메이션과 교구, AR 가이드로 올바른 양치법을 익히고 실천하도록 돕는 체험형 구강교육 프로젝트다.",
         members: [
             "윤태균",
             "안나경",
@@ -86,7 +86,7 @@ window.PROJECTS = [
         id: "curo",
         url: "./curo/",
         title: "CURO",
-        gridDescription: "1형 당뇨가 있는 아이의 첫 인슐린 자가 주사를 돕습니다. 30일 동안 수호대 친구들과 연습 벨트로 주사 놓는 법을 익힙니다.",
+        gridDescription: "1형 당뇨가 있는 아이의 첫 인슐린 자가 주사를 돕습니다. 수호대 친구들과 30일간 주사에 친숙해지고 연습 벨트로 실전을 준비합니다.",
         members: [
             "주보민",
             "유혜진",
@@ -94,24 +94,24 @@ window.PROJECTS = [
         ],
         category: "건강",
         topic: "당뇨 환자를 위한 바늘 친숙화 서비스",
-        description: "CURO는 자가 주사를 시작하는 1형 당뇨 환아를 돕는 30일 렌탈형 교육 서비스입니다. 수호대 캐릭터와 함께하는 4단계 교육 과정을 통해 아이는 주사에 친숙해지는 것부터 스스로 주사하는 단계까지 차근차근 나아갑니다. CURO는 주사를 처음 마주하는 아이와 어떻게 도와야 할지 고민하는 부모에게, 두려움에서 익숙함으로 나아가는 첫 한 달의 경험을 제공합니다.",
+        description: "CURO는 인슐린 자가 주사를 시작하는 1형 당뇨 환아를 돕는 30일 렌탈형 교육 서비스입니다. 수호대 캐릭터와 함께하는 4단계 교육 과정을 통해 아이는 주사에 친숙해지는 것부터 스스로 주사하는 단계까지 차근차근 나아갑니다. CURO는 주사를 처음 마주하는 아이와 어떻게 도와야 할지 고민하는 부모에게, 두려움에서 익숙함으로 나아가는 첫 한 달의 경험을 제공합니다.",
         image: "../assets/images/project/submissions/curo/portrait.webp?v=db4bc2e925bb",
         slideImage: "../assets/images/project/submissions/curo/landscape.webp?v=3f2bd4f81605",
         slideOrder: 3,
         courseCards: {
             interactive: {
-                title: "연습을 실전으로 연결하는 IoT 자가주사 교육 시스템",
-                description: "CURO는 주사 연습 벨트와 태블릿 앱을 연동해 아이가 인슐린 자가주사를 직접 체험하며 익힐 수 있도록 설계한 교육 시스템입니다. 주사 위치와 유지 시간에 따른 캐릭터의 피드백으로 올바른 주사 방법을 익히고, 다양한 미션과 보상, 일지와 편지 등의 콘텐츠를 통해 반복되는 교육에도 즐겁게 참여할 수 있습니다.",
+                title: "주사 연습 벨트로 배우는 올바른 자가주사",
+                description: "주사 연습 벨트와 태블릿 앱을 연동해 아이가 자신의 몸을 기준으로 주사 동작을 연습하도록 돕는 교육 시스템입니다. 주사 위치와 유지 시간에 따른 캐릭터의 피드백으로 올바른 주사 방법을 익히고, 다양한 미션과 보상, 일지와 편지 등의 콘텐츠를 통해 반복되는 교육에도 즐겁게 참여할 수 있습니다.",
                 image: "../assets/images/project/submissions/curo/interactive.webp?v=01321c239e50"
             },
             service: {
-                title: "동화 속 친구들과 함께하는 첫 주사 교육",
+                title: "동화 속 친구들과 함께하는 첫 자가주사 교육",
                 description: "CURO는 자가주사를 처음 시작하는 아이가 주사에 대한 두려움을 덜고 자연스럽게 익숙해질 수 있도록 설계한 교육 서비스입니다. 수호대 캐릭터와 동화책을 통해 주사를 친근하게 접하고, 놀이처럼 시작한 경험을 주사 캡과 인형, 연습 벨트를 활용한 단계별 교육으로 연결해 스스로 주사하는 과정에 차근차근 적응하도록 돕습니다.",
                 image: "../assets/images/project/submissions/curo/service.webp?v=d277296ff6b2"
             },
             interface: {
                 title: "아이의 건강을 살피고, 배움의 과정을 잇다",
-                description: "CURO는 아이의 자가주사 교육과 건강 관리를 지원하는 보호자용 앱과 렌탈 안내 웹사이트로 구성됩니다. 앱에서는 혈당 정보와 주사 연습 결과, 교육 진행 상황을 확인하며 아이의 학습을 지원할 수 있습니다. 웹사이트에서는 교육 과정과 키트의 구성 및 사용법을 알아보고, 동화 애니메이션과 캐릭터 콘텐츠를 경험하며 렌탈을 신청할 수 있습니다.",
+                description: "보호자가 아이의 건강과 주사 교육 과정을 함께 살필 수 있도록 앱과 웹사이트를 제공합니다. 보호자 앱에서는 혈당 정보와 주사 연습 결과, 학습 진행 상황을 확인할 수 있습니다. 웹사이트에서는 교육 프로그램과 키트 구성을 살펴보고 렌탈을 신청할 수 있으며, 동화 콘텐츠를 통해 아이의 학습 경험도 이어갑니다.",
                 image: "../assets/images/project/submissions/curo/interface.webp?v=6e521df2ac68"
             }
         },
@@ -191,7 +191,7 @@ window.PROJECTS = [
         id: "dadeullim",
         url: "./dadeullim/",
         title: "다들림",
-        gridDescription: "청각장애 운전자에게 도로 위 위험을 알려주는 차량 인터페이스입니다. 화면의 빛과 운전대의 진동으로 위험의 방향과 거리를 전합니다.",
+        gridDescription: "청각장애 운전자를 위한 실시간 주행 정보 서비스입니다. HUD와 디스플레이의 빛, 핸들의 진동으로 위험의 방향과 거리를 알려줍니다.",
         members: [
             "윤지원",
             "김도연",
@@ -199,24 +199,24 @@ window.PROJECTS = [
         ],
         category: "복지",
         topic: "청각장애인을 위한 운전 보조 서비스",
-        description: "다들림은 청각장애인의 안전하고 편안한 주행경험을 위한 차량 인터페이스 서비스이다. 본 프로젝트는 운전 중 청각으로 인지하기 어려운 정보를 시각, 촉각 정보로 전환하여 디스플레이와 HUD, 햅틱을 통해 직관적으로 전달하도록 설계하였다.",
+        description: "다들림은 청각장애 운전자의 안전하고 편안한 주행을 위한 차량 인터페이스 서비스입니다. 사이렌과 경적처럼 소리로만 전해지던 도로 위 위험을 시각과 촉각 정보로 바꾸어, 차량 디스플레이와 HUD, 핸들의 진동으로 위험의 방향과 거리를 직관적으로 전달합니다.",
         image: "../assets/images/project/submissions/dadeullim/portrait.webp?v=ed47fe59eef4",
         slideImage: "../assets/images/project/submissions/dadeullim/landscape.webp?v=51ccbdb0fbfe",
         slideOrder: 6,
         courseCards: {
             interactive: {
-                title: "소리 대신 진동과 빛으로 도로 위 위험을 전하는 1인칭 주행 체험",
-                description: "다들림 주행 체험은 청각장애인 운전자의 시선으로 소리 없는 도심을 111초간 달리는 1인칭 체험이다 신호 위반 차량, 오토바이, 정지 차량, 구급차가 나타나면 HUD·차량 디스플레이·햅틱 핸들이 위험의 종류와 거리, 방향을 빛과 진동으로 전달해 눈과 손으로 도로를 읽게 한다.",
+                title: "다들림 주행체험",
+                description: "청각장애 운전자의 시점에서 소리 없는 도로를 달리는 1인칭 주행 체험입니다. 위험이 나타나면 핸들의 좌우 진동과 HUD·차량 디스플레이의 빛이 소리 대신 위험의 방향을 알려줍니다.",
                 image: "../assets/images/project/submissions/dadeullim/interactive.webp?v=a223a114431e"
             },
             service: {
-                title: "청각장애인을 위한 실시간 주행 정보 차량 서비스",
-                description: "다들림은 청각장애인 운전자가 도로 위의 소리를 시각과 촉각으로 인지할 수 있도록 설계한 내비게이션 서비스이다. 긴급차량, 경적, 후방 접근 등 주행 중 발생하는 소리와 위험의 방향을 디스플레이, HUD, 스티어링 휠 진동으로 전달한다. 도로를 이해하는 방법은 하나일 필요가 없다.",
+                title: "다들림 주행 디스플레이",
+                description: "도로의 소리 정보를 시각화해 보여 주는 차량 디스플레이와 HUD입니다. 감지된 위험의 종류와 방향, 거리를 화면에 직관적으로 표시해, 운전자가 시선을 유지한 채 상황을 빠르게 파악하도록 돕습니다.",
                 image: "../assets/images/project/submissions/dadeullim/service.webp?v=2fdac4923f25"
             },
             interface: {
-                title: "소리를 넘어, 모두가 함께하는 주행 경험 웹사이트",
-                description: "청각장애인의 안전한 이동을 위해 소리를 시각과 진동으로 전환하는 모빌리티 브랜드 다들림의 웹사이트이다. 브랜드 아이덴티티와 서비스 경험을 중심으로 정보를 구성하고, 직관적인 인터랙션과 감각적인 비주얼을 적용하였다.",
+                title: "다들림 브랜드 웹사이트",
+                description: "청각장애인의 안전한 이동을 위해 소리를 시각과 촉각으로 전환하는 모빌리티 브랜드 다들림의 웹사이트입니다. 마우스와 스크롤에 반응하며 로고로 모이는 선의 움직임으로 브랜드의 메시지를 전합니다.",
                 image: "../assets/images/project/submissions/dadeullim/interface.webp?v=7c7d9cdfa530"
             }
         },
@@ -226,7 +226,7 @@ window.PROJECTS = [
         id: "omix",
         url: "./omix/",
         title: "OMIX",
-        gridDescription: "불교의 소리와 클럽 비트를 섞어 나만의 곡을 만드는 DJ 체험입니다. 108초의 연주가 끝나면 내 무대를 영상으로 간직할 수 있습니다.",
+        gridDescription: "전통 불교의 소리와 현대적인 비트를 결합한 새로운 DJ 체험입니다. 108초 동안 나만의 음악을 만들고, 완성된 결과를 기록하고 공유합니다.",
         members: [
             "노민영",
             "함대연",
@@ -246,7 +246,7 @@ window.PROJECTS = [
                 imageFit: "cover"
             },
             service: {
-                title: "OMIX | 체험을 넘어 이어지는 오프라인 서비스디자인",
+                title: "OMIX | 일상으로 이어지는 불교문화 경험",
                 description: "불교와 음악을 결합한 전시 경험을 굿즈와 오프라인 공간으로 확장한 서비스 디자인 프로젝트입니다. 관람객은 OMIX의 상징과 그래픽을 담은 의류, 키링, 스티커 등 다양한 굿즈를 직접 만나고 선택하며 브랜드를 경험합니다. 전시에서 느낀 감각을 실물로 소장하고 일상에서 사용함으로써, 일회성 체험이 지속적인 문화 경험으로 이어지도록 합니다.",
                 image: "../assets/images/project/submissions/omix/service.webp?v=6b080863246a",
                 imageFit: "cover"
@@ -264,7 +264,7 @@ window.PROJECTS = [
         id: "year-on",
         url: "./year-on/",
         title: "YEAR-ON",
-        gridDescription: "김홍도의 풍속화를 손짓으로 탐색하는 미디어아트입니다. 손끝으로 그림 속 인물을 이으면 이들이 나누는 이야기가 들려옵니다.",
+        gridDescription: "김홍도의 풍속화를 손짓으로 탐색하는 미디어아트입니다.\n손끝으로 그림 속 인물을 이으면 이들이 나누는 이야기가 들려옵니다.",
         members: [
             "민지호",
             "권민성"
@@ -366,7 +366,7 @@ window.PROJECTS = [
         id: "cocorang",
         url: "./cocorang/",
         title: "COCO LANG",
-        gridDescription: "반려견 보호자를 위한 동네 산책 매칭 서비스입니다. 지도에서 우리 강아지와 성향이 맞는 친구를 찾고 함께한 산책을 기록합니다.",
+        gridDescription: "COCO LANG은 반려견의 성향과 보호자의 교류 의사를 바탕으로 산책 친구를 연결하고, 일상 속 만남이 동네 이웃과의 관계로 이어지도록 돕는 서비스입니다.",
         members: [
             "김지유",
             "김지윤"
@@ -400,7 +400,7 @@ window.PROJECTS = [
         id: "magmoa",
         url: "./magmoa/",
         title: "마그모아",
-        gridDescription: "여행지에서 미니게임을 하며 그 지역의 디지털 마그넷을 모읍니다. 마그넷에 사진과 메모를 더하면 나만의 여행 지도가 완성됩니다.",
+        gridDescription: "마그모아는 여행지에서 디지털 마그넷을 수집하는 위치 기반 여행 기록 서비스다. 나만의 지도를 완성하고 추억을 공유하며 실물 굿즈로도 간직한다.",
         members: [
             "송유진",
             "손예진"
@@ -434,7 +434,7 @@ window.PROJECTS = [
         id: "efact",
         url: "./efact/",
         title: "E.FACT",
-        gridDescription: "청주의 소각시설 밀집 문제를 다룬 탐험 게임입니다. 오염된 미래의 청주를 걸으며 사라진 기억과 환경 변화의 흔적을 모읍니다.",
+        gridDescription: "E.FACT는 청주 소각장 과밀집 문제를 게임과 웹사이트로 알리고, 시민 참여형 인터랙션을 통해 환경 문제에 대한 관심과 연대를 이끌어내는 프로젝트입니다.",
         members: [
             "고비주",
             "김혜진"
@@ -469,7 +469,7 @@ window.PROJECTS = [
         id: "28",
         url: "./28/",
         title: "별운관",
-        gridDescription: "동아시아 전통 별자리인 28수를 만나는 디지털 운세소입니다. 생년월일을 입력하고 카드를 고르면 점술가가 내 별의 운세를 들려줍니다.",
+        gridDescription: "동아시아 전통 별자리 28수로 보는 디지털 운세소입니다. 생년월일을 입력하고 카드를 고르면 점술가가 별의 운세를 들려줍니다.",
         members: [
             "박윤지",
             "주예진"
