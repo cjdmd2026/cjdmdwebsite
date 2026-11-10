@@ -747,6 +747,10 @@ img {
     filter: var(--logo-shadow);
 }
 
+.hero-logo[data-project-id="curo"] {
+    width: 420px;
+}
+
 .hero-logo:is([data-project-id="cheoma"], [data-project-id="omix"]) {
     filter: brightness(0) invert(1) var(--logo-shadow);
 }

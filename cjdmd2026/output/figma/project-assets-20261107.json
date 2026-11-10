@@ -414,11 +414,11 @@
     "output": "assets/images/project/submissions/curo/logo.svg",
     "source": "output/figma/project-source/curo-logo-isolated.svg",
     "sourceFormat": "svg",
-    "sizeBytes": 7086,
+    "sizeBytes": 10049,
     "isolated": true,
     "dimensions": null,
-    "optimizedBytes": 7086,
-    "contentHash": "ad2df2738aed"
+    "optimizedBytes": 10049,
+    "contentHash": "7b74b324ea8f"
   },
   {
     "projectId": "stylens",

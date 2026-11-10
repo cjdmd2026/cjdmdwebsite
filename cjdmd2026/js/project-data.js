@@ -115,7 +115,7 @@ window.PROJECTS = [
                 image: "../assets/images/project/submissions/curo/interface.webp?v=6e521df2ac68"
             }
         },
-        logo: "../assets/images/project/submissions/curo/logo.svg?v=ad2df2738aed"
+        logo: "../assets/images/project/submissions/curo/logo.svg?v=7b74b324ea8f"
     },
     {
         id: "stylens",
@@ -130,7 +130,7 @@ window.PROJECTS = [
         topic: "시각장애인을 위한 스타일링 서비스",
         description: "저시력자 사용자를 위한 스마트미러 ‘STYLENS’는 시각적 정보 부족으로 의상 선택에 겪는 어려움을 해결합니다. 초음파 거리 감지 센서가 탑재된 발판을 통해 스마트미러 앞에 다가서면 시스템이 자동으로 켜집니다. 시각적 정보가 부족한 이들이 음성 명령만으로 옷을 인식하고, 직접 남긴 ‘질감 메모'와 맞춤형 코디 추천을 다정한 음성으로 안내받으며 독립적인 옷장 관리를 할 수 있는 스마트미러 서비스입니다.",
         image: "../assets/images/project/submissions/stylens/portrait.webp?v=cbd1cb920e4a",
-        slideImage: "../assets/images/project/submissions/stylens/landscape.webp?v=e2a404da47e6",
+        slideImage: "../assets/images/project/submissions/stylens/landscape.webp?v=fec7098e98e2",
         slideOrder: 4,
         courseCards: {
             interactive: {
