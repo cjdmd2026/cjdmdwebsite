@@ -4,16 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>유연한 결합: 청주대학교 디지털미디어디자인</title>
-    <link rel="stylesheet" href="../css/archive_02.css?v=20261106-poster-hover">
+    <link rel="stylesheet" href="../css/archive_02.css?v=20261111-logo-assembly">
     <link rel="stylesheet" href="../css/archive-mobile.css?v=20261101-mobile-clean-2">
     <link rel="stylesheet" href="../css/header-logo.css?v=20261024-1">
     <script>
+        if (location.protocol.startsWith('http') && matchMedia('screen and (min-width: 760px) and (prefers-reduced-motion: no-preference)').matches) {
+            document.documentElement.classList.add('archive-logo-enter');
+        }
         if (sessionStorage.getItem('stamp-page-transition') === '1') {
             document.documentElement.classList.add('page-transition-preload');
         }
     </script>
 
     <!-- Scripts:S -->
+    <script src="../js/archive-logo.js" defer onerror="document.documentElement.classList.remove('archive-logo-enter')"></script>
     <!--<script src="../js/stamp-effect-transition.js" defer></script> -->
     <script src="../js/typewriter-effect.js" defer></script>
     <script src="../js/archive-data.js?v=20261101-1" defer></script>
@@ -89,7 +93,7 @@
                 <div class="card">
 
                     <h1 class="title">
-                        <img src="../assets/images/archive/archive_title.svg" alt="유연한 결합">
+                        <img src="../assets/images/archive/logo-length.svg?v=c93b2f8709a5" alt="유연한 결합">
                     </h1>
 
                     <div class="explanation">
@@ -207,7 +211,7 @@
 
                             <div class="history-item">
                                 <div
-                                    class="history-card"
+                                    class="history-card history-card--unavailable"
                                     data-title="유연한 결합"
                                     data-description="
                                         우리는 각자만의 고유한 매력을 지닌 다채로운 개성들의 집합이다.

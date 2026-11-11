@@ -301,7 +301,7 @@ img {
     position: absolute;
     top: var(--hero-title-top);
     left: 50%;
-    width: min(21.6rem, 38.4vh, 100%);
+    width: min(17.44rem, 31vh, 80.75%);
     transform: translateX(-50%);
 }
 
@@ -309,6 +309,23 @@ img {
     display: block;
     width: 100%;
     height: auto;
+}
+
+@media screen and (min-width: 760px) and (prefers-reduced-motion: no-preference) {
+    .archive-logo-enter .hero .title img { opacity: 0; }
+    :is(.page-transition-preload, .page-transition-pending, .page-transition-active) .archive-logo-assembly {
+        --archive-logo-play-state: paused;
+    }
+}
+
+.archive-logo-assembly {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+@media print, (prefers-reduced-motion: reduce) {
+    .archive-logo-assembly { display: none; }
 }
 
 
@@ -566,7 +583,7 @@ img {
     opacity: 1;
 }
 
-/* Keep the ON poster still while its year and title retain their emphasis. */
+/* Posters without a website emphasize only their year and title. */
 .history .card-wrap .history-item:has(.history-card--unavailable) {
     scale: 1;
 }
@@ -575,7 +592,7 @@ img {
     opacity: 0;
 }
 
-/* All exhibitions except ON dim neighboring posters. */
+/* Only linked exhibitions dim neighboring posters. */
 .history .card-wrap:has(.history-item:is(:hover, :focus-within) .history-card:not(.history-card--unavailable))
 .history-item:not(:hover, :focus-within) :is(.history-card, .history-meta) {
     opacity: 0.4;
