@@ -97,7 +97,7 @@
 
     /* archive page layout */
     --hero-height: 200vh;
-    --hero-title-top: 35vh;
+    --hero-title-top: 50vh;
     --explanation-sticky-top: 60vh;
     --explanation-gap: 2rem;
     --history-start: 100vh;
@@ -301,8 +301,8 @@ img {
     position: absolute;
     top: var(--hero-title-top);
     left: 50%;
-    width: min(17.44rem, 31vh, 80.75%);
-    transform: translateX(-50%);
+    width: min(36.9140625rem, 65.390625vh, 63.0859375%);
+    transform: translate(-50%, -50%);
 }
 
 .hero .title img {
@@ -344,8 +344,8 @@ img {
     gap: var(--explanation-gap);
 
 
-    padding-left: 9rem;
-    padding-top: 4rem;
+    padding-left: 0;
+    padding-top: 3rem;
     margin: 0;
 
     color: #111;
@@ -354,7 +354,7 @@ img {
 
     opacity: var(--explanation-opacity, 1);
 
-    transition: padding-left 1s;
+    transition: padding-top 1.5s cubic-bezier(.25, .1, .25, 1);
 
     will-change:
         transform,
@@ -404,6 +404,8 @@ img {
 
     padding-left: 0;
     padding-top: 5rem;
+    transition-duration: 2.4s;
+    transition-timing-function: cubic-bezier(.42, 0, .58, 1);
 }
 
 .hero .explanation.is-history-section .history-title-mask h2 {
@@ -683,10 +685,10 @@ img {
     display: none;
 }
 
-/* 첫 화면의 기존 정렬 유지 */
+/* 첫 화면의 학교명과 소개글을 로고 중심에 맞춤 */
 .hero .explanation.has-students:not(.is-history-section) {
     display: flex;
-    padding-left: 9rem;
+    padding-left: 0;
 }
 
 @media (max-width: 900px) {
@@ -744,18 +746,21 @@ img {
     overflow: hidden;
 
     opacity: 0;
-    transform: translate3d(0, 70px, 0);
+    transform: translate3d(0, 70px, 0) scale(.9);
+    filter: blur(10px);
 
     transition:
-        opacity 0.9s ease var(--reveal-delay, 0ms),
-        transform 0.9s cubic-bezier(.22, 1, .36, 1) var(--reveal-delay, 0ms);
+        opacity .8s cubic-bezier(.25, .1, .25, 1) var(--reveal-delay, 0ms),
+        transform .8s cubic-bezier(.25, .1, .25, 1) var(--reveal-delay, 0ms),
+        filter .8s cubic-bezier(.25, .1, .25, 1) var(--reveal-delay, 0ms);
 
     will-change: transform, opacity;
 }
 
 .archive-box.is-visible {
     opacity: 1;
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
 }
 
 .archive-box h4 {
@@ -1004,11 +1009,14 @@ img {
 
 
 @media (prefers-reduced-motion: reduce) {
+    .hero .explanation { transition: none; }
+
     .archive-box,
     .history .card-wrap .history-item,
     .history .card-wrap .history-card {
         opacity: 1;
         transform: none;
+        filter: none;
         transition: none;
     }
 

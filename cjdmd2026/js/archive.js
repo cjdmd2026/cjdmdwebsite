@@ -404,13 +404,13 @@ function initHistoryExplanation() {
         animations.clear();
     }
 
-    function animate(element, keyframes, delay = 0) {
+    function animate(element, keyframes, delay = 0, duration = 420, easing = 'cubic-bezier(.18, .76, .22, 1)') {
         // The underlying DOM already contains the final state. Cancellation reveals
         // the latest content immediately, including when reduced motion is enabled.
         const animation = element.animate(keyframes, {
-            duration: 420,
+            duration,
             delay,
-            easing: 'cubic-bezier(.18, .76, .22, 1)',
+            easing,
             fill: 'backwards'
         });
         animations.add(animation);
@@ -440,6 +440,15 @@ function initHistoryExplanation() {
 
     function showContent(next, motion = true) {
         if (current && Object.keys(next).every(key => current[key] === next[key])) return;
+        const canAnimate = motion && !reducedMotion.matches && archiveDesktop.matches && !document.hidden;
+        const layoutDuration = current && current.history !== next.history
+            ? (next.history ? 2000 : 1500) : 1100;
+        // Capture the visible positions before cancelling an interrupted transition.
+        // Move the wrappers horizontally between the intro and history layouts.
+        // CSS owns vertical movement so card changes cannot restart or shorten it.
+        const previousPositions = canAnimate ? [titleMask, description].map(element => ({
+            element, rect: element.getBoundingClientRect()
+        })) : [];
         cancelAnimations();
         const yearChanged = !current || current.year !== next.year;
         explanation.classList.toggle('is-history-section', next.history);
@@ -447,7 +456,17 @@ function initHistoryExplanation() {
         const lines = renderDescription(next.description);
         if (yearChanged) renderStudents(studentList, next.year);
         current = next;
-        if (!motion || reducedMotion.matches || !archiveDesktop.matches || document.hidden) return;
+        if (!canAnimate) return;
+
+        previousPositions.forEach(({ element, rect }) => {
+            const nextRect = element.getBoundingClientRect();
+            const x = rect.left - nextRect.left;
+            if (Math.abs(x) < .5) return;
+            animate(element, [
+                { transform: `translate3d(${x}px, 0, 0)` },
+                { transform: 'translate3d(0, 0, 0)' }
+            ], 0, layoutDuration, 'cubic-bezier(.25, .1, .25, 1)');
+        });
 
         // Restart a short entrance for the newest selection instead of queuing
         // another leave/enter sequence behind an obsolete card.
@@ -491,8 +510,20 @@ function initHistoryExplanation() {
         });
     });
 
-    const observer = new IntersectionObserver(entries => {
-        const active = entries[0].isIntersecting && archiveDesktop.matches;
+    let historyFrame = 0;
+    let previousScrollY = window.scrollY;
+    let scrollDirection = 1;
+    function updateHistorySection() {
+        historyFrame = 0;
+        const y = window.scrollY;
+        if (y !== previousScrollY) scrollDirection = Math.sign(y - previousScrollY);
+        previousScrollY = y;
+        const rect = cardWrap.getBoundingClientRect();
+        // Enter before the posters arrive; return before they fully leave.
+        // Keep the last scroll direction while stationary to avoid toggling
+        // between the two trigger points during layout/viewport changes.
+        const boundary = window.innerHeight * (scrollDirection < 0 ? .9 : 1.18);
+        const active = archiveDesktop.matches && rect.bottom > 0 && rect.top < boundary;
         if (active === historyActive) return;
         historyActive = active;
         if (active) {
@@ -502,8 +533,14 @@ function initHistoryExplanation() {
             pointerCard = focusedCard = null;
             showContent(defaultContent);
         }
-    }, { threshold: 0.2 });
-    observer.observe(cardWrap);
+    }
+    function scheduleHistorySection() {
+        if (!historyFrame) historyFrame = requestAnimationFrame(updateHistorySection);
+    }
+    scheduleHistorySection();
+    window.addEventListener('scroll', scheduleHistorySection, { passive: true });
+    window.addEventListener('resize', scheduleHistorySection);
+    window.addEventListener('pageshow', scheduleHistorySection);
     reducedMotion.addEventListener('change', cancelAnimations);
     archiveDesktop.addEventListener('change', () => {
         if (archiveDesktop.matches) return;
@@ -527,13 +564,13 @@ function initHistoryExplanation() {
 function initTwoStepScroll() {
 
     /* =====================================================
-       0 → 100vh → 200vh
+       Hero → History → Archive
 
        0vh   : Hero
        100vh : History
-       200vh : Archive 시작
+       Archive: 사진 위에 화면 높이의 10% 여백을 남기는 위치
 
-       두 번의 100vh 이동 후 일반 Lenis 스크롤로 전환.
+       두 번의 단계 이동 후 일반 Lenis 스크롤로 전환.
     ===================================================== */
 
     const STEP_COUNT =
@@ -548,9 +585,16 @@ function initTwoStepScroll() {
     const POSITION_TOLERANCE =
         10;
 
+    const archive = document.querySelector('.archive-wrap');
+
 
     let isAnimating =
         false;
+
+    let cancelFallbackScroll = null;
+    const stopFallbackScroll = () => cancelFallbackScroll?.();
+    window.addEventListener('pagehide', stopFallbackScroll);
+    archiveReducedMotion.addEventListener('change', stopFallbackScroll);
 
 
     /* =====================================================
@@ -582,7 +626,10 @@ function initTwoStepScroll() {
     function getStepY(
         step
     ) {
-
+        if (step === STEP_COUNT && archive) {
+            const archiveTop = archive.getBoundingClientRect().top + window.scrollY;
+            return Math.max(getViewportHeight(), archiveTop - getViewportHeight() * .1);
+        }
         return (
             getViewportHeight() *
             step
@@ -601,22 +648,16 @@ function initTwoStepScroll() {
 
 
     function getNearestStep() {
-
-        const vh =
-            getViewportHeight();
-
-
-        return Math.max(
-            0,
-            Math.min(
-                STEP_COUNT,
-                Math.round(
-                    window.scrollY /
-                    vh
-                )
-            )
-        );
-
+        let nearest = 0;
+        let distance = Infinity;
+        for (let step = 0; step <= STEP_COUNT; step++) {
+            const nextDistance = Math.abs(window.scrollY - getStepY(step));
+            if (nextDistance < distance) {
+                nearest = step;
+                distance = nextDistance;
+            }
+        }
+        return nearest;
     }
 
 
@@ -643,6 +684,10 @@ function initTwoStepScroll() {
                 safeStep
             );
 
+        const enteringPhotos = safeStep === STEP_COUNT && target > window.scrollY;
+        const duration = enteringPhotos ? 1.6 : STEP_DURATION;
+        const easing = t => 1 - Math.pow(1 - t, 4);
+
 
         isAnimating =
             true;
@@ -664,6 +709,8 @@ function initTwoStepScroll() {
             completed =
                 true;
 
+            cancelFallbackScroll = null;
+
             isAnimating =
                 false;
 
@@ -678,16 +725,9 @@ function initTwoStepScroll() {
                 target,
                 {
 
-                    duration:
-                        STEP_DURATION,
+                    duration,
 
-                    easing:
-                        t =>
-                            1 -
-                            Math.pow(
-                                1 - t,
-                                4
-                            ),
+                    easing,
 
                     lock:
                         true,
@@ -704,7 +744,7 @@ function initTwoStepScroll() {
 
             setTimeout(
                 finish,
-                STEP_DURATION *
+                duration *
                 1000 +
                 200
             );
@@ -714,23 +754,25 @@ function initTwoStepScroll() {
 
         }
 
-
-        window.scrollTo(
-            {
-                top:
-                    target,
-
-                behavior:
-                    "smooth"
-            }
-        );
-
-
-        setTimeout(
-            finish,
-            STEP_DURATION *
-            1000
-        );
+        // Use the same timing and easing for every step without Lenis, too.
+        // Native smooth scrolling would choose a different motion curve.
+        const startY = window.scrollY;
+        const started = performance.now();
+        let frame = 0;
+        function tick(now) {
+            const progress = Math.max(0, Math.min(1, (now - started) / (duration * 1000)));
+            window.scrollTo({
+                top: startY + (target - startY) * easing(progress),
+                behavior: 'instant'
+            });
+            if (progress < 1) frame = requestAnimationFrame(tick);
+            else finish();
+        }
+        cancelFallbackScroll = () => {
+            cancelAnimationFrame(frame);
+            finish();
+        };
+        frame = requestAnimationFrame(tick);
 
     }
 
@@ -791,7 +833,7 @@ function initTwoStepScroll() {
         ) {
 
             /*
-             * 이미 200vh 지점을 넘었다면
+             * 이미 사진 도착 지점을 넘었다면
              * 여기부터는 기존 Lenis 일반 스크롤.
              */
             if (
@@ -806,7 +848,7 @@ function initTwoStepScroll() {
 
 
             /*
-             * 0 → 100vh → 200vh
+             * Hero → History → Archive
              */
             event.preventDefault();
 
@@ -829,7 +871,7 @@ function initTwoStepScroll() {
         /* =================================================
            위 방향
            아래에서 다시 올라왔을 때도
-           200vh → 100vh → 0 으로 대칭 이동
+           Archive → History → Hero 순서로 대칭 이동
         ================================================= */
 
         if (
@@ -837,7 +879,7 @@ function initTwoStepScroll() {
         ) {
 
             /*
-             * 200vh보다 훨씬 아래에 있을 때는
+             * 사진 도착 지점보다 훨씬 아래에 있을 때는
              * 일반 스크롤로 먼저 올라옴.
              */
             if (
@@ -852,8 +894,8 @@ function initTwoStepScroll() {
 
 
             /*
-             * 상단 0~200vh 구간에 들어오면
-             * 다시 100vh 단위로 이동.
+             * 사진 도착 지점 위로 들어오면
+             * 다시 단계별 위치로 이동.
              */
             if (
                 currentY >
@@ -896,10 +938,11 @@ function initTwoStepScroll() {
     window.addEventListener(
         "resize",
         () => {
+            stopFallbackScroll();
             if (!archiveDesktop.matches || archiveReducedMotion.matches) return;
 
             /*
-             * 현재 0~200vh 구간 안에 있을 때만
+             * 현재 단계 이동 구간 안에 있을 때만
              * viewport 높이 변경에 맞춰
              * 가장 가까운 단계로 위치 보정.
              */

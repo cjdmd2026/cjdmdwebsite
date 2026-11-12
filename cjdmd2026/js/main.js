@@ -355,7 +355,8 @@
             });
         }
 
-        // 사이에 있는 부서를 거치지 않고, 지금 사진 → 고른 사진으로만 바로 슬라이드
+        // 메인(index)은 흰 아이콘 매트릭스로, 다른 시안은 기존 가로 슬라이드로 전환합니다.
+        const iconTransition = window.CommitteeIconTransition?.create({ container: slider, fragments: FRAGMENTS });
         const slides = [...track.children];
         let shown = -1;
         // 두 사진을 한 덩어리(track)로 함께 움직여 경계에 틈(선)이 생기지 않게 함
@@ -374,6 +375,13 @@
         function slideTo(next, dir) {
             const cur = slides[shown];
             const tgt = slides[next];
+            if (iconTransition) {
+                void iconTransition.transition(cur?.querySelector("img"), tgt.querySelector("img"), () => {
+                    shown = next;
+                    settle();
+                });
+                return;
+            }
             settle();
             if (!cur || cur === tgt || reducedMotion.matches) {
                 shown = next;

@@ -1,0 +1,418 @@
+[
+  {
+    "width": 1920,
+    "height": 1080,
+    "posterUnchanged": true,
+    "title": {
+      "x": 969,
+      "y": 408.640625,
+      "width": 768,
+      "height": 58,
+      "bottom": 466.640625,
+      "fontSize": "48px",
+      "fontWeight": "700",
+      "lineHeight": "normal",
+      "marginBottom": "8px"
+    },
+    "subtitle": {
+      "x": 969,
+      "y": 474.640625,
+      "width": 768,
+      "height": 29,
+      "bottom": 503.640625,
+      "fontSize": "24px",
+      "fontWeight": "500",
+      "lineHeight": "normal",
+      "marginBottom": "24px"
+    },
+    "description": {
+      "x": 969,
+      "y": 527.640625,
+      "width": 768,
+      "height": 76.78125,
+      "bottom": 604.421875,
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "25.6px",
+      "marginBottom": "96px"
+    },
+    "button": {
+      "x": 969,
+      "y": 700.421875,
+      "width": 120.953125,
+      "height": 49.90625,
+      "bottom": 750.328125,
+      "fontSize": "16px",
+      "fontWeight": "600",
+      "lineHeight": "24px",
+      "marginBottom": "0px"
+    },
+    "textGap": -482.6328125,
+    "beforeGap": -500.1015625,
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "height": 900,
+    "posterUnchanged": true,
+    "title": {
+      "x": 726.75,
+      "y": 345.59375,
+      "width": 576,
+      "height": 43,
+      "bottom": 388.59375,
+      "fontSize": "36px",
+      "fontWeight": "700",
+      "lineHeight": "normal",
+      "marginBottom": "6px"
+    },
+    "subtitle": {
+      "x": 726.75,
+      "y": 394.59375,
+      "width": 576,
+      "height": 21,
+      "bottom": 415.59375,
+      "fontSize": "18px",
+      "fontWeight": "500",
+      "lineHeight": "normal",
+      "marginBottom": "18px"
+    },
+    "description": {
+      "x": 726.75,
+      "y": 433.59375,
+      "width": 576,
+      "height": 74.625,
+      "bottom": 508.21875,
+      "fontSize": "15.552px",
+      "fontWeight": "400",
+      "lineHeight": "24.8832px",
+      "marginBottom": "72px"
+    },
+    "button": {
+      "x": 726.75,
+      "y": 580.21875,
+      "width": 96,
+      "height": 40,
+      "bottom": 620.21875,
+      "fontSize": "14px",
+      "fontWeight": "600",
+      "lineHeight": "21px",
+      "marginBottom": "0px"
+    },
+    "textGap": -403.3046875,
+    "beforeGap": -419.34375,
+    "overflow": false
+  },
+  {
+    "width": 1280,
+    "height": 720,
+    "posterUnchanged": true,
+    "title": {
+      "x": 646,
+      "y": 260.2421875,
+      "width": 512,
+      "height": 38,
+      "bottom": 298.2421875,
+      "fontSize": "32px",
+      "fontWeight": "700",
+      "lineHeight": "normal",
+      "marginBottom": "6px"
+    },
+    "subtitle": {
+      "x": 646,
+      "y": 304.2421875,
+      "width": 512,
+      "height": 21,
+      "bottom": 325.2421875,
+      "fontSize": "18px",
+      "fontWeight": "500",
+      "lineHeight": "normal",
+      "marginBottom": "16px"
+    },
+    "description": {
+      "x": 646,
+      "y": 341.2421875,
+      "width": 512,
+      "height": 67.171875,
+      "bottom": 408.4140625,
+      "fontSize": "14px",
+      "fontWeight": "400",
+      "lineHeight": "22.4px",
+      "marginBottom": "64px"
+    },
+    "button": {
+      "x": 646,
+      "y": 472.4140625,
+      "width": 96,
+      "height": 40,
+      "bottom": 512.4140625,
+      "fontSize": "14px",
+      "fontWeight": "600",
+      "lineHeight": "21px",
+      "marginBottom": "0px"
+    },
+    "textGap": -346.2734375,
+    "beforeGap": -358.078125,
+    "overflow": false
+  },
+  {
+    "width": 1024,
+    "height": 768,
+    "posterUnchanged": true,
+    "title": {
+      "x": 459.0625,
+      "y": 292.3984375,
+      "width": 523.984375,
+      "height": 38,
+      "bottom": 330.3984375,
+      "fontSize": "32px",
+      "fontWeight": "700",
+      "lineHeight": "normal",
+      "marginBottom": "6px"
+    },
+    "subtitle": {
+      "x": 459.0625,
+      "y": 336.3984375,
+      "width": 523.984375,
+      "height": 21,
+      "bottom": 357.3984375,
+      "fontSize": "18px",
+      "fontWeight": "500",
+      "lineHeight": "normal",
+      "marginBottom": "16px"
+    },
+    "description": {
+      "x": 459.0625,
+      "y": 373.3984375,
+      "width": 523.984375,
+      "height": 67.171875,
+      "bottom": 440.5703125,
+      "fontSize": "14px",
+      "fontWeight": "400",
+      "lineHeight": "22.4px",
+      "marginBottom": "51.2px"
+    },
+    "button": {
+      "x": 459.0625,
+      "y": 491.7578125,
+      "width": 96,
+      "height": 40,
+      "bottom": 531.7578125,
+      "fontSize": "14px",
+      "fontWeight": "600",
+      "lineHeight": "21px",
+      "marginBottom": "0px"
+    },
+    "textGap": -352.0859375,
+    "beforeGap": -361.1875,
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "height": 1024,
+    "posterUnchanged": true,
+    "title": {
+      "x": 357.046875,
+      "y": 436.15625,
+      "width": 380.234375,
+      "height": 38,
+      "bottom": 474.15625,
+      "fontSize": "32px",
+      "fontWeight": "700",
+      "lineHeight": "normal",
+      "marginBottom": "6px"
+    },
+    "subtitle": {
+      "x": 357.046875,
+      "y": 480.15625,
+      "width": 380.234375,
+      "height": 21,
+      "bottom": 501.15625,
+      "fontSize": "18px",
+      "fontWeight": "500",
+      "lineHeight": "normal",
+      "marginBottom": "16px"
+    },
+    "description": {
+      "x": 357.046875,
+      "y": 517.15625,
+      "width": 380.234375,
+      "height": 67.171875,
+      "bottom": 584.328125,
+      "fontSize": "14px",
+      "fontWeight": "400",
+      "lineHeight": "22.4px",
+      "marginBottom": "38.4px"
+    },
+    "button": {
+      "x": 357.046875,
+      "y": 622.71875,
+      "width": 96,
+      "height": 40,
+      "bottom": 662.71875,
+      "fontSize": "14px",
+      "fontWeight": "600",
+      "lineHeight": "21px",
+      "marginBottom": "0px"
+    },
+    "textGap": -289.4765625,
+    "beforeGap": -301.9375,
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "posterUnchanged": true,
+    "title": {
+      "x": 20,
+      "y": 594,
+      "width": 350,
+      "height": 38,
+      "bottom": 632,
+      "fontSize": "32px",
+      "fontWeight": "700",
+      "lineHeight": "normal",
+      "marginBottom": "6px"
+    },
+    "subtitle": {
+      "x": 20,
+      "y": 638,
+      "width": 350,
+      "height": 21,
+      "bottom": 659,
+      "fontSize": "18px",
+      "fontWeight": "500",
+      "lineHeight": "normal",
+      "marginBottom": "16px"
+    },
+    "description": {
+      "x": 20,
+      "y": 675,
+      "width": 350,
+      "height": 63,
+      "bottom": 738,
+      "fontSize": "13.12px",
+      "fontWeight": "400",
+      "lineHeight": "20.992px",
+      "marginBottom": "24px"
+    },
+    "button": {
+      "x": 143,
+      "y": 762,
+      "width": 104,
+      "height": 42,
+      "bottom": 804,
+      "fontSize": "14px",
+      "fontWeight": "600",
+      "lineHeight": "21px",
+      "marginBottom": "0px"
+    },
+    "textGap": 121.640625,
+    "beforeGap": 122.96875,
+    "overflow": false
+  },
+  {
+    "width": 375,
+    "height": 667,
+    "posterUnchanged": true,
+    "title": {
+      "x": 20,
+      "y": 417,
+      "width": 335,
+      "height": 38,
+      "bottom": 455,
+      "fontSize": "32px",
+      "fontWeight": "700",
+      "lineHeight": "normal",
+      "marginBottom": "6px"
+    },
+    "subtitle": {
+      "x": 20,
+      "y": 461,
+      "width": 335,
+      "height": 21,
+      "bottom": 482,
+      "fontSize": "18px",
+      "fontWeight": "500",
+      "lineHeight": "normal",
+      "marginBottom": "16px"
+    },
+    "description": {
+      "x": 20,
+      "y": 498,
+      "width": 335,
+      "height": 63,
+      "bottom": 561,
+      "fontSize": "13.12px",
+      "fontWeight": "400",
+      "lineHeight": "20.992px",
+      "marginBottom": "24px"
+    },
+    "button": {
+      "x": 135.5,
+      "y": 585,
+      "width": 104,
+      "height": 42,
+      "bottom": 627,
+      "fontSize": "14px",
+      "fontWeight": "600",
+      "lineHeight": "21px",
+      "marginBottom": "0px"
+    },
+    "textGap": 22.53125,
+    "beforeGap": 23.859375,
+    "overflow": false
+  },
+  {
+    "width": 320,
+    "height": 568,
+    "posterUnchanged": true,
+    "title": {
+      "x": 20,
+      "y": 371,
+      "width": 280,
+      "height": 31,
+      "bottom": 402,
+      "fontSize": "26px",
+      "fontWeight": "700",
+      "lineHeight": "normal",
+      "marginBottom": "4px"
+    },
+    "subtitle": {
+      "x": 20,
+      "y": 406,
+      "width": 280,
+      "height": 19,
+      "bottom": 425,
+      "fontSize": "16px",
+      "fontWeight": "500",
+      "lineHeight": "normal",
+      "marginBottom": "10px"
+    },
+    "description": {
+      "x": 20,
+      "y": 435,
+      "width": 280,
+      "height": 63,
+      "bottom": 498,
+      "fontSize": "13.12px",
+      "fontWeight": "400",
+      "lineHeight": "20.992px",
+      "marginBottom": "12px"
+    },
+    "button": {
+      "x": 108,
+      "y": 510,
+      "width": 104,
+      "height": 42,
+      "bottom": 552,
+      "fontSize": "14px",
+      "fontWeight": "600",
+      "lineHeight": "21px",
+      "marginBottom": "0px"
+    },
+    "textGap": 20.09375,
+    "beforeGap": -31.578125,
+    "overflow": false
+  }
+]
