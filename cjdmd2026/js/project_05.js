@@ -628,7 +628,8 @@ async function captureForeground(target, {includeHidden = false} = {}) {
     return sources;
   }
   async function transition({direction = 1, swap, from, to, target, foreground = null, fromBlank = false,
-    toBlank = false, imageOnly = false, sceneTint = null, durationMs = options.durationMs, prepared = null, onStart, onProgress}) {
+    toBlank = false, imageOnly = false, sceneTint = null, sceneScrim = null,
+    durationMs = options.durationMs, prepared = null, onStart, onProgress}) {
     if (job) return false;
     const current = ++generation;
     if (reduced.matches) { await swap(); return true; }
@@ -653,7 +654,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
         codeTime: 0, playbackRate: updatePlaybackRate(now),
         durationMs: Math.max(300, Number(durationMs) || 2100),
         sceneTint: sceneTint || readSceneTint(), fromBlank, toBlank, imageOnly,
-        sceneScrim: readSceneScrim(),
+        sceneScrim: sceneScrim ?? readSceneScrim(),
         from: sources[0], to: sources[1], swapped: false, elapsed: 0, last: now};
       try {
         job.a = texture(job.from);
@@ -692,8 +693,9 @@ async function captureForeground(target, {includeHidden = false} = {}) {
     context.fillStyle = '#fff';
     context.fillRect(0,0,1,1);
     const white = blank.toDataURL();
+    // Capture the scrim before async texture preparation: the view switch hides its DOM layer immediately.
     return transition({from:entering?white:source,to:entering?source:white,target,onStart,onProgress,
-      fromBlank:entering,toBlank:!entering,imageOnly:true,sceneTint:readSceneTint(),
+      fromBlank:entering,toBlank:!entering,imageOnly:true,sceneTint:readSceneTint(),sceneScrim:readSceneScrim(),
       direction:entering?-1:1,durationMs:1000,swap(){}});
   }
   function updateScrollSpeed(delta) {

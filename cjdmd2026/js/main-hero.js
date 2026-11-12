@@ -1915,6 +1915,7 @@
         index = (index + posters.length) % posters.length;
         if (index === current) return;
         switchMode = mode;
+        stage.classList.add("is-theme-transitioning");
         stage.style.setProperty("--theme-color-dur", mode === "fade" ? ".3s" : ".9s");
         themeFrom = current;      // 진행 중이어도 즉시 새 전환 시작
         current = index;
@@ -1933,6 +1934,7 @@
         bgT = clamp((e - (fast ? 0 : SETTINGS.bgDelay)) / bgDur);
         // 글자색은 배경이 절반쯤 지날 때 바뀜
         if (bgT > .45) stage.dataset.theme = posters[current].theme;
+        if (themeT >= 1 && bgT >= 1) stage.classList.remove("is-theme-transitioning");
     }
 
     function startAuto() {

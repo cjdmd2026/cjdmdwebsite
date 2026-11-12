@@ -1432,6 +1432,7 @@ function initExplanationArchiveFade() {
     function createFlow(host) {
         const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
         const particles = new Map();
+        const incomingOutlines = new Set();
         let activeDrag = null;
         const merges = new Set();
         let width = host.clientWidth;
@@ -1442,6 +1443,7 @@ function initExplanationArchiveFade() {
         let elapsed = 0;
         let nextCollisionCheck = 0;
         let nextMerge = 0;
+        let spacingUntil = 0;
         const transitionActive = () => !archiveDesktop.matches || document.documentElement.matches(
             '.page-transition-preload, .page-transition-active'
         );
@@ -1489,6 +1491,7 @@ function initExplanationArchiveFade() {
         }
 
         function paint(particle, hostTop) {
+            if (particle.logoReserved) return;
             const margin = particle.size;
             const screenY = particle.y + hostTop;
             const visible = screenY > -margin && screenY < window.innerHeight + margin;
@@ -1614,6 +1617,7 @@ function initExplanationArchiveFade() {
         }
 
         function checkCollisions() {
+            if (document.documentElement.classList.contains('archive-logo-enter') || elapsed < spacingUntil) return;
             if (elapsed < nextCollisionCheck || elapsed < nextMerge || merges.size >= MAX_MERGES || activeDrag) return;
             nextCollisionCheck = elapsed + 0.15;
             // Read visible shape bounds together, at most a few times a second.
@@ -1649,6 +1653,64 @@ function initExplanationArchiveFade() {
             particles.forEach(particle => paint(particle, hostTop));
         }
 
+        function makeRoom(dt) {
+            const friction = Math.exp(-8 * dt);
+            particles.forEach(particle => {
+                particle.spaceVX = (particle.spaceVX || 0) * friction;
+                particle.spaceVY = (particle.spaceVY || 0) * friction;
+            });
+            if (reducedMotion.matches || (!incomingOutlines.size && elapsed >= spacingUntil)) return;
+            // Read the incoming outlines together before writing any particle poses.
+            // Their real animated bounds also account for rotation and SVG scaling.
+            const hostBounds = host.getBoundingClientRect();
+            const obstacles = [];
+            incomingOutlines.forEach(incoming => {
+                const time = incoming.animation.currentTime;
+                if (time === null || incoming.animation.playState === 'idle' || time < incoming.start || time > incoming.end + incoming.fade) return;
+                const box = incoming.element.getBoundingClientRect();
+                if (box.right < 0 || box.left > innerWidth || box.bottom < 70 || box.top > innerHeight) return;
+                obstacles.push({
+                    x: box.left + box.width / 2 - hostBounds.left,
+                    y: box.top + box.height / 2 - hostBounds.top,
+                    radius: Math.max(box.width, box.height) * .46,
+                    weight: time <= incoming.end ? 1 : 1 - (time - incoming.end) / incoming.fade
+                });
+            });
+            if (obstacles.length) spacingUntil = elapsed + 1.2;
+            if (elapsed >= spacingUntil) return;
+            const free = [...particles.values()].filter(particle => particle.visible && !particle.logoReserved && !particle.merge
+                && activeDrag?.particle !== particle && activeDrag?.target !== particle);
+            function push(particle, obstacle, stiffness) {
+                let dx = particle.x - obstacle.x, dy = particle.y - obstacle.y;
+                const reach = particle.size * .42 + obstacle.radius + 18;
+                const distance = Math.hypot(dx, dy);
+                if (distance >= reach) return;
+                if (distance < .01) { dx = Math.cos(particle.phase); dy = Math.sin(particle.phase); }
+                const force = (reach - distance) * stiffness * (obstacle.weight ?? 1) * dt / (distance < .01 ? 1 : distance);
+                particle.spaceVX += dx * force;
+                particle.spaceVY += dy * force;
+            }
+            for (const particle of free) {
+                for (const obstacle of obstacles) push(particle, obstacle, 38);
+            }
+            // Pass the displacement to neighbours instead of squeezing them into
+            // a new pile. Existing manual grabs and automatic joins stay intact.
+            for (let i = 0; i < free.length; i++) {
+                for (let j = i + 1; j < free.length; j++) {
+                    const a = free[i], b = free[j];
+                    push(a, { x: b.x, y: b.y, radius: b.size * .42 }, 20);
+                    push(b, { x: a.x, y: a.y, radius: a.size * .42 }, 20);
+                }
+            }
+            for (const particle of free) {
+                const speed = Math.hypot(particle.spaceVX, particle.spaceVY);
+                if (speed > 110) {
+                    particle.spaceVX *= 110 / speed;
+                    particle.spaceVY *= 110 / speed;
+                }
+            }
+        }
+
         function tick(time) {
             frame = 0;
             if (!canAnimate()) {
@@ -1659,8 +1721,10 @@ function initExplanationArchiveFade() {
             lastTime = time;
             elapsed += dt;
             const drag = Math.exp(-VELOCITY_DRAG * dt);
+            makeRoom(dt);
 
             particles.forEach(particle => {
+                if (particle.logoReserved) return;
                 const held = activeDrag?.particle === particle;
                 const ready = activeDrag?.target === particle;
                 const follow = 1 - Math.exp(-18 * dt);
@@ -1681,8 +1745,8 @@ function initExplanationArchiveFade() {
                 const flowY = -FLOW_SPEED * (0.65 + 0.35 * Math.cos(particle.x * 0.002 + elapsed * 0.09 + particle.phase));
                 particle.vx = flowX + (particle.vx - flowX) * drag;
                 particle.vy = flowY + (particle.vy - flowY) * drag;
-                particle.x += particle.vx * dt;
-                particle.y += particle.vy * dt;
+                particle.x += (particle.vx + particle.spaceVX) * dt;
+                particle.y += (particle.vy + particle.spaceVY) * dt;
                 particle.angle = (particle.angle + particle.spin * dt) % 360;
 
                 // Re-enter from the opposite boundary only after leaving the document.
@@ -1720,7 +1784,7 @@ function initExplanationArchiveFade() {
         function pickParticle(clientX, clientY) {
             let nearest = null, best = Infinity;
             particles.forEach(particle => {
-                if (!particle.visible) return;
+                if (!particle.visible || particle.logoReserved) return;
                 const bounds = particle.shape.getBoundingClientRect();
                 // Ignore the fully faded middle of the background.
                 const centerX = bounds.left + bounds.width / 2;
@@ -1903,6 +1967,7 @@ function initExplanationArchiveFade() {
         window.addEventListener("blur", cancelDrag);
         document.addEventListener("visibilitychange", syncMotion);
         document.addEventListener("page-transition:change", syncMotion);
+        document.addEventListener("archive-logo:complete", syncMotion);
         reducedMotion.addEventListener("change", syncMotion);
         archiveDesktop.addEventListener("change", syncMotion);
         window.addEventListener("scroll", () => {
@@ -1922,6 +1987,91 @@ function initExplanationArchiveFade() {
         syncMotion();
 
         return {
+            // The logo borrows real positions from the normal field. Its replacements
+            // enter from outside the viewport and then rejoin this same particle flow.
+            reserveLogoSlots(limit) {
+                const hostTop = host.getBoundingClientRect().top;
+                const candidates = [...particles.values()].filter(particle =>
+                    !particle.merge && particle.y + hostTop > 80 && particle.y + hostTop < innerHeight + 20 &&
+                    particle.x > -20 && particle.x < width + 20 && Math.abs(particle.x - width / 2) > width * .1);
+                // Keep a third of the existing field moving throughout the gathering.
+                const selected = candidates.filter((_, index) => index % 3 !== 0).slice(0, limit);
+                const refills = new Map();
+                const tracked = new Set();
+                function trackOutline(element, animation, { start = 0, end, fade = 0 }) {
+                    const incoming = { element, animation, start, end, fade };
+                    incomingOutlines.add(incoming);
+                    tracked.add(incoming);
+                    return incoming;
+                }
+                const slots = selected.map(particle => {
+                    particle.logoReserved = true;
+                    particle.visible = false;
+                    particle.element.style.visibility = 'hidden';
+                    const edge = Math.min(.5, Math.max(0, Math.min(particle.x / width, 1 - particle.x / width)));
+                    const stops = [[0, 1], [.18, .82], [.3, .46], [.42, .12], [.5, 0]];
+                    const rightIndex = stops.findIndex(([position]) => position >= edge);
+                    const [left, right] = [stops[Math.max(0, rightIndex - 1)], stops[rightIndex]];
+                    const fade = left === right ? left[1] : lerp(left[1], right[1], (edge - left[0]) / (right[0] - left[0]));
+                    return {
+                        x: particle.x, y: particle.y + hostTop, size: particle.element.clientWidth * .85,
+                        angle: particle.angle, vx: particle.vx, vy: particle.vy, spin: particle.spin,
+                        alpha: parseFloat(particle.element.style.getPropertyValue('--alpha')) * fade
+                    };
+                });
+                function restore(particle) {
+                    if (!particle.logoReserved) return;
+                    particle.logoReserved = false;
+                    particle.visible = null;
+                    particle.mergeAfter = elapsed + MERGE_COOLDOWN;
+                    delete particle.element.dataset.logoRefill;
+                    paint(particle, host.getBoundingClientRect().top);
+                    refills.get(particle)?.cancel();
+                    refills.delete(particle);
+                    tracked.forEach(incoming => {
+                        if (incoming.element !== particle.element) return;
+                        incomingOutlines.delete(incoming);
+                        tracked.delete(incoming);
+                    });
+                }
+                return {
+                    slots,
+                    trackOutline,
+                    refill(index, timing) {
+                        const particle = selected[index];
+                        if (!particle?.logoReserved) return null;
+                        const margin = particle.size * 1.6;
+                        const screenY = particle.y + hostTop;
+                        // Use the nearest edge so replacements arrive as the original leaves.
+                        const distances = [particle.x, width - particle.x, screenY, innerHeight - screenY];
+                        const edge = distances.indexOf(Math.min(...distances));
+                        const fromX = edge === 0 ? -margin : edge === 1 ? width + margin : particle.x;
+                        const fromY = edge === 2 ? -hostTop - margin : edge === 3 ? innerHeight - hostTop + margin : particle.y;
+                        particle.x += particle.vx * (timing.delay + timing.duration) / 1000;
+                        particle.y += particle.vy * (timing.delay + timing.duration) / 1000;
+                        const fromAngle = particle.angle;
+                        particle.angle += particle.spin * (timing.delay + timing.duration) / 1000;
+                        const pose = (x, y, angle) => `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) rotate(${angle}deg)`;
+                        const animation = particle.element.animate([
+                            { transform: pose(fromX, fromY, fromAngle) },
+                            { transform: pose(particle.x, particle.y, particle.angle) }
+                        ], { ...timing, easing: 'cubic-bezier(.3, 0, .2, 1)', fill: 'both' });
+                        animation.pause();
+                        animation.currentTime = 0;
+                        particle.element.style.visibility = 'visible';
+                        particle.element.dataset.logoRefill = '';
+                        refills.set(particle, animation);
+                        trackOutline(particle.element, animation, { start: timing.delay, end: timing.delay + timing.duration });
+                        animation.finished.then(() => restore(particle), () => {});
+                        return animation;
+                    },
+                    release() {
+                        selected.forEach(restore);
+                        tracked.forEach(incoming => incomingOutlines.delete(incoming));
+                        tracked.clear();
+                    }
+                };
+            },
             addStage(stage, row, rowCount) {
                 const hostTop = host.getBoundingClientRect().top;
                 stage.querySelectorAll(".piece").forEach((element, index) => {
@@ -1968,6 +2118,9 @@ function initExplanationArchiveFade() {
                 const nextWidth = host.clientWidth;
                 const nextHeight = host.clientHeight;
                 particles.forEach(particle => {
+                    // A late font/layout update must not move a refill's landing point.
+                    // Viewport changes cancel the entry before the normal resize handler.
+                    if (particle.logoReserved) return;
                     particle.x *= nextWidth / Math.max(1, width);
                     particle.y *= nextHeight / Math.max(1, height);
                 });
@@ -2101,6 +2254,8 @@ function initExplanationArchiveFade() {
         }
 
         syncStages();
+        window.ArchiveOutlineBackground = { reserveLogoSlots: flow.reserveLogoSlots };
+        document.dispatchEvent(new Event('archive-background:ready'));
         const sizeObserver = new ResizeObserver(syncStages);
         sizeObserver.observe(host);
         window.addEventListener("resize", syncStages, { passive: true });

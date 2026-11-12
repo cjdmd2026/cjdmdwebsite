@@ -17,7 +17,8 @@
     const scriptURL = document.currentScript?.src || new URL('../js/designer-icon-slide.js', document.baseURI).href;
     const iconBaseURL = new URL('../assets/images/project/icon/', scriptURL);
     // Keep the original fill attribute as the key that links each shape to its designer.
-    const yearOnSlideTint = '[id$="team-10-ieoon-layer-1"] [fill="#ccbbff"] { fill: #d6c9ff; }';
+    const yearOnSlideColor = '#d6c9ff';
+    const yearOnSlideTint = '[id$="team-10-ieoon-layer-1"] [fill="#ccbbff"] { fill: ' + yearOnSlideColor + '; }';
     const slideIconStyle = '.icon-layer { animation: none !important; } ' + yearOnSlideTint;
     // 디자이너 목록 HTML 기준 상세 페이지 경로입니다. 개별 주소는 designer-data.js의 href로 지정합니다.
     const DESIGNER_DETAIL_PATH = './profile/';
@@ -312,7 +313,8 @@
           jobs.push(loadImage("data:image/svg+xml;charset=utf-8," + encodeURIComponent(xml)).then(image => {
             const group = document.createElement("canvas"); group.width = group.height = 384;
             group.getContext("2d").drawImage(image, 0, 0, 384, 384);
-            return { image: group, name: icon.name, team, color, shapeCount: colors.filter(c => c === color).length,
+            const displayColor = icon.projectId === 'year-on' && color === '#ccbbff' ? yearOnSlideColor : color;
+            return { image: group, name: icon.name, team, color, displayColor, shapeCount: colors.filter(c => c === color).length,
               layer: colors.lastIndexOf(color), ratio: 1, offsetX: 0, offsetY: 0, relativeWidth: 1, relativeHeight: 1 };
           }));
         }
@@ -617,14 +619,17 @@
       } else snapTeamEntry(progress);
       updateToolbar(); setHint();
     }
-    function createDesignerLink(member) {
+    function createDesignerLink(member, accentColor) {
       const card = document.createElement('a'); card.className = 'formation-person-card';
+      card.style.setProperty('--designer-accent', accentColor || '#fff');
       const url = new URL(member.href || DESIGNER_DETAIL_PATH, document.baseURI);
       url.searchParams.set('id', member.id);
       card.href = url.href; card.setAttribute('page-transition', '');
       card.dataset.designerId = member.id;
       card.setAttribute('aria-label', member.nameKo + ' 상세 페이지 보기');
-      const portrait = document.createElement('img'); portrait.className = 'formation-portrait'; portrait.alt = ''; portrait.src = member.image;
+      const portrait = document.createElement('span'); portrait.className = 'formation-portrait';
+      const image = document.createElement('img'); image.alt = ''; image.src = member.image;
+      portrait.appendChild(image);
       const copy = document.createElement('span'); copy.className = 'formation-copy';
       const name = document.createElement('span'); name.className = 'formation-name'; name.textContent = member.nameKo;
       const english = document.createElement('span'); english.className = 'formation-name-en'; english.textContent = member.nameEn;
@@ -733,7 +738,8 @@
         const anchor = document.createElement('span'); anchor.className = 'formation-piece-anchor';
         anchor.setAttribute('aria-hidden', 'true'); row.appendChild(anchor);
         if (profile.members[i]) {
-          const card = createDesignerLink(profile.members[i]);
+          const piece = fragments[team].find((_, index) => fragmentRows[team][index] === i);
+          const card = createDesignerLink(profile.members[i], piece?.displayColor);
           card.style.setProperty('--row', i);
           row.appendChild(card);
         }
@@ -1311,7 +1317,6 @@
       if (approach === 0) ctx.drawImage(wordArtwork.background, 0, 0, width, height);
       if (t < 1 || ambientParticles.length) {
         const visibleTop = bounds.viewportTop - wordOffset, visibleBottom = visibleTop + innerHeight;
-        const ambientVisibility = 1 - smooth(0, .25, Math.max(...detailProgress));
         // 지나가는 작은 조각도 확대가 마무리되는 동안 함께 사라집니다.
         const departingOpacity = 1 - smooth(WORD_APPROACH.handoffStart, WORD_APPROACH.clearEnd, t);
         const intro = clamp(idleTime / WORD_FLOAT.intro, 0, 1);
@@ -1389,13 +1394,13 @@
           ctx.drawImage(floatBatch ? floatCanvas : floatFallbackCanvas, bounds.left, visibleTop, bounds.width, innerHeight);
           ctx.restore();
         }
-        // 화면에 남는 회색 아이콘은 가까이 지나가는 장식과 분리해 선명하게 그립니다.
-        if (ambientVisibility > 0) for (const item of ambientParticles) {
+        // 회색 장식도 주변 팀 아이콘과 같은 비율로 연해지되 완전히 숨기지 않습니다.
+        for (const item of ambientParticles) {
           const pose = ambientPose(item, cameraScale), piece = item.piece;
           const x = pose.x - pose.width / 2, y = pose.y - pose.height / 2;
           if (x + pose.width < bounds.left || x > bounds.left + bounds.width ||
               y + pose.height < visibleTop || y > visibleBottom) continue;
-          ctx.globalAlpha = pose.opacity * ambientVisibility;
+          ctx.globalAlpha = pose.opacity * lerp(1, .14, attention);
           ctx.drawImage(wordArtwork.floatAtlas, piece.ax, piece.ay, piece.gw, piece.gh, x, y, pose.width, pose.height);
         }
         ctx.globalAlpha = 1;

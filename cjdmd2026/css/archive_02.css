@@ -313,19 +313,22 @@ img {
 
 @media screen and (min-width: 760px) and (prefers-reduced-motion: no-preference) {
     .archive-logo-enter .hero .title img { opacity: 0; }
-    :is(.page-transition-preload, .page-transition-pending, .page-transition-active) .archive-logo-assembly {
-        --archive-logo-play-state: paused;
-    }
 }
 
 .archive-logo-assembly {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 50%;
+    width: 100vw;
+    height: 100vh;
+    transform: translateX(-50%);
+    overflow: clip;
     pointer-events: none;
 }
 
-@media print, (prefers-reduced-motion: reduce) {
+@media print, (width < 760px), (prefers-reduced-motion: reduce) {
     .archive-logo-assembly { display: none; }
+    .archive-logo-enter .hero .title img { opacity: 1; }
 }
 
 

@@ -391,31 +391,63 @@ body.mobile-menu-open .header {
     white-space: nowrap;
 }
 
-/* 포스터 소개 수정 시안: 1920px 기준 제목 48 / 부제목 24 / 본문 16px. */
+/* 포스터 소개 수정 시안: 1920px 기준 48 / 24 / 18px, 간격 12 / 28 / 42px. */
 .hero-text--poster-intro {
     left: 50.46875vw;
-    top: calc(50% + 3.6574vh);
+    top: calc(50% + 2.12963vh);
+}
+/* 글 주변만 은은하게 가리고, 외곽은 넓은 타원형 그라데이션으로 흩어집니다. */
+.hero-text-surface {
+    position: relative;
+    display: flow-root;
+    width: fit-content;
+    max-width: 100%;
+    isolation: isolate;
+}
+.hero-text-surface::before {
+    content: "";
+    position: absolute;
+    inset: -64px -100px;
+    z-index: -1;
+    background: radial-gradient(ellipse, var(--hero-bg) 20%, transparent 72%);
+    opacity: .6;
+    filter: blur(20px);
+    pointer-events: none;
+    transition: opacity .2s ease;
+}
+.hero-stage.is-theme-transitioning .hero-text-surface::before {
+    opacity: 0;
+    transition: none;
 }
 .hero-text--poster-intro .hero-title {
     font-size: clamp(2rem, 2.5vw, 3rem);
     font-weight: 700;
     line-height: normal;
-    margin-bottom: clamp(.375rem, .416667vw, .5rem);
+    margin-bottom: clamp(.5rem, .625vw, .75rem);
 }
 .hero-text--poster-intro .hero-subtitle {
     font-size: clamp(1.125rem, 1.25vw, 1.5rem);
+    font-family: "Pretendard Variable", var(--font-main);
     font-weight: 500;
     line-height: normal;
-    margin-bottom: clamp(1rem, 1.25vw, 1.5rem);
+    color: #111;
+    margin-bottom: clamp(1rem, 1.458333vw, 1.75rem);
     white-space: normal;
 }
 .hero-text--poster-intro .hero-description {
     font-family: "Pretendard Regular", var(--font-main);
-    line-height: 1.6;
-    margin-bottom: 3vw;
+    font-size: clamp(.875rem, .9375vw, 1.125rem);
+    font-weight: 400;
+    line-height: 1.65;
+    color: #111;
+    margin-bottom: clamp(1.5rem, 2.1875vw, 2.625rem);
 }
 .hero-text--poster-intro .pill-button {
     font-size: clamp(.875rem, .833333vw, 1rem);
+}
+.hero-stage[data-theme="dark"] .hero-text--poster-intro .hero-subtitle,
+.hero-stage[data-theme="dark"] .hero-text--poster-intro .hero-description {
+    color: inherit;
 }
 
 .hero-scroll-hint {
@@ -842,6 +874,9 @@ body.mobile-menu-open .header {
 
     .hero-text--poster-intro .hero-title { font-size: 2rem; margin-bottom: .375rem; }
     .hero-text--poster-intro .hero-subtitle { font-size: 1.125rem; margin-bottom: 1rem; }
+    .hero-text--poster-intro .hero-description { font-size: .875rem; margin-bottom: 1.2rem; }
+    .hero-text-surface { margin-inline: auto; }
+    .hero-text-surface::before { inset: -52px -64px; }
 
     .committee {
         --committee-top-space: 100px;
