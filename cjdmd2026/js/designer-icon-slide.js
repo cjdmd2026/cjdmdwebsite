@@ -26,11 +26,12 @@
 
     // wordScale: 포스터 SVG 전체 크기. 원본의 주변 조각과 여백도 포함합니다.
     // wordCenterY: 초기 글자의 화면 내 중심 높이. 0.5 = 화면 중앙, 작은 값 = 위쪽.
-    // gallerySpreadX/Y: 중심 주변에 흩어진 아이콘 무리의 가로/세로 범위입니다.
+    // gallerySpreadX/Y: 지그재그로 나열한 아이콘의 가로/세로 범위입니다.
     // galleryMobileSpreadX/Y: 750px 미만 화면의 간격. 아이콘 크기와 랜덤 순서는 유지합니다.
-    // galleryGap/galleryMobileGap: 배치 시 목표 여백(px). galleryMinGap은 가까운 아이콘 사이에 확보할 최소 여백입니다.
+    // galleryMinGap: 프로젝트명을 포함해 행 사이에 확보할 최소 여백(px)입니다.
     // galleryIconScale: 기본 아이콘 크기 배율. galleryFloatX/Y: 떠다니는 최대 거리(px). galleryHoverScale: 호버 배율.
-    const SETTINGS = { galleryFloatX: 0, galleryFloatY: 0, galleryFloatSpeed: .75, galleryHoverScale: 1, galleryIconScale: 1.1, galleryGap: 70, galleryMobileGap: 18, galleryMinGap: 70, gallerySpreadX: .8, gallerySpreadY: 1, galleryMobileSpreadX: .88, galleryMobileSpreadY: .86, wordScale: .98, wordCenterY: .5, spring: .024, damping: .82 };
+    // galleryLift: 아이콘 전체를 위로 올리는 최대 거리(px). 0으로 두어 제목 위아래 여백을 확보합니다.
+    const SETTINGS = { galleryFloatX: 0, galleryFloatY: 0, galleryFloatSpeed: .75, galleryHoverScale: 1, galleryIconScale: 1.1, galleryMinGap: 24, gallerySpreadX: .88, gallerySpreadY: 1, galleryMobileSpreadX: .9, galleryMobileSpreadY: .86, galleryLift: 0, wordScale: .98, wordCenterY: .5, spring: .024, damping: .82 };
     const canvas = document.getElementById("formation");
     if (!canvas || !document.getElementById("scrollScene")) return;
     if (!Array.isArray(window.DESIGNERS)) { console.error("designer-data.js를 먼저 연결해 주세요."); return; }
@@ -39,8 +40,10 @@
     const assemblyCanvas = document.createElement('canvas');
     const assemblyCtx = assemblyCanvas.getContext('2d');
     // 회색 장식도 글자를 구성하던 원본 조각이 확대되어 남는 자리입니다.
-    const GALLERY_AMBIENT = { maxPerSide: 18, teamGap: 70, pieceGap: 36, topCount: 3,
-      sourceMinSize: 100, candidatesPerShape: 1, rasterSize: 96, floatX: 3, floatY: 5, floatSpeed: .55 };
+    // 현재 가장 진한 회색부터 세 단계 더 연하게, 화면 중심과의 거리에 따라 적용합니다.
+    const GALLERY_AMBIENT = { pieceGap: 18, sizeScale: .74, outerDepth: 2,
+      opacityLevels: [.78, .58, .38, .18], fadeDistances: [.4, .65, .9],
+      sourceMinSize: 100, candidatesPerShape: 1, rasterSize: 96, floatX: 0, floatY: 0, floatSpeed: .55 };
     const HIDDEN_ORIGIN = { size: 32, focusX: .45, focusY: .5 };
     // 첫 구성 아이콘은 남고, 같은 팀의 나머지 조각은 한 번에 함께 들어옵니다.
     // start만 확대 진행률이며, 나머지 결합 시간은 스크롤과 독립적인 밀리초입니다.
@@ -91,6 +94,8 @@
         .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     }));
     const toolbar = document.querySelector('.designer-heading');
+    const searchInput = toolbar.querySelector('.search-bar input');
+    const searchStatus = document.getElementById('formationSearchStatus');
     const source = ICON_PROJECTS.map(project => ({ ...project, name: project.title, svg: "" }));
     // 포스터에 흩어진 개인 SVG를 팀 ID와 색상으로 찾아 같은 팀끼리 결합합니다.
     const word = { src: new URL('../assets/images/designer/gyeolhap-word.svg?v=20261030-all-glyphs', scriptURL).href };
@@ -106,7 +111,9 @@
     let teamEntryTime = 0, teamEntryFinish = 0, teamEntryLastSpread = 0;
     let teamEntryReversing = false, teamEntryInitialized = false;
     let galleryOrder = source.map((_, team) => team);
-    let galleryOffsets = [];
+    let gallerySizeOffsets = [];
+    let galleryInteriorSlots = [];
+    let galleryGrid = null;
     let galleryShuffleArmed = true, galleryRevision = 0;
     let idleTime = 0, galleryTime = 0;
     let hoveredTeam = -1, focusedTeam = -1;
@@ -116,8 +123,10 @@
     let wordShiftY = 0;
     let selectedTeam = -1;
     let viewActive = scene.classList.contains("slide-view"), savedProgress = 0;
-    // 아이콘 갤러리는 그리드의 초성·검색 선택과 무관하게 전체 프로젝트를 표시합니다.
+    // 검색해도 전체 격자는 유지하고, 일치하는 디자이너의 프로젝트만 컬러로 표시합니다.
     const visibleTeams = source.map(() => true);
+    let searchQuery = '', searchResults = [...window.DESIGNERS], searchComposing = false;
+    const searchMatches = source.map(() => true), searchColors = source.map(() => 1);
     toolbar.inert = viewActive;
     toolbar.setAttribute('aria-hidden', String(viewActive));
     const detailProgress = source.map(() => 0), detailTargets = source.map(() => []), iconButtons = [];
@@ -125,6 +134,51 @@
     const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
     const lerp = (a, b, t) => a + (b - a) * t;
     const smooth = (a, b, value) => { const t = clamp((value - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+    const normalizeName = value => String(value || '').normalize('NFC').toLocaleLowerCase('ko-KR').replace(/[\s._:-]+/g, '');
+    const nameIndex = window.DESIGNERS.map(designer => ({ designer,
+      names: [normalizeName(designer.nameKo), normalizeName(designer.nameEn)].filter(Boolean),
+      initials: [...(designer.nameKo || '')].map(letter => {
+        const code = letter.charCodeAt(0) - 0xac00;
+        return code >= 0 && code < 11172 ? 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ'[Math.floor(code / 588)] : letter;
+      }).join('')
+    }));
+    function nameDistance(a, b) {
+      let previous = Array.from({ length: b.length + 1 }, (_, i) => i);
+      for (let i = 1; i <= a.length; i++) {
+        const current = [i];
+        for (let j = 1; j <= b.length; j++) current[j] = Math.min(current[j - 1] + 1,
+          previous[j] + 1, previous[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+        previous = current;
+      }
+      return previous[b.length];
+    }
+    function applyGallerySearch(immediate = false) {
+      if (searchComposing) return;
+      const query = normalizeName(searchInput?.value);
+      if (query === searchQuery && !immediate) return;
+      searchQuery = query;
+      let matches = nameIndex.filter(entry => !query || entry.names.some(name => name.includes(query)) || entry.initials.includes(query));
+      let approximate = false;
+      // 일부 이름·초성이 먼저 일치하면 그 결과를 사용하고, 없을 때만 가까운 오타를 찾습니다.
+      if (!matches.length && query.length >= 3 && !/^[ㄱ-ㅎ]+$/.test(query)) {
+        const ranked = nameIndex.map(entry => ({ entry, distance: Math.min(...entry.names.map(name => nameDistance(name, query))) }));
+        const closest = Math.min(...ranked.map(item => item.distance));
+        if (closest <= (query.length >= 6 ? 2 : 1)) {
+          matches = ranked.filter(item => item.distance === closest).map(item => item.entry);
+          approximate = true;
+        }
+      }
+      searchResults = matches.map(entry => entry.designer);
+      const projects = new Set(searchResults.flatMap(designer => designer.projectIds || []));
+      source.forEach((project, team) => { searchMatches[team] = !query || projects.has(project.projectId); });
+      if (searchStatus) searchStatus.textContent = !query ? '' : !matches.length ? '일치하는 디자이너가 없습니다.' :
+        `${approximate ? '비슷한 이름 ' : ''}${matches.length}명 · ${searchMatches.filter(Boolean).length}개 프로젝트`;
+      if (selectedTeam >= 0 && query) closeDetails();
+      if (immediate || !loaded || !viewActive || motionReduced || paused) {
+        searchColors.forEach((_, team) => { searchColors[team] = Number(searchMatches[team]); });
+        if (loaded) draw();
+      } else wake(500);
+    }
     // 회색 장식의 시간도 처음부터 이어서 확대·도착·복귀 사이에 움직임이 멈추지 않게 합니다.
     const idleActive = () => viewActive && !paused && !motionReduced && !document.hidden && spread < 1 && wordArtwork?.floating.length > 0;
     const galleryIdleActive = () => viewActive && !paused && !motionReduced && !document.hidden &&
@@ -334,19 +388,28 @@
       }
       return banks;
     }
-    function drawTeamHover(context, icon, team, x, y, size) {
+    function drawTeamHover(context, icon, team, x, y, size, colorAmount = 1) {
       const amount = galleryHover[team];
-      if (amount === 0 || !teamHoverCtx) {
+      if ((amount === 0 && colorAmount >= 1) || !teamHoverCtx) {
         context.drawImage(icon.image, x - size / 2, y - size / 2, size, size);
         return;
       }
       const extent = teamHoverCanvas.width;
       teamHoverCtx.clearRect(0, 0, extent, extent);
-      for (const piece of hoverLayers[team]) {
+      if (amount === 0) teamHoverCtx.drawImage(icon.image, TEAM_HOVER.padding, TEAM_HOVER.padding, TEAM_HOVER.size, TEAM_HOVER.size);
+      else for (const piece of hoverLayers[team]) {
         teamHoverCtx.save();
         teamHoverCtx.translate(extent / 2, extent / 2);
         teamHoverCtx.rotate(piece.hoverAngle * amount);
         teamHoverCtx.drawImage(piece.image, -TEAM_HOVER.size / 2, -TEAM_HOVER.size / 2, TEAM_HOVER.size, TEAM_HOVER.size);
+        teamHoverCtx.restore();
+      }
+      if (colorAmount < 1) {
+        teamHoverCtx.save();
+        teamHoverCtx.globalCompositeOperation = 'source-atop';
+        teamHoverCtx.globalAlpha = 1 - colorAmount;
+        teamHoverCtx.fillStyle = '#dedede';
+        teamHoverCtx.fillRect(0, 0, extent, extent);
         teamHoverCtx.restore();
       }
       const paddedSize = size * extent / TEAM_HOVER.size;
@@ -580,9 +643,9 @@
     function captureReturnGallery() {
       if (!loaded) return null;
       return {
-        layout: 'centered-scatter-v3',
+        layout: 'aligned-grid-v3',
         order: galleryOrder.map(team => source[team].projectId),
-        offsets: galleryOffsets.map(({ x, y }) => ({ x, y })),
+        sizeOffsets: gallerySizeOffsets.map(({ x, y }) => ({ x, y })),
         progress: viewActive ? (stepDestination ?? scrollTarget) : savedProgress,
         selectedProject: selectedTeam >= 0 ? source[selectedTeam].projectId : null,
         revision: galleryRevision, shuffleArmed: galleryShuffleArmed, paused, floatTime: galleryTime
@@ -596,9 +659,9 @@
       const indexes = new Map(source.map((project, team) => [project.projectId, team]));
       if (Array.isArray(state?.order) && state.order.length === source.length && new Set(state.order).size === source.length && state.order.every(id => indexes.has(id))) {
         galleryOrder = state.order.map(id => indexes.get(id));
-        galleryOffsets = state.layout === 'centered-scatter-v3' && state.offsets?.length === source.length &&
-          state.offsets.every(point => Number.isFinite(point.x) && Number.isFinite(point.y) && Math.abs(point.x) <= 1 && Math.abs(point.y) <= 1)
-          ? state.offsets.map(({ x, y }) => ({ x, y })) : [];
+        gallerySizeOffsets = state.sizeOffsets?.length === source.length &&
+          state.sizeOffsets.every(point => Number.isFinite(point.x) && Number.isFinite(point.y) && Math.abs(point.x) <= 1 && Math.abs(point.y) <= 1)
+          ? state.sizeOffsets.map(({ x, y }) => ({ x, y })) : [];
         galleryOrder.forEach(team => iconList.appendChild(iconButtons[team].parentElement));
       }
       galleryRevision = Number.isInteger(state?.revision) ? Math.max(0, state.revision) : 0;
@@ -627,9 +690,7 @@
       card.href = url.href; card.setAttribute('page-transition', '');
       card.dataset.designerId = member.id;
       card.setAttribute('aria-label', member.nameKo + ' 상세 페이지 보기');
-      const portrait = document.createElement('span'); portrait.className = 'formation-portrait';
-      const image = document.createElement('img'); image.alt = ''; image.src = member.image;
-      portrait.appendChild(image);
+      const portrait = document.createElement('img'); portrait.className = 'formation-portrait'; portrait.alt = ''; portrait.src = member.image;
       const copy = document.createElement('span'); copy.className = 'formation-copy';
       const name = document.createElement('span'); name.className = 'formation-name'; name.textContent = member.nameKo;
       const english = document.createElement('span'); english.className = 'formation-name-en'; english.textContent = member.nameEn;
@@ -766,84 +827,130 @@
       // 첫 장면을 만들 때 한 번만 순서를 정합니다.
       if (next.length > 1 && next.every((team, i) => team === previous[i])) next.push(next.shift());
       galleryOrder = next;
-      galleryOffsets = [];
+      gallerySizeOffsets = [];
       galleryShuffleArmed = false; galleryRevision++;
       // 화면의 순서와 키보드 탐색 순서만 바꾸고 학생/색상 연결은 유지합니다.
       galleryOrder.forEach(team => iconList.appendChild(iconButtons[team].parentElement));
     }
-    function makeSpreadSlots() {
-      // 줄/열이나 양 끝 고정점 없이, 중심 주변에서 서로 떨어진 무작위 위치를 고릅니다.
-      const headingBottom = spreadHeading.offsetTop + spreadHeading.offsetHeight;
-      const top = Math.min(height * .3, headingBottom + Math.min(26, height * .045));
-      const bottom = Math.max(10, Math.min(30, height * .045));
-      const availableHeight = Math.max(40, height - top - bottom);
-      // 기존 아이콘 크기 기준만 유지합니다. 실제 위치에는 행/열을 사용하지 않습니다.
-      const rowCount = width / availableHeight > 3.4 ? 2 : width >= 750 ? 3 : width >= 500 ? 4 : 5;
-      const rowHeight = availableHeight / rowCount, columnWidth = width * .94 / Math.ceil(source.length / rowCount);
-      const size = Math.max(12, Math.min(112, columnWidth * .55, rowHeight * .65) * SETTINGS.galleryIconScale);
-      const compactX = width < 750 ? SETTINGS.galleryMobileSpreadX : SETTINGS.gallerySpreadX;
-      const compactY = width < 750 ? SETTINGS.galleryMobileSpreadY : SETTINGS.gallerySpreadY;
-      const safeSize = Math.max(44, size) * SETTINGS.galleryHoverScale;
-      const requestedGap = Math.max(SETTINGS.galleryMinGap, width < 750 ? SETTINGS.galleryMobileGap : SETTINGS.galleryGap);
-      const radiusX = Math.max(1, width - safeSize - 16) * .5 * compactX;
-      const radiusY = Math.max(1, availableHeight - safeSize - 16) * .5 * compactY;
+    function galleryReferenceIconSize(size, availableHeight) {
+      // 배치 간격을 풀어도 크기는 이전의 70px 간격/가로 범위 기준을 유지합니다.
+      const gap = 70, safeSize = Math.max(44, size) * SETTINGS.galleryHoverScale;
+      const radiusX = Math.max(1, width - safeSize - 16) * .5 * (width < 750 ? .88 : .8);
+      const radiusY = Math.max(1, availableHeight - safeSize - 16) * .5 * (width < 750 ? .86 : 1);
       const distance = (a, b) => Math.max(Math.abs(a.x - b.x) * radiusX, Math.abs(a.y - b.y) * radiusY);
-      if (galleryOffsets.length !== source.length) {
-        galleryOffsets = [];
-        // 둥근 영역의 모서리 쪽도 활용하되, 개별 아이콘을 경계에 맞춰 정렬하지 않습니다.
+      if (gallerySizeOffsets.length !== source.length) {
+        gallerySizeOffsets = [];
         const randomPoint = () => {
           let point;
           do { point = { x: random(-1, 1), y: random(-1, 1) }; }
           while (point.x ** 4 + point.y ** 4 > 1);
           return point;
         };
-        const nearestDistance = (point, skip = -1) => galleryOffsets.reduce((nearest, other, i) =>
+        const nearestDistance = (point, skip = -1) => gallerySizeOffsets.reduce((nearest, other, i) =>
           i === skip ? nearest : Math.min(nearest, distance(point, other)), Infinity);
         for (let i = 0; i < source.length; i++) {
           let best, bestDistance = -1;
           for (let attempt = 0; attempt < 96; attempt++) {
-            const point = randomPoint();
-            const clearance = nearestDistance(point);
+            const point = randomPoint(), clearance = nearestDistance(point);
             if (clearance > bestDistance) { best = point; bestDistance = clearance; }
-            if (clearance >= safeSize + requestedGap) break;
+            if (clearance >= safeSize + gap) break;
           }
-          galleryOffsets.push(best);
+          gallerySizeOffsets.push(best);
         }
-        // 새 배치를 만들 때만 가까운 아이콘을 빈 공간으로 옮겨 크기 축소를 최소화합니다.
-        // 스크롤 프레임과 화면 크기 변경에서는 저장된 좌표를 그대로 사용합니다.
         for (let pass = 0; pass < 12; pass++) {
           let crowded = false;
-          galleryOffsets.forEach((point, i) => {
+          gallerySizeOffsets.forEach((point, i) => {
             let best = point, bestDistance = nearestDistance(point, i);
-            if (bestDistance >= safeSize + requestedGap) return;
+            if (bestDistance >= safeSize + gap) return;
             crowded = true;
             for (let attempt = 0; attempt < 256; attempt++) {
               const candidate = randomPoint(), clearance = nearestDistance(candidate, i);
               if (clearance > bestDistance) { best = candidate; bestDistance = clearance; }
-              if (bestDistance >= safeSize + requestedGap) break;
+              if (clearance >= safeSize + gap) break;
             }
-            galleryOffsets[i] = best;
+            gallerySizeOffsets[i] = best;
           });
           if (!crowded) break;
         }
       }
-      // 무리 전체를 중심에 옮깁니다. 개별 아이콘을 좌우 경계에 붙이거나 잘라 맞추지 않습니다.
-      const xs = galleryOffsets.map(point => point.x), ys = galleryOffsets.map(point => point.y);
-      const centerX = (Math.min(...xs) + Math.max(...xs)) / 2;
-      const centerY = (Math.min(...ys) + Math.max(...ys)) / 2;
       let clearance = Infinity;
-      galleryOffsets.forEach((point, i) => galleryOffsets.slice(i + 1).forEach(other => {
+      gallerySizeOffsets.forEach((point, i) => gallerySizeOffsets.slice(i + 1).forEach(other => {
         clearance = Math.min(clearance, distance(point, other));
       }));
-      // 좁은 화면에서도 서로 가려지지 않도록 필요한 경우에만 크기를 조금 줄입니다.
-      const iconSize = Math.max(12, Math.min(size, (clearance - SETTINGS.galleryMinGap) / SETTINGS.galleryHoverScale));
-      const slots = galleryOffsets.map(point => ({
-        x: width / 2 + (point.x - centerX) * radiusX,
-        y: top + availableHeight / 2 + (point.y - centerY) * radiusY,
-        size: iconSize
-      }));
+      return Math.max(12, Math.min(size, (clearance - gap) / SETTINGS.galleryHoverScale));
+    }
+    function galleryLabelMetrics() {
+      ctx.save();
+      const metrics = source.map((icon, team) => {
+        const label = iconButtons[team]?.querySelector('.icon-team-name');
+        const style = label ? getComputedStyle(label) : null;
+        const fontSize = parseFloat(style?.fontSize) || 14;
+        ctx.font = style?.font || '700 ' + fontSize + 'px sans-serif';
+        const measured = ctx.measureText(icon.name).width + 4;
+        const maxWidth = Math.min(160, innerWidth * .3);
+        return { width: Math.min(maxWidth, measured),
+          height: Math.ceil(measured / maxWidth) * (parseFloat(style?.lineHeight) || fontSize * 1.4) + 5 };
+      });
+      ctx.restore();
+      return metrics;
+    }
+    function galleryItemBounds(slot, label = null, padding = 0) {
+      const halfWidth = Math.max(slot.size, label?.width || 0) / 2;
+      return { left: slot.x - halfWidth - padding, right: slot.x + halfWidth + padding,
+        top: slot.y - slot.size / 2 - padding,
+        bottom: slot.y + slot.size / 2 + (label?.height || 0) + padding };
+    }
+    function galleryBoundsGap(a, b) {
+      // 사각 점유 영역 사이의 실제 거리를 사용해 대각선 배치도 허용합니다.
+      return Math.hypot(Math.max(0, a.left - b.right, b.left - a.right),
+        Math.max(0, a.top - b.bottom, b.top - a.bottom));
+    }
+    function galleryGridSlot(column, row, size) {
+      // 팀과 더미 모두 같은 좌표를 사용해 도형 크기와 이름 길이가 정렬에 영향을 주지 않습니다.
+      return { x: Math.round((galleryGrid.left + column * galleryGrid.stepX) * 2) / 2,
+        y: Math.round((galleryGrid.top + row * galleryGrid.stepY) * 2) / 2,
+        size, column, row };
+    }
+    function makeSpreadSlots() {
+      const headingBottom = spreadHeading.offsetTop + spreadHeading.offsetHeight;
+      const top = Math.min(height * .3, headingBottom + Math.min(26, height * .045));
+      const bottom = Math.max(10, Math.min(30, height * .045));
+      const availableHeight = Math.max(40, height - top - bottom);
+      const referenceRows = width / availableHeight > 3.4 ? 2 : width >= 750 ? 3 : width >= 500 ? 4 : 5;
+      const rowHeight = availableHeight / referenceRows;
+      const columnWidth = width * .94 / Math.ceil(source.length / referenceRows);
+      // 정렬 방식과 관계없이 이전 아이콘 크기를 유지합니다.
+      const size = galleryReferenceIconSize(
+        Math.max(12, Math.min(112, columnWidth * .55, rowHeight * .65) * SETTINGS.galleryIconScale), availableHeight);
+      const dummySize = size * GALLERY_AMBIENT.sizeScale;
+      const labelHeight = Math.max(...galleryLabelMetrics().map(label => label.height));
+      const compactX = width < 750 ? SETTINGS.galleryMobileSpreadX : SETTINGS.gallerySpreadX;
+      const compactY = width < 750 ? SETTINGS.galleryMobileSpreadY : SETTINGS.gallerySpreadY;
+      const radiusX = Math.max(1, width - Math.max(44, size) * SETTINGS.galleryHoverScale - 16) * .5 * compactX;
+      const lift = Math.min(SETTINGS.galleryLift, height * .05);
+      const layoutHeight = availableHeight * compactY;
+      const gap = Math.max(SETTINGS.galleryMinGap, GALLERY_AMBIENT.pieceGap + 12);
+      const columns = Math.ceil(source.length / 2), rows = 4;
+      const stepY = Math.min(size + labelHeight + gap, (layoutHeight - size - labelHeight) / (rows - 1));
+      const groupHeight = size + labelHeight + (rows - 1) * stepY;
+      galleryGrid = {
+        left: width / 2 - radiusX,
+        top: top + (availableHeight - groupHeight) / 2 - lift + size / 2,
+        stepX: columns > 1 ? radiusX * 2 / (columns - 1) : size + gap,
+        stepY, columns, rows
+      };
       const byTeam = [];
-      galleryOrder.forEach((team, slot) => { byTeam[team] = slots[slot]; });
+      galleryInteriorSlots = [];
+      let nextTeam = 0;
+      for (let column = 0; column < columns; column++) {
+        for (let row = 0; row < rows; row++) {
+          // 칸 위치는 유지하고 1·3·5·7열은 더미부터, 2·4·6열은 팀부터 배치합니다.
+          const isTeam = (row + column) % 2 === 1 && nextTeam < galleryOrder.length;
+          const slot = galleryGridSlot(column, row, isTeam ? size : dummySize);
+          if (isTeam) byTeam[galleryOrder[nextTeam++]] = slot;
+          else galleryInteriorSlots.push(slot);
+        }
+      }
       return byTeam;
     }
     function positionSpreadSlots() {
@@ -985,97 +1092,103 @@
     }
     function layoutGalleryAmbient() {
       ambientSlots = [];
-      if (!width || !height) return;
+      if (!width || !height || !spreadSlots.length || !galleryGrid) return;
       const stageBox = stage.getBoundingClientRect();
-      const referenceSize = spreadSlots[0]?.size || 0;
-      const topExtra = Math.ceil(referenceSize + GALLERY_AMBIENT.teamGap + 18);
       ambientViewportWidth = document.documentElement.clientWidth;
       ambientStageLeft = stageBox.left;
-      if (!spreadSlots.length) return;
-      // 같은 갤러리로 돌아오거나 크기만 바뀔 때 장식이 매번 뒤섞이지 않게 합니다.
+      const referenceSize = spreadSlots[0].size * GALLERY_AMBIENT.sizeScale;
+      // 제목과 보기 버튼을 같은 묶음으로 두고, 양옆 더미 사이의 여백을 맞춥니다.
+      const heading = toolbar.querySelector('.designer-heading__top');
+      toolbar.style.setProperty('--gallery-heading-offset', '0px');
+      const headingBox = heading.getBoundingClientRect();
+      const titleColumns = Math.max(1, Math.ceil((headingBox.width + referenceSize +
+        GALLERY_AMBIENT.pieceGap * 2) / galleryGrid.stepX) - 1);
+      const headingCenter = stageBox.left + (galleryGridSlot(-1, 0, referenceSize).x +
+        galleryGridSlot(titleColumns, 0, referenceSize).x) / 2;
+      toolbar.style.setProperty('--gallery-heading-offset',
+        (headingCenter - headingBox.left - headingBox.width / 2) + 'px');
+      const labels = galleryLabelMetrics();
+      const occupied = spreadSlots.map((slot, team) => galleryItemBounds(slot, labels[team], 3));
+      const cellKey = slot => slot.column + ':' + slot.row;
+      const filledCells = new Set(spreadSlots.map(cellKey));
+      const titleBounds = [...toolbar.querySelectorAll('.textbox, .view-buttons, .search-bar')]
+        .filter(element => element.getClientRects().length).map(element => {
+        const box = element.getBoundingClientRect();
+        return { left: box.left - stageBox.left - 4, right: box.right - stageBox.left + 4,
+          top: box.top - stageBox.top - 4, bottom: box.bottom - stageBox.top + 4 };
+      });
+      const field = { left: -stageBox.left, right: ambientViewportWidth - stageBox.left,
+        top: -stageBox.top, bottom: innerHeight - stageBox.top };
+      const centerX = (field.left + field.right) / 2, centerY = (field.top + field.bottom) / 2;
+      const radiusX = (field.right - field.left) / 2, radiusY = (field.bottom - field.top) / 2;
+      const minGap = GALLERY_AMBIENT.pieceGap;
+      const padding = Math.max(GALLERY_AMBIENT.floatX, GALLERY_AMBIENT.floatY) + 2;
       let seed = galleryOrder.reduce((value, team) => (Math.imul(value, 31) + team + 1) >>> 0, galleryRevision + 7);
       const next = () => ((seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296);
-      const clusterLeft = ambientStageLeft + Math.min(...spreadSlots.map(slot => slot.x - slot.size * SETTINGS.galleryHoverScale / 2));
-      const clusterRight = ambientStageLeft + Math.max(...spreadSlots.map(slot => slot.x + slot.size * SETTINGS.galleryHoverScale / 2));
-      const clusterTop = Math.min(...spreadSlots.map(slot => slot.y - slot.size * SETTINGS.galleryHoverScale / 2));
-      // 팀 아이콘 무리의 전체 가로 폭을 비우고, 좌우 바깥 여백에만 그립니다.
-      const bands = [
-        { left: 0, right: Math.max(0, clusterLeft - GALLERY_AMBIENT.teamGap), outer: 0 },
-        { left: Math.min(ambientViewportWidth, clusterRight + GALLERY_AMBIENT.teamGap), right: ambientViewportWidth, outer: ambientViewportWidth }
-      ];
-      const placed = [];
-      // 무리 아래쪽 양옆의 빈 포켓도 채우되, 팀 아이콘과 이름 아래 여백을 확보합니다.
-      for (let side = 0; side < 2; side++) {
-        const size = referenceSize, radius = size / 2;
-        const targetX = side === 0 ? clusterLeft + radius : clusterRight - radius;
-        const targetY = height - radius - 8;
-        let point, bestDistance = Infinity;
-        for (let row = 0; row < 7; row++) for (let column = -12; column <= 12; column++) {
-          const candidate = { x: targetX + column * size / 8, y: targetY - row * size / 10, radius };
-          if (candidate.x - radius < 8 || candidate.x + radius > ambientViewportWidth - 8) continue;
-          const clearsTeams = spreadSlots.every(slot => {
-            const teamX = ambientStageLeft + slot.x, teamRadius = slot.size * SETTINGS.galleryHoverScale / 2;
-            return Math.abs(candidate.x - teamX) >= radius + teamRadius + GALLERY_AMBIENT.teamGap ||
-              candidate.y - radius >= slot.y + teamRadius + GALLERY_AMBIENT.teamGap + 24;
-          });
-          const clearsPieces = placed.every(other => Math.max(Math.abs(candidate.x - other.x), Math.abs(candidate.y - other.y)) -
-            radius - other.radius >= GALLERY_AMBIENT.pieceGap);
-          if (!clearsTeams || !clearsPieces) continue;
-          const distance = (candidate.x - targetX) ** 2 + (candidate.y - targetY) ** 2;
-          if (distance < bestDistance) { point = candidate; bestDistance = distance; }
+      const place = slot => {
+        occupied.push(galleryItemBounds(slot, null, padding));
+        if (Number.isInteger(slot.column) && Number.isInteger(slot.row)) filledCells.add(cellKey(slot));
+        const distance = Math.hypot((slot.x - centerX) / radiusX, (slot.y - centerY) / radiusY);
+        const shadeLevel = GALLERY_AMBIENT.fadeDistances.filter(limit => distance >= limit).length;
+        // 기존 난수 순서를 유지해 색상 조정으로 화면 밖 더미의 위치가 바뀌지 않게 합니다.
+        next();
+        ambientSlots.push({ ...slot, shadeLevel, opacity: GALLERY_AMBIENT.opacityLevels[shadeLevel],
+          priority: ambientSlots.length });
+      };
+      // 중앙의 지정된 칸은 항상 유지합니다.
+      galleryInteriorSlots.forEach(place);
+
+      // 화면 안에 걸치는 모든 칸은 같은 격자로 빠짐없이 채웁니다.
+      const firstColumn = Math.ceil((field.left - referenceSize / 2 - galleryGrid.left) / galleryGrid.stepX);
+      const lastColumn = Math.floor((field.right + referenceSize / 2 - galleryGrid.left) / galleryGrid.stepX);
+      const firstRow = Math.ceil((field.top - referenceSize / 2 - galleryGrid.top) / galleryGrid.stepY);
+      const lastRow = Math.floor((field.bottom + referenceSize / 2 - galleryGrid.top) / galleryGrid.stepY);
+      const viewportTop = -stageBox.top;
+      for (let row = firstRow; row <= lastRow; row++) {
+        for (let column = firstColumn; column <= lastColumn; column++) {
+          const slot = galleryGridSlot(column, row, referenceSize);
+          if (filledCells.has(cellKey(slot))) continue;
+          if (slot.y + referenceSize / 2 < field.top || slot.y - referenceSize / 2 > field.bottom) continue;
+          const bounds = galleryItemBounds(slot, null, padding);
+          // 화면 안에서는 이미 확보된 격자 간격 위에 추가 여백을 요구하지 않습니다.
+          // 제목/프로젝트명과 실제로 겹치는 칸만 제외합니다.
+          if (row < 0 && titleBounds.some(title => galleryBoundsGap(bounds, title) === 0)) continue;
+          if (occupied.some(other => galleryBoundsGap(bounds, other) === 0)) continue;
+          place(slot);
         }
-        if (!point) continue;
-        placed.push(point);
-        ambientSlots.push({ x: point.x - ambientStageLeft, y: point.y, size, opacity: .7, priority: side });
       }
-      bands.forEach((band, side) => {
-        const bandWidth = band.right - band.left;
-        if (bandWidth < referenceSize * .65) return;
-        const edgeTeam = spreadSlots.reduce((edge, slot) => (side === 0 ? slot.x < edge.x : slot.x > edge.x) ? slot : edge);
-        const count = Math.min(GALLERY_AMBIENT.maxPerSide,
-          Math.max(3, Math.round(bandWidth * height / (referenceSize + GALLERY_AMBIENT.pieceGap) ** 2 * .8)));
-        for (let i = 0; i < count; i++) {
-          const size = referenceSize, radius = size / 2;
-          // 먼저 가장 바깥 팀 바로 옆을 채우고, 나머지는 화면 끝까지 이어집니다.
-          const minX = side === 0 ? -size * .18 : band.left + radius;
-          const maxX = side === 0 ? band.right - radius : ambientViewportWidth + size * .18;
-          if (minX > maxX) continue;
-          let point;
-          for (let attempt = 0; attempt < 180; attempt++) {
-            const inward = Math.pow(next(), .65);
-            const x = i === 0 ? (side === 0 ? maxX : minX) : i === 1 ? band.outer :
-              lerp(minX, maxX, side === 0 ? inward : 1 - inward);
-            const y = i === 0 && attempt === 0 ? clamp(edgeTeam.y, radius + 8, height - radius - 8) :
-              radius + 8 + next() * Math.max(0, height - size - 16);
-            const candidate = { x, y, radius };
-            const clear = placed.every(other => Math.max(Math.abs(candidate.x - other.x),
-              Math.abs(candidate.y - other.y)) - radius - other.radius >= GALLERY_AMBIENT.pieceGap);
-            if (clear) { point = candidate; break; }
+      // 화면 밖은 별도의 영역으로 다룹니다. 간격과 이어지는 깊이를 달리해
+      // 사각형 테두리 대신 듬성듬성 풀리는 모양을 만들고, 안쪽 격자에는 섞지 않습니다.
+      const extendEdge = (side, first, last) => {
+        const horizontal = side === 'top' || side === 'bottom';
+        const outwardStep = horizontal ? galleryGrid.stepY : galleryGrid.stepX;
+        const alongStep = horizontal ? galleryGrid.stepX : galleryGrid.stepY;
+        const boundary = side === 'left' ? field.left : side === 'right' ? field.right :
+          side === 'top' ? viewportTop : field.bottom;
+        const direction = side === 'left' || side === 'top' ? -1 : 1;
+        for (let index = first; index <= last; index++) {
+          const anchor = galleryGridSlot(horizontal ? index : 0, horizontal ? 0 : index, referenceSize);
+          const along = horizontal ? anchor.x : anchor.y;
+          const depth = next() < .4 ? GALLERY_AMBIENT.outerDepth : 1;
+          for (let layer = 0; layer < depth; layer++) {
+            for (let attempt = 0; attempt < 4; attempt++) {
+              const distance = referenceSize / 2 + minGap + outwardStep * (lerp(.1, .65, next()) + layer);
+              const across = boundary + direction * distance;
+              const shifted = along + lerp(-.3, .3, next()) * alongStep;
+              const slot = { x: horizontal ? shifted : across, y: horizontal ? across : shifted,
+                size: referenceSize, outside: true, side };
+              const bounds = galleryItemBounds(slot, null, padding);
+              if (occupied.some(other => galleryBoundsGap(bounds, other) < minGap)) continue;
+              place(slot);
+              break;
+            }
           }
-          if (!point) continue;
-          placed.push(point);
-          ambientSlots.push({ x: point.x - ambientStageLeft, y: point.y, size, opacity: lerp(.5, .9, next()), priority: 5 + i * 2 + side });
         }
-      });
-      // 무리 위로 세 조각만 살짝 더 내밀고, 제목과 보기 버튼 영역은 비워 둡니다.
-      const titleBoxes = [...toolbar.querySelectorAll('.textbox, .view-buttons')].map(element => element.getBoundingClientRect());
-      for (let i = 0; i < GALLERY_AMBIENT.topCount; i++) {
-        const size = referenceSize, radius = size / 2;
-        for (let attempt = 0; attempt < 24; attempt++) {
-          const ratio = [.25, .55, .82][i] + (next() - .5) * .07;
-          const point = { x: lerp(clusterLeft, clusterRight, ratio),
-            y: clusterTop - GALLERY_AMBIENT.teamGap - radius - next() * 18, radius };
-          if (point.y - radius < -topExtra || point.x - radius < 8 || point.x + radius > ambientViewportWidth - 8) continue;
-          const clearsTitle = titleBoxes.every(box => point.x + radius + 18 <= box.left || point.x - radius - 18 >= box.right ||
-            stageBox.top + point.y + radius + 18 <= box.top || stageBox.top + point.y - radius - 18 >= box.bottom);
-          const clearsPieces = placed.every(other => Math.max(Math.abs(point.x - other.x), Math.abs(point.y - other.y)) -
-            radius - other.radius >= GALLERY_AMBIENT.pieceGap);
-          if (!clearsTitle || !clearsPieces) continue;
-          placed.push(point);
-          ambientSlots.push({ x: point.x - ambientStageLeft, y: point.y, size, opacity: lerp(.5, .75, next()), priority: 2 + i });
-          break;
-        }
-      }
+      };
+      extendEdge('left', firstRow, lastRow);
+      extendEdge('right', firstRow, lastRow);
+      extendEdge('top', firstColumn, lastColumn);
+      extendEdge('bottom', firstColumn, lastColumn);
     }
     function targetPoints() {
       const wordWidth = Math.min(width * .98, Math.max(45, height - 24) * wordArtwork.width / wordArtwork.height, 1250) * SETTINGS.wordScale;
@@ -1136,9 +1249,11 @@
     function retainAmbientGlyphs(originals) {
       const used = new Set(), usedShapes = new Set();
       const candidates = originals.filter(item => item.piece.ambientCandidate);
+      const shapeCount = new Set(candidates.map(item => item.piece.ambientShape)).size;
       ambientParticles = [];
-      // 고유 형태가 부족한 큰 화면에서도 위·아래와 좌우를 고르게 채우고 복제하지 않습니다.
+      // 모든 형태를 한 번씩 쓴 뒤 순환해, 넓은 화면에서도 더미가 빠지는 칸이 없게 합니다.
       for (const slot of [...ambientSlots].sort((a, b) => a.priority - b.priority)) {
+        if (usedShapes.size === shapeCount) usedShapes.clear();
         let selected, bestScore = Infinity;
         for (const item of candidates) {
           if (usedShapes.has(item.piece.ambientShape)) continue;
@@ -1293,6 +1408,9 @@
       assemblyCtx.clearRect(bounds.left, bounds.viewportTop, bounds.width, innerHeight);
       const galleryPoses = spreadSlots.map((_, team) => galleryPose(team));
       const t = clamp(spread, 0, 1);
+      // 아이콘이 펼쳐지는 스크롤에 맞춰 이름도 서서히 드러나고, 되감으면 다시 사라집니다.
+      const nameOpacity = smooth(.65, .95, t);
+      const attention = Math.max(...detailProgress);
       const cameraScale = currentCameraScale();
       // 투명 버튼도 실제로 그려진 아이콘의 위치와 크기를 따라갑니다.
       let interactiveCount = 0;
@@ -1304,6 +1422,9 @@
         const hitScale = Math.max(24, pose.size) / Math.max(44, base.size);
         button.style.transform = 'translate(' + (pose.x - base.x) + 'px,' + (pose.y + wordOffset - base.y) + 'px) scale(' + hitScale + ')';
         button.classList.toggle('is-hovered', hoverTarget(team) === 1);
+        // 상세로 분리되는 팀의 이름은 숨기고, 주변 이름은 아이콘과 같은 농도로 연해집니다.
+        button.style.setProperty('--project-name-opacity', String(nameOpacity *
+          (1 - smooth(0, .18, detailProgress[team])) * lerp(1, .14, attention) * lerp(.3, 1, searchColors[team])));
       });
       iconList.hidden = interactiveCount === 0;
       // 기준 팀 아이콘과 회색 장식을 같은 카메라로 확대합니다.
@@ -1311,7 +1432,6 @@
       const cameraTravel = 1 - 1 / cameraScale;
       // 확대가 끝나도 조각은 계속 이동하며, 모두 안착한 뒤 같은 위치의 원본 SVG로 넘깁니다.
       const iconOpacity = smooth(teamEntryFinish, teamEntryFinish + TEAM_ENTRY.handoffDuration, teamEntryTime), fragmentOpacity = 1 - iconOpacity;
-      const attention = Math.max(...detailProgress);
       lastDraw = [];
       // 움직임이 시작되면 통짜 글자 이미지를 쓰지 않고, 모든 획을 개별 아이콘으로 그립니다.
       if (approach === 0) ctx.drawImage(wordArtwork.background, 0, 0, width, height);
@@ -1431,7 +1551,7 @@
         if (x + w * (.5 + halo) < bounds.left || x - w * (.5 + halo) > bounds.left + bounds.width ||
             y + h * (.5 + halo) < bounds.viewportTop - wordOffset || y - h * (.5 + halo) > bounds.viewportTop + innerHeight - wordOffset) continue;
         assemblyCtx.save(); assemblyCtx.globalAlpha = pieceOpacity; assemblyCtx.translate(x, y); assemblyCtx.rotate(angle);
-        drawTeamEntryPiece(assemblyCtx, piece, w, h, pose.blur, pose.colorAmount);
+        drawTeamEntryPiece(assemblyCtx, piece, w, h, pose.blur, (pose.colorAmount ?? 1) * searchColors[p.team]);
         assemblyCtx.restore();
         lastDraw.push({ id: p.id, name: piece.name, color: piece.color, kind: "color-group", role: "assembly",
           team: p.team, studentId: p.studentId, x, y, size: Math.max(w, h), angle, opacity: pieceOpacity * fragmentOpacity });
@@ -1453,7 +1573,7 @@
           const opacity = iconOpacity * (1 - smooth(0, .18, detail)) * lerp(1, .14, attention);
           if (opacity <= 0) return;
           assemblyCtx.globalAlpha = opacity;
-          drawTeamHover(assemblyCtx, icon, team, x, y, size);
+          drawTeamHover(assemblyCtx, icon, team, x, y, size, searchColors[team]);
           lastDraw.push({ name: icon.name, kind: "icon", team, x, y, size, angle: 0, opacity });
         });
         assemblyCtx.restore();
@@ -1476,7 +1596,7 @@
             const opacity = smooth(0, .18, detail) * pose.opacity;
             if (opacity <= .001) return;
             ctx.save(); ctx.globalAlpha = opacity; ctx.translate(x, y); ctx.rotate(angle);
-            drawTeamEntryPiece(ctx, piece, w, h, pose.blur, pose.colorAmount); ctx.restore();
+            drawTeamEntryPiece(ctx, piece, w, h, pose.blur, (pose.colorAmount ?? 1) * searchColors[team]); ctx.restore();
             lastDraw.push({ name: piece.name, color: piece.color, kind: 'color-group', role: 'detail', team, studentId: target.studentId, x, y, size: Math.max(w, h), angle, opacity });
           });
           ctx.restore();
@@ -1510,6 +1630,14 @@
         galleryHover[team] = next;
         if (next !== target) hoverMoving = true;
       });
+      let searchMoving = false;
+      searchColors.forEach((value, team) => {
+        const target = Number(searchMatches[team]);
+        let next = lerp(value, target, 1 - Math.pow(.78, dt));
+        if (Math.abs(next - target) < .001) next = target;
+        searchColors[team] = next;
+        if (next !== target) searchMoving = true;
+      });
       // A longer ease-out tail lets the pieces and background settle together
       // when returning to the word, including direct upward scrolling.
       const followDamping = scrollTarget < spread ? .88 : .78;
@@ -1526,7 +1654,7 @@
       });
       draw();
       setHint();
-      if (idleActive() || galleryIdleActive() || teamEntryActive() || hoverMoving || spread !== scrollTarget || detailMoving) raf = requestAnimationFrame(frame);
+      if (idleActive() || galleryIdleActive() || teamEntryActive() || hoverMoving || searchMoving || spread !== scrollTarget || detailMoving) raf = requestAnimationFrame(frame);
       else { settle(); draw(); }
     }
     function scatter() {
@@ -1546,7 +1674,10 @@
       if (!event.target.closest('.icon-hit, .formation-panel')) closeDetails();
     });
     document.addEventListener('designer:viewchange', event => changeFormationView(event.detail.view, event.detail.keepToolbar));
-    // designer-filter-change는 그리드 전용이므로 아이콘 갤러리에서는 구독하지 않습니다.
+    // 그리드의 초성 필터는 적용하지 않고, 공통 검색 입력만 컬러 강조에 사용합니다.
+    document.addEventListener('designer-filter-change', () => applyGallerySearch());
+    searchInput?.addEventListener('compositionstart', () => { searchComposing = true; });
+    searchInput?.addEventListener('compositionend', () => { searchComposing = false; applyGallerySearch(); });
     designerClose.addEventListener('click', () => closeDetails(true));
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape' && selectedTeam >= 0) { event.preventDefault(); closeDetails(true); }
@@ -1576,6 +1707,7 @@
     reducedMotion.addEventListener("change", (event) => {
       motionReduced = event.matches;
       galleryHover.forEach((_, team) => { galleryHover[team] = hoverTarget(team); });
+      searchColors.forEach((_, team) => { searchColors[team] = Number(searchMatches[team]); });
       if (motionReduced && stepDestination !== null) scrollToState(stepDestination === 1);
       if (motionReduced) { cancelAnimationFrame(raf); raf = 0; spread = scrollTarget; snapTeamEntry(spread); syncDetailsInstantly(); settle(); draw(); } else wake();
       setHint();
@@ -1634,6 +1766,7 @@
         iconList.appendChild(item);
       }
       loaded = true;
+      applyGallerySearch(true);
       if (!window.DesignerReturnState?.restoring) {
         shuffleGallery();
         layout(true);
@@ -1660,7 +1793,9 @@
         galleryOrder: [...galleryOrder], galleryRevision, selectedTeam, detailProgress: [...detailProgress],
         galleryTime, galleryFloating: galleryIdleActive(), galleryHover: [...galleryHover],
         galleryAnchors: spreadSlots.map(({ x, y, size }) => ({ x, y, size })),
-        viewActive, filterActive: false, resultCount: window.DESIGNERS.length, visibleTeams: [...visibleTeams], toolbarVisible: !toolbar.inert, unmappedResultCount: 0,
+        viewActive, filterActive: !!searchQuery, resultCount: searchResults.length,
+        searchQuery, matchingProjectIds: source.filter((_, team) => searchMatches[team]).map(project => project.projectId),
+        searchColors: [...searchColors], visibleTeams: [...visibleTeams], toolbarVisible: !toolbar.inert, unmappedResultCount: 0,
         selectedDesigners: selectedTeam < 0 ? [] : profiles[selectedTeam].members.map(({ nameKo, nameEn }) => ({ nameKo, nameEn })),
         averageDistance: particles.reduce((sum, p) => sum + Math.hypot(p.x - p.tx, p.y - p.ty), 0) / particles.length,
         names: [...new Set(particles.map(p => p.sprite.name))],

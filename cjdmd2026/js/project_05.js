@@ -75,10 +75,13 @@
 html.project-wave-running #slideview .card,
 html.project-wave-running .project-info { transition: none !important; }
 html[data-project-fluid-view="slide"].project-wave-text-pending :is(
-  .project-dial-title, .title-section .project-title, .desktop-slide-description
+  .title-section .project-title, .desktop-slide-description
 ),
-html[data-project-fluid-view="slide"].project-wave-text-pending:not(.project-intro-copy-ready):not(.project-wave-copy-ready) .project-info {
+html[data-project-fluid-view="slide"].project-wave-text-pending:not(.project-intro-copy-ready):not(.project-wave-copy-ready) :is(.project-dial-title, .project-info) {
   visibility: hidden !important; opacity: 0 !important; animation: none !important;
+}
+html[data-project-fluid-view="slide"].project-wave-text-pending:not(.project-intro-copy-ready):not(.project-wave-copy-ready) .project-dial-title::before {
+  animation: none !important; transform: scaleY(0);
 }
 html[data-project-fluid-view="slide"].project-wave-text-enter :is(
   .project-dial-item.is-active .project-dial-title, .project-info,
@@ -114,7 +117,6 @@ html[data-project-fluid-view="slide"].project-wave-text-exit :is(
 `;
     waveStyle.textContent += `
 html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
-  .project-dial-item.is-active .project-dial-title,
   .title-section .project-title, .desktop-slide-description
 ) { animation:none !important; transform:none !important; clip-path:none !important; opacity:1 !important; }
 `;
@@ -377,29 +379,28 @@ html[data-project-fluid-view="slide"].project-ascii-content-ready :is(
     };
   }
 
-// Capture project titles only; search and view controls stay in their fixed DOM layer.
+// Capture auxiliary copy; the project title and description share a DOM reveal.
 async function captureForeground(target, {includeHidden = false} = {}) {
+  const selectors = '.title-section .project-title, .desktop-slide-description';
+  const elements = [...document.querySelectorAll(selectors)].filter(element => element.getClientRects().length);
+  const surface = document.createElement('canvas');
+  // Slide copy is in the DOM, so an empty layer needs only a transparent pixel.
+  if (!elements.length) {
+    surface.width = surface.height = 1;
+    surface.codeContent = {textRuns:0, iconCount:0};
+    return surface;
+  }
   const bounds = target.getBoundingClientRect();
   const ratio = Math.min(devicePixelRatio || 1, 1.5);
-  const surface = document.createElement('canvas');
   surface.width = Math.max(1, Math.round(bounds.width * ratio));
   surface.height = Math.max(1, Math.round(bounds.height * ratio));
   const ctx = surface.getContext('2d');
   ctx.scale(ratio, ratio);
   ctx.translate(-bounds.left, -bounds.top);
   let textRuns = 0;
-  // Keep the description in the DOM so it can reveal horizontally after the slide.
-  const selectors = '.project-dial-item.is-active .project-dial-title, .title-section .project-title, .desktop-slide-description';
-  for (const element of document.querySelectorAll(selectors)) {
-    if (!element.getClientRects().length) continue;
+  for (const element of elements) {
     const parentStyle = getComputedStyle(element);
     if (!includeHidden && (parentStyle.visibility === 'hidden' || Number(parentStyle.opacity) === 0)) continue;
-    if (element.classList.contains('project-dial-title')) {
-      const rect = element.getBoundingClientRect();
-      const barWidth = parseFloat(parentStyle.borderLeftWidth);
-      ctx.fillStyle = parentStyle.borderLeftColor;
-      ctx.fillRect(rect.left, rect.top, barWidth, rect.height);
-    }
     const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
     while (walker.nextNode()) {
       const node = walker.currentNode;
@@ -436,26 +437,8 @@ async function captureForeground(target, {includeHidden = false} = {}) {
       flush();
     }
   }
-  const textLayer = document.createElement('canvas');
-  textLayer.width = surface.width;
-  textLayer.height = surface.height;
-  textLayer.getContext('2d').drawImage(surface, 0, 0);
-  // Icons and controls live in separate DOM layers above the transition canvas.
+  // Text now animates in the DOM; this texture stays unchanged throughout the wave.
   surface.codeContent = {textRuns, iconCount:0};
-  surface.renderCodeFrame = (slideProgress, incoming, direction) => {
-    const copyPhase = incoming ? 1-slideProgress : slideProgress;
-    ctx.save();
-    ctx.setTransform(1,0,0,1,0,0);
-    ctx.clearRect(0,0,surface.width,surface.height);
-    // The shader masks copy at the moving band instead of fading the whole layer.
-    ctx.globalAlpha = 1;
-    // Move the title opposite the slide and icon dial.
-    ctx.drawImage(textLayer, 0, (incoming?-1:1)*direction*72*ratio*copyPhase);
-    ctx.restore();
-    surface.codeContent.copyMotion = copyPhase;
-    return surface;
-  };
-  surface.renderCodeFrame(includeHidden?1:0,includeHidden,1);
   return surface;
 }
 
@@ -476,6 +459,10 @@ async function captureForeground(target, {includeHidden = false} = {}) {
   }
   function syncBounds() {
     if (!job) return;
+    const boundsKey = `${innerWidth}x${innerHeight}@${devicePixelRatio}`;
+    // Slide cards are fixed in place; view switches still track their animated bounds.
+    if (!job.imageOnly && job.boundsKey === boundsKey) return;
+    job.boundsKey = boundsKey;
     const rect = job.target.getBoundingClientRect();
     Object.assign(overlay.style, {left: `${rect.left}px`, top: `${rect.top}px`, width: `${rect.width}px`, height: `${rect.height}px`});
     const header = document.querySelector('.header');
@@ -502,15 +489,6 @@ async function captureForeground(target, {includeHidden = false} = {}) {
       headerNav.dataset.waveBackdrop = job.incomingBackdrop;
       job.incomingBackdrop = null;
     }
-    // Reuse the cached copy throughout the code transition.
-    for (const [source, value, incoming] of [[job.contentSource,job.content,false],[job.nextSource,job.nextContent,true]]) {
-      if (!source?.renderCodeFrame || progress === job.paintedProgress) continue;
-      source.renderCodeFrame(slideProgress,incoming,job.direction);
-      gl.bindTexture(gl.TEXTURE_2D,value);
-      gl.texSubImage2D(gl.TEXTURE_2D,0,0,0,gl.RGBA,gl.UNSIGNED_BYTE,source);
-      overlay.dataset[incoming?'incomingMotion':'outgoingMotion']=source.codeContent.copyMotion.toFixed(3);
-    }
-    job.paintedProgress=progress;
     [job.a, job.b, atlas, job.content, job.nextContent].forEach((value, index) => {
       gl.activeTexture(gl.TEXTURE0 + index);
       gl.bindTexture(gl.TEXTURE_2D, value);
@@ -577,8 +555,6 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             if(content) {
               gl.deleteTexture(active.nextContent);
               active.nextContent=texture(content);
-              active.nextSource=content;
-              active.paintedProgress=null;
               overlay.dataset.incomingText=String(content.codeContent?.textRuns || 0);
               overlay.dataset.incomingIcons=String(content.codeContent?.iconCount || 0);
             }
@@ -661,7 +637,6 @@ async function captureForeground(target, {includeHidden = false} = {}) {
         job.b = texture(job.to);
         const content = foreground || document.createElement('canvas');
         job.content = texture(content);
-        job.contentSource = content;
         job.nextContent = texture(document.createElement('canvas'));
         if (headerNav) {
           headerNav.dataset.waveBackdrop = navigationBackdrop(fromBlank ? null : job.from, target);
@@ -709,8 +684,8 @@ async function captureForeground(target, {includeHidden = false} = {}) {
     scrollMotion.velocity = fresh ? velocity
       : scrollMotion.velocity+(velocity-scrollMotion.velocity)*blend;
     const intensity = Math.min(1, scrollMotion.velocity/2.4);
-    // Preserve the lingering tail even during fast wheel / trackpad gestures.
-    scrollMotion.targetRate = .85+.80*intensity*intensity*(3-2*intensity);
+    // Keep the rhythm steady; deliberate stronger input adds only a small speed lift.
+    scrollMotion.targetRate = 1+.18*intensity*intensity*(3-2*intensity);
     scrollMotion.lastInput = now;
     scrollMotion.direction = direction;
   }
@@ -756,8 +731,10 @@ async function captureForeground(target, {includeHidden = false} = {}) {
         rgbRelease: 0.18,    // 안전용 잔여값. 실제 Fluid 해제는 wipe 마지막 구간 안에서 끝냄
         rgb: 5,              // RGB를 한 단계 부드럽게
         fluid: 50,          // 세로 전환에서 과한 출렁임을 줄임
-        wheelThreshold: 100,  // 미세 휠 입력에 너무 민감하게 반응하지 않도록
-        wheelGestureGap: 200, // 휠 입력이 끊긴 뒤 다음 제스처 허용
+        slideDurationMs: 1350,
+        wheelThreshold: 40,
+        wheelGestureGap: 180,
+        wheelRepeatInterval: 480,
         pixelRatio: 1.25,
         maxTextureSize: 1920,
         ...window.PROJECT_FLUID_OPTIONS
@@ -766,51 +743,20 @@ async function captureForeground(target, {includeHidden = false} = {}) {
 
     (() => {
         "use strict";
-        let writerFrame=0,writerTimer=0,infoRevealCleanup=null;
+        let writerFrame=0;
         function clearWriterQueue(){
             cancelAnimationFrame(writerFrame);
-            clearTimeout(writerTimer);
-            infoRevealCleanup?.();
-            infoRevealCleanup=null;
         }
-        function revealProjectInfo(projectInfo,animate){
+        function revealProjectInfo(projectInfo){
             if(!projectInfo)return;
-
-            projectInfo.classList.remove('is-visible');
-            void projectInfo.offsetWidth;
-
-            if(!animate||matchMedia('(prefers-reduced-motion: reduce)').matches){
-                projectInfo.classList.add('is-visible');
-                return;
-            }
-
             const activeTitle=document.querySelector(
                 '.project-dial-item.is-active .project-dial-title'
             );
-            let done=false,fallbackTimer=0;
-            const cleanup=()=>{
-                activeTitle?.removeEventListener('animationstart',onTitleRevealStart);
-                clearTimeout(fallbackTimer);
-            };
-            const show=()=>{
-                if(done)return;
-                done=true;
-                cleanup();
-                requestAnimationFrame(()=>projectInfo.classList.add('is-visible'));
-            };
-            const onTitleRevealStart=event=>{
-                if(event.animationName!=='project-dial-title-reveal')return;
-                clearTimeout(fallbackTimer);
-                fallbackTimer=window.setTimeout(show,300);
-            };
-
-            if(activeTitle){
-                activeTitle.addEventListener('animationstart',onTitleRevealStart);
-                fallbackTimer=window.setTimeout(show,2400);
-                infoRevealCleanup=cleanup;
-            }else{
-                show();
-            }
+            const copy=[activeTitle,projectInfo].filter(Boolean);
+            copy.forEach(element=>element.classList.remove('is-visible'));
+            void projectInfo.offsetWidth;
+            // Both elements start together when the scene's copy-ready gate opens.
+            copy.forEach(element=>element.classList.add('is-visible'));
         }
         // =========================================================
         // PROJECTS 데이터
@@ -1057,7 +1003,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                     }
                 );
             }
-            revealProjectInfo(projectInfo,animate);
+            revealProjectInfo(projectInfo);
         }
         // =========================================================
         // Grid 제목
@@ -1127,7 +1073,8 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             const reduce=matchMedia('(prefers-reduced-motion: reduce)');
             let index=Math.max(0,cards.findIndex(c=>c.classList.contains('is-active')));
             let engine=null,phase='idle',queuedDirection=null,request=0,disabled=false,disposed=false;
-            let wheelTotal=0,lastWheel=0,searchFrame=0,wheelLocked=false;
+            let wheelTotal=0,lastWheel=-Infinity,searchFrame=0,wheelLocked=false;
+            let wheelDirection=0,wheelPeak=0,lastWheelStep=-Infinity;
             let wanted=null,wantedDirection=1,loading=false,prepared=null;
             let initial=true,stoppedLenis=null;
             let focusTarget=null,focusTimer=0;
@@ -1166,6 +1113,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 'jikji':'team-14-jikji-jamboree.svg'
             };
             const dialIcons=new Map();
+            const iconWrapCopies=new Map();
             const iconRail=document.createElement('nav');
             iconRail.className='project-icon-rail';
             iconRail.setAttribute('aria-label','프로젝트 바로가기');
@@ -1175,6 +1123,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             iconRail.style.zIndex=String(Number.isFinite(headerZ)&&headerZ>1?headerZ-1:999);
             document.body.append(iconRail);
             let iconTransition=null;
+            let scrollDial=null,scrollDialFrame=0;
             const iconLoads=projectDialItems.map(async item=>{
                 const projectId=String(item.dataset.projectId),file=projectIconFiles[projectId];
                 const title=item.querySelector('.project-dial-title');
@@ -1185,8 +1134,9 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 slot.setAttribute('aria-label',title.textContent.trim()+' 프로젝트로 이동');
                 slot.dataset.projectId=projectId;
                 listen(slot,'click',()=>{
-                    if(slot.getAttribute('aria-current')==='true'||window.ProjectViewTransition?.busy)return;
-                    focusProject(projectId,{immediate:true});
+                    if((slot.getAttribute('aria-current')==='true'&&!scrollDial)||window.ProjectViewTransition?.busy)return;
+                    if(reduce.matches)focusProject(projectId,{immediate:true});
+                    else rollIconDial(0,projectId);
                 });
                 iconRail.append(slot);item.classList.add('has-project-icon');
                 dialIcons.set(projectId,{item,slot});
@@ -1275,17 +1225,16 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             }
 
             html[data-project-fluid-view="slide"] {
-                --project-dial-icon-size:clamp(3rem,5vw,5rem);
+                --project-dial-icon-size:clamp(2.7rem,4.5vw,4.5rem);
                 --project-icon-left:clamp(2rem,4.5vw,5rem);
                 --project-copy-bottom:10vh;
                 --project-copy-width:max(30vw,22rem);
                 --project-copy-left:calc(var(--project-icon-left) + var(--project-dial-icon-size) + 2rem);
-                --project-dial-title-duration:800ms;
             }
-            /* Continue smoothly from the standard 5rem heading at 110rem viewport width. */
+            /* Continue smoothly from the standard 4.5rem icon at 110rem viewport width. */
             @media (min-width:110rem) {
                 html[data-project-fluid-view="slide"] {
-                    --project-dial-icon-size:min(12rem,calc(100vw / 22));
+                    --project-dial-icon-size:min(10.8rem,calc(90vw / 22));
                 }
             }
             .container:has(#slideview:not([hidden])) .project-dial.has-project-icons {
@@ -1333,7 +1282,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 overflow-clip-margin:max(1rem,calc(var(--project-dial-icon-size) * (var(--project-icon-hover-scale) - 1) / 2));
                 pointer-events:none;
             }
-            .project-icon-rail .project-dial-icon {
+            .project-icon-rail :is(.project-dial-icon, .project-icon-wrap-copy) {
                 display:block;
                 position:absolute;
                 left:calc(50% - var(--project-rail-icon-size,0px) / 2);
@@ -1349,26 +1298,37 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 overflow:visible;
                 cursor:pointer;
                 pointer-events:auto;
-                /* One hover curve drives brightness and zoom while the slide controls base opacity. */
-                opacity:calc(var(--project-icon-opacity,1) + (1 - var(--project-icon-opacity,1)) * var(--project-icon-hover-progress));
+                /* A wrapping icon stays hidden even if the pointer rests on its old position. */
+                opacity:calc((var(--project-icon-opacity,1) + (1 - var(--project-icon-opacity,1)) * var(--project-icon-hover-progress)) * var(--project-icon-visibility,1));
                 transition:--project-icon-hover-progress 300ms ease-in-out;
                 transform-origin:center;
                 will-change:transform,opacity;
             }
             .project-icon-rail .project-dial-icon[hidden] { display:none; }
-            .project-dial-icon svg { display:block; width:100%; height:100%; }
+            .project-icon-rail .project-dial-icon.is-wrapping {
+                transition:none;
+                will-change:transform,opacity,filter;
+                pointer-events:none;
+            }
+            .project-icon-rail .project-icon-wrap-copy {
+                visibility:visible;
+                pointer-events:none;
+                transition:none;
+                will-change:transform,opacity,filter;
+            }
+            :is(.project-dial-icon, .project-icon-wrap-copy) svg { display:block; width:100%; height:100%; }
             .project-dial-icon svg * { animation:none!important; transition:none!important; }
             .project-dial-icon > svg {
                 transform:scale(calc(1 + (var(--project-icon-hover-scale) - 1) * var(--project-icon-hover-progress)));
             }
             .project-icon-rail .project-dial-icon[aria-current="true"] { cursor:default; }
             @media (hover:hover) {
-                .project-icon-rail .project-dial-icon:not([aria-current="true"]):hover {
+                .project-icon-rail:not(.is-moving) .project-dial-icon:not(.is-wrapping):not([aria-current="true"]):hover {
                     --project-icon-hover-progress:1;
                     z-index:1;
                 }
             }
-            .project-icon-rail .project-dial-icon:not([aria-current="true"]):focus-visible {
+            .project-icon-rail:not(.is-moving) .project-dial-icon:not(.is-wrapping):not([aria-current="true"]):focus-visible {
                 --project-icon-hover-progress:1;
                 z-index:1;
             }
@@ -1395,22 +1355,31 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             }
             html[data-project-fluid-view="slide"] .project-dial-item.is-active .project-dial-title {
                 visibility:visible;
-                opacity:1;
-                clip-path:inset(0 0 0 0);
-                animation:project-dial-title-reveal var(--project-dial-title-duration,800ms) cubic-bezier(.22,1,.36,1) both;
             }
-            @keyframes project-dial-title-reveal {
-                from { clip-path:inset(0 100% 0 0); }
-                to { clip-path:inset(0 0 0 0); }
-            }
+            html[data-project-fluid-view="slide"] .project-dial-title,
             html[data-project-fluid-view="slide"] .project-info {
                 opacity:0;
                 transform:translateX(-32px);
                 clip-path:inset(0 100% 0 0);
                 will-change:transform,opacity,clip-path;
             }
+            html[data-project-fluid-view="slide"] .project-dial-item.is-active .project-dial-title.is-visible,
             html[data-project-fluid-view="slide"] .project-info.is-visible {
                 animation:project-info-reveal 700ms cubic-bezier(.22,1,.36,1) both;
+            }
+            html[data-project-fluid-view="slide"] .project-dial-title::before {
+                transform:scaleY(0);
+            }
+            html[data-project-fluid-view="slide"] .project-dial-item.is-active .project-dial-title.is-visible::before {
+                animation:project-title-line-draw 700ms ease-in-out both;
+            }
+            @keyframes project-title-line-draw {
+                from { transform:scaleY(0); }
+                to { transform:scaleY(1); }
+            }
+            html.project-view-transitioning[data-project-fluid-view="slide"] .project-dial-title::before {
+                animation:none!important;
+                transform:scaleY(1);
             }
             @keyframes project-info-reveal {
                 from {
@@ -1425,9 +1394,12 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 }
             }
             @media (prefers-reduced-motion:reduce) {
-                html[data-project-fluid-view="slide"] .project-dial-item.is-active .project-dial-title {
+                html[data-project-fluid-view="slide"] .project-dial-item.is-active .project-dial-title.is-visible::before {
                     animation:none;
+                    transform:scaleY(1);
                 }
+                html[data-project-fluid-view="slide"] .project-dial-item.is-active .project-dial-title,
+                html[data-project-fluid-view="slide"] .project-dial-item.is-active .project-dial-title.is-visible,
                 html[data-project-fluid-view="slide"] .project-info,
                 html[data-project-fluid-view="slide"] .project-info.is-visible {
                     opacity:1;
@@ -1500,54 +1472,213 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             // =========================================================
             const dialClamp=(value,min,max)=>Math.max(min,Math.min(max,value));
             const dialLerp=(a,b,t)=>a+(b-a)*t;
+            const dialFade=(progress,start,duration)=>{
+                const t=dialClamp((progress-start)/duration,0,1);
+                return t*t*(3-2*t);
+            };
+            function iconMotionProgress(progress){
+                const t=dialClamp(progress,0,1),ramp=.2,speed=1/(1-ramp);
+                // Soft acceleration and braking around a steady middle, over the full timeline.
+                const accelerate=value=>speed*(value/2-ramp*Math.sin(Math.PI*value/ramp)/(2*Math.PI));
+                if(t<ramp)return accelerate(t);
+                if(t>1-ramp)return 1-accelerate(1-t);
+                return speed*(t-ramp/2);
+            }
 
             function slideHeadingCenterY(){
                 // Layout coordinates stay stable while the view transition scales the layers.
                 return copyGroup.offsetTop + iconRail.offsetWidth / 2;
             }
 
+            const wrapDialIndex=(position,count)=>((position%count)+count)%count;
+            function scrollDialSelection(){
+                if(!scrollDial)return null;
+                return scrollDial.ids[wrapDialIndex(Math.round(scrollDial.target),scrollDial.ids.length)];
+            }
+            function stopScrollDial(){
+                cancelAnimationFrame(scrollDialFrame);
+                scrollDialFrame=0;
+                scrollDial=null;
+            }
+            function rollIconDial(pixels,projectId=null){
+                const ids=visibleCards().map(card=>String(card.dataset.projectId)).filter(id=>dialIcons.has(id));
+                if(ids.length<2)return;
+                const now=performance.now();
+                if(!scrollDial){
+                    let position=ids.indexOf(String(cards[index]?.dataset.projectId));
+                    let anchorY=slideHeadingCenterY();
+                    const from=ids.indexOf(iconTransition?.fromId),to=ids.indexOf(iconTransition?.toId);
+                    if(iconTransition&&from>=0&&to>=0){
+                        let distance=to-from;
+                        if(distance>ids.length/2)distance-=ids.length;
+                        if(distance<-ids.length/2)distance+=ids.length;
+                        position=from+distance*iconTransition.progress;
+                        anchorY=dialLerp(iconTransition.fromY,anchorY,iconTransition.progress);
+                    }
+                    scrollDial={ids,position,target:position,velocity:0,anchorY,last:now,lastInput:now,
+                        direction:Math.sign(pixels)||1,reversePixels:0,rolling:true,snapped:false,committedId:null};
+                }
+                if(projectId!==null){
+                    const target=ids.indexOf(String(projectId));
+                    if(target<0)return;
+                    scrollDial.target=target+Math.round((scrollDial.position-target)/ids.length)*ids.length;
+                    scrollDial.direction=Math.sign(scrollDial.target-scrollDial.position)||scrollDial.direction;
+                    scrollDial.lastInput=now-180;
+                    scrollDial.snapped=true;
+                    scrollDial.rolling=true;
+                    scrollDial.committedId=null;
+                    cancelProjectFocus();queuedDirection=null;
+                    if(!scrollDialFrame){scrollDial.last=now;scrollDialFrame=requestAnimationFrame(tickScrollDial);}
+                    return;
+                }
+                const motion=scrollDial,direction=Math.sign(pixels);
+                if(direction!==motion.direction){
+                    motion.reversePixels+=pixels;
+                    if(Math.abs(motion.reversePixels)<24)return;
+                    pixels=motion.reversePixels;
+                    motion.reversePixels=0;
+                    motion.target=motion.position;
+                    motion.direction=direction;
+                }else motion.reversePixels=0;
+                cancelProjectFocus();
+                queuedDirection=null;
+                // Keep only a short runway ahead of the hand, never a long scroll backlog.
+                motion.target=dialClamp(motion.target+dialClamp(pixels,-180,180)/90,motion.position-3,motion.position+3);
+                motion.lastInput=now;
+                motion.snapped=false;
+                motion.rolling=true;
+                motion.committedId=null;
+                if(!scrollDialFrame){motion.last=now;scrollDialFrame=requestAnimationFrame(tickScrollDial);}
+            }
+            function tickScrollDial(now){
+                scrollDialFrame=0;
+                const motion=scrollDial;
+                if(!motion||disposed||slideview.hidden)return;
+                const dt=Math.min(32,Math.max(0,now-motion.last))/1000;
+                motion.last=now;
+                const quiet=now-motion.lastInput;
+                if(quiet>140&&!motion.snapped){
+                    motion.target=Math.round(motion.target+motion.direction*.000001);
+                    motion.snapped=true;
+                }
+                // A damped spring retains velocity across every project boundary.
+                const spring=12,offset=motion.position-motion.target;
+                const impulse=motion.velocity+spring*offset,decay=Math.exp(-spring*dt);
+                const next=motion.target+(offset+impulse*dt)*decay;
+                const distance=next-motion.position,step=dialClamp(distance,-5*dt,5*dt);
+                motion.position+=step;
+                motion.velocity=dialClamp(Math.abs(distance)>5*dt&&dt?step/dt:(motion.velocity-spring*impulse*dt)*decay,-5,5);
+                if(quiet>180&&motion.snapped){
+                    const selected=scrollDialSelection();
+                    if(motion.committedId!==selected){
+                        motion.committedId=selected;
+                        focusProject(selected,{immediate:true});
+                    }
+                }
+                if(motion.snapped&&Math.abs(motion.target-motion.position)<.002&&Math.abs(motion.velocity)<.015){
+                    motion.position=motion.target;
+                    motion.velocity=0;
+                    motion.rolling=false;
+                    if(phase==='idle'&&scrollDialSelection()===String(cards[index]?.dataset.projectId)){
+                        scrollDial=null;
+                        if(!document.querySelector('.project-info')?.classList.contains('is-visible')){
+                            updateSlideInfo(cards[index].dataset.projectId,false);
+                        }
+                    }
+                }
+                syncIconRail(cards[index]?.dataset.projectId);
+                if(scrollDial?.rolling)scrollDialFrame=requestAnimationFrame(tickScrollDial);
+            }
+
             function syncIconRail(projectId){
                 const ids=visibleCards().map(card=>String(card.dataset.projectId))
                     .filter(id=>dialIcons.has(id));
-                const from=ids.indexOf(iconTransition?.fromId);
-                const to=ids.indexOf(iconTransition?.toId);
-                const moving=iconTransition&&from>=0&&to>=0;
-                const active=ids.indexOf(String(projectId));
-                const progress=moving?dialClamp(iconTransition.progress,0,1):0;
+                const base=scrollDial?Math.floor(scrollDial.position):0;
+                const from=scrollDial?wrapDialIndex(base,ids.length):ids.indexOf(iconTransition?.fromId);
+                const to=scrollDial?wrapDialIndex(base+1,ids.length):ids.indexOf(iconTransition?.toId);
+                const moving=scrollDial?scrollDial.rolling:iconTransition&&from>=0&&to>=0;
+                iconRail.classList.toggle('is-moving',Boolean(moving));
+                const active=scrollDial?wrapDialIndex(Math.round(scrollDial.position),ids.length):ids.indexOf(String(projectId));
+                const progress=moving?(scrollDial?scrollDial.position-base:dialClamp(iconTransition.progress,0,1)):0;
+                if(!moving){
+                    iconWrapCopies.forEach(copy=>copy.remove());
+                    iconWrapCopies.clear();
+                }
                 const height=iconRail.clientHeight;
                 const headingY=slideHeadingCenterY();
-                const railY=moving?dialLerp(iconTransition.fromY,headingY,progress):headingY;
-                const center=dialClamp(railY-iconRail.offsetTop,0,height);
-                const size=Math.min(iconRail.clientWidth,2*Math.min(center,height-center));
+                const dialHeading=scrollDial?(iconTransition?dialLerp(scrollDial.anchorY,headingY,iconTransition.progress):scrollDial.anchorY):headingY;
+                const size=Math.min(iconRail.clientWidth,height);
+                const centerAt=y=>dialClamp(y-iconRail.offsetTop,size/2,height-size/2);
+                // Reserve room for every icon, independent of the selected project's position.
+                const maxStep=Math.max(0,(height-size)/Math.max(1,ids.length));
+                const gap=Math.min(10,size*.15,maxStep*.2);
+                const inactiveSize=Math.min(size*.6,maxStep-gap);
+                const step=inactiveSize+gap;
                 iconRail.style.setProperty('--project-rail-icon-size',`${size.toFixed(2)}px`);
-                const layoutAt=(activeIndex,itemIndex)=>{
+                const layoutAt=(activeIndex,itemIndex,center)=>{
                     if(activeIndex<0){
-                        const step=Math.min(height/Math.max(1,ids.length),size*.8);
                         return {center:(height-(ids.length-1)*step)/2+itemIndex*step,
-                            size:Math.min(size*.46,step*.8),opacity:.4};
+                            size:inactiveSize,opacity:.4};
                     }
-                    const offset=itemIndex-activeIndex;
-                    if(!offset)return {center,size,opacity:1};
-                    const above=offset<0;
-                    const count=above?activeIndex:ids.length-activeIndex-1;
-                    const space=Math.max(0,(above?center:height-center)-size/2);
-                    const gap=Math.min(12,size*.18,space);
-                    const step=Math.min(size*.8,(space-gap)/count);
+                    const relative=(itemIndex-activeIndex+ids.length)%ids.length;
+                    // Continue the list above the selection when the lower rail is full.
+                    const belowCount=Math.min(ids.length-1,Math.floor((height-center-size/2)/Math.max(1,step)));
+                    const offset=relative<=belowCount?relative:relative-ids.length;
+                    if(!offset)return {center,size,opacity:1,offset};
                     return {
-                        center:center+Math.sign(offset)*(size/2+gap+(Math.abs(offset)-.5)*step),
-                        size:Math.min(size*.46,step*.8),opacity:.4
+                        center:center+Math.sign(offset)*(size/2+gap+inactiveSize/2+(Math.abs(offset)-1)*step),
+                        size:inactiveSize,opacity:.4,offset
                     };
+                };
+                const paintIcon=(element,pose,visibility=1)=>{
+                    const scale=pose.size/Math.max(1,size);
+                    element.style.transform=`translate3d(0,${(pose.center-size/2).toFixed(2)}px,0) scale(${scale.toFixed(4)})`;
+                    element.style.setProperty('--project-icon-opacity',pose.opacity.toFixed(3));
+                    element.style.setProperty('--project-icon-visibility',visibility.toFixed(3));
+                    element.style.filter=visibility<1?`blur(${((1-visibility)*6/Math.max(.01,scale)).toFixed(2)}px)`:'none';
                 };
                 dialIcons.forEach(({slot},id)=>{
                     const itemIndex=ids.indexOf(id);
                     slot.hidden=itemIndex<0;
-                    if(slot.hidden)return;
-                    const before=layoutAt(moving?from:active,itemIndex);
-                    const after=moving?layoutAt(to,itemIndex):before;
-                    const scale=dialLerp(before.size,after.size,progress)/Math.max(1,size);
-                    const y=dialLerp(before.center,after.center,progress)-size/2;
-                    slot.style.transform=`translate3d(0,${y.toFixed(2)}px,0) scale(${scale.toFixed(4)})`;
-                    slot.style.setProperty('--project-icon-opacity',dialLerp(before.opacity,after.opacity,progress).toFixed(3));
+                    if(slot.hidden){
+                        iconWrapCopies.get(id)?.remove();
+                        iconWrapCopies.delete(id);
+                        return;
+                    }
+                    slot.setAttribute('aria-current',String(itemIndex===active));
+                    const beforeY=scrollDial?dialHeading:moving?iconTransition.fromY:headingY;
+                    const before=layoutAt(moving?from:active,itemIndex,centerAt(beforeY));
+                    const after=moving?layoutAt(to,itemIndex,centerAt(dialHeading)):before;
+                    // Both ends of the looping icon share the same motion as their neighbors.
+                    const wrapping=moving&&Math.abs(after.offset-before.offset)>ids.length/2;
+                    slot.classList.toggle('is-wrapping',Boolean(wrapping));
+                    if(wrapping){
+                        let outgoing=iconWrapCopies.get(id);
+                        if(!outgoing){
+                            outgoing=document.createElement('span');
+                            outgoing.className='project-icon-wrap-copy';
+                            outgoing.dataset.projectId=id;
+                            outgoing.setAttribute('aria-hidden','true');
+                            outgoing.inert=true;
+                            const svg=slot.querySelector('svg');
+                            if(svg)outgoing.append(svg.cloneNode(true));
+                            iconRail.append(outgoing);
+                            iconWrapCopies.set(id,outgoing);
+                        }
+                        const direction=after.offset>before.offset?-1:1;
+                        const visibility=dialFade(progress,0,1);
+                        // Overlap the exit and entrance instead of pausing between two fades.
+                        paintIcon(outgoing,{...before,center:before.center+direction*step*progress},1-visibility);
+                        paintIcon(slot,{...after,center:after.center-direction*step*(1-progress)},visibility);
+                    }else{
+                        iconWrapCopies.get(id)?.remove();
+                        iconWrapCopies.delete(id);
+                        paintIcon(slot,{
+                            center:dialLerp(before.center,after.center,progress),
+                            size:dialLerp(before.size,after.size,progress),
+                            opacity:dialLerp(before.opacity,after.opacity,progress)
+                        });
+                    }
                 });
             }
 
@@ -1559,7 +1690,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 projectDialItems.forEach((item,i)=>{
                     const distance=Math.abs(i-activeIndex);
                     item.classList.toggle('is-active',distance===0);
-                    dialIcons.get(item.dataset.projectId)?.slot.setAttribute('aria-current',String(distance===0));
+                    if(!scrollDial)dialIcons.get(item.dataset.projectId)?.slot.setAttribute('aria-current',String(distance===0));
                     item.classList.toggle('is-near',distance===1);
                     item.classList.toggle('is-far',distance===2);
                     item.classList.toggle('is-none',distance>2);
@@ -1763,50 +1894,56 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             function cancelDescriptionExit(){
                 const exit=descriptionExit;
                 descriptionExit=null;
-                exit?.animation.cancel();
-                exit?.element.remove();
+                exit?.animations.forEach(animation=>animation.cancel());
+                exit?.elements.forEach(element=>element.remove());
             }
             async function exitProjectDescription(){
                 clearWriterQueue();
                 cancelDescriptionExit();
-                const info=document.querySelector('.project-info');
-                if(!info)return;
-                const style=getComputedStyle(info);
-                if(reduce.matches||style.visibility==='hidden'||Number(style.opacity)===0){
+                const exit={animations:[],elements:[]};
+                descriptionExit=exit;
+                const copy=document.querySelectorAll('.project-info, .project-dial-item.is-active .project-dial-title');
+                for(const info of copy){
+                    const style=getComputedStyle(info);
+                    if(reduce.matches||style.visibility==='hidden'||Number(style.opacity)===0){
+                        info.classList.remove('is-visible');
+                        continue;
+                    }
+                    const from={opacity:style.opacity,transform:style.transform,clipPath:style.clipPath};
+                    const bounds=info.getBoundingClientRect();
+                    const offset=new DOMMatrixReadOnly(style.transform==='none'?undefined:style.transform);
+                    // Keep both outgoing text blocks above the canvas while the content updates.
+                    const outgoing=info.cloneNode(true);
+                    outgoing.className=info.classList.contains('project-dial-title')?'project-title-exit':'project-info-exit';
+                    outgoing.inert=true;
+                    outgoing.setAttribute('aria-hidden','true');
+                    for(const property of style)outgoing.style.setProperty(property,style.getPropertyValue(property));
+                    if(info.classList.contains('project-dial-title')){
+                        outgoing.style.setProperty('--project-title-line-transform',getComputedStyle(info,'::before').transform);
+                    }
+                    Object.assign(outgoing.style,{
+                        position:'fixed',left:`${bounds.left-offset.m41}px`,top:`${bounds.top-offset.m42}px`,
+                        right:'auto',bottom:'auto',margin:'0',pointerEvents:'none',
+                        zIndex:String(Number.isFinite(headerZ)&&headerZ>1?headerZ-1:999),
+                        webkitTextFillColor:'currentColor',
+                        animation:'none',transition:'none'
+                    });
+                    document.body.append(outgoing);
                     info.classList.remove('is-visible');
-                    return;
+                    const animation=outgoing.animate([
+                        from,
+                        {opacity:0,transform:'translateX(-40px)',clipPath:from.clipPath}
+                    ],{duration:260,easing:'cubic-bezier(.4,0,1,1)',fill:'forwards'});
+                    animation.id='project-copy-exit';
+                    exit.animations.push(animation);
+                    exit.elements.push(outgoing);
                 }
-                const from={opacity:style.opacity,transform:style.transform,clipPath:style.clipPath};
-                const bounds=info.getBoundingClientRect();
-                const offset=new DOMMatrixReadOnly(style.transform==='none'?undefined:style.transform);
-                // Keep the outgoing copy above the canvas while the real description updates.
-                const outgoing=info.cloneNode(true);
-                outgoing.className='project-info-exit';
-                outgoing.inert=true;
-                outgoing.setAttribute('aria-hidden','true');
-                for(const property of style)outgoing.style.setProperty(property,style.getPropertyValue(property));
-                Object.assign(outgoing.style,{
-                    position:'fixed',left:`${bounds.left-offset.m41}px`,top:`${bounds.top-offset.m42}px`,
-                    right:'auto',bottom:'auto',margin:'0',pointerEvents:'none',
-                    zIndex:String(Number.isFinite(headerZ)&&headerZ>1?headerZ-1:999),
-                    // Preserve each text child's color instead of inheriting the parent's computed fill.
-                    webkitTextFillColor:'currentColor',
-                    animation:'none',transition:'none'
-                });
-                document.body.append(outgoing);
-                info.classList.remove('is-visible');
-                const animation=outgoing.animate([
-                    from,
-                    {opacity:0,transform:'translateX(-40px)',clipPath:from.clipPath}
-                ],{duration:260,easing:'cubic-bezier(.4,0,1,1)',fill:'forwards'});
-                animation.id='project-info-exit';
-                descriptionExit={animation,element:outgoing};
                 try{
-                    await animation.finished;
+                    await Promise.all(exit.animations.map(animation=>animation.finished));
                 }catch{
                     // View changes and reduced motion can cancel the exit.
                 }finally{
-                    if(descriptionExit?.animation===animation)cancelDescriptionExit();
+                    if(descriptionExit===exit)cancelDescriptionExit();
                 }
             }
             async function exitProjectCopy(){
@@ -2094,7 +2231,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                             from,to,prepared,target:cards[index],fromBlank:true,
                             onProgress(progress){
                                 if(intro!==entry||entry.copyRevealed||progress<.72)return;
-                                // Follow the title as it clears the central band, rather than waiting for the full wave.
+                                // Reveal the title and description together before the wave finishes.
                                 entry.copyRevealed=true;
                                 root.classList.add('project-intro-copy-ready');
                             },
@@ -2113,6 +2250,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 }
             }
             function clearTransition(){
+                stopScrollDial();
                 cancelProjectFocus();
                 window.ProjectViewTransition?.cancel();
                 finishIntro(true);
@@ -2124,7 +2262,8 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 wanted=null;prepared=null;loading=false;phase='idle';queuedDirection=null;
                 iconTransition=null;
                 syncIconRail(cards[index]?.dataset.projectId);
-                wheelTotal=0;lastWheel=0;wheelLocked=false;
+                wheelTotal=0;lastWheel=-Infinity;wheelLocked=false;
+                wheelDirection=0;wheelPeak=0;lastWheelStep=-Infinity;
                 engine?.cancel();slideview.classList.remove('is-fluid-transitioning');
             }
             function jump(next,updateText=true){
@@ -2186,13 +2325,15 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                         toId:String(cards[next].dataset.projectId),progress:0};
                     const finished = await window.ProjectWave.transition({
                         direction,
+                        durationMs:settings.slideDurationMs,
                         onStart(){ void exitProjectDescription(); },
-                        onProgress(progress, timelineProgress){
+                        onProgress(_waveProgress, timelineProgress){
                             if(current!==request||disposed||slideview.hidden||!iconTransition)return;
-                            iconTransition.progress=progress;
+                            iconTransition.progress=iconMotionProgress(timelineProgress);
                             syncIconRail(cards[index]?.dataset.projectId);
-                            // Start the 700ms description reveal during the final fifth of the wave.
-                            if(timelineProgress>=.8&&queuedDirection===null){
+                            // Let the shared text reveal overlap the settling part of the wave.
+                            if(timelineProgress>=.68&&queuedDirection===null
+                                &&(!scrollDial||(!scrollDial.rolling&&scrollDialSelection()===String(cards[index]?.dataset.projectId)))){
                                 root.classList.add('project-wave-copy-ready');
                             }
                         },
@@ -2221,8 +2362,9 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                     if (finished && current === request && !disposed && !slideview.hidden) {
                         cancelDescriptionExit();
                         // Continuous scrolling only reveals the final project's description.
-                        if (queuedDirection !== null) {
-                            document.querySelector('.project-info')?.classList.remove('is-visible');
+                        if (queuedDirection !== null || scrollDial?.rolling
+                            || (scrollDial&&scrollDialSelection()!==String(cards[index]?.dataset.projectId))) {
+                            document.querySelectorAll('.project-info, .project-dial-title').forEach(element=>element.classList.remove('is-visible'));
                         }
                         // Preserve the reveal already in progress when the canvas finishes.
                         root.classList.remove('project-wave-text-pending','project-wave-text-enter','project-wave-text-exit');
@@ -2242,6 +2384,10 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                         wanted = null;
                         phase = 'idle';
                         loading = false;
+                        if(scrollDial){
+                            scrollDial.anchorY=slideHeadingCenterY();
+                            if(!scrollDial.rolling&&scrollDialSelection()===String(cards[index]?.dataset.projectId))scrollDial=null;
+                        }
                         iconTransition = null;
                         syncIconRail(cards[index]?.dataset.projectId);
                         wheelTotal = 0;
@@ -2473,6 +2619,7 @@ function settleAsciiContent() {
             }
             function reconcileSearch(){
                 if(disposed)return;
+                stopScrollDial();
                 queuedDirection=null;
                 const list=visibleCards();
                 if(!list.length){clearTransition();return;}
@@ -2500,44 +2647,81 @@ function settleAsciiContent() {
             const editable=target=>target instanceof Element&&target.closest('input,textarea,select,[contenteditable="true"],[role="dialog"],[data-fluid-ignore]');
             const wheelOption=(name,fallback,min,max)=>Math.min(max,Math.max(min,Number.isFinite(Number(settings[name]))?Number(settings[name]):fallback));
             listen(document,'wheel',event=>{
-                if(disposed||slideview.hidden||event.ctrlKey||event.metaKey||editable(event.target))return;
+                if(disposed||slideview.hidden||event.ctrlKey||event.metaKey||event.altKey||editable(event.target))return;
                 const nested=event.composedPath().find(el=>el instanceof Element&&el.matches('[data-fluid-ignore],[role="dialog"]'));
                 if(nested)return;
                 if(event.cancelable)event.preventDefault();
                 event.lenisStopPropagation=true;
                 const delta=Math.abs(event.deltaY)>=Math.abs(event.deltaX)?event.deltaY:event.deltaX;
-                if(!delta)return;
+                if(!Number.isFinite(delta)||!delta)return;
                 const now=event.timeStamp;
-                const direction=Math.sign(delta);
                 const unit=event.deltaMode===1?16:event.deltaMode===2?innerHeight:1;
-                // Momentum can spike or briefly reverse within a single gesture.
-                // Only a pause since the last wheel event starts another gesture.
-                if(now-lastWheel>wheelOption('wheelGestureGap',200,80,1000)){
+                const pixels=delta*unit,magnitude=Math.abs(pixels),direction=Math.sign(pixels);
+                if(!reduce.matches){
+                    if(root.classList.contains('project-intro-pending')||root.classList.contains('project-intro-running')
+                        ||window.ProjectViewTransition?.busy)return;
+                    wheelTotal=Math.sign(wheelTotal)===direction?wheelTotal+pixels:pixels;
+                    if(scrollDial?.rolling||Math.abs(wheelTotal)>=6){rollIconDial(wheelTotal);wheelTotal=0;}
+                    return;
+                }
+                const threshold=wheelOption('wheelThreshold',40,1,500);
+                // A short rendering pause must not split one swipe into two gestures.
+                if(now-lastWheel>wheelOption('wheelGestureGap',180,80,1000)
+                    &&(!wheelLocked||direction!==wheelDirection||now-lastWheelStep>=320)){
                     wheelTotal=0;
                     wheelLocked=false;
+                    wheelPeak=0;
+                    wheelDirection=direction;
                 }
                 lastWheel=now;
                 if(root.classList.contains('project-intro-pending')
-                    ||root.classList.contains('project-intro-running')){
+                    ||root.classList.contains('project-intro-running')||window.ProjectViewTransition?.busy){
                     wheelTotal=0;wheelLocked=true;return;
                 }
-                // Locked/inertial events still adjust animation speed without adding slides.
-                window.ProjectWave.updateScrollSpeed(delta*unit);
-                if(wheelLocked)return;
-                if(Math.sign(wheelTotal)!==direction)wheelTotal=0;
-                wheelTotal+=delta*unit;
-                if(Math.abs(wheelTotal)>=wheelOption('wheelThreshold',100,1,500)){
+                if(direction!==wheelDirection){
+                    // A deliberate reversal can interrupt the gesture lock; tiny tail bounces cannot.
+                    wheelTotal=Math.sign(wheelTotal)===direction?wheelTotal+pixels:pixels;
+                    if(Math.abs(wheelTotal)<threshold)return;
+                    wheelLocked=false;
+                    wheelDirection=direction;
+                    wheelPeak=magnitude;
+                }else{
+                    wheelPeak=Math.max(wheelPeak,magnitude);
+                    // Repeated notches keep advancing, while decaying trackpad momentum stays one step.
+                    if(wheelLocked&&now-lastWheelStep>=wheelOption('wheelRepeatInterval',480,240,1500)
+                        &&magnitude>=(event.deltaMode===1?16:24)&&magnitude>=wheelPeak*.9){
+                        wheelLocked=false;
+                        wheelTotal=0;
+                        wheelPeak=magnitude;
+                    }
+                    if(wheelLocked){wheelTotal=0;return;}
+                    if(Math.sign(wheelTotal)!==direction)wheelTotal=0;
+                    wheelTotal+=pixels;
+                }
+                if(Math.abs(wheelTotal)>=threshold){
+                    window.ProjectWave.updateScrollSpeed(wheelTotal);
+                    const peak=wheelPeak;
                     wheelTotal=0;
                     navigate(direction);
                     // Set after navigate: reduced motion may synchronously reset state.
                     wheelLocked=true;
                     lastWheel=now;
+                    lastWheelStep=now;
+                    wheelDirection=direction;
+                    wheelPeak=peak;
                 }
             },{passive:false,capture:true});
             listen(document,'keydown',event=>{
                 if(slideview.hidden||editable(event.target)||event.ctrlKey||event.metaKey||event.altKey)return;
                 const dir=['ArrowDown','ArrowRight','PageDown'].includes(event.key)?1:['ArrowUp','ArrowLeft','PageUp'].includes(event.key)?-1:0;
-                if(dir){event.preventDefault();if(!event.repeat)navigate(dir);}
+                if(dir){
+                    event.preventDefault();
+                    if(event.repeat)return;
+                    if(scrollDial){
+                        const at=wrapDialIndex(Math.round(scrollDial.target)+dir,scrollDial.ids.length);
+                        rollIconDial(0,scrollDial.ids[at]);
+                    }else navigate(dir);
+                }
             });
             let touch=null;
             listen(document,'touchstart',event=>{
@@ -2563,6 +2747,7 @@ function settleAsciiContent() {
             const copySizeObserver=new ResizeObserver(alignSlideContent);
             copySizeObserver.observe(copyGroup);
             listen(window,'resize',()=>{
+                stopScrollDial();
                 finishIntro(true);
                 syncFluidSurfaceBounds(cards[wanted??index]||cards[index]);
                 alignSlideContent();
@@ -2574,7 +2759,7 @@ function settleAsciiContent() {
                     jump(next);
                 }else warm();
             });
-            listen(window,'pagehide',()=>finishIntro(true));
+            listen(window,'pagehide',()=>{stopScrollDial();finishIntro(true);});
             const returning = window.projectListReturn;
             if (returning) {
                 const savedIndex = cards.findIndex(card => card.dataset.projectId === returning.projectId);
@@ -2592,6 +2777,8 @@ function settleAsciiContent() {
                 get state(){return {
                     view:slideview.hidden?'grid':'slide',phase,index,projectId:cards[index]?.dataset.projectId,
                     pendingId:wanted===null?null:cards[wanted]?.dataset.projectId,queuedDirection,loading,disabled,
+                    dial:scrollDial?{position:scrollDial.position,target:scrollDial.target,velocity:scrollDial.velocity,
+                        rolling:scrollDial.rolling,selectedId:scrollDialSelection()}:null,
                     textureCount:engine?.imageCache.size||0,loadingCount:engine?.imageLoads.size||0,
                     activeCount:engine?.nodes.length||0,wipes:engine?.state.wipes||[],
                     transitionCount:engine?.started||0,renderCount:engine?.renderCount||0,rgbEnvelope:engine?.energy||0

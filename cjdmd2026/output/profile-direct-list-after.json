@@ -1,0 +1,53 @@
+[
+  {
+    "profileName": "권민성",
+    "profileBottom": 960,
+    "listTop": 960,
+    "sectionTop": 960,
+    "scrollHeight": 2085,
+    "motionReady": false,
+    "stickyDisplay": "none",
+    "flyerCount": 0,
+    "cards": 3,
+    "wheelPrevented": false,
+    "viewport": [
+      1440,
+      900
+    ],
+    "errors": []
+  },
+  {
+    "profileName": "권민성",
+    "profileBottom": 828,
+    "listTop": 828,
+    "sectionTop": 828,
+    "scrollHeight": 1953,
+    "motionReady": false,
+    "stickyDisplay": "none",
+    "flyerCount": 0,
+    "cards": 3,
+    "wheelPrevented": false,
+    "viewport": [
+      1024,
+      768
+    ],
+    "errors": []
+  },
+  {
+    "profileName": "권민성",
+    "profileBottom": 599.578125,
+    "listTop": 599.578125,
+    "sectionTop": 599.578125,
+    "scrollHeight": 2236,
+    "motionReady": false,
+    "stickyDisplay": "none",
+    "flyerCount": 0,
+    "cards": 3,
+    "wheelPrevented": false,
+    "viewport": [
+      390,
+      844
+    ],
+    "errors": []
+  }
+]

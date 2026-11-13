@@ -1,0 +1,18 @@
+[
+  {
+    "profileName": "권민성",
+    "profileBottom": 960,
+    "listTop": 3750,
+    "sectionTop": 960,
+    "scrollHeight": 4875,
+    "motionReady": true,
+    "stickyDisplay": "block",
+    "flyerCount": 1,
+    "cards": 3,
+    "viewport": [
+      1440,
+      900
+    ],
+    "errors": []
+  }
+]

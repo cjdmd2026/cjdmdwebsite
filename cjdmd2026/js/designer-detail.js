@@ -5,6 +5,8 @@
 
     const CONFIG = {
         designerId: "",
+        // 프로필 다음에 전시 목록을 바로 표시합니다. 전체 화면 확대/축소 구간은 사용하지 않습니다.
+        fullPageMotion: false,
         fullMode: "ratio",       // "ratio" 또는 "viewport"
         travelScreens: 3.1,
         expandLeadScreens: 0.65, // 섹션이 상단에 닿기 전부터 확대를 시작합니다.
@@ -16,7 +18,7 @@
         focalY: 0.5,
 
         // 프로필 ↔ 최대 확대 이미지 ↔ 카드 목록 시작
-        stepScroll: true,
+        stepScroll: false,
         stepDuration: 1500,       // 전체 화면 ↔ 카드 목록(ms)
         profileStepDuration: 2200, // 프로필 ↔ 전체 화면(ms)
         wheelThreshold: 12,      // 작을수록 가벼운 스크롤에도 반응
@@ -611,7 +613,7 @@
 
         if (primary) image.src = primary;
 
-        if (isFirst && !compactLayout.matches) {
+        if (isFirst && !compactLayout.matches && CONFIG.fullPageMotion) {
             const flyer = createNode(
                 "div",
                 "hero-flyer is-docked"
@@ -967,7 +969,7 @@
     }
 
     function mount() {
-        if (stopped || compactLayout.matches) return;
+        if (stopped || compactLayout.matches || !CONFIG.fullPageMotion) return;
 
         const nodes = findElements();
 

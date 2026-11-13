@@ -242,8 +242,8 @@ html[data-project-fluid-view="slide"].project-intro-running:not(.project-intro-a
     white-space: nowrap;
     transform-origin: 50% 0;
 }
-/* The description follows the title while the remaining wave is still playing. */
-html:is(.project-intro-copy-ready, .project-wave-copy-ready) .container:has(#slideview:not([hidden])) .project-description {
+/* Reveal the title and description together above the remaining wave. */
+html:is(.project-intro-copy-ready, .project-wave-copy-ready) .container:has(#slideview:not([hidden])) :is(.project-dial, .project-description) {
     z-index: 1000;
 }
 /* ============================== Common ============================== */
@@ -658,15 +658,30 @@ html[data-project-fluid-view="slide"] .header .nav:is(
 }
 
 .container:has(#slideview:not([hidden])) .project-dial-title {
+    position: relative;
     padding-left: var(--project-title-bar-gap);
-    border-left: var(--project-title-bar-width) solid var(--project-title-accent, transparent);
+    border-left: var(--project-title-bar-width) solid transparent;
     font-family: 'pretendard', var(--font-main);
-    font-size: 5rem;
+    font-size: 4.5rem;
     font-weight: 700;
     line-height: 1;
 
     color: rgba(255, 255, 255, 0.9);
     text-shadow: 0 2px 14px rgb(0 0 0 / 22%);
+}
+
+:where(.container:has(#slideview:not([hidden]))) .project-dial-title::before,
+.project-title-exit::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(-1 * var(--project-title-bar-width));
+    width: var(--project-title-bar-width);
+    background: var(--project-title-accent, transparent);
+    transform: var(--project-title-line-transform, scaleY(1));
+    transform-origin: center top;
+    pointer-events: none;
 }
 
 

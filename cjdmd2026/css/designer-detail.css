@@ -1005,7 +1005,7 @@ img {
 
 .footer .container .footer-info p {
     color: var(--color-white);
-    font-size: 0.5rem;
+    font-size: 0.7rem;
 }
 
 .footer .container .footer-info img {
@@ -1033,6 +1033,6 @@ img {
     .main .back-button span, .main .back-button:is(:hover, :focus-visible) span { opacity: 1; font-size: .875rem; }
     .footer { border-top: 1px solid #ebebed; padding: 24px 0 max(24px, env(safe-area-inset-bottom)); }
     .footer .container { margin-block: 0; align-items: center; gap: 12px; }
-    .footer .container .footer-info p { font-size: .65rem; }
+    .footer .container .footer-info p { font-size: .85rem; }
     .footer .container .footer-icons { gap: 8px; }
 }

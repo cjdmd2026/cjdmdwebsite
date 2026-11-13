@@ -4,7 +4,7 @@
     'use strict';
     // 일반 페이지 위에서 사용하는 클릭 효과. 링크, 텍스트 선택, 스크롤 입력을 가로채지 않습니다.
     // iconSize: 크기(px), holdDelay: 모으기 시작(ms), idleDelay + fadeDuration: 손을 뗀 뒤 사라지는 시간(ms).
-    const SETTINGS = { iconSize: 22, holdDelay: 250, spawnInterval: 95, gatherSpring: 115,
+    const SETTINGS = { iconSize: 22, clickSpeed: 340, holdDelay: 250, spawnInterval: 95, gatherSpring: 115,
       gatherDamping: 20, burstSpeed: 190, idleDelay: 120, fadeDuration: 430, maxIcons: 36 };
     if (window.StudentMouseEffect || document.getElementById('student-mouse-effect-layer')) return;
     const canvas = document.createElement('canvas');
@@ -26,15 +26,18 @@
     const point = { x: 0, y: 0 };
     function localPoint(event) { return { x: clamp(event.clientX, 0, width), y: clamp(event.clientY, 0, height) }; }
     function baseSize() { return width < 600 ? SETTINGS.iconSize * .86 : SETTINGS.iconSize; }
-    function spawn(gathering = false) {
+    function spawn(gathering = false, angle = random(0, Math.PI * 2)) {
       if (!ready) return;
-      const asset = assets[nextIcon++ % assets.length], angle = random(0, Math.PI * 2);
-      const radius = gathering ? random(26, 46) : random(2, 6), size = baseSize() * random(.84, 1.14);
+      const asset = assets[nextIcon++ % assets.length];
+      // 클릭 시 중심에서 방사형으로 튀어나오고, 모션 감소 설정에서는 간격을 두고 표시합니다.
+      const radius = gathering ? random(26, 46) : reduced.matches ? baseSize() * random(1, 1.3) : 0;
+      const size = baseSize() * random(.84, 1.14), speed = gathering ? 0 : SETTINGS.clickSpeed * random(.85, 1.15);
       particles.push({ id: serial++, asset, size, drawSize: size,
         x: clamp(point.x + Math.cos(angle) * radius, size, width - size),
         y: clamp(point.y + Math.sin(angle) * radius, size, height - size),
-        vx: reduced.matches ? 0 : random(-32, 32), vy: reduced.matches ? 0 : random(-58, -28),
-        angle: random(-.16, .16), spin: reduced.matches ? 0 : random(-.8, .8), born: performance.now() });
+        vx: reduced.matches ? 0 : gathering ? random(-32, 32) : Math.cos(angle) * speed,
+        vy: reduced.matches ? 0 : gathering ? random(-58, -28) : Math.sin(angle) * speed,
+        angle: random(-.16, .16), spin: reduced.matches ? 0 : gathering ? random(-.8, .8) : random(-3, 3), born: performance.now() });
       if (particles.length > SETTINGS.maxIcons) particles.shift();
     }
     function begin(event) {
@@ -44,7 +47,10 @@
       const now = performance.now();
       active = { id: event.pointerId, type: event.pointerType, startX: point.x, startY: point.y,
         started: now, holding: false, nextEmission: now + SETTINGS.holdDelay };
-      mode = 'press'; spawn(); wake();
+      mode = 'press';
+      const count = 4 + Math.floor(Math.random() * 2), startAngle = random(0, Math.PI * 2);
+      for (let i = 0; i < count; i++) spawn(false, startAngle + i * Math.PI * 2 / count);
+      wake();
     }
     function move(event) {
       if (!active || active.id !== event.pointerId) return;

@@ -420,7 +420,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function viewContents(view) {
         const selectors = view === "slide"
             ? ".formation-slide, .formation-scroll-cue"
-            : ".search-bar, .designer-filter, .designer-slider";
+            : ".designer-filter, .designer-slider";
         const elements = [...designerPage.querySelectorAll(selectors)];
         if (view === "grid") elements.push(document.querySelector(".designer-grid-empty"));
         return elements.filter(element => element && element.getClientRects().length &&
