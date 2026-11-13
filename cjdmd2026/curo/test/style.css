@@ -257,6 +257,6 @@ img { display: block; -webkit-user-drag: none; pointer-events: none; }
 .ad-box button.a { margin: 4px 8px 4px 0; padding: 10px 16px; border-radius: 10px; background: #2A2E31; color: #fff; font-size: 16px; font-family: inherit; }
 .ad-box button.a.red { background: #E24B4B; } .ad-box button.a.gray { background: #9A9A9A; }
 .ad-box .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.ad-box select, .ad-box input[type="date"] { font: inherit; padding: 6px 8px; border: 1px solid #CCC; border-radius: 8px; }
+.ad-box select, .ad-box input[type="date"], .ad-box input[type="text"] { font: inherit; padding: 6px 8px; border: 1px solid #CCC; border-radius: 8px; }
 .ad-x { position: absolute; left: calc(50% + 536px); top: calc(50% - 374px); width: 44px; height: 44px; border-radius: 50%; background: #F1F1F1; font-size: 26px; z-index: 1; font-family: system-ui; }
 .ad-big { font-size: 22px; font-weight: 700; color: #1EB2A6; }

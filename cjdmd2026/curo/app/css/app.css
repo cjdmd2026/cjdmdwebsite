@@ -660,3 +660,127 @@ html:not(.mock) .tabbar button { justify-content: flex-start; padding-top: 9px; 
 .info .kwset button.is-on { background: var(--mint); border-color: var(--mint); color: #fff; }
 .info .nt { padding: 14px 0; border-bottom: 1px solid #EEE; } .info .nt b { display: block; font-size: 13px; font-weight: 600; } .info .nt small { font-size: 10px; color: var(--gray2); }
 .setl .ver { font-size: 11px; color: var(--gray); }
+
+/* 2026-11 앱 수정 사항: 기존 화면 구성 유지 */
+.pick { position: relative; padding-top: 35px; }
+.modal-close { position:absolute; right:12px; top:7px; width:28px; height:28px; font-size:24px; color:#777; }
+.pick > .row .btn { width:100%; }
+.fpick { width:280px; padding:36px 24px 22px; }
+.fpick h4 { display:block; margin-bottom:8px; }
+.modal-desc { text-align:center; font-size:11px; color:var(--gray); margin:0 0 22px; }
+.fgrid button { position:relative; border:0; }
+.fgrid button:not(.is-on) img { opacity:.45; }
+.fgrid button.is-on::after { content:'✓'; position:absolute; right:0; top:0; width:23px; height:23px; border-radius:50%; background:var(--mint); color:white; border:2px solid white; line-height:19px; font-size:15px; }
+.avatar .camera-icon { width:32px; height:26px; color:white; }
+.sec .q { display:inline-flex; align-items:center; justify-content:center; width:15px; height:15px; border:0; vertical-align:middle; padding:0; }
+.sec .q svg { width:15px; height:15px; }
+html:not(.mock) .rhead { padding-top:18px; padding-bottom:48px; }
+@keyframes revisionGrow { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+.stage .bar i { transform-origin:left; animation:revisionGrow .8s ease-out both; }
+.prog .bar, .prog .bar i { border-radius:999px; }
+.slide .bar i { animation:none; transform:scaleX(0); transform-origin:left; }
+.slide.animate-bars .bar i { animation:revisionGrow .8s ease-out both; }
+.search-launch { display:flex; width:100%; min-height:40px; align-items:center; justify-content:space-between; text-align:left; border:1px solid #ddd; border-radius:6px; padding:0 12px; color:#888; }
+.search-launch:empty::before { content:'검색'; }
+.search-launch img, .search-submit img { width:18px; height:18px; object-fit:contain; }
+.search-submit { position:absolute; right:12px; top:10px; }
+.search input { padding-right:38px; }
+.recent { padding:14px 28px; }
+.recent-head,.recent-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; }
+.recent-head { font-size:14px; }
+.recent-head button { font-size:11px; color:var(--gray); }
+.recent-row { font-size:13px; border-bottom:1px solid #eee; }
+.recent-row button:first-child { text-align:left; flex:1; }
+.recent-row button:last-child { font-size:20px; width:26px; }
+.empty-state { text-align:center; padding:40px 18px; font-size:13px; color:var(--gray); line-height:1.7; }
+.demo-caption { margin:10px 28px; font-size:11px; line-height:1.6; color:#777; }
+.sources { font-size:11px; line-height:1.6; color:#478c86; }
+.contact-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:22px 0; border-bottom:1px solid #eee; font-size:14px; }
+.contact-row a,.contact-row button,.contact-row span { color:var(--mint); font-size:12px; flex:none; }
+.contact-edit { padding:16px 0; }
+.contact-edit input { width:100%; padding:12px; border:1px solid #ddd; margin:8px 0; }
+.hospital-stage { flex:1; position:relative; min-height:250px; overflow:hidden; }
+.hospital-stage .map-full { position:absolute; inset:0; margin:0; border-radius:0; }
+.hospital-stage .map-full .mp { width:100%; height:100%; object-fit:cover; }
+.hospital-stage .hospital-pin { position:absolute; left:48%; top:28%; width:36px; height:43px; object-fit:contain; }
+.hospital-stage .loc { position:absolute; right:20px; top:20px; bottom:auto; width:40px; height:40px; border-radius:50%; background:white; color:var(--mint); display:grid; place-items:center; box-shadow:0 2px 8px #0002; }
+.loc svg { width:28px; height:28px; }
+.hospital-sheet { position:absolute; bottom:0; left:0; right:0; margin:0; padding:0; height:54%; min-height:190px; display:flex; flex-direction:column; transition:height .25s ease,min-height .25s ease; box-shadow:0 -3px 15px #0001; }
+.hospital-sheet.is-collapsed { height:38px; min-height:38px; }
+.sheet-handle { width:100%; height:38px; flex:none; display:grid; place-items:center; touch-action:none; }
+.sheet-handle .grab { position:static; margin:0; width:44px; height:4px; border-radius:3px; background:#ccc; }
+.hospital-list { overflow:auto; flex:1; min-height:0; }
+.hospital-sheet .hos { min-height:138px; height:138px; padding-top:15px; padding-bottom:30px; }
+.hospital-sheet .hos .dist { left:122px; bottom:28px; }
+.hospital-sheet .hos .acts { bottom:24px; }
+.cam-view { height:calc(var(--vh) - var(--sb)); }
+.cam-view > img { height:0; flex:1; }
+.cam-foot { height:130px; padding-bottom:env(safe-area-inset-bottom,0px); }
+.fd-photo .kc { font-size:25px; bottom:42px; }
+.fd-photo .kc small { font-size:15px; }
+.fd-photo .ftg { bottom:44px; }
+.fd-photo .ftg span { font-size:11px; padding:5px 10px; }
+.day-meal figure > img { display:block; width:100%; height:168px; object-fit:cover; }
+.meal-name { display:flex; align-items:center; gap:4px; }
+.day-meal .meal-icon,.reco .meal-icon { width:15px; height:15px; aspect-ratio:auto; object-fit:contain; }
+.day-meal figcaption,.reco figcaption { align-items:center; gap:4px; min-height:32px; }
+.food-copy { padding-right:18px; }
+.food-copy p { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+.prof .pic { border:0; }
+.write-classify { display:flex; gap:10px; padding:14px 28px; font-size:12px; }
+.write-classify select { margin-left:8px; border:1px solid #ddd; border-radius:6px; padding:8px; background:white; }
+.lesson .pb i { border-radius:999px; }
+.safety-note,.medical-note { margin:12px 28px; font-size:11px; line-height:1.6; color:#777; }
+.search-submit img { position:static; }
+.pf-av { border:0; }
+
+/* 긴급 목록: 제공 시안의 검색창, 분류와 카드 간격 */
+[data-scr="sos"] .search { margin-top:34px; }
+[data-scr="sos"] .search-launch { height:36px; min-height:36px; border:1.5px solid #ddd; border-radius:22px; padding:0 16px; }
+[data-scr="sos"] .search-launch img { width:20px; height:20px; right:13px; top:8px; }
+[data-scr="sos"] .filter-chips { margin-top:10px; gap:10px; padding-right:16px; }
+[data-scr="sos"] .filter-chips button { height:25px; padding:0 11px; font-size:12px; border-radius:16px; }
+[data-scr="sos"] .posts { margin-top:20px; }
+[data-scr="sos"] .post { padding:0 28px 12px; margin-bottom:10px; }
+[data-scr="sos"] .kw { gap:10px; }
+[data-scr="sos"] .kw span { font-size:10px; line-height:18px; }
+[data-scr="sos"] .post h4 { margin:12px 0 6px; font-size:15px; line-height:20px; }
+[data-scr="sos"] .post p { font-size:12px; line-height:18px; height:36px; color:#808080; }
+[data-scr="sos"] .post .mt { margin-top:14px; font-size:12px; line-height:16px; color:#bcbcbc; }
+.chart-info { margin:10px 28px; font-size:11px; color:#888; line-height:1.6; }
+.chart-info summary { cursor:pointer; }
+.chart-info p { margin-top:6px; }
+
+/* PDF 전 화면 재대조: 선택 상태와 검색/지도 구성 복원 */
+.fgrid button { border:2px solid transparent; }
+.fgrid button:not(.is-on) img { opacity:1; }
+.fgrid.has-selection button:not(.is-on) img { opacity:.35; }
+.fgrid button.is-on { border:2px solid var(--mint); box-shadow:0 0 0 1px var(--mint); }
+.search-launch { height:36px; min-height:36px; border-radius:20px; }
+[data-scr="food-search"] .search,[data-scr="guide-search"] .search { margin-top:22px; }
+[data-scr="guide-search"] .search { margin-top:34px; }
+.hospital-stage { margin-top:21px; }
+.hospital-stage .loc { top:auto; bottom:calc(54% + 12px); color:#222; transition:bottom .25s ease; }
+.hospital-stage.single-hospital .hospital-sheet { height:180px; min-height:180px; }
+.hospital-stage.single-hospital .loc { bottom:192px; }
+.hospital-stage:has(.is-collapsed) .loc { bottom:50px; }
+.hospital-stage.single-hospital .hospital-sheet.is-collapsed { height:38px; min-height:38px; }
+.hospital-stage .hospital-pin { left:calc(50% - 18px); }
+.hospital-stage.single-hospital .hospital-pin { top:40%; }
+.hos .dist { left:122px; }
+.contact-directory { padding:8px 28px; }
+.contact-directory .contact-row { padding:17px 0; gap:10px; font-size:13px; }
+.contact-row[hidden] { display:none; }
+.contact-directory .contact-row > img { width:13px; height:13px; object-fit:contain; opacity:.45; }
+.contact-directory .contact-row b { flex:1; font-weight:600; }
+.contact-directory .contact-row span,.contact-directory .contact-row a,.contact-directory .contact-row button { color:#aaa; }
+.fd-sheet > .nut { margin-top:4px; }
+.day-meal figcaption span::before,.reco figcaption span::before { content:none; }
+.hospital-stage .map-full { bottom:54%; transition:bottom .25s ease; }
+.hospital-stage.single-hospital .map-full { bottom:180px; }
+.hospital-stage:has(.is-collapsed) .map-full { bottom:38px; }
+.hospital-stage .map-full .loc { bottom:12px; }
+.hospital-stage .hospital-pin { top:45%; }
+.post .ims.two-images,.pd-ims.two-images { grid-template-columns:1fr 1fr; grid-template-rows:auto; height:auto; align-items:start; }
+.post .ims.two-images > img,.pd-ims.two-images > img { width:100%; height:auto; object-fit:contain; }
+@media (prefers-reduced-motion:reduce) { .stage .bar i,.slide.animate-bars .bar i { animation:none; transform:scaleX(1); } .hospital-sheet { transition:none; } }
