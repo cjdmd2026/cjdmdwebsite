@@ -1502,7 +1502,10 @@ html:has(.designer-page.slide-view) {
     object-position: center 30%;
     flex: none;
     border-radius: 9px;
-    background: #161616;
+    background: #fff;
+    /* 얼굴은 선명하게 두고, 사진 아래쪽을 카드의 흰 배경으로 부드럽게 연결합니다. */
+    mask-image: linear-gradient(to bottom, #000 58%, rgba(0, 0, 0, .85) 70%, rgba(0, 0, 0, .35) 88%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, #000 58%, rgba(0, 0, 0, .85) 70%, rgba(0, 0, 0, .35) 88%, transparent 100%);
 }
 .formation-copy { min-width: 0; flex: 1; }
 .formation-name {
