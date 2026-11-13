@@ -9,7 +9,7 @@
   <link rel="icon" href="app/img/symbol.webp">
   <link rel="preload" href="app/fonts/freesentation-400.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="app/fonts/freesentation-600.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="app/css/app.css?v=7">
+  <link rel="stylesheet" href="app/css/app.css?v=20261113d">
 </head>
 <body>
   <!-- 화면은 js/app.js 가 #app 안에 하나씩 그림 (주소 #/home, #/edu …) -->
@@ -29,14 +29,14 @@
 
   <div class="dim" id="dim">
     <div class="pick" role="dialog" aria-label="날짜 선택">
-      <h4><button data-mv="-1" aria-label="이전 달">‹</button><span></span><button data-mv="1" aria-label="다음 달">›</button></h4>
+      <button class="modal-close" data-cancel aria-label="닫기">×</button><h4><button data-mv="-1" aria-label="이전 달">‹</button><span></span><button data-mv="1" aria-label="다음 달">›</button></h4>
       <div class="cal7"></div>
-      <div class="row"><button class="btn is-off" style="pointer-events:auto" data-cancel>뒤로가기</button><button class="btn" data-ok>완료</button></div>
+      <div class="row"><button class="btn" data-ok>완료</button></div>
     </div>
   </div>
   <div class="toast" id="toast" role="status"></div>
   </div>
 
-  <script src="app/js/app.js?v=7"></script>
+  <script src="app/js/content.js?v=20261113d"></script><script src="app/js/app.js?v=20261113d"></script>
 </body>
 </html>
