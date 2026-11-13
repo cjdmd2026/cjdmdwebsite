@@ -269,6 +269,15 @@
       <h4>기록</h4>
       <table><tr><th>응시 기록</th><th>수령 기록</th><th>1일차 수령</th><th>2일차</th><th>3일차</th><th>4일차</th></tr><tr><td>${DB.records.length}</td><td>${DB.receipts.length}</td>${byDay}</tr></table>
       <div class="row" style="margin-top:12px"><button class="a" id="ad-csv">기록 내려받기 (엑셀용 CSV)</button><button class="a gray" id="ad-undo">마지막 수령 1건 취소</button></div>
+      <h4>수령 기록 직접 추가</h4>
+      <div class="row">이름 <input type="text" id="ad-r-name" maxlength="10" placeholder="예) 홍길동" style="width:150px">
+        굿즈 <select id="ad-r-item">${ids.map((id) => `<option value="${id}">${NAMES[id]} (남은 ${avail(id)})</option>`).join('')}</select>
+        과목 <select id="ad-r-cat">${Q.cats.map((c) => `<option value="${c.id}">${c.title}</option>`).join('')}</select>
+        점수 <select id="ad-r-score">${[100, 90, 80, 70, 60, 50, 40, 30, 20, 10, 0].map((v) => `<option value="${v}">${v}점</option>`).join('')}</select>
+        일차 <select id="ad-r-day">${[1, 2, 3, 4].map((k) => `<option value="${k}"${k === d ? ' selected' : ''}>${k}일차</option>`).join('')}</select>
+        <button class="a" id="ad-r-add">수령 기록 추가</button></div>
+      <p class="hint">현장에서 직접 나눠준 굿즈처럼 화면을 거치지 않은 수령을 기록할 때 써요. 추가하면 그 굿즈의 남은 수량이 1개 줄어요.</p>
+      ${DB.receipts.length ? `<table style="margin-top:10px"><tr><th>시각</th><th>일차</th><th>이름</th><th>굿즈</th><th>점수</th><th></th></tr>${DB.receipts.map((r, i) => ({ r, i })).slice(-8).reverse().map(({ r, i }) => `<tr><td>${new Date(r.at).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</td><td>${r.day}</td><td>${esc(r.name)}${r.manual ? ' <small style="color:#999">(직접 추가)</small>' : ''}</td><td>${NAMES[r.item] || r.item}</td><td>${r.score}</td><td><button class="a gray" data-del="${i}" style="margin:0;padding:6px 12px;font-size:14px">삭제</button></td></tr>`).join('')}</table><p class="hint">최근 8건만 보여요. 전체는 '기록 내려받기'로 확인하세요.</p>` : ''}
       <h4>초기화</h4>
       <div class="row"><button class="a red" id="ad-clr-rank">오늘의 랭킹 · 응시 기록 지우기</button><button class="a red" id="ad-clr-rec">수령 기록 지우기 (재고 원상복구)</button><button class="a red" id="ad-clr-all">전부 처음으로 (전시 시작 전 테스트 후)</button></div>
     </div>`;
@@ -280,6 +289,14 @@
     if (id === 'ad-save') { $$('[data-stock]').forEach((i) => { DB.set.stock[i.dataset.stock] = Math.max(0, parseInt(i.value, 10) || 0); }); save(); openAdmin(); }
     if (id === 'ad-undo') { const r = DB.receipts[DB.receipts.length - 1]; if (r && confirm(`${r.name}님의 ${NAMES[r.item] || r.item} 수령을 취소할까요?`)) { DB.receipts.pop(); save(); openAdmin(); } }
     if (id === 'ad-csv') csv();
+    if (id === 'ad-r-add') {
+      const name = $('#ad-r-name').value.trim(), item = $('#ad-r-item').value;
+      if (!name) { alert('이름을 입력해 주세요.'); $('#ad-r-name').focus(); return; }
+      if (avail(item) < 1 && !confirm(`${NAMES[item]}의 남은 수량이 없어요. 그래도 추가할까요?`)) return;
+      DB.receipts.push({ item, name, cat: $('#ad-r-cat').value, score: parseInt($('#ad-r-score').value, 10) || 0, ms: 0, day: parseInt($('#ad-r-day').value, 10) || dayNo(), date: today(), at: Date.now(), manual: true });
+      save(); openAdmin(); return;
+    }
+    if (t.dataset && t.dataset.del != null) { const i = +t.dataset.del, r = DB.receipts[i]; if (r && confirm(`${r.name}님의 ${NAMES[r.item] || r.item} 수령 기록을 삭제할까요?`)) { DB.receipts.splice(i, 1); save(); openAdmin(); } return; }
     if (id === 'ad-clr-rank' && confirm('응시 기록(랭킹)을 모두 지울까요?')) { DB.records = []; save(); openAdmin(); }
     if (id === 'ad-clr-rec' && confirm('수령 기록을 모두 지울까요? 재고가 처음 상태로 돌아가요.')) { DB.receipts = []; save(); openAdmin(); }
     if (id === 'ad-clr-all' && confirm('응시·수령 기록과 설정을 모두 지우고, 오늘을 전시 첫날로 정할까요?')) { localStorage.removeItem(KEY); DB = load(); save(); openAdmin(); }
@@ -291,8 +308,8 @@
   function csv() {
     const cn = (id) => (Q.cats.find((c) => c.id === id) || {}).title || id;
     const t = (ms) => new Date(ms).toLocaleString('ko-KR');
-    const lines = ['구분,시각,일차,이름,과목,점수,걸린 시간,굿즈'];
-    DB.receipts.forEach((r) => lines.push(['수령', t(r.at), r.day, r.name, cn(r.cat), r.score, fmt(r.ms), NAMES[r.item]].map((v) => `"${String(v).replace(/"/g, '""')}"`).join(',')));
+    const lines = ['구분,시각,일차,이름,과목,점수,걸린 시간,굿즈'];   // 직접 추가한 수령은 구분 = '수령(직접)'
+    DB.receipts.forEach((r) => lines.push([r.manual ? '수령(직접)' : '수령', t(r.at), r.day, r.name, cn(r.cat), r.score, fmt(r.ms), NAMES[r.item]].map((v) => `"${String(v).replace(/"/g, '""')}"`).join(',')));
     DB.records.forEach((r) => lines.push(['응시', t(r.at), '', r.name, cn(r.cat), r.score, fmt(r.ms), ''].map((v) => `"${String(v).replace(/"/g, '""')}"`).join(',')));
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob(['﻿' + lines.join('\n')], { type: 'text/csv' }));

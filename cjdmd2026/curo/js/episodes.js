@@ -9,7 +9,7 @@ window.CURO_STORY = {
   unlocked: 1,                                   // 1화부터 몇 화까지 열려 있는지 (나머지는 자물쇠)
   placeholder: 'assets/images/story/hero.webp',  // 영상이 아직 없을 때 영상 자리에 보이는 임시 배경
   episodes: [
-    { title: '큐로 가디언즈의 시작', thumb: 'assets/images/story/ep-1.webp?v=69', video: 'https://player.mux.com/qxGfmlLmdh9iKDu60202HjC5R81WFEhMvsSjiW8mmVXwo',   // 354차: Mux 영상 (353차 Vimeo 대신)
+    { title: '큐로 가디언즈의 시작', thumb: 'assets/images/story/ep-1.webp?v=69', video: 'https://player.mux.com/029pK5x9JcrlyMa1acjdqo02I3WnUtydXO8uR022W1XQnE',   // 359차: Mux 영상 교체 (354차 영상 대신)
       summary: ['콩이는 주사기에서 나온 동물 친구들을 만나게 돼요.', '“우리는 콩이의 몸을 지켜주는 가디언즈야!”', '가디언즈에게 주사 방법을 배우고, 주사 연습 벨트를 착용해 직접 연습하며 주사에 대한 두려움을 이겨내요.'] },
     { title: '주사 준비 대작전', thumb: 'assets/images/story/ep-2.webp?v=69', video: '',
       summary: ['주사를 맞으려던 콩이는 필요한 물건들이 흩어져 있는 것을 발견해요.', '“어라? 주사를 맞으려면 뭐가 필요하지?”', '가디언즈와 함께 필요한 준비물을 하나씩 확인하며 주사를 준비하는 방법을 배워요.'] },
