@@ -1,0 +1,8 @@
+html body .friends-page #planetFriends{position:relative;overflow:hidden;background-color:white;background-image:linear-gradient(#eeeeee80 1px,transparent 1px),linear-gradient(90deg,#eeeeee80 1px,transparent 1px);background-size:2.5vw 2.5vw;isolation:isolate}
+html body .friends-page #planetFriends .friends-decor{position:absolute;pointer-events:none;z-index:-1;max-width:none;height:auto}
+html body .friends-page #planetFriends .friends-decor-ruler{width:21vw;left:0;bottom:-7vw}
+html body .friends-page #planetFriends .friends-decor-pencil{width:13.5vw;right:0;top:-1.2vw}
+@media(max-width:800px){html body .friends-page #planetFriends{background-size:20px 20px}html body .friends-page #planetFriends .friends-decor-ruler{width:27vw;bottom:-9vw}html body .friends-page #planetFriends .friends-decor-pencil{width:22vw;top:-2vw}}
+html body .friends-page .friends-grid-background{background-color:#fff!important;background-image:linear-gradient(to bottom,#fff 0,transparent 70px,transparent calc(100% - 140px),#fff 100%),linear-gradient(#eeeeee80 1px,transparent 1px),linear-gradient(90deg,#eeeeee80 1px,transparent 1px)!important;background-size:100% 100%,2.5vw 2.5vw,2.5vw 2.5vw!important;background-repeat:no-repeat,repeat,repeat}
+html body .friends-page .friends-grid-background #planetFriends,html body .friends-page .friends-grid-background .friends-stories{background:transparent!important}
+@media(max-width:800px){html body .friends-page .friends-grid-background{background-size:100% 100%,20px 20px,20px 20px!important}}

@@ -1,0 +1,26 @@
+.apu-kit-page .review-item p mark{background:none;color:#ffbe00;font-weight:600}
+@media(min-width:801px){
+ html body.apu-kit-page .community-reviews{display:block;min-height:0;padding:7vw 0 6.7vw;background:linear-gradient(#fff 0%,#fffdf6 32%,#ffedab 100%)}
+ html body.apu-kit-page .reviews-heading{margin:0 0 2.8vw;padding:0 4vw}
+ html body.apu-kit-page .reviews-heading h2{font-family:ApuNavHeading,sans-serif;font-size:2.15vw!important;line-height:1.4}
+ html body.apu-kit-page .reviews-heading h2 em{color:#ffce35;font-style:normal}
+ html body.apu-kit-page .reviews-heading>p{font:400 1.2vw/1.6 ApuNavHeading,sans-serif!important;margin:1.5vw 0 0}
+ html body.apu-kit-page .reviews-heading small{display:none}
+ html body.apu-kit-page .reviews-marquee{padding:0}
+ html body.apu-kit-page .review-group{gap:3.2vw;padding-right:3.2vw}
+ html body.apu-kit-page .review-item{width:20vw;flex:0 0 20vw;border-radius:.9vw;background:#f6f6f6;box-shadow:none}
+ html body.apu-kit-page .review-photo{height:12.4vw}
+ html body.apu-kit-page .review-item>div:last-child{box-sizing:border-box;min-height:12.6vw;padding:2.2vw 1vw 2vw}
+ html body.apu-kit-page .review-item h3{font:600 1.15vw/1.5 ApuNavBody,sans-serif;min-height:0;margin:0 0 1.4vw}
+ html body.apu-kit-page .review-item p{font:400 .9vw/1.65 ApuNavBody,sans-serif;min-height:0;white-space:normal;word-break:keep-all}
+ html body.apu-kit-page #faq{display:block;width:82.75%;min-height:0;padding:5.5vw 0 6vw}
+ html body.apu-kit-page #faq>p{margin:1.2vw 0 3vw}
+ html body.apu-kit-page #faq details{background:#e5f4ff;border-radius:1.15vw;margin-bottom:1.6vw}
+ html body.apu-kit-page #faq summary{min-height:7vw;padding:2.2vw 3vw;font-size:1.3vw}
+}
+@media(max-width:800px){
+ html body.apu-kit-page #faq details{background:#e5f4ff!important}
+ html body.apu-kit-page #faq summary,html body.apu-kit-page #faq .kw-faq-answer{background:transparent!important;color:#454545}
+ html body.apu-kit-page #faq summary>span{color:#0b99ff}
+ html body.apu-kit-page #faq summary::after{color:#0b99ff;border-color:#0b99ff}
+}

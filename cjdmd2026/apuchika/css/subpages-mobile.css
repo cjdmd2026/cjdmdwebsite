@@ -1,0 +1,20 @@
+@media(max-width:800px){
+:root{--m-title:clamp(17px,4.4vw,23px);--m-card:clamp(14px,3.7vw,18px);--m-copy:13px;--m-small:12px}
+html body :is(.story-width,.kw-wrap,.contact-inner){width:90%;margin-inline:auto}
+html body :is(.kw-wrap,.feature-layout,.guardian-profile,.plan-grid) p{word-break:keep-all;overflow-wrap:break-word;text-wrap:pretty}
+html body .kw-learning-layout{display:flex;flex-direction:column;align-items:stretch;gap:14px}
+html body .kw-learning-panels{order:-1;width:100%}
+html body .kw-learning-tabs{width:100%}
+html body .kw-learning-tabs [role=tab]{min-height:48px}
+html body .kw-component-grid,html body .kw-guide-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+html body .guardian-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:90%;margin-inline:auto}
+html body .guardian-profile .profile-copy{width:90%;max-width:36rem;margin-inline:auto;text-align:left}
+html body .profile-copy .profile-tags{display:flex;flex-wrap:wrap;gap:6px}
+html body .feature-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+html body .episode-library .episode-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px}
+html body .episode-grid .episode-card h3{margin:8px 0 4px;font-size:14px!important}
+html body .episode-grid .episode-card p{font-size:12px!important;line-height:1.5!important}
+html body.passes-page .plan-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;width:90%;max-width:510px;margin-inline:auto}
+html body.passes-page .plan-grid .plan{box-sizing:border-box;width:100%;min-width:0}
+html body.passes-page .contact-inner h2{max-width:24em;text-wrap:balance}
+}

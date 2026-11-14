@@ -1,0 +1,25 @@
+html body .friends-page .friends-hero-v98{height:60vw!important;min-height:0!important;aspect-ratio:auto}
+.friends-page .friends-hero-v98 .float-apu{width:48%;left:3%;top:24%}
+.friends-page .friends-hero-v98 .float-chika{width:34%;right:9%;top:12%}
+html body .friends-page .guardians{height:auto;min-height:0;padding:17vw 6vw 18vw;text-align:center}
+html body .friends-page :is(.guardians h1,.planet-friends h2,.friends-stories h2,.join-guardians h2){font-size:clamp(16px,4vw,24px)!important;line-height:1.35}
+html body .friends-page .guardians p{font-size:clamp(12px,2.8vw,16px);line-height:1.55;max-width:82%;margin:5vw auto;color:#27699a}
+html body .friends-page .guardian-pair{width:82%;margin:11vw auto 0;gap:6vw}
+html body .friends-page .guardian-pair :is(a,img){width:100%;height:auto}
+html body .friends-page .guardian-pair img{aspect-ratio:1}
+html body .friends-page .guardian-profile{display:flex!important;flex-direction:column;align-items:stretch;justify-content:flex-start;position:relative;overflow:hidden;height:auto!important;min-height:0!important;padding:8vw 0 0!important;gap:0}
+html body .friends-page .guardian-profile .profile-copy{position:relative;inset:auto;transform:none;width:82%;margin:0 auto;order:0;text-align:left;color:white}
+html body .friends-page .profile-copy h2{display:flex;flex-direction:column-reverse;align-items:flex-start;gap:2px;font-size:clamp(17px,4vw,25px)!important;margin:0 0 4vw}
+html body .friends-page .profile-copy h2 span{font-size:clamp(14px,3.4vw,20px)!important}
+html body .friends-page .profile-copy p{font-size:clamp(12px,2.8vw,16px)!important;line-height:1.5;margin:2vw 0}
+html body .friends-page .profile-tags,html body .friends-page .story-cta,html body .friends-page .join-guardians :is(p,.desktop-join-heading){display:none!important}
+html body .friends-page .guardian-profile .profile-character{order:1;position:relative!important;inset:auto!important;transform:none!important;align-self:flex-end;width:82%!important;height:64vw!important;margin:0;flex:none}
+html body .friends-page .profile-character img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:bottom right}
+html body .friends-page .model-sheet{padding:0}
+html body .friends-page .friends-grid-background{background:white}
+html body .friends-page .friend-trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:81%;gap:3vw;margin:6vw auto}
+html body .friends-page .friend-trio article,html body .friends-page .friend-face{width:100%;height:auto}
+html body .friends-page .friends-story-track a{width:24vw;min-width:24vw;height:34vw}
+html body .friends-page .join-guardians .mobile-join-heading{display:block;margin:0 auto 7vw;text-align:center}
+html body .friends-page .join-guardians{height:auto;padding:12vw 0 0}
+html body .friends-page .join-guardians .group-art{position:static;transform:none;width:85%;margin:0 auto;display:block}

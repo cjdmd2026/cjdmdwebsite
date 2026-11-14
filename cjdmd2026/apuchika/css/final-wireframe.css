@@ -7,7 +7,7 @@ body .site-footer .footer-copy{text-align:center;font-size:calc(10 * var(--exhib
 body:has(.friends-page) .site-footer{background:#30a8ff}
 .review-photo img,.comment-photo img{display:block;width:100%;height:100%;object-fit:cover}.review-photo{overflow:hidden}.comment-photo{overflow:hidden;border-radius:50%}
 .guardian-profile>img{height:100%;width:100%;object-fit:contain;object-position:center bottom}.model-sheet{padding:0}.model-sheet img{display:block;width:100%;height:auto}
-.guardians{background-image:url('../assets/images/cloud-background-v33.webp')}.guardian-pair img{object-fit:cover}
+.guardians{background-image:url('../assets/images/cloud-background-v33.jpg')}.guardian-pair img{object-fit:cover}
 .kw-hero-main{aspect-ratio:1.81;max-height:none;min-width:0}.kw-carousel-slides,.kw-carousel-slide{height:100%;width:100%}.kw-carousel-slide[hidden]{display:none}.kw-carousel-slide>a{display:block;width:100%;height:100%}.kw-carousel-slide img{display:block;width:100%;height:100%;object-fit:contain}.kw-carousel-placeholder{background:#dedede}
 .kw-carousel-controls{position:absolute;left:50%;bottom:calc(12 * var(--exhibit-unit,1px));transform:translateX(-50%);display:flex;align-items:center;gap:calc(10 * var(--exhibit-unit,1px));padding:calc(7 * var(--exhibit-unit,1px)) calc(12 * var(--exhibit-unit,1px));border-radius:calc(25 * var(--exhibit-unit,1px));background:#ffffffce}.kw-carousel-controls button{width:calc(8 * var(--exhibit-unit,1px));height:calc(8 * var(--exhibit-unit,1px));padding:0;border:0;border-radius:50%;background:#b2b2b2;cursor:pointer}.kw-carousel-controls button[aria-pressed=true]{background:#087fb2}.kw-carousel-controls .kw-carousel-pause{width:calc(20 * var(--exhibit-unit,1px));height:calc(20 * var(--exhibit-unit,1px));background:none;font:calc(14 * var(--exhibit-unit,1px))/1 sans-serif;color:#234b60}
 .kw-content-image{display:block;width:100%;height:100%;object-fit:cover;min-width:0}.kw-component>.kw-content-image{object-fit:contain;background:#fff;align-self:stretch}.kw-learning-panels .kw-content-image{aspect-ratio:2.05;border-radius:calc(7 * var(--exhibit-unit,1px));min-height:calc(330 * var(--exhibit-unit,1px))}.kw-rental-image{width:100%;height:100%;object-fit:cover;border-radius:calc(8 * var(--exhibit-unit,1px))}.kw-rental-image[hidden]{display:none}
@@ -143,11 +143,11 @@ body.apu-kit-page>footer.site-footer{display:block;background:#464646;padding:ca
 .floating-top-btn>img,.friends-floating button>img,.animation-floating button>img{display:block;width:100%;height:100%;object-fit:contain}
 .floating-top-btn span{display:none}
 .kit-unboxing .kit-floating-items .kit-orb{background:transparent;border-radius:0;object-fit:contain;filter:drop-shadow(0 8px 12px #064e7820)}
-.guardians{background-image:url('../assets/images/user-uploaded/cha-bg.jpg')}
+.guardians{background-image:url('../assets/images/cha-bg.jpg')}
 body:has(.friends-page) .site-footer{background:#30a8ff}
 .planet-friends{position:relative;isolation:isolate}
 
-.cta-section{background-image:url('../assets/images/user-uploaded/footer-bg.jpg')}
+.cta-section{background-image:url('../assets/images/footer-bg.jpg')}
 .learn-section .blue-wave{display:block;position:absolute;left:0;bottom:-1px;width:100%;height:clamp(calc(96 * var(--exhibit-unit,1px)),13vw,calc(210 * var(--exhibit-unit,1px)));max-width:none;object-fit:cover;object-position:center bottom;background:none;z-index:1;pointer-events:none}
 .learn-section .future-character{display:none}
 @media(max-width:620px){.learn-section .blue-wave{height:calc(96 * var(--exhibit-unit,1px))}.hero-video-placeholder{object-position:center}}
@@ -195,7 +195,7 @@ body .floating-rental-btn,body .floating-rental-btn:hover{width:calc(52 * var(--
 @media(max-width:620px){header.apu-header,header.apu-header .apu-nav-panel{grid-template-columns:calc(67 * var(--exhibit-unit,1px)) minmax(0,1fr);column-gap:calc(14 * var(--exhibit-unit,1px))}.kw-side-story img{width:46%;max-width:calc(90 * var(--exhibit-unit,1px));bottom:calc(18 * var(--exhibit-unit,1px));right:calc(12 * var(--exhibit-unit,1px))}}
 
 /* Match the supplied introduction background to the hero cloud edge. */
-.guardians{margin-top:-1px;background:#fff url('../assets/images/user-uploaded/guardian-background-v63.webp') center top/100% 100% no-repeat;border:0;box-shadow:none}
+.guardians{margin-top:-1px;background:#fff url('../assets/images/guardian-background-v63.jpg') center top/100% 100% no-repeat;border:0;box-shadow:none}
 .friends-hero-static:after{content:"";position:absolute;left:0;right:0;bottom:0;height:clamp(calc(12 * var(--exhibit-unit,1px)),2vw,calc(38 * var(--exhibit-unit,1px)));background:linear-gradient(to bottom,rgba(238,245,251,0),#eef5fb);pointer-events:none}
 
 /* v72: independent badge shortcut at the right of the main navigation. */

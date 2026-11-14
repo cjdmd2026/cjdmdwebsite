@@ -1,0 +1,30 @@
+@media(min-width:801px){
+ html body.home-page{--home-action-width:12vw;--home-action-height:3.2vw;--home-action-font:1.2vw}
+ html body.home-page :is(#start .cta-button,.badge-invite-v98>a,#learn-more .card-shortcut){box-sizing:border-box!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;width:var(--home-action-width)!important;min-width:var(--home-action-width)!important;max-width:var(--home-action-width)!important;height:var(--home-action-height)!important;min-height:var(--home-action-height)!important;max-height:var(--home-action-height)!important;padding:0 1vw!important;gap:.65vw!important;border-radius:99px!important;font:400 var(--home-action-font)/1 ApuNavHeading,sans-serif!important;white-space:nowrap!important}
+ html body.home-page #start .cta-button .cta-label{font:inherit!important;position:static!important;transform:none!important}
+ html body.home-page #start .cta-button .cta-arrow{position:static!important;transform:none!important;font:400 1.25vw/1 ApuNavBody,sans-serif!important}
+ html body.home-page #learn-more .card-shortcut>span{font:400 1.25vw/1 ApuNavBody,sans-serif!important}
+ html body.home-page #oral-care .circle-img{width:44%!important;left:28%!important;top:15.5%!important;height:auto!important;aspect-ratio:1;margin:0!important;display:flex;align-items:center;justify-content:center}
+ html body.home-page #oral-care .circle-img img{width:100%!important;height:100%!important;max-height:none!important;object-fit:contain;transform:scale(var(--oral-icon-scale,1))!important;transform-origin:center}
+ html body.home-page #oral-care .info-card:nth-child(1){--oral-icon-scale:1.12}
+ html body.home-page #oral-care .info-card:nth-child(2){--oral-icon-scale:.98}
+ html body.home-page #oral-care .info-card:nth-child(3){--oral-icon-scale:1.04}
+ html body.home-page #oral-care .info-card .oral-caption{margin:0!important;line-height:1.15!important}
+ html body.home-page #oral-care .info-card .oral-caption br{display:none}
+ html body.home-page #oral-care .info-card .oral-caption span{display:block;font:400 clamp(17px,1.38vw,29px)/1.2 ApuNavBody,sans-serif!important;margin:0 0 .25em!important}
+ html body.home-page #oral-care .info-card .oral-caption strong{display:block;font:400 clamp(20px,1.65vw,35px)/1.2 ApuNavHeading,sans-serif!important;margin:0!important}
+}
+@media(min-width:801px){
+ html body.home-page #oral-care{box-sizing:border-box;height:calc(100svh - var(--desktop-header,var(--header-h)));min-height:0!important;padding:4svh 0 9svh!important;display:flex;flex-direction:column;justify-content:center;align-items:center}
+ html body.home-page #oral-care .section-head{margin:0!important;padding:0!important;flex:none}
+ html body.home-page #oral-care .vertical-card-grid{margin:3svh auto 0!important;flex:none}
+ html body.home-page #oral-care .vertical-card-grid>.info-card{height:min(25vw,50svh)!important;min-height:0!important;aspect-ratio:auto!important}
+}
+@media(min-width:801px){html body.home-page #learn-more .card-shortcut{width:8.8vw!important;min-width:8.8vw!important;max-width:8.8vw!important;height:2.8vw!important;min-height:2.8vw!important;max-height:2.8vw!important;font:400 1.08vw/1 ApuNavHeading,sans-serif!important;padding:0 .9vw!important;gap:.45vw!important}html body.home-page #learn-more .card-shortcut>span{font-size:1vw!important}}
+@media(min-width:801px){
+ html body.home-page #oral-care .vertical-card-grid>.info-card{display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:clamp(20px,2vw,38px);padding:24px 12px!important}
+ html body.home-page #oral-care .info-card .circle-img{position:relative!important;inset:auto!important;left:auto!important;top:auto!important;width:44%!important;height:auto!important;aspect-ratio:1;flex:none;margin:0!important}
+ html body.home-page #oral-care .info-card .oral-caption{position:static!important;inset:auto!important;width:100%!important;max-width:none!important;flex:none;text-align:center!important;margin:0!important}
+ html body.home-page #oral-care .info-card:nth-child(1) .circle-img img{translate:0 5%}
+ html body.home-page #oral-care .info-card:nth-child(2) .circle-img img{translate:0 -4%}
+}

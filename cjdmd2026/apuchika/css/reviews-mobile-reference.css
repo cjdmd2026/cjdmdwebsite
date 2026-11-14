@@ -1,0 +1,23 @@
+@media(max-width:800px){
+ html body.apu-kit-page .community-reviews{min-height:0;padding:40px 0 28px;background:linear-gradient(#fff 0%,#fff 30%,#ffebc6 100%)}
+ html body.apu-kit-page .reviews-heading{padding:0 16px;margin:0 0 22px}
+ html body.apu-kit-page .reviews-heading h2{font:400 clamp(17px,3.5vw,28px)/1.45 ApuNavHeading,sans-serif;letter-spacing:-.035em;white-space:nowrap}
+ html body.apu-kit-page .reviews-heading em{color:#ffc52e;font-style:normal}
+ html body.apu-kit-page .reviews-heading>p,html body.apu-kit-page .reviews-heading>small{display:none}
+ html body.apu-kit-page .reviews-marquee{padding:0 0 20px}
+ html body.apu-kit-page .review-group{gap:clamp(10px,2.5vw,20px);padding-right:clamp(10px,2.5vw,20px)}
+ html body.apu-kit-page .review-item{width:28.5vw;flex:0 0 28.5vw;min-width:0;border-radius:9px;box-shadow:none}
+ html body.apu-kit-page .review-photo{height:auto;aspect-ratio:1.6}
+ html body.apu-kit-page .review-item>div:last-child{box-sizing:border-box;min-height:18vw;padding:clamp(12px,3vw,24px) 8px 18px;justify-content:flex-start}
+ html body.apu-kit-page .review-item h3{font:600 clamp(10px,1.7vw,14px)/1.5 ApuNavBody,sans-serif;min-height:0;margin:0 0 12px;word-break:keep-all}
+ html body.apu-kit-page .review-item p{font:400 clamp(9px,1.35vw,11px)/1.7 ApuNavBody,sans-serif!important;min-height:0;white-space:normal;word-break:keep-all}
+ html body.apu-kit-page .review-item:hover{transform:none}
+}
+@media(max-width:800px){
+ html body.apu-kit-page #community .review-item{box-sizing:border-box;width:28.5vw;flex:0 0 28.5vw;height:35.625vw;max-height:35.625vw;display:flex;flex-direction:column;overflow:hidden}
+ html body.apu-kit-page #community .review-photo{flex:0 0 17.8vw;height:17.8vw;aspect-ratio:auto}
+ html body.apu-kit-page #community .review-item>div:last-child{display:block;flex:1;min-height:0;height:auto;overflow:hidden;padding:3vw 1.2vw 2vw;text-align:center}
+ html body.apu-kit-page #community .review-item h3{display:block;width:100%;font:600 clamp(8px,1.6vw,13px)/1.4 ApuNavBody,sans-serif!important;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;margin:0 0 2vw!important;min-height:0!important}
+ html body.apu-kit-page #community .review-item p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3;overflow:hidden;text-overflow:ellipsis;white-space:normal;font:400 clamp(7px,1.2vw,10px)/1.6 ApuNavBody,sans-serif!important;min-height:0!important;margin:0!important}
+ html body.apu-kit-page #community .review-item br{display:none}
+}

@@ -1,0 +1,30 @@
+@media(min-width:801px){
+ html body.apu-kit-page #components .kw-component{display:grid;grid-template-columns:46% minmax(0,1fr)!important;min-height:0!important;aspect-ratio:2.15!important;overflow:hidden;border-radius:14px}
+ html body.apu-kit-page #components .kw-component-media{position:relative;display:grid;place-items:center;height:100%;overflow:hidden;background:#fff}
+ html body.apu-kit-page #components .kw-component-media img{position:absolute;inset:0;width:100%!important;height:100%!important;padding:1.2vw!important;object-fit:contain!important;transform:none!important}
+ html body.apu-kit-page #components .kw-component:first-child .kw-component-media img{padding:.35vw!important;transform:scale(1.12)!important}
+ html body.apu-kit-page #components .kw-component>div:last-child{padding:1.8vw 1.6vw!important;align-self:center}
+ html body.apu-kit-page #components .kw-number{display:block;margin:0 0 .65vw!important}
+ html body.apu-kit-page #components h3{margin:0 0 1vw!important}
+ html body.apu-kit-page #components .kw-component p{margin:0!important;line-height:1.6}
+ html body.apu-kit-page #tsd .kw-apu{background:#dcf1fc!important;border-radius:50%!important;overflow:hidden!important}
+ html body.apu-kit-page #tsd .kw-apu::before{display:block!important;content:'';position:absolute;inset:8.5%!important;border-radius:50%;background:#9cd9fa!important;z-index:0!important}
+ html body.apu-kit-page #tsd .kw-apu img{z-index:1;inset:0!important;width:100%!important;height:100%!important;object-fit:contain!important;clip-path:circle(41.5% at 50% 50%);border-radius:0!important}
+ html body.apu-kit-page #rentalGuide{height:auto!important;min-height:0!important;padding:5vw 0!important}
+ html body.apu-kit-page #rentalGuide .kw-service-pin{position:static!important;height:auto!important;min-height:0!important;padding:0!important}
+ html body.apu-kit-page #rentalGuide .kw-service-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2vw!important;margin-top:3vw!important}
+ html body.apu-kit-page #rentalGuide .kw-service-grid li{opacity:1!important;visibility:visible!important;transform:none!important;translate:0 0;background:#edf7ff;border-radius:16px;overflow:hidden;transition:translate .25s ease,box-shadow .25s ease}
+ html body.apu-kit-page #rentalGuide .kw-service-grid li:is(:hover,:focus-visible){translate:0 -8px;box-shadow:0 12px 28px #00557b22;outline:2px solid #0b99ff;outline-offset:2px}
+ html body.apu-kit-page #rentalGuide .kw-service-media{height:auto!important;max-height:none!important;aspect-ratio:1.5;border-radius:0!important;overflow:hidden}
+ html body.apu-kit-page #rentalGuide .kw-service-media img{width:100%;height:100%;object-fit:cover}
+ html body.apu-kit-page #rentalGuide .kw-step-copy{margin:0!important;padding:1.5vw 1.5vw 2vw!important;border:0!important}
+ html body.apu-kit-page #rentalGuide .kw-service-grid::before,html body.apu-kit-page #rentalGuide .kw-service-grid::after,html body.apu-kit-page #rentalGuide .kw-step-copy::before,html body.apu-kit-page #rentalGuide .kw-step-copy::after{display:none!important}
+ html body.apu-kit-page #faq details{margin:0 0 16px!important}
+ html body.apu-kit-page #faq summary{box-sizing:border-box;height:auto!important;min-height:88px!important;padding:24px 3vw!important}
+ html body.apu-kit-page #faq details[open]>summary{min-height:0!important;padding:24px 3vw 16px!important}
+ html body.apu-kit-page #faq .kw-faq-answer{padding:0 3vw 28px!important}
+ html body.apu-kit-page #faq .kw-faq-answer p{padding:12px 0 0!important;margin:0!important}
+}
+html body.apu-kit-page .review-photo{padding:0!important;margin:0!important;width:100%!important;overflow:hidden}
+html body.apu-kit-page .review-photo img{display:block!important;width:100%!important;max-width:none!important;height:100%!important;padding:0!important;margin:0!important;object-fit:cover!important;transform:scale(1.035);transform-origin:center}
+@media(prefers-reduced-motion:reduce){html body.apu-kit-page #rentalGuide .kw-service-grid li{transition:none;translate:none!important}}

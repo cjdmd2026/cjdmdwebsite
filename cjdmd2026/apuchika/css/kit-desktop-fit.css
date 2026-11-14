@@ -1,0 +1,33 @@
+@media(min-width:801px){
+ html body.apu-kit-page .kit-opening{--kit-first-height:min(36vw,calc(100svh - var(--desktop-header,var(--header-h)) - 110px))}
+ html body.apu-kit-page .kit-opening .kw-hero{box-sizing:border-box;width:min(90%,calc(var(--kit-first-height)*2.24))!important;height:var(--kit-first-height)!important;min-height:0!important;margin:18px auto 0!important;grid-template-columns:4.65fr 1fr!important;gap:1.1vw!important}
+ html body.apu-kit-page .kit-opening .kw-hero-main{height:100%!important;min-height:0!important;max-height:none!important;aspect-ratio:auto!important}
+ html body.apu-kit-page .kit-opening .kw-carousel,html body.apu-kit-page .kit-opening .kw-carousel-track{height:100%!important;min-height:0!important;aspect-ratio:auto!important}
+ html body.apu-kit-page .kit-opening .kw-hero-side{height:100%!important;min-height:0!important;gap:1vw!important}
+ html body.apu-kit-page .kit-opening .kw-brandline{box-sizing:border-box;width:min(90%,calc(var(--kit-first-height)*2.24))!important;margin:14px auto 0!important;min-height:46px!important;padding:10px 20px!important}
+}
+.kw-tsd-pin{display:contents}
+@media(min-width:801px){
+ html body.apu-kit-page #tsd{height:220svh!important;padding:0!important;position:relative;overflow:visible}
+ html body.apu-kit-page #tsd .kw-tsd-pin{box-sizing:border-box;position:sticky;top:var(--desktop-header,var(--header-h));height:calc(100svh - var(--desktop-header,var(--header-h)));padding:4svh 0;display:flex;flex-direction:column;justify-content:center;gap:3svh}
+ html body.apu-kit-page #tsd .kw-tsd-layout{width:90%!important;margin:0 auto!important;grid-template-columns:40% 52%!important;gap:8%!important;align-items:center!important}
+ html body.apu-kit-page #tsd .kw-apu{width:min(24vw,45svh)!important;height:min(24vw,45svh)!important;justify-self:center;align-self:center;aspect-ratio:1;max-width:none!important;margin:0!important;transform:none!important}
+ html body.apu-kit-page #tsd .kw-tsd-steps{gap:2svh!important}
+ html body.apu-kit-page #tsd .kw-tsd-steps li{min-height:6.2vw!important;opacity:0;visibility:hidden;translate:0 12px;transition:opacity .3s ease,translate .3s ease,visibility .3s}
+ html body.apu-kit-page #tsd .kw-tsd-steps li.is-revealed{opacity:1;visibility:visible;translate:0 0}
+}
+@media(min-width:801px) and (prefers-reduced-motion:reduce){html body.apu-kit-page #tsd{height:auto!important}html body.apu-kit-page #tsd .kw-tsd-pin{position:relative;top:0}html body.apu-kit-page #tsd .kw-tsd-steps li{opacity:1;visibility:visible;translate:none}}
+@media(min-width:801px){
+ html body.apu-kit-page .kw-service-pin{box-sizing:border-box;top:var(--desktop-header,var(--header-h))!important;height:calc(100svh - var(--desktop-header,var(--header-h)))!important;min-height:0!important;padding:3svh 0!important;display:flex;flex-direction:column;justify-content:center!important}
+ html body.apu-kit-page .kw-service-grid{margin-top:4svh!important;flex:none}
+ html body.apu-kit-page .kw-service-media{max-height:24svh!important;overflow:hidden}
+ html body.apu-kit-page .kw-service-media img{width:100%;height:100%;object-fit:cover}
+}
+@media(min-width:801px){html body.apu-kit-page #faq .kw-faq-answer p{font:400 clamp(14px,.95vw,20px)/1.6 ApuNavBody,sans-serif!important;letter-spacing:0!important;margin:0!important;padding-top:16px!important}html body.apu-kit-page #faq .kw-faq-answer{padding-bottom:24px!important}}
+@media(min-width:801px){
+ html body.apu-kit-page .kit-opening .kw-hero-side>a.kw-side-story{display:grid;grid-template-rows:auto minmax(0,1fr);row-gap:14px;padding:1.8vw 1.5vw 0!important}
+ html body.apu-kit-page .kit-opening .kw-side-story h2{grid-row:1;position:static!important;margin:0!important;line-height:1.4!important}
+ html body.apu-kit-page .kit-opening .kw-side-story img{grid-row:2;position:static!important;inset:auto!important;justify-self:end;align-self:stretch;box-sizing:border-box;width:calc(100% + 1.5vw)!important;height:100%!important;min-height:0!important;max-width:none!important;max-height:100%!important;margin:0 -1.5vw 0 0!important;object-fit:contain!important;object-position:right bottom!important;transform:none!important}
+}
+@media(min-width:801px){html body.apu-kit-page #tsd{margin-top:0!important;padding-top:0!important}html body.apu-kit-page #tsd .kw-tsd-pin{justify-content:flex-start!important;padding-top:3svh!important;gap:3svh!important}html body.apu-kit-page #tsd .kw-center{margin:0!important;padding:0!important}}
+@media(min-width:801px){html body.apu-kit-page #faq details[open]>summary{box-sizing:border-box;height:auto!important;min-height:0!important;padding-top:24px!important;padding-bottom:16px!important}html body.apu-kit-page #faq .kw-faq-answer{padding-top:0!important;padding-bottom:40px!important}html body.apu-kit-page #faq .kw-faq-answer p{padding-top:12px!important}}

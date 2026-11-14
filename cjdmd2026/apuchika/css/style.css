@@ -601,7 +601,7 @@ button,
   border-radius: 50%;
 
   background:
-    url("../assets/images/user-uploaded/chat-v59.webp") center / 34px 34px no-repeat,
+    url("../assets/images/chat-v59.webp") center / 34px 34px no-repeat,
     #00508a;
 }
 
@@ -1326,7 +1326,7 @@ button,
   overflow: hidden;
 
   /* 배경 이미지 설정 */
-  background: url("../assets/images/solution-bg.webp") center center / cover no-repeat;
+  background: url("../assets/images/solution-bg.jpg") center center / cover no-repeat;
 
   /* 마스크로 상단/하단 끝부분만 자연스럽게 페이드아웃 (회색 띠/경계선 원천 제거) */
   -webkit-mask-image: linear-gradient(

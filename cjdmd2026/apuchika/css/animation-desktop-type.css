@@ -1,0 +1,7 @@
+@media(min-width:801px){
+ html body.apu-animation:not(.episode-page) .episode-library .episode-grid{align-items:start;row-gap:3.5vw!important}
+ html body.apu-animation:not(.episode-page) .episode-library .episode-card{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto;align-content:start;row-gap:0!important;min-width:0;text-align:left}
+ html body.apu-animation:not(.episode-page) .episode-library .episode-card>a:not(.card-cover-link){display:block;margin:0!important;padding:0!important}
+ html body.apu-animation:not(.episode-page) .episode-library .episode-card h3{box-sizing:content-box;font:400 clamp(17px,1.3vw,28px)/1.35 ApuNavHeading,sans-serif!important;letter-spacing:0;margin:14px 0 8px!important;padding:0!important;min-height:2.7em!important;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;text-align:left}
+ html body.apu-animation:not(.episode-page) .episode-library .episode-card p{font:400 clamp(14px,1vw,21px)/1.55 ApuNavBody,sans-serif!important;letter-spacing:0;word-break:normal;overflow-wrap:break-word;text-align:left;margin:0!important;padding:0!important;min-height:0!important;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+}

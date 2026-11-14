@@ -1,0 +1,10 @@
+/* Desktop exhibition baseline: 1920 x 1080 CSS viewport; positions follow available height. */
+@media(min-width:901px){
+html body.apu-kit-page .unboxing-pin{top:var(--desktop-header,var(--header-h));height:calc(100svh - var(--desktop-header,var(--header-h)));min-height:0}
+html body.apu-kit-page .unboxing-copy{top:11%;left:5%;width:90%}
+html body.apu-kit-page .kw-service-pin{box-sizing:border-box;top:var(--desktop-header,var(--header-h));height:calc(100svh - var(--desktop-header,var(--header-h)));min-height:0;justify-content:flex-start;padding:clamp(64px,11svh,120px) 0 32px}
+html body.apu-kit-page .kw-service-grid{margin-top:clamp(40px,7svh,76px)}
+html body.apu-kit-page .community-reviews{scroll-snap-align:none;padding-top:clamp(40px,5svh,60px)}
+html body.apu-kit-page .reviews-heading{margin-bottom:clamp(24px,3.5svh,42px)}
+html body.apu-kit-page .kw-faq{scroll-snap-align:none}
+}
