@@ -857,3 +857,26 @@ h2.sec.tip-on .q-tip { opacity: 1; }
 
 /* 363차: 코덱스 작업 복구 + 4차 병합 — ? 버튼 */
 .q-btn { display: inline-flex; align-items: center; padding: 0; border: 0; background: none; cursor: pointer; color: #BDBDBD; }
+/* 366차: 추가 수정사항 PDF */
+/* 음식 상세: 사진 위 태그 알약 더 둥글게 · 메뉴 이름만 크게 */
+.fd-photo .ftg span { border-radius: 999px; }
+.big-q .fn { font-size: 23px; font-weight: 600; }
+/* 추천 메뉴: 키워드 알약 · 이름/kcal 글씨 키움 + 더보기 */
+.reco em { font-size: 9px; padding: 2px 8px; border-radius: 999px; left: 6px; top: 6px; }
+.reco figcaption { font-size: 11px; padding: 6px 7px; }
+.reco .meal-icon { width: 17px; height: 17px; }
+.reco-more { display: flex; align-items: center; justify-content: center; gap: 4px; margin: 14px auto 0; padding: 8px 20px; border: 1px solid #DDD; border-radius: 999px; background: #fff; color: #777; font-size: 13px; cursor: pointer; }
+.reco-more img { width: 10px; height: 10px; transform: rotate(90deg); opacity: .6; }
+/* 불러오기: 하루 식사 사진 칸 꽉 채우고 둥글게 */
+.day-meal figure { border: 0; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px #EEE inset; cursor: pointer; }
+.day-meal figure > img { border-radius: 12px; height: 172px; }
+.day-meal em { font-size: 9px; padding: 2px 8px; border-radius: 999px; left: 8px; top: 8px; }
+/* 불러오기: 자주 먹는 메뉴 4위부터 흰 바탕 + 회색 테두리 (.freq a.w) / 머리에 구름 배경 */
+.scr[data-scr="cal-load"] { --head: #44C4B4; }
+.scr[data-scr="cal-load"] .mhead { background: var(--head) url('../img/bg-cloud.webp') center bottom / cover no-repeat; }
+/* 식사 앨범: 글씨 키움 */
+.album figure { cursor: pointer; }
+.album figcaption { font-size: 11px; padding: 7px 8px; align-items: center; }
+.album figcaption span.ic img { height: 13px; }
+/* 빠른 기록 ? 아이콘: 동그라미 한 줄만 (svg 위에 테두리가 또 그려져 폰에서 두 겹으로 보였음) */
+h2.sec svg.q { border: 0; border-radius: 0; background: none; width: 16px; height: 16px; color: #BDBDBD; display: block; }
