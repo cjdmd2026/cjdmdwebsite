@@ -24,7 +24,7 @@
     guardian: { name: '김민주', birth: '1984. 11. 25', rel: '어머니', phone: '010 - 1234 - 5678', face: 'mio' },
     kid: { name: '이서준', birth: '2011. 02. 16', sex: '여자 아이', diag: '2020. 08. 20', face: 'beary' },
     char: 0, week: 0, eduSlide: 0, food: 'dessert', comTab: '전체', comKeyword: '전체', guideCategory: '전체', guideQuery: '', foodQuery: '', recentGuide: [], recentFood: [],
-    contacts: {}, liked: {}, hlike: {}, bm: {}, post: 0, recs: {}, addFor: 'rec-weight',   /* 2차: 좋아요는 처음엔 모두 꺼짐 */
+    nf: '전체', contacts: {}, liked: {}, hlike: {}, bm: {}, post: 0, recs: {}, addFor: 'rec-weight',   /* 2차: 좋아요는 처음엔 모두 꺼짐 */
     toggles: { allNoti: true, myPost: true, dark: false }
   };
   const CHARS = [
@@ -48,41 +48,42 @@
   /* 차트 — 시안(빠른 기록)에서 잰 자리. svg 390 × 206 = 화면 폭 그대로
      세로축 글자 오른쪽 끝 x 44, 가로줄 x 51 → 오른쪽 끝(점점 흐려짐), 맨 위 줄 y 10, 0 줄 y 190
      가로 글자 가운데 = 65 + 63·i (시간) / 68 + 65·i (요일), 막대 폭 16 */
-  const XL = ['오전 0시', '오전 1시', '오전 2시', '오전 3시', '오전4시', '오전 5시'];
-  const XD = ['월', '화', '수', '목', '금'];
+  /* 4차: 그래프는 옆으로 밀면(스와이프) 숨은 시간·요일이 나옴. 세로축 글자는 왼쪽에 고정 */
+  const XL = Array.from({ length: 12 }, (_, i) => `오전 ${i}시`);
+  const XD = ['월', '화', '수', '목', '금', '토', '일'];
   let gid = 0;
-  function frame(ticks, yOf, labels, xs, body) {
+  function frame(ticks, yOf, labels, xs, body, W = 390) {
     const id = 'g' + (++gid);
-    let g = `<defs><linearGradient id="${id}l" x1="51" x2="390" gradientUnits="userSpaceOnUse"><stop offset=".8" stop-color="#E6E6E6"/><stop offset="1" stop-color="#E6E6E6" stop-opacity="0"/></linearGradient>
-      <linearGradient id="${id}t" x1="0" x2="1"><stop offset=".86" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff"/></linearGradient></defs>`;
-    ticks.forEach((t) => { const y = yOf(t); g += `<line x1="51" x2="390" y1="${y}" y2="${y}" stroke="url(#${id}l)" stroke-width="${t ? 1 : 1.5}"/><text x="44" y="${y + 3}" font-size="8.5" text-anchor="end" fill="#222">${t}</text>`; });
+    let g = `<defs><linearGradient id="${id}l" x1="0" x2="${W}" gradientUnits="userSpaceOnUse"><stop offset="${W > 390 ? .97 : .8}" stop-color="#E6E6E6"/><stop offset="1" stop-color="#E6E6E6" stop-opacity="0"/></linearGradient></defs>`;
+    ticks.forEach((t) => { const y = yOf(t); g += `<line x1="51" x2="${W}" y1="${y}" y2="${y}" stroke="url(#${id}l)" stroke-width="${t ? 1 : 1.5}"/>`; });
     g += body;
-    labels.forEach((l, i) => { g += `<text x="${xs(i)}" y="205" font-size="8" text-anchor="middle" fill="${i > 4 ? '#BBB' : '#222'}">${l}</text>`; });
-    g += `<rect x="330" y="0" width="60" height="206" fill="url(#${id}t)"/>`;
-    return `<svg viewBox="0 0 390 210" width="390" height="210">${g}</svg>`;
+    labels.forEach((l, i) => { g += `<text x="${xs(i)}" y="205" font-size="8" text-anchor="middle" fill="#222">${l}</text>`; });
+    const yax = ticks.map((t) => `<text x="44" y="${yOf(t) + 3}" font-size="8.5" text-anchor="end" fill="#222">${t}</text>`).join('');
+    return `<div class="ch-sc"><svg viewBox="0 0 ${W} 210" width="${W}" height="210">${g}</svg></div><svg class="ch-y" viewBox="0 0 50 210" width="50" height="210">${yax}</svg><i class="ch-fade"></i>`;
   }
   const lin = (max) => (v) => 190 - 180 * v / max;
   const xT = (i) => 65 + 63 * i, xD = (i) => 68 + 65 * i;
+  const WT_W = xD(XD.length - 1) + 40, XL_W = xT(XL.length - 1) + 40;
   function areaChart(pts, max = 200, labels = XL) {
-    const y = lin(max), id = 'a' + (++gid);
-    const d = `M51 190 L51 ${y(pts[0][1])} ` + pts.map(([x, v]) => `L${x} ${y(v)}`).join(' ') + ' L390 190 Z';
+    const y = lin(max), id = 'a' + (++gid), W = pts[pts.length - 1][0];
+    const d = `M51 190 L51 ${y(pts[0][1])} ` + pts.map(([x, v]) => `L${x} ${y(v)}`).join(' ') + ` L${W} 190 Z`;
     const body = `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD98C"/><stop offset="1" stop-color="#FFF6E2" stop-opacity=".6"/></linearGradient></defs><path class="g-up" d="${d}" fill="url(#${id})"/>`;
-    return frame([200, 150, 100, 50, 0], y, labels, xT, body);
+    return frame([200, 150, 100, 50, 0], y, W > 400 ? labels : labels.slice(0, 6), xT, body, W);
   }
-  const GLU = [[51, 113], [67, 113], [128, 135], [191, 118], [254, 100], [317, 100], [390, 92]];
+  const GLU = [[51, 113], [67, 113], [128, 135], [191, 118], [254, 100], [317, 100], [380, 96], [443, 104], [506, 122], [569, 140], [632, 128], [695, 112], [XL_W, 108]];
   function rangeChart(r, max = 200) {
     const y = lin(max);
-    const body = r.map(([lo, hi, light], i) => `<rect class="g-mid" style="animation-delay:${i * 70}ms" x="${xT(i) - 8}" y="${y(hi)}" width="16" height="${y(lo) - y(hi)}" rx="8" fill="${light ? '#FFE09A' : '#FFC94D'}"/>`).join('');
-    return frame([200, 150, 100, 50, 0], y, XL, xT, body);
+    const body = r.map(([lo, hi, light], i) => `<rect class="g-mid" style="animation-delay:${Math.min(i, 6) * 70}ms" x="${xT(i) - 8}" y="${y(hi)}" width="16" height="${y(lo) - y(hi)}" rx="8" fill="${light ? '#FFE09A' : '#FFC94D'}"/>`).join('');
+    return frame([200, 150, 100, 50, 0], y, XL.slice(0, r.length), xT, body, xT(r.length - 1) + 40);
   }
   /* 체중: 세로축 60 · 50 · 40 · 30 · 0 (30 아래는 줄여 그림), 막대는 위만 둥글고 아래는 바닥에 붙음 */
   function weightChart(vals) {
     const y = (v) => (v >= 30 ? 145 - (v - 30) * 4.5 : 190 - v * 1.5);
-    const body = vals.map(([v, light], i) => { const x = xD(i) - 8, t = y(v); return `<path class="g-up" style="animation-delay:${i * 70}ms" d="M${x} 190 V${t + 8} a8 8 0 0 1 16 0 V190 Z" fill="${light ? '#FFE09A' : '#FFC94D'}"/>`; }).join('');
-    return frame([60, 50, 40, 30, 0], y, XD, xD, body);
+    const body = vals.map(([v, light], i) => { const x = xD(i) - 8, t = y(v); return `<path class="g-up" style="animation-delay:${Math.min(i, 6) * 70}ms" d="M${x} 190 V${t + 8} a8 8 0 0 1 16 0 V190 Z" fill="${light ? '#FFE09A' : '#FFC94D'}"/>`; }).join('');
+    return frame([60, 50, 40, 30, 0], y, XD.slice(0, vals.length), xD, body, WT_W);
   }
-  const BP = [[45, 168], [75, 128, 1], [45, 168], [55, 148], [68, 134], [85, 120, 1]];
-  const WT = [[45], [41, 1], [45], [45], [46]];
+  const BP = [[45, 168], [75, 128, 1], [45, 168], [55, 148], [68, 134], [85, 120, 1], [60, 150], [72, 138, 1], [50, 160], [66, 142], [78, 126, 1], [58, 152]];
+  const WT = [[45], [41, 1], [45], [45], [46], [44, 1], [45]];
 
   const TOAST = $('#toast');
   let tt = 0;
@@ -148,13 +149,8 @@
       </div>`,
 
     noti: () => `${topC('알림', icon('i-gear', 'noti-set'))}
-      <div class="chips" style="margin:22px 0 0">${chips(['전체', '인슐린', '혈압', '저혈당', '리포트'])}</div>
-      <div class="noti">
-        <a data-go="sos"><span class="ico" style="background:#1EB2A6"><img src="${I('i-warn')}" alt="" style="width:6px"></span><div><small>[긴급]</small><b>혈당이 70mg/dL 미만입니다!</b></div></a>
-        <a data-go="condition"><span class="ico"><img src="${I('i-symbol-w')}" alt=""></span><div><small>[리포트]</small><b>오늘 탄수화물 섭취 기록이 부족합니다</b></div></a>
-        <a data-go="edu"><span class="ico"><img src="${I('i-symbol-w')}" alt=""></span><div><small>[인슐린]</small><b>인슐린 투여 시간을 잊지 말고 체크해 주세요</b></div></a>
-        <a data-go="sos"><span class="ico"><img src="${I('i-symbol-w')}" alt=""></span><div><small>[긴급]</small><b>아이가 평소보다 물을 많이 찾나요?</b></div></a>
-      </div>`,
+      <div class="chips" style="margin:22px 0 0">${['전체', '인슐린', '혈압', '저혈당', '리포트'].map((t) => `<button class="${t === S.nf ? 'is-on' : ''}" data-nf="${t}">${t}</button>`).join('')}</div>
+      <div class="noti" id="noti-list">${notiList()}</div>`,
 
     'noti-set': () => `${topC('알림')}<div class="setl" style="margin-top:8px">
       <div class="it">모든 알림 표시${tg('allNoti')}</div><div class="it">내 게시글 알림${tg('myPost')}</div><a class="it" data-info="notiTime">알림 설정</a></div>`,
@@ -164,8 +160,8 @@
       <h3>앱 설정</h3><div class="it ind">다크모드${tg('dark')}</div><a class="it ind" data-info="keyword">관심 키워드 설정</a><a class="it ind" data-info="lock">암호/지문 잠금</a><a class="it ind" data-info="link">계정연동</a><hr>
       <h3>이용 안내</h3><div class="it ind">앱 버전<span class="ver">1.0.0 (최신)</span></div><a class="it ind" data-info="ask">문의하기</a><a class="it ind" data-info="notice">공지사항</a><a class="it ind" data-info="leave">회원탈퇴</a></div>`,
 
-    condition: () => `<div class="mhead" style="padding-bottom:46px">${topC('11월', icon('i-siren', 'sos'), true)}${calGrid(11)}</div>
-      <div class="sheet">
+    condition: () => `<div class="mhead" style="padding-bottom:46px">${topC('11월', '', true)}${calGrid(11)}</div>
+      <div class="sheet cond-sheet">
       <h2 class="sec">혈당 기록</h2>${statBox([['최고', '140', 'mg/dL'], ['최저', '98', 'mg/dL']], 'rec-glucose')}<div class="chart">${areaChart(GLU)}</div>
       ${feed('취침 후 야간 혈당이 목표 범위 안에서 안정적으로 유지되었습니다.<br>새벽 시간대 저혈당이나 급격한 변동 없이 완만한 흐름을 보이고 있어요.')}<div class="sec-gap"></div>
       <h2 class="sec">혈압 기록</h2>${statBox([['최고', '210', 'mmHg'], ['최저', '80', 'mmHg'], ['', '65', 'bpm']], 'rec-bp')}<div class="chart">${rangeChart(BP)}</div>
@@ -183,7 +179,7 @@
       stage('적정', 48), '체중과 활동 내용을 함께 기록해 주세요. 기록을 진료 때 함께 확인하고, 치료나 인슐린 용량 변경은 담당 의료진과 상의해 주세요.', addCard('메모', '활동 및 체중 관리 일지', '꾸준한 운동을 통해서 체중을 조절해야하기 때문에 오늘도 2시간 동안 수영을 진행', 'm-memo', true)),
     'rec-meal': () => recPage('식사', [['1,100', 'kcal']], '섭취 계산', statBox([['누적 섭취 칼로리', '1,100', 'kcal']]) + nut(), '',
       '', '디저트와 균형 잡힌 키토김밥, 월남쌈으로 구성된 식사를 하셨네요. 단백질과 지방, 탄수화물 밸런스가 비교적 잘 잡혀 있으며, 당분 섭취량도 적당합니다.',
-      `<div class="sec-gap"></div><h2 class="sec">식사 앨범</h2><div class="album">${[['f-gimbap', '키토김밥', 300], ['f-dessert', '귤 디저트', 500], ['f-wolnam', '월남쌈', 300]].map(([f, n, k]) => `<figure><img src="${I(f)}" alt=""><figcaption><span>${n}</span>${k} kcal</figcaption></figure>`).join('')}</div>`
+      `<div class="sec-gap"></div><h2 class="sec">식사 앨범</h2><div class="album">${[['f-gimbap', '키토김밥', 300], ['f-dessert', '귤 디저트', 500], ['f-wolnam', '월남쌈', 300]].map(([f, n, k]) => `<figure><img src="${I(f)}" alt=""><figcaption><span class="ic"><img src="${I(f === 'f-dessert' ? 'i-dessert' : 'i-mealpic')}" alt="">${n}</span>${k} kcal</figcaption></figure>`).join('')}</div>`
       + '<div class="sec-gap"></div><h2 class="sec">추가 기록</h2>' + addCard('간식', '오후 6시 22분', '<b class="lg">가나 초콜릿 한 조각</b>', 'm-snack')),
 
     cal: () => `<div class="rhead">${topC('열량 계산', '', true)}<div class="date">2026. 11. 9</div><div class="val"><div><b>1,100<small>kcal</small></b></div></div></div>
@@ -232,18 +228,25 @@
     com: () => `${logoTop(icon('i-search') + icon('i-more'))}<div class="ctabs">${['전체','제품','정보'].map(t=>`<button data-com-tab="${t}" class="${S.comTab===t?'is-on':''}">${t}</button>`).join('')}</div><div class="chips filter-chips">${COM_KEYS[S.comTab].map(t=>`<button data-com-key="${t}" class="${S.comKeyword===t?'is-on':''}">${t}</button>`).join('')}</div><div class="posts">${POSTS.map((p,i)=>({p,i})).filter(({p})=>(S.comTab==='전체'||p.category===S.comTab)&&(S.comKeyword==='전체'||p.kw.includes('#'+S.comKeyword))).map(({p,i})=>postItem(p,i)).join('')||empty('아직 이 키워드의 글이 없어요.')}</div><a class="fab" data-go="write"><span class="pl">+</span>글쓰기</a>`,
 
     post: () => { const p = POSTS[S.post] || POSTS[0], bm = S.bm[S.post];
-      return `<header class="top post-top">${back()}<div class="bc">커뮤니티<small>${p.category || '전체'} 게시판</small></div><div class="icons"><span class="ic-btn"><img src="${I('i-more')}" alt=""></span></div></header>
+      return `<header class="top post-top">${back()}<div class="bc">커뮤니티<small>${p.category || '전체'} 게시판</small></div><div class="icons"><button class="ic-btn" data-pmore aria-label="더보기"><img src="${I('i-more')}" alt=""></button></div>
+        <div class="pmenu" id="pmenu"><button data-pm="refresh">새로고침</button><button data-pm="report">신고<img src="${I('i-chev')}" alt=""></button><button data-pm="block">차단</button><button data-pm="sub">구독</button></div></header>
       <div class="pd"><button class="bm${bm ? ' is-on' : ''}" data-bm aria-label="북마크"><img src="${I(bm ? 'i-bm-on' : 'i-bm-b')}" alt=""></button><div class="au" style="margin-top:0"><img src="${I(p.face)}" alt=""><div><b>${p.au}</b><small>${p.ago || '방금 전'}</small></div></div>
       <h2>${p.t}</h2>
       <p>${p.full || p.p}</p>
       ${p.ims ? `<div class="pd-ims${p.ims.length===2?' two-images':''}">${p.ims.map((m) => `<img src="${I(m)}" alt="">`).join('')}</div>` : ''}
       <div class="kw">${p.kw.map((k) => `<span>${k}</span>`).join('')}</div>
       <div class="mt" style="margin-top:14px"><span><img src="${I('i-share')}" alt="" style="height:10px;width:auto;display:inline;vertical-align:-1px;opacity:.5"> ${p.share || 0}</span><span><img src="${I('i-comments')}" alt="" style="height:9px;width:auto;display:inline;vertical-align:-1px;opacity:.5"> ${p.cm || 0}</span></div></div>
-      <div class="cmt">${(p.cmts || []).map(([f, n, t, re]) => `<div class="c${re ? ' re' : ''}"><div class="au" style="margin-top:0"><img src="${I(f)}" alt=""><div><b>${n}</b><small>5시간 전</small></div></div><p>${t}</p><time>2026.7.31 16:59</time><img class="more" src="${I('i-more-g')}" alt=""></div>`).join('')}</div>
+      <div class="cmt">${(p.cmts || []).map(([f, n, t, re]) => `<div class="c${re ? ' re' : ''}"><div class="au" style="margin-top:0"><img src="${I(f)}" alt=""><div><b>${n}</b><small>5시간 전</small></div></div><p>${t}</p><time>2026.7.31 16:59</time><button class="more" data-cmore aria-label="댓글 더보기"><img src="${I('i-more-g')}" alt=""></button></div>`).join('')}</div>
       <div class="reply"><div><input placeholder="댓글을 입력해주세요."><button data-toast="댓글이 등록됐어요"><img src="${I('i-reply')}" alt="보내기"></button></div></div>`; },
 
-    write: () => `<header class="top top-c"><button class="back x" data-back aria-label="닫기"><img src="${I('i-close')}" alt=""></button><span class="top-t">글쓰기</span><div class="r"><button data-post style="font-size:14px">등록</button></div></header>
+    write: () => `<header class="top top-c"><button class="back x" data-back aria-label="닫기"><img src="${I('i-close')}" alt=""></button><span class="top-t">글쓰기</span><div class="r"><button data-wnext style="font-size:14px">다음</button></div></header>
       <div class="write-classify"><label>게시판<select id="write-category"><option>전체</option><option>제품</option><option>정보</option></select></label><label>키워드<select id="write-keyword">${COM_KEYS['전체'].slice(1).map(k=>`<option>${k}</option>`).join('')}</select></label></div><input class="write-t" placeholder="제목을 입력하세요"><textarea class="write-b" placeholder="내용을 작성해주세요."></textarea><div class="write-img" id="w-img"></div>`,
+
+    write2: () => { const d = S.draft || { t: '', b: '' };
+      return `${topC('글쓰기', '<button data-post style="font-size:14px">등록</button>')}
+      <div class="w2"><h3>${d.t}</h3><p>${d.b.replace(/\n/g, '<br>') || '&nbsp;'}</p></div>
+      <div class="w2-row"><span>게시판 · 태그</span><span class="r">${d.cat} · #${d.key}<img src="${I('i-chev')}" alt=""></span></div>
+      <div class="w2-rule"><button data-info="rules">커뮤니티 이용규칙 전체 보기</button></div>`; },
 
     my: () => `${logoTop(icon('i-gear', 'settings'))}
       <div class="prof"><div class="pic"><img src="${I('pf-' + S.guardian.face)}" alt=""></div><div><b>${S.guardian.name}님</b><p><a data-go="profile">프로필 수정</a> | <a data-go="start">로그아웃</a></p></div></div>
@@ -385,11 +388,25 @@
   }
   function recPage(title, vals, secTitle, stat, chart, stg, fb, extra) {
     return `<div class="rhead">${topC(title, '', true)}<div class="date">2026. 11. 9</div><div class="val"><div>${vals.map(([v, u]) => `<b>${v}<small>${u}</small></b>`).join('')}</div><span>기기 연동하기</span></div></div>
-      <div class="sheet"><h2 class="sec">${secTitle}<svg class="q" viewBox="0 0 20 20" aria-label="도움말"><circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7.7 7.2c.1-2.6 5-2.6 4.8.3-.1 1.7-2.5 1.8-2.5 3.7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="14.1" r=".9" fill="currentColor"/></svg></h2>${stat}${chart}${stg}${feed(fb)}${extra.includes('sec-gap') ? '' : '<div class="sec-gap"></div><h2 class="sec">추가 기록</h2>'}${extra}
+      <div class="sheet"><h2 class="sec">${secTitle}<button class="q-btn" data-q aria-label="설명 보기"><svg class="q" viewBox="0 0 20 20" aria-label="도움말"><circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7.7 7.2c.1-2.6 5-2.6 4.8.3-.1 1.7-2.5 1.8-2.5 3.7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="14.1" r=".9" fill="currentColor"/></svg></button><span class="q-tip">오늘의 수치를 바탕으로 만들어지는 하루 통계예요.</span></h2>${stat}${chart}${stg}${feed(fb)}${extra.includes('sec-gap') ? '' : '<div class="sec-gap"></div><h2 class="sec">추가 기록</h2>'}${extra}
       ${userRecs()}<button class="plus" data-addrec aria-label="기록 추가"><i></i></button><div class="blank"></div></div>`;
   }
   function userRecs() {   /* 2차: + 로 추가한 기록 (그 화면에만) */
     return (S.recs[cur()] || []).map((r) => addCard('메모', `<b style="font-size:12px">${r.t}</b>`, r.b || '&nbsp;', 'm-memo', true)).join('');
+  }
+  /* 4차: 알림 — 긴급은 빨간 원 + 느낌표 + '긴급' 태그 (색만으로 구분하지 않음) */
+  const NOTI = [
+    { u: 1, tag: '긴급', f: '저혈당', t: '혈당이 70mg/dL 미만입니다!', go: 'guide', g: 0 },
+    { tag: '리포트', f: '리포트', t: '오늘 탄수화물 섭취 기록이 부족합니다', go: 'rec-meal' },
+    { tag: '인슐린', f: '인슐린', t: '인슐린 투여 시간을 잊지 말고 체크해 주세요', go: 'guide', g: 8 },
+    { u: 1, tag: '긴급', f: '', t: '아이가 평소보다 물을 많이 찾나요?', go: 'guide', g: 2 },
+    { tag: '혈압', f: '혈압', t: '혈압 기록을 확인해 주세요', go: 'rec-bp' },
+    { tag: '리포트', f: '리포트', t: '오늘의 혈당 리포트가 준비됐습니다', go: 'condition' }
+  ];
+  function notiList() {
+    const list = NOTI.filter((n) => S.nf === '전체' || n.f === S.nf);
+    return list.length ? list.map((n) => `<a class="${n.u ? 'is-urgent' : ''}" data-go="${n.go}"${n.g != null ? ` data-guide="${n.g}"` : ''}><span class="ico">${n.u ? `<img class="w" src="${I('i-warn2')}" alt="긴급">` : `<img src="${I('i-symbol-w')}" alt="">`}</span><div><small>[${n.tag}]</small><b>${n.t}</b></div></a>`).join('')
+      : '<p class="noti-empty">새 알림이 없어요</p>';
   }
   function lessons() {
     return `<div class="lessons">${[['동화책', '동화책 2화 보기', 0, 'cur'], ['주사 연습', '벨트를 활용하여 주사 연습', 100], ['일지 작성', '오늘의 학습 일지 작성', 100, 'faded'], ['주사기 탐색', '주사기 구조 알아보기', 100, 'faded']].map(([t, s, p, k]) => {if(S.week){p=0;k='cur';}return `<div class="lesson${k === 'cur' ? ' is-cur' : ''}${k === 'faded' ? ' is-done2' : ''}"><b>${t}</b><p>${s}</p><span class="bd${p === 100 ? ' done' : ''}">${p === 100 ? '완료' : '미완료'}</span><div class="pb"><div><i style="width:${p}%"></i></div>${p}%</div></div>`;}).join('')}</div>`;
@@ -436,7 +453,7 @@
   /* ---------- 화면 전환 ---------- */
   const TABS = { home: 'home', edu: 'edu', com: 'com', my: 'my', condition: 'home', 'rec-glucose': 'home', 'rec-bp': 'home', 'rec-weight': 'home', 'rec-meal': 'home', cal: 'home', 'cal-search': 'home', 'cal-load': 'home', hospital: 'home', 'hosp-visit': 'home', 'hospital-map': 'home', roadmap: 'edu', sos: 'home', guide: 'home', info: 'my' };
   /* 스크롤 없이 한 화면에 맞추는 화면 (내용이 화면보다 길면 화면 전체를 살짝 줄임) */
-  const FIT = ['start', 'easy', 'login', 'signup', 'terms', 'kid', 'guardian', 'noti', 'noti-set', 'cal-camera', 'write', 'hospital-map', 'hospital', 'profile', 'rec-add'];
+  const FIT = ['start', 'easy', 'login', 'signup', 'terms', 'kid', 'guardian', 'noti', 'noti-set', 'cal-camera', 'write', 'hospital-map', 'hospital', 'profile', 'rec-add', 'write2'];
   const dock = $('#dock'), tabbar = $('#tabbar'), topbtn = $('#topbtn'), fabSlot = $('#fab-slot');
   function shrinkFit(sec) {
     sec.style.zoom = ''; sec.style.height = '';
@@ -453,6 +470,7 @@
     sec.dataset.scr = name;
     sec.innerHTML = SCREENS[name]();
     $$('.scr', app).forEach((s) => s.remove());
+    $$('.fdim, .rdim', frameEl).forEach((d) => d.classList.remove('is-on'));
     app.appendChild(sec);
     const t = TABS[name];
     dock.classList.toggle('is-on', !!t);
@@ -469,7 +487,7 @@
     if (name === 'splash') setTimeout(() => { if (cur() === 'splash') go('start', true); }, 1400);
   }
   const cur = () => (location.hash.replace(/^#\/?/, '') || 'splash');
-  function go(name, replace) { if (replace) location.replace('#/' + name); else location.hash = '#/' + name; }
+  function go(name, replace) { if (cur() === name) { render(name); return; } if (replace) location.replace('#/' + name); else location.hash = '#/' + name; }   /* 같은 화면(예: 음식 상세 → 다른 음식)도 다시 그림 */
   window.addEventListener('hashchange', () => render(cur()));
   window.addEventListener('scroll', () => topbtn.classList.toggle('is-on', !!TABS[cur()] && window.scrollY > 60), { passive: true });
   window.addEventListener('resize', () => { const sec = $('.scr.fit'); if (sec && !['hospital','hospital-map','cal-camera'].includes(sec.dataset.scr)) shrinkFit(sec); });
@@ -547,6 +565,17 @@
       sl.scrollLeft=S.eduSlide*sl.clientWidth; const seen=new Set(); const activate=()=>{const i=Math.round(sl.scrollLeft/sl.clientWidth);S.eduSlide=i;dots.forEach((d,k)=>d.classList.toggle('is-on',k===i));if(!seen.has(i)){seen.add(i);$('.slide:nth-child('+(i+1)+')',sl).classList.add('animate-bars');}}; sl.addEventListener('scroll',activate,{passive:true});activate();
     }
   }
+  /* 4차: 신고하기 팝업 */
+  const rdim = document.createElement('div');
+  rdim.className = 'dim rdim';
+  rdim.innerHTML = `<div class="pick rpick" role="dialog" aria-label="신고하기"><button class="rx" data-rx aria-label="닫기"><img src="${I('i-close-g')}" alt=""></button><h4>신고하기</h4><p>허위 또는 악의적 목적으로 신고할 경우<br>서비스 이용에 제한을 받을 수 있습니다.</p><input placeholder="신고 할 내용을 작성해주세요."><button class="btn" data-rok>완료</button></div>`;
+  frameEl.appendChild(rdim);
+  function openReport() { $('input', rdim).value = ''; rdim.classList.add('is-on'); }
+  rdim.addEventListener('click', (e) => {
+    if (e.target === rdim || e.target.closest('[data-rx]')) { rdim.classList.remove('is-on'); return; }
+    if (e.target.closest('[data-rok]')) { rdim.classList.remove('is-on'); toast('신고가 접수됐어요'); }
+  });
+  document.addEventListener('click', (e) => { if (!e.target.closest('[data-q]')) $$('.tip-on').forEach((x) => x.classList.remove('tip-on')); if (!e.target.closest('[data-pmore], #pmenu')) { const m = $('#pmenu'); if (m) m.classList.remove('is-on'); } }, true);
   frameEl.addEventListener('click', (e) => {
     const t = e.target;
     if(revisionClick(e))return;
@@ -570,6 +599,12 @@
     if (el('[data-bm]')) { const b = el('[data-bm]'); S.bm[S.post] = !S.bm[S.post]; b.classList.toggle('is-on', S.bm[S.post]); $('img', b).src = I(S.bm[S.post] ? 'i-bm-on' : 'i-bm-b'); return; }
     if (el('[data-addrec]')) { S.addFor = cur(); go('rec-add'); return; }
     if (el('[data-recsave]')) { const ti = $('#ra-t').value.trim(); if (!ti) { toast('제목을 입력해 주세요'); return; } (S.recs[S.addFor] = S.recs[S.addFor] || []).push({ t: ti.replace(/</g, '&lt;'), b: $('#ra-b').value.trim().replace(/</g, '&lt;') }); toast('기록을 추가했어요'); history.back(); return; }
+    if (el('[data-nf]')) { S.nf = el('[data-nf]').dataset.nf; $$('[data-nf]').forEach((b) => b.classList.toggle('is-on', b.dataset.nf === S.nf)); $('#noti-list').innerHTML = notiList(); return; }
+    if (el('[data-q]')) { el('[data-q]').parentNode.classList.toggle('tip-on'); return; }
+    if (el('[data-pmore]')) { $('#pmenu').classList.toggle('is-on'); return; }
+    if (el('[data-pm]')) { const k = el('[data-pm]').dataset.pm; $('#pmenu').classList.remove('is-on'); if (k === 'refresh') { render('post'); toast('새로고침했어요'); } if (k === 'report') openReport(); if (k === 'block') toast('이 작성자의 글을 더 이상 보지 않아요'); if (k === 'sub') toast('작성자를 구독했어요'); return; }
+    if (el('[data-cmore]')) { openReport(); return; }
+    if (el('[data-food]')) { S.food = el('[data-food]').dataset.food; }
     if (el('[data-info]')) { S.info = el('[data-info]').dataset.info; go('info'); return; }
     if (el('[data-guide]')) { S.guide = +el('[data-guide]').dataset.guide; }
     if (el('[data-kwt]')) { el('[data-kwt]').classList.toggle('is-on'); return; }
@@ -578,7 +613,8 @@
     if (el('[data-swap]')) { openFace('study'); return; }
     if (el('[data-hosp]')) { if (el('.acts')) return; const h = el('[data-hosp]'); S.hosp = +h.dataset.hosp; S.hfrom = h.dataset.from; go('hospital-map'); return; }
     if (el('[data-addimg]')) { $('#w-img').innerHTML = `<img src="${I('f-gimbap')}" alt="">`; return; }
-    if (el('[data-post]')) { const ti = $('.write-t').value.trim(); if (!ti) { toast('제목을 입력해 주세요'); return; } POSTS.unshift({category:$('#write-category').value,kw:['#'+$('#write-keyword').value],face:'pf-'+S.guardian.face,au:esc(S.guardian.name),t:esc(ti),p:esc($('.write-b').value||''),ago:'방금 전',cmts:[]}); S.comTab=$('#write-category').value; S.comKeyword='전체'; toast('글이 등록됐어요'); go('com'); return; }
+    if (el('[data-wnext]')) { const ti = $('.write-t').value.trim(); if (!ti) { toast('제목을 입력해 주세요'); return; } S.draft = { t: esc(ti), b: esc($('.write-b').value.trim()), cat: $('#write-category').value, key: $('#write-keyword').value }; go('write2'); return; }   /* 4차: 글쓰기 '다음' → 확인 화면 → 등록 */
+    if (el('[data-post]')) { const d = S.draft; if (!d) { go('write'); return; } POSTS.unshift({category:d.cat,kw:['#'+d.key],face:'pf-'+S.guardian.face,au:esc(S.guardian.name),t:d.t,p:d.b,full:d.b.replace(/\n/g,'<br>'),ago:'방금 전',cmts:[]}); S.comTab=d.cat; S.comKeyword='전체'; S.draft=null; toast('글이 등록됐어요'); go('com'); return; }
     if(el('[data-food]')) S.food=el('[data-food]').dataset.food;
     const g = el('[data-go]');
     if (g) { e.preventDefault(); if (g.dataset.toast) toast(g.dataset.toast); go(g.dataset.go); }

@@ -784,3 +784,76 @@ html:not(.mock) .rhead { padding-top:18px; padding-bottom:48px; }
 .post .ims.two-images,.pd-ims.two-images { grid-template-columns:1fr 1fr; grid-template-rows:auto; height:auto; align-items:start; }
 .post .ims.two-images > img,.pd-ims.two-images > img { width:100%; height:auto; object-fit:contain; }
 @media (prefers-reduced-motion:reduce) { .stage .bar i,.slide.animate-bars .bar i { animation:none; transform:scaleX(1); } .hospital-sheet { transition:none; } }
+
+/* ===== 4차 수정 (사용자 PDF 18쪽) ===== */
+/* 자동 로그인: 켜지면 안에 작은 원 */
+.chk.is-on i { background: url('../img/i-auto-on.webp') center / contain no-repeat; border: 0; }
+/* 알림: 긴급 = 빨간 원 + 흰 느낌표 + 빨간 '긴급' 태그 */
+.noti a.is-urgent .ico { background: #F04E4E; }
+.noti .ico img.w { height: 20px; width: auto; }
+.noti a.is-urgent small { color: #F04E4E; font-weight: 600; }
+.noti-empty { padding: 40px 0; text-align: center; color: var(--gray); font-size: 13px; }
+/* 민트 머리 뒤 구름 배경 (홈 · 오늘의 컨디션 · 교육) */
+/* 365차: 녹색 뒷 배경 = 보내준 '여백 뒷 배경' 그림 그대로 (PDF 시안처럼 그림 한 장을 머리 영역에 꽉 채움, 아래 기준)
+   그림 바탕색 #44C4B4 를 이 세 화면의 민트로 써서 그림 경계가 안 보이게. 다른 화면 민트는 원래 색 그대로 */
+.scr[data-scr="home"], .scr[data-scr="condition"], .scr[data-scr="edu"] { --head: #44C4B4; }
+.scr[data-scr="home"] .home-head, .scr[data-scr="condition"] .mhead, .scr[data-scr="edu"] .edu-head { background: var(--head) url('../img/bg-cloud.webp') center bottom / cover no-repeat; }
+/* 홈: 아래 둥근 곡선까지 그림이 이어지게 — 곡선(흰색)을 머리 영역 아래에 덮어 그림 (예전엔 곡선이 따로 된 민트 띠라 구름 아래 빈 띠가 보였음) */
+.scr[data-scr="home"] .home-head { padding-bottom: 40px; }
+.scr[data-scr="home"] .home-head::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 41px; z-index: -1; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 40' preserveAspectRatio='none'%3E%3Cpath d='M0 19Q195 59 390 19V40H0Z' fill='%23fff'/%3E%3C/svg%3E") 0 0 / 100% 40px no-repeat; }
+.scr[data-scr="home"] .home-wave { display: none; }
+/* 오늘의 컨디션: 요일 글자 조금 크게, 혈당 기록 위 여백 */
+.mcal b { font-size: 16px; font-weight: 600; }
+.mcal span { font-size: 15px; }
+.cond-sheet { padding-top: 36px; }
+/* 그래프: 옆으로 밀어 숨은 시간·요일 보기, 세로축 글자는 고정 */
+.chart { position: relative; }
+.ch-sc { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+.ch-sc::-webkit-scrollbar { display: none; }
+.chart .ch-sc svg { width: auto; max-width: none; height: 210px; display: block; }
+.chart svg.ch-y { position: absolute; left: 0; top: 0; width: 50px; height: 210px; background: linear-gradient(90deg, #fff 88%, rgba(255,255,255,0)); pointer-events: none; }
+.ch-fade { position: absolute; right: 0; top: 0; width: 46px; height: 200px; background: linear-gradient(90deg, rgba(255,255,255,0), #fff); pointer-events: none; }
+/* 단계 막대도 왼→오로 차오름 */
+.stage .bar i { transform-origin: 0 50%; animation: gFill 1s .2s cubic-bezier(.3, .7, .2, 1) both; }
+@media (prefers-reduced-motion: reduce) { .stage .bar i { animation: none; } }
+/* ? 아이콘 + 말풍선 */
+h2.sec { position: relative; }
+h2.sec .q { width: 17px; height: 17px; border: 1.5px solid #BDBDBD; color: #BDBDBD; font-size: 11px; font-weight: 700; line-height: 1; padding: 0; background: #fff; cursor: pointer; }
+.q-tip { position: absolute; left: 132px; top: 50%; transform: translateY(-50%); white-space: nowrap; background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,.14); padding: 8px 12px; font-size: 10.5px; font-weight: 500; color: var(--ink2); opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 5; }
+h2.sec.tip-on .q-tip { opacity: 1; }
+/* 식사 앨범: 식사 · 간식 아이콘 */
+.album figcaption span.ic::before { display: none; }
+.album figcaption span.ic { display: inline-flex; align-items: center; gap: 4px; }
+.album figcaption span.ic img { height: 11px; width: auto; }
+/* 추천 메뉴 누르면 상세로 */
+.reco figure { cursor: pointer; }
+/* 글쓰기 2단계 (확인 화면) */
+.w2 { margin: 18px 28px 0; padding-bottom: 16px; border-bottom: 1px solid #E6E6E6; }
+.w2 h3 { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+.w2 p { font-size: 11.5px; line-height: 1.6; color: var(--gray); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.w2-row { display: flex; justify-content: space-between; align-items: center; margin: 0 28px; height: 42px; border-bottom: 1px solid #E6E6E6; font-size: 12px; color: var(--ink2); flex: none; }
+.w2-row .r { display: flex; align-items: center; gap: 6px; color: var(--gray); font-size: 11px; } .w2-row .r img { width: 6px; }
+.w2-rule { margin: 14px 28px 0; text-align: right; flex: none; }
+.w2-rule button { border: 1px solid #CFCFCF; border-radius: 12px; padding: 4px 12px; font-size: 10px; color: var(--ink2); }
+/* 글 더보기 메뉴 · 신고하기 */
+.post-top { position: relative; }
+.pmenu { position: absolute; right: -6px; top: 30px; width: 130px; background: #fff; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,.15); padding: 6px 0; display: none; z-index: 20; }
+.pmenu.is-on { display: block; }
+.pmenu button { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 9px 16px; font-size: 13px; text-align: left; }
+.pmenu button img { width: 6px; }
+.cmt .c .more { position: absolute; right: -4px; top: 0; padding: 2px 4px; } .cmt .c .more img { height: 14px; width: auto; }
+.rpick { position: relative; width: 300px; padding: 24px 22px 20px; text-align: center; }
+.rpick .rx { position: absolute; right: 14px; top: 14px; } .rpick .rx img { width: 14px; }
+.rpick h4 { margin: 0 0 8px; font-size: 16px; font-weight: 700; }
+.rpick p { font-size: 10.5px; line-height: 1.6; color: var(--gray); }
+.rpick input { width: 100%; margin: 20px 0 18px; border: 0; border-bottom: 1px solid #CFCFCF; padding: 8px 2px; font-size: 12px; text-align: center; outline: none; }
+.rpick .btn { height: 42px; line-height: 42px; font-size: 15px; }
+/* 댓글 입력창은 글이 짧아도 항상 화면 아래 */
+.scr[data-scr="post"].is-on { display: flex; flex-direction: column; }
+.scr[data-scr="post"] > * { flex: none; }
+.scr[data-scr="post"] .reply { margin-top: auto; }
+.fd-photo .kc { text-shadow: 0 1px 6px rgba(0,0,0,.35); }
+
+/* 363차: 코덱스 작업 복구 + 4차 병합 — ? 버튼 */
+.q-btn { display: inline-flex; align-items: center; padding: 0; border: 0; background: none; cursor: pointer; color: #BDBDBD; }
