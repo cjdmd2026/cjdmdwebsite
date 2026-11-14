@@ -1,0 +1,246 @@
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Pretendard', sans-serif;
+}
+
+@font-face {
+  font-family: 'Isamanru';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicLight.woff') format('woff');
+  font-weight: 300;
+  font-display: swap;
+}
+
+html,
+body{
+  margin:0;
+  padding:0;
+  height:100%;
+  overflow:hidden;
+}
+
+.content{
+  width:2600px;
+  height:1420px;
+  border-radius:40px;
+  padding:70px 90px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+}
+
+.replay-btn{
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  border:none;
+  background:#239fdd;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  flex-shrink:0;
+  box-shadow:0 6px 16px rgba(35,159,221,0.35);
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.replay-btn svg{
+  width:48px;
+  height:48px;
+}
+.replay-btn:hover{
+  transform:scale(1.08);
+  box-shadow:0 8px 20px rgba(35,159,221,0.45);
+}
+.replay-btn:active{
+  transform:scale(0.96);
+}
+
+.content > h1{
+  text-align:center;
+  font-size: 100px;
+  margin-bottom: 40px;
+  font-family: 'Isamanru';
+}
+
+.question-container{
+  height:auto;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:70px;
+}
+
+.progress-wrap{
+  display:flex;
+  gap:10px;
+  margin-bottom:30px;
+}
+
+.dot{
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  background:#ddd;
+}
+
+.dot.active{
+  background:#239fdd;
+}
+
+.dot.done{
+  background:#A6D8F1;
+}
+
+.image-box{
+  width:550px;
+  height:100%;
+  background:#f2f2f2;
+  border:1px dashed #ccc;
+  border-radius: 50px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:#999;
+}
+
+.question-img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  border-radius: 50px;
+}
+
+.question-area{
+  width:600px;
+  height:600px;
+  display:flex;
+  flex-direction:column;
+}
+
+.question{
+  font-size:50px;
+  line-height:1.4;
+  color:#333;
+  margin-bottom:70px;
+  margin-top: 0;
+}
+
+.answer-wrap{
+  display:flex;
+  flex-direction:column;
+  gap:17px;
+  margin-top:auto;
+}
+
+.answer-btn{
+  background:#fff;
+  border:3px solid #239fdd;
+  border-radius:18px;
+  padding:13px;
+  font-size:41px;
+  font-weight:600;
+  color:#333;
+  text-align:left;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.answer-btn.selected{
+  background:#90e0ff95;
+  color:#000;
+}
+
+.answer-btn:hover{
+  transform:translateY(-2px);
+}
+
+.next-wrap,
+.prev-wrap{
+  position:fixed;
+  top:50%;
+  transform:translateY(-50%);
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  gap:14px;
+  border-radius:60px;
+      padding:22px 40px;
+  cursor:pointer;
+
+  transition:transform .15s ease, box-shadow .15s ease;
+  z-index:100;
+  
+}
+
+.next-wrap{ right:60px; }
+.prev-wrap{ left:60px; }
+
+.next-btn:hover,
+.prev-btn:hover{
+
+  box-shadow:0 10px 24px rgba(35,159,221,0.45);
+}
+.next-btn,
+.prev-btn{
+      width:auto ;
+       height:80px !important; 
+       padding:0 26px 0 12px !important;
+      border-radius:30px !important; border:none;
+      background:rgba(255,255,255,0.8) !important;
+      backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+      display:flex; align-items:center; gap:10px; cursor:pointer;
+      color:#555; font-size:40px; font-weight:700;
+      box-shadow:0 6px 18px rgba(30,60,100,0.15) !important;
+    }
+.next-btn{ padding:0 12px 0 26px !important; }
+
+.next-btn .ic,
+.prev-btn .ic{ width:40px; height:40px; border-radius:50%; background:#E3EAF3; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.next-btn svg,
+.prev-btn svg{ width:30px !important; height:30px !important; }
+
+@keyframes callSwing {
+  0%, 100% { transform: translateY(-8px) rotate(-2deg); }
+  50%       { transform: translateY(-8px) rotate(2deg); }
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+.modal-box{
+  width:900px;
+  background:#fff;
+  border-radius:32px;
+  padding:70px 80px;
+  text-align:center;
+}
+
+.modal-box p{
+  font-size:56px;
+  font-weight:700;
+  color:#333;
+  margin-bottom:26px;
+}
+
+.modal-box button{
+  border:none;
+  border-radius:16px;
+  padding:18px 50px;
+  background:#239fdd;
+  color:#fff;
+  font-size:40px;
+  font-weight:700;
+  cursor:pointer;
+}
+

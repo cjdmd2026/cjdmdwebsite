@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+<link rel="icon" type="image/x-icon" href="img/favicon.ico">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#ff5c5c">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="피싱뚝">
+<script src="alpha-video.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>중급 학습</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="style.css">
+
+ <style>
+
+    .cards{
+      gap: 0 220px;
+    }
+
+    .s_card {
+      width: 620px;
+      height: 940px;
+      background: transparent;
+      padding: 0;
+      border-radius: 0;
+      box-shadow: none;
+      position: relative;
+    }
+
+    .s_card:hover{
+      background:transparent;
+    }
+
+    .s_card:nth-of-type(1) .image{
+      animation: phoneRockLeft 1.8s ease-in-out infinite;
+    }
+    .s_card:nth-of-type(2) .image{
+      animation: phoneRockRight 1.8s ease-in-out infinite;
+      animation-delay: 0.3s;
+    }
+
+    .s_card.selected .image{
+      animation-play-state: paused;
+      transform: rotate(0deg);
+      box-shadow:
+        0 0 0 10px rgba(239,68,68,0.55),
+        0 20px 40px rgba(0,0,0,0.4),
+        inset 0 0 0 3px #3a3a3a;
+    }
+    .s_card.selected .image img{
+      filter: grayscale(0.25) brightness(0.85);
+    }
+
+    @keyframes phoneRockLeft{
+      0%,100%{ transform: rotate(-6deg); }
+      50%{ transform: rotate(-9deg); }
+    }
+    @keyframes phoneRockRight{
+      0%,100%{ transform: rotate(6deg); }
+      50%{ transform: rotate(9deg); }
+    }
+
+    .card-number {
+      position: absolute;
+      top: -22px;
+      left: -22px;
+      width: 68px;
+      height: 68px;
+      background: #ff5c5c;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 34px;
+      font-weight: 700;
+      box-shadow: 0 4px 10px rgba(255, 92, 92, 0.5);
+      z-index: 3;
+    }
+
+    .image {
+      width: 454px;
+      height: 780px;
+      margin: 0 auto 20px;
+      background: #1b1b1b;
+      border-radius: 52px;
+      padding: 14px;
+      box-shadow:
+        0 20px 40px rgba(0,0,0,0.4),
+        inset 0 0 0 3px #3a3a3a;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .image::before{
+      content:'';
+      position:absolute;
+      top:14px;
+      left:50%;
+      transform:translateX(-50%);
+      width:120px;
+      height:20px;
+      background:#1b1b1b;
+      border-radius:0 0 14px 14px;
+      z-index:2;
+    }
+
+    .image::after{
+      content:'';
+      position:absolute;
+      right:-3px;
+      top:150px;
+      width:3px;
+      height:90px;
+      background:#0d0d0d;
+      border-radius:0 2px 2px 0;
+    }
+
+    .image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 38px;
+      display: block;
+    }
+
+    .s_card p {
+      display: none;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .video-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .video-modal.show {
+      display: flex;
+    }
+
+    .video-wrap {
+      position: relative;
+      transform: scale(var(--fit-scale, 1));
+    }
+
+    .phone-frame{
+      width: 700px;
+      height: 1330px;
+      background:#1b1b1b;
+      border-radius:60px;
+      padding:20px;
+      box-shadow:
+        0 25px 50px rgba(0,0,0,0.45),
+        inset 0 0 0 3px #3a3a3a;
+      position:relative;
+      z-index:2;
+    }
+
+    .peek-character{
+      position:absolute;
+      right:-300px;
+      bottom:-600px;
+      width:1420px;
+      z-index:1;
+      pointer-events:none;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.35));
+      animation: peekBob 2.4s ease-in-out infinite;
+    }
+
+    .peek-character img{
+      width:100%;
+      display:block;
+    }
+
+    .phone-frame::before{
+      content:'';
+      position:absolute;
+      top:20px;
+      left:50%;
+      transform:translateX(-50%);
+      width:146px;
+      height:28px;
+      background:#1b1b1b;
+      border-radius:0 0 20px 20px;
+      z-index:2;
+    }
+
+    .phone-frame .side-btn{
+      position:absolute;
+      background:#0d0d0d;
+    }
+    .phone-frame .side-btn.vol-up{
+      left:-4px; top:154px; width:4px; height:63px;
+      border-radius:2px 0 0 2px;
+    }
+    .phone-frame .side-btn.vol-down{
+      left:-4px; top:231px; width:4px; height:63px;
+      border-radius:2px 0 0 2px;
+    }
+    .phone-frame .side-btn.power{
+      right:-4px; top:210px; width:4px; height:126px;
+      border-radius:0 2px 2px 0;
+    }
+
+    .phone-screen{
+      width:100%;
+      height:100%;
+      background:#000;
+      border-radius:42px;
+      overflow:hidden;
+    }
+
+    .phone-screen video{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      background:#000;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: -28px;
+      right: -28px;
+      width: 70px;
+      height: 70px;
+      border: none;
+      border-radius: 50%;
+      background: white;
+      font-size: 34px;
+      cursor: pointer;
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      margin: 0;
+    }
+
+    .close-btn:hover {
+      background: #f0f0f0;
+    }
+
+    .character-reveal video{
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    #resultFlash{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:998;
+      background:transparent;
+    }
+
+    @keyframes flashGreen{
+      0%{ background:rgba(52,199,89,0.35); }
+      100%{ background:rgba(52,199,89,0); }
+    }
+    @keyframes flashRed{
+      0%{ background:rgba(239,100,97,0.35); }
+      100%{ background:rgba(239,100,97,0); }
+    }
+    #resultFlash.correct{ animation:flashGreen 0.6s ease-out; }
+    #resultFlash.wrong{ animation:flashRed 0.6s ease-out; }
+
+    .result-popup{
+      position:fixed;
+      top:50%;
+      left:50%;
+      transform:translate(-50%,-50%) scale(0.8);
+      background:#fff;
+      padding:56px 78px;
+      border-radius:32px;
+      text-align:center;
+      box-shadow:0 18px 50px rgba(0,0,0,0.28);
+      z-index:9999;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity 0.25s ease, transform 0.25s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    .result-popup.show{
+      opacity:1;
+      transform:translate(-50%,-50%) scale(1);
+    }
+
+    .result-icon{
+      font-size:72px;
+      margin-bottom:16px;
+      display:inline-block;
+    }
+
+    .result-popup.correct .result-icon{
+      animation:bouncePop 0.6s cubic-bezier(.34,1.56,.64,1) 0.05s both;
+    }
+
+    .result-popup.wrong .result-icon{
+      animation:shakeIcon 0.35s ease-in-out 0.25s 2;
+    }
+
+    @keyframes bouncePop{
+      0%{ transform:scale(0.5); opacity:0; }
+      50%{ transform:scale(1.3); opacity:1; }
+      70%{ transform:scale(0.9); }
+      100%{ transform:scale(1); }
+    }
+
+    @keyframes shakeIcon{
+      0%,100%{ transform:rotate(0); }
+      25%{ transform:rotate(-14deg); }
+      75%{ transform:rotate(14deg); }
+    }
+
+    .result-title{
+      font-size:44px;
+      font-weight:800;
+      margin-bottom:10px;
+    }
+
+    .result-popup.correct .result-title{ color:#34c759; }
+    .result-popup.wrong .result-title{ color:#ef6461; }
+
+    .result-sub{
+      font-size:30px;
+      color:#666;
+    }
+
+    #confettiCanvas{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      pointer-events:none;
+      z-index:996;
+    }
+  
+    .s_card{ height:auto !important; }
+    .image{ width:420px; height:722px; }
+    .character-reveal{ pointer-events:none; }
+
+    .s_card .buttons{
+      flex-direction:column;
+      gap:14px;
+      margin-top:6px;
+    }
+
+    .call-action{
+      min-width:580px;
+      min-height:124px;
+      padding:0 40px;
+      white-space:nowrap;
+      border:none;
+      border-radius:999px;
+      background:#34c759;
+      color:#fff;
+      font-family:inherit;
+      font-size:48px;
+      font-weight:800;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:16px;
+      cursor:pointer;
+      box-shadow:0 10px 24px rgba(52,199,89,0.45);
+      animation:callPulse 1.3s ease-in-out infinite;
+      touch-action:manipulation;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .call-action:active{ transform:scale(0.96); }
+    .call-action .call-icon{ font-size:54px; line-height:1; }
+
+    @keyframes callPulse{
+      0%,100%{ box-shadow:0 10px 24px rgba(52,199,89,0.45), 0 0 0 0 rgba(52,199,89,0.55); }
+      50%{ box-shadow:0 10px 24px rgba(52,199,89,0.45), 0 0 0 22px rgba(52,199,89,0); }
+    }
+
+    .s_card.watched .call-action{
+      background:#ff5c5c;
+      box-shadow:0 10px 24px rgba(255,92,92,0.45);
+      animation:flagPulse 1.6s ease-in-out infinite;
+      font-size:42px;
+    }
+    @keyframes flagPulse{
+      0%,100%{ transform:scale(1); }
+      50%{ transform:scale(1.04); }
+    }
+    .s_card.selected .call-action{
+      background:#c81e1e;
+      animation:none;
+    }
+
+    .rewatch-btn{
+      display:none;
+      border:none;
+      background:none;
+      color:#555;
+      font-family:inherit;
+      font-size:34px;
+      font-weight:700;
+      text-decoration:underline;
+      text-underline-offset:6px;
+      padding:6px 20px;
+      cursor:pointer;
+      touch-action:manipulation;
+    }
+    .s_card.watched .rewatch-btn{ display:block; }
+
+    .phone-tap-hint{
+      display:none;
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      background:rgba(255,92,92,0.95);
+      color:#fff;
+      font-size:38px;
+      font-weight:800;
+      padding:14px 32px;
+      border-radius:999px;
+      white-space:nowrap;
+      z-index:3;
+      pointer-events:none;
+      box-shadow:0 6px 16px rgba(0,0,0,0.25);
+    }
+    .s_card.watched .phone-tap-hint{ display:block; }
+    .s_card.watched .image{ cursor:pointer; }
+
+    .result-sub{
+      max-width:min(900px, 82vw);
+      margin:0 auto;
+      line-height:1.55;
+      word-break:keep-all;
+      color:#444;
+    }
+    .result-popup.show{ pointer-events:auto; cursor:pointer; }
+    .result-tap{
+      margin-top:22px;
+      font-size:22px;
+      color:#999;
+    }
+</style>
+  <link rel="stylesheet" href="nav.css">
+  <script>try{ sessionStorage.setItem('level','advanced'); }catch(e){}</script>
+<style id="tabfix">
+  html, body { width:100%; height:100%; margin:0; overflow:hidden; overscroll-behavior:none; }
+  #scaleWrap { position:fixed !important; }
+</style>
+</head>
+
+<body>
+
+  <div id="resultFlash"></div>
+
+  <canvas id="confettiCanvas"></canvas>
+
+  <div id="scaleWrap">
+    <div class="container">
+
+      <div class="content">
+
+        <div class="top-bar">
+          <button class="phishing-badge">피싱뚝</button>
+          <button class="replay-btn" onclick="playGuideVoice()" aria-label="안내 다시 듣기">
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="#fff"/><path d="M16 8.5a5 5 0 010 7M18.5 6a8.5 8.5 0 010 12" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+            </span>
+            안내 다시 듣기
+          </button>
+        </div>
+
+        <div class="title-row">
+          <h1>둘중에 사기라고 생각되는 것을 고르시오</h1>
+        </div>
+
+        <div class="cards">
+
+          <div class="s_card" data-answer="1" data-video="video/t_video_b.mp4">
+            <div class="card-number">1</div>
+            <div class="image" onclick="onCardTap(this.closest('.s_card'))">
+              <img src="img/call_1.webp" alt="1번 전화 화면">
+              <div class="phone-tap-hint">👆 눌러서 선택</div>
+            </div>
+            <p>1번</p>
+
+            <div class="buttons">
+              <button type="button" class="call-action" onclick="onCardTap(this.closest('.s_card'))">
+                <span class="call-icon">📞</span><span class="call-text">울리는 전화 받기</span>
+              </button>
+              <button type="button" class="rewatch-btn" onclick="openCardVideo(this.closest('.s_card'))">▶ 영상 다시 보기</button>
+            </div>
+          </div>
+
+          <div class="s_card" data-answer="2" data-video="video/f_video.mp4">
+            <div class="card-number">2</div>
+            <div class="image" onclick="onCardTap(this.closest('.s_card'))">
+              <img src="img/call_2.webp" alt="2번 전화 화면">
+              <div class="phone-tap-hint">👆 눌러서 선택</div>
+            </div>
+            <p>2번</p>
+
+            <div class="buttons">
+              <button type="button" class="call-action" onclick="onCardTap(this.closest('.s_card'))">
+                <span class="call-icon">📞</span><span class="call-text">울리는 전화 받기</span>
+              </button>
+              <button type="button" class="rewatch-btn" onclick="openCardVideo(this.closest('.s_card'))">▶ 영상 다시 보기</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="character-reveal" id="characterReveal">
+        <video id="charVideo" class="char-video" playsinline style="display:none;"></video>
+        <img id="revealImg" alt="캐릭터" class="single" style="display:none;">
+      </div>
+
+      <div class="video-modal" id="videoModal" onclick="handleModalClick(event)">
+        <div class="video-wrap">
+          <button class="close-btn" onclick="closeVideo()">✕</button>
+
+          <div class="peek-character">
+            <img src="img/hand.webp" alt="핸드폰들고있는손">
+          </div>
+
+          <div class="phone-frame">
+            <div class="side-btn vol-up"></div>
+            <div class="side-btn vol-down"></div>
+            <div class="side-btn power"></div>
+
+            <div class="phone-screen">
+              <video id="guideVideo" controls playsinline>
+                <source id="videoSource" type="video/mp4">
+              </video>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="prev-wrap">
+  <button class="prev-btn" onclick="location.href='index1.html'" aria-label="이전">
+    <span class="ic">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M15 5L8 12L15 19" stroke="#16263F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+    이전
+  </button>
+</div>
+
+  <div class="next-wrap">
+  <button id="nextBtn" class="next-btn" aria-label="다음">
+    다음
+    <span class="ic">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M9 5L16 12L9 19" stroke="#16263F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+  </button>
+</div>
+
+  <div id="modal" class="modal">
+    <div class="modal-box">
+        <p>답변을 선택해주세요</p>
+        <button onclick="closeModal()">
+            확인
+        </button>
+    </div>
+  </div>
+
+  <div class="result-popup" id="resultPopup">
+    <div class="result-icon" id="resultIcon"></div>
+    <div class="result-title" id="resultTitle"></div>
+    <div class="result-sub" id="resultSub"></div>
+    <div class="result-tap">화면을 누르면 바로 넘어가요</div>
+  </div>
+
+<script>
+const charVideoMap = {
+  '1': 'mp3/ddoddo_Q_v.webm',
+  '2': 'mp3/bbibbo_Q_v.webm',
+  '3': 'mp3/gamjjock_Q_v.webm'
+};
+
+const voiceIndex = sessionStorage.getItem('voiceIndex') || '1';
+
+function showCharacterReveal() {
+  const video = document.getElementById('charVideo');
+
+  if (charVideoMap[voiceIndex]) {
+    revealImg.style.display = 'none';
+    video.style.display = 'block';
+    AlphaVideo.setSrc(video, charVideoMap[voiceIndex]);
+    AlphaVideo.playWithFallback(video);
+  } else {
+    video.style.display = 'none';
+    revealImg.style.display = 'block';
+    revealImg.src = charImgMap[voiceIndex] || charImgMap['2'];
+  }
+}
+
+function playGuideVoice() {
+  if (!charVideoMap[voiceIndex]) return;
+  const video = document.getElementById('charVideo');
+  video.currentTime = 0;
+  video.play().catch(err => {
+    console.log('Video replay error:', err);
+  });
+}
+
+function fitScale() {
+  const scaleX = window.innerWidth / 2850;
+  const scaleY = window.innerHeight / 1575;
+  const scale = Math.min(scaleX, scaleY);
+  document.getElementById('scaleWrap').style.transform = `translate(-50%, -50%) scale(${scale})`;
+  document.documentElement.style.setProperty('--fit-scale', scale);
+}
+window.addEventListener('resize', fitScale);
+fitScale();
+
+window.addEventListener('load', function() {
+  fitScale();
+  showCharacterReveal();
+  setTimeout(playGuideVoice, 300);
+});
+
+  const CORRECT_ANSWER = '2';
+  const RESULT_TEXT = {
+    correct: "피싱은 수사기관인 척하며 '비대면 조사'를 하자고 하고, 남에게 말하면 처벌받는다고 겁을 주며 혼자 있는 곳으로 가라고 하는 특성이 있어요.",
+    wrong:   "정답은 '비대면 약식 조사', '발설하면 구속', '혼자 있는 장소로 이동하라'고 한 2번 전화였어요."
+  };
+  const RESULT_SHOW_MS = 15000;
+
+  const nextBtn = document.getElementById('nextBtn');
+  let selectedAnswer = null;
+  let advanceTimer = null;
+  let hideTimer = null;
+
+  function showResultPopup(isCorrect) {
+    const flash   = document.getElementById('resultFlash');
+    const popup   = document.getElementById('resultPopup');
+    const icon    = document.getElementById('resultIcon');
+    const title   = document.getElementById('resultTitle');
+    const sub     = document.getElementById('resultSub');
+
+    clearTimeout(hideTimer);
+    clearTimeout(advanceTimer);
+    popup.classList.remove('show', 'correct', 'wrong');
+    flash.className = '';
+    void flash.offsetWidth;
+
+    if (isCorrect) {
+      popup.classList.add('correct');
+      icon.textContent = '🎉';
+      title.textContent = '피싱범을 잡았어요!';
+      sub.textContent = RESULT_TEXT.correct;
+      flash.className = 'correct';
+      fireConfetti();
+    } else {
+      popup.classList.add('wrong');
+      icon.textContent = '❌';
+      title.textContent = '피싱범을 놓쳤어요!';
+      sub.textContent = RESULT_TEXT.wrong;
+      flash.className = 'wrong';
+    }
+
+    requestAnimationFrame(() => popup.classList.add('show'));
+
+    hideTimer = setTimeout(() => {
+      popup.classList.remove('show');
+      advanceTimer = setTimeout(() => {
+        localStorage.setItem('test1Answer', selectedAnswer);
+        window.location.href = 'Q_v_end.html';
+      }, 300);
+    }, RESULT_SHOW_MS);
+  }
+
+  function selectCard(card) {
+    const answerButtons = document.querySelectorAll('.s_card');
+    const answer = card.dataset.answer;
+    const isCorrect = answer === CORRECT_ANSWER;
+
+    answerButtons.forEach(item => {
+      item.classList.remove('selected', 'correct', 'wrong', 'wrong-shake');
+    });
+
+    card.classList.add('selected', isCorrect ? 'correct' : 'wrong');
+    if (!isCorrect) {
+      card.classList.add('wrong-shake');
+    }
+
+    selectedAnswer = card.dataset.answer;
+
+    showResultPopup(isCorrect);
+  }
+
+  nextBtn.addEventListener('click', () => {
+    if (!selectedAnswer) {
+      openModal();
+      return;
+    }
+    clearTimeout(hideTimer);
+    clearTimeout(advanceTimer);
+    localStorage.setItem('test1Answer', selectedAnswer);
+    window.location.href = 'Q_v_end.html';
+  });
+
+  function goNextFromResult() {
+    if (!selectedAnswer) return;
+    clearTimeout(hideTimer);
+    clearTimeout(advanceTimer);
+    localStorage.setItem('test1Answer', selectedAnswer);
+    window.location.href = 'Q_v_end.html';
+  }
+  document.addEventListener('click', (e) => {
+    if (!document.getElementById('resultPopup').classList.contains('show')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    goNextFromResult();
+  }, true);
+
+  function openModal(){
+    document.getElementById('modal').style.display='flex';
+  }
+
+  function closeModal(){
+    document.getElementById('modal').style.display='none';
+  }
+
+  function fireConfetti() {
+    const dpr = window.devicePixelRatio || 1;
+    const confettiCanvas = document.getElementById('confettiCanvas');
+    if (!confettiCanvas) return;
+    const ctx2 = confettiCanvas.getContext('2d');
+    confettiCanvas.width = window.innerWidth * dpr;
+    confettiCanvas.height = window.innerHeight * dpr;
+    confettiCanvas.style.width = window.innerWidth + 'px';
+    confettiCanvas.style.height = window.innerHeight + 'px';
+    ctx2.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const colors = ['#ff6a3d', '#ffd400', '#4dd0e1', '#7ed957', '#ff2600', '#ffffff'];
+    const pieces = [];
+    const count = 150;
+
+    for (let i = 0; i < count; i++) {
+      const isCircle = Math.random() > 0.5;
+      pieces.push({
+        x: Math.random() * window.innerWidth,
+        y: -40 - Math.random() * window.innerHeight * 0.5,
+        size: 14 + Math.random() * 18,
+        shape: isCircle ? 'circle' : 'rect',
+        color: colors[Math.floor(Math.random() * colors.length)],
+        vx: (Math.random() - 0.5) * 2,
+        vy: 0.8 + Math.random() * 1.2,
+        rotation: Math.random() * 360,
+        vr: (Math.random() - 0.5) * 10,
+        gravity: 0.035,
+        drift: Math.random() * Math.PI * 2,
+        driftSpeed: 0.02 + Math.random() * 0.03
+      });
+    }
+
+    let frame = 0;
+    const maxFrames = 260;
+
+    function animate() {
+      frame++;
+      ctx2.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      pieces.forEach(p => {
+        p.vy += p.gravity * 0.05;
+        p.drift += p.driftSpeed;
+        p.x += p.vx + Math.sin(p.drift) * 1.2;
+        p.y += p.vy;
+        p.rotation += p.vr;
+
+        ctx2.save();
+        ctx2.translate(p.x, p.y);
+        ctx2.rotate((p.rotation * Math.PI) / 180);
+        ctx2.fillStyle = p.color;
+        if (p.shape === 'circle') {
+          ctx2.beginPath();
+          ctx2.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+          ctx2.fill();
+        } else {
+          ctx2.fillRect(-p.size / 2, -p.size / 3, p.size, p.size * 0.65);
+        }
+        ctx2.restore();
+      });
+
+      if (frame < maxFrames) {
+        requestAnimationFrame(animate);
+      } else {
+        ctx2.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      }
+    }
+
+    animate();
+  }
+
+  function openVideo(src) {
+    const modal = document.getElementById('videoModal');
+    const video = document.getElementById('guideVideo');
+    const source = document.getElementById('videoSource');
+    source.src = src;
+    video.load();
+    video.play();
+    modal.classList.add('show');
+  }
+
+  function closeVideo() {
+    const modal = document.getElementById('videoModal');
+    const video = document.getElementById('guideVideo');
+    modal.classList.remove('show');
+    video.pause();
+    video.currentTime = 0;
+    markWatched(currentVideoCard);
+    currentVideoCard = null;
+  }
+
+  function handleModalClick(event) {
+    if (event.target === document.getElementById('videoModal')) {
+      closeVideo();
+    }
+  }
+
+  let currentVideoCard = null;
+
+  document.body.appendChild(document.getElementById('videoModal'));
+
+  function openCardVideo(card) {
+    currentVideoCard = card;
+    openVideo(card.dataset.video);
+  }
+
+  function markWatched(card) {
+    if (!card || card.classList.contains('watched')) return;
+    card.classList.add('watched');
+    card.querySelector('.call-icon').textContent = '🚩';
+    card.querySelector('.call-text').textContent = '이 전화가 보이스피싱 같아요!';
+  }
+
+  function onCardTap(card) {
+    if (card.classList.contains('watched')) {
+      selectCard(card);
+    } else {
+      openCardVideo(card);
+    }
+  }
+
+  document.getElementById('guideVideo').addEventListener('ended', () => closeVideo());
+
+</script>
+
+</body>
+</html>

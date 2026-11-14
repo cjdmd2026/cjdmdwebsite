@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+<link rel="icon" type="image/x-icon" href="img/favicon.ico">
+<link rel="manifest" href="manifest.webmanifest">
+<script src="audio-unlock.js"></script>
+<meta name="theme-color" content="#ff5c5c">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="피싱뚝">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>보이스피싱 취약도 테스트</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    body {
+      background-image: url("img/test_background.webp");
+      background-color: #fff;
+    }
+
+    .content {
+      transform: translateY(-210px);
+    }
+
+    .title {
+      font-size: 120px;
+      font-weight: 700;
+      line-height: 1.3;
+      color: #333;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      font-family: 'Isamanru';
+
+      animation:
+        titleEnter .7s ease-out both,
+        titleShimmer 5s linear infinite;
+    }
+
+    .subtitle {
+      font-size: 55px;
+      color: #666;
+      margin: 20px 0 50px;
+
+      animation: subtitleEnter .7s ease-out .4s both;
+    }
+
+    .start-btn {
+      background: #ff5c5c;
+      border: none;
+      border-radius: 15px;
+      padding: 21px 70px;
+      font-size: 60px;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      transition: .2s;
+      position: relative;
+      overflow: hidden;
+
+      animation:
+        buttonBounceIn .8s cubic-bezier(.2,.8,.2,1.2) .8s both,
+        buttonPulse 2s ease-in-out 1.7s infinite;
+    }
+
+    .start-btn:hover {
+      transform: scale(1.06);
+      box-shadow:
+        0 10px 25px rgba(0,0,0,.18),
+        0 0 22px rgba(255,92,92,.45);
+    }
+
+    @keyframes titleEnter {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes subtitleEnter {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes buttonBounceIn {
+      0% {
+        opacity: 0;
+        transform: translateY(25px) scale(.85);
+      }
+
+      65% {
+        opacity: 1;
+        transform: translateY(-5px) scale(1.06);
+      }
+
+      82% {
+        transform: translateY(2px) scale(.98);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes buttonPulse {
+      0%, 100% {
+        box-shadow: 0 0 8px rgba(255,92,92,.25);
+        filter: brightness(1);
+      }
+
+      50% {
+        box-shadow:
+          0 0 20px rgba(255,92,92,.75),
+          0 0 40px rgba(255,92,92,.45);
+        filter: brightness(1.08);
+      }
+    }
+
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,.6);
+      transform: translate(-50%,-50%) scale(0);
+      pointer-events: none;
+      animation: rippleEffect .5s ease-out;
+    }
+
+    @keyframes rippleEffect {
+      to {
+        transform: translate(-50%,-50%) scale(1);
+        opacity: 0;
+      }
+    }
+
+    .top-bar {
+      position: relative;
+      left: 0;
+    }
+
+    .top-bar .phishing-badge {
+      position: relative;
+      left: 100px;
+    }
+
+    .top-bar .replay-btn {
+      position: relative;
+      left: -100px;
+    }
+  </style>
+<style id="tabfix">
+  html, body { width:100%; height:100%; margin:0; overflow:hidden; overscroll-behavior:none; }
+  #scaleWrap { position:fixed !important; }
+</style>
+</head>
+
+<body>
+
+  <div id="scaleWrap">
+    <div class="container">
+      <div class="content">
+
+        <div class="top-bar">
+          <button class="phishing-badge" type="button">
+            피싱뚝
+          </button>
+
+          <button
+            class="replay-btn"
+            type="button"
+            onclick="playGuideVoice()"
+            aria-label="안내 다시 듣기">
+
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M4 9v6h4l5 4V5L8 9H4z"
+                  fill="#fff"
+                />
+                <path
+                  d="M16 8.5a5 5 0 010 7M18.5 6a8.5 8.5 0 010 12"
+                  stroke="#fff"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </span>
+
+            안내 다시 듣기
+          </button>
+        </div>
+
+        <div class="title-row">
+          <h1 class="title">
+            나는 보이스피싱에<br> 얼마나 취약할까?
+          </h1>
+        </div>
+
+        <p class="subtitle">
+          테스트를 통해 보이스피싱 취약도를 확인해봅시다
+        </p>
+
+        <button
+          class="start-btn"
+          onclick="startTest(event)">
+          테스트 시작하기
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const voiceMap = {
+      '1': 'mp3/index2_ddoddo.mp3',
+      '2': 'mp3/index2_bbibbo.mp3',
+      '3': 'mp3/index2_gamjjock.mp3'
+    };
+
+    const voiceIndex = sessionStorage.getItem('voiceIndex') || '1';
+    const voiceFile = voiceMap[voiceIndex];
+
+    let currentAudio = null;
+
+    function playAudio(src) {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+      }
+
+      currentAudio = new Audio(src);
+
+      currentAudio.play().catch(err => {
+        console.log('Audio play error:', err);
+      });
+
+      return currentAudio;
+    }
+
+    function playGuideVoice() {
+      playAudio(voiceFile);
+    }
+
+    function fitScale() {
+      const scaleX = window.innerWidth / 2850;
+      const scaleY = window.innerHeight / 1575;
+      const scale = Math.min(scaleX, scaleY);
+
+      document.getElementById('scaleWrap').style.transform =
+        `translate(-50%, -50%) scale(${scale})`;
+    }
+
+    window.addEventListener('resize', fitScale);
+
+    window.addEventListener('load', function() {
+      fitScale();
+      playGuideVoice();
+    });
+
+    fitScale();
+
+    function startTest(event) {
+      const button = event.currentTarget;
+      const rect = button.getBoundingClientRect();
+
+      const ripple = document.createElement('span');
+      const size = Math.max(rect.width, rect.height) * 2;
+
+      ripple.className = 'ripple';
+      ripple.style.width = size + 'px';
+      ripple.style.height = size + 'px';
+      ripple.style.left = (event.clientX - rect.left) + 'px';
+      ripple.style.top = (event.clientY - rect.top) + 'px';
+
+      button.appendChild(ripple);
+
+      setTimeout(() => {
+        location.href = 'info.html';
+      }, 400);
+    }
+  </script>
+
+</body>
+</html>
