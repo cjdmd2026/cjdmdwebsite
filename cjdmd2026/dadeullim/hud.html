@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+
+<head>
+  <!-- 2026.11.03 : CSS · JS 주소 뒤 ?v=날짜 — 브라우저(특히 아이맥 사파리)가 예전 파일을 계속 쓰지 않게
+       ---- 깃허브에 올릴 때 CSS · JS 를 고쳤으면 날짜를 새로 바꾸기 -->
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="DADEULLIM HUD Interface"
+  >
+
+  <title>
+    DADEULLIM — HUD
+  </title>
+
+
+  <!-- =====================================================
+       INDEX 공통 CSS
+       HEADER / FOOTER
+  ====================================================== -->
+
+  <link
+    rel="stylesheet"
+    href="./style.css?v=20261114b"
+  >
+
+
+  <!-- =====================================================
+       DISPLAY / HANDLE / HUD 공통 CSS
+  ====================================================== -->
+
+  <link
+    rel="stylesheet"
+    href="./interface.css?v=20261114b"
+  >
+
+
+  <!-- =====================================================
+       DISPLAY / HANDLE / HUD 공통 JS
+  ====================================================== -->
+
+  <script
+    src="./interface.js?v=20261114b"
+    defer
+  ></script>
+
+</head>
+
+
+
+<!-- 2026.10.18 : 히어로 → 시안 E, 다섯 겹 섹션 → 시안 A (아래 [HUD 최종])
+     2026.10.17 : HUD 시안 16 으로 교체
+     body 클래스 hud-page → hud16-page
+     (interface-page 는 유지 → 헤더 숨김/보임 동작 그대로,
+      기존 hud-page 스타일 · 스크립트는 꺼짐) -->
+<body class="interface-page hud16-page">
+
+
+  <!-- =====================================================
+       HEADER
+       DADEULLIM COMMON HEADER
+  ====================================================== -->
+
+  <header
+    class="site-header"
+    id="site-header"
+  >
+
+    <div class="site-header__bar">
+
+
+      <!-- LOGO — 2026.10.06 : 클릭 시 index로 이동하면서 인트로 다시 재생 (?intro) -->
+
+      <a
+        class="site-header__logo"
+        href="./index.html?intro"
+        aria-label="DADEULLIM 홈"
+      >
+        <!-- LOGO IMAGE — 2026.10.06 : 텍스트(DADEULLIM) → CC2 로고 이미지로 교체 -->
+        <span class="site-header__logo-mark" aria-hidden="true"></span>
+      </a>
+
+
+      <!-- MAIN NAV -->
+
+      <nav
+        class="site-header__nav"
+        aria-label="메인 메뉴"
+      >
+
+        <a
+          class="site-header__nav-link"
+          href="./problem.html"
+        >
+          WE ARE
+        </a>
+
+        <a
+          class="site-header__nav-link site-header__nav-link--brand"
+          href="./brand1.html"
+        >
+          BRAND
+        </a>
+
+        <a
+          class="site-header__nav-link is-active"
+          href="./display.html"
+        >
+          INTERFACE
+        </a>
+
+        <a
+          class="site-header__nav-link"
+          href="./driving.html"
+        >
+          EXPERIENCE
+        </a>
+
+      </nav>
+
+    </div>
+
+
+    <!-- ===================================================
+         MEGA MENU
+    ==================================================== -->
+
+    <div class="site-header__mega">
+
+      <div class="site-header__mega-grid">
+
+
+        <!-- WE ARE (2026.11.10 : ABOUT → WE ARE, 맨 앞으로) -->
+
+        <div class="site-header__mega-column">
+
+          <p class="site-header__mega-title">
+            WE ARE
+          </p>
+
+          <div class="site-header__mega-links">
+
+            <a href="./problem.html">
+              문제 정의
+            </a>
+
+            <a href="./user.html">
+              사용자 분석
+            </a>
+
+          </div>
+
+        </div>
+
+
+        <!-- BRAND -->
+
+        <div class="site-header__mega-column">
+
+          <p class="site-header__mega-title">
+            BRAND
+          </p>
+
+          <div class="site-header__mega-links">
+
+            <a href="./brand1.html">
+              다들림 소개
+            </a>
+
+            <a href="./brand2.html">
+              브랜드 철학
+            </a>
+
+            <a href="./logo.html">
+              로고 시스템
+            </a>
+
+          </div>
+
+        </div>
+
+
+        <!-- INTERFACE -->
+
+        <div class="site-header__mega-column">
+
+          <p class="site-header__mega-title">
+            INTERFACE
+          </p>
+
+          <div class="site-header__mega-links">
+
+            <a href="./display.html">
+              디스플레이
+            </a>
+
+            <a href="./handle.html">
+              핸들
+            </a>
+
+            <a
+              href="./hud.html"
+              aria-current="page"
+            >
+              HUD
+            </a>
+
+          </div>
+
+        </div>
+
+
+        <!-- EXPERIENCE -->
+
+        <div class="site-header__mega-column">
+
+          <p class="site-header__mega-title">
+            EXPERIENCE
+          </p>
+
+          <div class="site-header__mega-links">
+
+            <a href="./driving.html">
+              주행 경험
+            </a>
+
+            <a href="./safety.html">
+              안전 경험
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- =====================================================
+       HUD MAIN — 시안 16 (2026.10.17)
+       hud16_code.zip → 우리 방식으로 정리
+       1. 히어로 : 완성된 HUD 한 장 → 스크롤하면 비스듬히 누우며 다섯 겹으로 펼쳐짐
+       2. Sound → Sight : 소리가 단어(시각)로 바뀌는 연결 구간
+       3. 다섯 단어 섹션 (Siren · Horn · Stop · Gap · Merge) — interface.js 가 #words 안에 만듦
+       4. 마지막 문장
+       스타일 : interface.css 맨 아래 [HUD 16]
+       동작   : interface.js  맨 아래 [HUD 16]
+       이미지 : images/hud16/
+  ====================================================== -->
+
+  <main class="hud16">
+
+
+    <!-- =================================================
+         [HUD 11-08] 2026.11.08
+         00. HERO — 앞유리 사진 (시안 목록 2)
+         비 오는 밤, 운전자 어깨 너머 앞유리에 뜬 HUD 를 화면 가득
+         움직이는 건 경고 아이콘에서 번지는 파동 하나뿐 (위치는 interface.js 가 사진 크롭에 맞춰 계산)
+         전) .hf-hero (가운데 빛나는 영상 + 하프미러 반사)
+         ---- 사진은 목업 : 바꿀 때 images/b-8.jpg 교체 (파동 위치는 interface.js [HUD 11-08] 의 PX · PY)
+    ================================================== -->
+
+    <section
+      class="hs-hero"
+      id="hsHero"
+      aria-label="HUD"
+    >
+
+      <img
+        class="hs-hero__img"
+        src="./images/b-8.jpg"
+        alt="비 오는 밤 도심, 운전자 어깨 너머 앞유리에 긴급차량 접근 경고가 떠 있는 모습"
+      >
+
+      <span
+        class="hs-hero__ring"
+        id="hsRing"
+        aria-hidden="true"
+      ><i></i><i></i><i></i></span>
+
+      <div class="hs-hero__copy">
+
+        <h1 class="hs-hero__title">운전자의 시선 위에<br>소리를 띄웁니다.</h1>
+
+        <div class="hs-row">
+          <div>
+            <span>01</span>
+            <b>전방 유리, 시선 높이</b>
+            <p>고개를 돌리지 않아도 읽히는 자리.</p>
+          </div>
+          <div>
+            <span>02</span>
+            <b>위험한 소리를 한 단어로</b>
+            <p>사이렌 · 경적 · 급정거 · 차간거리 · 끼어들기.</p>
+          </div>
+          <div>
+            <span>03</span>
+            <b>다섯 겹의 정보</b>
+            <p>차로 · 속도 · 경로 · 소리 · 경고.</p>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =================================================
+         [HUD 11-08] 2026.11.08
+         01. 다섯 겹 — 제자리 교체 (시안 B 방식)
+         왼쪽 : 목차 01–05 · 가운데 : 겹친 HUD + 아래 하프미러 반사 · 오른쪽 : 번호와 설명
+         스크롤하면 화면이 세로로 펼쳐지지 않고, 그 자리에서 지금 겹만 밝아지고 나머지는 흐려짐
+         전) #haLy 시안 A (누운 HUD 가 세로로 펼쳐짐 + 오른쪽 설명 블록이 지나감)
+         목차 · HUD · 설명은 interface.js [HUD 11-08] 이 채움
+    ================================================== -->
+
+    <section
+      class="hb-ly"
+      id="hbLy"
+      aria-label="HUD 레이어 구조"
+    >
+      <div class="hb-stage">
+        <ol
+          class="hb-idx"
+          id="hbIdx"
+        ></ol>
+        <div class="hb-c">
+          <div
+            class="hb-hud"
+            id="hbHud"
+            aria-hidden="true"
+          ></div>
+          <div
+            class="hb-ref"
+            id="hbRef"
+            aria-hidden="true"
+          ></div>
+        </div>
+        <div
+          class="hb-txt"
+          id="hbTxt"
+          aria-live="polite"
+        ></div>
+      </div>
+    </section>
+
+
+    <!-- =================================================
+         02. SOUND → SIGHT
+    ================================================== -->
+
+    <section
+      class="br"
+      id="br"
+      aria-label="소리에서 시각으로"
+    >
+
+      <!-- 2026.10.17 : 작은 라벨(FROM LAYERS TO WORDS · 05 WORDS) 없앰 -->
+
+      <!-- 2026.10.17 : 아래에 따로 있던 제목 · 설명(br__foot)을 위로 올려 한 섹션으로 합침
+           순서 : 라벨 → 제목 · 설명 → Sound — Sight 선 → 선의 의미 -->
+      <div class="br__head">
+
+        <h2 class="rv balance">
+          들리지 않는 소리를,<br>
+          눈앞의 단어로 바꿉니다.
+        </h2>
+
+        <p
+          class="rv"
+          data-d="1"
+        >
+          경적, 사이렌, 급정거의 순간. 다들림 HUD는 소리가 전하던 의미를 색과 위치, 짧은 문장으로 옮겨 전방 유리 위에 띄웁니다.
+        </p>
+
+      </div>
+
+      <div class="br__line">
+
+        <p class="br__w br__w--sound">
+          Sound
+        </p>
+
+        <nav
+          class="br__track"
+          aria-label="다섯 단어 바로가기"
+        >
+
+          <span
+            class="br__rule"
+            aria-hidden="true"
+          ></span>
+
+          <!-- 2026.11.08 : 점 이름 영어(01 Siren …) → 한글 -->
+          <div class="br__ticks">
+            <a href="#w1"><span>01 사이렌</span></a>
+            <a href="#w2"><span>02 경적</span></a>
+            <a href="#w3"><span>03 정지</span></a>
+            <a href="#w4"><span>04 차간거리</span></a>
+            <a href="#w5"><span>05 끼어들기</span></a>
+          </div>
+
+        </nav>
+
+        <p class="br__w br__w--sight">
+          Sight
+        </p>
+
+      </div>
+
+      <!-- 2026.10.17 : 선이 차오르는 의미 설명 (연한 회색) -->
+      <p class="br__note rv">
+        소리(Sound)가 시각(Sight)으로 바뀌는 길. 선 위의 다섯 지점은 다들림 HUD가 소리를 단어로 바꿔 보여 주는 다섯 순간입니다.
+      </p>
+
+    </section>
+
+
+    <!-- =================================================
+         03. 다섯 단어 — interface.js [HUD 16] 이 채움
+    ================================================== -->
+
+    <div id="words"></div>
+
+
+    <!-- =================================================
+         04. END
+    ================================================== -->
+
+    <section class="end">
+
+      <p class="lines">
+        <span class="ln"><span>시선은 도로에 머물고,</span></span>
+        <span class="ln"><span>필요한 정보만 눈앞에.</span></span>
+      </p>
+
+      <!-- 2026.10.17 : 작은 라벨(DADEULLIM HEAD-UP DISPLAY) 없앰 -->
+
+    </section>
+
+  </main>
+
+
+
+  <!-- =====================================================
+       FOOTER
+       DADEULLIM COMMON FOOTER
+  ====================================================== -->
+
+  <footer
+    class="case-footer"
+    id="footer"
+  >
+
+
+    <!-- ===================================================
+         FOOTER INFORMATION
+    ==================================================== -->
+
+    <div
+      class="case-container case-footer__top"
+    >
+
+
+      <!-- PROJECT -->
+
+      <div
+        class="
+          case-footer__column
+          case-footer__column--project
+        "
+      >
+
+        <p class="case-footer__label">
+          PROJECT
+        </p>
+
+        <p class="case-footer__project-name">
+          DADEULLIM
+        </p>
+
+        <p class="case-footer__text">
+          Sound Experience
+        </p>
+
+        <p class="case-footer__text">
+          Graduation Project 2026
+        </p>
+
+      </div>
+
+
+      <!-- NAVIGATION -->
+
+      <div
+        class="
+          case-footer__column
+          case-footer__column--navigation
+        "
+      >
+
+        <p class="case-footer__label">
+          NAVIGATION
+        </p>
+
+        <a href="./brand1.html">
+          Brand
+        </a>
+
+        <a href="./display.html">
+          Interface
+        </a>
+
+        <a href="./driving.html">
+          Experience
+        </a>
+
+        <a href="./problem.html">
+          About
+        </a>
+
+      </div>
+
+
+      <!-- CREDITS -->
+
+      <div
+        class="
+          case-footer__column
+          case-footer__column--credits
+        "
+      >
+
+        <p class="case-footer__label">
+          CREDITS
+        </p>
+
+        <p class="case-footer__text">
+          Digital Media Design
+        </p>
+
+        <p class="case-footer__text">
+          Cheongju University
+        </p>
+
+        <p class="case-footer__text">
+          Graduation Exhibition 2026
+        </p>
+
+      </div>
+
+
+      <!-- CONTACT -->
+
+      <div
+        class="
+          case-footer__column
+          case-footer__column--contact
+        "
+      >
+
+        <p class="case-footer__label">
+          CONTACT
+        </p>
+
+        <a href="#">
+          Instagram
+        </a>
+
+        <a href="mailto:hello@dadeullim.com">
+          E-mail
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================
+         BACK TO TOP
+    ==================================================== -->
+
+    <div
+      class="case-container case-footer__utility"
+    >
+
+      <a
+        class="case-footer__back-to-top"
+        href="#hsHero"
+      >
+
+        BACK TO TOP
+
+        <span aria-hidden="true">
+          ↑
+        </span>
+
+      </a>
+
+    </div>
+
+
+    <!-- ===================================================
+         LARGE DADEULLIM
+    ==================================================== -->
+
+    <div
+      class="case-footer__brand-stage"
+      aria-label="DADEULLIM"
+    >
+
+      <div class="case-footer__brand-lockup">
+
+
+        <!-- SYMBOL -->
+
+        <div
+          class="case-footer__symbol"
+          aria-hidden="true"
+        >
+
+          <span></span>
+          <span></span>
+          <span></span>
+
+        </div>
+
+
+        <!-- LARGE WORDMARK -->
+
+        <p class="case-footer__brand">
+          DADEULLIM
+        </p>
+
+      </div>
+
+    </div>
+
+  </footer>
+
+
+</body>
+
+</html>
