@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OMIX — My Player</title>
+  <link rel="icon" href="symbol.ico?v=2" type="image/x-icon" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Stack+Sans+Notch&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="i18n-en.js"></script>
+  <script src="i18n.js"></script>
+  <script src="theme.js"></script>
+  <script src="scroll-top.js" defer></script>
+  <script src="player-ui.js" defer></script>
+  <script src="products.js"></script>
+  <script src="click-sound.js"></script>
+  <script src="transition-head.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/fontawesome.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/brands.min.css" />
+  <link rel="stylesheet" href="omix-extras.css" data-ox-extras />
+</head>
+<body>
+
+  <!-- [커스텀 커서] -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-dot" id="cursorDot"></div>
+
+  <!-- [Grain 노이즈] -->
+  <div class="grain"></div>
+
+  <!-- ================================================
+    [상단 네비게이션 바]
+    My Player 탭이 active 상태
+    ================================================ -->
+  <nav class="nav" id="nav">
+    <ul class="nav-menu">
+      <li><a href="chart.html"     class="nav-link">Chart</a></li>
+      <li><a href="genre.html"     class="nav-link">Explore</a></li>
+      <li class="nav-store-item"><a href="store.html"     class="nav-link">Store</a></li>
+      <li><a href="about.html"     class="nav-link">About</a></li>
+      <li><a href="my-player.html" class="nav-link">My Player</a></li>
+      <li class="nav-cart-item"><a href="cart.html" class="nav-link nav-cart-link">CART <span class="cart-badge">0</span></a></li>
+    </ul>
+    <a href="index.html" class="nav-logo-center"><img src="logo.webp" alt="OMIX" class="logo-img" /></a>
+    <div class="nav-sns">
+      <a href="store.html" class="nav-link nav-store-link">Store</a>
+      <a href="cart.html" class="nav-link nav-cart-link">CART <span class="cart-badge">0</span></a>
+      <a href="#" class="nav-sns-link" aria-label="Instagram"  target="_blank"><i class="fab fa-instagram"></i></a>
+      <a href="https://www.youtube.com/@OMIX-BUDDHIST" class="nav-sns-link" aria-label="YouTube"    target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
+    </div>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </nav>
+
+  <!-- [무한 스크롤 marquee 띠] -->
+  <div class="site-marquee">
+    <div class="marquee-track">
+      <span class="marquee-item-wrap">LISTEN</span><span class="dot-sep">◆</span>
+      <span class="marquee-item-wrap">MIX</span><span class="dot-sep">◆</span>
+      <span class="marquee-item-wrap">REMIX</span><span class="dot-sep">◆</span>
+      <span class="marquee-item-wrap">ARCHIVE</span><span class="dot-sep">◆</span>
+      <span class="marquee-item-wrap">BUDDHISM × MUSIC</span><span class="dot-sep">◆</span>
+      <span class="marquee-item-wrap">OM MUSIC IMMERSIVE EXPERIENCE</span><span class="dot-sep">◆</span>
+      <span class="marquee-item-wrap">108 SOUNDS</span><span class="dot-sep">◆</span>
+      <span class="marquee-item-wrap">MY MIX, MY RITUAL</span><span class="dot-sep">◆</span>
+      <span class="marquee-item-wrap">LISTEN</span><span class="dot-sep">◆</span>
+      <span class="marquee-item-wrap">MIX</span><span class="dot-sep">◆</span>
+      <span class="marquee-item-wrap">REMIX</span><span class="dot-sep">◆</span>
+      <span class="marquee-item-wrap">ARCHIVE</span><span class="dot-sep">◆</span>
+      <span class="marquee-item-wrap">BUDDHISM × MUSIC</span><span class="dot-sep">◆</span>
+      <span class="marquee-item-wrap">OM MUSIC IMMERSIVE EXPERIENCE</span><span class="dot-sep">◆</span>
+      <span class="marquee-item-wrap">108 SOUNDS</span><span class="dot-sep">◆</span>
+      <span class="marquee-item-wrap">MY MIX, MY RITUAL</span><span class="dot-sep">◆</span>
+    </div>
+  </div>
+
+  <!-- ================================================
+    [메인 콘텐츠]
+    my-player-page: nav+marquee 높이 아래부터 시작
+    3열 레이아웃: 좌(현재 재생) | 중(플레이리스트) | 우(라이브러리)
+    ================================================ -->
+  <main class="my-player-page">
+    <div class="my-player-layout">
+
+      <!-- ════════════════════════════════════════
+           좌 패널: 현재 재생 중인 곡 + 확장 컨트롤
+           position: sticky로 스크롤 시 고정
+           ════════════════════════════════════════ -->
+      <div class="panel-now-playing">
+
+        <!-- 대형 앨범 아트 래퍼 -->
+        <div class="now-album-art-frame">
+          <div class="now-album-art playing" id="nowAlbumArt">
+            <img class="now-album-art-img" id="nowAlbumImg" alt="" />
+            <div class="now-album-art-inner" id="nowAlbumEmoji"
+                 style="background: linear-gradient(135deg, #1a0408 0%, #300a12 50%, #0a0408 100%);">
+              🎵
+            </div>
+          </div>
+        </div>
+
+        <!-- 곡명 / 아티스트 -->
+        <div class="now-track-info">
+          <p class="now-track-name" id="nowTrackName">Void Mandala</p>
+          <p class="now-track-artist" id="nowTrackArtist">DJ Haein × OMIX Studio</p>
+        </div>
+
+        <!-- 확장 플레이어 컨트롤 -->
+        <div class="now-controls">
+
+          <!-- 프로그레스 바 + 시간 -->
+          <div class="now-progress">
+            <div class="now-progress-bar" id="nowProgressBar">
+              <div class="now-progress-fill" id="nowProgressFill" style="width: 38%"></div>
+            </div>
+            <div class="now-progress-times">
+              <span id="nowCurrentTime">1:26</span>
+              <span id="nowTotalTime">3:48</span>
+            </div>
+          </div>
+
+          <!-- 재생 버튼 행: 이전 / 재생정지 / 다음 -->
+          <div class="now-btns">
+            <!-- 셔플 -->
+            <button class="now-btn" id="shuffleBtn" title="셔플">⇄</button>
+            <!-- 이전 곡 -->
+            <button class="now-btn" id="nowPrevBtn">⏮</button>
+            <!-- 중앙 재생/정지: 크고 흰 원형 버튼 -->
+            <button class="now-btn play-main" id="nowPlayBtn">▶</button>
+            <!-- 다음 곡 -->
+            <button class="now-btn" id="nowNextBtn">⏭</button>
+            <!-- 반복 -->
+            <button class="now-btn" id="repeatBtn" title="반복">↺</button>
+          </div>
+
+          <!-- 좋아요 + 볼륨 -->
+          <div class="now-extras">
+            <!-- 좋아요: ♡ ↔ ♥ -->
+            <button class="now-like" id="nowLike">♡</button>
+            <!-- 볼륨 슬라이더 -->
+            <div class="now-vol">
+              <button type="button" class="vol-btn" aria-label="음소거"></button>
+              <input type="range" class="vol-slider" id="nowVolSlider" min="0" max="100" value="70" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 청취 통계 칩 3개: 이번 주 / 좋아요 / 재생
+             이번 주·총 재생은 my-player.js [13-C]에서 실제 재생 기록으로 채운다 -->
+        <div class="now-stats">
+          <div class="now-stat-chip">
+            <div class="now-stat-val" id="statWeek">0</div>
+            <div class="now-stat-key">이번 주</div>
+          </div>
+          <div class="now-stat-chip">
+            <div class="now-stat-val" id="statLikes">34</div>
+            <div class="now-stat-key">좋아요</div>
+          </div>
+          <div class="now-stat-chip">
+            <div class="now-stat-val" id="statPlays">0</div>
+            <div class="now-stat-key">총 재생</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ════════════════════════════════════════
+           중앙 패널: 현재 플레이리스트 (QUEUE / HISTORY 탭)
+           ════════════════════════════════════════ -->
+      <div class="panel-playlist">
+
+        <!-- 헤더: 플레이리스트 제목 + 곡 수 -->
+        <div class="playlist-header">
+          <!-- 에디토리얼 코너 브래킷 (헤더 상단) -->
+          <span class="stc-br stc-tl"></span>
+          <span class="stc-br stc-tr"></span>
+          <span class="playlist-title">My Playlist</span>
+          <span class="playlist-count" id="playlistCount">10 TRACKS</span>
+        </div>
+
+        <!-- QUEUE / HISTORY 탭 전환
+             my-player.js [4]번 블록에서 탭 처리 -->
+        <div class="playlist-tabs">
+          <button class="playlist-tab active" data-tab="queue">Queue</button>
+          <button class="playlist-tab" data-tab="history">History</button>
+        </div>
+
+        <!-- 트랙 리스트 스크롤 영역 -->
+        <div class="playlist-body" id="playlistBody">
+
+          <!-- 트랙 행은 my-player.js [12] renderPlaylist()에서 TRACKS 기준으로 생성
+               (기본 10곡 + 차트에서 담은 곡). .current: 현재 재생 중 강조 -->
+
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           우 패널: 라이브러리 (스탯 + 저장 트랙 + 최근 장르)
+           ════════════════════════════════════════ -->
+      <div class="panel-library">
+
+        <!-- ── QR로 받은 트랙 ──
+             전시 부스에서 QR로 받은 곡(card-overlay.js 가 localStorage 에 저장)을 보여준다.
+             목록은 my-player.js [13-B] 에서 렌더링 -->
+        <div class="library-section live-section" id="liveSection">
+          <p class="lib-section-title">QR로 받은 트랙</p>
+          <div id="liveTrackList"></div>
+          <div class="live-empty" id="liveEmpty">
+            <p>아직 받은 트랙이 없어요.<br>전시 부스에서 QR을 스캔해보세요.</p>
+            <a href="index.html?card=demo" class="live-empty-link">데모 카드 받아보기 →</a>
+          </div>
+        </div>
+
+        <!-- ── 이번 주 통계 ── -->
+        <div class="library-section">
+          <p class="lib-section-title">이번 주 통계</p>
+
+          <!-- 재생 시간 -->
+          <div class="lib-stat-card">
+            <span class="lib-stat-icon">⏱</span>
+            <div class="lib-stat-info">
+              <div class="lib-stat-val" id="statTime">0m</div>
+              <div class="lib-stat-label">청취 시간</div>
+            </div>
+          </div>
+
+          <!-- 재생 곡 수 -->
+          <div class="lib-stat-card">
+            <span class="lib-stat-icon">🎵</span>
+            <div class="lib-stat-info">
+              <div class="lib-stat-val" id="statTracks">0곡</div>
+              <div class="lib-stat-label">재생 트랙</div>
+            </div>
+          </div>
+
+          <!-- 좋아요 수 -->
+          <div class="lib-stat-card">
+            <span class="lib-stat-icon">♥</span>
+            <div class="lib-stat-info">
+              <div class="lib-stat-val" style="color: var(--red)">12곡</div>
+              <div class="lib-stat-label">좋아요 트랙</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── 저장된 트랙 ── -->
+        <div class="library-section">
+          <p class="lib-section-title">저장된 트랙</p>
+
+          <!-- 저장 트랙 1 -->
+          <div class="saved-track" data-track="0">
+            <div class="saved-track-art" style="background: linear-gradient(135deg, #1a0408, #300a12);">🎵</div>
+            <div class="saved-track-info">
+              <p class="saved-track-name">Han Groove Riot</p>
+              <p class="saved-track-artist">OMIX Studio</p>
+            </div>
+            <span class="saved-track-like">♥</span>
+          </div>
+
+          <!-- 저장 트랙 2 -->
+          <div class="saved-track" data-track="1">
+            <div class="saved-track-art" style="background: linear-gradient(135deg, #0d0a1a, #1a0a2e);">🎧</div>
+            <div class="saved-track-info">
+              <p class="saved-track-name">Karma Game</p>
+              <p class="saved-track-artist">OMIX Studio</p>
+            </div>
+            <span class="saved-track-like">♥</span>
+          </div>
+
+          <!-- 저장 트랙 3 -->
+          <div class="saved-track" data-track="2">
+            <div class="saved-track-art" style="background: linear-gradient(135deg, #0a0a1a, #14082a);">💿</div>
+            <div class="saved-track-info">
+              <p class="saved-track-name">Mix Attack</p>
+              <p class="saved-track-artist">OMIX Studio</p>
+            </div>
+            <span class="saved-track-like">♥</span>
+          </div>
+
+          <!-- 저장 트랙 4 -->
+          <div class="saved-track" data-track="4">
+            <div class="saved-track-art" style="background: linear-gradient(135deg, #0a140a, #0a2010);">🎶</div>
+            <div class="saved-track-info">
+              <p class="saved-track-name">Temple Echo Loop</p>
+              <p class="saved-track-artist">OMIX Studio</p>
+            </div>
+            <span class="saved-track-like">♥</span>
+          </div>
+
+        </div>
+
+        <!-- ── 최근 재생 장르 ── -->
+        <div class="library-section">
+          <p class="lib-section-title">최근 장르</p>
+          <!-- 장르 태그 필 목록: genre-tag 클래스로 색상 지정 -->
+          <div class="genre-pills">
+            <span class="genre-pill genre-tag club">Club</span>
+            <span class="genre-pill genre-tag mindful">Mindful Roots</span>
+            <span class="genre-pill genre-tag dance">Dance</span>
+            <span class="genre-pill genre-tag meditation">Meditation</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── 하단 고정 미니 플레이어 ──
+       My Player 페이지에서는 미니 플레이어도 동기화됨 -->
+  <div class="mini-player" id="miniPlayer">
+    <div class="player-track">
+      <div class="player-disc" id="playerDisc">
+        <div class="disc-hole"></div>
+      </div>
+      <div class="player-info">
+        <p class="player-name" id="playerName">Void Mandala</p>
+        <p class="player-artist" id="playerArtist">DJ Haein × OMIX Studio</p>
+      </div>
+    </div>
+    <div class="player-controls">
+      <button class="ctrl-btn" id="prevBtn">⏮</button>
+      <button class="ctrl-btn ctrl-play" id="playPauseBtn">▶</button>
+      <button class="ctrl-btn" id="nextBtn">⏭</button>
+    </div>
+    <div class="player-progress">
+      <div class="progress-bar" id="progressBar">
+        <div class="progress-fill" id="progressFill" style="width: 38%"></div>
+      </div>
+      <div class="progress-times">
+        <span id="currentTime">1:26</span>
+        <span id="totalTime">3:48</span>
+      </div>
+    </div>
+    <div class="player-vol">
+      <button type="button" class="vol-btn" aria-label="음소거"></button>
+      <input type="range" class="vol-slider" min="0" max="100" value="70" />
+    </div>
+    <button class="player-like" id="globalLike">♡</button>
+  </div>
+
+  <!-- my-player.js: 커서, nav, 플레이어 컨트롤, 트랙 전환, 탭, 저장 트랙 -->
+  <script src="my-playlist.js"></script>
+  <script src="my-player.js"></script>
+  <script src="now-playing-panel.js"></script>
+
+  <div class="theme-switcher" id="themeSwitcher">
+    <button class="theme-toggle" id="themeToggle" aria-label="테마 색상 변경">
+      <span class="theme-toggle-dot" id="themeToggleDot"></span>
+    </button>
+    <div class="theme-palette" id="themePalette">
+      <button class="theme-swatch active" data-color="#F91536" data-name="RED"    style="background:#F91536" title="OMIX Red"></button>
+      <button class="theme-swatch"        data-color="#A647FF" data-name="PURPLE" style="background:#A647FF" title="Violet"></button>
+      <button class="theme-swatch"        data-color="#00D4FF" data-name="CYAN"   style="background:#00D4FF" title="Cyan"></button>
+      <button class="theme-swatch"        data-color="#39FF14" data-name="GREEN"  style="background:#39FF14" title="Neon Green"></button>
+      <button class="theme-swatch"        data-color="#FFB800" data-name="GOLD"   style="background:#FFB800" title="Gold"></button>
+    </div>
+  </div>
+  <script>
+  (function () {
+    const toggle = document.getElementById('themeToggle');
+    const dot    = document.getElementById('themeToggleDot');
+    const palette = document.getElementById('themePalette');
+    const swatches = document.querySelectorAll('.theme-swatch');
+    let open = false;
+    const saved = localStorage.getItem('omix-accent');
+    if (saved) applyColor(saved);
+    toggle.addEventListener('click', () => {
+      open = !open;
+      palette.classList.toggle('visible', open);
+      toggle.classList.toggle('active', open);
+    });
+    swatches.forEach(sw => {
+      sw.addEventListener('click', () => {
+        const color = sw.dataset.color;
+        applyColor(color);
+        localStorage.setItem('omix-accent', color);
+        swatches.forEach(s => s.classList.remove('active'));
+        sw.classList.add('active');
+        dot.style.background = color;
+        open = false;
+        palette.classList.remove('visible');
+        toggle.classList.remove('active');
+      });
+    });
+    function applyColor(color) {
+      document.documentElement.style.setProperty('--red', color);
+      dot.style.background = color;
+      swatches.forEach(sw => sw.classList.toggle('active', sw.dataset.color === color));
+    }
+    document.addEventListener('click', e => {
+      if (open && !document.getElementById('themeSwitcher').contains(e.target)) {
+        open = false;
+        palette.classList.remove('visible');
+        toggle.classList.remove('active');
+      }
+    });
+  })();
+  </script>
+  <script src="page-reveal.js"></script>
+  <script src="transition.js"></script>
+  <script src="omix-extras.js"></script>
+</body>
+</html>
