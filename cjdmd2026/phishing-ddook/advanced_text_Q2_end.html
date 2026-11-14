@@ -45,14 +45,14 @@
       controls
     >
       <source
-        src="mp3/Q2_V_end.mp4"
+        src="mp3/Q2_V_a.mp4"
         type="video/mp4"
       >
     </video>
   </div>
 
   <div class="prev-wrap">
-  <button class="prev-btn" onclick="location.href=(sessionStorage.getItem('level')==='beginner'?'beginner_text.html':'advanced_text.html')" aria-label="이전">
+  <button class="prev-btn" onclick="location.href='advanced_text_Q2.html'" aria-label="이전">
     <span class="ic">
       <svg viewBox="0 0 24 24" fill="none"><path d="M15 5L8 12L15 19" stroke="#16263F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </span>
@@ -68,24 +68,6 @@
     </span>
   </button>
 </div>
-
-  <script>
-    const voiceMap = {
-    };
-
-    const voiceIndex = sessionStorage.getItem('voiceIndex') || '1';
-    const voiceFile = voiceMap[voiceIndex] || null;
-    let currentAudio = null;
-
-    function playGuideVoice() {
-      if (!voiceFile) return;
-      if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
-      currentAudio = new Audio(voiceFile);
-      currentAudio.play().catch(err => console.log('Audio play error:', err));
-    }
-
-    window.addEventListener('load', playGuideVoice);
-  </script>
 
 <script>
   function fitVideo() {

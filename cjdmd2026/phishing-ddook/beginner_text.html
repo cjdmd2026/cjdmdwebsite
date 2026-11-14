@@ -550,6 +550,15 @@
   let advanceTimer = null;
   let hideTimer = null;
 
+  let resultAudio = null;
+  function playResultSound(isCorrect) {
+    const name = { '1': 'ddoddo', '2': 'bbibbo', '3': 'gamjjock' }[sessionStorage.getItem('voiceIndex') || '1'] || 'ddoddo';
+    if (charAudio) { charAudio.pause(); charAudio.currentTime = 0; }
+    if (resultAudio) { resultAudio.pause(); resultAudio.currentTime = 0; }
+    resultAudio = new Audio(`mp3/${isCorrect ? 'correct' : 'wrong'}_${name}.mp3`);
+    resultAudio.play().catch(err => console.log('Audio play error:', err));
+  }
+
   function showResultPopup(isCorrect) {
     const flash   = document.getElementById('resultFlash');
     const popup   = document.getElementById('resultPopup');
@@ -562,6 +571,7 @@
     popup.classList.remove('show', 'correct', 'wrong');
     flash.className = '';
     void flash.offsetWidth;
+    playResultSound(isCorrect);
 
     if (isCorrect) {
       popup.classList.add('correct');
@@ -584,7 +594,7 @@
       popup.classList.remove('show');
       advanceTimer = setTimeout(() => {
         localStorage.setItem('test1Answer', selectedAnswer);
-        window.location.href = 'advanced_text_Q2_end.html';
+        window.location.href = 'beginner_text_end.html';
       }, 300);
     }, RESULT_SHOW_MS);
   }
@@ -616,7 +626,7 @@
     clearTimeout(hideTimer);
     clearTimeout(advanceTimer);
     localStorage.setItem('test1Answer', selectedAnswer);
-    window.location.href = 'advanced_text_Q2_end.html';
+    window.location.href = 'beginner_text_end.html';
   });
 
   function goNextFromResult() {
@@ -624,7 +634,7 @@
     clearTimeout(hideTimer);
     clearTimeout(advanceTimer);
     localStorage.setItem('test1Answer', selectedAnswer);
-    window.location.href = 'advanced_text_Q2_end.html';
+    window.location.href = 'beginner_text_end.html';
   }
   document.addEventListener('click', (e) => {
     if (!document.getElementById('resultPopup').classList.contains('show')) return;
