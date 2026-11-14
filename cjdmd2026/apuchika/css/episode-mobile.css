@@ -1,0 +1,35 @@
+@media(max-width:800px){
+html body.episode-page main{padding-top:0}
+html body.episode-page .story-width{width:90%;max-width:650px;margin-inline:auto}
+body.episode-page .episode-detail{padding:16px 0 0}
+body.episode-page #episodeTitle,html body.episode-page .other-stories h2{font-size:16px!important;line-height:1.4;margin:0 0 20px}
+body.episode-page .episode-player{width:100%;height:auto;aspect-ratio:350/184;border-radius:8px;overflow:hidden;background-size:cover;background-position:center}
+html body.episode-page #episodeDescription{margin:14px 5px 12px;font-size:11px!important;line-height:1.55!important;text-align:left}
+body.episode-page .episode-actions{display:flex;justify-content:flex-start;align-items:start;gap:3px}
+body.episode-page .episode-actions>*{display:flex;flex-direction:column;align-items:center;justify-content:center;width:36px;min-width:0;min-height:40px;padding:0}
+body.episode-page .episode-actions .episode-action-icon{width:14px;height:14px;object-fit:contain}
+body.episode-page .episode-actions small{font-size:8px;margin:5px 0 0}
+html body.episode-page .other-stories{background:white;padding:30px 0 32px}
+html body.episode-page .other-stories h2{text-align:left;margin:0 0 24px}
+body.episode-page .other-track{display:grid;grid-template-columns:1fr;gap:16px;overflow:visible;padding:0}
+body.episode-page .other-track .episode-card{position:relative;display:grid;grid-template-columns:42% minmax(0,1fr);align-items:center;gap:6%;width:100%;margin:0;padding:0;background:transparent;text-align:left}
+body.episode-page .other-track .episode-card:nth-child(n+4),body.episode-page .other-scroll,body.episode-page .shared-quick-actions{display:none!important}
+body.episode-page .episode-card .card-cover-link,body.episode-page .episode-card .cover{display:block;width:100%;height:auto;aspect-ratio:147/85;border-radius:8px;overflow:hidden}
+html body.episode-page .other-track h3{font-size:12px!important;line-height:1.45;margin:0}
+body.episode-page .other-track .episode-heart{position:absolute;left:calc(42% - 24px);right:auto;top:4px;width:21px;height:21px;padding:0;font-size:14px}
+html body.episode-page .back-to-list{display:flex;align-items:center;justify-content:center;width:80px;min-width:0;height:27px;min-height:0;padding:0;margin:34px auto 0;font-size:12px!important;border-radius:20px}
+body.episode-page .footer-logo{display:none}
+}
+@media(max-width:800px){
+html body.episode-page .episode-player>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+html body.episode-page .episode-player .episode-play{opacity:0}
+html body.episode-page .episode-player .episode-play:focus-visible{opacity:1}
+html body.episode-page .other-track .card-cover-link .cover{background:center/cover url('../assets/images/mobile-story-preview.jpg')}
+html body.episode-page .other-track .card-cover-link .cover>img,html body.episode-page .other-track .cover-play{display:none}
+html body.episode-page .other-track .episode-heart{background:none;border:0;box-shadow:none}
+html body.episode-page .other-track .episode-heart[aria-pressed=false]{opacity:0}
+html body.episode-page .other-track .episode-heart:focus-visible{opacity:1}
+html body.episode-page #episodeTitle,html body.episode-page .other-stories h2{font-size:14px!important}
+html body.episode-page #episodeDescription{font-size:9px!important;min-height:38px;line-height:1.5!important}
+html body.episode-page .other-track h3{font-size:11px!important}
+}

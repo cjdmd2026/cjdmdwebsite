@@ -1,0 +1,5 @@
+/* Rental steps use the same blue as the main brand. */
+html body.apu-kit-page #rentalGuide .kw-step-copy>span,
+html body.apu-kit-page #rentalGuide .kw-step-copy h3{color:#0b99ff}
+html body.apu-kit-page #rentalGuide .kw-service-grid::after{background:#0b99ff}
+html body.apu-kit-page #rentalGuide .kw-step-copy::before{border-color:#0b99ff}

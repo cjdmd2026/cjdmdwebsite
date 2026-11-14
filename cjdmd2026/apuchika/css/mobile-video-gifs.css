@@ -1,0 +1,28 @@
+.mobile-logo-gif,.mobile-kit-gif{display:none}
+@media(max-width:800px){
+ html body.home-page #solution .hero-logo-video{display:none!important}
+ html body.home-page #solution .mobile-logo-gif{display:block;width:80%;height:auto;object-fit:contain;margin:0 auto;background:transparent}
+ html body.home-page #kit-movie .kit-movie-screen>:not(.mobile-kit-gif){display:none!important}
+ html body.home-page #kit-movie .mobile-kit-gif{display:block;position:relative;width:100%;height:auto;object-fit:contain;opacity:1!important;visibility:visible!important;background:transparent}
+}
+@media(max-width:800px){
+ html body.home-page #solution .mobile-logo-gif{width:100%;max-width:none;min-height:52vw}
+ html body.home-page #kit-movie .kit-movie-screen{width:95%;max-width:none;overflow:visible}
+ html body.home-page #kit-movie .mobile-kit-gif{width:125%;max-width:none;margin-left:-12.5%;min-height:64vw}
+ html body.home-page #kit-movie{height:180svh;min-height:0}
+ html body.home-page #kit-movie .kit-movie-stage{position:sticky;top:56px;height:calc(100svh - 56px);box-sizing:border-box}
+ html body.home-page #learn-more{padding:60px 0 64px;min-height:0}
+ html body.home-page #learn-more .section-head{margin-bottom:20px}
+ html body.home-page #learn-more .section-head h2{font-size:14px!important}
+ html body.home-page #learn-more .link-card-grid{width:84%;gap:10px}
+ html body.home-page #learn-more .link-card{min-height:0;height:36vw;padding:15px 12px;border-radius:7px}
+ html body.home-page #learn-more .link-card.wide{height:33vw}
+ html body.home-page #learn-more .link-card h3{font-size:11px!important;line-height:1.4;margin-bottom:6px}
+ html body.home-page #learn-more .link-card p{font-size:8px!important;line-height:1.5;max-width:100%}
+ html body.home-page #learn-more .link-card.wide p{max-width:55%}
+ html body.home-page #learn-more .link-card img{max-width:60%;max-height:55%;object-fit:contain;right:0;bottom:4%}
+ html body.home-page #learn-more .link-card.wide img{max-width:55%;max-height:90%}
+ html body.home-page #learn-more .card-shortcut{font-size:7px!important;min-height:0!important;height:auto;padding:3px 8px!important;width:auto}
+ html body.home-page #start.cta-section{height:78vw;background-size:cover;background-position:center bottom}
+ html body.home-page #start .cta-tablet{height:auto!important;aspect-ratio:auto!important;object-fit:contain}
+}

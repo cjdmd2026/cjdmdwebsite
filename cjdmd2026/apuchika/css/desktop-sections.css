@@ -1,0 +1,15 @@
+@media(min-width:801px){
+html body header.apu-header .apu-nav-panel{display:block;padding-inline:0}
+html body header.apu-header .apu-nav-columns{display:block;position:relative;width:100%;height:136px;padding:14px 0 20px;box-sizing:border-box}
+html body header.apu-header .apu-nav-column{position:absolute;left:var(--column-center,50%);width:var(--column-width,20%);transform:translateX(-50%);align-items:stretch}
+html body header.apu-header .apu-nav-column>a{font-family:ApuNavBody,sans-serif;font-size:var(--submenu-size,16px)!important;min-height:45px;padding:10px 2px;line-height:1.4}
+html body .friends-page .profile-tags span{font-family:ApuNavHeading,sans-serif!important;font-weight:400!important;-webkit-text-stroke:0}
+html{scroll-padding-top:var(--desktop-header,90px)}
+html body :is(#solution,#components,#rentalGuide,#characterIntro,#planetFriends){scroll-margin-top:0}
+}
+@media(min-width:801px) and (min-height:700px) and (prefers-reduced-motion:no-preference){
+html{scroll-snap-type:y proximity}
+.desktop-section-stop,.desktop-pin-stage{scroll-snap-align:start;scroll-snap-stop:normal}
+.desktop-pin-stage{position:relative;height:calc(124svh - var(--desktop-header,90px));overflow:visible}
+html body .desktop-pin-stage>.guardian-profile{position:sticky;top:var(--desktop-header,90px);height:calc(100svh - var(--desktop-header,90px));min-height:0;max-height:none;margin:0}
+}

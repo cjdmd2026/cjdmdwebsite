@@ -1,5 +1,5 @@
 
-#badgeFarewell{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;background:#0b99ff url(../assets/images/badge/background-v71.webp) center/cover;opacity:1;transition:opacity .65s ease;pointer-events:auto}
+#badgeFarewell{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;background:#0b99ff url(../assets/images/background-v71.jpg) center/cover;opacity:1;transition:opacity .65s ease;pointer-events:auto}
 #badgeFarewell[hidden]{display:none!important}#badgeFarewell.is-leaving{opacity:0;pointer-events:none}
 .farewell-scene{position:relative;width:min(calc(600 * var(--exhibit-unit,1px)),64vw,76vh);text-align:center;padding-top:calc(100 * var(--exhibit-unit,1px))}
 .letter-envelope{position:relative;width:100%;aspect-ratio:1.65;isolation:isolate;filter:drop-shadow(0 20px 22px #387b9d22)}

@@ -1,0 +1,20 @@
+html body.apu-kit-page .kw-mint{background:#fff url('../assets/images/kit-tsd-gradient.webp') center/100% 100% no-repeat}
+html body.apu-kit-page .kw-mint>.kw-components,
+html body.apu-kit-page .kw-mint>.kw-learning,
+html body.apu-kit-page .kw-mint>.kw-tsd{background:transparent}
+@media(max-width:800px){
+ html body.apu-kit-page .kit-unboxing.is-inside .unboxing-copy h2,
+ html body.apu-kit-page .kit-unboxing.is-inside .unboxing-description,
+ html body.apu-kit-page .kit-unboxing.is-inside .unboxing-skip{color:#fff!important}
+ html body.apu-kit-page .kit-unboxing.is-inside .unboxing-copy h2 em{color:#ffdb44!important}
+}
+@media(max-width:800px){
+ html body.apu-kit-page .kit-unboxing .unboxing-pin{box-sizing:border-box;height:100svh!important;min-height:100svh!important}
+}
+@media(max-width:800px){
+ html body.apu-kit-page .kit-unboxing .orb-1{--orb-size:14%;left:13%;top:62%}
+ html body.apu-kit-page .kit-unboxing .orb-2{--orb-size:18%;left:16%;top:29%}
+ html body.apu-kit-page .kit-unboxing .orb-3{--orb-size:34%;left:33%;top:42%}
+ html body.apu-kit-page .kit-unboxing .orb-4{--orb-size:14%;left:69%;top:64%}
+ html body.apu-kit-page .kit-unboxing .orb-5{--orb-size:23%;left:65%;top:33%}
+}

@@ -1,0 +1,5 @@
+.kw-hero-main .kw-carousel-slides{position:relative;width:100%;height:100%;isolation:isolate;overflow:hidden}
+.kw-hero-main .kw-carousel-slide{position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none;z-index:0;transition:opacity 700ms cubic-bezier(.4,0,.2,1)}
+.kw-hero-main .kw-carousel-slide.is-current-slide{opacity:1;pointer-events:auto;z-index:1}
+.kw-hero-main .kw-carousel-controls{z-index:3}
+@media(prefers-reduced-motion:reduce){.kw-hero-main .kw-carousel-slide{transition:none}}

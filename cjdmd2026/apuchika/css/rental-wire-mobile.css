@@ -1,0 +1,63 @@
+html body .kw-hero.kw-wide{display:block;width:100%;max-width:none;margin:0;padding:0}
+html body .kw-hero .kw-hero-side{display:none}
+html body .kw-hero .kw-hero-main{width:100%;aspect-ratio:1.81;height:auto;border-radius:0}
+html body .kw-mint{background:white}
+html body #components .kw-component-grid{display:grid;grid-template-columns:1fr;gap:16px}
+html body #components .kw-component{display:grid;grid-template-columns:42% minmax(0,1fr);align-items:center;gap:5%;text-align:left;padding:0}
+html body #components .kw-component-media{width:100%;aspect-ratio:1;height:auto;margin:0}
+html body #components .kw-component h3{font-size:16px}
+html body #components .kw-component p{font-size:12px;line-height:1.5;word-break:keep-all}
+html body #learning .kw-learning-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;gap:2px}
+html body #learning .kw-learning-tabs button{min-width:0;height:auto;min-height:48px;padding:6px;text-align:left}
+html body #learning .kw-learning-tabs button *{font-size:clamp(10px,2.7vw,14px);line-height:1.3}
+html body #tsd .kw-tsd-layout{display:block}
+html body #tsd .kw-tsd-layout>:not(.kw-tsd-steps){display:none}
+html body #tsd .kw-tsd-steps li{border-radius:40px;background:#fff1d5;margin:6px 0;padding:14px 12%}
+html body #guide{overflow:visible;background:#06aaf5;color:white}
+html body #guide .kw-guide-grid{width:80%;max-width:390px;margin:30px auto 0;display:grid;grid-template-columns:1fr;gap:20px}
+html body #guide .kw-guide-grid article{background:white;color:#343434;border-radius:14px;padding:22px 14px 14px;box-shadow:0 6px 18px #00527c22}
+html body #guide .kw-guide-grid article img{display:block;width:100%;height:auto;aspect-ratio:1.5;object-fit:cover}
+@media(prefers-reduced-motion:no-preference) and (min-height:500px){
+html body #guide.deck{position:relative;height:240svh;padding:0;overflow:clip}
+html body #guide.deck>.kw-wide{position:sticky;top:var(--header-h,56px);height:calc(100svh - var(--header-h,56px));display:flex;flex-direction:column;justify-content:center}
+html body #guide.deck .kw-guide-grid{position:relative;isolation:isolate;display:grid}
+html body #guide.deck .kw-guide-grid article{grid-area:1/1;z-index:var(--layer);transform:translateY(var(--lift,0%)) scale(var(--size,1));opacity:var(--alpha,1);transition:none}
+}
+html body #rentalGuide{height:auto;min-height:0}
+html body #rentalGuide .kw-service-pin{position:relative;top:auto;height:auto;min-height:0;padding:48px 0}
+html body #rentalGuide .kw-service-grid{display:flex;flex-direction:column;width:90%;margin:24px auto;gap:22px}
+html body #rentalGuide .kw-service-grid li{width:67%;box-sizing:border-box;padding:16px;background:#eaf6ff;border-radius:12px;opacity:1;transform:none}
+html body #rentalGuide .kw-service-grid li:nth-child(even){align-self:flex-end}
+html body #rentalGuide :is(.kw-service-media,.kw-service-grid::before){display:none}
+html body #rentalGuide .kw-service-grid::before,html body #rentalGuide .kw-step-copy::before{display:none}
+html body #rentalGuide .kw-step-copy{padding:0;margin:0}
+
+/* One benefit at a time, synchronized with the photo. */
+html body #rentalBenefits{display:block;padding:0;height:320svh;overflow:visible;background:#fff}
+html body #rentalBenefits .kw-benefits-pin{position:sticky;top:var(--header-h,56px);height:calc(100svh - var(--header-h,56px));min-height:580px;display:flex;flex-direction:column;justify-content:center;gap:26px;padding:28px 0;box-sizing:border-box;width:88%}
+html body #rentalBenefits .kw-benefits-left{width:100%}
+html body #rentalBenefits h2{font-size:22px;text-align:left;margin:0 0 16px}
+html body #rentalBenefits .kw-lead{font-size:14px;line-height:1.6;text-align:left;margin:0 0 28px;word-break:keep-all}
+html body #rentalBenefits .kw-rental-media{width:88%;margin:0 auto;height:auto;aspect-ratio:1.8;border-radius:16px;overflow:hidden}
+html body #rentalBenefits .kw-rental-image{margin:0;width:100%;height:100%;object-fit:cover}
+html body #rentalBenefits .kw-benefits-window{mask-image:none;height:120px;width:100%;overflow:visible}
+html body #rentalBenefits .kw-benefits{transform:none!important;height:auto;margin:0;padding:0}
+html body #rentalBenefits .kw-benefits li{border:0;display:none;height:auto;min-height:0;padding:0;margin:0;opacity:1;transform:none;text-align:center}
+html body #rentalBenefits .kw-benefits li.is-active{display:block;animation:benefit-in .35s ease-out}
+html body #rentalBenefits .kw-benefits h3{display:inline-block;font-size:17px;line-height:1.4;color:white;background:#0b99ff;border-radius:24px;padding:5px 17px;margin:0 0 14px}
+html body #rentalBenefits .kw-benefit-number{display:none}
+html body #rentalBenefits .kw-benefits p{padding:0;font-size:14px;line-height:1.65;color:#555;max-width:29em;margin:0 auto;word-break:keep-all}
+@keyframes benefit-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){html body #rentalBenefits .kw-benefits li.is-active{animation:none}}
+
+html body .kw-banner{height:auto;aspect-ratio:auto;background:transparent;padding:0}
+html body .kw-banner picture{display:block;width:100%}
+html body .kw-banner picture img{display:block;width:100%;height:auto;object-fit:contain}
+
+html body .review-group{gap:10px;padding-right:10px}
+html body .review-item{width:calc((100vw - 30px)/3);flex:0 0 calc((100vw - 30px)/3);min-width:0;border-radius:7px}
+html body .review-photo{height:auto;aspect-ratio:1.25}
+html body .review-item>div:last-child{padding:10px 7px 12px}
+html body .review-item h3{font-size:clamp(10px,2.65vw,15px);min-height:0;line-height:1.45;margin:0 0 8px;word-break:keep-all}
+html body .review-item p{font-size:clamp(9px,2.2vw,12px)!important;min-height:0;line-height:1.5;white-space:normal;word-break:keep-all}
+html body .review-item:hover{transform:none}

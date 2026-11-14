@@ -1,0 +1,90 @@
+@media(max-width:800px){
+ html body.home-page #solution .solution-inner{width:100%;box-sizing:border-box;align-items:center;padding:48px 8%;overflow:hidden}
+ html body.home-page #solution .mobile-logo-gif{position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;display:block;width:120%!important;max-width:none!important;height:auto!important;min-height:0!important;flex:none;align-self:center;margin:0!important;transform:none!important;object-fit:contain}
+ html body.home-page #solution .solution-copy{width:100%;margin:0;text-align:center}
+ html body.home-page #process{width:82%;max-width:none;padding:44px 0 48px;gap:22px}
+ html body.home-page #process .process-head h1{font-size:18px!important;line-height:1.4;margin:0 0 12px}
+ html body.home-page #process .process-head p{font-size:13px!important;line-height:1.55!important;margin:0}
+ html body.home-page #process .process-visual{aspect-ratio:1.64;border-radius:12px}
+ html body.home-page #process .step-list{gap:12px}
+ html body.home-page #process .step{display:grid;grid-template-columns:20px 38px minmax(0,1fr);gap:12px;min-height:54px;padding:12px 12%;box-sizing:border-box}
+ html body.home-page #process .step b{display:grid;place-items:center;position:static;width:20px;height:20px;min-width:20px;font-size:12px;line-height:1}
+ html body.home-page #process .step span{font-size:14px!important;line-height:1.3}
+ html body.home-page #process .step em{font-size:11px!important;line-height:1.4;white-space:normal}
+ html body.home-page #kit-movie{background:#0b99ff!important;padding-bottom:0!important;border:0!important;box-shadow:none!important}
+ html body.home-page #kit-movie .kit-movie-stage{margin-bottom:0!important;border:0!important;box-shadow:none!important}
+ html body.home-page #learn-more{border-top:0!important;box-shadow:none!important;margin-top:0!important}
+ html body :is(.process-head p,.solution-copy,.kw-lead,.kw-center p,.profile-copy p,.guardians>p,#episodeDescription,.feature-layout p,.kw-component p,.kw-faq-answer p){font-size:13px!important;line-height:1.55!important}
+}
+@media(max-width:800px){
+ html body.apu-kit-page #learning .kw-learning-tabs button{box-sizing:border-box;padding:16px 14px!important;text-align:left;align-items:flex-start;justify-content:center}
+ html body.apu-kit-page #learning .kw-learning-tabs button>span{width:100%;display:flex;flex-direction:column;gap:8px}
+ html body.apu-kit-page #learning .kw-learning-tabs b{font-size:12px!important;line-height:1.3}
+ html body.apu-kit-page #learning .kw-learning-tabs span span{font-size:11px!important;line-height:1.5;margin:0!important}
+}
+@media(max-width:800px){
+ html body.apu-animation:not(.episode-page) .episode-library{padding:44px 0 52px!important}
+ html body.apu-animation:not(.episode-page) .episode-library .story-width{width:84%!important;max-width:none}
+ html body.apu-animation:not(.episode-page) .episode-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:18px!important;row-gap:30px!important;margin-top:28px}
+ html body.apu-animation:not(.episode-page) .episode-grid .episode-card{min-width:0;margin:0;padding:0}
+ html body.apu-animation:not(.episode-page) .episode-grid .cover{aspect-ratio:16/9;border-radius:12px}
+ html body.apu-animation:not(.episode-page) .episode-grid .episode-card h3{font:400 12px/1.4 ApuNavHeading,sans-serif!important;margin:10px 0 7px!important;min-height:2.8em;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;color:#444;word-break:keep-all}
+ html body.apu-animation:not(.episode-page) .episode-grid .episode-card p{font:400 11px/1.6 ApuNavBody,sans-serif!important;margin:0!important;min-height:3.2em;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;color:#666;word-break:keep-all}
+ html body.apu-animation:not(.episode-page) .episode-grid .episode-heart{top:7px;right:7px;width:26px;height:26px;padding:4px}
+ html body.apu-animation:not(.episode-page) .episode-grid .episode-heart .favorite-heart-icon{width:18px;height:18px}
+ html body.apu-animation:not(.episode-page) .library-tools{margin-bottom:0!important;gap:16px}
+}
+@media(max-width:800px){
+ html body.apu-animation:not(.episode-page) .episode-grid{row-gap:24px!important;align-items:start}
+ html body.apu-animation:not(.episode-page) .episode-grid .episode-card{display:block!important;height:auto!important;min-height:0!important}
+ html body.apu-animation:not(.episode-page) .episode-grid .episode-card h3{min-height:0!important;height:auto!important;margin:9px 0 6px!important}
+ html body.apu-animation:not(.episode-page) .episode-grid .episode-card p{min-height:0!important;height:auto!important;margin:0!important}
+ html body.apu-animation .episode-pagination{display:flex;justify-content:center;gap:5px!important;margin:28px 0 0!important;padding:0!important}
+ html body.apu-animation .episode-pagination button{width:28px!important;height:28px!important;min-width:28px!important;min-height:28px!important;font-size:12px!important;line-height:1!important;padding:0!important;margin:0!important}
+ html body.apu-animation .episode-pagination .page-arrow svg{width:9px!important;height:14px!important}
+ html body.apu-animation:not(.episode-page) .episode-library{padding-bottom:28px!important}
+ html body .friends-hero-v98 .front-cloud{bottom:0!important}
+}
+@media(max-width:800px){html body .friends-page .join-guardians{overflow:hidden}html body .friends-page .join-guardians .group-art{clip-path:inset(0 0 4px 0);margin-bottom:-4px!important}html body .friends-page+.site-footer{position:relative;margin-top:0}}
+@media(max-width:800px){
+ html body.home-page #process{width:84%}
+ html body.home-page #process .process-head p{font:400 12px/1.65 ApuNavBody,sans-serif!important;letter-spacing:-.015em;word-break:normal;overflow-wrap:break-word;text-wrap:pretty}
+}
+.kit-title-mobile-break{display:none}
+@media(max-width:800px){
+ html body.home-page #kit-movie .mobile-kit-gif{width:140%!important;margin-left:-20%!important;height:auto!important}
+ html body.home-page #kit-movie #kit-movie-title{width:90%!important;max-width:none!important;margin-inline:auto;font-size:20px!important;line-height:1.4!important;text-align:center}
+ .kit-title-mobile-break{display:block}
+}
+@media(max-width:800px){
+ html body.apu-animation:not(.episode-page) .episode-library .story-width{width:88%!important}
+ html body.apu-animation:not(.episode-page) .episode-grid{grid-template-columns:minmax(0,1fr)!important;column-gap:0!important;row-gap:28px!important;margin-top:24px}
+ html body.apu-animation:not(.episode-page) .episode-grid .cover{aspect-ratio:16/9;border-radius:12px}
+ html body.apu-animation:not(.episode-page) .episode-grid .episode-card h3{font:400 15px/1.4 ApuNavHeading,sans-serif!important;margin:12px 0 7px!important;min-height:0}
+ html body.apu-animation:not(.episode-page) .episode-grid .episode-card p{font:400 13px/1.55 ApuNavBody,sans-serif!important;margin:0!important;-webkit-line-clamp:2;line-clamp:2}
+ html body.apu-animation:not(.episode-page) .episode-grid .episode-heart{top:10px;right:10px;width:32px;height:32px;padding:5px}
+ html body.apu-animation:not(.episode-page) .episode-grid .episode-heart .favorite-heart-icon{width:22px;height:22px}
+ html body.apu-animation:not(.episode-page) .episode-toolbar{gap:14px;margin-bottom:28px!important;align-items:center}
+ html body.apu-animation:not(.episode-page) .episode-search input{font-size:14px!important;padding:10px 0!important}
+ html body.apu-animation:not(.episode-page) .favorites-filter{font-size:12px!important;padding:9px 12px!important;gap:6px}
+}
+
+@media(max-width:800px){html body.apu-animation .episode-pagination{margin-top:44px!important;margin-bottom:0!important}html body.apu-animation:not(.episode-page) .episode-library{padding-bottom:48px!important}}
+
+@media(max-width:800px){
+ html body.home-page #kit-movie{height:100svh!important;min-height:0!important}
+ html body.home-page #learn-more{padding:32px 0 76px!important}
+ html body.home-page #learn-more .section-head{margin-bottom:24px!important}
+ html body.home-page #learn-more .section-head h2{font-size:18px!important;line-height:1.4}
+ html body.home-page #learn-more .link-card-grid{width:88%!important;grid-template-columns:minmax(0,1fr)!important;gap:16px!important;margin:0 auto!important}
+ html body.home-page #learn-more .link-card{grid-column:auto!important;min-height:180px!important;height:auto!important;aspect-ratio:auto!important;padding:22px 46% 22px 20px!important;border-radius:14px!important}
+ html body.home-page #learn-more .link-card-copy{max-width:none!important;width:100%!important}
+ html body.home-page #learn-more .link-card h3{font-size:16px!important;line-height:1.4;margin:0 0 10px!important}
+ html body.home-page #learn-more .link-card p{font-size:12px!important;line-height:1.6;max-width:none!important;margin:0!important}
+ html body.home-page #learn-more .link-card img{width:46%!important;height:150px!important;max-width:none!important;max-height:none!important;right:6px!important;bottom:12px!important;object-fit:contain;transform:none!important}
+ html body.home-page #learn-more .card-shortcut{width:auto!important;height:25px!important;padding:0 10px!important;margin-top:16px!important;font-size:11px!important}
+ html body.home-page #learn-more .future-character{display:none!important}
+}
+
+.solution-mobile-copy{display:none}
+@media(max-width:800px){html body.home-page #solution .solution-desktop-copy{display:none}html body.home-page #solution .solution-mobile-copy{display:block;white-space:nowrap;font-size:clamp(10px,3.05vw,13px);line-height:1.7}html body.home-page #solution .solution-copy{width:94%!important;margin-inline:auto!important}}

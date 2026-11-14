@@ -1,0 +1,11 @@
+html body.apu-kit-page .kw-carousel-controls{display:flex;align-items:center;gap:2px;padding:5px 8px;border:1px solid #ffffffa6;border-radius:999px;background:rgba(255,255,255,.78);box-shadow:0 2px 8px #074b7814}
+html body.apu-kit-page .kw-carousel-controls button[data-slide-to]{display:grid;place-items:center;width:22px;height:26px;flex:0 0 22px;margin:0;padding:0}
+html body.apu-kit-page .kw-carousel-controls button[data-slide-to]::before{position:static;width:7px;height:7px;margin:0;background:#b9cbd3}
+html body.apu-kit-page .kw-carousel-controls button[data-slide-to][aria-pressed=true]::before{position:static;width:7px;height:7px;background:#0b99ff}
+html body.apu-kit-page .kw-carousel-controls .kw-carousel-pause{display:grid;place-items:center;width:28px;height:26px;flex:0 0 28px;border:0;border-radius:50%;margin:0 0 0 4px;padding:0;background:#ffffff80;font-size:0;line-height:0;color:#3983a8}
+html body.apu-kit-page .kw-carousel-pause::before{content:'';display:block;width:8px;height:10px;background:linear-gradient(to right,currentColor 0 30%,transparent 30% 70%,currentColor 70%)}
+html body.apu-kit-page .kw-carousel-pause[aria-pressed=true]::before{width:9px;height:10px;background:currentColor;clip-path:polygon(10% 0,100% 50%,10% 100%)}
+html body.apu-kit-page .kw-carousel-controls .kw-carousel-pause{position:relative!important;width:28px!important;height:28px!important;min-height:28px!important;flex:0 0 28px;font-size:0!important;line-height:0!important;box-sizing:border-box}
+html body.apu-kit-page .kw-carousel-controls .kw-carousel-pause::before{position:absolute!important;inset:50% auto auto 50%!important;transform:translate(-50%,-50%)!important;margin:0!important;padding:0!important;width:8px;height:10px;box-sizing:border-box}
+html body.apu-kit-page .kw-carousel-controls .kw-carousel-pause::after{display:none!important;content:none!important}
+html body.apu-kit-page .kw-carousel-controls button[data-slide-to]::before{inset:auto!important;transform:none!important;border-radius:50%;margin:0!important}

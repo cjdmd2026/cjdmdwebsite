@@ -1,0 +1,3 @@
+html body .friends-page .friends-story-viewport{box-sizing:border-box;width:100%!important;max-width:100%!important;min-width:0;flex:none;contain:inline-size;overflow:hidden}
+html body .friends-page .friends-story-track{width:max-content!important;max-width:none;min-width:0}
+html body .friends-page .friends-story-group{flex:0 0 auto!important;width:max-content;min-width:0}

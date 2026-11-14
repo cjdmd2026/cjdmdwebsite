@@ -1,0 +1,48 @@
+/* Keep the kit notice readable without letting it overpower the hero. */
+.apu-kit-page .kit-opening .kw-brandline,
+.apu-kit-page .kit-opening .kw-brandline > span:not(.kw-notice-badge),
+.apu-kit-page .kit-opening .kw-brandline strong,
+.apu-kit-page .kit-opening .kw-notice-badge {
+  font-family: ApuNavHeading, sans-serif;
+  font-weight: 400;
+}
+
+@media (min-width: 801px) {
+  .apu-kit-page .kit-opening .kw-brandline {
+    font-size: clamp(16px, 1vw, 22px);
+  }
+  .apu-kit-page .kit-opening .kw-notice-badge {
+    font-size: clamp(11px, .68vw, 15px);
+  }
+}
+
+@media (max-width: 800px) {
+  .apu-kit-page .kit-opening .kw-brandline > span:not(.kw-notice-badge) {
+    font-size: 10px;
+  }
+  .apu-kit-page .kit-opening .kw-notice-badge {
+    font-size: 8px;
+  }
+}
+
+/* Desktop hero: use the available width instead of a viewport-height cap. */
+@media (min-width: 901px) {
+  html body.apu-kit-page .kit-opening {
+    min-height: 0;
+    align-content: start;
+    padding: 28px 0 40px;
+    gap: 20px;
+  }
+  html body.apu-kit-page .kit-opening > .kw-wide {
+    width: 92%;
+    max-width: none;
+    margin: 0 auto;
+  }
+  html body.apu-kit-page .kit-opening .kw-hero {
+    grid-template-columns: 5fr 1fr;
+  }
+}
+@media(max-width:800px){
+ html body.apu-kit-page .kit-opening .kw-hero.kw-wide{margin-bottom:10px!important}
+ html body.apu-kit-page .kit-opening .kw-brandline{margin-top:0!important}
+}
