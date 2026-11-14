@@ -24,7 +24,7 @@
     guardian: { name: '김민주', birth: '1984. 11. 25', rel: '어머니', phone: '010 - 1234 - 5678', face: 'mio' },
     kid: { name: '이서준', birth: '2011. 02. 16', sex: '여자 아이', diag: '2020. 08. 20', face: 'beary' },
     char: 0, week: 0, eduSlide: 0, food: 'dessert', comTab: '전체', comKeyword: '전체', guideCategory: '전체', guideQuery: '', foodQuery: '', recentGuide: [], recentFood: [],
-    nf: '전체', contacts: {}, liked: {}, hlike: {}, bm: {}, post: 0, recs: {}, addFor: 'rec-weight',   /* 2차: 좋아요는 처음엔 모두 꺼짐 */
+    nf: '전체', contacts: {}, liked: {}, hlike: {}, bm: {}, post: 0, recs: {}, addFor: 'rec-weight', dayMeals: [['chicken-potato','아침'],['tofu','점심']], album: ['gimbap','dessert','wolnam'],   /* 366차: 한 끼 선택 → 하루 식사·식사 앨범에 추가 */   /* 2차: 좋아요는 처음엔 모두 꺼짐 */
     toggles: { allNoti: true, myPost: true, dark: false }
   };
   const CHARS = [
@@ -179,7 +179,7 @@
       stage('적정', 48), '체중과 활동 내용을 함께 기록해 주세요. 기록을 진료 때 함께 확인하고, 치료나 인슐린 용량 변경은 담당 의료진과 상의해 주세요.', addCard('메모', '활동 및 체중 관리 일지', '꾸준한 운동을 통해서 체중을 조절해야하기 때문에 오늘도 2시간 동안 수영을 진행', 'm-memo', true)),
     'rec-meal': () => recPage('식사', [['1,100', 'kcal']], '섭취 계산', statBox([['누적 섭취 칼로리', '1,100', 'kcal']]) + nut(), '',
       '', '디저트와 균형 잡힌 키토김밥, 월남쌈으로 구성된 식사를 하셨네요. 단백질과 지방, 탄수화물 밸런스가 비교적 잘 잡혀 있으며, 당분 섭취량도 적당합니다.',
-      `<div class="sec-gap"></div><h2 class="sec">식사 앨범</h2><div class="album">${[['f-gimbap', '키토김밥', 300], ['f-dessert', '귤 디저트', 500], ['f-wolnam', '월남쌈', 300]].map(([f, n, k]) => `<figure><img src="${I(f)}" alt=""><figcaption><span class="ic"><img src="${I(f === 'f-dessert' ? 'i-dessert' : 'i-mealpic')}" alt="">${n}</span>${k} kcal</figcaption></figure>`).join('')}</div>`
+      `<div class="sec-gap"></div><h2 class="sec">식사 앨범</h2><div class="album">${S.album.map((id) => { const f = FOODS.find((x) => x.id === id); return `<figure data-food="${f.id}" data-go="food"><img src="${I(f.img)}" alt="${f.name}"><figcaption><span class="ic"><img src="${I(f.id === 'dessert' ? 'i-dessert' : 'i-mealpic')}" alt="">${f.name}</span>${f.kcal} kcal</figcaption></figure>`; }).join('')}</div>`
       + '<div class="sec-gap"></div><h2 class="sec">추가 기록</h2>' + addCard('간식', '오후 6시 22분', '<b class="lg">가나 초콜릿 한 조각</b>', 'm-snack')),
 
     cal: () => `<div class="rhead">${topC('열량 계산', '', true)}<div class="date">2026. 11. 9</div><div class="val"><div><b>1,100<small>kcal</small></b></div></div></div>
@@ -194,9 +194,9 @@
     'cal-favorites': () => foodListPage(true),
     'food-search': () => searchPage('food'),
     'cal-camera': () => `<div class="cam-view"><img src="${I('f-dessert')}" alt="촬영 화면 예시">${topBack(true)}<div class="cam-foot"><button class="shutter" data-food="dessert" data-go="food" aria-label="촬영 예시 확인"></button></div></div>`,
-    'cal-load': () => `<div class="mhead" style="padding-bottom:46px">${topC('5월', icon('i-bm-b', 'cal-favorites'), true)}${calGrid(11,'mcal',31,true,2026,5)}</div>
-      <div class="sheet"><h2 class="sec">하루 식사</h2><div class="day-meal">${['chicken-potato','tofu'].map((id,i) => mealFigure(FOODS.find(f=>f.id===id), i ? '점심' : '아침')).join('')}</div>
-      <div class="sec-gap"></div><h2 class="sec">자주 먹는 메뉴</h2><div class="freq">${['chicken','salad','miyeok','dessert'].map((id,i)=>{const f=FOODS.find(f=>f.id===id);return `<a data-food="${id}" data-go="food"><em>${i+1}</em><div><b>${f.name}</b><span>${f.kcal} <small>kcal</small></span></div></a>`;}).join('')}</div><div class="blank"></div></div>`,
+    'cal-load': () => `<div class="mhead" style="padding-bottom:46px">${topC('6월', icon('i-bm-b', 'cal-favorites'), true)}${calGrid(11,'mcal',30,true,2026,6)}</div>
+      <div class="sheet"><h2 class="sec">하루 식사</h2><div class="day-meal">${S.dayMeals.map(([id,l]) => mealFigure(FOODS.find(f=>f.id===id), l)).join('')}</div>
+      <div class="sec-gap"></div><h2 class="sec">자주 먹는 메뉴</h2><div class="freq">${['chicken','salad','miyeok','dessert'].map((id,i)=>{const f=FOODS.find(f=>f.id===id);return `<a data-food="${id}" data-go="food"${i>2?' class="w"':''}><em>${i+1}</em><div><b>${f.name}</b><span>${f.kcal} <small>kcal</small></span></div></a>`;}).join('')}</div><div class="blank"></div></div>`,
     food: () => foodDetail(),
 
     edu: () => `<div class="edu-head">${logoTop(icon('i-cal-w', 'roadmap'), true)}
@@ -240,7 +240,7 @@
       <div class="reply"><div><input placeholder="댓글을 입력해주세요."><button data-toast="댓글이 등록됐어요"><img src="${I('i-reply')}" alt="보내기"></button></div></div>`; },
 
     write: () => `<header class="top top-c"><button class="back x" data-back aria-label="닫기"><img src="${I('i-close')}" alt=""></button><span class="top-t">글쓰기</span><div class="r"><button data-wnext style="font-size:14px">다음</button></div></header>
-      <div class="write-classify"><label>게시판<select id="write-category"><option>전체</option><option>제품</option><option>정보</option></select></label><label>키워드<select id="write-keyword">${COM_KEYS['전체'].slice(1).map(k=>`<option>${k}</option>`).join('')}</select></label></div><input class="write-t" placeholder="제목을 입력하세요"><textarea class="write-b" placeholder="내용을 작성해주세요."></textarea><div class="write-img" id="w-img"></div>`,
+      <input class="write-t" placeholder="제목을 입력하세요"><textarea class="write-b" placeholder="내용을 작성해주세요."></textarea><div class="write-img" id="w-img"></div>`,
 
     write2: () => { const d = S.draft || { t: '', b: '' };
       return `${topC('글쓰기', '<button data-post style="font-size:14px">등록</button>')}
@@ -321,7 +321,7 @@
   function foodDetail() {
     const f=FOODS.find(f=>f.id===S.food)||FOODS[0];
     const chart=areaChart(f.curve.map((v,i)=>[65+63*i,v]),200,['식전','1시간','2시간','3시간','4시간','5시간']);
-    return `<div class="fd-photo"><img src="${I(f.img)}" alt="${f.name}">${topBack(true)}<div class="kc">${f.kcal} <small>kcal</small></div><div class="ftg">${f.tags.map(t=>`<span>${t}</span>`).join('')}</div></div><div class="fd-sheet"><div class="fd-name">${f.name}<button data-like="${f.id}" aria-label="즐겨찾기" aria-pressed="${!!S.liked[f.id]}"><img src="${I(S.liked[f.id]?'i-like-on':'i-like-off')}" alt=""></button></div><div class="nut">${['탄수화물','식이섬유','단백질','지방'].map((t,i)=>`<div><span>${t}</span><span>${f.nutrients[i]}g</span></div>`).join('')}<div><span>염분</span><span>${f.id==='dessert'?'150~250mg':'정보 없음'}</span></div></div><div class="sec-gap"></div><p class="big-q"><span>${f.name}</span>의 식후 변화 알아보기</p><div class="chart">${chart}</div><details class="chart-info"><summary>그래프 안내</summary><p>식후 변화를 설명하기 위한 참고 그래프입니다. 개인의 측정값이나 혈당 예측이 아니며, 실제 반응은 섭취량과 건강 상태에 따라 달라집니다.</p></details>${feed(f.desc+'<br>음식만으로 혈당의 상승·하락을 단정할 수 없어요. 실제 혈당과 섭취량을 기록하고 개인 식사·치료 계획을 따라 주세요.','식사 참고')}<p class="sources pad"><a href="https://www.niddk.nih.gov/health-information/diabetes/overview/healthy-living-with-diabetes" target="_blank" rel="noopener">참고: NIDDK 식사와 혈당</a></p><div class="sec-gap"></div><h2 class="sec">추천 메뉴</h2><div class="reco">${FOODS.filter(x=>x.id!==f.id).slice(0,4).map(x=>mealFigure(x,x.id==='dessert'?'간식':'식사')).join('')}</div><div class="pad"><button class="btn" data-meal-save="${f.id}">한 끼 선택</button></div><div class="blank"></div></div>`;
+    return `<div class="fd-photo"><img src="${I(f.img)}" alt="${f.name}">${topBack(true)}<div class="kc">${f.kcal} <small>kcal</small></div><div class="ftg">${f.tags.map(t=>`<span>${t}</span>`).join('')}</div></div><div class="fd-sheet"><div class="fd-name">${f.name}<button data-like="${f.id}" aria-label="즐겨찾기" aria-pressed="${!!S.liked[f.id]}"><img src="${I(S.liked[f.id]?'i-like-on':'i-like-off')}" alt=""></button></div><div class="nut">${['탄수화물','식이섬유','단백질','지방'].map((t,i)=>`<div><span>${t}</span><span>${f.nutrients[i]}g</span></div>`).join('')}<div><span>염분</span><span>${f.id==='dessert'?'150~250mg':'정보 없음'}</span></div></div><div class="sec-gap"></div><p class="big-q"><span class="fn">${f.name}</span>의 식후 변화 알아보기</p><div class="chart">${chart}</div><details class="chart-info"><summary>그래프 안내</summary><p>식후 변화를 설명하기 위한 참고 그래프입니다. 개인의 측정값이나 혈당 예측이 아니며, 실제 반응은 섭취량과 건강 상태에 따라 달라집니다.</p></details>${feed(f.desc+'<br>음식만으로 혈당의 상승·하락을 단정할 수 없어요. 실제 혈당과 섭취량을 기록하고 개인 식사·치료 계획을 따라 주세요.','식사 참고')}<p class="sources pad"><a href="https://www.niddk.nih.gov/health-information/diabetes/overview/healthy-living-with-diabetes" target="_blank" rel="noopener">참고: NIDDK 식사와 혈당</a></p><div class="sec-gap"></div><h2 class="sec">추천 메뉴</h2><div class="reco">${FOODS.filter(x=>x.id!==f.id).slice(0,4).map(x=>mealFigure(x,x.id==='dessert'?'간식':'식사')).join('')}</div><button class="reco-more" data-reco-more>더보기<img src="${I('i-chev')}" alt=""></button><div class="pad"><button class="btn" data-meal-save="${f.id}">한 끼 선택</button></div><div class="blank"></div></div>`;
   }
   function guideList(q='', category=S.guideCategory) {
     return GUIDES.map((g,i)=>({g,i})).filter(({g})=>(category==='전체'||g.category===category)&&matches(g.t+' '+g.sum+' '+g.kw.join(' ')+' '+g.steps.flat().join(' '),q)).map(({g,i})=>`<a class="post" data-guide="${i}" data-go="guide"><div class="kw">${g.kw.map(k=>`<span>${k}</span>`).join('')}</div><h4>${g.t}</h4><p>${g.sum} ${g.steps[0][1]}</p><div class="mt"><span>${g.ago || '12분 전'} | 조회 ${Number(g.v).toLocaleString('ko-KR')}</span><span><img src="${I('i-comments')}" alt="댓글">${g.c || 0}</span></div></a>`).join('')||empty('검색 결과가 없어요. 다른 키워드로 찾아보세요.');
@@ -354,7 +354,6 @@
       update();
     }
     if(name==='cal-favorites')$('#favorite-query',sec).addEventListener('input',e=>$('#food-results',sec).innerHTML=foodCards(e.target.value,true));
-    if(name==='write')$('#write-category',sec).addEventListener('change',e=>$('#write-keyword',sec).innerHTML=COM_KEYS[e.target.value].slice(1).map(k=>`<option>${k}</option>`).join(''));
     const handle=$('.sheet-handle',sec);
     if(handle){let start=null,dragged=false;handle.addEventListener('pointerdown',e=>{start=e.clientY;dragged=false;handle.setPointerCapture(e.pointerId);});handle.addEventListener('pointermove',e=>{if(start===null)return;const dy=e.clientY-start;if(Math.abs(dy)>25){setSheet(sec,dy>0);dragged=true;}});handle.addEventListener('pointerup',()=>{start=null;if(dragged){handle.dataset.dragged='1';setTimeout(()=>delete handle.dataset.dragged,100);}});handle.addEventListener('pointercancel',()=>start=null);}
   }
@@ -369,7 +368,8 @@
     if(hit('[data-locate]')){$('.map-full').scrollTo(0,0);toast('예시 지도의 병원 위치입니다');return true;}
     if(b=hit('[data-contact-edit]')){$(`[data-contact-form="${b.dataset.contactEdit}"]`).hidden=false;return true;}
     if(b=hit('[data-contact-save]')){const id=b.dataset.contactSave,form=$(`[data-contact-form="${id}"]`),num=$('input',form).value.replace(/[^0-9+]/g,'');if(!/^\+?\d{8,15}$/.test(num)){toast('확인한 전화번호를 입력해 주세요');return true;}S.contacts[id]=num;const row=form.previousElementSibling;row.innerHTML=`<b>${HOSP[+id].name}</b><a href="tel:${num}">연결</a>`;form.hidden=true;return true;}
-    if(b=hit('[data-meal-save]')){const f=FOODS.find(x=>x.id===b.dataset.mealSave);(S.recs['rec-meal'] ||= []).push({t:esc(f.name),b:`${f.kcal} kcal · 선택한 식사`});toast('식사 기록에 추가했어요');go('rec-meal');return true;}
+    if(b=hit('[data-reco-more]')){const f=FOODS.find(x=>x.id===S.food)||FOODS[0];b.previousElementSibling.insertAdjacentHTML('beforeend',FOODS.filter(x=>x.id!==f.id).slice(4).map(x=>mealFigure(x,x.id==='dessert'?'간식':'식사')).join(''));b.remove();return true;}   /* 366차: 추천 메뉴 더보기 */
+    if(b=hit('[data-meal-save]')){const f=FOODS.find(x=>x.id===b.dataset.mealSave);S.dayMeals.push([f.id,['아침','점심','저녁'][S.dayMeals.length]||'간식']);S.album.unshift(f.id);toast('하루 식사와 식사 앨범에 추가했어요');go('rec-meal');return true;}   /* 366차: 추가 기록이 아니라 하루 식사(불러오기)·식사 앨범에만 */
     return false;
   }
   function snsBtns() {
@@ -388,7 +388,7 @@
   }
   function recPage(title, vals, secTitle, stat, chart, stg, fb, extra) {
     return `<div class="rhead">${topC(title, '', true)}<div class="date">2026. 11. 9</div><div class="val"><div>${vals.map(([v, u]) => `<b>${v}<small>${u}</small></b>`).join('')}</div><span>기기 연동하기</span></div></div>
-      <div class="sheet"><h2 class="sec">${secTitle}<button class="q-btn" data-q aria-label="설명 보기"><svg class="q" viewBox="0 0 20 20" aria-label="도움말"><circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7.7 7.2c.1-2.6 5-2.6 4.8.3-.1 1.7-2.5 1.8-2.5 3.7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="14.1" r=".9" fill="currentColor"/></svg></button><span class="q-tip">오늘의 수치를 바탕으로 만들어지는 하루 통계예요.</span></h2>${stat}${chart}${stg}${feed(fb)}${extra.includes('sec-gap') ? '' : '<div class="sec-gap"></div><h2 class="sec">추가 기록</h2>'}${extra}
+      <div class="sheet"><h2 class="sec">${secTitle}<button class="q-btn" data-q aria-label="설명 보기"><svg class="q" viewBox="0 0 20 20" aria-label="도움말"><circle cx="10" cy="10" r="8.6" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M7.9 7.6c0-1.4 1-2.3 2.2-2.3s2.2.8 2.2 2c0 1.6-2.2 1.8-2.2 3.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="10.1" cy="13.9" r=".95" fill="currentColor"/></svg></button><span class="q-tip">오늘의 수치를 바탕으로 만들어지는 하루 통계예요.</span></h2>${stat}${chart}${stg}${feed(fb)}${extra.includes('sec-gap') ? '' : '<div class="sec-gap"></div><h2 class="sec">추가 기록</h2>'}${extra}
       ${userRecs()}<button class="plus" data-addrec aria-label="기록 추가"><i></i></button><div class="blank"></div></div>`;
   }
   function userRecs() {   /* 2차: + 로 추가한 기록 (그 화면에만) */
@@ -613,7 +613,7 @@
     if (el('[data-swap]')) { openFace('study'); return; }
     if (el('[data-hosp]')) { if (el('.acts')) return; const h = el('[data-hosp]'); S.hosp = +h.dataset.hosp; S.hfrom = h.dataset.from; go('hospital-map'); return; }
     if (el('[data-addimg]')) { $('#w-img').innerHTML = `<img src="${I('f-gimbap')}" alt="">`; return; }
-    if (el('[data-wnext]')) { const ti = $('.write-t').value.trim(); if (!ti) { toast('제목을 입력해 주세요'); return; } S.draft = { t: esc(ti), b: esc($('.write-b').value.trim()), cat: $('#write-category').value, key: $('#write-keyword').value }; go('write2'); return; }   /* 4차: 글쓰기 '다음' → 확인 화면 → 등록 */
+    if (el('[data-wnext]')) { const ti = $('.write-t').value.trim(); if (!ti) { toast('제목을 입력해 주세요'); return; } S.draft = { t: esc(ti), b: esc($('.write-b').value.trim()), cat: '전체', key: COM_KEYS['전체'][1] }; go('write2'); return; }   /* 4차: 글쓰기 '다음' → 확인 화면 → 등록 */
     if (el('[data-post]')) { const d = S.draft; if (!d) { go('write'); return; } POSTS.unshift({category:d.cat,kw:['#'+d.key],face:'pf-'+S.guardian.face,au:esc(S.guardian.name),t:d.t,p:d.b,full:d.b.replace(/\n/g,'<br>'),ago:'방금 전',cmts:[]}); S.comTab=d.cat; S.comKeyword='전체'; S.draft=null; toast('글이 등록됐어요'); go('com'); return; }
     if(el('[data-food]')) S.food=el('[data-food]').dataset.food;
     const g = el('[data-go]');
