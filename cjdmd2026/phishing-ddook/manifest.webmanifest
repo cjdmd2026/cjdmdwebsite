@@ -1,0 +1,16 @@
+{
+  "name": "피싱뚝",
+  "short_name": "피싱뚝",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "background_color": "#EAF2FA",
+  "theme_color": "#ff5c5c",
+  "icons": [
+    {
+      "src": "img/favicon.ico",
+      "sizes": "16x16 32x32 48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}

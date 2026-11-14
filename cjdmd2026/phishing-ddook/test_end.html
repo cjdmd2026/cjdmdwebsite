@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/x-icon" href="img/favicon.ico">
+<link rel="manifest" href="manifest.webmanifest">
+<script src="audio-unlock.js"></script>
+<meta name="theme-color" content="#ff5c5c">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="피싱뚝">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>취약성 테스트 결과</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="style3.css">
+<style>
+:root{
+  --coral:#ff5c5c;
+  --coral-soft:#fff1ef;
+  --high:#e5484d;
+  --high-soft:#fff0f0;
+  --mid:#f08c2e;
+  --mid-soft:#fff5ea;
+  --low:#2f9e6a;
+  --low-soft:#e9f7ef;
+  --navy:#16263f;
+  --ink:#1d2433;
+  --muted:#6b7686;
+  --track:#eff1f5;
+}
+
+body{
+  background-image: url(img/Test_end_background.webp);
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+}
+
+.result-wrap{
+  width:1400px;
+  height:1150px;
+  margin:0 auto;
+  padding:34px 0;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+
+.card{
+  background:#fff;
+  border-radius:40px;
+  box-shadow:0 10px 28px rgba(22,38,63,0.06);
+}
+
+@keyframes fadeSlideUp{
+  from{ opacity:0; transform:translateY(20px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+.card{ animation:fadeSlideUp .5s ease-out both; }
+.card:nth-child(2){ animation-delay:.08s; }
+.card:nth-child(3){ animation-delay:.16s; }
+
+.type-head{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  gap:40px;
+  padding:22px 48px 22px 26px;
+}
+.type-icon{
+  flex:0 0 auto;
+  width:176px;
+  height:176px;
+  border-radius:50%;
+  background:var(--coral-soft);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.type-icon img{
+  width:160px;
+  height:160px;
+  object-fit:contain;
+}
+.type-text{ flex:1; min-width:0; }
+.result-eyebrow{
+  display:inline-block;
+  font-size:26px;
+  font-weight:800;
+  color:var(--coral);
+  background:var(--coral-soft);
+  padding:8px 24px;
+  border-radius:999px;
+  margin-bottom:14px;
+}
+.result-type{
+  font-size:76px;
+  font-weight:800;
+  color:var(--ink);
+  line-height:1.15;
+  letter-spacing:-2px;
+  white-space:nowrap;
+}
+.result-type .type-key{ color:var(--coral); }
+
+.replay-btn{
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  border:none;
+  background:var(--coral);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  flex-shrink:0;
+  box-shadow:0 6px 16px rgba(255,92,92,0.35);
+  transition:transform .15s ease;
+}
+.replay-btn svg{ width:48px; height:48px; }
+.replay-btn:active{ transform:scale(0.96); }
+
+.card-title{
+  font-size:32px;
+  font-weight:800;
+  color:var(--navy);
+  letter-spacing:-0.5px;
+  display:flex;
+  align-items:center;
+  gap:20px;
+}
+.legend{ display:flex; gap:18px; margin-left:auto; }
+.legend span{
+  display:flex; align-items:center; gap:8px;
+  font-size:22px; font-weight:700; color:var(--muted);
+}
+.legend i{ width:18px; height:18px; border-radius:50%; display:block; }
+
+.feat-card{
+  flex:0 0 auto;
+  padding:28px 48px 30px;
+}
+.feat-card .card-title{ margin-bottom:18px; }
+.feat-list{ display:flex; flex-direction:column; gap:10px; }
+.feat-row{
+  display:grid;
+  grid-template-columns:58px 140px 260px 64px 1fr;
+  align-items:center;
+  column-gap:22px;
+  height:58px;
+}
+.feat-q{
+  width:58px; height:58px; border-radius:50%;
+  background:var(--navy); color:#fff;
+  font-size:24px; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+}
+.feat-label{
+  font-size:32px;
+  font-weight:800;
+  color:var(--ink);
+  white-space:nowrap;
+}
+.feat-track{
+  position:relative;
+  height:30px;
+  background:var(--track);
+  border-radius:999px;
+  overflow:hidden;
+}
+.feat-fill{
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  transition:width .9s cubic-bezier(.34,1.2,.4,1);
+}
+.feat-score{
+  font-size:26px; font-weight:800; color:var(--muted);
+  white-space:nowrap; margin-left:-8px;
+}
+.lv-high .feat-score{ color:var(--high); }
+.feat-text{
+  font-size:28px;
+  font-weight:700;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  padding:10px 22px;
+  border-radius:16px;
+}
+.lv-high .feat-fill{ background:linear-gradient(90deg,#ff8a7a,var(--high)); }
+.lv-high .feat-text{ color:var(--high); background:var(--high-soft); }
+.lv-mid  .feat-fill{ background:linear-gradient(90deg,#ffc27a,var(--mid)); }
+.lv-mid  .feat-text{ color:#c96a12; background:var(--mid-soft); }
+.lv-low  .feat-fill{ background:linear-gradient(90deg,#7fd3a8,var(--low)); }
+.lv-low  .feat-text{ color:var(--low); background:var(--low-soft); }
+
+.radar-card{
+  flex:1 1 auto;
+  min-height:0;
+  display:flex;
+  align-items:center;
+  gap:48px;
+  padding:20px 56px 20px 30px;
+}
+.radar-box{
+  flex:0 0 auto;
+  height:100%;
+  aspect-ratio:600 / 450;
+}
+.radar-box svg{ width:100%; height:100%; display:block; overflow:visible; }
+.radar-grid{ fill:none; stroke:#e6e9ef; stroke-width:2; }
+.radar-grid.outer{ stroke:#d4d9e2; stroke-width:3; }
+.radar-axis{ stroke:#e6e9ef; stroke-width:2; }
+.radar-shape{
+  fill:rgba(255,92,92,0.22);
+  stroke:var(--coral);
+  stroke-width:5;
+  stroke-linejoin:round;
+  transform-origin:0px 0px;
+  animation:radarGrow .9s cubic-bezier(.34,1.3,.4,1) .3s both;
+}
+@keyframes radarGrow{ from{ transform:scale(0); } to{ transform:scale(1); } }
+.radar-dot{ fill:#fff; stroke:var(--coral); stroke-width:4; }
+.radar-label{ font-size:34px; font-weight:800; fill:var(--ink); }
+.radar-label.top{ fill:var(--high); }
+
+.radar-desc{ flex:1; min-width:0; }
+.top-chips{ display:flex; gap:14px; margin:18px 0 22px; }
+.top-chip{
+  font-size:28px; font-weight:800;
+  color:#fff; background:var(--high);
+  padding:8px 24px; border-radius:999px;
+}
+.radar-desc p{
+  font-size:31px;
+  color:#4a5568;
+  line-height:1.6;
+  word-break:keep-all;
+}
+.radar-desc p b{ color:var(--ink); font-weight:800; }
+
+@media (prefers-reduced-motion: reduce){
+  .card, .radar-shape{ animation:none; }
+  .feat-fill{ transition:none; }
+}
+</style>
+  <link rel="stylesheet" href="nav.css">
+<style id="testfit">
+  html, body { width:100%; height:100%; margin:0; overflow:hidden; overscroll-behavior:none; }
+  #testCanvas {
+    position:fixed; left:50%; top:50%;
+    width:2130px; height:1150px;
+    transform-origin:center center;
+    transform:translate(-50%,-50%) scale(var(--fit, 1));
+  }
+
+</style>
+</head>
+
+<body>
+
+<div id="testCanvas">
+<main class="result-wrap">
+
+  <section class="card type-head">
+    <div class="type-icon">
+      <img id="charImg" alt="결과 캐릭터">
+    </div>
+    <div class="type-text">
+      <p class="result-eyebrow">취약성 테스트 결과</p>
+      <h2 class="result-type" id="resultType">계산 중...</h2>
+    </div>
+    <button class="replay-btn" onclick="playGuideVoice()" aria-label="다시 듣기">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" fill="#fff"/>
+      </svg>
+    </button>
+  </section>
+
+  <section class="card feat-card">
+    <p class="card-title">
+      문항별로 알아본 나의 특징
+      <span class="legend">
+        <span><i style="background:var(--high)"></i>잘 속는 편</span>
+        <span><i style="background:var(--mid)"></i>보통</span>
+        <span><i style="background:var(--low)"></i>잘 막는 편</span>
+      </span>
+    </p>
+    <div class="feat-list" id="dimBars">
+    </div>
+  </section>
+
+  <section class="card radar-card">
+    <div class="radar-box" id="radarBox">
+    </div>
+    <div class="radar-desc">
+      <p class="card-title">한눈에 보는 나의 취약 특징</p>
+      <div class="top-chips" id="topChips"></div>
+      <p id="resultSummary"></p>
+    </div>
+  </section>
+
+</main>
+</div>
+<script>
+  (function(){
+    function fitTestCanvas(){
+      var c = document.getElementById('testCanvas');
+      if (!c) return;
+      var s = Math.min(window.innerWidth / 2130, window.innerHeight / 1150);
+      c.style.setProperty('--fit', s);
+    }
+    fitTestCanvas();
+    window.addEventListener('resize', fitTestCanvas);
+    window.addEventListener('orientationchange', fitTestCanvas);
+  })();
+</script>
+
+<div class="prev-wrap">
+  <button class="prev-btn" onclick="location.href='test5.html'" aria-label="이전">
+    <span class="ic">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M15 5L8 12L15 19" stroke="#16263F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+    이전
+  </button>
+</div>
+
+<div class="next-wrap">
+  <button class="next-btn" id="finishBtn" aria-label="다음 체험하기">
+    <span class="finish-label">다음</span>
+    <span class="ic">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M9 5L16 12L9 19" stroke="#16263F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+  </button>
+</div>
+
+<script type="module">
+
+document.getElementById("finishBtn").addEventListener("click", () => {
+  try { sessionStorage.clear(); } catch (e) {}
+  location.href = "index.html";
+});
+
+const ORDER = ["urgency", "trust", "action", "verify", "repeat"];
+
+const LABELS = {
+  urgency: "긴급성",
+  trust:   "신뢰성",
+  action:  "행동유도",
+  verify:  "확인 부족",
+  repeat:  "반복성"
+};
+
+const PHRASES = {
+  urgency: {
+    high: "재촉하면 요구를 잘 들어주는 편이에요!",
+    mid:  "재촉하면 조금 흔들리는 편이에요.",
+    low:  "재촉해도 침착하게 대처하는 편이에요!"
+  },
+  trust: {
+    high: "공공기관, 가족 등을 사칭했을 때 신뢰를 많이 해요!",
+    mid:  "사칭 연락에 가끔 마음이 흔들릴 수 있어요.",
+    low:  "사칭에 잘 속지 않는 편이에요!"
+  },
+  action: {
+    high: "행동을 유도하면 잘 따라 하는 편이에요!",
+    mid:  "시키면 가끔 따라 할 때가 있어요.",
+    low:  "시킨다고 바로 따라 하지 않는 편이에요!"
+  },
+  verify: {
+    high: "수상해도 확인을 잘 안 하는 편이에요!",
+    mid:  "가끔 확인을 놓칠 때가 있어요.",
+    low:  "수상하면 꼭 확인하는 편이에요!"
+  },
+  repeat: {
+    high: "반복적인 부탁도 잘 들어줘요!",
+    mid:  "부탁이 반복되면 조금 흔들려요.",
+    low:  "반복되는 부탁도 잘 거절하는 편이에요!"
+  }
+};
+
+const MAX_SCORE = 5;
+
+function levelOf(score){
+  if (score >= 4) return "high";
+  if (score >= 3) return "mid";
+  return "low";
+}
+
+const TYPE_IMAGE = {
+  "급하다 하면 바로 믿는 순둥이": "img/sundungi.webp",
+  "지금 하라면 바로 하는 빠름이": "img/ppareumi.webp",
+  "급하면 확인 안하는 덜렁이": "img/deolleongi.webp",
+  "급하다 하면 끝까지 하는 불안이": "img/bulani.webp",
+  "믿으면 바로 해주는 순진이": "img/sunjini.webp",
+  "믿으면 확인 안하는 방심이": "img/bangsim.webp",
+  "믿어서 계속 해주는 소심이": "img/sosimi.webp",
+  "시키면 확인 없이 하는 성급이": "img/seonggeubi.webp",
+  "시키는 대로 계속 하는 따라쟁이": "img/ttarajaengi.webp",
+  "확인 안하고 끝까지 하는 깜빡이": "img/kkamppagi.webp"
+};
+const DEFAULT_IMAGE = "img/bangsim.webp";
+
+function getSessionScore(dim){
+  const v = sessionStorage.getItem("score_" + dim);
+  return v === null ? null : Number(v);
+}
+
+function pickTopTwoDimensions(scores){
+  const entries = ORDER.map(dim => ({ dim, score: scores[dim] || 0 }));
+  entries.sort((a, b) => b.score - a.score || ORDER.indexOf(a.dim) - ORDER.indexOf(b.dim));
+  return [entries[0].dim, entries[1].dim];
+}
+
+function renderCharacter(resultType){
+  document.getElementById("charImg").src = TYPE_IMAGE[resultType] || DEFAULT_IMAGE;
+}
+
+function renderBars(scores){
+  const wrap = document.getElementById("dimBars");
+  wrap.innerHTML = "";
+
+  ORDER.forEach((dim, i) => {
+    const score = Number(scores[dim] || 0);
+    const pct = Math.max(0, Math.min(100, (score / MAX_SCORE) * 100));
+    const lv = levelOf(score);
+
+    const row = document.createElement("div");
+    row.className = "feat-row lv-" + lv;
+    row.innerHTML = `
+      <div class="feat-q">Q${i + 1}</div>
+      <div class="feat-label">${LABELS[dim]}</div>
+      <div class="feat-track">
+        <div class="feat-fill" style="width:0%"></div>
+      </div>
+      <div class="feat-score">${score}점</div>
+      <div class="feat-text">${PHRASES[dim][lv]}</div>`;
+    wrap.appendChild(row);
+
+    setTimeout(() => {
+      row.querySelector(".feat-fill").style.width = pct + "%";
+    }, 150 + i * 90);
+  });
+}
+
+function renderRadar(scores){
+  const [topA, topB] = pickTopTwoDimensions(scores);
+  const R = 160;
+  const N = ORDER.length;
+  const angle = i => (-90 + i * (360 / N)) * Math.PI / 180;
+  const pt = (i, r) => [Math.cos(angle(i)) * r, Math.sin(angle(i)) * r];
+  const poly = r => ORDER.map((_, i) => pt(i, r).map(v => v.toFixed(1)).join(",")).join(" ");
+
+  let svg = `<svg viewBox="-300 -235 600 450" role="img" aria-label="5가지 특징 점수 그래프">`;
+  for (let s = 1; s <= MAX_SCORE; s++) {
+    svg += `<polygon class="radar-grid${s === MAX_SCORE ? " outer" : ""}" points="${poly(R * s / MAX_SCORE)}"/>`;
+  }
+  ORDER.forEach((_, i) => {
+    const [x, y] = pt(i, R);
+    svg += `<line class="radar-axis" x1="0" y1="0" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`;
+  });
+  const shape = ORDER.map((dim, i) => pt(i, R * Math.max(0.04, (Number(scores[dim]) || 0) / MAX_SCORE)));
+  svg += `<polygon class="radar-shape" points="${shape.map(p => p.map(v => v.toFixed(1)).join(",")).join(" ")}"/>`;
+  shape.forEach(([x, y]) => {
+    svg += `<circle class="radar-dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="8"/>`;
+  });
+  ORDER.forEach((dim, i) => {
+    const [x, y] = pt(i, R + 34);
+    const anchor = Math.abs(x) < 10 ? "middle" : (x > 0 ? "start" : "end");
+    const dy = y < -R ? -4 : (y > R * 0.5 ? 22 : 9);
+    const isTop = dim === topA || dim === topB;
+    svg += `<text class="radar-label${isTop ? " top" : ""}" x="${x.toFixed(1)}" y="${(y + dy).toFixed(1)}" text-anchor="${anchor}">${LABELS[dim]}</text>`;
+  });
+  svg += `</svg>`;
+  document.getElementById("radarBox").innerHTML = svg;
+
+  document.getElementById("topChips").innerHTML =
+    [topA, topB].map(d => `<span class="top-chip">${LABELS[d]}</span>`).join("");
+}
+
+function boldSummary(resultType, summary){
+  if (!summary) return "";
+  const re = /^(.+?)\s*유형은\s*(.+?)이고,\s*동시에\s*(.+?)\s*경향이\s*있어요\.?$/;
+  const m = summary.match(re);
+  if (m) {
+    return `${resultType} 유형은 <b>${m[2]}</b>이고, 동시에 <b>${m[3]}</b> 경향이 있어요.`;
+  }
+  return summary;
+}
+
+function renderType(resultType, resultSummary){
+  const el = document.getElementById("resultType");
+  if (resultType) {
+    const idx = resultType.lastIndexOf(" ");
+    el.innerHTML = idx === -1
+      ? `<span class="type-key">${resultType}</span>`
+      : `${resultType.slice(0, idx)} <span class="type-key">${resultType.slice(idx + 1)}</span>`;
+  } else {
+    el.textContent = "결과를 계산하는 중이에요";
+  }
+  fitTypeName();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitTypeName);
+  document.getElementById("resultSummary").innerHTML = boldSummary(resultType, resultSummary);
+}
+
+function fitTypeName(){
+  const el = document.getElementById("resultType");
+  let size = 76;
+  el.style.fontSize = size + "px";
+  while (el.scrollWidth > el.clientWidth + 1 && size > 44) {
+    size -= 2;
+    el.style.fontSize = size + "px";
+  }
+}
+
+function demoData(scores){
+  scores.urgency = 3; scores.trust = 5; scores.action = 2; scores.verify = 5; scores.repeat = 2;
+  return {
+    resultType: "믿으면 확인 안하는 방심이",
+    resultSummary: "믿으면 확인 안하는 방심이 유형은 공공기관이나 아는 사람이라고 하면 쉽게 믿는 편이고, 동시에 다른 곳에 확인하지 않고 그대로 진행하는 경향이 있어요."
+  };
+}
+
+const TYPE_BY_PAIR = {
+  "trust,urgency":  "급하다 하면 바로 믿는 순둥이",
+  "action,urgency": "지금 하라면 바로 하는 빠름이",
+  "urgency,verify": "급하면 확인 안하는 덜렁이",
+  "repeat,urgency": "급하다 하면 끝까지 하는 불안이",
+  "action,trust":   "믿으면 바로 해주는 순진이",
+  "trust,verify":   "믿으면 확인 안하는 방심이",
+  "repeat,trust":   "믿어서 계속 해주는 소심이",
+  "action,verify":  "시키면 확인 없이 하는 성급이",
+  "action,repeat":  "시키는 대로 계속 하는 따라쟁이",
+  "repeat,verify":  "확인 안하고 끝까지 하는 깜빡이"
+};
+const BLURB = {
+  urgency: "상황이 급하다고 몰아붙이면 이유를 따지지 않고 서두르는 편",
+  trust:   "공공기관이나 아는 사람이라고 하면 쉽게 믿는 편",
+  action:  "시키는 대로 링크를 누르거나 바로 행동에 옮기는 편",
+  verify:  "다른 곳에 확인하지 않고 그대로 진행하는 편",
+  repeat:  "같은 부탁이 반복되면 결국 들어주는 편"
+};
+function describeLocal(scores){
+  const top2 = pickTopTwoDimensions(scores);
+  top2.sort((a, b) => ORDER.indexOf(a) - ORDER.indexOf(b));
+  const typeName = TYPE_BY_PAIR[top2.slice().sort().join(",")] || "";
+  const typeSummary = typeName
+    ? `${typeName} 유형은 ${BLURB[top2[0]]}이고, 동시에 ${BLURB[top2[1]]} 경향이 있어요.`
+    : "";
+  return { typeName, typeSummary };
+}
+
+async function fetchRemote(){
+  try {
+    const S = await import("./session.js");
+    if (!S.getSessionId()) return null;
+    return S.fixUnknownType(await S.fetchResult());
+  } catch (err) {
+    console.warn("[test_end] 저장된 결과를 불러오지 못했어요:", err);
+    return null;
+  }
+}
+
+async function init(){
+  const scores = {};
+  ORDER.forEach(dim => { scores[dim] = getSessionScore(dim) || 0; });
+
+  let resultType = "";
+  let resultSummary = "";
+
+  const isDemo = /[?&]demo=1/.test(location.search);
+  const hasLocalScores = ORDER.some(dim => getSessionScore(dim) !== null);
+
+  if (isDemo) {
+    ({ resultType, resultSummary } = demoData(scores));
+  } else if (hasLocalScores) {
+    ({ typeName: resultType, typeSummary: resultSummary } = describeLocal(scores));
+  } else {
+    const data = await fetchRemote();
+    if (data && data.scores) {
+      ORDER.forEach(dim => { scores[dim] = Number(data.scores[dim] || 0); });
+      resultType = data.resultType || "";
+      resultSummary = data.typeSummary || "";
+      if (!resultType) ({ typeName: resultType, typeSummary: resultSummary } = describeLocal(scores));
+    }
+  }
+
+  if (!resultType) {
+    document.getElementById("resultType").textContent = "테스트 기록이 없어요";
+    document.getElementById("resultSummary").textContent = "취약성 테스트 5문항(test1~5)을 먼저 풀어 주세요.";
+    renderCharacter("");
+    renderBars(scores);
+    renderRadar(scores);
+    return;
+  }
+
+  renderCharacter(resultType);
+  renderType(resultType, resultSummary);
+  renderBars(scores);
+  renderRadar(scores);
+}
+
+init();
+
+const voiceMap = {
+};
+const voiceIndex = sessionStorage.getItem('voiceIndex') || '1';
+const voiceFile = voiceMap[voiceIndex] || null;
+
+let currentAudio = null;
+
+function playVoice(){
+  if (!voiceFile) return;
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+  }
+  currentAudio = new Audio(voiceFile);
+  currentAudio.play().catch(err => console.log('Audio play error:', err));
+}
+
+window.playGuideVoice = playVoice;
+window.replayVoice = playVoice;
+
+if (!voiceFile) {
+  document.querySelectorAll('.replay-btn').forEach(btn => { btn.style.display = 'none'; });
+}
+
+window.addEventListener('load', playVoice);
+</script>
+
+</body>
+</html>

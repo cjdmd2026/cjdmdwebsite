@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+<link rel="icon" type="image/x-icon" href="img/favicon.ico">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#ff5c5c">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="피싱뚝">
+<script src="alpha-video.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>학습 단계 선택</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    #pageFadeIn{
+      position:fixed; inset:0; z-index:9999;
+      background:#fff;
+      pointer-events:none;
+      opacity:1;
+      transition:opacity .45s ease-out;
+    }
+    #pageFadeIn.done{ opacity:0; }
+
+    .bg-haze{ position:fixed; inset:0; z-index:0; pointer-events:none;
+      background:linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.15) 22%, rgba(255,255,255,0) 40%); }
+    .bg-dof{ position:fixed; left:0; right:0; bottom:0; height:22%; z-index:0; pointer-events:none;
+      backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+      -webkit-mask-image:linear-gradient(180deg, transparent 0%, #000 70%); mask-image:linear-gradient(180deg, transparent 0%, #000 70%); }
+    .bg-vignette{ position:fixed; inset:0; z-index:0; pointer-events:none;
+      background:radial-gradient(ellipse 80% 70% at 50% 45%, rgba(0,0,0,0) 60%, rgba(20,40,70,0.18) 100%); }
+
+    .content{ position:relative; z-index:2; }
+
+    .title-row h1{
+      color:#16263F;
+      text-shadow:0 0 24px rgba(255,255,255,0.9), 0 0 60px rgba(255,255,255,0.6);
+    }
+    .sub-title{
+      margin:-20px 0 60px; text-align:center;
+      font-size:40px; font-weight:600; color:#4A5B70;
+      text-shadow:0 0 16px rgba(255,255,255,0.9);
+    }
+
+    .cards{
+      gap:0 800px;
+      position:relative; z-index:2;
+      margin-bottom:200px;
+    }
+
+    .s_card{
+      --c:#E8402F; --c-soft:rgba(232,64,47,0.12);
+      position:relative; z-index:2;
+      width:580px; height:800px;
+      padding:56px 48px 48px;
+      border-radius:44px;
+      display:flex; flex-direction:column; justify-content:flex-start; align-items:center;
+      cursor:pointer;
+      background:rgba(255,255,255,0.72);
+      backdrop-filter:blur(14px) saturate(1.2); -webkit-backdrop-filter:blur(14px) saturate(1.2);
+      border:none;
+      box-shadow:0 18px 40px rgba(30,60,100,0.16), inset 0 0 0 2px rgba(255,255,255,0.9);
+      transition:transform .35s cubic-bezier(.34,1.4,.64,1), box-shadow .3s ease, opacity .3s ease;
+      animation:cardGlowPulse 2.6s ease-in-out infinite;
+    }
+    .s_card:nth-of-type(2){ --c:#6A3FD1; --c-soft:rgba(106,63,209,0.12); animation-delay:.6s; }
+
+    @keyframes cardGlowPulse{
+      0%,100%{ box-shadow:0 18px 40px rgba(30,60,100,0.16), inset 0 0 0 2px rgba(255,255,255,0.9); }
+      50%    { box-shadow:0 18px 40px rgba(30,60,100,0.16), inset 0 0 0 4px var(--c-soft), 0 0 0 6px var(--c-soft); }
+    }
+    .s_card:hover, .s_card:focus-visible{
+      animation:none; outline:none;
+      transform:translateY(-10px);
+      box-shadow:0 28px 56px rgba(30,60,100,0.22), inset 0 0 0 5px var(--c);
+    }
+    .cards:hover .s_card:not(:hover){ opacity:.7; }
+
+    .step{ align-self:flex-start; display:flex; align-items:center; gap:14px; font-size:28px; font-weight:800; color:var(--c); }
+    .step .pill{ background:var(--c-soft); padding:8px 22px; border-radius:30px; }
+    .dots{ display:flex; gap:8px; }
+    .dots i{ width:16px; height:16px; border-radius:50%; background:var(--c-soft); }
+    .dots i.on{ background:var(--c); }
+
+    .s_card .image{
+      width:250px; height:250px; margin-top:24px; border-radius:50%;
+      background:var(--c-soft); display:flex; align-items:center; justify-content:center;
+    }
+    .s_card .image img{ width:220px; height:220px; object-fit:contain; filter:drop-shadow(0 12px 18px rgba(20,40,70,0.2)); }
+
+    .s_card h1{ margin:32px 0 0; font-size:72px; color:#16263F; }
+    .s_card .desc{ margin-top:14px; font-size:34px; line-height:1.5; color:#4A5B70; text-align:center; }
+
+    .card-select-btn{
+      margin-top:auto !important;
+      width:100% !important; height:104px !important;
+      border-radius:26px !important;
+      background:var(--c) !important; color:#fff !important;
+      font-size:44px !important; font-weight:800 !important;
+      display:flex !important; align-items:center; justify-content:center; gap:12px;
+      box-shadow:0 12px 24px rgba(0,0,0,0.12) !important;
+      transition:filter .2s;
+    }
+    .s_card:hover .card-select-btn{ filter:brightness(1.08); }
+
+    .bg-video{
+      position:absolute;
+      height:1500px;
+      bottom:-400px;
+      left:700px;
+      z-index:5;
+      pointer-events:none;
+      filter:drop-shadow(0 0 10px rgba(255,255,255,0.55));
+    }
+    .char-shadow{ display:none; }
+
+  </style>
+  <link rel="stylesheet" href="nav.css">
+<style id="tabfix">
+  html, body { width:100%; height:100%; margin:0; overflow:hidden; overscroll-behavior:none; }
+  #scaleWrap { position:fixed !important; }
+</style>
+</head>
+
+<body>
+
+  <div id="pageFadeIn" aria-hidden="true"></div>
+
+  <div class="bg-haze"></div>
+  <div class="bg-vignette"></div>
+  <div class="bg-dof"></div>
+
+  <div id="scaleWrap">
+    <div class="container">
+
+      <div class="char-shadow"></div>
+      <video
+        id="charVideo"
+        class="bg-video"
+        autoplay
+        playsinline
+        webkit-playsinline
+        disablepictureinpicture
+        disableremoteplayback
+        controlslist="nodownload nofullscreen noremoteplayback noplaybackrate"
+      ></video>
+
+      <div class="content">
+
+        <div class="top-bar">
+          <button class="phishing-badge">피싱뚝</button>
+          <button class="replay-btn" onclick="playGuideVoice()" aria-label="안내 다시 듣기">
+            <span class="ic">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="#fff"/><path d="M16 8.5a5 5 0 010 7M18.5 6a8.5 8.5 0 010 12" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+            </span>
+            안내 다시 듣기
+          </button>
+        </div>
+
+        <div class="title-row">
+          <h1>나에게 맞는 학습 단계를 선택해보세요</h1>
+        </div>
+        <p class="sub-title">처음이라면 1단계부터 시작하는 걸 추천해요</p>
+
+        <div class="cards">
+
+          <div class="s_card" role="button" tabindex="0" aria-label="피싱포착 - 무엇이 진짜일까? 학습 시작"
+               onclick="location.href='beginner.html'"
+               onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();location.href='beginner.html';}">
+            <div class="step"><span class="pill">1단계 · 초급</span><span class="dots"><i class="on"></i><i></i></span></div>
+            <div class="image"><img src="img/pochak.webp" alt=""></div>
+            <h1>피싱포착</h1>
+            <div class="desc">무엇이 진짜일까?<br>가짜 문자·전화 알아보기</div>
+            <div class="card-select-btn">1단계 시작하기
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M9 5L16 12L9 19" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+
+          <div class="s_card" role="button" tabindex="0" aria-label="피싱정복 - 어디가 위험할까? 학습 시작"
+               onclick="location.href='advanced.html'"
+               onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();location.href='advanced.html';}">
+            <div class="step"><span class="pill">2단계 · 중급</span><span class="dots"><i class="on"></i><i class="on"></i></span></div>
+            <div class="image"><img src="img/jeongbok.webp" alt=""></div>
+            <h1>피싱정복</h1>
+            <div class="desc">어디가 위험할까?<br>실전 상황에서 대처하기</div>
+            <div class="card-select-btn">2단계 시작하기
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M9 5L16 12L9 19" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+ <div class="prev-wrap">
+  <button class="prev-btn" onclick="location.href='index.html'" aria-label="이전">
+    <span class="ic">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M15 5L8 12L15 19" stroke="#16263F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+    이전
+  </button>
+</div>
+
+  <script>
+const videoMap = {
+  '1': 'video/ddoddo_index1.webm',
+  '2': 'video/bbibbo_index1.webm',
+  '3': 'video/gamjjock_index1.webm'
+};
+
+const voiceIndex = sessionStorage.getItem('voiceIndex') || '1';
+
+const pageFadeIn = document.getElementById('pageFadeIn');
+let pageRevealed = false;
+function revealPage() {
+  if (pageRevealed) return;
+  pageRevealed = true;
+  requestAnimationFrame(() => requestAnimationFrame(() => pageFadeIn.classList.add('done')));
+}
+setTimeout(revealPage, 1200);
+
+function loadCharacterVideo() {
+  const video = document.getElementById('charVideo');
+  const src = videoMap[voiceIndex] || videoMap['1'];
+
+  video.addEventListener('loadeddata', revealPage, { once: true });
+
+  video.addEventListener('error', () => {
+    const err = video.error;
+    console.error('❌ 영상을 불러오지 못했습니다:', src, '(에러 코드:', err && err.code, ')');
+    revealPage();
+  });
+
+  video.addEventListener('ended', () => {
+    video.pause();
+    if (video.duration && isFinite(video.duration)) {
+      video.currentTime = Math.max(0, video.duration - 0.05);
+    }
+  });
+
+  AlphaVideo.setSrc(video, src);
+  video.load();
+  AlphaVideo.playWithFallback(video);
+}
+
+function playGuideVoice() {
+  const video = document.getElementById('charVideo');
+  video.currentTime = 0;
+  video.play().catch(err => console.log('Video replay blocked:', err));
+}
+
+function fitScale() {
+  const scaleX = window.innerWidth / 2850;
+  const scaleY = window.innerHeight / 1575;
+  const scale = Math.min(scaleX, scaleY);
+  document.getElementById('scaleWrap').style.transform = `translate(-50%, -50%) scale(${scale})`;
+}
+window.addEventListener('resize', fitScale);
+window.addEventListener('load', fitScale);
+fitScale();
+
+loadCharacterVideo();
+  </script>
+
+</body>
+</html>
