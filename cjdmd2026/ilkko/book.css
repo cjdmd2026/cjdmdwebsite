@@ -1,0 +1,2368 @@
+
+/* ==========================================
+   00. 기본 설정
+   ========================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Pretendard', -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #ffffff;
+  color: #1a1a1a;
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul, li {
+  list-style: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+}
+
+/* Maplestory OTF 폰트 */
+@font-face {
+  font-family: 'Maplestory OTF';
+  src:
+    local('Maplestory OTF Bold'),
+    local('MaplestoryOTFBold'),
+    local('Maplestory Bold'),
+    url('fonts/Maplestory Bold.otf') format('opentype');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+
+/* ==========================================
+   01. 공통 헤더
+   ========================================== */
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 75px;
+
+  background: rgba(255,255,255,.96);
+  backdrop-filter: blur(8px);
+  border-bottom: 2px solid #ff7710;
+
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+
+  transition: transform .35s cubic-bezier(.16,1,.3,1);
+}
+
+.header.is-hidden {
+  transform: translateY(-100%);
+}
+
+.header-inner {
+  width: 90%;
+  max-width: 1240px;
+  margin: 0 auto;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-logo-img {
+  height: 36px;
+  width: auto;
+}
+
+.header-menu-list {
+  display: flex;
+  gap: 36px;
+}
+
+.header-menu-item a {
+  font-size: 15px;
+  font-weight: 500;
+  color: #666;
+  transition: color .2s;
+}
+
+.header-menu-item.active a,
+.header-menu-item a:hover {
+  color: #ff7710;
+  font-weight: 700;
+}
+
+/* 모바일 메뉴 */
+
+.mobile-menu-toggle {
+  display: none;
+  width: 28px;
+  height: 22px;
+  position: relative;
+  z-index: 1001;
+
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.mobile-menu-toggle span {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+
+  background: #111;
+  border-radius: 2px;
+  transition: .3s;
+}
+
+.mobile-menu-toggle span:nth-child(1) {
+  top: 0;
+}
+
+.mobile-menu-toggle span:nth-child(2) {
+  top: 9px;
+}
+
+.mobile-menu-toggle span:nth-child(3) {
+  top: 18px;
+}
+
+.mobile-menu-toggle.is-active span:nth-child(1) {
+  top: 9px;
+  transform: rotate(45deg);
+}
+
+.mobile-menu-toggle.is-active span:nth-child(2) {
+  opacity: 0;
+}
+
+.mobile-menu-toggle.is-active span:nth-child(3) {
+  top: 9px;
+  transform: rotate(-45deg);
+}
+
+
+/* ==========================================
+   02. 첫 번째 섹션: 동화책 히어로
+   ========================================== */
+
+.book-page {
+  padding-top: 75px;
+  min-height: 100vh;
+}
+
+.book-hero {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #fff;
+
+  /* 체크 배경 PNG */
+  background-image:
+    linear-gradient(
+      to bottom,
+      rgba(255,255,255,0) 52%,
+      rgba(255,255,255,.12) 68%,
+      rgba(255,255,255,.72) 86%,
+      #ffffff 100%
+    ),
+    url('images/hero-check.webp');
+
+  background-position:
+    center top,
+    center top;
+
+  background-size:
+    100% 100%,
+    cover;
+
+  background-repeat: no-repeat;
+}
+
+.book-hero-inner {
+  width: 100%;
+  max-width: 1240px;
+  min-height: 780px;
+
+  margin: 0 auto;
+  padding: 70px 24px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 구름 말풍선 PNG */
+
+.hero-speech-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+
+  margin: 0 auto -38px;
+  z-index: 1;
+}
+
+.hero-speech-img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* 책 4권 */
+
+.hero-books-area {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.hero-books-row {
+  width: 100%;
+  max-width: 870px;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  gap: 10px;
+}
+
+.hero-book {
+  position: relative;
+  flex: 0 0 auto;
+
+  transition: transform .35s cubic-bezier(.2,.8,.2,1);
+}
+
+.hero-book-img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+
+  filter: drop-shadow(0 8px 12px rgba(0,0,0,.06));
+}
+
+.hero-book:hover {
+  transform: translateY(-10px);
+}
+
+.book-1,
+.book-2,
+.book-3,
+.book-4 {
+  width: clamp(110px, 14vw, 205px);
+}
+
+.book-2,
+.book-4 {
+  margin-bottom: 24px;
+}
+
+.book-3 {
+  z-index: 4;
+}
+
+
+/* ==========================================
+   03. 두 번째 섹션: 독서 고민
+   ========================================== */
+
+.concern-section {
+  background: #fff;
+  padding: 88px 20px 90px;
+  overflow: hidden;
+}
+
+.concern-inner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.concern-title {
+  text-align: center;
+
+  font-size: clamp(28px,3.2vw,43px);
+  font-weight: 800;
+  letter-spacing: -.055em;
+  line-height: 1.35;
+
+  color: #090909;
+  word-break: keep-all;
+}
+
+.concern-stage {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  height: 720px;
+
+  margin: 30px auto 0;
+}
+
+/* 연노랑 원과 앵무새 */
+
+.concern-circle {
+  position: absolute;
+  left: 50%;
+  top: 65px;
+
+  transform: translateX(-50%);
+
+  width: 660px;
+  aspect-ratio: 1;
+
+  border-radius: 50%;
+  background: #fff9cf;
+
+  overflow: hidden;
+  z-index: 1;
+}
+
+.concern-parrot {
+  position: absolute;
+  left: 50%;
+  bottom: -2%;
+
+  transform: translateX(-50%);
+
+  width: 100%;
+  height: auto;
+  max-width: none;
+  object-fit: contain;
+}
+
+.concern-bubbles {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+/* 주황색 말풍선 */
+
+.concern-bubble {
+  --bubble-color: #ff9800;
+
+  position: absolute;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 112px;
+  padding: 17px 18px;
+
+  background: var(--bubble-color);
+  border-radius: 14px;
+
+  color: #fff;
+  text-align: center;
+
+  font-size: clamp(17px,1.55vw,22px);
+  line-height: 1.35;
+  font-weight: 600;
+  letter-spacing: -.035em;
+  word-break: keep-all;
+
+  filter: drop-shadow(0 4px 2px rgba(0,0,0,.12));
+
+  transform-origin: center bottom;
+}
+
+/* 말풍선 꼬리 */
+
+.concern-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -14px;
+
+  width: 23px;
+  height: 20px;
+
+  background: var(--bubble-color);
+}
+
+.bubble-left-top::after,
+.bubble-left-bottom::after {
+  right: 20px;
+  clip-path: polygon(0 0,100% 0,100% 100%);
+}
+
+.bubble-right-top::after,
+.bubble-right-bottom::after {
+  left: 20px;
+  clip-path: polygon(0 0,100% 0,0 100%);
+}
+
+/* 말풍선 위치 */
+
+.bubble-left-top {
+  top: 100px;
+  left: 170px;
+  width: 315px;
+  --pop-delay: .60s;
+}
+
+.bubble-right-top {
+  top: 25px;
+  right: 150px;
+  width: 355px;
+  --pop-delay: .15s;
+}
+
+.bubble-left-bottom {
+  top: 270px;
+  left: 35px;
+  width: 305px;
+  --pop-delay: 1.50s;
+}
+
+.bubble-right-bottom {
+  top: 205px;
+  right: 15px;
+  width: 335px;
+  --pop-delay: 1.05s;
+}
+
+
+/* ==========================================
+   04. 채팅 말풍선 순차 등장
+   ========================================== */
+
+.has-js .concern-bubble {
+  opacity: 0;
+}
+
+.has-js .concern-stage.is-chat-active .concern-bubble {
+  animation: chat-pop .60s cubic-bezier(.2,.8,.25,1) both;
+  animation-delay: var(--pop-delay);
+}
+
+@keyframes chat-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(25px) scale(.72);
+  }
+
+  55% {
+    opacity: 1;
+    transform: translateY(-6px) scale(1.075);
+  }
+
+  78% {
+    opacity: 1;
+    transform: translateY(2px) scale(.98);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+/* ==========================================
+   05. 세 번째 섹션: 동화책 패키지
+   ========================================== */
+
+.package-section {
+  width: 100%;
+  padding: 12px 20px 120px;
+
+  background: #fff;
+  overflow: hidden;
+}
+
+.package-inner {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+/* 주황 화살표 */
+
+.package-down-arrows {
+  width: 44px;
+  height: 76px;
+
+  margin: 0 auto 95px;
+  color: #FF9808;
+}
+
+.package-down-arrows svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* 화살표 처음 숨김 */
+
+.has-js .package-down-arrows svg path {
+  opacity: 0;
+  transform: translateY(-9px);
+
+  transition:
+    opacity .35s ease,
+    transform .35s ease;
+}
+
+/* 첫 번째 */
+
+.has-js .package-down-arrows.is-arrow-active svg path:nth-child(1) {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0s;
+}
+
+/* 두 번째 */
+
+.has-js .package-down-arrows.is-arrow-active svg path:nth-child(2) {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: .18s;
+}
+
+/* 세 번째 */
+
+.has-js .package-down-arrows.is-arrow-active svg path:nth-child(3) {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: .36s;
+}
+
+/* 패키지 제목 */
+
+.package-title {
+  margin: 0 0 76px;
+
+  color: #0c0c0c;
+  text-align: center;
+
+  font-size: clamp(28px,3vw,40px);
+  font-weight: 800;
+
+  letter-spacing: -.055em;
+  line-height: 1.35;
+  word-break: keep-all;
+}
+
+/* 패키지 카드 3개 */
+
+.package-grid {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 28px;
+}
+
+.package-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  min-width: 0;
+  min-height: 505px;
+
+  padding: 58px 22px 36px;
+
+  border-radius: 9px;
+  background: #FFF8E1;
+  text-align: center;
+
+  transition:
+    background-color .25s ease,
+    box-shadow .25s ease,
+    translate .85s ease,
+    opacity .85s ease;
+}
+
+.package-card:hover {
+  background: #FFF8E1;
+  box-shadow: 0 12px 24px rgba(0,0,0,.045);
+}
+
+/* 흰색 말풍선 */
+
+.package-bubble {
+  position: relative;
+
+  width: 100%;
+  max-width: 230px;
+  min-height: 105px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 15px 12px;
+
+  background: #fff;
+  border-radius: 18px;
+
+  color: #191919;
+
+  font-size: clamp(15px,1.25vw,18px);
+  font-weight: 650;
+  line-height: 1.45;
+  letter-spacing: -.045em;
+  word-break: keep-all;
+}
+
+.package-bubble::after {
+  content: '';
+
+  position: absolute;
+  left: 50%;
+  bottom: -12px;
+
+  width: 24px;
+  height: 20px;
+
+  transform: translateX(-50%);
+  background: #fff;
+
+  clip-path: polygon(0 0,100% 0,50% 100%);
+}
+
+/* 상품 PNG */
+
+.package-visual {
+  width: 100%;
+  height: 160px;
+
+  margin: 30px 0 22px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.package-visual img {
+  width: auto;
+  height: auto;
+  max-width: 95%;
+  max-height: 150px;
+  object-fit: contain;
+}
+
+/* 상품 이름 */
+
+.package-item-title {
+  margin-top: auto;
+
+  color: #131313;
+
+  font-size: clamp(21px,1.8vw,25px);
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: -.05em;
+}
+
+/* 상품 설명 */
+
+.package-desc {
+  margin-top: 14px;
+
+  color: #777;
+
+  font-size: clamp(15px,1.3vw,18px);
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: -.035em;
+
+  word-break: keep-all;
+}
+
+
+/* ==========================================
+   06. 패키지 순차 등장
+   ========================================== */
+
+/* 화살표가 끝나기 전까지 숨김 */
+
+.has-js .package-section .package-title,
+.has-js .package-section .package-card {
+  opacity: 0;
+  translate: 0 25px;
+
+  transition:
+    opacity .65s ease,
+    translate .65s cubic-bezier(.16,1,.3,1),
+    background-color .25s ease,
+    box-shadow .25s ease;
+}
+
+/* 화살표 등장 완료 후 */
+
+.has-js .package-section.is-package-ready .package-title,
+.has-js .package-section.is-package-ready .package-card {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* 제목 */
+
+.has-js .package-section.is-package-ready .package-title {
+  transition-delay: 0s;
+}
+
+/* 카드 순서 */
+
+.has-js .package-section.is-package-ready .package-card:nth-child(1) {
+  transition-delay: .55s;
+}
+
+.has-js .package-section.is-package-ready .package-card:nth-child(2) {
+  transition-delay: .73s;
+}
+
+.has-js .package-section.is-package-ready .package-card:nth-child(3) {
+  transition-delay: .91s;
+}
+
+
+/* ==========================================
+   07. 네 번째 섹션: 스케치북 3단계 학습
+   1번째 이미지처럼 보이도록 수정
+   ========================================== */
+
+.three-step-section {
+  position: relative;
+  width: 100%;
+  min-height: 860px;
+  padding: 0;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+/* 스케치북 배경을 섹션 중앙에 "고정 폭"처럼 배치 */
+.three-step-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(980px, 100%);
+  height: 100%;
+  background-image: url('images/sketchbook-bg.webp');
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: 100% auto;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 안쪽 콘텐츠 */
+.three-step-inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 210px 20px 90px;
+}
+
+/* 제목 */
+.three-step-title {
+   margin: 0 auto 48px;
+  color: #101010;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.045em;
+  text-align: center;
+  word-break: keep-all;
+  position: relative;
+  top: -45px;
+}
+
+/* 원형 다이어그램 전체 */
+.three-step-visual {
+  --orbit-size: 580px;
+  --badge-size: 162px;
+  --center-size: 230px;
+
+  position: relative;
+  width: var(--orbit-size);
+  height: var(--orbit-size);
+  margin: 0 auto;
+}
+
+/* 얇은 원 */
+.step-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border: 1px solid #FF9808;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.ring-outer {
+  width: 100%;
+  height: 100%;
+}
+
+.ring-inner {
+  width: 63%;
+  height: 63%;
+}
+
+/* 가운데 앵무새 */
+.step-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.step-center-circle {
+  width: var(--center-size);
+  height: var(--center-size);
+  border-radius: 50%;
+  background: #FFF7D1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.step-center-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* 주황 원 */
+.step-badge {
+  position: absolute;
+  z-index: 3;
+  width: var(--badge-size);
+  height: var(--badge-size);
+  border-radius: 50%;
+  background: #FF9808;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: translate .25s ease, box-shadow .25s ease;
+}
+
+.step-badge span {
+  font-family: 'Maplestory OTF', 'Maplestory', sans-serif;
+  color: #ffffff;
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  word-break: keep-all;
+}
+
+/* 위치 */
+.step-top {
+  top: -4%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.step-left {
+  left: -3%;
+  bottom: 12%;
+}
+
+.step-right {
+  right: -3%;
+  bottom: 22%;
+}
+
+.step-badge:hover {
+  translate: 0 -5px;
+  box-shadow: 0 8px 14px rgba(255,152,8,.17);
+}
+
+/* ==========================================
+   08. 공통 스크롤 등장 효과
+   ========================================== */
+
+.has-js .reveal-up {
+  opacity: 0;
+  translate: 0 28px;
+
+  transition:
+    opacity .85s ease,
+    translate .85s cubic-bezier(.16,1,.3,1);
+}
+
+.has-js .reveal-up.is-visible {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.delay-1 {
+  transition-delay: .16s !important;
+}
+
+
+/* ==========================================
+   09. 맨 위로 버튼
+   ========================================== */
+
+.scroll-top-btn {
+  position: fixed;
+
+  bottom: 40px;
+  right: 40px;
+
+  width: 52px;
+  height: 52px;
+
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #eaeaea;
+
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+
+  cursor: pointer;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+
+  transition: all .3s ease;
+}
+
+.scroll-top-btn.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.scroll-top-btn svg {
+  width: 22px;
+  height: 22px;
+  color: #888;
+  transition: color .2s;
+}
+
+.scroll-top-btn:hover {
+  background: #ff7710;
+  border-color: #ff7710;
+}
+
+.scroll-top-btn:hover svg {
+  color: #fff;
+}
+
+
+/* ==========================================
+   10. 공통 푸터
+   ========================================== */
+
+.footer {
+  position: relative;
+  z-index: 20;
+
+  width: 100%;
+
+  background: #141414;
+  color: #888;
+
+  padding: 60px 20px 40px;
+}
+
+.footer-inner {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  margin-bottom: 30px;
+}
+
+.footer-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-nav a {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+
+  transition: color .2s;
+}
+
+.footer-nav a:hover {
+  color: #ccc;
+}
+
+.footer-app-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-app {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 18px;
+
+  border: 1px solid #fff;
+  border-radius: 8px;
+
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+
+  transition: background-color .2s;
+}
+
+.btn-app:hover {
+  background: rgba(255,255,255,.1);
+}
+
+.footer-info {
+  font-size: 12px;
+  color: #777;
+  line-height: 1.6;
+
+  margin-bottom: 24px;
+}
+
+.footer-info p {
+  margin: 0 0 4px;
+  word-break: break-all;
+}
+
+.footer-divider {
+  border: 0;
+  border-top: 1px solid #282828;
+
+  margin: 0 0 24px;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.copyright {
+  font-size: 13px;
+  color: #666;
+}
+
+.footer-sns {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.footer-sns a {
+  color: #666;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: color .2s;
+}
+
+.footer-sns a:hover {
+  color: #fff;
+}
+
+.sns-text-icon {
+  font-size: 10px;
+  font-weight: 800;
+
+  border: 1px solid #666;
+  border-radius: 4px;
+  padding: 1px 4px;
+}
+
+
+/* ==========================================
+   11. 태블릿 반응형
+   769px ~ 1100px
+   ========================================== */
+
+@media (min-width: 769px) and (max-width: 1100px) {
+
+  /* 히어로 */
+
+  .book-hero-inner {
+    min-height: 680px;
+    padding: 55px 20px 65px;
+  }
+
+  .hero-speech-wrap {
+    max-width: 650px;
+    margin-bottom: -26px;
+  }
+
+  .hero-books-row {
+    gap: 8px;
+    max-width: 800px;
+  }
+
+  .book-1,
+  .book-2,
+  .book-3,
+  .book-4 {
+    width: clamp(100px,18vw,190px);
+  }
+
+  .book-2,
+  .book-4 {
+    margin-bottom: 20px;
+  }
+
+  /* 독서 고민 */
+
+  .concern-stage {
+    height: 640px;
+  }
+
+  .concern-circle {
+    width: min(62vw,580px);
+    top: 86px;
+  }
+
+  .concern-bubble {
+    min-height: 108px;
+    padding: 14px;
+
+    font-size: clamp(16px,2vw,20px);
+  }
+
+  .bubble-left-top {
+    left: 9%;
+    top: 130px;
+    width: 30%;
+  }
+
+  .bubble-right-top {
+    right: 8%;
+    top: 44px;
+    width: 33%;
+  }
+
+  .bubble-left-bottom {
+    left: 1%;
+    top: 290px;
+    width: 29%;
+  }
+
+  .bubble-right-bottom {
+    right: 1%;
+    top: 230px;
+    width: 32%;
+  }
+
+  /* 패키지 */
+
+  .package-grid {
+    gap: 18px;
+  }
+
+  .package-card {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .package-bubble {
+    font-size: 15px;
+  }
+
+  /* 스케치북 */
+
+  .three-step-section {
+    min-height: 700px;
+    background-size: min(1250px, 96vw) auto;
+  }
+
+  .three-step-inner {
+    padding: 145px 16px 80px;
+  }
+
+  .three-step-title {
+    font-size: clamp(27px, 3vw, 34px);
+    margin-bottom: 40px;
+  }
+
+  .three-step-visual {
+    --orbit-size: clamp(500px, 56vw, 580px);
+    --badge-size: calc(var(--orbit-size) * .28);
+    --center-size: calc(var(--orbit-size) * .40);
+  }
+
+  .step-badge span {
+    font-size: clamp(18px, 2vw, 23px);
+  }
+
+  .step-left {
+    left: -4%;
+    bottom: 12%;
+  }
+
+  .step-right {
+    right: -4%;
+    bottom: 21%;
+  }
+
+}
+
+
+/* ==========================================
+   12. 모바일 반응형
+   768px 이하
+   ========================================== */
+
+@media (max-width: 768px) {
+
+  /* 모바일 헤더 */
+
+  .mobile-menu-toggle {
+    display: block;
+  }
+
+  .header-nav {
+    position: absolute;
+    top: 75px;
+    left: 0;
+
+    width: 100%;
+    padding: 10px 5% 30px;
+
+    background: #fff;
+
+    box-shadow: 0 10px 15px rgba(0,0,0,.05);
+
+    transform: translateY(-10px);
+    opacity: 0;
+    visibility: hidden;
+
+    transition: all .3s ease;
+  }
+
+  .header-nav.is-open {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .header-menu-list {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .header-menu-item {
+    border-bottom: 1px solid #f4f4f4;
+  }
+
+  .header-menu-item:last-child {
+    border-bottom: 0;
+  }
+
+  .header-menu-item a {
+    display: block;
+
+    font-size: 17px;
+    font-weight: 600;
+
+    padding: 18px 5px;
+    color: #222;
+  }
+
+  .header-menu-item.active a {
+    color: #ff7710;
+  }
+
+  /* 첫 번째 섹션 */
+
+  .book-hero-inner {
+    min-height: auto;
+    padding: 45px 18px 70px;
+  }
+
+  .hero-speech-wrap {
+    max-width: 540px;
+    margin: 0 auto 20px;
+  }
+
+  .hero-books-row {
+    display: grid;
+
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    align-items: end;
+
+    width: 100%;
+    max-width: 440px;
+
+    gap: 28px 14px;
+    margin: 0 auto;
+  }
+
+  .book-1,
+  .book-2,
+  .book-3,
+  .book-4 {
+    width: 100%;
+    max-width: 205px;
+    justify-self: center;
+  }
+
+  .book-2,
+  .book-4 {
+    margin-bottom: 14px;
+  }
+
+  /* 두 번째 섹션 */
+
+  .concern-section {
+    padding: 70px 16px 85px;
+  }
+
+  .concern-title {
+    font-size: clamp(26px,5.2vw,35px);
+  }
+
+  .concern-stage {
+    height: auto;
+    margin-top: 32px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .concern-circle {
+    position: relative;
+    top: auto;
+    left: auto;
+
+    transform: none;
+
+    width: min(82vw,440px);
+    max-width: 100%;
+
+    align-self: center;
+  }
+
+  .concern-bubbles {
+    position: relative;
+    inset: auto;
+
+    width: 100%;
+    max-width: 520px;
+
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+
+    gap: 22px 12px;
+    margin: 0 auto;
+  }
+
+  .concern-bubble {
+    position: relative;
+    inset: auto;
+
+    width: 100%;
+    min-height: 98px;
+
+    padding: 13px 9px;
+
+    font-size: clamp(13px,2.6vw,18px);
+    border-radius: 12px;
+  }
+
+  .concern-bubble::after {
+    bottom: -12px;
+    width: 19px;
+    height: 17px;
+  }
+
+  /* 세 번째 섹션 */
+
+  .package-section {
+    padding: 10px 18px 90px;
+  }
+
+  .package-down-arrows {
+    margin-bottom: 58px;
+  }
+
+  .package-title {
+    margin-bottom: 38px;
+    font-size: clamp(26px,5.2vw,34px);
+  }
+
+  .package-grid {
+    max-width: 440px;
+    margin: 0 auto;
+
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .package-card {
+    min-height: 445px;
+    padding: 38px 20px 30px;
+  }
+
+  .package-bubble {
+    max-width: 270px;
+    min-height: 90px;
+    font-size: 17px;
+  }
+
+  .package-visual {
+    height: 150px;
+    margin: 27px 0 20px;
+  }
+
+  .package-item-title {
+    font-size: 23px;
+  }
+
+  .package-desc {
+    font-size: 16px;
+  }
+
+  /* 네 번째 스케치북 */
+
+  .three-step-section {
+    min-height: 620px;
+
+    background-size: 1200px auto;
+    background-position: center top;
+  }
+
+  .three-step-inner {
+    padding: 125px 12px 80px;
+  }
+
+  .three-step-title {
+    font-size: clamp(22px, 4.6vw, 30px);
+    margin-bottom: 34px;
+  }
+
+  .three-step-visual {
+    --orbit-size: min(90vw, 470px);
+    --badge-size: calc(var(--orbit-size) * .30);
+    --center-size: calc(var(--orbit-size) * .43);
+
+    width: var(--orbit-size);
+    height: var(--orbit-size);
+    max-width: calc(100vw - 28px);
+  }
+
+  .step-badge span {
+    font-size: clamp(13px, 3vw, 18px);
+  }
+
+  .step-top {
+    top: -3%;
+  }
+
+  .step-left {
+    left: -2%;
+    bottom: 11%;
+  }
+
+  .step-right {
+    right: -2%;
+    bottom: 20%;
+  }
+
+  /* 탑 버튼 */
+
+  .scroll-top-btn {
+    bottom: 20px;
+    right: 20px;
+
+    width: 44px;
+    height: 44px;
+  }
+
+  /* 푸터 */
+
+  .footer {
+    padding: 40px 20px 30px;
+  }
+
+  .footer-top {
+    flex-direction: column-reverse;
+    gap: 28px;
+    margin-bottom: 24px;
+  }
+
+  .footer-app-buttons {
+    width: 100%;
+  }
+
+  .btn-app {
+    flex: 1;
+    justify-content: center;
+
+    padding: 14px 0;
+    font-size: 14px;
+  }
+
+  .footer-bottom {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+}
+
+
+/* ==========================================
+   13. 작은 모바일
+   480px 이하
+   ========================================== */
+
+@media (max-width: 480px) {
+
+  /* 히어로 */
+
+  .book-hero-inner {
+    padding: 35px 16px 60px;
+  }
+
+  .hero-speech-wrap {
+    margin-bottom: 16px;
+  }
+
+  .hero-books-row {
+    gap: 24px 10px;
+  }
+
+  .book-2,
+  .book-4 {
+    margin-bottom: 10px;
+  }
+
+  /* 독서 고민 */
+
+  .concern-section {
+    padding: 62px 14px 70px;
+  }
+
+  .concern-stage {
+    gap: 18px;
+  }
+
+  .concern-bubbles {
+    gap: 20px 10px;
+  }
+
+  .concern-bubble {
+    font-size: 13px;
+    min-height: 94px;
+    padding: 12px 7px;
+  }
+
+  /* 패키지 */
+
+  .package-section {
+    padding: 8px 14px 75px;
+  }
+
+  /* 스케치북 */
+
+  .three-step-section {
+    min-height: 540px;
+    background-size: 980px auto;
+  }
+
+  .three-step-inner {
+    padding: 105px 10px 64px;
+  }
+
+  .three-step-title {
+    font-size: clamp(18px, 5vw, 22px);
+    margin-bottom: 26px;
+  }
+
+  .three-step-visual {
+    --orbit-size: min(90vw, 390px);
+  }
+
+  .step-badge span {
+    font-size: clamp(11px, 3vw, 14px);
+  }
+
+}
+
+
+/* ==========================================
+   14. 움직임 최소화
+   ========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  .has-js .reveal-up {
+    opacity: 1;
+    translate: 0;
+    transition: none;
+  }
+
+  .has-js .concern-bubble {
+    opacity: 1;
+    animation: none !important;
+  }
+
+  .has-js .package-down-arrows svg path {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .has-js .package-section .package-title,
+  .has-js .package-section .package-card {
+    opacity: 1;
+    translate: 0;
+    transition: none;
+  }
+
+  .step-badge,
+  .hero-book {
+    transition: none;
+  }
+
+}
+
+/* ==========================================
+   13. 다섯 번째 섹션: 동화책 기능 3단계
+   위아래를 더 넓게 쓰는 버전
+   ========================================== */
+.storybook-feature {
+  width: 100%;
+  background: #fff;
+  overflow: hidden;
+}
+
+.storybook-feature-banner,
+.storybook-feature-pagination {
+  background: #ffec78;
+}
+
+.storybook-feature-banner {
+  min-height: 250px;
+  padding: 120px 20px 70px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.storybook-feature-banner h2 {
+  color: #101010;
+  font-size: clamp(24px, 2.8vw, 34px);
+  font-weight: 800;
+  letter-spacing: -.045em;
+  line-height: 1.4;
+  text-align: center;
+  word-break: keep-all;
+}
+
+.storybook-feature-content {
+  position: relative;
+  background: #fff;
+  padding: 52px 0 26px;
+}
+
+.storybook-feature-copy {
+  position: relative;
+  z-index: 2;
+  min-height: 132px;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.storybook-feature-copy h3 {
+  color: #121212;
+  font-size: clamp(21px, 2.5vw, 28px);
+  font-weight: 800;
+  letter-spacing: -.04em;
+  line-height: 1.4;
+}
+
+.storybook-feature-copy p {
+  margin-top: 14px;
+  color: #191919;
+  font-size: clamp(14px, 1.5vw, 17px);
+  font-weight: 600;
+  letter-spacing: -.025em;
+  line-height: 1.5;
+}
+
+.storybook-feature-carousel {
+  --book-spread-width: 520px;
+  --book-slide-step: clamp(540px, 70vw, 820px);
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  outline-offset: -4px;
+}
+
+.storybook-feature-viewport {
+  position: relative;
+  width: 100%;
+  height: 410px;
+  overflow: hidden;
+}
+
+/*
+  책을 각각 순간이동시키지 않고, 연속된 9개(3세트)를
+  하나의 트랙으로 움직인다. 양끝에서 같은 이미지로
+  눈에 보이지 않게 위치만 되돌려 무한 반복한다.
+*/
+.storybook-feature-track {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: max-content;
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--book-slide-step) - var(--book-spread-width));
+  --book-offset: 0px;
+  transform: translate3d(
+    calc(var(--book-offset) - var(--book-spread-width) / 2), 0, 0
+  );
+  transition: transform .68s cubic-bezier(.22, 1, .36, 1);
+  will-change: transform;
+}
+
+.storybook-feature-slide {
+  position: relative;
+  flex: 0 0 var(--book-spread-width);
+  width: var(--book-spread-width);
+  height: 410px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.storybook-feature-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center top;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.storybook-feature-arrow {
+  position: absolute;
+  z-index: 5;
+  top: 50%;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-50%);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #000;
+  cursor: pointer;
+  transition: scale .2s ease, opacity .2s ease;
+}
+
+.storybook-feature-arrow:hover {
+  scale: 1.09;
+}
+
+.storybook-feature-arrow:focus-visible,
+.storybook-feature-dot:focus-visible {
+  outline: 3px solid #ff9000;
+  outline-offset: 4px;
+}
+
+.storybook-feature-arrow--prev {
+  left: max(6%, calc(50% - 450px));
+}
+
+.storybook-feature-arrow--next {
+  right: max(6%, calc(50% - 450px));
+}
+
+.storybook-feature-pagination {
+  min-height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 26px 16px 95px;
+  gap: 5px;
+}
+
+.storybook-feature-dot {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  transition: background-color .2s ease, transform .2s ease;
+}
+
+.storybook-feature-dot.is-active {
+  background: #828282;
+}
+
+.storybook-feature-dot:hover {
+  transform: scale(1.25);
+}
+
+@media (max-width: 768px) {
+  .storybook-feature-banner {
+    min-height: 190px;
+    padding: 78px 18px 50px;
+  }
+
+  .storybook-feature-banner h2 {
+    font-size: clamp(21px, 4.9vw, 28px);
+  }
+
+  .storybook-feature-content {
+    padding: 38px 0 28px;
+  }
+
+  .storybook-feature-copy {
+    min-height: 124px;
+    padding: 0 18px;
+  }
+
+  .storybook-feature-copy h3 {
+    font-size: clamp(19px, 4.4vw, 25px);
+  }
+
+  .storybook-feature-copy p {
+    font-size: 14px;
+  }
+
+  .storybook-feature-carousel {
+    --book-spread-width: min(80vw, 460px);
+    --book-slide-step: 96vw;
+  }
+
+  .storybook-feature-viewport {
+    height: min(66vw, 360px);
+  }
+
+  .storybook-feature-slide {
+    height: 100%;
+  }
+
+  .storybook-feature-arrow {
+    width: 45px;
+    height: 48px;
+  }
+
+  .storybook-feature-arrow svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .storybook-feature-arrow--prev {
+    left: 8px;
+  }
+
+  .storybook-feature-arrow--next {
+    right: 8px;
+  }
+
+  .storybook-feature-pagination {
+    min-height: 110px;
+    padding: 22px 16px 72px;
+  }
+}
+
+@media (max-width: 420px) {
+  .storybook-feature-banner {
+    padding-top: 62px;
+  }
+
+  .storybook-feature-banner h2 {
+    font-size: 21px;
+  }
+
+  .storybook-feature-copy {
+    min-height: 116px;
+  }
+
+  .storybook-feature-copy p {
+    font-size: 13px;
+  }
+
+  .storybook-feature-arrow {
+    width: 38px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .storybook-feature-track,
+  .storybook-feature-arrow,
+  .storybook-feature-dot {
+    transition: none;
+  }
+}
+
+
+/* ==========================================
+   14. 여섯 번째 섹션: 읽:꼬 동화책 패키지
+   2x2 카드 + 클릭 3D 플립
+   ========================================== */
+.ilkko-package-section {
+  position: relative;
+  width: 100%;
+  padding: 104px 24px 122px;
+  background: #eaf9fd;
+  overflow: hidden;
+}
+
+.ilkko-package-heading {
+  margin: 0 auto 54px;
+  max-width: 1020px;
+  color: #121212;
+  text-align: center;
+  font-size: clamp(25px, 2.75vw, 37px);
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: -0.055em;
+  word-break: keep-all;
+}
+
+.ilkko-package-grid {
+  width: 100%;
+  max-width: 714px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+/* 버튼 자체가 카드여서 클릭과 키보드 조작 모두 가능 */
+.ilkko-package-flip {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 258 / 358;
+  padding: 0;
+  border: 0;
+  border-radius: 13px;
+  background: transparent;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
+  appearance: none;
+  perspective: 1200px;
+  -webkit-perspective: 1200px;
+  outline-offset: 5px;
+  transition: filter .3s ease;
+}
+
+.ilkko-package-flip:hover {
+  filter: drop-shadow(0 12px 16px rgba(53, 117, 147, .09));
+}
+
+.ilkko-package-flip:focus-visible {
+  outline: 3px solid #ff9808;
+}
+
+.ilkko-package-card-inner {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: inherit;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  transition: transform .76s cubic-bezier(.2,.72,.22,1);
+}
+
+.ilkko-package-flip.is-flipped .ilkko-package-card-inner {
+  transform: rotateY(180deg);
+}
+
+/* 앞면과 뒷면은 정확히 같은 흰 카드 크기 */
+.ilkko-package-card-front,
+.ilkko-package-card-back {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 13px;
+  background: #fff;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.ilkko-package-card-front {
+  padding: 36px 28px 30px;
+  transform: rotateY(0deg) translateZ(1px);
+}
+
+.ilkko-package-card-label {
+  display: inline-block;
+  margin-top: 3px;
+  padding: 6px 15px;
+  border-radius: 999px;
+  background: #f4f4f4;
+  color: #181818;
+  font-size: clamp(12px, 1.1vw, 14px);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.ilkko-package-card-title {
+  margin-top: 16px;
+  color: #121212;
+  font-size: clamp(18px, 1.7vw, 23px);
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.045em;
+  text-align: center;
+}
+
+.ilkko-package-card-thumbnail {
+  display: block;
+  width: 54%;
+  max-width: 225px;
+  height: 39%;
+  margin-top: 42px;
+  object-fit: contain;
+  object-position: center;
+}
+
+.ilkko-package-card-description {
+  display: block;
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 292px;
+  margin: 60px auto 0;
+  color: #272727;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.7;
+  letter-spacing: -0.03em;
+  text-align: center;
+  word-break: keep-all;
+  text-wrap: balance;
+  align-self: center;
+}
+
+/* 뒷면: 텍스트 없이 표지 이미지만 흰 네모칸에 꽉 채움 */
+.ilkko-package-card-back {
+  transform: rotateY(180deg) translateZ(1px);
+}
+
+.ilkko-package-card-cover {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: center;
+}
+
+@media (max-width: 768px) {
+  .ilkko-package-section {
+    padding: 78px 20px 95px;
+  }
+  .ilkko-package-heading {
+    margin-bottom: 36px;
+    font-size: clamp(22px, 4.4vw, 30px);
+  }
+  .ilkko-package-grid { gap: 14px; }
+  .ilkko-package-card-front { padding: 26px 20px 24px; }
+  .ilkko-package-card-title { margin-top: 12px; }
+  .ilkko-package-card-thumbnail { margin-top: 15px; }
+  .ilkko-package-card-description { font-size: 12px; line-height: 1.6; margin-top: 39px; }
+}
+
+@media (max-width: 540px) {
+  .ilkko-package-section { padding: 64px 18px 82px; }
+  .ilkko-package-heading { font-size: 23px; margin-bottom: 30px; }
+  .ilkko-package-grid { max-width: 380px; grid-template-columns: 1fr; gap: 18px; }
+  .ilkko-package-card-front { padding: 30px 27px 34px; }
+  .ilkko-package-card-title { font-size: 22px; margin-top: 14px; }
+  .ilkko-package-card-thumbnail { margin-top: 22px; }
+  .ilkko-package-card-description { width: 95%; max-width: 300px; margin-top: 38px; font-size: 14px; line-height: 1.7; text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ilkko-package-card-inner,
+  .ilkko-package-flip { transition: none; }
+}
+
+
+
+/* ==========================================
+   14. 읽:꼬 동화책 패키지 구매 안내
+   사용자 제공 참고 이미지의 비율과 간격 기반
+   하단 책/선반/캐릭터 = package-scene.webp 단 1개
+   ========================================== */
+.ilkko-purchase-section {
+  width: 100%;
+  overflow: hidden;
+  background: #fff;
+  padding: 107px 20px 74px;
+}
+.ilkko-purchase-inner {
+  width: 100%;
+  max-width: 1162px;
+  margin: 0 auto;
+  text-align: center;
+}
+.ilkko-purchase-eyebrow {
+  color: #101010;
+  font-size: clamp(17px, 2.1vw, 24px);
+  font-weight: 800;
+  letter-spacing: -.045em;
+  line-height: 1.35;
+}
+.ilkko-purchase-heading {
+  margin-top: 6px;
+  color: #101010;
+  font-size: clamp(26px, 3.1vw, 36px);
+  font-weight: 900;
+  letter-spacing: -.055em;
+  line-height: 1.25;
+  word-break: keep-all;
+}
+/* 회색 배지 2개: 참고 이미지에 맞춘 가로 252px */
+.ilkko-purchase-highlights {
+  margin: 77px auto 0;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 43px;
+}
+.ilkko-purchase-highlight {
+  width: 252px;
+  height: 160px;
+  padding: 17px 12px 20px;
+  border-radius: 25px;
+  background: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  color: #111;
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.28;
+  letter-spacing: -.04em;
+}
+.ilkko-purchase-highlight-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 48px;
+  height: 48px;
+}
+.ilkko-purchase-highlight-icon svg { display: block; width: 100%; height: 100%; }
+.ilkko-purchase-highlight-label { display: block; }
+.ilkko-purchase-highlight-label strong { font-weight: 900; }
+/* 핵심: 책+선반+캐릭터는 단 한 장의 이미지 */
+.ilkko-purchase-visual {
+  width: min(855px, 100%);
+  margin: 73px auto 0;
+}
+.ilkko-purchase-visual img {
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: auto;
+  object-fit: contain;
+}
+.ilkko-purchase-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: min(360px, 100%);
+  min-height: 82px;
+  margin-top: 7px;
+  padding: 16px 20px;
+  border: 0;
+  border-radius: 18px;
+  background: #ff7a05;
+  color: #fff;
+  font: inherit;
+  font-size: 27px;
+  font-weight: 800;
+  letter-spacing: -.04em;
+  cursor: pointer;
+  transition: transform .2s ease, background-color .2s ease;
+}
+.ilkko-purchase-button:hover { background: #ee7200; transform: translateY(-2px); }
+.ilkko-purchase-button:focus-visible { outline: 3px solid #ff9808; outline-offset: 4px; }
+.ilkko-purchase-notice {
+  min-height: 1.4em;
+  margin-top: 10px;
+  color: #555;
+  font-size: 13px;
+}
+@media (max-width: 768px) {
+  .ilkko-purchase-section { padding: 77px 20px 70px; }
+  .ilkko-purchase-highlights { margin-top: 47px; gap: 18px; }
+  .ilkko-purchase-highlight { width: min(43vw, 218px); height: 135px; border-radius: 18px; font-size: 16px; gap: 9px; }
+  .ilkko-purchase-highlight-icon { width: 39px; height: 39px; }
+  .ilkko-purchase-visual { margin-top: 47px; }
+  .ilkko-purchase-button { width: min(320px, 100%); min-height: 66px; font-size: 21px; border-radius: 14px; margin-top: 14px; }
+}
+@media (max-width: 480px) {
+  .ilkko-purchase-section { padding: 59px 14px 57px; }
+  .ilkko-purchase-eyebrow { font-size: 15px; }
+  .ilkko-purchase-heading { font-size: 23px; }
+  .ilkko-purchase-highlights { margin-top: 32px; gap: 10px; }
+  .ilkko-purchase-highlight { width: calc((100vw - 38px) / 2); max-width: 172px; height: 118px; padding: 10px 5px; border-radius: 14px; font-size: 12px; gap: 7px; }
+  .ilkko-purchase-highlight-icon { width: 34px; height: 34px; }
+  .ilkko-purchase-visual { width: 100%; margin-top: 40px; }
+  .ilkko-purchase-button { width: min(290px, 100%); min-height: 56px; font-size: 18px; border-radius: 12px; margin-top: 18px; }
+}
+@media (prefers-reduced-motion: reduce) { .ilkko-purchase-button { transition: none; } }
+
+
+/* ===== 2026-11-14: 동화책 요청 영역만 수정 ===== */
+/* 스케치북 바깥쪽 흰 여백 없이 화면 가로 전체를 채움 */
+.three-step-section::before {
+  inset: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: none;
+  background-size: 100% 100%;
+  background-position: center top;
+}
+
+/* 모바일에서도 앵무새와 말풍선을 같은 영역에 배치 */
+@media (max-width: 768px) {
+  .concern-stage {
+    position: relative;
+    display: block;
+    width: 100%;
+    max-width: 520px;
+    height: clamp(385px, 113vw, 560px);
+    margin: 24px auto 0;
+  }
+  .concern-circle {
+    position: absolute;
+    left: 50%;
+    top: 13%;
+    transform: translateX(-50%);
+    width: 75%;
+    max-width: none;
+    align-self: auto;
+  }
+  .concern-bubbles {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    display: block;
+    margin: 0;
+  }
+  .concern-bubble {
+    position: absolute;
+    min-height: 0;
+    width: 43%;
+    padding: 14px 9px;
+    font-size: clamp(12px, 3.15vw, 17px);
+    line-height: 1.4;
+    border-radius: 12px;
+  }
+  .bubble-left-top { top: 20%; left: 0; right: auto; }
+  .bubble-right-top { top: 3%; right: 0; left: auto; }
+  .bubble-left-bottom { top: 65%; left: 0; right: auto; }
+  .bubble-right-bottom { top: 57%; right: 0; left: auto; }
+  .three-step-section::before { width: 100%; left: 0; }
+}
+@media (max-width: 480px) {
+  .concern-stage { height: 112vw; max-height: 460px; gap: 0; }
+  .concern-bubbles { display: block; gap: 0; }
+  .concern-bubble { width: 43%; min-height: 0; padding: 11px 6px; font-size: clamp(11px, 3.15vw, 14px); }
+  .three-step-section::before { width: 100%; }
+}
+
+/* 3번째 기능 슬라이드의 교구만 확대 (나머지 캐러셀 유지) */
+.storybook-feature-slide[data-title^="03."] img {
+  transform: scale(1.25);
+  transform-origin: center center;
+}
+@media (max-width: 768px) {
+ .storybook-feature-slide[data-title^="03."] img { transform: scale(1.12); }
+}
+
+/* 2026-11-15 모바일 히어로 말풍선 위치 최종 조정: 표시 위치 기준 */
+@media (max-width: 768px) {
+  .concern-stage .bubble-left-top {top: 35%; left: 6%; right: auto;}
+  .concern-stage .bubble-right-top {top: 23%; right: 6%; left: auto;}
+  .concern-stage .bubble-left-bottom {top: 44%; left: 3%; right: auto;}
+  .concern-stage .bubble-right-bottom {top: 67%; right: -1%; left: auto;}
+}
+
+/* 모바일: 아이 눈높이 말풍선을 표시된 왼쪽 빈 공간으로 이동 */
+@media (max-width: 768px) {
+  .concern-stage .bubble-left-top {
+    top: 22% !important;
+    left: 8% !important;
+    right: auto !important;
+    bottom: auto !important;
+  }
+}

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>읽:꼬 - 캐릭터</title>
+  <link rel="icon" type="image/webp" sizes="64x64" href="images/favicon.webp">
+  <link rel="stylesheet" href="character.css">
+  <link rel="stylesheet" href="footer-common.css">
+  <link rel="stylesheet" href="title-maplestory.css">
+  <link rel="stylesheet" href="desktop-layout.css?v=book-and-typography">
+</head>
+<body>
+
+  <!-- ==========================================
+       SECTION 1: 헤더 네비게이션 (공통)
+       ========================================== -->
+  <header class="header" id="commonHeader">
+    <div class="header-inner">
+      <h1 class="header-logo">
+        <a href="index.html">
+          <img src="images/logo.webp" alt="읽:꼬 로고" class="header-logo-img">
+        </a>
+      </h1>
+      
+      <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="메뉴 열기">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="header-nav" id="headerNav">
+        <ul class="header-menu-list">
+          <li class="header-menu-item"><a href="curriculum.html">커리큘럼</a></li>
+          <li class="header-menu-item active"><a href="character.html">캐릭터</a></li>
+          <li class="header-menu-item"><a href="book.html">동화책</a></li>
+          <li class="header-menu-item"><a href="community.html">커뮤니티</a></li>
+          <li class="header-menu-item"><a href="tip.html">도움말</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       MAIN CONTENT: 캐릭터 페이지 본문 영역
+       ========================================== -->
+  <main class="character-main">
+    
+    <!-- SECTION 2: 고정 히어로 배경 레이어 (뒤에 고정) -->
+    <section class="character-hero-section" id="characterHeroSection">
+      
+      <!-- 마우스 팔로워 Click 힌트 -->
+      <div class="character-hero-click-hint" id="characterClickHint">
+        <svg class="hint-pointer-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="7" y1="2" x2="7" y2="4.5" stroke="#000" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="2" y1="7" x2="4.5" y2="7" stroke="#000" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="3.5" y1="3.5" x2="5.2" y2="5.2" stroke="#000" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M7 6.5L16.5 13.5L11.5 14.5L13.5 19L11.5 20L9.5 15.5L6 17.5V6.5Z" fill="#fff" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+        <span class="hint-text">click</span>
+      </div>
+
+      <!-- LAYER 1: 배경 이미지 (1.webp) -->
+      <img src="images/1.webp" alt="CHARACTERS 배경" class="hero-bg-img">
+
+      <!-- LAYER 2: 인터랙션 캐릭터 (2.webp) -->
+      <div class="hero-char-wrap" id="heroCharWrap">
+        <img src="images/2.webp" alt="읽꼬 캐릭터" class="hero-char-img">
+      </div>
+
+      <!-- LAYER 3: 클릭 도장 스티커 레이어 -->
+      <div class="hero-stamp-layer" id="heroStampLayer"></div>
+
+    </section>
+
+    <!-- SECTION 3: 구름과 하단 흰색 콘텐츠가 묶여서 '쓱' 올라오는 커튼 레이어 -->
+    <div class="character-content-wrapper">
+      
+      <!-- 구름 이미지 (3.webp - 흰색 배경 섹션 맨 위에 부착) -->
+      <div class="hero-bottom-wave">
+        <img src="images/3.webp" alt="하단 구름 경계선" class="hero-wave-img">
+      </div>
+
+      <!-- 잎글마을 친구 소개 타이틀 섹션 -->
+      <section class="character-intro-title-section">
+        <div class="intro-title-inner">
+          <div class="intro-center-visual">
+            <img src="images/character-intro-banner.webp" alt="읽:꼬와 함께하는 잎글마을의 친구 소개" class="intro-group-img">
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 4: 잎글마을 친구 캐릭터 캐러셀 섹션 (7개 카드) -->
+      <section class="character-friends-carousel-section">
+        
+        <!-- 상단 타이틀 영역 -->
+        <div class="carousel-header">
+          <h2 class="carousel-main-title">잎글마을 친구</h2>
+          <p class="carousel-sub-title">
+            잎글 마을을 모험하며 보물을 찾고, 글 읽기 실력도 쑥쑥 키워보세요!<br>
+            친구들과 함께 신나는 모험을 떠나볼까요?
+          </p>
+        </div>
+
+        <!-- 캐러셀 컨테이너 -->
+        <div class="carousel-container">
+          
+          <!-- 좌우 화살표 버튼 -->
+          <button class="carousel-nav-btn prev-btn" id="carouselPrevBtn" aria-label="이전 캐릭터">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <button class="carousel-nav-btn next-btn" id="carouselNextBtn" aria-label="다음 캐릭터">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+
+          <!-- 카드 트랙 래퍼 -->
+          <div class="carousel-track-wrapper">
+            <div class="carousel-track" id="carouselTrack">
+              
+              <!-- 1. 잉꼬 -->
+              <div class="character-card active" data-character="ingkko">
+                <div class="card-left-visual" style="background-color: #FFFDF0;">
+                  <img src="images/ingkko_wave_fit_card.webp" alt="잉꼬 움직이는 캐릭터" class="card-char-img animated-character">
+                </div>
+                <div class="card-right-info" style="background-color: #FF9D00;">
+                  <div class="card-tags">
+                    <span class="tag">#모험</span>
+                    <span class="tag">#앵무새</span>
+                    <span class="tag">#조력자</span>
+                  </div>
+                  <h3 class="card-char-name">잉꼬</h3>
+                  <p class="card-char-desc">혼자 모험을 떠나기를 무서워면<br>나와 함께 잎글 마을로 모험을 떠나보자!</p>
+                  <a href="#none" class="card-more-btn">더보기</a>
+                </div>
+              </div>
+
+              <!-- 2. 두두 -->
+              <div class="character-card" data-character="dudu">
+                <div class="card-left-visual" style="background-color: #FFFDF0;">
+                  <img src="images/dudu_cheek_web.webp" alt="두두 움직이는 캐릭터" class="card-char-img animated-character">
+                </div>
+                <div class="card-right-info" style="background-color: #5C321E;">
+                  <div class="card-tags">
+                    <span class="tag">#모음</span>
+                    <span class="tag">#광부</span>
+                    <span class="tag">#두더지</span>
+                  </div>
+                  <h3 class="card-char-name">두두</h3>
+                  <p class="card-char-desc">모음은 한글의 가장 기본이 되는 단계야<br>나와 함께 모음을 같이 배워볼래?</p>
+                  <a href="#none" class="card-more-btn">더보기</a>
+                </div>
+              </div>
+
+              <!-- 3. 꾸미 -->
+              <div class="character-card" data-character="kkumi">
+                <div class="card-left-visual" style="background-color: #FFFDF0;">
+                  <img src="images/bear_animation.webp" alt="꾸미 움직이는 캐릭터" class="card-char-img animated-character">
+                </div>
+                <div class="card-right-info" style="background-color: #FFC056;">
+                  <div class="card-tags">
+                    <span class="tag">#자음</span>
+                    <span class="tag">#꿀곰</span>
+                    <span class="tag">#곰</span>
+                  </div>
+                  <h3 class="card-char-name">꾸미</h3>
+                  <p class="card-char-desc">자음은 모음과 결합하여 단단한 틀을 만들어<br>나와 함께 자음을 배워볼래?</p>
+                  <a href="#none" class="card-more-btn">더보기</a>
+                </div>
+              </div>
+
+              <!-- 4. 바오 -->
+              <div class="character-card" data-character="bao">
+                <div class="card-left-visual" style="background-color: #FFFDF0;">
+                  <img src="images/beaver_cheer_web.webp" alt="바오 움직이는 캐릭터" class="card-char-img animated-character">
+                </div>
+                <div class="card-right-info" style="background-color: #54B8FF;">
+                  <div class="card-tags">
+                    <span class="tag">#음운 인식</span>
+                    <span class="tag">#목수</span>
+                    <span class="tag">#비버</span>
+                  </div>
+                  <h3 class="card-char-name">바오</h3>
+                  <p class="card-char-desc">음운 인식은 말소리를 분리하고 합성하는 단계야<br>나와 함께 음운 인식을 배워볼래?</p>
+                  <a href="#none" class="card-more-btn">더보기</a>
+                </div>
+              </div>
+
+              <!-- 5. 루이 -->
+              <div class="character-card" data-character="lui">
+                <div class="card-left-visual" style="background-color: #F8F9FA;">
+                  <img src="images/koala_original_animation.webp" alt="루이 움직이는 캐릭터" class="card-char-img animated-character">
+                </div>
+                <div class="card-right-info" style="background-color: #8EC800;">
+                  <div class="card-tags">
+                    <span class="tag">#해독</span>
+                    <span class="tag">#정원사</span>
+                    <span class="tag">#코알라</span>
+                  </div>
+                  <h3 class="card-char-name">루이</h3>
+                  <p class="card-char-desc">해독은 글자를 소리로 바꾸는 단계야<br>나와 함께 해독을 배워볼래?</p>
+                  <a href="#none" class="card-more-btn">더보기</a>
+                </div>
+              </div>
+
+              <!-- 6. 레오 -->
+              <div class="character-card" data-character="leo">
+                <div class="card-left-visual" style="background-color: #F5FCF2;">
+                  <img src="images/chameleon_paint_web.webp" alt="레오 움직이는 캐릭터" class="card-char-img animated-character">
+                </div>
+                <div class="card-right-info" style="background-color: #43B701;">
+                  <div class="card-tags">
+                    <span class="tag">#음운 변동</span>
+                    <span class="tag">#화가</span>
+                    <span class="tag">#카멜레온</span>
+                  </div>
+                  <h3 class="card-char-name">레오</h3>
+                  <p class="card-char-desc">음운 변동은 표기와 실제 발음을 배우는 단계야<br>나와 함께 음운 변동을 배워볼래?</p>
+                  <a href="#none" class="card-more-btn">더보기</a>
+                </div>
+              </div>
+
+              <!-- 7. 우엉이 -->
+              <div class="character-card" data-character="ueong">
+                <div class="card-left-visual" style="background-color: #FFF5F5;">
+                  <img src="images/owl_animation.webp" alt="우엉이 움직이는 캐릭터" class="card-char-img animated-character">
+                </div>
+                <div class="card-right-info" style="background-color: #FF5353;">
+                  <div class="card-tags">
+                    <span class="tag">#철자</span>
+                    <span class="tag">#우체부</span>
+                    <span class="tag">#부엉이</span>
+                  </div>
+                  <h3 class="card-char-name">우엉이</h3>
+                  <p class="card-char-desc">철자는 완전한 문장을 쓰고 완성하는 최종 단계야<br>나와 함께 철자를 배워볼래?</p>
+                  <a href="#none" class="card-more-btn">더보기</a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+    </div>
+    <!-- ==========================================
+       SECTION 5: 캐릭터 더보기 모달 팝업
+       ========================================== -->
+  <div class="character-modal-overlay" id="characterModalOverlay" aria-hidden="true">
+    <div class="character-modal-window">
+      <!-- 닫기 버튼 -->
+      <button class="modal-close-btn" id="modalCloseBtn" aria-label="모달 닫기">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      <!-- 모달 타이틀 -->
+      <h2 class="modal-char-title" id="modalCharTitle">우엉이</h2>
+
+      <!-- 6개 이미지 그리드 영역 -->
+      <div class="modal-image-grid" id="modalImageGrid">
+        <div class="grid-item"><img src="" alt="캐릭터 모션 1" id="modalImg1"></div>
+        <div class="grid-item"><img src="" alt="캐릭터 모션 2" id="modalImg2"></div>
+        <div class="grid-item"><img src="" alt="캐릭터 모션 3" id="modalImg3"></div>
+        <div class="grid-item"><img src="" alt="캐릭터 모션 4" id="modalImg4"></div>
+        <div class="grid-item"><img src="" alt="캐릭터 모션 5" id="modalImg5"></div>
+        <div class="grid-item"><img src="" alt="캐릭터 모션 6" id="modalImg6"></div>
+      </div>
+    </div>
+  </div>
+
+  </main>
+
+  <!-- ==========================================
+       플로팅 요소 (탑 버튼)
+       ========================================== -->
+  <button class="scroll-top-btn" id="scrollTopBtn" aria-label="맨 위로 가기">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>
+  </button>
+
+  <!-- ==========================================
+       SECTION 8: 푸터 영역 (공통)
+       ========================================== -->
+  <footer class="footer ilkko-footer" aria-label="사이트 푸터">
+  <div class="ilkko-footer-inner">
+    <p class="ilkko-copyright">@2026 ilkko All rights reserved</p>
+    <a class="ilkko-footer-logo" href="index.html" aria-label="읽:꼬 메인으로 이동">
+      <img src="images/footerlogo.webp" alt="읽:꼬" />
+    </a>
+    <a class="ilkko-instagram" href="https://www.instagram.com/cjudmd_2026?cplk=MW9wb3BmeDM2MmFkOA==" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+      <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true" fill="currentColor">
+        <path d="M7.2 2h9.6A5.2 5.2 0 0 1 22 7.2v9.6a5.2 5.2 0 0 1-5.2 5.2H7.2A5.2 5.2 0 0 1 2 16.8V7.2A5.2 5.2 0 0 1 7.2 2Zm4.8 5.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6Zm0 2a2.8 2.8 0 1 1 0 5.6 2.8 2.8 0 0 1 0-5.6Zm5.05-3.15a1.15 1.15 0 1 0 0 2.3 1.15 1.15 0 0 0 0-2.3Z"/>
+      </svg>
+    </a>
+  </div>
+</footer>
+
+  <script src="character.js?v=pop-20261113"></script>
+</body>
+</html>
