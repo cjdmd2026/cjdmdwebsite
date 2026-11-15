@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>읽:꼬 - 커뮤니티</title>
+  <link rel="icon" type="image/webp" sizes="64x64" href="images/favicon.webp">
+  <link rel="stylesheet" href="community.css?v=wide-review-layout">
+  <link rel="stylesheet" href="footer-common.css">
+  <link rel="stylesheet" href="title-maplestory.css">
+  <link rel="stylesheet" href="desktop-layout.css?v=book-and-typography">
+</head>
+<body>
+
+  <!-- ==========================================
+       SECTION 1: 헤더 네비게이션 (공통)
+       - 로고, 모바일 햄버거 버튼, 메인 메뉴 링크 포함
+       ========================================== -->
+  <header class="header" id="commonHeader">
+    <div class="header-inner">
+      <!-- 서비스 로고 -->
+      <h1 class="header-logo">
+        <a href="index.html">
+          <img src="images/logo.webp" alt="읽:꼬 로고" class="header-logo-img">
+        </a>
+      </h1>
+      
+      <!-- 모바일 화면용 햄버거 메뉴 토글 버튼 -->
+      <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="메뉴 열기">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <!-- 글로벌 네비게이션 메뉴 -->
+      <nav class="header-nav" id="headerNav">
+        <ul class="header-menu-list">
+          <li class="header-menu-item"><a href="curriculum.html">커리큘럼</a></li>
+          <li class="header-menu-item"><a href="character.html">캐릭터</a></li>
+          <li class="header-menu-item"><a href="book.html">동화책</a></li>
+          <li class="header-menu-item active"><a href="community.html">커뮤니티</a></li>
+          <li class="header-menu-item"><a href="tip.html">도움말</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       MAIN CONTENT: 본문 영역
+       ========================================== -->
+  <main>
+
+    <!-- ==========================================
+         SECTION 2: 커뮤니티 히어로 인터랙티브 영역 (스크롤 고정 트랙)
+         - 인터랙티브 요소(클릭 힌트, 스티커, 캐릭터, 도장 레이어) 포함
+         ========================================== -->
+    <div class="community-hero-scroll-track" id="communityScrollTrack">
+      <section class="community-hero-pinned-viewport" id="communityHeroViewport">
+        
+        <!-- 마우스를 따라다니는 Click 힌트 (Desktop 전용) -->
+        <div class="community-hero-click-hint" id="communityClickHint">
+          <svg class="hint-pointer-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="7" y1="2" x2="7" y2="4.5" stroke="#000" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="2" y1="7" x2="4.5" y2="7" stroke="#000" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="3.5" y1="3.5" x2="5.2" y2="5.2" stroke="#000" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M7 6.5L16.5 13.5L11.5 14.5L13.5 19L11.5 20L9.5 15.5L6 17.5V6.5Z" fill="#fff" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+          </svg>
+          <span class="hint-text">click</span>
+        </div>
+
+        <!-- 히어로 메인 타이틀 및 배지 -->
+        <div class="community-hero-text-wrap" id="communityHeroText">
+          <span class="community-hero-badge">아이가 발견한 경험</span>
+          <p class="community-hero-sub-title">읽:꼬의 다양한 이야기를 만나보세요.</p>
+          <div class="community-hero-main-title-box">
+            <h2 class="community-hero-main-title">Community</h2>
+            <span class="community-hero-tag">Dyslexia</span>
+          </div>
+        </div>
+
+        <!-- 배경 장식 스티커 애니메이션 요소 -->
+        <div class="community-hero-floating-stickers">
+          <!-- 좌측 스티커 모음 -->
+          <img src="images/community-sticker-eyes.webp" alt="스티커 눈" class="community-sticker sticker-left-eyes">
+          <img src="images/community-sticker-flag.webp" alt="스티커 체크 플래그" class="community-sticker sticker-left-flag">
+          <img src="images/community-sticker-star.webp" alt="스티커 작은 별" class="community-sticker sticker-left-star">
+          <img src="images/community-sticker-corner.webp" alt="스티커 주황 기역자" class="community-sticker sticker-left-corner">
+
+          <!-- 우측 스티커 모음 -->
+          <img src="images/community-sticker-books.webp" alt="스티커 쌓인 책" class="community-sticker sticker-right-books">
+          <img src="images/community-sticker-spring.webp" alt="스티커 초록 스프링" class="community-sticker sticker-right-spring">
+          <img src="images/community-sticker-shape.webp" alt="스티커 노랑 파이프" class="community-sticker sticker-right-yellow">
+        </div>
+
+        <!-- 메인 캐릭터 비주얼 -->
+        <div class="community-hero-char-wrap" id="communityHeroChar">
+          <img src="images/community-hero-character.webp" alt="커뮤니티 캐릭터" class="community-hero-char-img">
+        </div>
+
+        <!-- 클릭 시 도장이 찍히는 JS 이벤트 레이어 -->
+        <div class="community-hero-stamp-layer" id="communityStampLayer"></div>
+      </section>
+    </div>
+
+    <!-- ==========================================
+         SECTION 3: 서비스 리뷰 수치 통계 섹션
+         - 만족도, 앱스토어 평점, 추천율 (JS 리빌 애니메이션 적용)
+         ========================================== -->
+    <section class="community-review-section">
+      <!-- 헤더 타이틀 -->
+      <div class="review-header reveal-up">
+        <h2>난독증 부모님들의 선택!</h2>
+        <p>30만 부모님이 선택한 난독증 재택 훈련 서비스 읽:꼬</p>
+      </div>
+      
+      <!-- 통계 카드 그리드 -->
+      <div class="review-card-container">
+        <!-- 01. 만족도 카드 -->
+        <div class="review-card reveal-up delay-1">
+          <img src="images/review-character.webp" alt="장식 캐릭터" class="review-char-deco">
+          <img src="images/review-icon-smile.webp" alt="스마일 아이콘" class="review-icon">
+          <span class="review-label">읽:꼬 만족하시나요?</span>
+          <strong class="review-value">94% 만족!</strong>
+        </div>
+
+        <!-- 02. 평점 카드 -->
+        <div class="review-card reveal-up delay-2">
+          <img src="images/review-icon-appstore.webp" alt="앱스토어 아이콘" class="review-icon">
+          <span class="review-label">앱스토어 구매평점</span>
+          <strong class="review-value">4.7점!</strong>
+        </div>
+
+        <!-- 03. 추천율 카드 -->
+        <div class="review-card reveal-up delay-3">
+          <img src="images/review-icon-thumb.webp" alt="따봉 아이콘" class="review-icon">
+          <span class="review-label">읽:꼬 추천하시나요?</span>
+          <strong class="review-value">99% 추천!</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECTION 4: 대표 추천 후기 (상세 리뷰 카드)
+         ========================================== -->
+    <section class="testimonial-section">
+      <div class="testimonial-inner">
+        
+        <!-- 헤더 및 더보기 링크 -->
+        <div class="testimonial-header">
+          <div class="header-titles">
+            <h2>추천 후기</h2>
+            <p>읽:꼬를 이용해주신 고객님들의 후기를 확인해보세요!</p>
+          </div>
+        </div>
+
+        <!-- 카드 리스트 영역 : 아래 후기는 실제 고객 검증 데이터가 아닌 디자인 시연용 예시입니다. -->
+        <div class="testimonial-list">
+
+          <!-- 후기 카드 01 -->
+          <article class="testimonial-card">
+            <div class="card-left">
+              <div class="user-avatar">
+                <img src="./images/avatar_bird.webp" alt="프로필 캐릭터">
+              </div>
+              <div class="review-body">
+                <h3 class="review-title">집에서도 꾸준히 하니 읽기 자신감이 생겼어요.</h3>
+                <p class="review-content">
+                  학원이나 센터에 자주 가기 어려워서 집에서 해볼 수 있는 방법을 찾고 있었어요.<br>
+                  읽:꼬는 아이가 놀이처럼 참여해서 부담 없이 시작할 수 있었고,<br>
+                  매일 조금씩 반복하니 스스로 소리 내어 읽어보려는 모습이 정말 많이 늘었어요.
+                </p>
+                <span class="review-author">김**님 보호자</span>
+              </div>
+            </div>
+            <div class="card-right-image">
+              <img src="./images/review_uploaded_1.jpg" alt="읽꼬 재택훈련 후기 사진 1">
+            </div>
+          </article>
+
+          <!-- 후기 카드 02 -->
+          <article class="testimonial-card">
+            <div class="card-left">
+              <div class="user-avatar">
+                <img src="./images/avatar_bear.webp" alt="프로필 캐릭터">
+              </div>
+              <div class="review-body">
+                <h3 class="review-title">방문 수업 없이도 집에서 편하게 훈련할 수 있었어요.</h3>
+                <p class="review-content">
+                  맞벌이라 시간을 맞추기 어려웠는데 태블릿과 교구만 있으면 바로 시작할 수 있어서 편했어요.<br>
+                  아이가 자음과 모음을 만지고 맞추는 활동을 좋아해서 훈련 시간을 기다리더라고요.<br>
+                  무엇보다 부모가 옆에서 어렵게 설명하지 않아도 단계별로 따라갈 수 있는 점이 만족스러웠어요.
+                </p>
+                <span class="review-author">박**님 보호자</span>
+              </div>
+            </div>
+            <div class="card-right-image">
+              <img src="./images/review_uploaded_2.jpg" alt="읽꼬 재택훈련 후기 사진 2">
+            </div>
+          </article>
+
+          <!-- 후기 카드 03 -->
+          <article class="testimonial-card">
+            <div class="card-left">
+              <div class="user-avatar">
+                <img src="./images/avatar_mole.webp" alt="프로필 캐릭터">
+              </div>
+              <div class="review-body">
+                <h3 class="review-title">아이가 혼자서도 해보려고 하는 습관이 생겼습니다.</h3>
+                <p class="review-content">
+                  처음에는 글자 읽기를 어려워해서 금방 지칠까 걱정했는데 캐릭터와 게임 요소 덕분에 집중을 잘했어요.<br>
+                  오늘은 몇 단계까지 해볼지 스스로 정하고 끝까지 해내는 모습이 인상 깊었어요.<br>
+                  읽기 연습뿐 아니라 아이의 성취감과 자기주도성이 함께 자라는 서비스라서 추천하고 싶어요.
+                </p>
+                <span class="review-author">이**님 보호자</span>
+              </div>
+            </div>
+            <div class="card-right-image">
+              <img src="./images/review_uploaded_3.jpg" alt="읽꼬 재택훈련 후기 사진 3">
+            </div>
+          </article>
+</div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECTION 5: 후기 작성 유도 CTA 배너 (쿠폰 증정)
+         ========================================== -->
+    <div class="review-cta-banner">
+      <!-- 그래픽 요소 -->
+      <div class="cta-char-wrap">
+        <img src="images/hero-character.webp" alt="읽꼬 캐릭터" class="cta-char-img" />
+      </div>
+
+      <!-- 안내 카피 -->
+      <div class="cta-text-wrap">
+        <h3>읽:꼬 후기를 작성하고<br />아이가 발견한 경험을 나눠주세요!</h3>
+      </div>
+
+      <!-- 행동 유도 버튼 및 혜택 뱃지 -->
+      <div class="cta-action-wrap">
+        <div class="floating-coupon-badge">
+          <span>2,000원 쿠폰 받기</span>
+        </div>
+        <button type="button" class="btn-write-review" id="openReviewModal" aria-haspopup="dialog" aria-controls="reviewWriteDialog">
+          <span>후기 작성하기</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         SECTION 6: 전체 리뷰 목록 & 필터/페이지네이션 (JS 동적 렌더링)
+         ========================================== -->
+    <section class="review-list-section">
+      <div class="review-list-inner">
+
+        <!-- 탭 카테고리 필터 -->
+        <div class="review-tab-menu">
+          <button class="tab-btn active" data-tab="all">전체 리뷰</button>
+          <button class="tab-btn" data-tab="photo">포토 리뷰</button>
+          <button class="tab-btn" data-tab="text">일반 리뷰</button>
+        </div>
+
+        <!-- 동적 카드 삽입 컨테이너 (JS 연결) -->
+        <div class="review-items-wrap" id="reviewContainer"></div>
+
+        <!-- 동적 페이지네이션 컨테이너 (JS 연결) -->
+        <div class="review-pagination" id="paginationContainer"></div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECTION 7: 플로팅 요소 (탑 버튼)
+         ========================================== -->
+    <button class="scroll-top-btn" id="scrollTopBtn" aria-label="맨 위로 가기">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="18 15 12 9 6 15"></polyline>
+      </svg>
+    </button>
+
+    <!-- 동적 리뷰 데이터 처리 스크립트 -->
+
+
+    <!-- 후기 작성 팝업 : 등록 내용은 이 브라우저에만 보관됩니다. -->
+    <div class="review-dialog-backdrop" id="reviewWriteDialog" role="presentation" hidden>
+      <section class="review-dialog" role="dialog" aria-modal="true" aria-labelledby="reviewDialogTitle" tabindex="-1">
+        <button type="button" class="review-dialog-close" id="closeReviewModal" aria-label="후기 창 닫기">×</button>
+        <div class="review-dialog-heading">
+          <span class="review-dialog-eyebrow">읽:꼬 이야기</span>
+          <h2 id="reviewDialogTitle">후기 작성하기</h2>
+          <p>아이와 함께한 읽기 훈련 경험을 들려주세요.</p>
+        </div>
+        <form id="writeReviewForm" class="review-dialog-form">
+          <label for="reviewNickname">작성자 닉네임</label>
+          <input id="reviewNickname" name="nickname" type="text" maxlength="20" placeholder="예: 잎글맘" autocomplete="nickname" required>
+          <label for="reviewTitle">후기 제목</label>
+          <input id="reviewTitle" name="title" type="text" maxlength="60" placeholder="아이의 변화를 한마디로!" required>
+          <label for="reviewContent">후기 내용</label>
+          <textarea id="reviewContent" name="content" rows="5" maxlength="800" placeholder="어떤 훈련이 재미있었나요?" required></textarea>
+          <label for="reviewPhoto">사진 첨부 <span class="review-optional">(선택, 최대 3MB)</span></label>
+          <input id="reviewPhoto" name="photo" type="file" accept="image/png,image/jpeg,image/webp">
+          <p class="review-photo-hint">얼굴이나 개인정보가 나온 사진은 공유 전에 확인해 주세요.</p>
+          
+          <div class="review-dialog-actions">
+            <button type="button" class="review-dialog-cancel" id="cancelReviewModal">취소</button>
+            <button type="submit" class="review-dialog-submit">후기 등록</button>
+          </div>
+          <p class="review-form-feedback" id="reviewFormFeedback" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <!-- ==========================================
+       SECTION 8: 푸터 영역 (공통)
+       - 정보 링크, 앱 다운로드, 회사 정보, 소셜 미디어
+       ========================================== -->
+  <footer class="footer ilkko-footer" aria-label="사이트 푸터">
+  <div class="ilkko-footer-inner">
+    <p class="ilkko-copyright">@2026 ilkko All rights reserved</p>
+    <a class="ilkko-footer-logo" href="index.html" aria-label="읽:꼬 메인으로 이동">
+      <img src="images/footerlogo.webp" alt="읽:꼬" />
+    </a>
+    <a class="ilkko-instagram" href="https://www.instagram.com/cjudmd_2026?cplk=MW9wb3BmeDM2MmFkOA==" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+      <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true" fill="currentColor">
+        <path d="M7.2 2h9.6A5.2 5.2 0 0 1 22 7.2v9.6a5.2 5.2 0 0 1-5.2 5.2H7.2A5.2 5.2 0 0 1 2 16.8V7.2A5.2 5.2 0 0 1 7.2 2Zm4.8 5.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6Zm0 2a2.8 2.8 0 1 1 0 5.6 2.8 2.8 0 0 1 0-5.6Zm5.05-3.15a1.15 1.15 0 1 0 0 2.3 1.15 1.15 0 0 0 0-2.3Z"/>
+      </svg>
+    </a>
+  </div>
+</footer>
+  
+  <!-- 페이지 전용 메인 JS 파일 -->
+  <script src="community.js?v=mobile-final-20261113"></script>
+</body>
+</html>

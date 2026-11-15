@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>읽:꼬 커리큘럼</title>
+  <link rel="icon" type="image/webp" sizes="64x64" href="images/favicon.webp">
+  <link rel="stylesheet" href="curriculum.css">
+  <script src="curriculum.js" defer></script>
+  <link rel="stylesheet" href="footer-common.css">
+  <link rel="stylesheet" href="title-maplestory.css">
+  <link rel="stylesheet" href="desktop-layout.css?v=book-and-typography">
+</head>
+<body>
+  <!-- 01. 기존 공통 헤더 -->
+  <header class="header" id="commonHeader">
+    <div class="header-inner">
+      <h1 class="header-logo">
+        <a href="index.html" aria-label="읽:꼬 홈으로 이동">
+          <img src="images/logo.webp" alt="읽:꼬" class="header-logo-img">
+        </a>
+      </h1>
+      <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button"
+              aria-label="메뉴 열기" aria-controls="headerNav" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="header-nav" id="headerNav" aria-label="주 메뉴">
+        <ul class="header-menu-list">
+          <li class="header-menu-item active"><a href="curriculum.html" aria-current="page">커리큘럼</a></li>
+          <li class="header-menu-item"><a href="character.html">캐릭터</a></li>
+          <li class="header-menu-item"><a href="book.html">동화책</a></li>
+          <li class="header-menu-item"><a href="community.html">커뮤니티</a></li>
+          <li class="header-menu-item"><a href="tip.html">도움말</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="curriculum-main">
+    <!-- 02. 첫 번째 섹션: 하늘+캐릭터 PNG / 하단 구름 PNG -->
+    <section class="curriculum-hero" aria-label="읽:꼬 소개">
+      <div class="curriculum-hero-artwork">
+        <img src="images/curmain.webp"
+             alt="읽:꼬, 난독증 아동을 위한 재택 훈련 서비스"
+             class="curriculum-hero-image" width="1920" height="964" fetchpriority="high">
+        <img src="images/cloud.webp" alt="" aria-hidden="true"
+             class="curriculum-hero-cloud" width="1920" height="421">
+      </div>
+    </section>
+
+    <!-- 03. 학습 구성: 섹션 전체가 보인 뒤 세로 스크롤로 가로 이동 -->
+    <section class="learning-stages" id="learningStages" aria-labelledby="learningStagesTitle">
+      <div class="learning-stages-sticky">
+        <div class="learning-stages-content">
+          <h2 class="learning-stages-title" id="learningStagesTitle">읽:꼬 학습 구성</h2>
+          <div class="stage-viewport" id="stageViewport" role="region" tabindex="0"
+               aria-label="읽:꼬 6단계 학습 구성. 스크롤하면 단계가 차례대로 이동합니다.">
+            <div class="stage-track" id="stageTrack">
+          <article class="stage-item">
+            <div class="stage-visual">
+              <div class="stage-artwork">
+                <img src="images/stage-01.webp" alt="" draggable="false" width="540" height="300">
+              </div>
+            </div>
+            <h3>모음 <span>(1단계)</span></h3>
+            <p>난독증 극복을 위한 체계적인 맞춤형<br>훈련의 첫 단계로, 기초 음운 인식을 도와요</p>
+          </article>
+          <article class="stage-item">
+            <div class="stage-visual">
+              <div class="stage-artwork">
+                <img src="images/stage-02.webp" alt="" draggable="false" width="540" height="300">
+              </div>
+            </div>
+            <h3>자음 <span>(2단계)</span></h3>
+            <p>모음을 배우고 난 후,<br>자음 원리를 체계적으로 체득해요</p>
+          </article>
+          <article class="stage-item">
+            <div class="stage-visual">
+              <div class="stage-artwork">
+                <img src="images/stage-03.webp" alt="" draggable="false" width="540" height="300">
+              </div>
+            </div>
+            <h3>음운 인식 <span>(3단계)</span></h3>
+            <p>말소리를 듣고 구분하며,<br>소리와 글자의 관계를 익혀요</p>
+          </article>
+          <article class="stage-item">
+            <div class="stage-visual">
+              <div class="stage-artwork">
+                <img src="images/stage-04.webp" alt="" draggable="false" width="540" height="300">
+              </div>
+            </div>
+            <h3>해독 연습 <span>(4단계)</span></h3>
+            <p>자음과 모음을 연결해<br>낱말을 스스로 읽는 힘을 길러요</p>
+          </article>
+          <article class="stage-item">
+            <div class="stage-visual">
+              <div class="stage-artwork">
+                <img src="images/stage-05.webp" alt="" draggable="false" width="540" height="300">
+              </div>
+            </div>
+            <h3>음운 변동 <span>(5단계)</span></h3>
+            <p>소리가 달라지는 규칙을 이해하고<br>자연스럽게 읽는 연습을 해요</p>
+          </article>
+          <article class="stage-item">
+            <div class="stage-visual">
+              <div class="stage-artwork">
+                <img src="images/stage-06.webp" alt="" draggable="false" width="540" height="300">
+              </div>
+            </div>
+            <h3>철자 <span>(6단계)</span></h3>
+            <p>소리와 글자를 연결해<br>올바르게 쓰는 능력을 길러요</p>
+          </article>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- ===========================================
+         04. 숲속 여행 : 각 장면이 아래에서 위로 올라오는 스크롤 전환
+         배경 6장 원본 비율/캐릭터 위치 유지 · 끊김 없는 구름 덮기
+         캐릭터/말풍선, 모달, 마지막 패키지 기능은 그대로 유지
+    ============================================ -->
+    <section class="nature-section" id="natureSection" aria-label="읽:꼬 단계별 숲속 여행">
+      <div class="nature-scene" id="natureScene">
+        <!-- 배경 1/6 : 두더지 · 모음 -->
+        <div class="nature-chapter nature-chapter--1" data-chapter="1">
+          <img class="nature-background" src="images/bg-01.webp"
+               alt="점점 짙어지는 파란 하늘과 아래쪽 부드러운 구름" width="1889" height="2048" loading="eager" decoding="async">
+        <div class="nature-stop nature-stop--1" data-step="1">
+          <img class="nature-character" tabindex="0" src="images/nature-mole.webp"
+               alt="곡괭이를 들고 광물을 캐는 두더지" loading="lazy">
+          <button class="nature-bubble" type="button" data-open-step="1"
+                  aria-label="모음 1단계 자세히 보기">
+            <img src="images/bubble1.webp" alt="모음" loading="lazy">
+          </button>
+        </div>
+        </div>
+        <!-- 배경 2/6 : 곰 · 자음 -->
+        <div class="nature-chapter nature-chapter--2" data-chapter="2">
+          <img class="nature-background" src="images/bg-02.webp"
+               alt="맑은 하늘과 왼쪽, 오른쪽의 구름 풍경" width="1595" height="2048" loading="lazy" decoding="async">
+        <div class="nature-stop nature-stop--2" data-step="2">
+          <img class="nature-character" tabindex="0" src="images/nature-bear.webp"
+               alt="꿀이 묻어 반짝이는 곰" loading="lazy">
+          <button class="nature-bubble" type="button" data-open-step="2"
+                  aria-label="자음 2단계 자세히 보기">
+            <img src="images/bubble2.webp" alt="자음" loading="lazy">
+          </button>
+        </div>
+        </div>
+        <!-- 배경 3/6 : 비버 · 음운 인식 -->
+        <div class="nature-chapter nature-chapter--3" data-chapter="3">
+          <img class="nature-background" src="images/bg-03.webp"
+               alt="구름이 이어지는 파란 하늘" width="1991" height="2048" loading="lazy" decoding="async">
+        <div class="nature-stop nature-stop--3" data-step="3">
+          <img class="nature-character" tabindex="0" src="images/nature-beaver.webp"
+               alt="나무판을 들고 신나하는 비버" loading="lazy">
+          <button class="nature-bubble" type="button" data-open-step="3"
+                  aria-label="음운 인식 3단계 자세히 보기">
+            <img src="images/bubble3.webp" alt="음운 인식" loading="lazy">
+          </button>
+        </div>
+        </div>
+        <!-- 배경 4/6 : 코알라 · 해독 연습 -->
+        <div class="nature-chapter nature-chapter--4" data-chapter="4">
+          <img class="nature-background" src="images/bg-04.webp"
+               alt="층층이 떠 있는 둥근 구름이 있는 하늘" width="1924" height="2033" loading="lazy" decoding="async">
+        <div class="nature-stop nature-stop--4" data-step="4">
+          <img class="nature-character" tabindex="0" src="images/nature-koala.webp"
+               alt="나뭇잎을 손질하는 코알라" loading="lazy">
+          <button class="nature-bubble" type="button" data-open-step="4"
+                  aria-label="해독 연습 4단계 자세히 보기">
+            <img src="images/bubble4.webp" alt="해독 연습" loading="lazy">
+          </button>
+        </div>
+        </div>
+        <!-- 배경 5/6 : 카멜레온 · 음운 변동 -->
+        <div class="nature-chapter nature-chapter--5" data-chapter="5">
+          <img class="nature-background" src="images/bg-05.webp"
+               alt="아래쪽 초록 들판으로 향하는 구름 가득한 하늘" width="1934" height="2028" loading="lazy" decoding="async">
+        <div class="nature-stop nature-stop--5" data-step="5">
+          <img class="nature-character" tabindex="0" src="images/nature-chameleon.webp"
+               alt="색색의 물감으로 그림 그리는 카멜레온" loading="lazy">
+          <button class="nature-bubble" type="button" data-open-step="5"
+                  aria-label="음운 변동 5단계 자세히 보기">
+            <img src="images/bubble5.webp" alt="음운변동" loading="lazy">
+          </button>
+        </div>
+        </div>
+        <!-- 배경 6/6 : 부엉이 · 철자 -->
+        <div class="nature-chapter nature-chapter--6" data-chapter="6">
+          <img class="nature-background" src="images/bg-06.webp"
+               alt="푸른 산과 호수, 꽃이 피어난 초록 들판" width="1408" height="2048" loading="lazy" decoding="async">
+        <div class="nature-stop nature-stop--6" data-step="6">
+          <img class="nature-character" tabindex="0" src="images/nature-owl.webp"
+               alt="편지를 배달하는 부엉이" loading="lazy">
+          <button class="nature-bubble" type="button" data-open-step="6"
+                  aria-label="철자 6단계 자세히 보기">
+            <img src="images/bubble6.webp" alt="철자" loading="lazy">
+          </button>
+        </div>
+        <div class="nature-package-wrap" id="naturePackage">
+          <img class="nature-package" src="images/nature-package.webp"
+               alt="동화책과 읽:꼬 학습 교구를 담은 쏙쏙 패키지 박스"
+               loading="lazy">
+        </div>
+        </div>
+      </div>
+      <!-- 모바일 전용: 한 장의 긴 하늘 배경 위에 여섯 장면을 고정 배치합니다.
+           PC 장면/PC 호버와 CSS 위치 변수는 변경하지 않습니다. -->
+      <div class="nature-mobile-scene" aria-label="읽:꼬 6단계 숲속 모험">
+        <img class="nature-mobile-sky" src="images/mobile-sky-background.webp" alt="구름이 흐르는 푸른 하늘부터 숲과 호수까지 이어지는 배경" width="436" height="2048" loading="lazy" decoding="async">
+        <img class="nature-mobile-character mobile-character-1" src="images/nature-mole.webp" alt="모음 단계 두더지" loading="lazy">
+        <button class="nature-mobile-bubble mobile-bubble-1" type="button" data-open-step="1" aria-label="모음 1단계 자세히 보기"><img src="images/bubble1.webp" alt="모음"></button>
+        <img class="nature-mobile-character mobile-character-2" src="images/nature-bear.webp" alt="자음 단계 곰" loading="lazy">
+        <button class="nature-mobile-bubble mobile-bubble-2" type="button" data-open-step="2" aria-label="자음 2단계 자세히 보기"><img src="images/bubble2.webp" alt="자음"></button>
+        <img class="nature-mobile-character mobile-character-3" src="images/nature-beaver.webp" alt="음운 인식 단계 비버" loading="lazy">
+        <button class="nature-mobile-bubble mobile-bubble-3" type="button" data-open-step="3" aria-label="음운 인식 3단계 자세히 보기"><img src="images/bubble3.webp" alt="음운 인식"></button>
+        <img class="nature-mobile-character mobile-character-4" src="images/nature-koala.webp" alt="해독 연습 단계 코알라" loading="lazy">
+        <button class="nature-mobile-bubble mobile-bubble-4" type="button" data-open-step="4" aria-label="해독 연습 4단계 자세히 보기"><img src="images/bubble4.webp" alt="해독 연습"></button>
+        <img class="nature-mobile-character mobile-character-5" src="images/nature-chameleon.webp" alt="음운 변동 단계 카멜레온" loading="lazy">
+        <button class="nature-mobile-bubble mobile-bubble-5" type="button" data-open-step="5" aria-label="음운 변동 5단계 자세히 보기"><img src="images/bubble5.webp" alt="음운 변동"></button>
+        <img class="nature-mobile-character mobile-character-6" src="images/nature-owl.webp" alt="철자 단계 부엉이" loading="lazy">
+        <button class="nature-mobile-bubble mobile-bubble-6" type="button" data-open-step="6" aria-label="철자 6단계 자세히 보기"><img src="images/bubble6.webp" alt="철자"></button>
+        <img class="nature-mobile-package" src="images/nature-package.webp" alt="모험을 마친 뒤 만나는 읽:꼬 패키지" loading="lazy">
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 04. 공통 위로 가기 버튼 -->
+  <button class="scroll-top-btn" id="scrollTopBtn" type="button" aria-label="맨 위로 가기">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>
+  </button>
+
+  <!-- 05. 공통 푸터 -->
+  <footer class="footer ilkko-footer" aria-label="사이트 푸터">
+  <div class="ilkko-footer-inner">
+    <p class="ilkko-copyright">@2026 ilkko All rights reserved</p>
+    <a class="ilkko-footer-logo" href="index.html" aria-label="읽:꼬 메인으로 이동">
+      <img src="images/footerlogo.webp" alt="읽:꼬" />
+    </a>
+    <a class="ilkko-instagram" href="https://www.instagram.com/cjudmd_2026?cplk=MW9wb3BmeDM2MmFkOA==" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+      <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true" fill="currentColor">
+        <path d="M7.2 2h9.6A5.2 5.2 0 0 1 22 7.2v9.6a5.2 5.2 0 0 1-5.2 5.2H7.2A5.2 5.2 0 0 1 2 16.8V7.2A5.2 5.2 0 0 1 7.2 2Zm4.8 5.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6Zm0 2a2.8 2.8 0 1 1 0 5.6 2.8 2.8 0 0 1 0-5.6Zm5.05-3.15a1.15 1.15 0 1 0 0 2.3 1.15 1.15 0 0 0 0-2.3Z"/>
+      </svg>
+    </a>
+  </div>
+</footer>
+
+  <!-- 단계별 훈련 팝업: 참고 화면과 동일한 960px 다이얼로그 구조 -->
+  <div class="training-modal" id="trainingModal" aria-hidden="true">
+    <div class="training-modal-backdrop" data-close-modal></div>
+    <section class="training-dialog" role="dialog" aria-modal="true"
+             aria-labelledby="trainingModalTitle" tabindex="-1">
+      <header class="training-modal-header">
+        <button class="training-close" id="trainingClose" type="button" aria-label="팝업 닫기">×</button>
+        <h2 id="trainingModalTitle">단계별 훈련</h2>
+        <nav class="training-tabs" id="trainingTabs" aria-label="단계 선택">
+          <button type="button" data-modal-step="1" aria-label="1단계 모음">1</button>
+          <button type="button" data-modal-step="2" aria-label="2단계 자음">2</button>
+          <button type="button" data-modal-step="3" aria-label="3단계 음운 인식">3</button>
+          <button type="button" data-modal-step="4" aria-label="4단계 해독 연습">4</button>
+          <button type="button" data-modal-step="5" aria-label="5단계 음운 변동">5</button>
+          <button type="button" data-modal-step="6" aria-label="6단계 철자">6</button>
+        </nav>
+      </header>
+      <div class="training-modal-scroll" id="trainingModalScroll">
+        <div class="training-modal-body">
+          <div class="training-modal-art">
+            <span class="training-ribbon" id="trainingModalNumber">1단계</span>
+            <div class="training-image-placeholder" id="trainingImagePlaceholder">
+              <video id="trainingModalVideo" class="training-stage-video" playsinline muted autoplay loop preload="metadata" aria-label="단계별 학습 영상"></video>
+              <img id="trainingModalImage" src="" alt="" hidden>
+              <span id="trainingPlaceholderText" hidden>단계별 이미지 영역</span>
+            </div>
+          </div>
+          <div class="training-modal-information">
+            <h3 id="trainingModalHeadline">글자와 소리를 처음 만나보아요.</h3>
+            <p id="trainingModalDescription"></p>
+            <div class="training-tags" id="trainingModalTags"></div>
+          </div>
+        </div>
+        <div class="training-list-separator"></div>
+        <div class="training-overview" id="trainingDetailList" aria-label="훈련 단계 목록"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 패키지 박스에 도착했을 때 컨페티 -->
+  <div class="confetti-layer" id="confettiLayer" aria-hidden="true"></div>
+
+</body>
+</html>
