@@ -38,13 +38,21 @@ async function sampleScroll(page, history) {
             history: explanation.classList.contains('is-history-section'),
             titleX: title.getBoundingClientRect().left,
             descriptionX: description.getBoundingClientRect().left,
+            titleOpacity: Number(getComputedStyle(title.querySelector('h2')).opacity),
+            titleText: title.textContent,
+            titleShift: (() => {
+                const heading = title.querySelector('h2');
+                return new DOMMatrix(getComputedStyle(heading).transform).m42 / heading.offsetHeight;
+            })(),
+            titleCount: explanation.querySelectorAll('.history-title-mask').length,
             activeAnimations: explanation.getAnimations({ subtree: true }).length
         });
         const before = read();
         scrollTo({ top: history ? innerHeight : 0, behavior: 'instant' });
         const samples = [];
         const start = performance.now();
-        while (performance.now() - start < 2700) {
+        // Include the outgoing text's 240ms exit before the 2.4s layout movement.
+        while (performance.now() - start < 3100) {
             await new Promise(requestAnimationFrame);
             samples.push(read());
         }
@@ -56,6 +64,12 @@ function assertSmoothChange(result, history) {
     assert.equal(result.after.history, history);
     const changed = result.samples.filter(sample => sample.history === history);
     assert.ok(changed.length > 5, 'The new content remains visible');
+    const leaving = result.samples.filter(sample => sample.history !== history);
+    assert.ok(leaving.some(sample => sample.titleShift > .5), 'The old title moves below the mask before replacement');
+    assert.ok(leaving.every(sample => sample.titleText === result.before.titleText), 'The old wording is retained throughout its exit');
+    assert.ok(changed.some(sample => sample.titleShift > .1 && sample.titleShift < .9), 'The new wording rises from below the mask');
+    assert.ok(result.samples.every(sample => sample.titleOpacity === 1 && sample.titleCount === 1), 'The transition uses one opaque text layer without a crossfade');
+    assert.ok(Math.abs(result.after.titleShift) < .001, 'The incoming text settles at its original baseline');
     for (const key of ['titleX', 'descriptionX']) {
         const start = result.before[key], end = result.after[key];
         const distance = Math.abs(end - start);
@@ -109,12 +123,14 @@ function assertSmoothChange(result, history) {
                     maxJump: Math.max(...errors), expected,
                     title: explanation.querySelector('h2').textContent,
                     animations: explanation.getAnimations({ subtree: true }).length,
+                    titleCount: explanation.querySelectorAll('.history-title-mask').length,
                     transform: getComputedStyle(wrappers[0]).transform
                 };
             });
             assert.ok(interrupted.maxJump < 1, 'Rapid card changes continue from the current on-screen position');
             assert.equal(interrupted.title, interrupted.expected, 'The latest card wins');
             assert.equal(interrupted.animations, 0);
+            assert.equal(interrupted.titleCount, 1, 'Rapid changes keep a single title');
             assert.equal(interrupted.transform, 'none');
             assertSmoothChange(await sampleScroll(page, false), false);
             assert.deepEqual(errors, []);
@@ -236,6 +252,7 @@ function assertSmoothChange(result, history) {
                         elapsed, scrollY,
                         y: title.getBoundingClientRect().top,
                         history: explanation.classList.contains('is-history-section'),
+                        textShift: new DOMMatrix(getComputedStyle(title.querySelector('h2')).transform).m42,
                         animations: explanation.getAnimations({ subtree: true }).length
                     });
                     if (elapsed < 2400) requestAnimationFrame(sample);
@@ -245,8 +262,10 @@ function assertSmoothChange(result, history) {
             await page.mouse.wheel(0, -700);
             await page.waitForFunction(() => returnMotionSamples.at(-1).elapsed >= 2400);
             const returning = await page.evaluate(() => returnMotionSamples);
+            const returnExitStart = returning.find(sample => sample.textShift > 1);
             const returnStart = returning.find(sample => !sample.history);
-            assert.ok(returnStart && returnStart.scrollY > 270, 'The intro returns before the upward scroll is nearly over');
+            assert.ok(returnExitStart && returnExitStart.scrollY > 270, 'The outgoing text starts descending early during the upward scroll');
+            assert.ok(returnStart && returnStart.elapsed > returnExitStart.elapsed, 'The introduction replaces the history wording only after the exit');
             const returnEnd = returning.at(-1);
             assert.ok(Math.abs(returnEnd.y - first.y) < 1, 'The text returns to its original height');
             const returnSettled = returning.find(sample => !sample.history && Math.abs(sample.y - first.y) < .25);
@@ -262,6 +281,7 @@ function assertSmoothChange(result, history) {
         const reduced = await sampleScroll(page, true);
         assert.equal(reduced.after.history, true);
         assert.ok(reduced.samples.every(sample => sample.activeAnimations === 0), 'Reduced motion changes content without animations');
+        assert.ok(reduced.samples.every(sample => Math.abs(sample.titleShift) < .001), 'Reduced motion does not leave text hidden below its mask');
         const reducedPhoto = await page.locator('.archive-wrap .card01').evaluate(element => {
             const style = getComputedStyle(element);
             return { opacity: style.opacity, filter: style.filter, transform: style.transform };

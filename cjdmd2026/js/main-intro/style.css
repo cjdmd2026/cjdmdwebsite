@@ -37,7 +37,7 @@ a:focus-visible{outline:2px solid #ff3c3c;outline-offset:6px}
 .hero-art{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .hero-nebula-canvas{display:block;width:100%;height:100%;opacity:0;transition:opacity .8s ease}
 .hero-art.is-ready .hero-nebula-canvas{opacity:1}
-.individuality-title{position:absolute;left:var(--page-gutter);right:var(--page-gutter);top:50%;transform:translateY(-50%);font-family:"Pretendard Regular","Pretendard",sans-serif;font-size:var(--heading-size);line-height:1.3;letter-spacing:-.02em;font-weight:400}
+.individuality-title{position:absolute;left:var(--page-gutter);right:var(--page-gutter);top:50%;transform:translateY(-50%);font-family:"Pretendard Regular","Pretendard",sans-serif;font-size:32px;line-height:1.3;letter-spacing:-.02em;font-weight:400}
 .reading-line{display:flex;align-items:center;gap:clamp(12px,1.25vw,24px);white-space:nowrap}
 .reading-paragraph-start{margin-top:.58em}
 .reading-copy{position:relative;flex:none}
@@ -100,7 +100,7 @@ a:focus-visible{outline:2px solid #ff3c3c;outline-offset:6px}
   .hero-heading .heading-main{max-width:22em;line-height:1.35}
   .hero-heading .heading-lead{margin-bottom:4px}
   .section-year{bottom:7%;font-size:28px}
-  .individuality-title{top:44%;font-size:clamp(17px,6.3vw,35px)}
+  .individuality-title{top:44%;font-size:clamp(17px,6.3vw,32px)}
   .reading-line{gap:10px}
   .story-captions{bottom:9%}
   .construction-bar{bottom:max(20px,env(safe-area-inset-bottom))}

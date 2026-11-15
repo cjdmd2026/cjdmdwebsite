@@ -1,0 +1,1951 @@
+{
+  "encoding": "lossless-webp-original-pixels",
+  "projects": [
+    {
+      "id": "cheoma",
+      "title": "그늘잡이",
+      "oldBytes": 74920563,
+      "modes": [
+        {
+          "mode": "pc",
+          "source": "그늘잡이_상세페이지/프로젝트 상세 - 표준.png",
+          "sourceBytes": 23804639,
+          "sourceHash": "fcd415a0c8b61c49d5e820acdf4de1a525c47c1c6061bb6dc49a390226651a3d",
+          "width": 1920,
+          "height": 20712,
+          "frameId": "4:292",
+          "tiles": [
+            {
+              "file": "pc-01.webp",
+              "width": 1920,
+              "height": 1170,
+              "bytes": 1361860,
+              "hash": "2988fd6f59fb"
+            },
+            {
+              "file": "pc-02.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1773872,
+              "hash": "eb9493e637fd"
+            },
+            {
+              "file": "pc-03.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 870272,
+              "hash": "aad6c678bd30"
+            },
+            {
+              "file": "pc-04.webp",
+              "width": 1920,
+              "height": 730,
+              "bytes": 449774,
+              "hash": "8b7f78681c0a"
+            },
+            {
+              "file": "pc-05.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1728538,
+              "hash": "40b9f25f24e4"
+            },
+            {
+              "file": "pc-06.webp",
+              "width": 1920,
+              "height": 1412,
+              "bytes": 235528,
+              "hash": "805855e2373d"
+            },
+            {
+              "file": "pc-07.webp",
+              "width": 1920,
+              "height": 541,
+              "bytes": 693798,
+              "hash": "748cf73ed41d"
+            },
+            {
+              "file": "pc-08.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 702748,
+              "hash": "7fcfc2449709"
+            },
+            {
+              "file": "pc-09.webp",
+              "width": 1920,
+              "height": 1426,
+              "bytes": 570278,
+              "hash": "77a85c9afe5c"
+            },
+            {
+              "file": "pc-10.webp",
+              "width": 1920,
+              "height": 1645,
+              "bytes": 1004872,
+              "hash": "c45e8d4bf24d"
+            },
+            {
+              "file": "pc-11.webp",
+              "width": 1920,
+              "height": 1038,
+              "bytes": 323092,
+              "hash": "80a76173fedd"
+            },
+            {
+              "file": "pc-12.webp",
+              "width": 1920,
+              "height": 894,
+              "bytes": 91696,
+              "hash": "1defc92f8f0a"
+            },
+            {
+              "file": "pc-13.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 2093664,
+              "hash": "833bd6889a5e"
+            },
+            {
+              "file": "pc-14.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1683866,
+              "hash": "172ea73177ee"
+            },
+            {
+              "file": "pc-15.webp",
+              "width": 1920,
+              "height": 1056,
+              "bytes": 1555902,
+              "hash": "57f0e07e2356"
+            }
+          ]
+        },
+        {
+          "mode": "mobile",
+          "source": "그늘잡이_상세페이지/프로젝트 상세 - 모바일 표준.png",
+          "sourceBytes": 2156777,
+          "sourceHash": "7d79f058fe3f2b59bf5e59be0a10b1138af73c2f22f86b78db723874dffc593e",
+          "width": 390,
+          "height": 7535,
+          "frameId": "24:2025",
+          "tiles": [
+            {
+              "file": "mobile-01.webp",
+              "width": 390,
+              "height": 875,
+              "bytes": 190488,
+              "hash": "b6bb0b57942c"
+            },
+            {
+              "file": "mobile-02.webp",
+              "width": 390,
+              "height": 713,
+              "bytes": 206132,
+              "hash": "f205f6cc2005"
+            },
+            {
+              "file": "mobile-03.webp",
+              "width": 390,
+              "height": 646,
+              "bytes": 88356,
+              "hash": "f9181cd0bb79"
+            },
+            {
+              "file": "mobile-04.webp",
+              "width": 390,
+              "height": 518,
+              "bytes": 11874,
+              "hash": "c48cd3092822"
+            },
+            {
+              "file": "mobile-05.webp",
+              "width": 390,
+              "height": 1000,
+              "bytes": 139776,
+              "hash": "069ab1bcf99a"
+            },
+            {
+              "file": "mobile-06.webp",
+              "width": 390,
+              "height": 29,
+              "bytes": 234,
+              "hash": "22ce2fd95292"
+            },
+            {
+              "file": "mobile-07.webp",
+              "width": 390,
+              "height": 814,
+              "bytes": 12928,
+              "hash": "bc39a460b05e"
+            },
+            {
+              "file": "mobile-08.webp",
+              "width": 390,
+              "height": 656,
+              "bytes": 72688,
+              "hash": "e68a787a7d77"
+            },
+            {
+              "file": "mobile-09.webp",
+              "width": 390,
+              "height": 357,
+              "bytes": 8968,
+              "hash": "8bef2708b6b7"
+            },
+            {
+              "file": "mobile-10.webp",
+              "width": 390,
+              "height": 1000,
+              "bytes": 292344,
+              "hash": "6f129ce5922b"
+            },
+            {
+              "file": "mobile-11.webp",
+              "width": 390,
+              "height": 927,
+              "bytes": 351376,
+              "hash": "12503397a0c5"
+            }
+          ]
+        }
+      ],
+      "newImageBytes": 16514924
+    },
+    {
+      "id": "curo",
+      "title": "CURO",
+      "oldBytes": 70823434,
+      "modes": [
+        {
+          "mode": "pc",
+          "source": "CURO_상세페이지/CURO_상세페이지_1.jpg",
+          "sourceBytes": 18583325,
+          "sourceHash": "dd4129faa7d4aa4d48f79fecf39fbb5a97cea1b1e402710de3ce512ff0e2dc19",
+          "width": 1920,
+          "height": 21282,
+          "frameId": "116:20",
+          "tiles": [
+            {
+              "file": "pc-01.webp",
+              "width": 1920,
+              "height": 1170,
+              "bytes": 625540,
+              "hash": "00b82078c4da"
+            },
+            {
+              "file": "pc-02.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1798152,
+              "hash": "f7dac62f65aa"
+            },
+            {
+              "file": "pc-03.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1326016,
+              "hash": "e672254ed9a5"
+            },
+            {
+              "file": "pc-04.webp",
+              "width": 1920,
+              "height": 730,
+              "bytes": 700140,
+              "hash": "7c5b9e4b9a8c"
+            },
+            {
+              "file": "pc-05.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 878640,
+              "hash": "91cc213b24f0"
+            },
+            {
+              "file": "pc-06.webp",
+              "width": 1920,
+              "height": 1036,
+              "bytes": 669724,
+              "hash": "df626f867b0f"
+            },
+            {
+              "file": "pc-07.webp",
+              "width": 1920,
+              "height": 570,
+              "bytes": 487532,
+              "hash": "8e95ad445524"
+            },
+            {
+              "file": "pc-08.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 696672,
+              "hash": "b72d2403d765"
+            },
+            {
+              "file": "pc-09.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1385500,
+              "hash": "6d4ea588c4ad"
+            },
+            {
+              "file": "pc-10.webp",
+              "width": 1920,
+              "height": 362,
+              "bytes": 95436,
+              "hash": "bffbd593e975"
+            },
+            {
+              "file": "pc-11.webp",
+              "width": 1920,
+              "height": 1279,
+              "bytes": 295114,
+              "hash": "9130c4077db2"
+            },
+            {
+              "file": "pc-12.webp",
+              "width": 1920,
+              "height": 1460,
+              "bytes": 825576,
+              "hash": "a085e266c981"
+            },
+            {
+              "file": "pc-13.webp",
+              "width": 1920,
+              "height": 894,
+              "bytes": 37590,
+              "hash": "34245ca188b7"
+            },
+            {
+              "file": "pc-14.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 2650774,
+              "hash": "163c7a370ffe"
+            },
+            {
+              "file": "pc-15.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 2079196,
+              "hash": "dc08c383586e"
+            },
+            {
+              "file": "pc-16.webp",
+              "width": 1920,
+              "height": 1181,
+              "bytes": 1778878,
+              "hash": "9ee4a53e2799"
+            }
+          ]
+        },
+        {
+          "mode": "mobile",
+          "source": "CURO_상세페이지/CURO_상세페이지_2.jpg",
+          "sourceBytes": 3448225,
+          "sourceHash": "1eb59165fe56704b8e5c450d6d0ccaa3e49e6fbb30778858a0f27be31b299ff5",
+          "width": 390,
+          "height": 11184,
+          "frameId": "116:482",
+          "tiles": [
+            {
+              "file": "mobile-01.webp",
+              "width": 390,
+              "height": 859,
+              "bytes": 127106,
+              "hash": "65aad011558b"
+            },
+            {
+              "file": "mobile-02.webp",
+              "width": 390,
+              "height": 713,
+              "bytes": 257680,
+              "hash": "51adacf0fcfa"
+            },
+            {
+              "file": "mobile-03.webp",
+              "width": 390,
+              "height": 807,
+              "bytes": 36864,
+              "hash": "c5e2890819d9"
+            },
+            {
+              "file": "mobile-04.webp",
+              "width": 390,
+              "height": 1000,
+              "bytes": 239780,
+              "hash": "e15bf3fcc44b"
+            },
+            {
+              "file": "mobile-05.webp",
+              "width": 390,
+              "height": 93,
+              "bytes": 26510,
+              "hash": "13cd624b6311"
+            },
+            {
+              "file": "mobile-06.webp",
+              "width": 390,
+              "height": 1000,
+              "bytes": 206790,
+              "hash": "238639db15a3"
+            },
+            {
+              "file": "mobile-07.webp",
+              "width": 390,
+              "height": 1000,
+              "bytes": 289428,
+              "hash": "88e5de10ab92"
+            },
+            {
+              "file": "mobile-08.webp",
+              "width": 390,
+              "height": 1000,
+              "bytes": 260846,
+              "hash": "a8f6ef2f2bb1"
+            },
+            {
+              "file": "mobile-09.webp",
+              "width": 390,
+              "height": 125,
+              "bytes": 6484,
+              "hash": "c3f1a0e33aca"
+            },
+            {
+              "file": "mobile-10.webp",
+              "width": 390,
+              "height": 842,
+              "bytes": 69374,
+              "hash": "9509e133d7a9"
+            },
+            {
+              "file": "mobile-11.webp",
+              "width": 390,
+              "height": 479,
+              "bytes": 97080,
+              "hash": "fd676d5c0453"
+            },
+            {
+              "file": "mobile-12.webp",
+              "width": 390,
+              "height": 682,
+              "bytes": 171956,
+              "hash": "a4cd0d16afa1"
+            },
+            {
+              "file": "mobile-13.webp",
+              "width": 390,
+              "height": 1000,
+              "bytes": 233512,
+              "hash": "6b36aee718d0"
+            },
+            {
+              "file": "mobile-14.webp",
+              "width": 390,
+              "height": 1000,
+              "bytes": 346098,
+              "hash": "5d35a67c3f0f"
+            },
+            {
+              "file": "mobile-15.webp",
+              "width": 390,
+              "height": 584,
+              "bytes": 212120,
+              "hash": "284fd5ae85f9"
+            }
+          ]
+        }
+      ],
+      "newImageBytes": 18912108
+    },
+    {
+      "id": "dadeullim",
+      "title": "다들림",
+      "oldBytes": 69588815,
+      "modes": [
+        {
+          "mode": "pc",
+          "source": "다들림_상세페이지/다들림_상세페이지_PC.jpg",
+          "sourceBytes": 13509011,
+          "sourceHash": "3d898111742edda79a5113338d059203a651b6d3eedb9ef5bc31fb25a2a634df",
+          "width": 1919,
+          "height": 19349,
+          "frameId": "21:1992",
+          "tiles": [
+            {
+              "file": "pc-01.webp",
+              "width": 1919,
+              "height": 1174,
+              "bytes": 984792,
+              "hash": "3a4b8b8016fc"
+            },
+            {
+              "file": "pc-02.webp",
+              "width": 1919,
+              "height": 1800,
+              "bytes": 1850412,
+              "hash": "b8fdcae38e1a"
+            },
+            {
+              "file": "pc-03.webp",
+              "width": 1919,
+              "height": 1800,
+              "bytes": 1029734,
+              "hash": "dc844cac7588"
+            },
+            {
+              "file": "pc-04.webp",
+              "width": 1919,
+              "height": 719,
+              "bytes": 415584,
+              "hash": "b30e18f50df0"
+            },
+            {
+              "file": "pc-05.webp",
+              "width": 1919,
+              "height": 1800,
+              "bytes": 716396,
+              "hash": "db662f8d8cc0"
+            },
+            {
+              "file": "pc-06.webp",
+              "width": 1919,
+              "height": 393,
+              "bytes": 50692,
+              "hash": "e219c91f7190"
+            },
+            {
+              "file": "pc-07.webp",
+              "width": 1919,
+              "height": 537,
+              "bytes": 316708,
+              "hash": "e11f76850a6a"
+            },
+            {
+              "file": "pc-08.webp",
+              "width": 1919,
+              "height": 1800,
+              "bytes": 588882,
+              "hash": "f96fe8363e62"
+            },
+            {
+              "file": "pc-09.webp",
+              "width": 1919,
+              "height": 194,
+              "bytes": 23750,
+              "hash": "4530a15306fc"
+            },
+            {
+              "file": "pc-10.webp",
+              "width": 1919,
+              "height": 1499,
+              "bytes": 723084,
+              "hash": "2a786dbee027"
+            },
+            {
+              "file": "pc-11.webp",
+              "width": 1919,
+              "height": 1378,
+              "bytes": 1040792,
+              "hash": "d1b2da69590a"
+            },
+            {
+              "file": "pc-12.webp",
+              "width": 1919,
+              "height": 894,
+              "bytes": 235228,
+              "hash": "f52f24960b51"
+            },
+            {
+              "file": "pc-13.webp",
+              "width": 1919,
+              "height": 1800,
+              "bytes": 1835458,
+              "hash": "be0b8f4f39da"
+            },
+            {
+              "file": "pc-14.webp",
+              "width": 1919,
+              "height": 1800,
+              "bytes": 1744094,
+              "hash": "adb57c32fe47"
+            },
+            {
+              "file": "pc-15.webp",
+              "width": 1919,
+              "height": 1761,
+              "bytes": 1879398,
+              "hash": "2c2c0cf2d1c4"
+            }
+          ]
+        },
+        {
+          "mode": "mobile",
+          "source": "다들림_상세페이지/다들림_상세페이지_모바일.jpg",
+          "sourceBytes": 1716829,
+          "sourceHash": "ebb0e7e324b06e5c9e803669fb91c0d8bb9631a5928ea9f6157706dd7041ff7a",
+          "width": 390,
+          "height": 7125,
+          "frameId": "41:3",
+          "tiles": [
+            {
+              "file": "mobile-01.webp",
+              "width": 390,
+              "height": 876,
+              "bytes": 219908,
+              "hash": "2c878e00ff61"
+            },
+            {
+              "file": "mobile-02.webp",
+              "width": 390,
+              "height": 713,
+              "bytes": 191242,
+              "hash": "fc39e8b70c2d"
+            },
+            {
+              "file": "mobile-03.webp",
+              "width": 390,
+              "height": 683,
+              "bytes": 83540,
+              "hash": "3704d93a86dd"
+            },
+            {
+              "file": "mobile-04.webp",
+              "width": 390,
+              "height": 518,
+              "bytes": 27658,
+              "hash": "f35121b604e2"
+            },
+            {
+              "file": "mobile-05.webp",
+              "width": 390,
+              "height": 732,
+              "bytes": 132176,
+              "hash": "b03e40e27e4d"
+            },
+            {
+              "file": "mobile-06.webp",
+              "width": 390,
+              "height": 538,
+              "bytes": 57240,
+              "hash": "532adc23690a"
+            },
+            {
+              "file": "mobile-07.webp",
+              "width": 390,
+              "height": 538,
+              "bytes": 109534,
+              "hash": "ec1fec2900e3"
+            },
+            {
+              "file": "mobile-08.webp",
+              "width": 390,
+              "height": 357,
+              "bytes": 34076,
+              "hash": "958a68d47a69"
+            },
+            {
+              "file": "mobile-09.webp",
+              "width": 390,
+              "height": 1000,
+              "bytes": 277384,
+              "hash": "7c2f31027342"
+            },
+            {
+              "file": "mobile-10.webp",
+              "width": 390,
+              "height": 1000,
+              "bytes": 282320,
+              "hash": "7503dde23e59"
+            },
+            {
+              "file": "mobile-11.webp",
+              "width": 390,
+              "height": 170,
+              "bytes": 820,
+              "hash": "de651c64c5ca"
+            }
+          ]
+        }
+      ],
+      "newImageBytes": 14850902
+    },
+    {
+      "id": "efact",
+      "title": "E.FACT",
+      "oldBytes": 85208013,
+      "modes": [
+        {
+          "mode": "pc",
+          "source": "E.FACT_상세페이지/프로젝트 상세 - 다크(수정안).jpg",
+          "sourceBytes": 16342921,
+          "sourceHash": "58c775f2876ea3faf9bbefb838acf954ba3f17db79c4e690ebee395b91cabde0",
+          "width": 1920,
+          "height": 19244,
+          "frameId": "1:5",
+          "tiles": [
+            {
+              "file": "pc-01.webp",
+              "width": 1920,
+              "height": 1170,
+              "bytes": 1614740,
+              "hash": "03fbcf311d4d"
+            },
+            {
+              "file": "pc-02.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 2196452,
+              "hash": "2a4aa36a24fb"
+            },
+            {
+              "file": "pc-03.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1163776,
+              "hash": "f91740969a3e"
+            },
+            {
+              "file": "pc-04.webp",
+              "width": 1920,
+              "height": 820,
+              "bytes": 696074,
+              "hash": "0af3da38ea71"
+            },
+            {
+              "file": "pc-05.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 640452,
+              "hash": "8ca8060fe5ee"
+            },
+            {
+              "file": "pc-06.webp",
+              "width": 1920,
+              "height": 412,
+              "bytes": 257772,
+              "hash": "4475192f1b8d"
+            },
+            {
+              "file": "pc-07.webp",
+              "width": 1920,
+              "height": 570,
+              "bytes": 14948,
+              "hash": "f1b55b8ac4ce"
+            },
+            {
+              "file": "pc-08.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1080640,
+              "hash": "9b460698904c"
+            },
+            {
+              "file": "pc-09.webp",
+              "width": 1920,
+              "height": 236,
+              "bytes": 113222,
+              "hash": "75d69db6325b"
+            },
+            {
+              "file": "pc-10.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1359678,
+              "hash": "a2ebda5f0c69"
+            },
+            {
+              "file": "pc-11.webp",
+              "width": 1920,
+              "height": 1314,
+              "bytes": 651776,
+              "hash": "bfcddfd529d0"
+            },
+            {
+              "file": "pc-12.webp",
+              "width": 1920,
+              "height": 1038,
+              "bytes": 204236,
+              "hash": "88285d4e6da8"
+            },
+            {
+              "file": "pc-13.webp",
+              "width": 1920,
+              "height": 894,
+              "bytes": 320928,
+              "hash": "990e6bb70003"
+            },
+            {
+              "file": "pc-14.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 2139776,
+              "hash": "26bb53ca6362"
+            },
+            {
+              "file": "pc-15.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1874586,
+              "hash": "a0cfbc993588"
+            },
+            {
+              "file": "pc-16.webp",
+              "width": 1920,
+              "height": 190,
+              "bytes": 7124,
+              "hash": "3ab388cb1f4a"
+            }
+          ]
+        },
+        {
+          "mode": "mobile",
+          "source": "E.FACT_상세페이지/프로젝트 상세 - 모바일 다크(수정안).jpg",
+          "sourceBytes": 2568589,
+          "sourceHash": "fd69fcf00eb7e12cd9f09d590e9e980df5ed67b89ffa1bc7eaa0ba995b128651",
+          "width": 390,
+          "height": 9357,
+          "frameId": "1:238",
+          "tiles": [
+            {
+              "file": "mobile-01.webp",
+              "width": 390,
+              "height": 897,
+              "bytes": 267888,
+              "hash": "1ff844e56a11"
+            },
+            {
+              "file": "mobile-02.webp",
+              "width": 390,
+              "height": 1000,
+              "bytes": 293654,
+              "hash": "64737332cdeb"
+            },
+            {
+              "file": "mobile-03.webp",
+              "width": 390,
+              "height": 1000,
+              "bytes": 179274,
+              "hash": "e9dc1ea52531"
+            },
+            {
+              "file": "mobile-04.webp",
+              "width": 390,
+              "height": 373,
+              "bytes": 91380,
+              "hash": "a0403835a3fb"
+            },
+            {
+              "file": "mobile-05.webp",
+              "width": 390,
+              "height": 683,
+              "bytes": 41330,
+              "hash": "d8eccaff6ca9"
+            },
+            {
+              "file": "mobile-06.webp",
+              "width": 390,
+              "height": 531,
+              "bytes": 63088,
+              "hash": "c93cc8478342"
+            },
+            {
+              "file": "mobile-07.webp",
+              "width": 390,
+              "height": 732,
+              "bytes": 47092,
+              "hash": "b0579400e168"
+            },
+            {
+              "file": "mobile-08.webp",
+              "width": 390,
+              "height": 550,
+              "bytes": 43434,
+              "hash": "22acb4c0ea39"
+            },
+            {
+              "file": "mobile-09.webp",
+              "width": 390,
+              "height": 747,
+              "bytes": 60494,
+              "hash": "f6d491ee1f1e"
+            },
+            {
+              "file": "mobile-10.webp",
+              "width": 390,
+              "height": 453,
+              "bytes": 35082,
+              "hash": "4bf841b41889"
+            },
+            {
+              "file": "mobile-11.webp",
+              "width": 390,
+              "height": 1000,
+              "bytes": 349864,
+              "hash": "3df46d1bcf50"
+            },
+            {
+              "file": "mobile-12.webp",
+              "width": 390,
+              "height": 1000,
+              "bytes": 348478,
+              "hash": "6c96ffe7f277"
+            },
+            {
+              "file": "mobile-13.webp",
+              "width": 390,
+              "height": 391,
+              "bytes": 94016,
+              "hash": "8ffdbc125e12"
+            }
+          ]
+        }
+      ],
+      "newImageBytes": 16251254
+    },
+    {
+      "id": "ilkko",
+      "title": "읽꼬",
+      "oldBytes": 108595952,
+      "modes": [
+        {
+          "mode": "pc",
+          "source": "읽꼬_상세페이지/프로젝트 상세 - 표준.jpg",
+          "sourceBytes": 25941680,
+          "sourceHash": "b0b6433d124ceb2f860823f20eeee87e39dc761e9f5e99ed3f2c0a93a3b38e12",
+          "width": 1920,
+          "height": 27166,
+          "frameId": "206:9",
+          "tiles": [
+            {
+              "file": "pc-01.webp",
+              "width": 1920,
+              "height": 1170,
+              "bytes": 1426580,
+              "hash": "e98e92b42d5c"
+            },
+            {
+              "file": "pc-02.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 2245738,
+              "hash": "7e2233610ba5"
+            },
+            {
+              "file": "pc-03.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1908534,
+              "hash": "86bce590026a"
+            },
+            {
+              "file": "pc-04.webp",
+              "width": 1920,
+              "height": 730,
+              "bytes": 885032,
+              "hash": "9b9e419a5146"
+            },
+            {
+              "file": "pc-05.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1577814,
+              "hash": "bfe49a0ea41d"
+            },
+            {
+              "file": "pc-06.webp",
+              "width": 1920,
+              "height": 703,
+              "bytes": 494332,
+              "hash": "94ade2c24ae9"
+            },
+            {
+              "file": "pc-07.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1041132,
+              "hash": "25c493c3460f"
+            },
+            {
+              "file": "pc-08.webp",
+              "width": 1920,
+              "height": 132,
+              "bytes": 6860,
+              "hash": "ea7e8df913e9"
+            },
+            {
+              "file": "pc-09.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 596044,
+              "hash": "c9fa77df7fea"
+            },
+            {
+              "file": "pc-10.webp",
+              "width": 1920,
+              "height": 277,
+              "bytes": 76928,
+              "hash": "46586f79dc73"
+            },
+            {
+              "file": "pc-11.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 662816,
+              "hash": "cba91fb3a8c3"
+            },
+            {
+              "file": "pc-12.webp",
+              "width": 1920,
+              "height": 1646,
+              "bytes": 172186,
+              "hash": "f3e393175f31"
+            },
+            {
+              "file": "pc-13.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1058862,
+              "hash": "947e3712c3c5"
+            },
+            {
+              "file": "pc-14.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1807256,
+              "hash": "9f4fdaf8b5d7"
+            },
+            {
+              "file": "pc-15.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1815142,
+              "hash": "9b146501b7b0"
+            },
+            {
+              "file": "pc-16.webp",
+              "width": 1920,
+              "height": 184,
+              "bytes": 101138,
+              "hash": "53d965700124"
+            },
+            {
+              "file": "pc-17.webp",
+              "width": 1920,
+              "height": 660,
+              "bytes": 161638,
+              "hash": "20c25f007634"
+            },
+            {
+              "file": "pc-18.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 3742306,
+              "hash": "66535ed2b1e2"
+            },
+            {
+              "file": "pc-19.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 2210552,
+              "hash": "25d9ad29ecdb"
+            },
+            {
+              "file": "pc-20.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1788452,
+              "hash": "17334f9d9823"
+            },
+            {
+              "file": "pc-21.webp",
+              "width": 1920,
+              "height": 64,
+              "bytes": 48,
+              "hash": "75943d9368ba"
+            }
+          ]
+        },
+        {
+          "mode": "mobile",
+          "source": "읽꼬_상세페이지/프로젝트 상세 - 모바일 표준.jpg",
+          "sourceBytes": 3768772,
+          "sourceHash": "d3a0d58a988fbed31cab8f66d21fb2ec126066a59fc0a6aa64225241d01ceb41",
+          "width": 390,
+          "height": 9351,
+          "frameId": "180:2644",
+          "tiles": [
+            {
+              "file": "mobile-01.webp",
+              "width": 390,
+              "height": 875,
+              "bytes": 287700,
+              "hash": "620a551473a0"
+            },
+            {
+              "file": "mobile-02.webp",
+              "width": 390,
+              "height": 723,
+              "bytes": 288236,
+              "hash": "feacf416a630"
+            },
+            {
+              "file": "mobile-03.webp",
+              "width": 390,
+              "height": 773,
+              "bytes": 305200,
+              "hash": "57ae182f9bf2"
+            },
+            {
+              "file": "mobile-04.webp",
+              "width": 390,
+              "height": 651,
+              "bytes": 112072,
+              "hash": "3b7289b6c6bb"
+            },
+            {
+              "file": "mobile-05.webp",
+              "width": 390,
+              "height": 624,
+              "bytes": 69952,
+              "hash": "989adc7b851d"
+            },
+            {
+              "file": "mobile-06.webp",
+              "width": 390,
+              "height": 1000,
+              "bytes": 131150,
+              "hash": "5cb805f85797"
+            },
+            {
+              "file": "mobile-07.webp",
+              "width": 390,
+              "height": 590,
+              "bytes": 48394,
+              "hash": "45ee6b63c9fe"
+            },
+            {
+              "file": "mobile-08.webp",
+              "width": 390,
+              "height": 1000,
+              "bytes": 268448,
+              "hash": "3c31d33aeba1"
+            },
+            {
+              "file": "mobile-09.webp",
+              "width": 390,
+              "height": 288,
+              "bytes": 91002,
+              "hash": "4e61b24ba167"
+            },
+            {
+              "file": "mobile-10.webp",
+              "width": 390,
+              "height": 314,
+              "bytes": 42102,
+              "hash": "0b5bc8c70c8a"
+            },
+            {
+              "file": "mobile-11.webp",
+              "width": 390,
+              "height": 1000,
+              "bytes": 425366,
+              "hash": "4371f4b7571d"
+            },
+            {
+              "file": "mobile-12.webp",
+              "width": 390,
+              "height": 1000,
+              "bytes": 499586,
+              "hash": "c6428ce2b843"
+            },
+            {
+              "file": "mobile-13.webp",
+              "width": 390,
+              "height": 513,
+              "bytes": 188286,
+              "hash": "c386a301a31c"
+            }
+          ]
+        }
+      ],
+      "newImageBytes": 26536884
+    },
+    {
+      "id": "omix",
+      "title": "OMIX",
+      "oldBytes": 102794698,
+      "modes": [
+        {
+          "mode": "pc",
+          "source": "OMIX_상세페이지 수정본/OMIX_상세페이지 수정본/프로젝트 상세 - 다크.jpg",
+          "sourceBytes": 49676480,
+          "sourceHash": "695c06df95f093a97767a1473134f98857252fd97c9d069d62918aa2c9f99794",
+          "width": 3252,
+          "height": 32768,
+          "frameId": "2025:249",
+          "tiles": [
+            {
+              "file": "pc-01.webp",
+              "width": 3252,
+              "height": 1981,
+              "bytes": 4816440,
+              "hash": "fb0187d1ec98"
+            },
+            {
+              "file": "pc-02.webp",
+              "width": 3252,
+              "height": 3049,
+              "bytes": 5477756,
+              "hash": "a3fac6cafcb9"
+            },
+            {
+              "file": "pc-03.webp",
+              "width": 3252,
+              "height": 1852,
+              "bytes": 2935860,
+              "hash": "7fc2503a86bb"
+            },
+            {
+              "file": "pc-04.webp",
+              "width": 3252,
+              "height": 3049,
+              "bytes": 4194490,
+              "hash": "6bda8e820044"
+            },
+            {
+              "file": "pc-05.webp",
+              "width": 3252,
+              "height": 875,
+              "bytes": 1399344,
+              "hash": "27967261d9f0"
+            },
+            {
+              "file": "pc-06.webp",
+              "width": 3252,
+              "height": 1061,
+              "bytes": 145778,
+              "hash": "aa3f7d73f398"
+            },
+            {
+              "file": "pc-07.webp",
+              "width": 3252,
+              "height": 3049,
+              "bytes": 1015550,
+              "hash": "d39c9d7c3feb"
+            },
+            {
+              "file": "pc-08.webp",
+              "width": 3252,
+              "height": 327,
+              "bytes": 155972,
+              "hash": "a75e5c68a81f"
+            },
+            {
+              "file": "pc-09.webp",
+              "width": 3252,
+              "height": 2378,
+              "bytes": 3075108,
+              "hash": "f45289cc26b6"
+            },
+            {
+              "file": "pc-10.webp",
+              "width": 3252,
+              "height": 1754,
+              "bytes": 624888,
+              "hash": "d229d3fcfeb9"
+            },
+            {
+              "file": "pc-11.webp",
+              "width": 3252,
+              "height": 1665,
+              "bytes": 2644704,
+              "hash": "457aa720ebd1"
+            },
+            {
+              "file": "pc-12.webp",
+              "width": 3252,
+              "height": 3049,
+              "bytes": 6435152,
+              "hash": "b7e5612d455c"
+            },
+            {
+              "file": "pc-13.webp",
+              "width": 3252,
+              "height": 3049,
+              "bytes": 4228438,
+              "hash": "2bbd29f48a1a"
+            },
+            {
+              "file": "pc-14.webp",
+              "width": 3252,
+              "height": 3049,
+              "bytes": 7763964,
+              "hash": "36a9c648b106"
+            },
+            {
+              "file": "pc-15.webp",
+              "width": 3252,
+              "height": 2581,
+              "bytes": 5339278,
+              "hash": "ae278363dff6"
+            }
+          ]
+        },
+        {
+          "mode": "mobile",
+          "source": "OMIX_상세페이지 수정본/OMIX_상세페이지 수정본/프로젝트 상세 - 모바일 다크.jpg",
+          "sourceBytes": 7165578,
+          "sourceHash": "c84db12204fbc8d7f7c342e2e3274043ba2da1a3e83e837dc420875b6ba34188",
+          "width": 780,
+          "height": 14312,
+          "frameId": "2025:97",
+          "tiles": [
+            {
+              "file": "mobile-01.webp",
+              "width": 780,
+              "height": 1750,
+              "bytes": 975158,
+              "hash": "c22a9cfc2f8b"
+            },
+            {
+              "file": "mobile-02.webp",
+              "width": 780,
+              "height": 1426,
+              "bytes": 688762,
+              "hash": "c0e501750b79"
+            },
+            {
+              "file": "mobile-03.webp",
+              "width": 780,
+              "height": 1756,
+              "bytes": 897544,
+              "hash": "0644c81f0d29"
+            },
+            {
+              "file": "mobile-04.webp",
+              "width": 780,
+              "height": 646,
+              "bytes": 136458,
+              "hash": "d798f2b9ffa5"
+            },
+            {
+              "file": "mobile-05.webp",
+              "width": 780,
+              "height": 1464,
+              "bytes": 249952,
+              "hash": "3afb7617cf4c"
+            },
+            {
+              "file": "mobile-06.webp",
+              "width": 780,
+              "height": 1076,
+              "bytes": 255688,
+              "hash": "2a458d6c852a"
+            },
+            {
+              "file": "mobile-07.webp",
+              "width": 780,
+              "height": 702,
+              "bytes": 74922,
+              "hash": "06c110ece45c"
+            },
+            {
+              "file": "mobile-08.webp",
+              "width": 780,
+              "height": 714,
+              "bytes": 207332,
+              "hash": "abfe3cef7a4b"
+            },
+            {
+              "file": "mobile-09.webp",
+              "width": 780,
+              "height": 2000,
+              "bytes": 820040,
+              "hash": "ae5ca19b503d"
+            },
+            {
+              "file": "mobile-10.webp",
+              "width": 780,
+              "height": 2000,
+              "bytes": 1159238,
+              "hash": "1a8286ebc2f9"
+            },
+            {
+              "file": "mobile-11.webp",
+              "width": 780,
+              "height": 778,
+              "bytes": 661744,
+              "hash": "4cca0e158dc0"
+            }
+          ]
+        }
+      ],
+      "newImageBytes": 56379560
+    },
+    {
+      "id": "phishing-ddook",
+      "title": "피싱 뚝!",
+      "oldBytes": 73181107,
+      "modes": [
+        {
+          "mode": "pc",
+          "source": "피싱 뚝!_상세페이지/피싱 뚝!_상세페이지_1.jpg",
+          "sourceBytes": 16400543,
+          "sourceHash": "fb68807a921ee6c8a4b076d8eea474a910f3fcc7d1125831549211cec39659c4",
+          "width": 1920,
+          "height": 19349,
+          "frameId": "60:7",
+          "tiles": [
+            {
+              "file": "pc-01.webp",
+              "width": 1920,
+              "height": 1170,
+              "bytes": 1424388,
+              "hash": "5440be3b3131"
+            },
+            {
+              "file": "pc-02.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1748138,
+              "hash": "bfad6f891964"
+            },
+            {
+              "file": "pc-03.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 960294,
+              "hash": "58472436e273"
+            },
+            {
+              "file": "pc-04.webp",
+              "width": 1920,
+              "height": 730,
+              "bytes": 448100,
+              "hash": "96d8c80ff62c"
+            },
+            {
+              "file": "pc-05.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1148518,
+              "hash": "2a733639b169"
+            },
+            {
+              "file": "pc-06.webp",
+              "width": 1920,
+              "height": 951,
+              "bytes": 516226,
+              "hash": "e42e87d9d4a8"
+            },
+            {
+              "file": "pc-07.webp",
+              "width": 1920,
+              "height": 544,
+              "bytes": 598766,
+              "hash": "c8810eb8e4bb"
+            },
+            {
+              "file": "pc-08.webp",
+              "width": 1920,
+              "height": 1771,
+              "bytes": 184656,
+              "hash": "2b7bfb80b718"
+            },
+            {
+              "file": "pc-09.webp",
+              "width": 1920,
+              "height": 1522,
+              "bytes": 802610,
+              "hash": "25e726960eb1"
+            },
+            {
+              "file": "pc-10.webp",
+              "width": 1920,
+              "height": 1008,
+              "bytes": 179074,
+              "hash": "c3458f244f42"
+            },
+            {
+              "file": "pc-11.webp",
+              "width": 1920,
+              "height": 894,
+              "bytes": 289038,
+              "hash": "38606d05bfbf"
+            },
+            {
+              "file": "pc-12.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 2700532,
+              "hash": "6ab59e0c62fa"
+            },
+            {
+              "file": "pc-13.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 2295888,
+              "hash": "8078020b072f"
+            },
+            {
+              "file": "pc-14.webp",
+              "width": 1920,
+              "height": 1759,
+              "bytes": 1763112,
+              "hash": "ff01ff109875"
+            }
+          ]
+        },
+        {
+          "mode": "mobile",
+          "source": "피싱 뚝!_상세페이지/피싱 뚝!_상세페이지_2.jpg",
+          "sourceBytes": 2172902,
+          "sourceHash": "d217e9de25c912d832de59e1769cd79359bbecad47b21563f49f6908a31b7423",
+          "width": 390,
+          "height": 7125,
+          "frameId": "60:233",
+          "tiles": [
+            {
+              "file": "mobile-01.webp",
+              "width": 390,
+              "height": 875,
+              "bytes": 221888,
+              "hash": "7eedf09eb48f"
+            },
+            {
+              "file": "mobile-02.webp",
+              "width": 390,
+              "height": 713,
+              "bytes": 187528,
+              "hash": "be8c39d6dc6e"
+            },
+            {
+              "file": "mobile-03.webp",
+              "width": 390,
+              "height": 683,
+              "bytes": 92796,
+              "hash": "2b3fb9c4b160"
+            },
+            {
+              "file": "mobile-04.webp",
+              "width": 390,
+              "height": 518,
+              "bytes": 102226,
+              "hash": "ead59634caac"
+            },
+            {
+              "file": "mobile-05.webp",
+              "width": 390,
+              "height": 732,
+              "bytes": 87684,
+              "hash": "af5d81fd40ac"
+            },
+            {
+              "file": "mobile-06.webp",
+              "width": 390,
+              "height": 538,
+              "bytes": 84458,
+              "hash": "a632f127b5bb"
+            },
+            {
+              "file": "mobile-07.webp",
+              "width": 390,
+              "height": 621,
+              "bytes": 55282,
+              "hash": "f236e2df49ca"
+            },
+            {
+              "file": "mobile-08.webp",
+              "width": 390,
+              "height": 357,
+              "bytes": 87076,
+              "hash": "156ed2e0e5c4"
+            },
+            {
+              "file": "mobile-09.webp",
+              "width": 390,
+              "height": 1000,
+              "bytes": 338604,
+              "hash": "e7581d5c6f7d"
+            },
+            {
+              "file": "mobile-10.webp",
+              "width": 390,
+              "height": 1000,
+              "bytes": 373120,
+              "hash": "3684ad576952"
+            },
+            {
+              "file": "mobile-11.webp",
+              "width": 390,
+              "height": 88,
+              "bytes": 4722,
+              "hash": "3380aeddce3e"
+            }
+          ]
+        }
+      ],
+      "newImageBytes": 16694724
+    },
+    {
+      "id": "stylens",
+      "title": "Stylens",
+      "oldBytes": 70798685,
+      "modes": [
+        {
+          "mode": "pc",
+          "source": "Stylens_상세페이지/프로젝트 상세 - 다크.jpg",
+          "sourceBytes": 13315685,
+          "sourceHash": "1f9e03ce5dabc104a28b770d938241a7766eb94fdd9e215cbd728dec897b84d1",
+          "width": 1920,
+          "height": 19349,
+          "frameId": "5:731",
+          "tiles": [
+            {
+              "file": "pc-01.webp",
+              "width": 1920,
+              "height": 1170,
+              "bytes": 1124000,
+              "hash": "3c5d762c0895"
+            },
+            {
+              "file": "pc-02.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1725182,
+              "hash": "d2cbc0e87837"
+            },
+            {
+              "file": "pc-03.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 792916,
+              "hash": "8fd3bb4e09f4"
+            },
+            {
+              "file": "pc-04.webp",
+              "width": 1920,
+              "height": 730,
+              "bytes": 392196,
+              "hash": "d7c3c24d0cde"
+            },
+            {
+              "file": "pc-05.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1914426,
+              "hash": "52b65a96f857"
+            },
+            {
+              "file": "pc-06.webp",
+              "width": 1920,
+              "height": 360,
+              "bytes": 30094,
+              "hash": "838da6af6759"
+            },
+            {
+              "file": "pc-07.webp",
+              "width": 1920,
+              "height": 570,
+              "bytes": 695318,
+              "hash": "9b6f472077a2"
+            },
+            {
+              "file": "pc-08.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 231542,
+              "hash": "e221c911aab6"
+            },
+            {
+              "file": "pc-09.webp",
+              "width": 1920,
+              "height": 194,
+              "bytes": 83618,
+              "hash": "5fe55364a89d"
+            },
+            {
+              "file": "pc-10.webp",
+              "width": 1920,
+              "height": 1491,
+              "bytes": 760194,
+              "hash": "1b9625094a38"
+            },
+            {
+              "file": "pc-11.webp",
+              "width": 1920,
+              "height": 1038,
+              "bytes": 881636,
+              "hash": "beebba745ebe"
+            },
+            {
+              "file": "pc-12.webp",
+              "width": 1920,
+              "height": 894,
+              "bytes": 74406,
+              "hash": "f3a43de150b4"
+            },
+            {
+              "file": "pc-13.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 2160652,
+              "hash": "873a41705cc5"
+            },
+            {
+              "file": "pc-14.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1371472,
+              "hash": "60fd0796ba8d"
+            },
+            {
+              "file": "pc-15.webp",
+              "width": 1920,
+              "height": 1800,
+              "bytes": 1304000,
+              "hash": "14c80f799a02"
+            },
+            {
+              "file": "pc-16.webp",
+              "width": 1920,
+              "height": 302,
+              "bytes": 68,
+              "hash": "26d2b852b90e"
+            }
+          ]
+        },
+        {
+          "mode": "mobile",
+          "source": "Stylens_상세페이지/프로젝트 상세 - 모바일 다크.jpg",
+          "sourceBytes": 1689655,
+          "sourceHash": "3685960da1905977602feb9d96c9211af59a548afdd17650f9507102f6f3e57d",
+          "width": 390,
+          "height": 7125,
+          "frameId": "5:929",
+          "tiles": [
+            {
+              "file": "mobile-01.webp",
+              "width": 390,
+              "height": 875,
+              "bytes": 192844,
+              "hash": "beb892df54c1"
+            },
+            {
+              "file": "mobile-02.webp",
+              "width": 390,
+              "height": 713,
+              "bytes": 196094,
+              "hash": "d5f9f3df6fc4"
+            },
+            {
+              "file": "mobile-03.webp",
+              "width": 390,
+              "height": 683,
+              "bytes": 34754,
+              "hash": "a694f9f13ced"
+            },
+            {
+              "file": "mobile-04.webp",
+              "width": 390,
+              "height": 518,
+              "bytes": 30572,
+              "hash": "0566ce018f92"
+            },
+            {
+              "file": "mobile-05.webp",
+              "width": 390,
+              "height": 732,
+              "bytes": 44616,
+              "hash": "ea0ec63b8fb1"
+            },
+            {
+              "file": "mobile-06.webp",
+              "width": 390,
+              "height": 538,
+              "bytes": 30548,
+              "hash": "ed21a7ea4685"
+            },
+            {
+              "file": "mobile-07.webp",
+              "width": 390,
+              "height": 538,
+              "bytes": 40642,
+              "hash": "914792928e74"
+            },
+            {
+              "file": "mobile-08.webp",
+              "width": 390,
+              "height": 357,
+              "bytes": 40382,
+              "hash": "809bd1d913b7"
+            },
+            {
+              "file": "mobile-09.webp",
+              "width": 390,
+              "height": 1000,
+              "bytes": 329860,
+              "hash": "b28467c64a74"
+            },
+            {
+              "file": "mobile-10.webp",
+              "width": 390,
+              "height": 1000,
+              "bytes": 367064,
+              "hash": "9b5a99c2a9f2"
+            },
+            {
+              "file": "mobile-11.webp",
+              "width": 390,
+              "height": 171,
+              "bytes": 7826,
+              "hash": "109bc8f1d5e4"
+            }
+          ]
+        }
+      ],
+      "newImageBytes": 14856922
+    }
+  ],
+  "summary": {
+    "RemovedAssets": 449,
+    "RemovedCss": 3,
+    "OldBytes": 655911267.0,
+    "NewBytes": 181000646.0,
+    "ReducedPercent": 72.4
+  },
+  "verification": {
+    "build": "passed",
+    "nativePixelComparison": "224 lossless WebP tiles matched their source crops",
+    "viewportWidths": [
+      320,
+      390,
+      430,
+      768,
+      999,
+      1000,
+      1440,
+      1920,
+      2560
+    ],
+    "browserCases": [
+      {
+        "project": "cheoma",
+        "mode": "mobile",
+        "tiles": 11,
+        "width": 390,
+        "height": 7535
+      },
+      {
+        "project": "cheoma",
+        "mode": "pc",
+        "tiles": 15,
+        "width": 1920,
+        "height": 20712
+      },
+      {
+        "project": "curo",
+        "mode": "mobile",
+        "tiles": 15,
+        "width": 390,
+        "height": 11184
+      },
+      {
+        "project": "curo",
+        "mode": "pc",
+        "tiles": 16,
+        "width": 1920,
+        "height": 21282
+      },
+      {
+        "project": "dadeullim",
+        "mode": "mobile",
+        "tiles": 11,
+        "width": 390,
+        "height": 7125
+      },
+      {
+        "project": "dadeullim",
+        "mode": "pc",
+        "tiles": 15,
+        "width": 1919,
+        "height": 19349
+      },
+      {
+        "project": "efact",
+        "mode": "mobile",
+        "tiles": 13,
+        "width": 390,
+        "height": 9357
+      },
+      {
+        "project": "efact",
+        "mode": "pc",
+        "tiles": 16,
+        "width": 1920,
+        "height": 19244
+      },
+      {
+        "project": "ilkko",
+        "mode": "mobile",
+        "tiles": 13,
+        "width": 390,
+        "height": 9351
+      },
+      {
+        "project": "ilkko",
+        "mode": "pc",
+        "tiles": 21,
+        "width": 1920,
+        "height": 27166
+      },
+      {
+        "project": "omix",
+        "mode": "mobile",
+        "tiles": 11,
+        "width": 780,
+        "height": 14312
+      },
+      {
+        "project": "omix",
+        "mode": "pc",
+        "tiles": 15,
+        "width": 3252,
+        "height": 32768
+      },
+      {
+        "project": "phishing-ddook",
+        "mode": "mobile",
+        "tiles": 11,
+        "width": 390,
+        "height": 7125
+      },
+      {
+        "project": "phishing-ddook",
+        "mode": "pc",
+        "tiles": 14,
+        "width": 1920,
+        "height": 19349
+      },
+      {
+        "project": "stylens",
+        "mode": "mobile",
+        "tiles": 11,
+        "width": 390,
+        "height": 7125
+      },
+      {
+        "project": "stylens",
+        "mode": "pc",
+        "tiles": 16,
+        "width": 1920,
+        "height": 19349
+      }
+    ],
+    "obsoleteFilesRemoved": 449,
+    "obsoleteStylesheetsRemoved": 3
+  }
+}

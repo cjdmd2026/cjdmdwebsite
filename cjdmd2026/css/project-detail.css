@@ -106,6 +106,16 @@ a:focus-visible,summary:focus-visible{outline:3px solid #1959db;outline-offset:4
 }
 .case-tile{position:absolute;left:0;right:0;display:block;pointer-events:none}
 .case-tile img{display:block;width:100%;height:100%;object-fit:fill}
+/* Revised exports retain their native pixels and flow at their original ratio.
+   Each tile reserves its height before loading, including at narrow widths. */
+.case-raster-tile{position:relative;display:block;width:100%;pointer-events:none}
+.case-raster-tile img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain}
+.case-raster-text{position:absolute;inset:0;z-index:1;display:block;width:100%;height:100%;overflow:hidden;fill:transparent;white-space:pre}
+.case-raster-text text{cursor:text}
+.case-raster-text a{pointer-events:all}
+.case-raster-text text::selection{fill:HighlightText;background:Highlight}
+.case-raster-text a:focus-visible{outline:2px solid #1959db;outline-offset:3px}
+.case-raster-heading{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .case-copy{position:absolute;z-index:1;margin:0;padding:0;border:0;letter-spacing:normal;font-family:ExhibitionText,Pretendard,"Malgun Gothic",sans-serif;font-style:normal;font-weight:400;line-height:1;overflow:visible}
 /* Scale each text box and its Figma baselines together, including during font swaps. */
 .case-copy > svg {

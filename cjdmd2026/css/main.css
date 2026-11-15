@@ -598,19 +598,19 @@ body.mobile-menu-open .header {
 .professor { padding-top: calc(23.05 * var(--u)); }        /* 위원회 이름 → 제목 451px */
 
 .professor-stage {
-    --card-w: clamp(200px, calc(21 * var(--u)), 460px);   /* 403px — 양 끝 카드가 화면 밖으로 잘리도록 */
-    --card-h: calc(var(--card-w) * 593 / 451);
+    --card-content-w: clamp(200px, calc(21 * var(--u)), 460px);
+    --card-w: calc(var(--card-content-w) * .84);        /* 인물 크기는 유지하고 검은 카드 좌우를 각각 8% 축소 */
+    --card-h: calc(var(--card-content-w) * 593 / 451);
     position: relative;
     margin-top: calc(.6 * var(--u));
     height: calc(var(--card-h) + calc(12 * var(--u)));
-    perspective: calc(var(--card-w) * 7.77);
     overflow: hidden;
     touch-action: pan-y;
     user-select: none;
 }
 .professor-stage:focus-visible { outline-offset: -4px; }
 
-.professor-track { position: absolute; inset: 0; transform-style: preserve-3d; }
+.professor-track { position: absolute; inset: 0; }
 
 .professor-card {
     position: absolute;
@@ -625,14 +625,15 @@ body.mobile-menu-open .header {
     color: #fff;
     cursor: pointer;
     backface-visibility: hidden;
-    will-change: transform, opacity;   /* 위치·투명도는 main.js 가 매 프레임 직접 그림 */
+    will-change: transform;   /* 위치는 main.js가 매 프레임 직접 그림 */
 }
 
 /* 사진: 머리(카드 위 10%) ~ 팔짱(69%) */
 .professor-card__photo {
     position: absolute;
-    left: 0;
-    right: 0;
+    left: 50%;
+    width: var(--card-content-w);
+    transform: translateX(-50%);
     top: 5.5%;
     height: 63.5%;
     -webkit-mask-image: linear-gradient(to bottom, #000 84%, transparent 100%);
@@ -649,7 +650,7 @@ body.mobile-menu-open .header {
     display: grid;
     place-items: center;
     color: #3d3d3d;
-    font-size: calc(var(--card-w) * .036);
+    font-size: calc(var(--card-content-w) * .036);
 }
 
 .professor-card__info { transition: opacity .5s ease; }
@@ -661,11 +662,11 @@ body.mobile-menu-open .header {
     transform: translateY(-50%);
 }
 /* 글자 (시안 피그마 값, 카드 너비 451 기준) */
-.professor-card__major { top: 74.2%; font-size: calc(var(--card-w) * 20 / 451); font-weight: 700; line-height: 1.2; }  /* Bold 20 */
-.professor-card__name { top: 82.5%; font-size: calc(var(--card-w) * 28 / 451); font-weight: 700; line-height: 1.2; }   /* Bold 28 */
+.professor-card__major { top: 74.2%; font-size: calc(var(--card-content-w) * 20 / 451); font-weight: 700; line-height: 1.2; }  /* Bold 20 */
+.professor-card__name { top: 82.5%; font-size: calc(var(--card-content-w) * 28 / 451); font-weight: 700; line-height: 1.2; }   /* Bold 28 */
 .professor-card__message {                                                                                             /* Medium 14, -5%, 50% */
     top: 90.2%;
-    font-size: calc(var(--card-w) * 14 / 451);
+    font-size: calc(var(--card-content-w) * 14 / 451);
     font-weight: 500;
     line-height: 1.2;
     letter-spacing: -0.05em;
@@ -905,7 +906,7 @@ body.mobile-menu-open .header {
     .committee-member { gap: .45rem; }
 
     .professor { padding-top: 120px; }
-    .professor-stage { --card-w: 62vw; margin-top: 1.5rem; height: calc(var(--card-h) + 60px); }
+    .professor-stage { --card-content-w: 62vw; margin-top: 1.5rem; height: calc(var(--card-h) + 60px); }
     .professor-card { top: 24px; }
     .professor-ambient { display: none; }
 

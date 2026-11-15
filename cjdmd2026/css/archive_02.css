@@ -97,8 +97,8 @@
 
     /* archive page layout */
     --hero-height: 200vh;
-    --archive-logo-lift: calc(2rem + 5px);
-    --archive-copy-lift: 3rem;
+    --archive-logo-lift: calc(2rem - 15px);
+    --archive-copy-lift: calc(3rem - 10px);
     --hero-title-top: calc(50vh - var(--archive-logo-lift));
     --explanation-sticky-top: calc(60vh - var(--archive-copy-lift));
     --explanation-gap: 2rem;

@@ -395,6 +395,8 @@ function initHistoryExplanation() {
     const animations = new Set();
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
     let current = null;
+    let pendingContent = null;
+    let exitVersion = 0;
     let historyActive = false;
     let pointerCard = null;
     let focusedCard = null;
@@ -404,21 +406,21 @@ function initHistoryExplanation() {
         animations.clear();
     }
 
-    function animate(element, keyframes, delay = 0, duration = 420, easing = 'cubic-bezier(.18, .76, .22, 1)') {
-        // The underlying DOM already contains the final state. Cancellation reveals
-        // the latest content immediately, including when reduced motion is enabled.
+    function animate(element, keyframes, delay = 0, duration = 420, easing = 'cubic-bezier(.18, .76, .22, 1)', hold = false) {
         const animation = element.animate(keyframes, {
             duration,
             delay,
             easing,
-            fill: 'backwards'
+            fill: hold ? 'both' : 'backwards'
         });
         animations.add(animation);
         const release = () => {
+            if (hold) return; // Keep outgoing text below its mask until the content swap.
             animations.delete(animation);
             animation.cancel();
         };
         animation.finished.then(release, () => animations.delete(animation));
+        return animation;
     }
 
     function renderDescription(html) {
@@ -438,9 +440,7 @@ function initHistoryExplanation() {
         return elements;
     }
 
-    function showContent(next, motion = true) {
-        if (current && Object.keys(next).every(key => current[key] === next[key])) return;
-        const canAnimate = motion && !reducedMotion.matches && archiveDesktop.matches && !document.hidden;
+    function applyContent(next, canAnimate) {
         const layoutDuration = current && current.history !== next.history
             ? (next.history ? 2000 : 1500) : 1100;
         // Capture the visible positions before cancelling an interrupted transition.
@@ -468,14 +468,59 @@ function initHistoryExplanation() {
             ], 0, layoutDuration, 'cubic-bezier(.25, .1, .25, 1)');
         });
 
-        // Restart a short entrance for the newest selection instead of queuing
-        // another leave/enter sequence behind an obsolete card.
-        const slide = [{ transform: 'translate3d(0, 100%, 0)' }, { transform: 'translate3d(0, 0, 0)' }];
+        // The old text is fully below its mask. Reveal the new wording from below.
+        const slide = [
+            { transform: 'translate3d(0, 100%, 0)' },
+            { transform: 'translate3d(0, 0, 0)' }
+        ];
         animate(title, slide);
         lines.forEach((line, index) => animate(line, slide, (index + 1) * 40));
         if (studentList && !studentList.hidden) {
             animate(studentList, [{ opacity: 0 }, { opacity: 1 }]);
         }
+    }
+
+    function settleContent() {
+        const next = pendingContent || current;
+        pendingContent = null;
+        exitVersion++;
+        if (next) applyContent(next, false);
+        else cancelAnimations();
+    }
+
+    function showContent(next, motion = true) {
+        const canAnimate = motion && current && !reducedMotion.matches && archiveDesktop.matches && !document.hidden;
+        if (!canAnimate) {
+            pendingContent = next;
+            settleContent();
+            return;
+        }
+        const requested = pendingContent || current;
+        if (Object.keys(next).every(key => requested[key] === next[key])) return;
+        // A quick hover or scroll reversal replaces the pending wording without
+        // restarting the exit or queueing obsolete selections.
+        if (pendingContent) { pendingContent = next; return; }
+        pendingContent = next;
+        const version = ++exitVersion;
+        const exiting = [title, ...description.querySelectorAll('.history-description-line')];
+        const finishes = exiting.map(element => {
+            const from = getComputedStyle(element).transform;
+            for (const animation of animations) {
+                if (animation.effect?.target !== element) continue;
+                animation.cancel();
+                animations.delete(animation);
+            }
+            return animate(element, [
+                { transform: from },
+                { transform: 'translate3d(0, 100%, 0)' }
+            ], 0, 240, 'cubic-bezier(.4, 0, .8, 1)', true).finished.catch(() => {});
+        });
+        Promise.all(finishes).then(() => {
+            if (version !== exitVersion || !pendingContent) return;
+            const latest = pendingContent;
+            pendingContent = null;
+            applyContent(latest, true);
+        });
     }
 
     function showSelection() {
@@ -541,18 +586,17 @@ function initHistoryExplanation() {
     window.addEventListener('scroll', scheduleHistorySection, { passive: true });
     window.addEventListener('resize', scheduleHistorySection);
     window.addEventListener('pageshow', scheduleHistorySection);
-    reducedMotion.addEventListener('change', cancelAnimations);
+    reducedMotion.addEventListener('change', settleContent);
     archiveDesktop.addEventListener('change', () => {
         if (archiveDesktop.matches) return;
         pointerCard = focusedCard = null;
         historyActive = false;
-        cancelAnimations();
         showContent(defaultContent, false);
     });
     document.addEventListener('visibilitychange', () => {
-        if (document.hidden) cancelAnimations();
+        if (document.hidden) settleContent();
     });
-    window.addEventListener('pagehide', cancelAnimations);
+    window.addEventListener('pagehide', settleContent);
     showContent(defaultContent, false);
 }
 
