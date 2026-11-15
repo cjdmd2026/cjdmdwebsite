@@ -1,0 +1,188 @@
+/* 읽:꼬 공통 푸터 — 피그마 시안에 맞춘 슬림 버전 */
+.footer.ilkko-footer {
+  box-sizing: border-box;
+  width: 100%;
+  height: 76px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  background: #111111;
+  color: #666666;
+  border: 0;
+}
+.ilkko-footer, .ilkko-footer *, .ilkko-footer *::before, .ilkko-footer *::after { box-sizing: border-box; }
+.ilkko-footer .ilkko-footer-inner {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  min-height: 0;
+  margin: 0 auto;
+  padding: 0 6.6%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+}
+.ilkko-footer .ilkko-copyright {
+  margin: 0;
+  padding: 0;
+  color: #666666;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+.ilkko-footer .ilkko-footer-logo {
+  display: flex;
+  width: 68px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+  padding: 0;
+  margin: 0;
+  text-decoration: none;
+}
+.ilkko-footer .ilkko-footer-logo img {
+  display: block;
+  width: 68px;
+  height: 38px;
+  max-width: none;
+  max-height: none;
+  object-fit: contain;
+}
+.ilkko-footer .ilkko-instagram {
+  display: flex;
+  width: 19px;
+  height: 19px;
+  align-items: center;
+  justify-content: center;
+  justify-self: end;
+  padding: 0;
+  color: #666666;
+  text-decoration: none;
+  transition: color .2s ease;
+}
+.ilkko-footer .ilkko-instagram svg { display: block; width: 19px; height: 19px; }
+.ilkko-footer .ilkko-instagram:hover { color: #999999; }
+@media (max-width: 767px) {
+  .footer.ilkko-footer { height: 68px; min-height: 0; padding: 0; }
+  .ilkko-footer .ilkko-footer-inner {
+    min-height: 0;
+    height: 100%;
+    padding: 0 18px;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 6px;
+  }
+  .ilkko-footer .ilkko-copyright { font-size: 9px; white-space: normal; }
+  .ilkko-footer .ilkko-footer-logo { width: 54px; height: 32px; justify-self: center; }
+  .ilkko-footer .ilkko-footer-logo img { width: 54px; height: 32px; }
+  .ilkko-footer .ilkko-instagram { width: 16px; height: 16px; }
+  .ilkko-footer .ilkko-instagram svg { width: 16px; height: 16px; }
+}
+
+
+/* ---------------------------------------------------------
+   모바일 전용 푸터 — 2026-11-13 최종 참고 이미지 기준
+   왼쪽 상단 로고 / 왼쪽 하단 저작권 / 오른쪽 상단 인스타그램
+   PC (768px 이상)는 위의 원본 스타일을 그대로 사용합니다.
+   --------------------------------------------------------- */
+@media (max-width: 767px) {
+  footer.footer.ilkko-footer {
+    width: 100% !important;
+    height: 146px !important;
+    min-height: 146px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #111111 !important;
+    border: 0 !important;
+  }
+
+  footer.ilkko-footer .ilkko-footer-inner {
+    box-sizing: border-box !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 30px !important;
+    grid-template-rows: 45px 30px !important;
+    grid-template-areas:
+      "logo instagram"
+      "copyright copyright" !important;
+    column-gap: 12px !important;
+    row-gap: 12px !important;
+    align-items: center !important;
+    align-content: center !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 8.8% !important;
+  }
+
+  footer.ilkko-footer .ilkko-footer-logo {
+    grid-area: logo !important;
+    justify-self: start !important;
+    align-self: center !important;
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    width: 74px !important;
+    height: 46px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  footer.ilkko-footer .ilkko-footer-logo img {
+    display: block !important;
+    width: 74px !important;
+    height: 46px !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+    object-position: left center !important;
+  }
+
+  footer.ilkko-footer .ilkko-copyright {
+    grid-area: copyright !important;
+    justify-self: start !important;
+    align-self: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-family: inherit !important;
+    font-size: clamp(12px, 3.65vw, 17px) !important;
+    font-weight: 400 !important;
+    line-height: 1.25 !important;
+    letter-spacing: 0 !important;
+    color: #666666 !important;
+    white-space: nowrap !important;
+    word-break: normal !important;
+  }
+
+  footer.ilkko-footer .ilkko-instagram {
+    grid-area: instagram !important;
+    justify-self: end !important;
+    align-self: center !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 28px !important;
+    height: 28px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #777777 !important;
+  }
+  footer.ilkko-footer .ilkko-instagram svg {
+    display: block !important;
+    width: 28px !important;
+    height: 28px !important;
+  }
+}
+
+@media (max-width: 350px) {
+  footer.ilkko-footer .ilkko-footer-inner {
+    padding-left: 7% !important;
+    padding-right: 7% !important;
+  }
+  footer.ilkko-footer .ilkko-copyright {
+    font-size: 12px !important;
+  }
+}

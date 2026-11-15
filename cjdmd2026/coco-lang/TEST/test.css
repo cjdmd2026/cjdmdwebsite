@@ -1,0 +1,7965 @@
+/* ===================================
+   기본 설정
+=================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: "Pretendard", sans-serif;
+  color: #3f3f3f;
+  background: #ffffff;
+  letter-spacing: 0.02em;
+
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+button {
+  font: inherit;
+}
+
+img {
+  display: block;
+}
+
+
+/* ===================================
+   전체 테스트 영역
+=================================== */
+
+.test-app {
+  position: relative;
+
+  width: 100vw;
+  max-width: none;
+
+  height: 100vh;
+  min-height: 100vh;
+
+  margin: 0;
+
+  background: #fffaf8;
+
+  overflow: hidden;
+  box-shadow: none;
+}
+
+
+/* ===================================
+   화면 전환
+=================================== */
+
+.screen {
+  display: none;
+
+  width: 100%;
+  height: 100vh;
+  min-height: 100vh;
+}
+
+.screen.active {
+  display: flex;
+}
+
+
+/* ===================================
+   시작 화면
+=================================== */
+
+.start-screen {
+  position: relative;
+
+  width: 100%;
+  height: 100vh;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  background: #fffaf8;
+
+  overflow: hidden;
+}
+
+
+/* ===================================
+   HTML 배경 이미지
+=================================== */
+
+.start-bg {
+  position: absolute;
+  inset: 0;
+
+  z-index: 0;
+
+  width: 100%;
+  max-width: none;
+  height: 100%;
+
+  object-fit: cover;
+  object-position: center;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+
+/* ===================================
+   시작 화면 콘텐츠
+=================================== */
+
+.start-content {
+  position: absolute;
+  inset: 0;
+
+  z-index: 2;
+
+  width: 100%;
+  height: 100%;
+
+  text-align: center;
+}
+
+
+/* ===================================
+   타이틀 이미지
+=================================== */
+
+.start-title {
+  position: absolute;
+
+  top: 7%;
+  left: 50%;
+
+  width: clamp(300px, 48vw, 920px);
+  max-width: 90%;
+  height: auto;
+
+  object-fit: contain;
+
+  opacity: 0;
+
+  animation:
+    title-enter 0.9s cubic-bezier(0.22, 1.35, 0.36, 1) 0.15s forwards,
+    title-float 3.4s ease-in-out 1.2s infinite;
+}
+
+
+/* 타이틀 통통 등장 */
+
+@keyframes title-enter {
+  0% {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      translateY(-45px)
+      scale(0.72)
+      rotate(-4deg);
+  }
+
+  55% {
+    opacity: 1;
+
+    transform:
+      translateX(-50%)
+      translateY(8px)
+      scale(1.07)
+      rotate(2deg);
+  }
+
+  75% {
+    transform:
+      translateX(-50%)
+      translateY(-4px)
+      scale(0.97)
+      rotate(-1deg);
+  }
+
+  100% {
+    opacity: 1;
+
+    transform:
+      translateX(-50%)
+      translateY(0)
+      scale(1)
+      rotate(0);
+  }
+}
+
+
+/* 타이틀 살짝 떠다니는 움직임 */
+
+@keyframes title-float {
+  0%,
+  100% {
+    transform:
+      translateX(-50%)
+      translateY(0)
+      rotate(0);
+  }
+
+  35% {
+    transform:
+      translateX(-50%)
+      translateY(-7px)
+      rotate(-0.7deg);
+  }
+
+  70% {
+    transform:
+      translateX(-50%)
+      translateY(-3px)
+      rotate(0.7deg);
+  }
+}
+
+
+/* ===================================
+   설명 문구
+=================================== */
+
+.start-description {
+  position: absolute;
+
+  top: 53%;
+  left: 50%;
+
+  width: min(88%, 860px);
+
+  margin: 0;
+
+  color: #4b9442;
+
+  font-size: clamp(25px, 1.75vw, 34px);
+  font-weight: 700;
+  line-height: 1.75;
+  letter-spacing: 0.045em;
+
+  text-align: center;
+  word-break: keep-all;
+
+  opacity: 0;
+
+  transform: translateX(-50%);
+
+  animation:
+    description-enter 0.7s ease 0.75s forwards;
+}
+
+
+@keyframes description-enter {
+  from {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateX(-50%)
+      translateY(0);
+  }
+}
+
+
+/* ===================================
+   시작 버튼
+=================================== */
+
+.start-button {
+  position: absolute;
+
+  left: 50%;
+  bottom: 21%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: clamp(360px, 26vw, 500px);
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  outline: 0;
+  border-radius: 999px;
+
+  background: transparent;
+
+  cursor: pointer;
+
+  opacity: 0;
+
+  transform:
+    translateX(-50%)
+    translateY(25px);
+
+  animation:
+    button-enter 0.75s
+    cubic-bezier(0.22, 1.35, 0.36, 1)
+    1s forwards;
+
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease;
+}
+
+.start-button img {
+  width: 100%;
+  max-width: none;
+  height: auto;
+
+  object-fit: contain;
+
+  pointer-events: none;
+  user-select: none;
+
+  filter:
+    drop-shadow(0 9px 12px rgba(90, 55, 35, 0.14));
+
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease;
+}
+
+
+/* ===================================
+   버튼 등장
+=================================== */
+
+@keyframes button-enter {
+  0% {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      translateY(24px)
+      scale(0.9);
+  }
+
+  65% {
+    opacity: 1;
+
+    transform:
+      translateX(-50%)
+      translateY(-3px)
+      scale(1.025);
+  }
+
+  100% {
+    opacity: 1;
+
+    transform:
+      translateX(-50%)
+      translateY(0)
+      scale(1);
+  }
+}
+
+
+/* ===================================
+   버튼 오버
+=================================== */
+
+.start-button:hover {
+  transform:
+    translateX(-50%)
+    translateY(-5px);
+}
+
+.start-button:hover img {
+  animation:
+    button-cute-hover 0.8s
+    ease-in-out
+    infinite
+    alternate;
+
+  filter:
+    brightness(1.025)
+    drop-shadow(0 13px 17px rgba(255, 113, 84, 0.2));
+}
+
+
+/* 오버 시 귀엽게 살랑이는 움직임 */
+
+@keyframes button-cute-hover {
+  from {
+    transform:
+      translateY(0)
+      rotate(-0.4deg);
+  }
+
+  to {
+    transform:
+      translateY(-3px)
+      rotate(0.4deg);
+  }
+}
+
+
+/* ===================================
+   버튼 클릭
+=================================== */
+
+.start-button:active {
+  transform:
+    translateX(-50%)
+    translateY(-1px);
+}
+
+.start-button:active img {
+  animation: none;
+
+  transform:
+    scale(0.975);
+
+  filter:
+    brightness(0.98)
+    drop-shadow(0 5px 8px rgba(90, 55, 35, 0.12));
+}
+
+
+/* ===================================
+   키보드 포커스
+=================================== */
+
+.start-button:focus-visible {
+  outline: 4px solid rgba(255, 113, 84, 0.28);
+  outline-offset: 7px;
+}
+
+
+/* ===================================
+   1600px 이하 모니터
+=================================== */
+
+@media (max-width: 1600px) {
+  .start-title {
+    top: 8%;
+
+    width: clamp(560px, 45vw, 760px);
+  }
+
+  .start-description {
+    top: 53%;
+
+    width: min(88%, 760px);
+
+    font-size: clamp(21px, 1.65vw, 29px);
+    letter-spacing: 0.035em;
+  }
+
+  .start-button {
+    bottom: 20%;
+
+    width: clamp(340px, 25vw, 460px);
+  }
+}
+
+
+/* ===================================
+   화면 높이가 작은 PC / 노트북
+=================================== */
+
+@media (max-height: 850px) {
+  .start-title {
+    top: 7%;
+
+    width: clamp(500px, 42vw, 680px);
+  }
+
+  .start-description {
+    top: 52%;
+
+    font-size: clamp(19px, 1.45vw, 25px);
+    line-height: 1.65;
+  }
+
+  .start-button {
+    bottom: 18%;
+
+    width: clamp(320px, 24vw, 430px);
+  }
+}
+
+
+/* ===================================
+   대형 모니터
+=================================== */
+
+@media (min-width: 2200px) {
+  .start-title {
+    width: min(48vw, 980px);
+  }
+
+  .start-description {
+    width: min(88%, 900px);
+
+    font-size: min(1.65vw, 36px);
+  }
+
+  .start-button {
+    bottom: 21%;
+
+    width: min(27vw, 540px);
+  }
+}
+
+
+/* ===================================
+   모션 최소화 설정
+=================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .start-title,
+  .start-description,
+  .start-button {
+    opacity: 1;
+    animation: none;
+  }
+
+  .start-title {
+    transform: translateX(-50%);
+  }
+
+  .start-description {
+    transform: translateX(-50%);
+  }
+
+  .start-button {
+    transform: translateX(-50%);
+  }
+
+  .start-button:hover img,
+  .start-button:active img {
+    animation: none;
+    transform: none;
+  }
+}
+
+
+
+/*--------------------PET PAGE-------------------------*/
+
+/* =========================================================
+   PET STATUS PAGE
+   pet-status.html
+========================================================= */
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.pet-status-page {
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+
+  font-family:
+    "Pretendard",
+    sans-serif;
+
+  background: #eaf9ff;
+}
+
+
+
+/* =========================================================
+   STAGE
+========================================================= */
+
+.pet-status-stage {
+  position: relative;
+
+  width: 100vw;
+  height: 100vh;
+
+  min-width: 1024px;
+  min-height: 650px;
+
+  overflow: hidden;
+}
+
+
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+.pet-status-bg-image {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 0;
+
+  width: 100%;
+  height: 100%;
+
+  max-width: none;
+
+  object-fit: fill;
+  object-position: center;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.pet-status-content {
+  position: absolute;
+
+  z-index: 2;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  padding-top:
+    clamp(
+      120px,
+      13vh,
+      155px
+    );
+}
+
+
+
+/* =========================================================
+   HEADING
+========================================================= */
+
+.pet-status-heading {
+  width: 100%;
+
+  margin: 0;
+
+  text-align: center;
+}
+
+
+
+.pet-status-heading h1 {
+  margin: 0;
+
+  color: #268557;
+
+  font-size:
+    clamp(
+      36px,
+      3vw,
+      56px
+    );
+
+  font-weight: 900;
+
+  line-height: 1.2;
+
+  letter-spacing: -0.045em;
+
+  word-break: keep-all;
+}
+
+
+
+.pet-status-heading p {
+  margin:
+    clamp(
+      15px,
+      1.7vh,
+      20px
+    )
+    0 0;
+
+  color: #405323;
+
+  font-size:
+    clamp(
+      18px,
+      1.45vw,
+      27px
+    );
+
+  font-weight: 600;
+
+  line-height: 1.55;
+
+  letter-spacing: -0.025em;
+
+  word-break: keep-all;
+}
+
+
+
+/* =========================================================
+   OPTIONS
+========================================================= */
+
+.pet-status-options {
+  width: min(62vw, 1060px) !important;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap:
+    clamp(
+      30px,
+      3vw,
+      48px
+    );
+
+  margin-top:
+    clamp(
+      54px,
+      6vh,
+      70px
+    );
+}
+
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.pet-status-card {
+  position: relative;
+
+  width: 100%;
+
+  height:
+    clamp(
+      280px,
+      31vh,
+      330px
+    );
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  padding:
+    34px
+    25px;
+
+  border: 4px solid;
+
+  border-radius:
+    clamp(
+      34px,
+      2.5vw,
+      44px
+    );
+
+  outline: none;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  background:
+    rgba(
+      255,
+      254,
+      248,
+      0.96
+    );
+
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 0
+    rgba(
+      80,
+      100,
+      50,
+      0.06
+    );
+
+  transition:
+    transform 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease,
+    background 0.22s ease;
+}
+
+
+
+/* 안쪽 점선 */
+
+.pet-status-card::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 13px;
+
+  border: 2px dashed;
+
+  border-radius:
+    clamp(
+      25px,
+      2vw,
+      33px
+    );
+
+  pointer-events: none;
+}
+
+
+
+/* =========================================================
+   YES CARD
+========================================================= */
+
+.pet-status-card--yes {
+  border-color: #c9dda3;
+}
+
+
+
+.pet-status-card--yes::before {
+  border-color: #9bc857;
+}
+
+
+
+.pet-status-card--yes
+.pet-status-card-small {
+  color: #559d4b;
+}
+
+
+
+.pet-status-card--yes
+.pet-status-card-title {
+  color: #278b58;
+}
+
+
+
+/* =========================================================
+   NO CARD
+========================================================= */
+
+.pet-status-card--no {
+  border-color: #e9e2c7;
+}
+
+
+
+.pet-status-card--no::before {
+  border-color: #efc86d;
+}
+
+
+
+.pet-status-card--no
+.pet-status-card-small {
+  color: #ce7300;
+}
+
+
+
+.pet-status-card--no
+.pet-status-card-title {
+  color: #df8c00;
+}
+
+
+
+/* =========================================================
+   CARD TEXT
+========================================================= */
+
+.pet-status-card-small {
+  display: block;
+
+  margin-bottom: 10px;
+
+  font-size:
+    clamp(
+      23px,
+      1.8vw,
+      32px
+    );
+
+  font-weight: 800;
+
+  line-height: 1.15;
+
+  letter-spacing: -0.04em;
+}
+
+
+
+.pet-status-card-title {
+  display: block;
+
+  font-size:
+    clamp(
+      30px,
+      2.4vw,
+      43px
+    );
+
+  font-weight: 900;
+
+  line-height: 1.2;
+
+  letter-spacing: -0.055em;
+}
+
+
+
+.pet-status-card-desc {
+  display: block;
+
+  margin-top:
+    clamp(
+      24px,
+      2.8vh,
+      31px
+    );
+
+  color: #425526;
+
+  font-size:
+    clamp(
+      18px,
+      1.4vw,
+      25px
+    );
+
+  font-weight: 500;
+
+  line-height: 1.65;
+
+  letter-spacing: -0.025em;
+
+  text-align: center;
+}
+
+
+
+
+
+/* =========================================================
+   CARD HOVER
+========================================================= */
+
+.pet-status-card:hover {
+  transform:
+    translateY(-7px);
+
+  box-shadow:
+    0 17px 30px
+    rgba(
+      76,
+      91,
+      42,
+      0.11
+    );
+}
+
+
+
+/* =========================================================
+   CARD SELECTED
+========================================================= */
+
+.pet-status-card.is-selected {
+  transform:
+    translateY(-7px)
+    scale(1.015);
+
+  background: #fffefa;
+}
+
+
+
+.pet-status-card.is-selected
+.pet-status-check {
+  opacity: 1;
+
+  transform:
+    scale(1);
+}
+
+
+
+/* YES selected */
+
+.pet-status-card--yes.is-selected {
+  border-color: #87b94c;
+
+  box-shadow:
+    0 0 0 4px
+    rgba(
+      135,
+      185,
+      76,
+      0.10
+    ),
+    0 15px 28px
+    rgba(
+      70,
+      110,
+      40,
+      0.12
+    );
+}
+
+
+
+/* NO selected */
+
+.pet-status-card--no.is-selected {
+  border-color: #e7b044;
+
+  box-shadow:
+    0 0 0 4px
+    rgba(
+      231,
+      176,
+      68,
+      0.10
+    ),
+    0 15px 28px
+    rgba(
+      150,
+      110,
+      30,
+      0.10
+    );
+}
+
+
+
+/* =========================================================
+   SELECT BUTTON
+========================================================= */
+
+.pet-status-next {
+  position: relative;
+
+  width:
+    clamp(
+      360px,
+      28vw,
+      500px
+    );
+
+  height:
+    clamp(
+      72px,
+      8vh,
+      88px
+    );
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  margin-top:
+    clamp(
+      48px,
+      5.8vh,
+      64px
+    );
+
+  padding: 0;
+
+  border: 0;
+
+  border-radius: 999px;
+
+  background: #ff7154;
+
+  color: #ffffff;
+
+  font-size:
+    clamp(
+      21px,
+      1.65vw,
+      28px
+    );
+
+  font-weight: 800;
+
+  letter-spacing: -0.035em;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 18px
+    rgba(
+      255,
+      113,
+      84,
+      0.20
+    );
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+
+/* 버튼 안쪽 점선 */
+
+.pet-status-next::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 8px;
+
+  border:
+    3px dashed
+    rgba(
+      255,
+      255,
+      255,
+      0.88
+    );
+
+  border-radius: inherit;
+
+  pointer-events: none;
+}
+
+
+
+.pet-status-next span {
+  position: relative;
+
+  z-index: 2;
+}
+
+
+
+/* 선택 전 */
+
+.pet-status-next:disabled {
+  opacity: 0.45;
+
+  cursor: default;
+
+  box-shadow: none;
+}
+
+
+
+/* 선택 후 */
+
+.pet-status-next.is-active {
+  opacity: 1;
+
+  cursor: pointer;
+}
+
+
+
+.pet-status-next.is-active:hover {
+  background: #ff795f;
+
+  transform:
+    translateY(-4px);
+
+  box-shadow:
+    0 14px 22px
+    rgba(
+      255,
+      113,
+      84,
+      0.25
+    );
+}
+
+
+
+.pet-status-next.is-active:active {
+  transform:
+    translateY(-1px)
+    scale(0.98);
+}
+
+
+
+/* =========================================================
+   1600px 이하
+========================================================= */
+
+@media (max-width: 1600px) {
+
+  .pet-status-content {
+    padding-top:
+      clamp(
+        100px,
+        11.5vh,
+        130px
+      );
+  }
+
+
+  .pet-status-heading h1 {
+    font-size:
+      clamp(
+        34px,
+        2.7vw,
+        44px
+      );
+  }
+
+
+  .pet-status-heading p {
+    font-size:
+      clamp(
+        17px,
+        1.35vw,
+        21px
+      );
+  }
+
+
+  .pet-status-options {
+    width:
+      min(
+        60vw,
+        930px
+      );
+
+    gap: 24px;
+
+    margin-top: 42px;
+  }
+
+
+  .pet-status-card {
+    height: 280px;
+  }
+
+
+  .pet-status-card-small {
+    font-size:
+      clamp(
+        20px,
+        1.6vw,
+        25px
+      );
+  }
+
+
+  .pet-status-card-title {
+    font-size:
+      clamp(
+        27px,
+        2.1vw,
+        34px
+      );
+  }
+
+
+  .pet-status-card-desc {
+    font-size:
+      clamp(
+        16px,
+        1.25vw,
+        20px
+      );
+  }
+
+
+  .pet-status-next {
+    width:
+      clamp(
+        330px,
+        26vw,
+        410px
+      );
+
+    height: 72px;
+
+    margin-top: 42px;
+  }
+
+}
+
+
+
+/* =========================================================
+   낮은 화면
+========================================================= */
+
+@media (max-height: 850px) {
+
+  .pet-status-content {
+    padding-top: 72px;
+  }
+
+
+  .pet-status-heading h1 {
+    font-size:
+      clamp(
+        31px,
+        2.5vw,
+        41px
+      );
+  }
+
+
+  .pet-status-heading p {
+    margin-top: 10px;
+
+    font-size:
+      clamp(
+        16px,
+        1.2vw,
+        19px
+      );
+  }
+
+
+  .pet-status-options {
+    margin-top: 28px;
+  }
+
+
+  .pet-status-card {
+    height: 245px;
+  }
+
+
+  .pet-status-card-desc {
+    margin-top: 18px;
+  }
+
+
+  .pet-status-next {
+    height: 62px;
+
+    margin-top: 26px;
+  }
+
+}
+
+
+
+/* =========================================================
+   1920 × 1080
+========================================================= */
+
+@media
+(min-width: 1700px)
+and
+(min-height: 900px) {
+
+  .pet-status-content {
+    padding-top: 135px;
+  }
+
+
+  .pet-status-options {
+    width: 1040px;
+
+    margin-top: 58px;
+
+    gap: 34px;
+  }
+
+
+  .pet-status-card {
+    height: 315px;
+  }
+
+
+  .pet-status-next {
+    width: 440px;
+
+    height: 82px;
+
+    margin-top: 56px;
+  }
+
+}
+
+/* =========================================================
+   PET STATUS - TARGET IMAGE FINAL FIX
+   두 번째 시안 비율 맞춤
+========================================================= */
+
+
+/* 전체 화면 */
+.pet-status-stage {
+  position: relative;
+
+  width: 100vw;
+  height: 100vh;
+
+  min-width: 1024px;
+  min-height: 650px;
+
+  overflow: hidden;
+}
+
+
+/* 배경 */
+.pet-status-bg-image {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  max-width: none;
+
+  object-fit: fill;
+  object-position: center;
+
+  z-index: 0;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   전체 내용 위치
+========================================================= */
+
+.pet-status-content {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  z-index: 2;
+
+  width: 100%;
+  height: 100%;
+
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  transform: none;
+}
+
+
+/* =========================================================
+   제목
+========================================================= */
+
+.pet-status-heading {
+  position: absolute;
+
+  top: 13.5%;
+  left: 50%;
+
+  width: 72%;
+
+  margin: 0;
+
+  transform: translateX(-50%);
+
+  text-align: center;
+}
+
+
+.pet-status-heading h1 {
+  margin: 0;
+
+  color: #27895a;
+
+  font-size: clamp(38px, 3vw, 55px);
+
+  font-weight: 900;
+
+  line-height: 1.15;
+
+  letter-spacing: -0.055em;
+}
+
+
+.pet-status-heading p {
+  margin: 18px 0 0;
+
+  color: #435522;
+
+  font-size: clamp(19px, 1.45vw, 26px);
+
+  font-weight: 600;
+
+  line-height: 1.5;
+
+  letter-spacing: -0.025em;
+}
+
+
+/* =========================================================
+   카드 전체 위치
+========================================================= */
+
+.pet-status-options {
+  position: absolute;
+
+  top: 28%;
+
+  left: 50%;
+
+  width: 62%;
+
+  max-width: 1060px;
+
+  margin: 0;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 32px;
+
+  transform: translateX(-50%);
+}
+
+
+/* =========================================================
+   카드 크기
+========================================================= */
+
+.pet-status-card {
+  position: relative;
+
+  width: 100%;
+  height: clamp(255px, 28vh, 295px);
+
+  padding: 28px 24px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  border-width: 4px;
+  border-style: solid;
+
+  border-radius: 35px;
+
+  background: rgba(255, 254, 248, 0.97);
+
+  box-shadow:
+    0 8px 0 rgba(90, 100, 50, 0.06);
+
+  cursor: pointer;
+
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+
+/* 안쪽 점선 */
+.pet-status-card::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 11px;
+
+  border-width: 2px;
+  border-style: dashed;
+
+  border-radius: 27px;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   YES
+========================================================= */
+
+.pet-status-card--yes {
+  border-color: #c6d99e;
+}
+
+
+.pet-status-card--yes::before {
+  border-color: #9bc650;
+}
+
+
+.pet-status-card--yes .pet-status-card-small {
+  color: #559d4c;
+}
+
+
+.pet-status-card--yes .pet-status-card-title {
+  color: #278b58;
+}
+
+
+/* =========================================================
+   NO
+========================================================= */
+
+.pet-status-card--no {
+  border-color: #e8dfc2;
+}
+
+
+.pet-status-card--no::before {
+  border-color: #efc66b;
+}
+
+
+.pet-status-card--no .pet-status-card-small {
+  color: #c87800;
+}
+
+
+.pet-status-card--no .pet-status-card-title {
+  color: #df8c00;
+}
+
+
+/* =========================================================
+   카드 글씨
+========================================================= */
+
+.pet-status-card-small {
+  margin: 0 0 10px;
+
+  font-size: clamp(23px, 1.7vw, 30px);
+
+  font-weight: 800;
+
+  line-height: 1.15;
+
+  letter-spacing: -0.045em;
+}
+
+
+.pet-status-card-title {
+  margin: 0;
+
+  font-size: clamp(30px, 2.25vw, 40px);
+
+  font-weight: 900;
+
+  line-height: 1.15;
+
+  letter-spacing: -0.055em;
+}
+
+
+.pet-status-card-desc {
+  margin-top: 27px;
+
+  color: #425425;
+
+  font-size: clamp(17px, 1.3vw, 23px);
+
+  font-weight: 500;
+
+  line-height: 1.65;
+
+  letter-spacing: -0.025em;
+
+  text-align: center;
+}
+
+
+
+/* =========================================================
+   카드 hover / selected
+========================================================= */
+
+.pet-status-card:hover {
+  transform: translateY(-5px);
+
+  box-shadow:
+    0 14px 24px rgba(75, 90, 40, 0.09);
+}
+
+
+.pet-status-card.is-selected {
+  transform:
+    translateY(-5px)
+    scale(1.01);
+}
+
+
+.pet-status-card--yes.is-selected {
+  border-color: #85b94a;
+}
+
+
+.pet-status-card--no.is-selected {
+  border-color: #e7ad3c;
+}
+
+
+/* =========================================================
+   선택하기 버튼
+========================================================= */
+
+.pet-status-next {
+  position: absolute;
+
+  left: 50%;
+  top: 62.5%;
+
+  width: clamp(350px, 27vw, 430px);
+  height: clamp(68px, 7.5vh, 78px);
+
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  transform: translateX(-50%);
+
+  border: 0;
+
+  border-radius: 999px;
+
+  background: #ff7154;
+
+  color: #ffffff;
+
+  font-size: clamp(21px, 1.6vw, 27px);
+
+  font-weight: 800;
+
+  letter-spacing: -0.035em;
+
+  box-shadow:
+    0 8px 15px rgba(255, 113, 84, 0.18);
+
+  cursor: pointer;
+
+  opacity: 1;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+/* 안쪽 점선 */
+.pet-status-next::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 7px;
+
+  border:
+    3px dashed
+    rgba(255, 255, 255, 0.9);
+
+  border-radius: inherit;
+
+  pointer-events: none;
+}
+
+
+.pet-status-next span {
+  position: relative;
+
+  z-index: 2;
+}
+
+
+/* 선택 전에도 두 번째 시안처럼 주황색 유지 */
+.pet-status-next:disabled {
+  background: #ff7154;
+
+  color: #ffffff;
+
+  opacity: 1;
+
+  cursor: default;
+
+  box-shadow:
+    0 8px 15px rgba(255, 113, 84, 0.18);
+}
+
+
+/* 활성화 후 hover */
+.pet-status-next:not(:disabled):hover {
+  background: #ff795f;
+
+  transform:
+    translateX(-50%)
+    translateY(-4px);
+
+  box-shadow:
+    0 13px 20px
+    rgba(255, 113, 84, 0.24);
+}
+
+
+/* =========================================================
+   1600px 이하
+========================================================= */
+
+@media (max-width: 1600px) {
+
+  .pet-status-heading {
+    top: 12%;
+  }
+
+
+  .pet-status-heading h1 {
+    font-size: clamp(34px, 2.7vw, 44px);
+  }
+
+
+  .pet-status-heading p {
+    margin-top: 14px;
+
+    font-size: clamp(17px, 1.3vw, 21px);
+  }
+
+
+  .pet-status-options {
+    top: 28%;
+
+    width: 60%;
+
+    max-width: 920px;
+
+    gap: 24px;
+  }
+
+
+  .pet-status-card {
+    height: clamp(240px, 29vh, 275px);
+  }
+
+
+  .pet-status-card-small {
+    font-size: clamp(20px, 1.55vw, 25px);
+  }
+
+
+  .pet-status-card-title {
+    font-size: clamp(27px, 2vw, 33px);
+  }
+
+
+  .pet-status-card-desc {
+    margin-top: 23px;
+
+    font-size: clamp(16px, 1.2vw, 19px);
+  }
+
+
+  .pet-status-next {
+    top: 65%;
+
+    width: clamp(330px, 26vw, 395px);
+
+    height: 68px;
+
+    font-size: 21px;
+  }
+
+}
+
+
+/* =========================================================
+   화면 높이가 낮을 때
+========================================================= */
+
+@media (max-height: 850px) {
+
+  .pet-status-heading {
+    top: 10.5%;
+  }
+
+
+  .pet-status-options {
+    top: 27%;
+  }
+
+
+  .pet-status-card {
+    height: 235px;
+  }
+
+
+  .pet-status-card-desc {
+    margin-top: 18px;
+  }
+
+
+  .pet-status-next {
+    top: 66%;
+
+    height: 62px;
+  }
+
+}
+
+
+/* =========================================================
+   PET STATUS - 전체 위치 최종 조정
+   맨 아래에 그대로 추가
+========================================================= */
+
+
+/* 전체 콘텐츠를 한 덩어리로 배치 */
+.pet-status-content {
+  position: absolute !important;
+
+  top: 0 !important;
+  left: 0 !important;
+
+  width: 100% !important;
+  height: 100% !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+
+  transform: none !important;
+
+  z-index: 2;
+}
+
+
+/* =========================================================
+   제목 - 아래로 이동
+========================================================= */
+
+.pet-status-heading {
+  position: relative !important;
+
+  top: auto !important;
+  left: auto !important;
+
+  width: 75% !important;
+
+  margin: 0 !important;
+
+  /* 핵심: 위 여백 */
+  padding-top: 18vh !important;
+
+  transform: none !important;
+
+  text-align: center;
+}
+
+
+/* 제목 */
+.pet-status-heading h1 {
+  margin: 0 !important;
+
+  font-size: clamp(38px, 3vw, 55px) !important;
+
+  line-height: 1.15;
+
+  color: #27895a;
+
+  font-weight: 900;
+
+  letter-spacing: -0.055em;
+}
+
+
+/* 설명 */
+.pet-status-heading p {
+  margin: 18px 0 0 !important;
+
+  font-size: clamp(18px, 1.4vw, 25px) !important;
+
+  color: #435522;
+
+  font-weight: 600;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   카드 영역
+========================================================= */
+
+.pet-status-options {
+  position: relative !important;
+
+  top: auto !important;
+  left: auto !important;
+
+  width: min(62vw, 1060px) !important;
+
+  display: grid !important;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr)) !important;
+
+  gap: 32px !important;
+
+  /* 제목과 카드 사이 */
+  margin: 58px 0 0 !important;
+
+  transform: none !important;
+}
+
+
+/* 카드 */
+.pet-status-card {
+  height: 290px !important;
+}
+
+
+/* =========================================================
+   선택 버튼
+========================================================= */
+
+.pet-status-next {
+  position: relative !important;
+
+  top: auto !important;
+  left: auto !important;
+
+  width: 430px !important;
+  height: 76px !important;
+
+  /* 카드와 버튼 사이 */
+  margin: 54px 0 0 !important;
+
+  transform: none !important;
+}
+
+
+/* hover 때 중앙 위치 깨지는 것 방지 */
+.pet-status-next:not(:disabled):hover {
+  transform: translateY(-4px) !important;
+}
+
+
+/* =========================================================
+   네 현재 브라우저 높이 정도
+========================================================= */
+
+@media (max-height: 900px) {
+
+  .pet-status-heading {
+    padding-top: 15.5vh !important;
+  }
+
+  .pet-status-options {
+    margin-top: 44px !important;
+  }
+
+  .pet-status-card {
+    height: 255px !important;
+  }
+
+  .pet-status-next {
+    height: 66px !important;
+
+    margin-top: 40px !important;
+  }
+
+}
+
+
+/* =========================================================
+   1920 × 1080 전시 화면
+========================================================= */
+
+@media
+(min-width: 1700px)
+and
+(min-height: 900px) {
+
+  .pet-status-heading {
+    padding-top: 18vh !important;
+  }
+
+  .pet-status-options {
+    width: 1040px !important;
+
+    margin-top: 62px !important;
+  }
+
+  .pet-status-card {
+    height: 300px !important;
+  }
+
+  .pet-status-next {
+    width: 440px !important;
+    height: 78px !important;
+
+    margin-top: 56px !important;
+  }
+
+}
+
+
+/* =========================================================
+   선택하기 버튼 상태
+========================================================= */
+
+/* 선택하기 전 */
+.pet-status-next:disabled {
+  background: #d8d8d8 !important;
+  color: #ffffff !important;
+
+  opacity: 1 !important;
+
+  box-shadow: none !important;
+
+  cursor: default;
+}
+
+
+/* 선택하기 전 안쪽 점선 */
+.pet-status-next:disabled::before {
+  border-color: rgba(255, 255, 255, 0.75) !important;
+}
+
+
+/* 선택한 후 */
+.pet-status-next:not(:disabled) {
+  background: #ff7154 !important;
+  color: #ffffff !important;
+
+  opacity: 1 !important;
+
+  box-shadow:
+    0 8px 15px rgba(255, 113, 84, 0.18) !important;
+
+  cursor: pointer;
+}
+
+
+/* 선택 후 hover */
+.pet-status-next:not(:disabled):hover {
+  background: #ff795f !important;
+
+  transform: translateY(51px) !important;
+
+  box-shadow:
+    0 13px 20px rgba(255, 113, 84, 0.24) !important;
+}
+
+
+
+/* =========================================================
+   PET STATUS - 카드 / 버튼 최종 위치
+   기존 카드/버튼 위치 수정 코드는 지우고 이것만 사용
+========================================================= */
+
+
+/* =========================
+   카드 영역
+========================= */
+
+.pet-status-options {
+  position: relative !important;
+
+  top: auto !important;
+  left: auto !important;
+
+  width: min(62vw, 1060px) !important;
+
+  /* 핵심: 제목과 카드 사이를 크게 벌림 */
+  margin-top: 125px !important;
+
+  /* 기존 translate 제거 */
+  transform: none !important;
+}
+
+
+/* =========================
+   선택하기 버튼
+========================= */
+
+.pet-status-next {
+  position: relative !important;
+
+  top: auto !important;
+  left: auto !important;
+
+  width: 430px !important;
+  height: 76px !important;
+
+  /* 카드 바로 아래에서 간격 */
+  margin-top: 50px !important;
+
+  /* 기존 이동값 모두 제거 */
+  transform: none !important;
+}
+
+
+/* =========================
+   선택 전
+========================= */
+
+.pet-status-next:disabled {
+  background: #d8d8d8 !important;
+  color: #ffffff !important;
+
+  opacity: 1 !important;
+
+  box-shadow: none !important;
+
+  cursor: default !important;
+
+  transform: none !important;
+}
+
+
+/* 선택 전 안쪽 점선 */
+.pet-status-next:disabled::before {
+  border-color:
+    rgba(255, 255, 255, 0.75) !important;
+}
+
+
+/* =========================
+   선택 후
+========================= */
+
+.pet-status-next:not(:disabled) {
+  background: #ff7154 !important;
+  color: #ffffff !important;
+
+  opacity: 1 !important;
+
+  cursor: pointer !important;
+
+  transform: none !important;
+
+  box-shadow:
+    0 8px 15px
+    rgba(255, 113, 84, 0.18) !important;
+}
+
+
+/* hover */
+.pet-status-next:not(:disabled):hover {
+  background: #ff795f !important;
+
+  transform: translateY(-4px) !important;
+
+  box-shadow:
+    0 13px 20px
+    rgba(255, 113, 84, 0.24) !important;
+}
+
+
+/* 클릭 */
+.pet-status-next:not(:disabled):active {
+  transform:
+    translateY(-1px)
+    scale(0.98) !important;
+}
+
+
+/* =========================================================
+   화면 높이가 낮을 때
+========================================================= */
+
+@media (max-height: 900px) {
+
+  .pet-status-options {
+    /* 낮은 화면에서도 카드 충분히 아래로 */
+    margin-top: 105px !important;
+
+    transform: none !important;
+  }
+
+
+  .pet-status-next {
+    margin-top: 42px !important;
+
+    transform: none !important;
+  }
+
+
+  .pet-status-next:disabled,
+  .pet-status-next:not(:disabled) {
+    transform: none !important;
+  }
+
+
+  .pet-status-next:not(:disabled):hover {
+    transform: translateY(-4px) !important;
+  }
+
+
+  .pet-status-next:not(:disabled):active {
+    transform:
+      translateY(-1px)
+      scale(0.98) !important;
+  }
+
+}
+
+
+
+/* =========================================================
+   PET STATUS - 제목 / 부제목 오른쪽 이동
+========================================================= */
+
+.pet-status-heading {
+  position: relative !important;
+
+  /* 제목 + 부제목을 같이 오른쪽으로 이동 */
+  left: 55px !important;
+}
+
+
+/* =========================================================
+   PROFILE INFO PAGE - FINAL
+   dog-info.html / guest-info.html
+========================================================= */
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.profile-page {
+  width: 100%;
+  height: 100vh;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+
+  font-family: "Pretendard", sans-serif;
+
+  background: #ffffff;
+}
+
+
+/* =========================================================
+   STAGE
+========================================================= */
+
+.profile-stage {
+  position: relative;
+
+  width: 100vw;
+  height: 100vh;
+
+  min-width: 1100px;
+  min-height: 650px;
+
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+.profile-background {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 0;
+
+  width: 100%;
+  height: 100%;
+
+  max-width: none;
+
+  object-fit: fill;
+  object-position: center;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.profile-content,
+.guest-profile-content {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 2;
+
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+
+  display: block;
+
+  transform: none;
+}
+
+
+/* =========================================================
+   HEADING
+========================================================= */
+
+
+.profile-heading {
+  position: absolute;
+
+  top: 17%;
+
+  /* 기존 50%에서 오른쪽으로 이동 */
+  left: calc(50% + 55px);
+
+  width: 78%;
+
+  margin: 0;
+
+  transform: translateX(-50%);
+
+  text-align: center;
+}
+
+
+.profile-heading h1 {
+  margin: 0;
+
+  color: #27895a;
+
+  font-size: clamp(42px, 3.15vw, 60px);
+
+  font-weight: 900;
+
+  line-height: 1.15;
+
+  letter-spacing: -0.055em;
+
+  word-break: keep-all;
+}
+
+
+.profile-heading p {
+  margin: 17px 0 0;
+
+  color: #445421;
+
+  font-size: clamp(19px, 1.4vw, 25px);
+
+  font-weight: 600;
+
+  line-height: 1.5;
+
+  letter-spacing: -0.03em;
+
+  word-break: keep-all;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.profile-main {
+  position: absolute;
+
+  top: 37%;
+  left: 50%;
+
+  width: min(74vw, 1160px);
+
+  margin: 0;
+
+  transform: translateX(-50%);
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(400px, 0.95fr)
+    minmax(490px, 1.05fr);
+
+  align-items: center;
+
+  column-gap: clamp(58px, 4.8vw, 85px);
+}
+
+
+/* =========================================================
+   LEFT IMAGE AREA
+========================================================= */
+
+.profile-image-area {
+  position: relative;
+
+  width: 100%;
+  height: clamp(350px, 39vh, 410px);
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* 프레임 */
+
+.profile-frame {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+
+  z-index: 1;
+
+  width: 100%;
+  height: 100%;
+
+  max-width: none;
+
+  object-fit: contain;
+
+  transform: translate(-50%, -50%);
+
+  pointer-events: none;
+}
+
+
+/* 강아지 - 프레임 안에서 살짝 오른쪽 */
+
+.profile-dog {
+  position: absolute;
+
+  top: 50%;
+  left: 59%;
+
+  z-index: 2;
+
+  width: 54%;
+  height: 68%;
+
+  object-fit: contain;
+
+  transform: translate(-50%, -50%);
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.profile-form {
+  width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 14px;
+}
+
+
+/* =========================================================
+   ROW
+========================================================= */
+
+.profile-row {
+  width: 100%;
+  height: clamp(74px, 7.8vh, 82px);
+
+  display: grid;
+
+  grid-template-columns:
+    130px
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  padding:
+    9px
+    18px
+    9px
+    25px;
+
+  border: 2px solid #ece4cf;
+
+  border-radius: 21px;
+
+  background:
+    rgba(255, 253, 245, 0.96);
+
+  box-shadow:
+    0 3px 8px
+    rgba(98, 87, 50, 0.035);
+}
+
+
+/* =========================================================
+   LABEL
+========================================================= */
+
+.profile-label {
+  display: flex;
+
+  align-items: center;
+
+  gap: 11px;
+
+  color: #338756;
+
+  font-size: clamp(18px, 1.2vw, 22px);
+
+  font-weight: 800;
+
+  letter-spacing: -0.03em;
+}
+
+
+/* 발바닥.webp */
+
+.paw-icon {
+  display: block;
+
+  width: 25px;
+  height: 25px;
+
+  object-fit: contain;
+
+  flex: 0 0 25px;
+
+  filter: none;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+.profile-input-area {
+  position: relative;
+
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+}
+
+
+.profile-input-area input {
+  width: 100%;
+  height: 54px;
+
+  padding: 0 18px;
+
+  border:
+    2px dashed
+    #a9cc55;
+
+  outline: none;
+
+  border-radius: 15px;
+
+  background: #ffffff;
+
+  color: #425633;
+
+  font-family: "Pretendard", sans-serif;
+
+  font-size: 18px;
+
+  font-weight: 700;
+
+  text-align: center;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.profile-input-area input:focus {
+  border-color: #77b344;
+
+  box-shadow:
+    0 0 0 4px
+    rgba(119, 179, 68, 0.10);
+}
+
+
+/* 나이 / 몸무게 */
+
+.profile-input-area.input-small {
+  width: 74%;
+}
+
+
+.profile-unit {
+  flex-shrink: 0;
+
+  margin-left: 10px;
+
+  color: #56643b;
+
+  font-size: 17px;
+
+  font-weight: 700;
+}
+
+
+/* 숫자 input 화살표 제거 */
+
+.profile-input-area input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+
+.profile-input-area input[type="number"]::-webkit-inner-spin-button,
+.profile-input-area input[type="number"]::-webkit-outer-spin-button {
+  margin: 0;
+
+  -webkit-appearance: none;
+}
+
+
+/* =========================================================
+   GENDER
+========================================================= */
+
+.gender-select {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    1fr;
+
+  gap: 10px;
+}
+
+
+.gender-choice {
+  width: 100%;
+  height: 54px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  padding: 0;
+
+  border:
+    2px dashed
+    #b5d163;
+
+  border-radius: 15px;
+
+  background: #ffffff;
+
+  color: #475434;
+
+  font-family: "Pretendard", sans-serif;
+
+  font-size: 18px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+
+.gender-choice:hover {
+  transform: translateY(-2px);
+
+  background: #fffef8;
+}
+
+
+.gender-choice.selected {
+  border-color: #72b146;
+
+  background: #f3f9e8;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(114, 177, 70, 0.08);
+}
+
+
+.gender-heart {
+  font-size: 23px;
+
+  line-height: 1;
+}
+
+
+.gender-heart.male {
+  color: #86d5f0;
+}
+
+
+.gender-heart.female {
+  color: #f6a6bd;
+}
+
+
+/* =========================================================
+   NEXT BUTTON
+========================================================= */
+
+.profile-next-button {
+  position: absolute;
+
+  top: 84%;
+  left: 50%;
+
+  width: clamp(320px, 24vw, 360px);
+  height: 76px;
+
+  margin: 0;
+  padding: 0;
+
+  transform: translateX(-50%);
+
+  border: 0;
+
+  border-radius: 999px;
+
+  background: #ff7154;
+
+  color: #ffffff;
+
+  font-family: "Pretendard", sans-serif;
+
+  font-size: 23px;
+
+  font-weight: 800;
+
+  letter-spacing: -0.03em;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 15px
+    rgba(255, 113, 84, 0.20);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+/* 버튼 안쪽 점선 */
+
+.profile-next-button::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 7px;
+
+  border:
+    2px dashed
+    rgba(255, 255, 255, 0.9);
+
+  border-radius: inherit;
+
+  pointer-events: none;
+}
+
+
+.profile-next-button:hover {
+  background: #ff795f;
+
+  transform:
+    translateX(-50%)
+    translateY(-3px);
+
+  box-shadow:
+    0 12px 20px
+    rgba(255, 113, 84, 0.25);
+}
+
+
+.profile-next-button:active {
+  transform:
+    translateX(-50%)
+    scale(0.98);
+}
+
+
+/* =========================================================
+   1600px 이하
+========================================================= */
+
+@media (max-width: 1600px) {
+
+  .profile-heading {
+    top: 16%;
+  }
+
+
+  .profile-heading h1 {
+    font-size: 44px;
+  }
+
+
+  .profile-heading p {
+    font-size: 19px;
+  }
+
+
+  .profile-main {
+    top: 36%;
+
+    width: 1040px;
+
+    grid-template-columns:
+      440px
+      510px;
+
+    column-gap: 65px;
+  }
+
+
+  .profile-image-area {
+    height: 360px;
+  }
+
+
+  .profile-row {
+    height: 72px;
+
+    grid-template-columns:
+      120px
+      minmax(0, 1fr);
+  }
+
+
+  .profile-input-area input,
+  .gender-choice {
+    height: 51px;
+  }
+
+
+  .profile-next-button {
+    top: 83%;
+
+    width: 330px;
+    height: 70px;
+
+    font-size: 22px;
+  }
+
+}
+
+
+/* =========================================================
+   낮은 화면
+========================================================= */
+
+@media (max-height: 820px) {
+
+  .profile-heading {
+    top: 14%;
+  }
+
+
+  .profile-heading h1 {
+    font-size: 39px;
+  }
+
+
+  .profile-heading p {
+    margin-top: 11px;
+
+    font-size: 17px;
+  }
+
+
+  .profile-main {
+    top: 32%;
+  }
+
+
+  .profile-image-area {
+    height: 315px;
+  }
+
+
+  .profile-row {
+    height: 64px;
+  }
+
+
+  .profile-input-area input,
+  .gender-choice {
+    height: 45px;
+  }
+
+
+  .profile-next-button {
+    top: 82%;
+
+    width: 310px;
+    height: 64px;
+
+    font-size: 20px;
+  }
+
+}
+
+
+
+/* =========================================================
+   PROFILE - 이미지 오른쪽 이동 + 입력폼 확대
+========================================================= */
+
+
+/* 전체 프레임 + 입력폼 영역 */
+.profile-main {
+  top: 37%;
+
+  /* 전체 영역도 조금 더 넓게 */
+  width: min(78vw, 1240px);
+
+  grid-template-columns:
+    460px
+    590px;
+
+  /* 이미지와 입력폼 사이 간격은 조금 줄임 */
+  column-gap: 55px;
+}
+
+
+/* =========================================================
+   왼쪽 프레임 영역
+========================================================= */
+
+.profile-image-area {
+  height: 390px;
+
+  /* 프레임 전체를 오른쪽으로 이동 */
+  transform: translateX(35px);
+}
+
+
+/* 프레임 */
+.profile-frame {
+  width: 108%;
+  height: 108%;
+
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  object-fit: contain;
+}
+
+
+/* 강아지 캐릭터 */
+.profile-dog {
+  /* 프레임 안 정중앙 유지 */
+  top: 50%;
+  left: 50%;
+
+  width: 57%;
+  height: 72%;
+
+  transform: translate(-50%, -50%);
+
+  object-fit: contain;
+}
+
+
+/* =========================================================
+   오른쪽 입력 영역 확대
+========================================================= */
+
+.profile-form {
+  width: 100%;
+
+  gap: 15px;
+}
+
+
+/* 이름 / 나이 / 성별 / 몸무게 바깥 박스 */
+.profile-row {
+  width: 100%;
+  height: 82px;
+
+  grid-template-columns:
+    135px
+    minmax(0, 1fr);
+
+  padding:
+    10px
+    20px
+    10px
+    26px;
+
+  border-radius: 22px;
+}
+
+
+/* 왼쪽 이름/나이/성별/몸무게 글자 */
+.profile-label {
+  gap: 12px;
+
+  font-size: 21px;
+}
+
+
+/* 발바닥.webp */
+.paw-icon {
+  width: 27px;
+  height: 27px;
+
+  flex: 0 0 27px;
+
+  object-fit: contain;
+}
+
+
+/* =========================================================
+   입력칸 자체 확대
+========================================================= */
+
+.profile-input-area input {
+  height: 57px;
+
+  padding: 0 20px;
+
+  border-radius: 16px;
+
+  font-size: 19px;
+}
+
+
+/* 나이 / 몸무게 입력창 */
+.profile-input-area.input-small {
+  width: 78%;
+}
+
+
+/* 살 / kg */
+.profile-unit {
+  margin-left: 12px;
+
+  font-size: 18px;
+}
+
+
+/* =========================================================
+   성별 버튼 확대
+========================================================= */
+
+.gender-select {
+  gap: 12px;
+}
+
+
+.gender-choice {
+  height: 57px;
+
+  border-radius: 16px;
+
+  font-size: 19px;
+}
+
+
+.gender-heart {
+  font-size: 25px;
+}
+
+
+/* =========================================================
+   1600px 이하에서도 동일하게 적용
+========================================================= */
+
+@media (max-width: 1600px) {
+
+  .profile-main {
+    top: 36%;
+
+    width: 1100px;
+
+    grid-template-columns:
+      450px
+      560px;
+
+    column-gap: 50px;
+  }
+
+
+  .profile-image-area {
+    height: 370px;
+
+    transform: translateX(30px);
+  }
+
+
+  .profile-frame {
+    width: 106%;
+    height: 106%;
+  }
+
+
+  .profile-dog {
+    width: 57%;
+    height: 72%;
+  }
+
+
+  .profile-row {
+    height: 78px;
+
+    grid-template-columns:
+      128px
+      minmax(0, 1fr);
+  }
+
+
+  .profile-input-area input,
+  .gender-choice {
+    height: 54px;
+  }
+
+}
+
+/* =========================================================
+   PROFILE - 오른쪽 입력폼 위치 조정
+========================================================= */
+
+/* 이름 / 나이 / 성별 / 몸무게 전체 영역 */
+.profile-form {
+  position: relative;
+
+  /* 오른쪽으로 이동 */
+  left: 45px;
+
+  /* 기존 크기 유지 */
+  width: 100%;
+}
+
+
+/* 1600px 이하 화면 */
+@media (max-width: 1600px) {
+
+  .profile-form {
+    left: 40px;
+  }
+
+}
+
+
+/* 화면 높이가 낮은 경우 */
+@media (max-height: 820px) {
+
+  .profile-form {
+    left: 35px;
+  }
+
+}
+
+
+/*---------------------SELECT PAGE----------------------*/
+
+
+/* =========================================================
+   SELECT PAGE
+   select.html
+========================================================= */
+
+
+/* ===================================
+   전체 선택 페이지
+=================================== */
+
+.select-page {
+  position: relative;
+  isolation: isolate;
+
+  width: 100vw;
+  height: 100vh;
+
+  min-width: 1024px;
+  min-height: 650px;
+
+  overflow: hidden;
+  background: #f5f2df;
+}
+
+
+/* ===================================
+   HTML 배경 이미지
+=================================== */
+
+.select-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+
+  width: 100%;
+  max-width: none;
+  height: 100%;
+
+  object-fit: cover;
+  object-position: center;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+
+/* ===================================
+   전체 콘텐츠
+=================================== */
+
+.select-content {
+  position: relative;
+  z-index: 2;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 100%;
+  height: 100%;
+
+  padding:
+    clamp(105px, 11vh, 140px)
+    clamp(60px, 5vw, 110px)
+    clamp(28px, 3vh, 45px);
+}
+
+
+/* ===================================
+   제목 영역
+=================================== */
+
+.select-title-wrap {
+  position: relative;
+  z-index: 4;
+
+  flex: 0 0 auto;
+  margin-top: 5px;
+  width: 100%;
+  text-align: center;
+
+  animation:
+    select-title-enter 0.65s
+    cubic-bezier(0.22, 1.2, 0.36, 1)
+    both;
+}
+
+.select-title {
+  margin: 40px 0 0;
+
+  color: #23835b;
+
+  font-size: clamp(40px, 3.1vw, 58px);
+  font-weight: 900;
+  line-height: 1.18;
+
+  letter-spacing: 0.04em;
+}
+
+.select-description {
+  margin: clamp(14px, 1.7vh, 20px) 0 0;
+
+  color: #354829;
+
+  font-size: clamp(18px, 1.35vw, 26px);
+  font-weight: 650;
+  line-height: 1.55;
+  letter-spacing: 0.015em;
+
+  word-break: keep-all;
+}
+
+
+/* 제목 등장 */
+
+@keyframes select-title-enter {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(-18px)
+      scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+
+/* ===================================
+   캐러셀 전체
+=================================== */
+
+.breed-carousel {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: min(100%, 1360px);
+
+  flex: 1;
+  min-height: 0;
+
+  margin: -30px auto 0;
+}
+
+
+/* ===================================
+   카드가 보이는 영역
+=================================== */
+
+.breed-viewport {
+  position: relative;
+
+  width: min(84vw, 1120px);
+  height: clamp(470px, 57vh, 570px);
+
+  overflow: hidden;
+}
+
+
+/* ===================================
+   슬라이드 트랙
+=================================== */
+
+.breed-track {
+  display: flex;
+
+  width: calc(200% + 32px);
+  height: 100%;
+
+  transform: translateX(0);
+
+  transition:
+    transform .5s cubic-bezier(.22,1,.36,1);
+}
+
+.breed-track.page-two {
+  transform: translateX(calc(-50% - 16px));
+}
+
+
+/* ===================================
+   각 슬라이드
+=================================== */
+
+.breed-slide {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  width: 50%;
+  flex-shrink: 0;
+  box-sizing: border-box;
+
+  gap: clamp(26px, 2.5vw, 40px);
+
+  padding:
+    40px
+    16px
+    86px;
+}
+
+
+/* ===================================
+   견종 주민증 카드
+=================================== */
+
+.breed-card {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 clamp(275px, 19vw, 315px);
+  width: clamp(275px, 19vw, 315px);
+  max-width: none;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  outline: 0;
+  border-radius: 30px;
+
+  background: transparent;
+  cursor: pointer;
+
+  transition:
+    transform 0.25s ease,
+    filter 0.25s ease;
+}
+
+/* 주민증 이미지 */
+
+.breed-card-image {
+  display: block;
+
+  width: 100%;
+  height: auto;
+
+  object-fit: contain;
+
+  pointer-events: none;
+  user-select: none;
+
+  filter:
+    drop-shadow(0 12px 18px rgba(74, 66, 42, 0.15));
+
+  transition:
+    transform 0.25s ease,
+    filter 0.25s ease;
+}
+
+
+/* 카드 Hover */
+
+.breed-card:hover {
+  transform:
+    translateY(-8px)
+    scale(1.035);
+}
+
+.breed-card:hover .breed-card-image {
+  transform: scale(1.02);
+
+  filter:
+    drop-shadow(0 22px 30px rgba(89, 113, 55, 0.24));
+}
+
+
+/* 카드 클릭 */
+
+.breed-card:active {
+  transform:
+    translateY(-4px)
+    scale(0.99);
+}
+
+
+/* 선택된 카드 */
+
+.breed-card.selected {
+  transform:
+    translateY(-10px)
+    scale(1.045);
+}
+
+.breed-card.selected:hover {
+  transform:
+    translateY(-10px)
+    scale(1.045);
+}
+
+.breed-card.selected .breed-card-image {
+  filter:
+    drop-shadow(0 0 10px rgba(126, 184, 72, 0.45))
+    drop-shadow(0 22px 30px rgba(89, 113, 55, 0.28));
+}
+
+
+/* ===================================
+   선택 체크 아이콘
+=================================== */
+
+.breed-check {
+  position: absolute;
+
+  top: 14px;
+  right: 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 48px;
+  height: 48px;
+
+  border: 4px solid #ffffff;
+  border-radius: 50%;
+
+  background: #79b94c;
+  color: #ffffff;
+
+  font-size: 24px;
+  font-weight: 900;
+
+  opacity: 0;
+
+  transform: scale(0.5);
+
+  box-shadow:
+    0 8px 16px rgba(70, 110, 46, 0.22);
+
+  pointer-events: none;
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.25s ease;
+}
+
+.breed-card.selected .breed-check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+
+/* ===================================
+   좌우 화살표
+=================================== */
+
+.carousel-arrow {
+  position: absolute;
+  top: 43%;
+  z-index: 20;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: clamp(58px, 4.6vw, 74px);
+  height: clamp(58px, 4.6vw, 74px);
+
+  padding: 0;
+
+  border: 3px solid rgba(89, 145, 58, 0.22);
+  border-radius: 50%;
+
+  color: #4c8b42;
+  background: rgba(255, 255, 255, 0.92);
+
+  font-size: clamp(34px, 2.8vw, 46px);
+  font-weight: 700;
+  line-height: 1;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 18px rgba(78, 93, 46, 0.12);
+
+  transform: translateY(-50%);
+
+  transition:
+    color 0.22s ease,
+    background-color 0.22s ease,
+    border-color 0.22s ease,
+    transform 0.22s ease,
+    opacity 0.22s ease;
+}
+
+.carousel-arrow.prev {
+  left: 8px;
+}
+
+.carousel-arrow.next {
+  right: 8px;
+}
+
+.carousel-arrow:hover:not(:disabled) {
+  color: #ffffff;
+  background: #79b94c;
+  border-color: #79b94c;
+
+  transform:
+    translateY(-50%)
+    scale(1.07);
+}
+
+.carousel-arrow:active:not(:disabled) {
+  transform:
+    translateY(-50%)
+    scale(0.95);
+}
+
+.carousel-arrow:disabled {
+  opacity: 0.23;
+  cursor: default;
+  box-shadow: none;
+}
+
+
+/* ===================================
+   페이지 표시 점
+=================================== */
+
+.carousel-dots {
+  position: absolute;
+
+  left: 50%;
+  bottom: 54px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  transform: translateX(-50%);
+}
+
+.carousel-dot {
+  width: 11px;
+  height: 11px;
+
+  border-radius: 999px;
+
+  background: #cfcfcf;
+
+  transition:
+    width 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.carousel-dot.active {
+  width: 34px;
+  background: #79b94c;
+}
+
+
+/* ===================================
+   선택하기 버튼
+=================================== */
+
+.breed-select-button {
+  position: relative;
+  top: -25px;   /* ← 카드에 더 붙게 */
+
+  z-index: 5;
+
+  flex: 0 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: clamp(320px, 24vw, 430px);
+  min-height: clamp(68px, 7.2vh, 82px);
+
+  margin: 0 auto;
+  padding: 14px 40px;
+
+  border: 0;
+  border-radius: 999px;
+
+  color: #ffffff;
+  background: #cfcfcf;
+
+  font-size: clamp(21px, 1.6vw, 28px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+
+  cursor: not-allowed;
+  box-shadow: none;
+
+  transition:
+    background-color 0.24s ease,
+    transform 0.22s ease,
+    box-shadow 0.24s ease;
+}
+
+/* 버튼 안쪽 점선 */
+
+.breed-select-button::before {
+  content: "";
+
+  position: absolute;
+  inset: 8px;
+
+  border: 3px dashed rgba(255,255,255,.84);
+  border-radius: inherit;
+
+  pointer-events: none;
+}
+
+.breed-select-button span{
+  position:relative;
+  z-index:1;
+}
+
+
+/* 비활성화 */
+
+.breed-select-button:disabled{
+  opacity:.82;
+  cursor:not-allowed;
+}
+
+
+/* 활성화 */
+
+.breed-select-button.active{
+
+  background:#ff7154;
+  cursor:pointer;
+
+  box-shadow:
+    0 10px 18px rgba(255,113,84,.22);
+
+  animation:
+    select-button-on .4s
+    cubic-bezier(.22,1.2,.36,1);
+
+}
+
+@keyframes select-button-on{
+
+  0%{
+    transform:scale(.96);
+  }
+
+  60%{
+    transform:scale(1.02);
+  }
+
+  100%{
+    transform:scale(1);
+  }
+
+}
+
+.breed-select-button.active:hover{
+
+  transform:translateY(-4px);
+
+  background:#ff7b60;
+
+  box-shadow:
+    0 14px 22px rgba(255,113,84,.25);
+
+}
+
+.breed-select-button.active:active{
+
+  transform:
+    translateY(-1px)
+    scale(.98);
+
+}
+
+
+/* ===================================
+   키보드 포커스
+=================================== */
+
+.breed-card:focus-visible,
+.carousel-arrow:focus-visible,
+.breed-select-button:focus-visible{
+
+  outline:
+    4px solid rgba(255,113,84,.28);
+
+  outline-offset:6px;
+
+}
+
+
+/* ===================================
+   1600px 이하
+=================================== */
+
+@media (max-width:1600px){
+
+.select-content{
+
+  padding:
+    clamp(115px,12vh,145px)
+    clamp(48px,4vw,82px)
+    clamp(22px,2.5vh,34px);
+
+}
+
+.select-title{
+
+  font-size:
+    clamp(36px,2.9vw,48px);
+
+}
+
+.select-description{
+
+  margin-top:12px;
+
+  font-size:
+    clamp(16px,1.3vw,22px);
+
+}
+
+.breed-carousel{
+
+  width:min(100%,1320px);
+
+  margin:-28px auto 0;
+
+}
+
+.breed-viewport{
+
+  width:min(84vw,1080px);
+  height:480px;
+  
+
+}
+
+.breed-slide{
+
+  gap:clamp(26px,2.5vw,40px);
+
+  padding:
+    40px
+    16px
+    86px;
+
+}
+
+.breed-slide.second-slide{
+
+  gap:clamp(72px,6vw,106px);
+
+}
+
+.breed-card{
+
+  flex:0 0 clamp(270px,19vw,305px);
+
+  width:clamp(270px,19vw,305px);
+
+}
+
+.carousel-arrow{
+
+  top:43%;
+
+  width:60px;
+  height:60px;
+
+  font-size:38px;
+
+}
+
+.carousel-dots{
+
+  bottom:52px;
+
+}
+
+.breed-select-button{
+
+  width:
+    clamp(320px,25vw,410px);
+
+  min-height:72px;
+
+  margin-top:-46px;
+
+  font-size:25px;
+
+}
+
+}
+
+/* ===================================
+   높이가 낮은 PC / 노트북
+=================================== */
+
+@media (max-height:850px){
+
+.select-content{
+
+  padding:
+    72px
+    clamp(42px,4vw,72px)
+    18px;
+
+}
+
+.select-title{
+
+  font-size:
+    clamp(32px,2.6vw,43px);
+
+}
+
+.select-description{
+
+  margin-top:8px;
+
+  font-size:
+    clamp(15px,1.2vw,20px);
+
+  line-height:1.45;
+
+}
+
+.breed-carousel{
+
+  margin:-18px auto 0;
+
+}
+
+.breed-viewport{
+
+  width:min(84vw,1080px);
+  height:450px;
+
+}
+
+.breed-slide{
+
+  gap:clamp(24px,2.4vw,38px);
+
+  padding:
+    36px
+    16px
+    78px;
+
+}
+
+.breed-slide.second-slide{
+
+  gap:clamp(68px,5.5vw,100px);
+
+}
+
+.breed-card{
+
+  flex:0 0 clamp(260px,18.5vw,292px);
+
+  width:clamp(260px,18.5vw,292px);
+
+}
+
+.carousel-arrow{
+
+  top:43%;
+
+  width:56px;
+  height:56px;
+
+  font-size:34px;
+
+}
+
+.carousel-dots{
+
+  bottom:46px;
+
+}
+
+.breed-select-button{
+
+  width:
+    clamp(300px,24vw,380px);
+
+  min-height:66px;
+
+  margin-top:-42px;
+
+  font-size:23px;
+
+}
+
+}
+
+
+/* ===================================
+   대형 모니터
+=================================== */
+
+@media (min-width:2200px){
+
+.select-content{
+
+  padding:
+    clamp(145px,13vh,185px)
+    150px
+    clamp(40px,4vh,62px);
+
+}
+
+.select-title{
+
+  font-size:min(3vw,66px);
+
+}
+
+.select-description{
+
+  font-size:min(1.4vw,30px);
+
+}
+
+.breed-carousel{
+
+  width:min(100%,1620px);
+
+  margin:-35px auto 0;
+
+}
+
+.breed-viewport{
+
+  width:min(80vw,1420px);
+  height:min(63vh,720px);
+
+}
+
+.breed-slide{
+
+  gap:clamp(46px,3vw,68px);
+
+  padding:
+    55px
+    24px
+    110px;
+
+}
+
+.breed-slide.second-slide{
+
+  gap:clamp(100px,6vw,150px);
+
+}
+
+.breed-card{
+
+  flex:0 0 min(20vw,390px);
+
+  width:min(20vw,390px);
+
+}
+
+.carousel-arrow{
+
+  top:44%;
+
+  width:82px;
+  height:82px;
+
+  font-size:52px;
+
+}
+
+.carousel-dots{
+
+  bottom:66px;
+
+}
+
+.breed-select-button{
+
+  width:min(25vw,520px);
+
+  min-height:92px;
+
+  margin-top:-58px;
+
+  font-size:31px;
+
+}
+
+}
+
+
+/* ===================================
+   모션 최소화
+=================================== */
+
+@media (prefers-reduced-motion:reduce){
+
+.select-title-wrap,
+.breed-track,
+.breed-card,
+.breed-card-image,
+.breed-check,
+.carousel-arrow,
+.breed-select-button{
+
+  animation:none;
+  transition:none;
+
+}
+
+}
+
+/* ===================================
+   추가 보정
+=================================== */
+
+/* 카드가 줄어들지 않도록 고정 */
+.breed-card{
+  flex-shrink:0;
+}
+
+
+/* 카드 확대 시 위에서 잘리지 않도록 */
+.breed-viewport{
+  overflow:visible;
+}
+
+
+/* 슬라이드 영역만 잘라주기 */
+.breed-carousel{
+  overflow:hidden;
+}
+
+
+/* 카드 이미지 */
+.breed-card-image{
+
+  display:block;
+
+  width:100%;
+  height:auto;
+
+  object-fit:contain;
+
+}
+
+
+/* 화살표 항상 카드 중앙 */
+
+.carousel-arrow{
+
+  top:50%;
+  transform:translateY(-50%);
+
+}
+
+.carousel-arrow:hover:not(:disabled){
+
+  transform:
+    translateY(-50%)
+    scale(1.08);
+
+}
+
+.carousel-arrow:active:not(:disabled){
+
+  transform:
+    translateY(-50%)
+    scale(.95);
+
+}
+
+
+/* 페이지 점 */
+
+.carousel-dots{
+
+  left:50%;
+  bottom:48px;
+
+  transform:translateX(-50%);
+
+}
+
+
+/* 선택 버튼 */
+
+.breed-select-button{
+
+  margin-top:-38px;
+
+}
+
+
+/* 첫 번째 페이지와 두 번째 페이지 카드 간격 통일 */
+
+.breed-slide{
+
+  justify-content:center;
+
+  gap:42px;
+
+}
+
+.breed-slide.second-slide{
+
+  justify-content:center;
+
+  gap:42px;
+
+}
+
+
+/* 카드 선택 효과 */
+
+.breed-card.selected{
+
+  z-index:10;
+
+}
+
+
+/* 카드 Hover */
+
+.breed-card:hover{
+
+  z-index:9;
+
+}
+
+
+
+
+/* ==================================================
+   QUESTION PAGE
+================================================== */
+
+.question-page {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #55c9ef;
+}
+
+
+/* 배경 */
+
+.question-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  object-position: center;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+
+/* 전체 콘텐츠 */
+
+.question-container {
+  position: relative;
+  z-index: 2;
+
+  width: 100%;
+  min-height: 100vh;
+}
+
+
+/* ==================================================
+   진행도
+================================================== */
+
+.question-progress {
+  position: absolute;
+  top: 52px;
+  left: 50%;
+  z-index: 10;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: min(60%, 670px);
+
+  transform: translateX(-50%);
+}
+
+
+.question-count {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 20px;
+
+  color: #ffffff;
+
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1;
+
+  text-shadow:
+    0 3px 6px rgba(52, 132, 167, 0.25);
+}
+
+
+.question-count-divider {
+  margin: 0 9px;
+}
+
+
+.progress-track {
+  position: relative;
+
+  width: 100%;
+  height: 20px;
+
+  padding: 3px;
+
+  border: 3px solid #ffffff;
+  border-radius: 999px;
+
+  background: #eee9e2;
+
+  box-sizing: border-box;
+  overflow: hidden;
+
+  box-shadow:
+    0 4px 0 rgba(62, 130, 162, 0.13),
+    0 7px 14px rgba(43, 115, 148, 0.14);
+}
+
+
+.progress-value {
+  position: relative;
+
+  width: 0;
+  height: 100%;
+
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #ff7154 0%,
+      #ff8d72 100%
+    );
+
+  transition:
+    width 0.35s
+    cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+.progress-value::after {
+  content: "";
+
+  position: absolute;
+  top: 50%;
+  right: 4px;
+
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.9);
+
+  transform: translateY(-50%);
+
+  box-shadow:
+    0 0 7px rgba(255, 255, 255, 0.9);
+}
+
+
+/* ==================================================
+   질문 콘텐츠
+================================================== */
+
+.question-content {
+  position: relative;
+
+  width: 100%;
+  min-height: 100vh;
+}
+
+
+/* 이전 버튼 */
+
+.back-button {
+  position: absolute;
+  top: 46px;
+  left: 42px;
+  z-index: 30;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 88px;
+  height: 42px;
+
+  padding: 0 20px;
+
+  border: 3px solid #ffffff;
+  border-radius: 999px;
+
+  color: #ffffff;
+  background: rgba(94, 195, 235, 0.85);
+
+  font-size: 16px;
+  font-weight: 750;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 4px 0 rgba(44, 132, 170, 0.18),
+    0 7px 12px rgba(44, 132, 170, 0.14);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+
+.back-button:hover {
+  background: #6dc9ed;
+
+  transform: translateY(-3px);
+}
+
+
+.back-button:active {
+  transform: translateY(1px);
+}
+
+
+/* ==================================================
+   질문 카드 영역
+================================================== */
+
+.question-card-wrap {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+}
+
+
+/* 선택한 견종 캐릭터 */
+
+.question-dog-image {
+  position: absolute;
+  top: 17%;
+  left: 50%;
+  z-index: 15;
+
+  display: block;
+
+  width: clamp(220px, 19vw, 310px);
+  height: clamp(150px, 14vw, 220px);
+
+  object-fit: contain;
+  object-position: center bottom;
+
+  transform: translateX(-50%);
+
+  filter:
+    drop-shadow(
+      0 7px 4px rgba(75, 62, 43, 0.13)
+    );
+
+  pointer-events: none;
+  user-select: none;
+
+  animation:
+    none;
+}
+
+
+@keyframes questionDogFloat {
+
+  0%,
+  100% {
+    transform:
+      translateX(-50%)
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      translateX(-50%)
+      translateY(-7px);
+  }
+}
+
+
+/* 배경 이미지에 카드가 포함되어 있으므로 투명 */
+
+.question-card {
+  position: absolute;
+  top: 43%;
+  left: 50%;
+  z-index: 8;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: min(78%, 1120px);
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  border-radius: 0;
+
+  background: transparent;
+
+  box-shadow: none;
+
+  transform: translateX(-50%);
+}
+
+
+.question-card::before {
+  display: none;
+  content: none;
+}
+
+
+/* 활동성, 야생성 등의 빨간 글씨 숨김 */
+
+.question-category {
+  display: none;
+}
+
+
+/* 질문 */
+
+.question-title {
+  position: relative;
+
+  width: 100%;
+  max-width: 1080px;
+
+  margin: 0 auto;
+
+  color: #404040;
+
+  font-size: clamp(26px, 2.1vw, 36px);
+  font-weight: 800;
+  line-height: 1.58;
+
+  letter-spacing: 0.018em;
+
+  text-align: center;
+  word-break: keep-all;
+
+  text-shadow:
+    0 3px 0 rgba(255, 255, 255, 0.9);
+}
+
+
+/* 질문 옆 반짝이 */
+
+.question-title::before,
+.question-title::after {
+  position: absolute;
+  top: 50%;
+
+  color: #ffc947;
+
+  font-size: 32px;
+
+  transform: translateY(-50%);
+
+  animation:
+    questionSparkle 1.5s ease-in-out infinite;
+}
+
+
+.question-title::before {
+  content: "✦";
+  left: -48px;
+}
+
+
+.question-title::after {
+  content: "✦";
+  right: -48px;
+
+  animation-delay: 0.3s;
+}
+
+
+@keyframes questionSparkle {
+
+  0%,
+  100% {
+    opacity: 0.5;
+
+    transform:
+      translateY(-50%)
+      scale(0.8)
+      rotate(0deg);
+  }
+
+  50% {
+    opacity: 1;
+
+    transform:
+      translateY(-50%)
+      scale(1.15)
+      rotate(12deg);
+  }
+}
+
+
+
+/* ==================================================
+   답변 버튼 영역
+================================================== */
+
+.answer-button-wrap {
+  position: absolute;
+  left: 50%;
+  bottom: calc(18% + 5px);
+  z-index: 20;
+
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 22px;
+
+  width: min(67%, 920px);
+
+  transform: translateX(-50%);
+}
+
+
+/* 버튼 왼쪽 반짝이 */
+
+.answer-button-wrap::before {
+
+  position: absolute;
+  left: -32px;
+  top: 12px;
+
+  color: #ffd34f;
+
+  font-size: 22px;
+  line-height: 1;
+
+  transform: rotate(-12deg);
+
+  animation:
+    answerSparkle 1.8s
+    ease-in-out infinite;
+}
+
+
+/* 버튼 오른쪽 발바닥 느낌 */
+
+.answer-button-wrap::after {
+
+  position: absolute;
+  right: -34px;
+  bottom: 8px;
+
+  color: #ffb49f;
+
+  font-size: 11px;
+  line-height: 0.9;
+
+  white-space: pre;
+
+  transform: rotate(18deg);
+
+  opacity: 0.9;
+}
+
+
+@keyframes answerSparkle {
+
+  0%,
+  100% {
+    opacity: 0.45;
+
+    transform:
+      rotate(-12deg)
+      scale(0.85);
+  }
+
+  50% {
+    opacity: 1;
+
+    transform:
+      rotate(5deg)
+      scale(1.12);
+  }
+}
+
+
+/* ==================================================
+   답변 버튼
+================================================== */
+
+.answer-card {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  min-height: 132px;
+
+  margin: 0;
+  padding: 20px 30px;
+
+  border: 3px solid #ffad9f;
+  border-radius: 32px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #fffdfc 0%,
+      #fff4f0 100%
+    );
+
+  box-sizing: border-box;
+
+  cursor: pointer;
+  overflow: hidden;
+
+  box-shadow:
+    0 6px 0 #ffd6cd,
+    0 11px 18px rgba(166, 93, 77, 0.12);
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+/* 안쪽 점선 */
+
+.answer-card::before {
+  content: "";
+
+  position: absolute;
+  inset: 9px;
+
+  border: 1.5px dashed #ffd4cc;
+  border-radius: 23px;
+
+  pointer-events: none;
+}
+
+
+/* 마우스 올렸을 때 */
+
+.answer-card:hover {
+  border-color: #ff8d79;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #ffede7 100%
+    );
+
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 8px 0 #ffc9be,
+    0 15px 22px rgba(166, 93, 77, 0.15);
+}
+
+
+/* 누르는 순간 */
+
+.answer-card:active {
+  transform: translateY(2px);
+
+  box-shadow:
+    0 3px 0 #ffc9be,
+    0 7px 12px rgba(166, 93, 77, 0.12);
+}
+
+
+/* 선택된 버튼 */
+
+.answer-card.selected {
+  border-color: #ff7154;
+
+  background:
+    linear-gradient(
+      180deg,
+      #fff2ec 0%,
+      #ffe4da 100%
+    );
+
+  box-shadow:
+    0 5px 0 #ffbcae,
+    0 0 0 5px rgba(255, 113, 84, 0.12);
+
+  animation:
+    answerPop 0.3s
+    cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+@keyframes answerPop {
+
+  0% {
+    transform: scale(1);
+  }
+
+  45% {
+    transform: scale(1.025);
+  }
+
+  100% {
+    transform: scale(0.995);
+  }
+}
+
+
+/* 비활성 버튼 */
+
+.answer-card:disabled {
+  cursor: default;
+}
+
+
+.answer-card:disabled:not(.selected) {
+  opacity: 0.55;
+}
+
+
+/* ==================================================
+   답변 알파벳 원
+================================================== */
+
+.answer-code {
+  position: relative;
+  z-index: 3;
+
+  flex: 0 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 72px;
+  height: 72px;
+
+  margin-right: 24px;
+
+  border: 4px solid #ffffff;
+  border-radius: 50%;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ff8f6f,
+      #ff684f
+    );
+
+  font-size: 32px;
+  font-weight: 750;
+  line-height: 1;
+
+  box-shadow:
+    0 5px 10px rgba(255, 113, 84, 0.24);
+}
+
+
+/* 오른쪽 버튼 색상 */
+
+.answer-card-right .answer-code {
+  background:
+    linear-gradient(
+      145deg,
+      #ff919d,
+      #ff6878
+    );
+}
+
+
+/* ==================================================
+   답변 글씨
+================================================== */
+
+.answer-text {
+  position: relative;
+  z-index: 3;
+
+  display: block;
+  flex: 1;
+
+  padding-right: 8px;
+
+  color: #ef664f;
+
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.6;
+
+  letter-spacing: -0.01em;
+
+  text-align: left;
+  word-break: keep-all;
+}
+
+
+/* ==================================================
+   하이라이트 제거
+================================================== */
+
+.answer-card-left .answer-code::after,
+.answer-card-right .answer-code::after {
+  display: none;
+  content: none;
+}
+
+
+/* ==================================================
+   노트북 / 아이패드 가로
+================================================== */
+
+@media
+  (min-width: 900px)
+  and (max-height: 850px) {
+
+  .answer-button-wrap {
+    bottom: calc(18% + 5px);
+
+    width: min(70%, 980px);
+    gap: 24px;
+  }
+
+
+  .answer-button-wrap::before,
+  .answer-button-wrap::after {
+    display: none;
+    content: none;
+  }
+
+
+  .answer-card {
+    min-height: 120px;
+
+    padding: 18px 28px;
+
+    border-radius: 30px;
+  }
+
+
+  .answer-card::before {
+    inset: 8px;
+
+    border-radius: 21px;
+  }
+
+
+  .answer-code {
+    width: 66px;
+    height: 66px;
+
+    margin-right: 22px;
+
+    font-size: 30px;
+  }
+
+
+  .answer-text {
+    font-size: 17px;
+  }
+}
+
+
+
+/*---------------------------RESULT PAGE-----------------------*/
+
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+
+  background: #55c8ef;
+
+  font-family:
+    "Pretendard",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+
+
+/* ==================================================
+   MapleStory Font
+================================================== */
+
+@font-face {
+  font-family: "NexonMaplestory";
+
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/MaplestoryOTFBold.woff")
+       format("woff");
+
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+/* ==================================================
+   결과 페이지 전체
+================================================== */
+
+.result-page {
+  position: relative;
+
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+
+  background: #55c8ef;
+}
+
+
+/* ==================================================
+   배경 이미지
+================================================== */
+
+.result-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  object-fit: fill;
+  object-position: center;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+
+/* ==================================================
+   콘텐츠 전체
+================================================== */
+
+.result-content {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+}
+
+
+/* ==================================================
+   왼쪽 결과 이미지
+   폴라로이드 안에 들어오도록 축소
+================================================== */
+
+.result-image-area {
+  position: absolute;
+
+  top: 29%;
+  left: 21.2%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 22%;
+  height: 35%;
+
+  margin: 0;
+  padding: 0;
+}
+
+
+.result-main-image {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+  object-position: center;
+
+  /* 오른쪽으로 이동 */
+  transform: translateX(18px);
+
+  filter:
+    drop-shadow(
+      0 5px 4px rgba(72, 55, 35, 0.1)
+    );
+
+  pointer-events: none;
+  user-select: none;
+}
+
+
+/* ==================================================
+   결과 제목
+================================================== */
+
+.result-header {
+  position: absolute;
+
+  top: 28.5%;
+  left: 56%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  width: 42%;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: visible;
+  text-align: left;
+}
+
+
+/* 우리 강아지는 */
+
+.result-title-prefix {
+  margin: 0 0 22px;
+
+  color: #3d3d3d;
+
+  font-size: clamp(18px, 1.8vw, 34px);
+  font-weight: 600;
+  line-height: 1.2;
+
+  /* 자간 살짝 줄이기 */
+  letter-spacing: 0.03em;
+
+  white-space: nowrap;
+}
+
+
+/* 유형 이름 + 이에요! */
+
+.result-title-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+
+  align-items: center;
+  justify-content: flex-start;
+
+  gap: 20px;
+
+  width: max-content;
+
+  /* 이 값만 추가 */
+  margin: 0;
+  margin-left: -12px;
+
+  padding: 0;
+
+  overflow: visible;
+  white-space: nowrap;
+}
+
+
+/* 유형 이름 */
+
+.result-type-name {
+  position: relative;
+  z-index: 1;
+
+  display: inline-block;
+  flex: 0 0 auto;
+
+  margin: 0;
+  padding: 0;
+
+  font-family: "NexonMaplestory", sans-serif;
+
+  color: #34742d;
+
+  font-size: 78px;
+
+  font-weight: 700;
+  line-height: 1.1;
+
+  letter-spacing: 0.03em;
+
+  white-space: nowrap;
+}
+
+/* 초록색 밑줄 */
+
+.result-type-name::before {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+  bottom: -5%;
+  z-index: -1;
+
+  width: 108%;
+  height: 35%;
+
+  border-radius: 999px;
+
+  background: rgba(205, 232, 124, 0.66);
+
+  transform: translateX(-50%);
+}
+
+
+/* 이에요! */
+
+.result-title-suffix {
+  flex: 0 0 auto;
+
+  margin: 0;
+  padding-top: 8px;
+
+  color: #3d3d3d;
+
+  font-size: clamp(16px, 1.55vw, 30px);
+  font-weight: 650;
+  line-height: 1;
+
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+
+/* ==================================================
+   한 줄 설명
+================================================== */
+
+.result-one-line-card {
+  position: absolute;
+
+  top: 50%;
+  left: 53.1%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 28.3%;
+  height: 10.5%;
+
+  margin: 0;
+
+  padding:
+    1%
+    2%;
+
+  border:
+    1px solid
+    rgba(104, 91, 69, 0.16);
+
+  border-radius: clamp(14px, 1.4vw, 28px);
+
+  background: rgba(255, 255, 255, 0.97);
+
+  box-shadow:
+    0 7px 17px
+    rgba(83, 68, 45, 0.14);
+}
+
+
+.result-one-line {
+  margin: 0;
+
+  color: #292929;
+
+  /* 글씨 조금 더 크게 */
+  font-size: clamp(14px, 1.25vw, 24px);
+
+  font-weight: 700;
+
+  /* 줄 간격 */
+  line-height: 1.75;
+
+  /* 자간 조금 넓게 */
+  letter-spacing: 0.02em;
+
+  text-align: center;
+
+  white-space: normal;
+  word-break: keep-all;
+}
+
+/* ==================================================
+   결과 설명 강조
+================================================== */
+
+.result-highlight{
+    color:#FF7154;
+    font-weight:800;
+}
+
+
+/* ==================================================
+   QR 인식 버튼
+================================================== */
+
+.qr-scan-button {
+  position: absolute;
+
+  top: 66%;
+  left: 65.3%;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  gap: clamp(10px, 1vw, 18px);
+
+  min-width: 13%;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+
+  color: #414141;
+  background: transparent;
+
+  cursor: pointer;
+
+  transform: translateX(-50%);
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+
+.qr-scan-button:hover {
+  transform:
+    translateX(-50%)
+    translateY(-3px);
+}
+
+
+.qr-scan-button:active {
+  transform:
+    translateX(-50%)
+    translateY(1px);
+}
+
+
+.qr-camera-icon {
+  display: block;
+
+  width: clamp(45px, 4.2vw, 80px);
+  height: clamp(36px, 3.4vw, 65px);
+
+  object-fit: contain;
+
+  pointer-events: none;
+}
+
+
+.qr-scan-text {
+  color: #454545;
+
+  font-size: clamp(12px, 1.05vw, 20px);
+  font-weight: 700;
+  line-height: 1.2;
+
+  letter-spacing: -0.025em;
+
+  white-space: nowrap;
+}
+
+
+/* ==================================================
+   하단 버튼
+================================================== */
+
+.result-button-wrap {
+  position: absolute;
+
+  left: 23.7%;
+  bottom: 14.3%;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 1.7%;
+
+  width: 56.4%;
+  height: 7.9%;
+
+  margin: 0;
+  padding: 0;
+}
+
+
+.result-detail-button,
+.result-other-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+  padding: 0 5%;
+
+  border-radius: 999px;
+
+  font-size: clamp(13px, 1.4vw, 27px);
+  font-weight: 700;
+  line-height: 1;
+
+  letter-spacing: -0.03em;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+
+/* 결과 자세히 보기 */
+
+.result-detail-button {
+  border: 0;
+
+  color: #ffffff;
+  background: #ff7154;
+
+  box-shadow:
+    0 5px 0 #e85b43,
+    0 9px 15px rgba(255, 113, 84, 0.17);
+}
+
+
+.result-detail-button:hover {
+  background: #ff7b60;
+
+  transform: translateY(-3px);
+}
+
+
+.result-detail-button:active {
+  transform: translateY(1px);
+
+  box-shadow:
+    0 2px 0 #e85b43,
+    0 4px 8px rgba(255, 113, 84, 0.15);
+}
+
+
+/* 다른 유형 보러가기 */
+
+.result-other-button {
+  border: 1.5px solid #dedede;
+
+  color: #282828;
+
+  background: rgba(255, 255, 255, 0.98);
+
+  box-shadow:
+    0 4px 11px
+    rgba(74, 60, 44, 0.08);
+}
+
+
+.result-other-button:hover {
+  border-color: #ffb6a8;
+  background: #fff8f5;
+
+  transform: translateY(-3px);
+}
+
+
+.result-other-button:active {
+  transform: translateY(1px);
+}
+
+
+/* ==================================================
+   QR 스캐너 모달
+================================================== */
+
+.qr-scanner-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+
+  padding: 24px;
+
+  overflow: hidden;
+
+  background: rgba(22, 32, 38, 0.58);
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
+}
+
+
+.qr-scanner-modal.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+
+.qr-scanner-box {
+  position: relative;
+
+  width: min(88vw, 480px);
+  max-height: 88vh;
+
+  padding:
+    42px
+    28px
+    30px;
+
+  overflow-y: auto;
+
+  border: 4px solid #a9d564;
+  border-radius: 32px;
+
+  background: #fffdf7;
+
+  text-align: center;
+
+  box-shadow:
+    0 20px 50px
+    rgba(18, 34, 37, 0.28);
+}
+
+
+.qr-scanner-close-button {
+  position: absolute;
+
+  top: 13px;
+  right: 15px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  border-radius: 50%;
+
+  color: #ffffff;
+  background: #ff7154;
+
+  font-size: 27px;
+  font-weight: 500;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+
+.qr-scanner-title {
+  margin: 4px 0 10px;
+
+  color: #34742d;
+
+  font-size: 25px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+
+.qr-scanner-description {
+  margin: 0 0 22px;
+
+  color: #595959;
+
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.55;
+}
+
+
+.qr-reader,
+#qrReader {
+  width: 100%;
+  min-height: 280px;
+
+  margin: 0 auto;
+
+  overflow: hidden;
+
+  border: 3px solid #d5e9a7;
+  border-radius: 22px;
+
+  background: #eeeeee;
+}
+
+
+#qrReader video,
+#qrReader canvas,
+#qrReader img {
+  display: block;
+
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+
+  border-radius: 18px;
+}
+
+
+#qrReader > div {
+  border: 0 !important;
+}
+
+
+.qr-scan-status {
+  margin: 18px 0 0;
+
+  color: #555555;
+
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+
+/* ==================================================
+   QR 모바일
+================================================== */
+
+@media (max-width: 600px) {
+
+  .qr-scanner-modal {
+    padding: 16px;
+  }
+
+
+  .qr-scanner-box {
+    width: 100%;
+
+    padding:
+      40px
+      20px
+      25px;
+
+    border-radius: 26px;
+  }
+
+
+  .qr-scanner-title {
+    font-size: 21px;
+  }
+
+
+  .qr-scanner-description {
+    font-size: 14px;
+  }
+
+
+  .qr-reader,
+  #qrReader {
+    min-height: 240px;
+  }
+
+}
+
+
+/* ==================================================
+   엄마바라기형 제목 크기 조정
+================================================== */
+
+.result-type-name.long-type-name {
+  font-size: clamp(58px, 3.7vw, 70px);
+  letter-spacing: -0.01em;
+}
+
+
+/* 엄마바라기형일 때 제목 줄 간격 조정 */
+
+.result-title-row:has(.result-type-name.long-type-name) {
+  gap: 8px;
+  margin-left: -16px;
+}
+
+
+
+
+
+/*-----------------------TYPES PAGE----------------------*/
+
+
+/* ==================================================
+   기본 설정
+================================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+
+  font-family:
+    "Pretendard",
+    sans-serif;
+
+  background: #55c8ef;
+}
+
+
+/* ==================================================
+   페이지 전체
+================================================== */
+
+.types-page {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+
+  background: #55c8ef;
+}
+
+
+/* ==================================================
+   배경과 카드가 함께 확대·축소되는 화면
+
+   배경 원본 비율
+   1648 × 920
+================================================== */
+
+.types-stage {
+  position: relative;
+  flex: 0 0 auto;
+
+  width: max(
+    100vw,
+    calc(100dvh * 1648 / 920)
+  );
+
+  height: max(
+    100dvh,
+    calc(100vw * 920 / 1648)
+  );
+
+  aspect-ratio: 1648 / 920;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+
+  background: #55c8ef;
+}
+
+
+/* ==================================================
+   전체 배경 이미지
+================================================== */
+
+.types-background-image {
+  position: absolute;
+  z-index: 0;
+
+  inset: 0;
+
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  object-fit: fill;
+  object-position: center;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+
+/* ==================================================
+   9개 유형 카드 전체 영역
+================================================== */
+
+.types-grid {
+  position: absolute;
+  z-index: 5;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  pointer-events: none;
+}
+
+
+/* ==================================================
+   유형 카드 공통
+
+   카드 자체는 움직이지 않음
+   캐릭터 이미지만 hover 적용
+================================================== */
+
+.type-card {
+  position: absolute;
+
+  display: block;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  outline: 0;
+  border-radius: 8px;
+
+  background: transparent;
+
+  cursor: pointer;
+  pointer-events: auto;
+
+  transform-origin: center;
+}
+
+
+/* 카드 전체에는 hover 효과를 주지 않음 */
+
+.type-card:hover {
+  z-index: 20;
+
+  filter: none;
+}
+
+
+/* 클릭할 때도 카드 전체는 움직이지 않음 */
+
+.type-card:active {
+  filter: none;
+}
+
+
+/* 키보드 포커스 */
+
+.type-card:focus-visible {
+  outline:
+    4px solid
+    rgba(255, 113, 84, 0.9);
+
+  outline-offset: 3px;
+}
+
+
+/* ==================================================
+   폴라로이드 안쪽 캐릭터 영역
+================================================== */
+
+.type-card-image-wrap {
+  position: absolute;
+  z-index: 5;
+
+  left: 8%;
+  top: 7%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 84%;
+  height: 69%;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: visible;
+
+  border: 0;
+  border-radius: 0;
+
+  background: transparent;
+
+  pointer-events: none;
+
+  transform:
+    translateY(0)
+    scale(1);
+
+  transform-origin: center;
+
+  transition:
+    transform 0.22s
+    cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.22s ease;
+}
+
+
+/* ==================================================
+   마우스를 올렸을 때 캐릭터만 확대
+================================================== */
+
+.type-card:hover .type-card-image-wrap {
+  transform:
+    translateY(-5px)
+    scale(1.07);
+
+  filter:
+    drop-shadow(
+      0 7px 5px
+      rgba(62, 94, 24, 0.16)
+    );
+}
+
+
+/* 클릭할 때 캐릭터만 살짝 작아짐 */
+
+.type-card:active .type-card-image-wrap {
+  transform:
+    translateY(-2px)
+    scale(1.025);
+}
+
+
+/* ==================================================
+   캐릭터 이미지
+================================================== */
+
+.type-card-image {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  max-width: 100%;
+  max-height: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  object-fit: contain;
+  object-position: center;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+
+/* 이미지가 없을 경우 */
+
+.type-card-image-wrap.image-error::after {
+  content: "이미지 준비 중";
+
+  position: absolute;
+
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #6d842b;
+
+  font-size:
+    clamp(
+      8px,
+      0.75vw,
+      14px
+    );
+
+  font-weight: 700;
+
+  background: transparent;
+}
+
+
+/* ==================================================
+   폴라로이드 아래쪽 유형 이름
+
+   hover 시 움직이지 않음
+================================================== */
+
+.type-card-name{
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+
+/* ==================================================
+   위쪽 폴라로이드 5개
+================================================== */
+
+
+/* 1. 마당발형 */
+
+.type-card-01 {
+  left: 13.95%;
+  top: 29.8%;
+
+  width: 13.55%;
+  height: 26.2%;
+
+  transform: rotate(-1.2deg);
+}
+
+/* 글씨를 폴라로이드 중심에 맞게 조정 */
+
+.type-card-01 .type-card-name {
+  left: 49%;
+  bottom: 5.2%;
+}
+
+
+/* 2. 말랑순둥형 */
+
+.type-card-02 {
+  left: 28.75%;
+  top: 29.55%;
+
+  width: 13.75%;
+  height: 26.35%;
+
+  transform: rotate(1.2deg);
+}
+
+.type-card-02 .type-card-name {
+  left: 50.8%;
+  bottom: 5%;
+}
+
+
+/* 3. 킁킁탐험형 */
+
+.type-card-03 {
+  left: 44.25%;
+  top: 29.9%;
+
+  width: 13.55%;
+  height: 26.1%;
+
+  transform: rotate(0.2deg);
+}
+
+.type-card-03 .type-card-name {
+  left: 50%;
+  bottom: 5.1%;
+}
+
+
+/* 4. 눈치만렙형 */
+
+.type-card-04 {
+  left: 58.55%;
+  top: 30.05%;
+
+  width: 13.55%;
+  height: 26%;
+
+  transform: rotate(0.6deg);
+}
+
+.type-card-04 .type-card-name {
+  left: 50.5%;
+  bottom: 5%;
+}
+
+
+/* 5. 우다다형 */
+
+.type-card-05 {
+  left: 72.75%;
+  top: 30.4%;
+
+  width: 13.95%;
+  height: 26%;
+
+  transform: rotate(0.5deg);
+}
+
+.type-card-05 .type-card-name {
+  left: 49.5%;
+  bottom: 5%;
+}
+
+
+/* ==================================================
+   아래쪽 폴라로이드 4개
+================================================== */
+
+
+/* 6. 경계대장형 */
+
+.type-card-06 {
+  left: 21.25%;
+  top: 59.2%;
+
+  width: 14.05%;
+  height: 27.25%;
+
+  transform: rotate(1deg);
+}
+
+.type-card-06 .type-card-name {
+  left: 50.7%;
+  bottom: 4.8%;
+}
+
+
+/* 7. 마이웨이형 */
+
+.type-card-07 {
+  left: 36.75%;
+  top: 59.45%;
+
+  width: 14%;
+  height: 27.15%;
+
+  transform: rotate(0.45deg);
+}
+
+.type-card-07 .type-card-name {
+  left: 49.5%;
+  bottom: 4.9%;
+}
+
+
+/* 8. 엄마바라기형 */
+
+.type-card-08 {
+  left: 52%;
+  top: 59.65%;
+
+  width: 13.85%;
+  height: 27%;
+
+  transform: rotate(0.45deg);
+}
+
+.type-card-08 .type-card-name {
+  left: 50.5%;
+  bottom: 4.8%;
+}
+
+
+/* 9. 예민보스형 */
+
+.type-card-09 {
+  left: 67.35%;
+  top: 59.85%;
+
+  width: 13.85%;
+  height: 26.95%;
+
+  transform: rotate(0.65deg);
+}
+
+.type-card-09 .type-card-name {
+  left: 49.3%;
+  bottom: 4.8%;
+}
+
+
+
+/* ==================================================
+   결과로 돌아가기 버튼
+================================================== */
+
+.back-result-button {
+  position: absolute;
+  z-index: 30;
+
+  left: 50%;
+  bottom: 2.1%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 180px;
+  height: 46px;
+
+  margin: 0;
+  padding: 0 26px;
+
+  border: 3px solid #507d17;
+  border-radius: 999px;
+
+  background: #ffffff;
+
+  color: #477215;
+
+  font-family:
+    "Pretendard",
+    sans-serif;
+
+  font-size:
+    clamp(
+      13px,
+      1vw,
+      18px
+    );
+
+  font-weight: 900;
+
+  cursor: pointer;
+
+  transform:
+    translateX(-50%);
+
+  box-shadow:
+    0 5px 0
+    rgba(53, 94, 11, 0.22);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+
+.back-result-button:hover {
+  background: #f7ffe8;
+
+  transform:
+    translateX(-50%)
+    translateY(-3px);
+
+  box-shadow:
+    0 8px 0
+    rgba(53, 94, 11, 0.2);
+}
+
+
+.back-result-button:active {
+  transform:
+    translateX(-50%)
+    translateY(1px);
+
+  box-shadow:
+    0 3px 0
+    rgba(53, 94, 11, 0.2);
+}
+
+
+/* ==================================================
+   높이가 낮은 노트북 화면
+================================================== */
+
+@media (max-height: 800px) {
+
+  .type-card-name {
+    font-size:
+      clamp(
+        10px,
+        1vw,
+        17px
+      );
+  }
+
+
+  .back-result-button {
+    min-width: 155px;
+    height: 39px;
+
+    padding: 0 20px;
+
+    border-width: 2px;
+
+    font-size:
+      clamp(
+        11px,
+        0.9vw,
+        15px
+      );
+  }
+
+}
+
+
+/* ==================================================
+   작은 노트북 및 태블릿
+================================================== */
+
+@media (max-width: 1100px) {
+
+  .type-card-image-wrap {
+    padding: 0;
+  }
+
+
+  .type-card-name {
+  font-size: clamp(9px, 1vw, 14px);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+
+  .back-result-button {
+    min-width: 135px;
+    height: 35px;
+
+    padding: 0 16px;
+
+    border-width: 2px;
+
+    font-size: 11px;
+  }
+
+}
+
+
+/* ==================================================
+   아주 작은 화면
+================================================== */
+
+@media (max-width: 700px) {
+
+  .type-card-name {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+
+  .back-result-button {
+    bottom: 1.4%;
+
+    min-width: 105px;
+    height: 28px;
+
+    padding: 0 11px;
+
+    font-size: 8px;
+  }
+
+}
+
+
+
+/*-----------------------RESULT-DETAIL PAGE--------------------------------*/
+
+
+
+/* ==================================================
+   RESULT DETAIL PAGE
+   첫 번째 시안 기준 최종 수정
+================================================== */
+
+
+/* ==================================================
+   페이지 전체
+================================================== */
+
+.result-detail-page {
+  position: relative;
+
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+
+  background: #55c8ef;
+
+  font-family:
+    "Pretendard",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+
+/* ==================================================
+   배경 스테이지
+   1648 × 920
+================================================== */
+
+.result-detail-stage {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: max(
+    100vw,
+    calc(100dvh * 1648 / 920)
+  );
+
+  height: max(
+    100dvh,
+    calc(100vw * 920 / 1648)
+  );
+
+  aspect-ratio: 1648 / 920;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+
+  transform: translate(-50%, -50%);
+
+  background: #55c8ef;
+}
+
+
+/* ==================================================
+   배경 이미지
+================================================== */
+
+.result-detail-bg {
+  position: absolute;
+
+  inset: 0;
+  z-index: 0;
+
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  object-fit: fill;
+  object-position: center;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+
+/* ==================================================
+   콘텐츠
+================================================== */
+
+.result-detail-content {
+  position: absolute;
+
+  inset: 0;
+  z-index: 5;
+
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+}
+
+
+/* ==================================================
+   왼쪽 메인 이미지
+================================================== */
+
+.detail-image-area {
+  position: absolute;
+
+  left: 21.8%;
+  top: 28.7%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 24%;
+  height: 36%;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: visible;
+}
+
+
+.detail-main-image {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  object-fit: contain;
+  object-position: center;
+
+  background: transparent;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+
+/* ==================================================
+   오른쪽 정보 전체
+================================================== */
+
+.detail-info-area {
+  position: absolute;
+
+  left: 52.3%;
+  top: 25%;
+
+  width: 32.7%;
+  height: 48%;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: visible;
+}
+
+
+/* ==================================================
+   제목
+================================================== */
+
+.detail-header {
+  position: absolute;
+
+  left: 0;
+  top: 0;
+
+  width: 100%;
+  height: 16%;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: visible;
+}
+
+
+.detail-title-row {
+  position: relative;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+
+  width: max-content;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  gap: clamp(
+    10px,
+    0.8vw,
+    16px
+  );
+
+  white-space: nowrap;
+
+  /* 첫 번째 시안처럼 제목만 오른쪽 */
+  transform: translateX(28px);
+}
+
+
+/* ==================================================
+   유형 이름
+================================================== */
+
+.detail-type-name {
+  position: relative;
+  z-index: 2;
+
+  display: inline-block;
+  flex: 0 0 auto;
+
+  margin: 0;
+  padding: 0;
+
+  color: #34742d;
+
+  font-family:
+    "NexonMaplestory",
+    "Pretendard",
+    sans-serif;
+
+  font-size:
+    clamp(
+      50px,
+      4vw,
+      78px
+    );
+
+  font-weight: 700;
+  line-height: 1;
+
+  letter-spacing: 0.01em;
+
+  white-space: nowrap;
+}
+
+
+/* 초록 하이라이트 */
+
+.detail-type-name::before {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+  bottom: -5%;
+  z-index: -1;
+
+  width: 108%;
+  height: 33%;
+
+  border-radius: 999px;
+
+  background:
+    rgba(
+      205,
+      232,
+      124,
+      0.68
+    );
+
+  transform: translateX(-50%);
+}
+
+
+/* 긴 이름 */
+
+.detail-type-name.detail-long-name {
+  font-size:
+    clamp(
+      46px,
+      3.5vw,
+      68px
+    );
+
+  letter-spacing: -0.01em;
+}
+
+
+/* ==================================================
+   "인 나는"
+================================================== */
+
+.detail-title-suffix {
+  display: inline-block;
+  flex: 0 0 auto;
+
+  margin: 0;
+
+  padding-top: 10px;
+
+  color: #222222;
+
+  font-size:
+    clamp(
+      18px,
+      1.65vw,
+      31px
+    );
+
+  font-weight: 600;
+  line-height: 1;
+
+  white-space: nowrap;
+}
+
+
+/* ==================================================
+   설명
+================================================== */
+
+.detail-description {
+  position: absolute;
+
+  left: 0;
+  top: 23%;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: clamp(
+    11px,
+    0.9vw,
+    17px
+  );
+
+  width: 110%;
+  height: 27%;
+
+  margin: 0;
+  padding: 0;
+}
+
+
+.detail-description p {
+  position: relative;
+
+  margin: 0;
+  padding-left: 1.45em;
+
+  color: #111111;
+
+  font-size:
+    clamp(
+      14px,
+      1.08vw,
+      21px
+    );
+
+  font-weight: 500;
+  line-height: 1.1;
+
+  letter-spacing: -0.015em;
+
+  white-space: nowrap;
+}
+
+
+/* 불릿 */
+
+.detail-description-dot {
+  position: absolute;
+
+  left: 0;
+  top: 0;
+
+  color: #111111;
+
+  font-weight: 800;
+}
+
+
+/* ==================================================
+   코드 + 키워드
+================================================== */
+
+.detail-tags {
+  position: absolute;
+
+  left: 0;
+  top: 51.5%;
+
+  display: flex;
+  align-items: center;
+
+  gap: 2.4%;
+
+  width: 100%;
+  height: 9.5%;
+
+  margin: 0;
+  padding: 0;
+
+  white-space: nowrap;
+}
+
+
+/* ==================================================
+   첫 번째 코드
+   첫 번째 이미지처럼 오렌지 배경
+================================================== */
+
+.detail-code {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 19%;
+  height: 100%;
+
+  padding: 0 3.2%;
+
+  border:
+    1.5px solid
+    #ff7154;
+
+  border-radius: 999px;
+
+  background: #ff7154;
+
+  color: #ffffff;
+
+  font-size:
+    clamp(
+      10px,
+      0.82vw,
+      16px
+    );
+
+  font-weight: 700;
+  line-height: 1;
+
+  letter-spacing: 0.01em;
+
+  white-space: nowrap;
+}
+
+
+/* ==================================================
+   나머지 키워드
+   흰색 배경 + 오렌지 글씨
+================================================== */
+
+.detail-tag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 17.5%;
+  height: 100%;
+
+  padding: 0 3.1%;
+
+  border:
+    1.5px solid
+    #ff7154;
+
+  border-radius: 999px;
+
+  background: #ffffff;
+
+  color: #ff7154;
+
+  font-size:
+    clamp(
+      9px,
+      0.74vw,
+      14px
+    );
+
+  font-weight: 600;
+  line-height: 1;
+
+  letter-spacing: -0.01em;
+
+  white-space: nowrap;
+}
+
+
+/* ==================================================
+   궁합 영역
+   첫 번째 이미지처럼 낮고 넓게
+================================================== */
+
+.detail-match-row {
+  position: absolute;
+
+  left: -3%;
+  top: 70%;
+
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    1fr;
+
+  column-gap: 4%;
+
+  width: 100%;
+
+  /* 기존보다 세로 높이 감소 */
+  height: 25%;
+
+  margin: 0;
+  padding: 0;
+}
+
+
+/* ==================================================
+   궁합 박스
+================================================== */
+
+.detail-match-box {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+
+  padding:
+    7%
+    4%
+    2.5%;
+
+  border:
+    2px solid
+    #ff7154;
+
+  border-radius:
+    clamp(
+      14px,
+      1.2vw,
+      22px
+    );
+
+  background: #ffffff;
+
+  overflow: visible;
+}
+
+
+/* 안 맞는 유형 테두리 */
+
+.detail-bad-box {
+  border-color: #ff9685;
+}
+
+
+/* ==================================================
+   궁합 제목
+   첫 번째 이미지처럼 배경색 다시 적용
+================================================== */
+
+.detail-match-label {
+  position: absolute;
+
+  left: 50%;
+  top: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 43%;
+
+  /* 박스가 낮아졌으므로 타이틀 높이도 조절 */
+  height: 27%;
+
+  padding: 0 7%;
+
+  border: 0;
+
+  border-radius: 999px;
+
+  background: #ff7154;
+
+  color: #ffffff;
+
+  font-size:
+    clamp(
+      10px,
+      0.82vw,
+      16px
+    );
+
+  font-weight: 700;
+  line-height: 1;
+
+  white-space: nowrap;
+
+  transform:
+    translate(
+      -50%,
+      -50%
+    );
+}
+
+
+/* 안 맞는 유형 */
+
+.detail-bad-box
+.detail-match-label {
+  background: #ff9685;
+
+  color: #ffffff;
+}
+
+
+/* ==================================================
+   궁합 내부
+================================================== */
+
+.detail-match-items {
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    1fr;
+
+  column-gap: 3%;
+
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+}
+
+
+.detail-match-item {
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: flex-end;
+
+  /* 이미지와 이름 간격 */
+  gap: 2%;
+
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  cursor: pointer;
+}
+
+
+/* ==================================================
+   궁합 캐릭터
+   기존보다 크게
+================================================== */
+
+.detail-match-image {
+  display: block;
+
+  /* 이미지 크게 */
+  width: 108%;
+  height: 74%;
+
+  margin: 0;
+  padding: 0;
+
+  object-fit: contain;
+  object-position: center;
+
+  background: transparent;
+
+  transform: scale(1);
+
+  transition:
+    transform 0.2s ease;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+
+/* 이미지에만 hover */
+
+.detail-match-item:hover
+.detail-match-image {
+  transform:
+    translateY(-3px)
+    scale(1.07);
+}
+
+
+/* ==================================================
+   궁합 유형명
+   기존보다 크게
+================================================== */
+
+.detail-match-name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 19%;
+
+  margin: 0;
+  padding: 0;
+
+  color: #333333;
+
+  font-size:
+    clamp(
+      10px,
+      0.8vw,
+      15px
+    );
+
+  font-weight: 650;
+  line-height: 1;
+
+  letter-spacing: -0.02em;
+
+  text-align: center;
+  white-space: nowrap;
+
+  pointer-events: none;
+}
+
+
+/* ==================================================
+   하단 버튼
+================================================== */
+
+.detail-button-wrap {
+  position: absolute;
+
+  left: 23.6%;
+  bottom: 14.5%;
+
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    1fr;
+
+  column-gap: 1.8%;
+
+  width: 56.2%;
+  height: 8%;
+
+  margin: 0;
+  padding: 0;
+
+  z-index: 20;
+}
+
+
+/* ==================================================
+   버튼 공통
+================================================== */
+
+.detail-back-button,
+.detail-other-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  border-radius: 999px;
+
+  font-family:
+    "Pretendard",
+    sans-serif;
+
+  font-size:
+    clamp(
+      14px,
+      1.35vw,
+      26px
+    );
+
+  font-weight: 700;
+  line-height: 1;
+
+  letter-spacing: -0.03em;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+
+/* 결과로 돌아가기 */
+
+.detail-back-button {
+  border: 0;
+
+  background: #ff7154;
+
+  color: #ffffff;
+
+  box-shadow:
+    0 5px 0 #e85b43,
+    0 8px 13px
+    rgba(
+      255,
+      113,
+      84,
+      0.14
+    );
+}
+
+
+.detail-back-button:hover {
+  background: #ff7b60;
+
+  transform: translateY(-3px);
+}
+
+
+.detail-back-button:active {
+  transform: translateY(1px);
+
+  box-shadow:
+    0 2px 0
+    #e85b43;
+}
+
+
+/* 다른 유형 */
+
+.detail-other-button {
+  border:
+    1.5px solid
+    #dedede;
+
+  background: #ffffff;
+
+  color: #111111;
+
+  box-shadow:
+    0 4px 11px
+    rgba(
+      74,
+      60,
+      44,
+      0.08
+    );
+}
+
+
+.detail-other-button:hover {
+  border-color: #ffb6a8;
+
+  background: #ffffff;
+
+  transform: translateY(-3px);
+}
+
+
+.detail-other-button:active {
+  transform: translateY(1px);
+}
+
+
+/* ==================================================
+   낮은 노트북
+================================================== */
+
+@media (max-height: 800px) {
+
+  .detail-type-name {
+    font-size:
+      clamp(
+        44px,
+        3.6vw,
+        68px
+      );
+  }
+
+
+  .detail-type-name.detail-long-name {
+    font-size:
+      clamp(
+        40px,
+        3.15vw,
+        60px
+      );
+  }
+
+
+  .detail-description p {
+    font-size:
+      clamp(
+        12px,
+        1vw,
+        18px
+      );
+  }
+
+
+  .detail-match-image {
+    width: 110%;
+    height: 74%;
+  }
+
+
+  .detail-match-name {
+    font-size:
+      clamp(
+        9px,
+        0.76vw,
+        14px
+      );
+  }
+
+}
+
+
+/* ==================================================
+   작은 노트북
+================================================== */
+
+@media (max-width: 1100px) {
+
+  .detail-title-row {
+    transform:
+      translateX(18px);
+  }
+
+
+  .detail-type-name {
+    font-size:
+      clamp(
+        36px,
+        3.6vw,
+        54px
+      );
+  }
+
+
+  .detail-type-name.detail-long-name {
+    font-size:
+      clamp(
+        32px,
+        3.1vw,
+        48px
+      );
+  }
+
+
+  .detail-title-suffix {
+    font-size:
+      clamp(
+        12px,
+        1.4vw,
+        20px
+      );
+  }
+
+
+  .detail-description p {
+    font-size:
+      clamp(
+        10px,
+        0.92vw,
+        14px
+      );
+  }
+
+
+  .detail-code,
+  .detail-tag {
+    font-size: 8px;
+  }
+
+
+  .detail-match-name {
+    font-size: 9px;
+  }
+
+
+  .detail-back-button,
+  .detail-other-button {
+    font-size:
+      clamp(
+        10px,
+        1.2vw,
+        16px
+      );
+  }
+
+}
+
+
+/* =========================================================
+   RESULT + RESULT DETAIL
+   두 페이지 화면 꽉 채우기 / 크기 통일
+
+   반드시 test.css 가장 마지막에 배치
+========================================================= */
+
+
+/* ==================================================
+   페이지 전체
+================================================== */
+
+.result-page,
+.result-detail-page {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+
+  background: #55c8ef;
+}
+
+
+/* ==================================================
+   공통 스테이지
+
+   max 방식 = 화면 전체를 빈틈없이 채움
+
+   result / result-detail 모두
+   같은 1648 × 920 비율 사용
+================================================== */
+
+.result-stage,
+.result-detail-stage {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  flex: none;
+
+  width: max(
+    100vw,
+    calc(100dvh * 1648 / 920)
+  );
+
+  height: max(
+    100dvh,
+    calc(100vw * 920 / 1648)
+  );
+
+  aspect-ratio: 1648 / 920;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+
+  transform: translate(-50%, -50%);
+
+  background: #55c8ef;
+}
+
+
+/* ==================================================
+   배경
+   두 페이지 동일하게 꽉 채움
+================================================== */
+
+.result-bg,
+.result-detail-bg {
+  position: absolute;
+
+  inset: 0;
+  z-index: 0;
+
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  object-fit: fill;
+  object-position: center;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+
+/* ==================================================
+   콘텐츠
+================================================== */
+
+.result-content,
+.result-detail-content {
+  position: absolute;
+
+  inset: 0;
+  z-index: 2;
+
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+}
+
+
+/* ==================================================
+   왼쪽 폴라로이드 캐릭터 영역
+
+   두 페이지에서 동일한 위치/크기
+================================================== */
+
+.result-image-area,
+.detail-image-area {
+  position: absolute;
+
+  left: 21.8%;
+  top: 28.7%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 24%;
+  height: 36%;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: visible;
+}
+
+
+/* ==================================================
+   캐릭터 이미지 자체
+================================================== */
+
+.result-main-image,
+.detail-main-image {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  max-width: 100%;
+  max-height: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  object-fit: contain;
+  object-position: center;
+
+  background: transparent;
+
+  /* result 페이지에 있던 translateX 제거 */
+  transform: none;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+
+/* 결과 화면 그림자 */
+
+.result-main-image {
+  filter:
+    drop-shadow(
+      0 5px 4px
+      rgba(72, 55, 35, 0.10)
+    );
+}
+
+
+/* 상세 페이지 */
+
+.detail-main-image {
+  filter: none;
+}
+
+
+
+/* ==========================================
+   DOG INFO - 중앙 정렬 최종 수정
+========================================== */
+
+/* 왼쪽 강아지 + 사진 프레임 삭제 */
+.profile-page .profile-image-area {
+  display: none !important;
+}
+
+/* 입력 영역을 화면 중앙에 배치 */
+.profile-page .profile-main {
+  position: absolute !important;
+
+  top: 43% !important;
+  left: 50% !important;
+
+  width: 590px !important;
+  max-width: 80vw !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+
+  align-items: center !important;
+  justify-content: center !important;
+
+  grid-template-columns: none !important;
+  gap: 0 !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  transform: translateX(-50%) !important;
+}
+
+/* 이름 / 나이 / 성별 / 몸무게 */
+.profile-page .profile-form {
+  position: relative !important;
+
+  top: auto !important;
+  left: 0 !important;
+  right: auto !important;
+
+  width: 100% !important;
+  max-width: 590px !important;
+
+  margin: 0 auto !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+
+  gap: 15px !important;
+
+  transform: none !important;
+}
+
+/* 입력칸 크기 유지 */
+.profile-page .profile-row {
+  width: 100% !important;
+  height: 82px !important;
+}
+
+/* 상단 제목도 정중앙 */
+.profile-page .profile-heading {
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+}
+
+/* 화면 높이가 낮을 때 */
+@media (max-height: 850px) {
+  .profile-page .profile-main {
+    top: 39% !important;
+  }
+
+  .profile-page .profile-row {
+    height: 72px !important;
+  }
+}
+
+
+/* =====================================
+   DOG INFO - 전체 위치 위로 이동
+===================================== */
+
+/* 입력창 4개 전체 위로 이동 */
+.profile-page .profile-main {
+  top: calc(43% - 100px) !important;
+}
+
+/* 시작하기 버튼 위치 조정 */
+.profile-page .profile-next,
+.profile-page .profile-submit,
+.profile-page #profileNext {
+  margin-top: 35px !important;
+}
+
+/* 화면 높이가 낮은 경우 */
+@media (max-height: 850px) {
+  .profile-page .profile-main {
+    top: calc(39% - 100px) !important;
+  }
+}
+
+
+
+/* ==========================================
+   GUEST INFO - 입력칸 + 버튼 위로 이동
+========================================== */
+
+/* 이름 / 나이 / 성별 입력창 위로 60px */
+.profile-page .guest-profile-content .profile-main {
+  top: calc(37% + 10px) !important;
+}
+
+/* 시작하기 버튼 위로 70px */
+.profile-page .guest-profile-content .profile-next-button {
+  transform: translate(-50%, 10px) !important;
+}
+

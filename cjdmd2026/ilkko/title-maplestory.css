@@ -1,0 +1,17 @@
+/* 읽:꼬 전체 페이지: 제목/부제목 전용 메이플스토리체 */
+@font-face {
+  font-family: "IlkkoSiteMaplestory";
+  src: local("Maplestory OTF Bold"), local("MaplestoryOTFBold"), local("Maplestory Bold"),
+       url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/MaplestoryOTFBold.woff") format("woff");
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+}
+/* 본문(p, li 등)은 변경하지 않음. 단계명(1단계 - 모음)도 h3로 지정되어 적용됨 */
+h1, h2, h3, h4, h5, h6,
+[class*="-title"], [class*="-subtitle"], [class*="-sub-title"],
+[class*="-heading"], [class*="_title"],
+.process-step > h3, .training-standard-title,
+.package-gift-heading {
+  font-family: "IlkkoSiteMaplestory", "Maplestory OTF", "Maplestory", sans-serif;
+}

@@ -207,5 +207,6 @@ html.st-watch .st-watch-view { display: block; }
   .sw-item.is-now { padding: 8px; margin: -8px; border-radius: 12px; background: #F2FBFA; }
 }
 @media (min-width: 601px) { .sw-more { display: none; } }
-/* 374차: 제목이 길어져 폰에서 두 줄이 될 때 단어 중간에서 안 끊기게 */
-.st-ct, .sw-title { word-break: keep-all; }
+/* 374차: 영상 화면 제목은 단어 중간에서 안 끊기게 · 375차: 목록 카드 제목은 한 줄 + 넘치면 … */
+.sw-title { word-break: keep-all; }
+.st-ct { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

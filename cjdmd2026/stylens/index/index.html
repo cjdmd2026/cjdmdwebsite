@@ -1,0 +1,3525 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="보이지 않는 차이를 이해하고 더 나다운 선택을 돕는 스타일 경험, Stylens">
+<title>STYLENS — Digital Closet</title>
+
+<!-- 같은 탭에서는 인트로를 한 번만 표시 -->
+<script>
+(() => {
+  try {
+    const key = "stylensIntroSeen";
+    if (sessionStorage.getItem(key) === "1") {
+      document.documentElement.classList.add("stylens-returning");
+    } else {
+      sessionStorage.setItem(key, "1");
+    }
+  } catch (error) {
+    // 저장소 접근이 제한된 경우 기존 인트로 동작 유지
+  }
+})();
+</script>
+
+<style>
+:root{
+  --black:#050505;
+  --black2:#0a0809;
+  --panel:#0e0b0d;
+  --pink:#ab5998;
+  --pink-light:#e195c6;
+  --pink-soft:#bd75aa;
+  --white:#f8f3f6;
+  --gray:#928991;
+  --gray2:#5f585e;
+  --line:rgba(225,149,198,.48);
+  --line-soft:rgba(225,149,198,.18);
+  --max:1440px;
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  background:var(--black);
+  color:var(--white);
+  font-family:Pretendard,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+  overflow-x:hidden;
+  word-break:keep-all;
+  overflow-wrap:normal;
+  line-break:strict;
+  text-rendering:optimizeLegibility;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+img{
+  display:block;
+  max-width:100%;
+}
+
+button{
+  font:inherit;
+}
+
+h1,h2,h3,h4,p,span,a,strong,small{
+  word-break:keep-all;
+  overflow-wrap:normal;
+}
+
+::selection{
+  background:var(--pink);
+  color:#fff;
+}
+
+.inner{
+  width:min(calc(100% - 80px),var(--max));
+  margin:auto;
+}
+
+/* HEADER */
+.header{
+  position:fixed;
+  left:0;
+  top:0;
+  width:100%;
+  height:88px;
+  z-index:999;
+  background:rgba(5,5,5,.92);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line-soft);
+}
+
+.header-inner{
+  width:min(calc(100% - 80px),var(--max));
+  height:100%;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.logo{
+  width:190px;
+  height:64px;
+  display:flex;
+  align-items:center;
+}
+
+.logo img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:left center;
+}
+
+.nav{
+  display:flex;
+  gap:46px;
+  align-items:center;
+}
+
+.nav a{
+  position:relative;
+  color:#8e858c;
+  padding:34px 0;
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  transition:.25s;
+  white-space:nowrap;
+}
+
+.nav a:hover,
+.nav a.active{
+  color:var(--white);
+}
+
+.nav a::after{
+  content:"";
+  position:absolute;
+  bottom:24px;
+  left:0;
+  width:0;
+  height:1px;
+  background:var(--pink-light);
+  transition:.3s;
+}
+
+.nav a:hover::after,
+.nav a.active::after{
+  width:100%;
+}
+
+/* GLOBAL TYPE */
+.micro-label{
+  color:#efafd6;
+  font-size:11px;
+  line-height:1;
+  font-weight:600;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+
+.section-number{
+  color:#958990;
+  font-size:11px;
+  letter-spacing:.2em;
+}
+
+.editorial-title{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(44px,6vw,96px);
+  line-height:.98;
+  font-weight:400;
+  letter-spacing:-.05em;
+  color:var(--pink-light);
+}
+
+.editorial-title em{
+  font-style:italic;
+}
+
+.body-copy{
+  color:#c2b9bf;
+  font-size:16px;
+  line-height:1.9;
+}
+
+.title-line{
+  display:block;
+  white-space:nowrap;
+}
+
+/* HERO */
+.hero{
+  position:relative;
+  min-height:100vh;
+  padding:132px 0 50px;
+  background:
+    radial-gradient(circle at 80% 15%,rgba(171,89,152,.08),transparent 24%),
+    var(--black);
+}
+
+.hero::before{
+  content:"";
+  position:absolute;
+  inset:88px 0 0;
+  opacity:.2;
+  background-image:
+    linear-gradient(rgba(225,149,198,.06) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(225,149,198,.06) 1px,transparent 1px);
+  background-size:80px 80px;
+  pointer-events:none;
+}
+
+/* CLOSET FRAME */
+.closet-shell{
+  position:relative;
+  width:100%;
+  border:1px solid var(--line);
+  padding:10px;
+  background:linear-gradient(
+    145deg,
+    rgba(171,89,152,.035),
+    rgba(255,255,255,.005)
+  );
+  box-shadow:0 40px 120px rgba(0,0,0,.5);
+}
+
+.closet-shell::before{
+  content:"";
+  position:absolute;
+  inset:-5px;
+  pointer-events:none;
+  border:1px solid rgba(225,149,198,.1);
+}
+
+.closet-top{
+  min-height:100px;
+  display:grid;
+  grid-template-columns:180px 1fr 190px;
+  border-bottom:1px solid var(--line);
+}
+
+.data-number,
+.closet-heading,
+.sync-box{
+  display:flex;
+  align-items:center;
+}
+
+.data-number{
+  padding:0 28px;
+  border-right:1px solid var(--line);
+}
+
+.closet-heading{
+  justify-content:center;
+}
+
+.closet-heading h1{
+  color:var(--pink-light);
+  font-family:Georgia,"Times New Roman",serif;
+  font-style:italic;
+  font-size:32px;
+  font-weight:400;
+  white-space:nowrap;
+}
+
+.sync-box{
+  justify-content:center;
+  gap:10px;
+  border-left:1px solid var(--line);
+  color:#c99cba;
+  font-size:11px;
+  letter-spacing:.2em;
+  white-space:nowrap;
+}
+
+.sync-dot{
+  width:6px;
+  height:6px;
+  flex:0 0 auto;
+  border-radius:50%;
+  background:var(--pink-light);
+  box-shadow:0 0 12px rgba(225,149,198,.8);
+}
+
+/* HERO DATA GRID */
+.hero-data-grid{
+  display:grid;
+  grid-template-columns:minmax(0,2.25fr) minmax(300px,.75fr);
+  min-height:620px;
+}
+
+.hero-film{
+  position:relative;
+  min-width:0;
+  border-right:1px solid var(--line);
+  overflow:hidden;
+  background:#080708;
+}
+
+.hero-film video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  filter:saturate(.84) contrast(1.02);
+}
+
+.hero-film-sequence{
+  position:absolute;
+  inset:0;
+  z-index:0;
+  overflow:hidden;
+  background:#fff;
+}
+
+.hero-sequence-video{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  opacity:0;
+  transform:scale(1.006);
+  transition:
+    opacity .72s ease,
+    transform 1.05s ease;
+  will-change:opacity,transform;
+  pointer-events:none;
+}
+
+.hero-sequence-video.is-active{
+  opacity:1;
+  transform:scale(1);
+}
+
+.hero-film::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0,0,0,.05),
+      transparent 56%,
+      rgba(5,5,5,.72)
+    );
+  pointer-events:none;
+}
+
+.film-info{
+  position:absolute;
+  z-index:3;
+  left:24px;
+  top:20px;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  width:calc(100% - 48px);
+}
+
+.film-tag{
+  padding:8px 12px;
+  border:1px solid var(--line);
+  border-radius:50px;
+  background:rgba(5,5,5,.45);
+  color:#efafd6;
+  font-size:10px;
+  letter-spacing:.14em;
+  backdrop-filter:blur(7px);
+  white-space:nowrap;
+}
+
+.film-copy{
+  position:absolute;
+  z-index:3;
+  left:28px;
+  bottom:28px;
+  max-width:520px;
+}
+
+.film-copy h2{
+  display:inline-block;
+  padding:10px 15px 12px;
+  background:rgba(171,89,152,.94);
+  color:#fff;
+  font-size:clamp(30px,3vw,48px);
+  line-height:1.14;
+  letter-spacing:-.04em;
+  font-weight:500;
+  text-wrap:balance;
+  box-shadow:0 8px 30px rgba(0,0,0,.12);
+}
+
+.film-copy h2 span{
+  color:#fff;
+  font-family:Georgia,serif;
+  font-style:italic;
+  font-weight:400;
+}
+
+.film-copy p{
+  display:table;
+  margin-top:10px;
+  max-width:430px;
+  padding:8px 12px 9px;
+  background:rgba(16,9,14,.78);
+  color:rgba(255,255,255,.94);
+  font-size:14px;
+  line-height:1.85;
+  text-wrap:pretty;
+  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);
+}
+
+/* INFO COLUMN */
+.info-column{
+  display:grid;
+  grid-template-rows:145px 1fr 135px;
+  min-width:0;
+  background:rgba(171,89,152,.22);
+}
+
+.closet-link-card{
+  position:relative;
+  color:inherit;
+  cursor:pointer;
+  transition:
+    background .3s ease,
+    box-shadow .3s ease,
+    transform .3s ease;
+}
+
+.closet-link-card:hover,
+.closet-link-card:focus-visible{
+  background:rgba(171,89,152,.34);
+  box-shadow:inset 0 0 0 1px rgba(225,149,198,.72);
+  outline:none;
+}
+
+.closet-link-card:hover .wardrobe-preview img,
+.closet-link-card:focus-visible .wardrobe-preview img{
+  transform:scale(1.035);
+}
+
+.total-card{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  border-bottom:1px solid var(--line);
+}
+
+.total-number{
+  color:var(--pink-light);
+  font-family:Georgia,serif;
+  font-size:44px;
+  line-height:1;
+}
+
+.total-card span{
+  margin-top:10px;
+  color:#c99fba;
+  font-size:10px;
+  letter-spacing:.24em;
+  white-space:nowrap;
+}
+
+.total-card small{
+  margin-top:10px;
+  color:#978b92;
+  font-size:9px;
+  letter-spacing:.18em;
+  white-space:nowrap;
+}
+
+.wardrobe-preview{
+  position:relative;
+  overflow:hidden;
+  background:#080708;
+}
+
+.wardrobe-preview img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  opacity:.68;
+  filter:saturate(.62) contrast(1.08);
+  transition:transform .8s ease;
+}
+
+.wardrobe-preview::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(171,89,152,.12),
+      rgba(5,5,5,.08) 45%,
+      rgba(64,24,53,.78)
+    );
+}
+
+.wardrobe-label{
+  position:absolute;
+  z-index:3;
+  top:20px;
+  left:20px;
+  font-size:10px;
+  color:#efafd6;
+  letter-spacing:.16em;
+  white-space:nowrap;
+}
+
+.wardrobe-footer{
+  border-top:1px solid rgba(255,255,255,.18);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  padding:0 22px;
+  background:rgba(171,89,152,.22);
+}
+
+.wardrobe-footer strong{
+  color:var(--pink-light);
+  font-family:Georgia,serif;
+  font-size:17px;
+  font-style:italic;
+  font-weight:400;
+  white-space:nowrap;
+}
+
+.wardrobe-footer span{
+  color:#b091a5;
+  font-size:10px;
+  letter-spacing:.13em;
+  text-align:right;
+  white-space:nowrap;
+}
+
+/* DATA TABS */
+.closet-tabs{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  margin-top:14px;
+  gap:10px;
+}
+
+.closet-tab{
+  position:relative;
+  min-height:92px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:18px 22px;
+  border:1px solid rgba(225,149,198,.28);
+  background:rgba(171,89,152,.075);
+}
+
+.closet-tab span{
+  color:#9f8e99;
+  font-size:9px;
+  letter-spacing:.18em;
+  white-space:nowrap;
+}
+
+.closet-tab strong{
+  margin-top:8px;
+  color:#d1b4c6;
+  font-size:13px;
+  font-weight:500;
+  white-space:nowrap;
+}
+
+.scroll-note{
+  height:100px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  color:#8f858b;
+  font-size:10px;
+  letter-spacing:.2em;
+}
+
+.scroll-note > span:not(.scroll-line){
+  white-space:nowrap;
+}
+
+.scroll-line{
+  width:80px;
+  height:1px;
+  background:#332e31;
+}
+
+/* ABOUT */
+.about{
+  padding:150px 0 170px;
+}
+
+.section-grid{
+  display:grid;
+  grid-template-columns:170px minmax(620px,1.35fr) minmax(360px,.65fr);
+  gap:55px;
+  align-items:start;
+}
+
+.section-side{
+  padding-top:7px;
+  color:#9e8d98;
+  font-size:11px;
+  letter-spacing:.18em;
+  white-space:nowrap;
+}
+
+.section-copy-area{
+  min-width:0;
+}
+
+.section-copy-area h2{
+  margin-top:14px;
+  max-width:none;
+  color:#eee7eb;
+  font-size:clamp(46px,4.1vw,64px);
+  line-height:1.14;
+  letter-spacing:-.045em;
+  font-weight:500;
+}
+
+.section-copy-area h2 .accent-line{
+  color:var(--pink-light);
+  font-family:Georgia,"Times New Roman",serif;
+  font-style:italic;
+  font-weight:400;
+}
+
+.section-description{
+  min-width:0;
+  max-width:440px;
+  padding-top:31px;
+}
+
+.section-description p{
+  color:#bdb4ba;
+  font-size:16px;
+  line-height:1.95;
+  text-wrap:pretty;
+}
+
+.section-description p + p{
+  margin-top:22px;
+}
+
+.text-link{
+  margin-top:35px;
+  display:inline-flex;
+  gap:22px;
+  align-items:center;
+  color:#efafd6;
+  font-size:12px;
+  letter-spacing:.12em;
+  white-space:nowrap;
+}
+
+/* DIGITAL CLOSET PREVIEW */
+.my-closet{
+  padding:120px 0 145px;
+  border-top:1px solid var(--line-soft);
+  border-bottom:1px solid var(--line-soft);
+}
+
+.closet-section-head{
+  display:flex;
+  justify-content:flex-start;
+  align-items:flex-end;
+  gap:40px;
+  margin-bottom:52px;
+}
+
+.closet-section-head > div{
+  flex:0 0 auto;
+}
+
+.closet-section-head h2{
+  display:inline-block;
+  width:max-content;
+  margin-top:14px;
+  padding:5px 10px 7px;
+  background:var(--pink);
+  color:#fff;
+  font-family:Georgia,serif;
+  font-size:clamp(42px,5vw,72px);
+  font-style:italic;
+  font-weight:400;
+  line-height:.95;
+  white-space:nowrap;
+}
+
+.closet-section-head p{
+  max-width:450px;
+  color:#b8afb5;
+  font-size:15px;
+  line-height:1.9;
+  text-wrap:pretty;
+}
+
+.wardrobe-dashboard{
+  display:grid;
+  grid-template-columns:1.4fr .8fr;
+  border:1px solid var(--line);
+  min-height:560px;
+  background:rgba(171,89,152,.12);
+}
+
+.dashboard-left{
+  position:relative;
+  overflow:hidden;
+  border-right:1px solid var(--line);
+}
+
+.dashboard-left img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  opacity:.72;
+}
+
+.dashboard-left::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(
+      180deg,
+      transparent 40%,
+      rgba(5,5,5,.82)
+    );
+}
+
+.dashboard-label{
+  position:absolute;
+  z-index:3;
+  left:26px;
+  top:24px;
+  font-size:10px;
+  letter-spacing:.14em;
+  color:#efafd6;
+}
+
+.dashboard-title{
+  position:absolute;
+  z-index:3;
+  left:28px;
+  bottom:30px;
+}
+
+.dashboard-title h3{
+  font-size:34px;
+  line-height:1.2;
+  font-weight:500;
+  letter-spacing:-.04em;
+}
+
+.dashboard-title p{
+  margin-top:8px;
+  color:#c7bdc3;
+  font-size:13px;
+}
+
+.dashboard-right{
+  display:grid;
+  grid-template-rows:145px 1fr;
+}
+
+.stat-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+  padding:0 32px;
+  border-bottom:1px solid rgba(255,255,255,.2);
+}
+
+.closet-quick-link{
+  background:var(--pink);
+  color:#fff;
+}
+
+.closet-quick-copy span{
+  display:block;
+  color:rgba(255,255,255,.88);
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:.16em;
+}
+
+.closet-quick-copy strong{
+  display:block;
+  margin-top:10px;
+  color:#fff;
+  font-size:18px;
+  font-weight:600;
+}
+
+.closet-quick-arrow{
+  color:#fff;
+  font-family:Georgia,serif;
+  font-size:34px;
+}
+
+.clothing-stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+}
+
+.clothing-stat{
+  min-height:150px;
+  padding:26px;
+  border-bottom:1px solid var(--line);
+  border-right:1px solid var(--line);
+}
+
+.clothing-stat:nth-child(even){
+  border-right:0;
+}
+
+.stat-index{
+  color:#9c8c95;
+  font-size:9px;
+  letter-spacing:.18em;
+}
+
+.clothing-stat strong{
+  display:block;
+  margin-top:31px;
+  color:#d8c4d0;
+}
+
+.clothing-stat .number{
+  margin-top:8px;
+  color:var(--pink-light);
+  font-family:Georgia,serif;
+  font-size:30px;
+}
+
+.bar{
+  width:100%;
+  height:2px;
+  margin-top:17px;
+  background:#1d191b;
+}
+
+.bar span{
+  display:block;
+  height:100%;
+  background:var(--pink);
+}
+
+/* COMMUNITY */
+.community{
+  padding:140px 0;
+}
+
+.community-head{
+  display:flex;
+  justify-content:flex-start;
+  align-items:flex-end;
+  gap:40px;
+  margin-bottom:60px;
+}
+
+.community-head > div{
+  flex:0 0 auto;
+}
+
+.community-head p{
+  max-width:500px;
+  margin-left:0;
+}
+
+.community-head h2{
+  display:inline-block;
+  padding:5px 10px 7px;
+  background:var(--pink);
+  color:#fff;
+  font-family:Georgia,serif;
+  font-size:clamp(45px,5vw,70px);
+  font-style:italic;
+  font-weight:400;
+}
+
+.community-head p{
+  max-width:500px;
+  color:#b7aeb4;
+  font-size:15px;
+  line-height:1.9;
+}
+
+.community-list{
+  border-top:1px solid var(--line);
+}
+
+.community-row{
+  display:grid;
+  grid-template-columns:80px minmax(0,1fr) 140px;
+  align-items:center;
+  min-height:110px;
+  padding:0 18px;
+  border-bottom:1px solid rgba(225,149,198,.22);
+  background:rgba(171,89,152,.1);
+}
+
+.community-row .num{
+  color:#9b8b94;
+  font-size:10px;
+}
+
+.community-row h3{
+  font-size:17px;
+  line-height:1.6;
+  font-weight:500;
+  color:#bdb3b9;
+}
+
+.community-row .type{
+  text-align:right;
+  color:#b595a9;
+  font-size:10px;
+}
+
+/* FINAL */
+.final{
+  position:relative;
+  padding:130px 0;
+  overflow:hidden;
+  border-top:1px solid var(--line-soft);
+}
+
+.final::after{
+  content:"STYLENS";
+  position:absolute;
+  right:-20px;
+  bottom:-42px;
+  font-size:180px;
+  font-family:Arial,sans-serif;
+  font-weight:800;
+  color:rgba(225,149,198,.025);
+}
+
+.final h2{
+  max-width:1040px;
+  margin-top:18px;
+  color:#eee5ea;
+  font-size:clamp(42px,5.5vw,78px);
+  font-weight:400;
+  line-height:1.1;
+}
+
+.final h2 em{
+  font-family:Georgia,serif;
+  font-style:italic;
+  color:var(--pink-light);
+}
+
+.final p{
+  margin-top:25px;
+  color:#aaa0a6;
+  font-size:15px;
+}
+
+/* FOOTER */
+.footer{
+  border-top:1px solid var(--line-soft);
+  padding:38px 0 28px;
+}
+
+.footer-inner{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.footer-logo{
+  width:150px;
+}
+
+.footer-meta{
+  display:flex;
+  gap:35px;
+  color:#8f858b;
+  font-size:10px;
+}
+
+/* REVEAL */
+[data-reveal]{
+  opacity:0;
+  transform:translateY(22px);
+  transition:
+    opacity .8s ease,
+    transform .8s ease;
+}
+
+[data-reveal].show{
+  opacity:1;
+  transform:none;
+}
+
+/* FULLSCREEN INTRO */
+body.intro-playing{
+  overflow:hidden;
+}
+
+.fullscreen-intro{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  width:100vw;
+  height:100vh;
+  overflow:hidden;
+  background:#000;
+  opacity:1;
+  visibility:visible;
+  transition:
+    opacity .65s ease,
+    visibility .65s ease;
+}
+
+.fullscreen-intro.is-finished{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+.fullscreen-intro.is-loop-stage{
+  cursor:pointer;
+}
+
+.intro-video,
+.intro-loop-video{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  opacity:0;
+  transform:scale(1.015);
+  transition:
+    opacity .28s ease,
+    transform .75s ease;
+  pointer-events:none;
+}
+
+.intro-video.is-active,
+.intro-loop-video.is-active{
+  opacity:1;
+  transform:scale(1);
+}
+
+/* DOT GRID */
+.intro-dot-canvas{
+  position:absolute;
+  inset:0;
+  z-index:12;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  opacity:0;
+  visibility:hidden;
+  transition:.55s ease;
+}
+
+.fullscreen-intro.is-loop-stage .intro-dot-canvas{
+  opacity:1;
+  visibility:visible;
+}
+
+/* ENTER GUIDE */
+.intro-enter-guide{
+  position:absolute;
+  left:50%;
+  bottom:42px;
+  z-index:18;
+  transform:translate(-50%,14px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  padding:13px 20px 12px;
+  color:#fff;
+  opacity:0;
+  visibility:hidden;
+  background:rgba(7,7,9,.72);
+  border:1px solid rgba(225,149,198,.48);
+  border-radius:999px;
+  backdrop-filter:blur(14px);
+}
+
+.fullscreen-intro.is-loop-stage .intro-enter-guide{
+  opacity:1;
+  visibility:visible;
+  transform:translate(-50%,0);
+}
+
+.intro-enter-guide__main{
+  font-size:12px;
+  font-weight:650;
+  letter-spacing:.24em;
+}
+
+.intro-enter-guide__line{
+  width:62px;
+  height:2px;
+  border-radius:999px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #e195c6,
+      #ab5998,
+      #e195c6,
+      transparent
+    );
+}
+
+/* INTRO START */
+.intro-start-screen{
+  position:absolute;
+  inset:0;
+  z-index:40;
+  display:grid;
+  place-items:center;
+  background:
+    radial-gradient(circle at 50% 48%,rgba(171,89,152,.24),transparent 30%),
+    linear-gradient(180deg,rgba(5,5,5,.34),rgba(5,5,5,.58));
+  cursor:pointer;
+  transition:.75s ease;
+}
+
+.intro-start-screen.is-started{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+.intro-start-wrap{
+  position:relative;
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:22px;
+}
+
+.intro-start-kicker{
+  color:rgba(225,149,198,.72);
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:.34em;
+}
+
+.intro-start-button{
+  min-width:214px;
+  height:64px;
+  padding:0 36px;
+  border:1px solid rgba(225,149,198,.72);
+  border-radius:999px;
+  color:#fff;
+  background:
+    linear-gradient(
+      115deg,
+      rgba(171,89,152,.92),
+      rgba(225,149,198,.42),
+      rgba(171,89,152,.9)
+    );
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.24em;
+  cursor:pointer;
+}
+
+.intro-start-note{
+  color:rgba(255,255,255,.48);
+  font-size:9px;
+  letter-spacing:.18em;
+}
+
+/* RESPONSIVE */
+@media(max-width:760px){
+  .inner,
+  .header-inner{
+    width:calc(100% - 34px);
+  }
+
+  .header{
+    height:72px;
+  }
+
+  .logo{
+    width:140px;
+  }
+
+  .nav{
+    gap:16px;
+  }
+
+  .nav a{
+    font-size:10px;
+  }
+
+  .hero{
+    padding-top:100px;
+  }
+
+  .closet-top{
+    grid-template-columns:90px 1fr 90px;
+  }
+
+  .hero-data-grid{
+    display:block;
+  }
+
+  .hero-film{
+    height:520px;
+    border-right:0;
+  }
+
+  .closet-tabs{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .section-grid{
+    display:block;
+  }
+
+  .wardrobe-dashboard{
+    display:block;
+  }
+
+  .dashboard-left{
+    height:500px;
+    border-right:0;
+  }
+
+  .community-head{
+    display:block;
+  }
+
+  .community-row{
+    grid-template-columns:50px minmax(0,1fr);
+  }
+
+  .community-row .type{
+    display:none;
+  }
+
+  .footer-inner{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:25px;
+  }
+}
+
+/* 다시 인덱스로 돌아올 때 인트로 화면 깜빡임 방지 */
+html.stylens-returning .fullscreen-intro{
+  display:none!important;
+}
+
+html.stylens-returning body.intro-playing{
+  overflow-x:hidden;
+  overflow-y:auto;
+}
+
+/* HOME SOUND CONTROL */
+/* 영상 오른쪽 위 LIVE EDITORIAL 자리 */
+.sound-toggle{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-height:33px;
+  padding:8px 12px;
+  border:1px solid var(--line);
+  border-radius:50px;
+  background:rgba(5,5,5,.45);
+  color:#efafd6;
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:.14em;
+  white-space:nowrap;
+  -webkit-backdrop-filter:blur(7px);
+  backdrop-filter:blur(7px);
+  cursor:pointer;
+  transition:
+    background .2s ease,
+    color .2s ease,
+    border-color .2s ease;
+}
+
+.sound-toggle:hover,
+.sound-toggle:focus-visible{
+  color:#fff;
+  border-color:var(--pink-light);
+  background:rgba(171,89,152,.68);
+  outline-offset:3px;
+}
+
+.sound-toggle.is-on{
+  color:#fff;
+  border-color:var(--pink-light);
+  background:rgba(171,89,152,.88);
+}
+
+.sound-toggle__icon{
+  width:15px;
+  height:15px;
+  flex:0 0 auto;
+}
+
+.sound-toggle__waves{
+  display:none;
+}
+
+.sound-toggle.is-on .sound-toggle__waves{
+  display:block;
+}
+
+.sound-toggle.is-on .sound-toggle__mute{
+  display:none;
+}
+
+@media(max-width:480px){
+  .logo{
+    width:102px;
+  }
+
+  .nav{
+    gap:10px;
+  }
+
+  .nav a{
+    font-size:9px;
+    letter-spacing:.04em;
+  }
+
+  .sound-toggle{
+    gap:6px;
+    padding:7px 10px;
+    font-size:9px;
+    letter-spacing:.08em;
+  }
+
+  .sound-toggle__icon{
+    width:14px;
+    height:14px;
+  }
+}
+
+
+/* =======================================================
+   STYLENS RESPONSIVE LAYOUT 2026
+   기존 디자인 / 배색 / 인트로 / 영상 기능 유지
+   데스크톱에서는 넓게, 작은 화면에서는 재배치
+======================================================= */
+
+/* 원래 최대 너비 1440px 때문에 아이맥에서 생긴 큰 양옆 여백 완화.
+   1440px 이하에서는 기존 80px 여백 계산을 그대로 사용. */
+:root {
+  --max: 2400px;
+}
+
+.header-inner {
+  position: relative;
+}
+
+.mobile-menu-toggle {
+  display: none;
+  position: relative;
+  width: 46px;
+  height: 46px;
+  padding: 11px;
+  flex: 0 0 auto;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: rgba(171,89,152,.08);
+  color: var(--white);
+  cursor: pointer;
+}
+
+.mobile-menu-toggle span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: var(--pink-light);
+  border-radius: 2px;
+  transition: transform .25s ease, opacity .25s ease;
+}
+
+.mobile-menu-toggle[aria-expanded="true"] span:first-child {
+  transform: translateY(7.3px) rotate(45deg);
+}
+.mobile-menu-toggle[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+}
+.mobile-menu-toggle[aria-expanded="true"] span:last-child {
+  transform: translateY(-7.3px) rotate(-45deg);
+}
+
+/* 전체 영상/카드/그리드의 너비 계산 안정화 */
+.hero-data-grid,
+.wardrobe-dashboard,
+.section-grid,
+.community-head,
+.closet-section-head,
+.closet-heading,
+.section-copy-area,
+.section-description,
+.dashboard-left,
+.dashboard-right,
+.info-column,
+.hero-film,
+.community-head > * {
+  min-width: 0;
+}
+
+/* 이미지 자체가 셀 너비를 임의로 늘리는 문제 방지 */
+.wardrobe-preview img,
+.dashboard-left img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.footer-meta {
+  flex-wrap: wrap;
+}
+
+/* 1600px 이상: 좌우 공간을 넓게 활용하면서 영상 높이도 비례 확대 */
+@media (min-width: 1600px) {
+  .hero-data-grid {
+    min-height: clamp(690px, 42vw, 980px);
+  }
+
+  .section-grid {
+    grid-template-columns: 170px minmax(0, 1.25fr) minmax(0, .75fr);
+    gap: clamp(45px, 3vw, 75px);
+  }
+
+  .closet-section-head p,
+  .community-head p {
+    max-width: 550px;
+  }
+}
+
+/* 작은 노트북: 이전의 min-width 지정이 그리드를 밀어내던 문제 수정 */
+@media (max-width: 1380px) {
+  .section-grid {
+    grid-template-columns: 110px minmax(0, 1.25fr) minmax(0, .75fr);
+    gap: 30px;
+  }
+
+  .section-copy-area h2 {
+    font-size: clamp(35px, 4.1vw, 58px);
+  }
+
+  .community-head {
+    grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+    gap: 45px;
+  }
+}
+
+@media (max-width: 1050px) {
+  .section-grid {
+    grid-template-columns: 100px minmax(0, 1fr);
+    gap: 25px 30px;
+  }
+
+  .section-description {
+    grid-column: 2;
+    padding-top: 0;
+    max-width: 700px;
+  }
+
+  .hero-data-grid {
+    grid-template-columns: minmax(0, 1.65fr) minmax(230px, .85fr);
+    min-height: 525px;
+  }
+
+  .info-column {
+    grid-template-rows: 125px 1fr 110px;
+  }
+
+  .wardrobe-footer {
+    gap: 8px;
+    padding: 0 14px;
+  }
+  .wardrobe-footer span {
+    white-space: normal;
+    line-height: 1.5;
+    font-size: 9px;
+  }
+
+  .stat-header {
+    padding: 0 20px;
+  }
+  .clothing-stat {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 900px) {
+  .about {
+    padding: 100px 0;
+  }
+
+  .my-closet,
+  .community {
+    padding: 100px 0;
+  }
+
+  .closet-section-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .closet-section-head > div {
+    flex: initial;
+  }
+
+  .community-head {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  .wardrobe-dashboard {
+    grid-template-columns: 1.15fr 1fr;
+  }
+
+  .clothing-stat {
+    min-height: 128px;
+    padding: 16px;
+  }
+
+  .clothing-stat strong {
+    margin-top: 20px;
+  }
+}
+
+/* 태블릿 세로: 두 칼럼 메인 영상을 한 칼럼으로 재배치 */
+@media (max-width: 820px) {
+  .hero-data-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+  }
+
+  .hero-film {
+    height: clamp(420px, 65vw, 570px);
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .info-column {
+    display: grid;
+    grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
+    grid-template-rows: minmax(205px, auto) minmax(76px, auto);
+  }
+
+  .total-card {
+    grid-column: 1;
+    grid-row: 1;
+    border-right: 1px solid var(--line);
+    border-bottom: 0;
+  }
+
+  .wardrobe-preview {
+    grid-column: 2;
+    grid-row: 1;
+    min-height: 205px;
+  }
+
+  .wardrobe-footer {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    padding: 16px 20px;
+  }
+}
+
+/* 모바일: 메뉴 / 히어로 / 소개 / 옷장 / 커뮤니티 전체 대응 */
+@media (max-width: 760px) {
+  .inner,
+  .header-inner {
+    width: calc(100% - 36px);
+  }
+
+  .header {
+    height: 72px;
+  }
+
+  .logo {
+    width: clamp(122px, 32vw, 158px);
+    height: 54px;
+  }
+
+  .mobile-menu-toggle {
+    display: flex;
+  }
+
+  .nav {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    align-items: stretch;
+    padding: 8px;
+    background: rgba(14,11,13,.98);
+    border: 1px solid var(--line);
+    box-shadow: 0 24px 54px rgba(0,0,0,.5);
+    backdrop-filter: blur(18px);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    pointer-events: none;
+    transition: opacity .2s ease, transform .2s ease, visibility .2s;
+  }
+
+  .nav.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .nav a {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .08em;
+  }
+
+  .nav a::after {
+    bottom: 8px;
+    left: 16px;
+  }
+  .nav a:hover::after,
+  .nav a.active::after {
+    width: calc(100% - 32px);
+  }
+
+  .hero {
+    min-height: 0;
+    padding: 94px 0 22px;
+  }
+
+  .closet-shell {
+    padding: 6px;
+  }
+
+  /* 작은 화면에서 Digital Closet / DATA / SYNCED 겹침 방지 */
+  .closet-top {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 65px 38px;
+    min-height: 0;
+  }
+
+  .closet-heading {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .closet-heading h1 {
+    font-size: clamp(25px, 7.2vw, 34px);
+  }
+
+  .data-number {
+    grid-column: 1;
+    grid-row: 2;
+    padding: 0 12px;
+    min-width: 0;
+    border-right: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .sync-box {
+    grid-column: 2;
+    grid-row: 2;
+    padding: 0 12px;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    justify-content: flex-end;
+  }
+
+  .hero-film {
+    height: clamp(360px, 110vw, 500px);
+  }
+
+  .film-info {
+    top: 12px;
+    left: 12px;
+    width: calc(100% - 24px);
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .film-tag {
+    padding: 8px 9px;
+    font-size: 9px;
+    letter-spacing: .055em;
+  }
+
+  .sound-toggle {
+    min-height: 33px;
+    padding: 7px 9px;
+    font-size: 9px;
+    letter-spacing: .055em;
+  }
+
+  .film-copy {
+    left: 16px;
+    right: 16px;
+    bottom: 18px;
+    width: auto;
+    max-width: none;
+  }
+
+  .film-copy h2 {
+    font-size: clamp(23px, 6.2vw, 36px);
+    padding: 9px 11px;
+  }
+
+  .film-copy p {
+    max-width: 100%;
+    padding: 8px 10px;
+    font-size: clamp(12px, 3.45vw, 14px);
+    line-height: 1.65;
+  }
+
+  .info-column {
+    grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr);
+    grid-template-rows: minmax(166px, auto) minmax(70px, auto);
+  }
+
+  .wardrobe-preview {
+    min-height: 166px;
+  }
+
+  .total-number {
+    font-size: 36px;
+  }
+
+  .total-card span {
+    font-size: 9px;
+  }
+
+  .total-card small {
+    max-width: 100%;
+    padding: 0 6px;
+    font-size: 8px;
+    letter-spacing: .04em;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  .wardrobe-label {
+    top: 12px;
+    left: 12px;
+    font-size: 8px;
+    letter-spacing: .06em;
+  }
+
+  .wardrobe-footer {
+    gap: 8px;
+    padding: 14px;
+  }
+
+  .wardrobe-footer strong {
+    font-size: 17px;
+  }
+
+  .wardrobe-footer span {
+    font-size: 9px;
+    letter-spacing: .04em;
+    text-align: right;
+  }
+
+  .closet-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .closet-tab {
+    min-height: 76px;
+    padding: 13px 14px;
+  }
+
+  .scroll-note {
+    height: 70px;
+    font-size: 9px;
+    letter-spacing: .12em;
+    gap: 8px;
+  }
+
+  .scroll-line {
+    width: clamp(22px, 10vw, 70px);
+  }
+
+  .about {
+    padding: 72px 0 85px;
+  }
+
+  .section-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+  }
+
+  .section-side {
+    padding: 0;
+  }
+
+  .section-copy-area h2 {
+    margin-top: 14px;
+    font-size: clamp(31px, 7.7vw, 48px);
+    line-height: 1.24;
+  }
+
+  .title-line {
+    white-space: normal;
+  }
+
+  .section-description {
+    grid-column: auto;
+    max-width: none;
+    padding-top: 0;
+  }
+
+  .section-description p {
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  .section-description p + p {
+    margin-top: 16px;
+  }
+
+  .text-link {
+    margin-top: 24px;
+  }
+
+  .my-closet {
+    padding: 75px 0 85px;
+  }
+
+  .closet-section-head {
+    margin-bottom: 30px;
+    gap: 20px;
+  }
+
+  .closet-section-head h2 {
+    font-size: clamp(38px, 10vw, 60px);
+  }
+
+  .closet-section-head p {
+    max-width: none;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  .wardrobe-dashboard {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+  }
+
+  .dashboard-left {
+    height: clamp(280px, 76vw, 450px);
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .dashboard-label {
+    top: 18px;
+    left: 18px;
+  }
+
+  .dashboard-title {
+    left: 18px;
+    right: 18px;
+    bottom: 20px;
+  }
+
+  .dashboard-title h3 {
+    font-size: clamp(25px, 6vw, 34px);
+  }
+
+  .dashboard-title p {
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .dashboard-right {
+    grid-template-rows: auto auto;
+  }
+
+  .stat-header {
+    min-height: 112px;
+    padding: 20px;
+  }
+
+  .closet-quick-copy strong {
+    font-size: 17px;
+  }
+
+  .clothing-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .clothing-stat {
+    min-height: 142px;
+    padding: 18px;
+  }
+
+  .clothing-stat strong {
+    margin-top: 16px;
+  }
+
+  .community {
+    padding: 80px 0;
+  }
+
+  .community-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    margin-bottom: 28px;
+    gap: 20px;
+  }
+
+  .community-head h2 {
+    font-size: clamp(38px, 10vw, 56px);
+  }
+
+  .community-head p {
+    font-size: 14px;
+    line-height: 1.85;
+  }
+
+  .community-row {
+    grid-template-columns: 32px minmax(0, 1fr);
+    min-height: 88px;
+    gap: 8px;
+    padding: 14px 10px;
+  }
+
+  .community-row h3 {
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .community-row .type {
+    display: none;
+  }
+
+  .final {
+    padding: 85px 0;
+  }
+
+  .final h2 {
+    font-size: clamp(32px, 8vw, 55px);
+    line-height: 1.23;
+  }
+
+  .final::after {
+    font-size: clamp(95px, 23vw, 170px);
+    bottom: -24px;
+  }
+
+  .final p {
+    font-size: 12px;
+    line-height: 1.65;
+  }
+
+  .footer {
+    padding: 32px 0 26px;
+  }
+
+  .footer-inner {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .footer-logo {
+    width: 135px;
+  }
+
+  .footer-meta {
+    gap: 10px 18px;
+    font-size: 10px;
+  }
+
+  .intro-start-wrap {
+    padding: 0 16px;
+    text-align: center;
+  }
+
+  .intro-start-kicker {
+    font-size: clamp(8px, 2.3vw, 10px);
+    letter-spacing: .14em;
+  }
+
+  .intro-enter-guide {
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    width: max-content;
+    max-width: calc(100vw - 32px);
+    text-align: center;
+    padding: 11px 14px;
+  }
+
+  .intro-enter-guide__main {
+    font-size: 10px;
+    letter-spacing: .1em;
+  }
+
+  /* iOS/Android 주소창 높이가 변해도 인트로가 맞도록 */
+  .fullscreen-intro {
+    height: 100vh;
+    height: 100dvh;
+  }
+}
+
+@media (max-width: 360px) {
+  .closet-heading h1 {
+    font-size: 24px;
+  }
+
+  .film-copy {
+    left: 12px;
+    right: 12px;
+  }
+
+  .film-copy h2 {
+    font-size: 22px;
+  }
+
+  .wardrobe-footer {
+    padding: 12px 10px;
+  }
+
+  .wardrobe-footer span {
+    font-size: 8px;
+  }
+}
+
+</style>
+</head>
+
+<body class="intro-playing">
+
+<!-- FULLSCREEN INTRO -->
+<div
+  class="fullscreen-intro"
+  id="fullscreenIntro"
+  aria-label="Stylens look intro">
+
+  <div
+    class="intro-start-screen"
+    id="introStartScreen"
+    role="button"
+    tabindex="0">
+
+    <div class="intro-start-wrap">
+      <span class="intro-start-kicker">
+        STYLENS / DIGITAL FASHION EXPERIENCE
+      </span>
+
+      <button
+        class="intro-start-button"
+        id="introStartButton"
+        type="button">
+        CLICK TO START
+      </button>
+
+      <span class="intro-start-note">
+        SOUND ON · CLICK TO BEGIN
+      </span>
+    </div>
+  </div>
+
+  <video
+    class="intro-video is-active"
+    id="introSequenceVideo"
+    muted
+    playsinline
+    preload="auto">
+    <source src="intro.mp4" type="video/mp4">
+  </video>
+
+  <video
+    class="intro-loop-video"
+    id="mainLoopVideo"
+    muted
+    loop
+    playsinline
+    preload="auto">
+    <source src="st_main_loop.mp4" type="video/mp4">
+  </video>
+
+  <canvas
+    class="intro-dot-canvas"
+    id="introDotCanvas">
+  </canvas>
+
+  <div
+    class="intro-enter-guide"
+    aria-hidden="true">
+    <span class="intro-enter-guide__main">
+      CLICK ANYWHERE TO ENTER
+    </span>
+    <span class="intro-enter-guide__line"></span>
+  </div>
+</div>
+
+<!-- 인트로 종료 후에도 음악 유지 -->
+<audio id="introMusic" loop preload="auto">
+  <source src="music.mp4" type="video/mp4">
+</audio>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <a class="logo" href="../index/index.html">
+      <img src="st_logo.webp" alt="STYLENS">
+    </a>
+
+    <button
+      class="mobile-menu-toggle"
+      id="mobileMenuToggle"
+      type="button"
+      aria-label="메뉴 열기"
+      aria-controls="siteNav"
+      aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav class="nav" id="siteNav" aria-label="주 메뉴">
+      <a href="../stylens/stylens.html">스타일렌즈</a>
+      <a href="../prototype/prototype.html">나의 옷장</a>
+      <a href="../community/community.html">커뮤니티</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="inner">
+
+    <div class="closet-shell" data-reveal>
+      <div class="closet-top">
+        <div class="data-number">
+          <span class="micro-label">DATA 01</span>
+        </div>
+
+        <div class="closet-heading">
+          <h1>Digital Closet</h1>
+        </div>
+
+        <div class="sync-box">
+          <i class="sync-dot"></i>
+          SYNCED
+        </div>
+      </div>
+
+      <div class="hero-data-grid">
+
+        <!-- HERO VIDEO -->
+        <div class="hero-film">
+          <div
+            class="hero-film-sequence"
+            id="heroFilmSequence">
+
+            <video
+              class="hero-sequence-video is-active"
+              id="heroSequenceA"
+              muted
+              playsinline
+              preload="auto">
+            </video>
+
+            <video
+              class="hero-sequence-video"
+              id="heroSequenceB"
+              muted
+              playsinline
+              preload="auto">
+            </video>
+          </div>
+
+          <!-- 영상 상단 버튼 영역 -->
+          <div class="film-info">
+            <span class="film-tag">
+              STYLENS / STYLE LOOP
+            </span>
+
+            <!-- LIVE EDITORIAL 대신 SOUND 버튼 -->
+            <button
+              class="sound-toggle"
+              id="soundToggle"
+              type="button"
+              aria-pressed="false"
+              aria-label="배경 음악 켜기">
+
+              <svg
+                class="sound-toggle__icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true">
+
+                <path d="M4 9v6h4l5 4V5L8 9H4Z"/>
+
+                <path
+                  class="sound-toggle__waves"
+                  d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/>
+
+                <path
+                  class="sound-toggle__mute"
+                  d="m17 9 5 6m0-6-5 6"/>
+              </svg>
+
+              <span class="sound-toggle__text">
+                SOUND OFF
+              </span>
+            </button>
+          </div>
+
+          <div class="film-copy">
+            <h2>
+              오늘의 옷을<br>
+              <span>나의 데이터로.</span>
+            </h2>
+
+            <p>
+              스마트미러가 인식한 옷은
+              디지털 옷장에 기록되고, <br>
+              다음 스타일 선택을 위한
+              데이터가 됩니다.
+            </p>
+          </div>
+        </div>
+
+        <a
+          class="info-column closet-link-card"
+          href="../prototype/prototype.html">
+
+          <div class="total-card">
+            <strong class="total-number">27</strong>
+            <span>TOTAL ITEMS</span>
+            <small>
+              08 TOP / 06 BOTTOM / 04 OUTER
+            </small>
+          </div>
+
+          <div class="wardrobe-preview">
+            <img
+              src="wardrobe-hero-bg-2d.webp"
+              alt="Stylens digital closet">
+
+            <span class="wardrobe-label">
+              MY CLOSET / ARCHIVE 01
+            </span>
+          </div>
+
+          <div class="wardrobe-footer">
+            <strong>My Closet</strong>
+            <span>
+              SMART MIRROR CONNECTED →
+            </span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="closet-tabs">
+      <div class="closet-tab">
+        <span>DATA 01</span>
+        <strong>DAILY</strong>
+      </div>
+
+      <div class="closet-tab">
+        <span>DATA 02</span>
+        <strong>WORK</strong>
+      </div>
+
+      <div class="closet-tab">
+        <span>DATA 03</span>
+        <strong>MEETING</strong>
+      </div>
+
+      <div class="closet-tab">
+        <span>DATA 04</span>
+        <strong>SPECIAL</strong>
+      </div>
+    </div>
+
+    <div class="scroll-note">
+      <span>SCROLL TO EXPLORE</span>
+      <span class="scroll-line"></span>
+      <span>STYLENS / 2026</span>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="inner section-grid" data-reveal>
+
+    <div class="section-side">
+      01 / STYLENS
+    </div>
+
+    <div class="section-copy-area">
+      <span class="micro-label">
+        INCLUSIVE STYLING EXPERIENCE
+      </span>
+
+      <h2>
+        <span class="title-line">
+          옷의 정보를 이해하고,
+        </span>
+        <span class="title-line accent-line">
+          나다운 선택으로
+        </span>
+        <span class="title-line">
+          연결합니다.
+        </span>
+      </h2>
+    </div>
+
+    <div class="section-description">
+      <p>
+        Stylens는 시각장애인과 저시력자가
+        자신의 옷을 이해하고 관리하며,
+        보다 주도적으로 스타일을 선택할 수 있도록
+        돕는 개인화 의류 관리 서비스입니다.
+      </p>
+
+      <p>
+        스마트미러가 옷의 색상과 소재,
+        형태를 인식하면 <br>
+        해당 정보는 디지털 옷장에 기록되고, <br>
+        이후의 스타일 선택에 활용됩니다.
+      </p>
+
+      <a href="#about" class="text-link">
+        STYLENS 둘러보기 →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- MY CLOSET -->
+<section class="my-closet">
+  <div class="inner">
+
+    <div class="closet-section-head" data-reveal>
+      <div>
+        <h2>My Closet</h2>
+      </div>
+
+      <p>
+        스마트미러에 등록한 옷은
+        디지털 옷장에 저장됩니다.
+        보유한 옷의 종류와 수량, <br>
+        나의 스타일 데이터를
+        한눈에 확인할 수 있습니다.
+      </p>
+    </div>
+
+    <div class="wardrobe-dashboard" data-reveal>
+      <div class="dashboard-left">
+        <img
+          src="wardrobe-hero-bg-2d.webp"
+          alt="나의 디지털 옷장">
+
+        <span class="dashboard-label">
+          WARDROBE / LIVE ARCHIVE
+        </span>
+
+        <div class="dashboard-title">
+          <h3>
+            스마트미러에서<br>
+            나의 옷장으로.
+          </h3>
+
+          <p>
+            SMART MIRROR → DIGITAL CLOSET
+          </p>
+        </div>
+      </div>
+
+      <div class="dashboard-right">
+        <a
+          class="stat-header closet-quick-link"
+          href="../prototype/prototype.html">
+
+          <div class="closet-quick-copy">
+            <span>
+              MY CLOSET · TOTAL ITEMS 27
+            </span>
+            <strong>
+              나의 옷장 바로가기
+            </strong>
+          </div>
+
+          <span class="closet-quick-arrow">→</span>
+        </a>
+
+        <div class="clothing-stats">
+          <div class="clothing-stat">
+            <span class="stat-index">01 / TOP</span>
+            <strong>상의</strong>
+            <div class="number">08</div>
+            <div class="bar">
+              <span style="width:82%"></span>
+            </div>
+          </div>
+
+          <div class="clothing-stat">
+            <span class="stat-index">02 / BOTTOM</span>
+            <strong>하의</strong>
+            <div class="number">06</div>
+            <div class="bar">
+              <span style="width:64%"></span>
+            </div>
+          </div>
+
+          <div class="clothing-stat">
+            <span class="stat-index">03 / OUTER</span>
+            <strong>아우터</strong>
+            <div class="number">04</div>
+            <div class="bar">
+              <span style="width:45%"></span>
+            </div>
+          </div>
+
+          <div class="clothing-stat">
+            <span class="stat-index">04 / ACCESSORY</span>
+            <strong>액세서리</strong>
+            <div class="number">09</div>
+            <div class="bar">
+              <span style="width:90%"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMUNITY -->
+<section class="community">
+  <div class="inner">
+
+    <div class="community-head" data-reveal>
+      <div>
+        <h2>Community</h2>
+      </div>
+
+      <p>
+        스타일에 관한 질문부터
+        Stylens 사용법과 새로운 업데이트까지. <br>
+        서로의 경험을 나누고 확인할 수 있는
+        공간입니다.
+      </p>
+    </div>
+
+    <div class="community-list" data-reveal>
+      <a
+        href="../community/community.html#post=index-001"
+        class="community-row">
+
+        <span class="num">01</span>
+        <h3>
+          검은 셔츠에는 어떤 바지가
+          잘 어울리나요?
+        </h3>
+        <span class="type">QUESTION</span>
+      </a>
+
+      <a
+        href="../community/community.html#post=index-002"
+        class="community-row">
+
+        <span class="num">02</span>
+        <h3>
+          스마트미러에 새로운 옷을
+          등록하는 방법
+        </h3>
+        <span class="type">GUIDE</span>
+      </a>
+
+      <a
+        href="../community/community.html#post=index-003"
+        class="community-row">
+
+        <span class="num">03</span>
+        <h3>
+          Stylens 디지털 옷장
+          업데이트 안내
+        </h3>
+        <span class="type">NOTICE</span>
+      </a>
+
+      <a
+        href="../community/community.html#post=index-004"
+        class="community-row">
+
+        <span class="num">04</span>
+        <h3>
+          비 오는 날에는 어떤 소재의 옷이
+          좋을까요?
+        </h3>
+        <span class="type">STYLE</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL -->
+<section class="final">
+  <div class="inner" data-reveal>
+    <span class="micro-label">
+      STYLENS / DIGITAL EXPERIENCE
+    </span>
+
+    <h2>
+      <span class="title-line">
+        보이지 않던 정보가
+      </span>
+      <span class="title-line">
+        <em>나의 옷장</em>
+        이 되는 순간.
+      </span>
+    </h2>
+
+    <p>
+      Smart Mirror · Digital Closet · Community
+    </p>
+  </div>
+</section>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="inner footer-inner">
+    <a
+      href="../index/index.html"
+      class="footer-logo">
+      <img src="st_logo.webp" alt="Stylens">
+    </a>
+
+    <div class="footer-meta">
+      <span>STYLENS</span>
+      <span>MY CLOSET</span>
+      <span>COMMUNITY</span>
+      <span>© 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* =========================
+   SCROLL REVEAL
+========================= */
+const reveals =
+  document.querySelectorAll("[data-reveal]");
+
+const observer =
+  new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target
+            .classList
+            .add("show");
+
+          observer.unobserve(
+            entry.target
+          );
+        }
+      });
+    },
+    {
+      threshold:.12
+    }
+  );
+
+reveals.forEach(
+  el => observer.observe(el)
+);
+
+/* =========================
+   HERO VIDEO SEQUENCE
+
+   intro.mp4
+       ↓
+   st_main_loop.mp4
+       ↓
+   intro.mp4
+       반복
+========================= */
+(() => {
+  const slotA =
+    document.getElementById(
+      "heroSequenceA"
+    );
+
+  const slotB =
+    document.getElementById(
+      "heroSequenceB"
+    );
+
+  if(!slotA || !slotB){
+    return;
+  }
+
+  const playlist = [
+    "intro.mp4",
+    "st_main_loop.mp4"
+  ];
+
+  const CROSSFADE = .72;
+
+  let currentSlot = slotA;
+  let nextSlot = slotB;
+  let currentIndex = 0;
+  let transitioning = false;
+  let started = false;
+  let generation = 0;
+
+  [slotA,slotB].forEach(video => {
+    video.muted = true;
+    video.playsInline = true;
+    video.loop = false;
+  });
+
+  function setSource(video,src){
+    if(
+      video.getAttribute("src")
+      !== src
+    ){
+      video.setAttribute(
+        "src",
+        src
+      );
+      video.load();
+    }
+  }
+
+  function prepareNext(){
+    const nextIndex =
+      (currentIndex + 1)
+      %
+      playlist.length;
+
+    setSource(
+      nextSlot,
+      playlist[nextIndex]
+    );
+
+    nextSlot.currentTime = 0;
+    nextSlot
+      .classList
+      .remove("is-active");
+
+    return nextIndex;
+  }
+
+  function hardAdvance(nextIndex){
+    currentSlot.pause();
+
+    currentSlot
+      .classList
+      .remove("is-active");
+
+    nextSlot
+      .classList
+      .add("is-active");
+
+    const oldCurrent =
+      currentSlot;
+
+    currentSlot =
+      nextSlot;
+
+    nextSlot =
+      oldCurrent;
+
+    currentIndex =
+      nextIndex;
+
+    transitioning =
+      false;
+
+    prepareNext();
+  }
+
+  async function crossfadeToNext(){
+    if(
+      transitioning
+      ||
+      !started
+    ){
+      return;
+    }
+
+    transitioning = true;
+
+    const localGeneration =
+      generation;
+
+    const nextIndex =
+      (currentIndex + 1)
+      %
+      playlist.length;
+
+    try{
+      nextSlot.currentTime = 0;
+      await nextSlot.play();
+    }catch(e){
+      transitioning = false;
+      return;
+    }
+
+    if(
+      localGeneration
+      !== generation
+    ){
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      nextSlot
+        .classList
+        .add("is-active");
+
+      currentSlot
+        .classList
+        .remove("is-active");
+    });
+
+    window.setTimeout(
+      () => {
+        if(
+          localGeneration
+          !== generation
+        ){
+          return;
+        }
+
+        hardAdvance(
+          nextIndex
+        );
+      },
+      CROSSFADE * 1000 + 80
+    );
+  }
+
+  function onTimeUpdate(){
+    if(
+      !started
+      ||
+      transitioning
+    ){
+      return;
+    }
+
+    if(
+      !Number.isFinite(
+        currentSlot.duration
+      )
+      ||
+      currentSlot.duration <= 0
+    ){
+      return;
+    }
+
+    const remaining =
+      currentSlot.duration
+      -
+      currentSlot.currentTime;
+
+    if(
+      remaining
+      <= CROSSFADE + .08
+    ){
+      crossfadeToNext();
+    }
+  }
+
+  slotA.addEventListener(
+    "timeupdate",
+    onTimeUpdate
+  );
+
+  slotB.addEventListener(
+    "timeupdate",
+    onTimeUpdate
+  );
+
+  slotA.addEventListener(
+    "ended",
+    () => {
+      if(
+        started
+        &&
+        currentSlot === slotA
+        &&
+        !transitioning
+      ){
+        crossfadeToNext();
+      }
+    }
+  );
+
+  slotB.addEventListener(
+    "ended",
+    () => {
+      if(
+        started
+        &&
+        currentSlot === slotB
+        &&
+        !transitioning
+      ){
+        crossfadeToNext();
+      }
+    }
+  );
+
+  window.startStylensHeroSequence =
+    async function(){
+      generation += 1;
+      started = true;
+      transitioning = false;
+      currentIndex = 0;
+      currentSlot = slotA;
+      nextSlot = slotB;
+
+      slotA.pause();
+      slotB.pause();
+
+      slotA
+        .classList
+        .add("is-active");
+
+      slotB
+        .classList
+        .remove("is-active");
+
+      setSource(
+        slotA,
+        playlist[0]
+      );
+
+      setSource(
+        slotB,
+        playlist[1]
+      );
+
+      slotA.currentTime = 0;
+      slotB.currentTime = 0;
+
+      try{
+        await slotA.play();
+      }catch(e){}
+    };
+})();
+</script>
+
+<script>
+/* =========================
+   FULLSCREEN INTRO
+========================= */
+(() => {
+  const intro =
+    document.getElementById(
+      "fullscreenIntro"
+    );
+
+  const introVideo =
+    document.getElementById(
+      "introSequenceVideo"
+    );
+
+  const loopVideo =
+    document.getElementById(
+      "mainLoopVideo"
+    );
+
+  const music =
+    document.getElementById(
+      "introMusic"
+    );
+
+  const dotCanvas =
+    document.getElementById(
+      "introDotCanvas"
+    );
+
+  const startScreen =
+    document.getElementById(
+      "introStartScreen"
+    );
+
+  const startButton =
+    document.getElementById(
+      "introStartButton"
+    );
+
+  if(
+    !intro
+    ||
+    !introVideo
+    ||
+    !loopVideo
+    ||
+    !startScreen
+    ||
+    !startButton
+  ){
+    return;
+  }
+
+  /*
+   * 같은 탭에서 두 번째 방문부터
+   * 인트로를 건너뛰고 홈 영상을 실행
+   */
+  if(
+    document.documentElement
+      .classList.contains("stylens-returning")
+  ){
+    introVideo.pause();
+    loopVideo.pause();
+
+    if(music){
+      music.pause();
+    }
+
+    intro.remove();
+
+    document.body
+      .classList
+      .remove("intro-playing");
+
+    if(
+      typeof window.startStylensHeroSequence
+      === "function"
+    ){
+      window.startStylensHeroSequence();
+    }
+
+    return;
+  }
+
+  let loopStage = false;
+  let finished = false;
+  let started = false;
+  let stopDotField = null;
+
+  function initDotField(){
+    if(!dotCanvas){
+      return () => {};
+    }
+
+    const ctx =
+      dotCanvas.getContext("2d");
+
+    if(!ctx){
+      return () => {};
+    }
+
+    const dots = [];
+
+    const pointer = {
+      x:-9999,
+      y:-9999,
+      active:false
+    };
+
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    let raf = 0;
+    let running = true;
+
+    function buildDots(){
+      dots.length = 0;
+
+      const spacing =
+        width < 760
+        ? 23
+        : 27;
+
+      for(
+        let y = spacing/2;
+        y < height;
+        y += spacing
+      ){
+        for(
+          let x = spacing/2;
+          x < width;
+          x += spacing
+        ){
+          dots.push({
+            x,
+            y,
+            strength:0
+          });
+        }
+      }
+    }
+
+    function resize(){
+      const rect =
+        intro.getBoundingClientRect();
+
+      width = rect.width;
+      height = rect.height;
+
+      dpr =
+        Math.min(
+          window.devicePixelRatio || 1,
+          2
+        );
+
+      dotCanvas.width =
+        width * dpr;
+
+      dotCanvas.height =
+        height * dpr;
+
+      dotCanvas.style.width =
+        width + "px";
+
+      dotCanvas.style.height =
+        height + "px";
+
+      ctx.setTransform(
+        dpr,0,0,dpr,0,0
+      );
+
+      buildDots();
+    }
+
+    function movePointer(e){
+      const rect =
+        intro.getBoundingClientRect();
+
+      pointer.x =
+        e.clientX - rect.left;
+
+      pointer.y =
+        e.clientY - rect.top;
+
+      pointer.active = true;
+    }
+
+    function draw(){
+      if(!running){
+        return;
+      }
+
+      ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+      );
+
+      for(const dot of dots){
+        let strength = 0;
+
+        if(pointer.active){
+          const dx =
+            dot.x - pointer.x;
+
+          const dy =
+            dot.y - pointer.y;
+
+          const dist =
+            Math.hypot(dx,dy);
+
+          const radius = 280;
+
+          if(dist < radius){
+            strength =
+              Math.pow(
+                1 - dist/radius,
+                1.4
+              );
+          }
+        }
+
+        dot.strength +=
+          (
+            strength
+            -
+            dot.strength
+          )
+          *
+          .08;
+
+        const size =
+          1.3
+          +
+          dot.strength * 8;
+
+        const alpha =
+          .23
+          +
+          dot.strength * .7;
+
+        ctx.beginPath();
+
+        ctx.arc(
+          dot.x,
+          dot.y,
+          size,
+          0,
+          Math.PI * 2
+        );
+
+        ctx.fillStyle =
+          `rgba(235,128,195,${alpha})`;
+
+        ctx.fill();
+      }
+
+      raf =
+        requestAnimationFrame(
+          draw
+        );
+    }
+
+    resize();
+
+    intro.addEventListener(
+      "mousemove",
+      movePointer
+    );
+
+    intro.addEventListener(
+      "mouseleave",
+      () => {
+        pointer.active = false;
+      }
+    );
+
+    window.addEventListener(
+      "resize",
+      resize
+    );
+
+    raf =
+      requestAnimationFrame(
+        draw
+      );
+
+    return () => {
+      running = false;
+
+      cancelAnimationFrame(
+        raf
+      );
+    };
+  }
+
+  introVideo.muted = true;
+  introVideo.loop = false;
+
+  loopVideo.muted = true;
+  loopVideo.loop = true;
+
+  if(music){
+    music.loop = true;
+  }
+
+  function enterWebsite(){
+    if(
+      !loopStage
+      ||
+      finished
+    ){
+      return;
+    }
+
+    finished = true;
+
+    intro
+      .classList
+      .add("is-finished");
+
+    document.body
+      .classList
+      .remove("intro-playing");
+
+    if(
+      typeof stopDotField
+      === "function"
+    ){
+      stopDotField();
+    }
+
+    // 인트로 종료 후에도 음악 유지
+    if(music && music.paused){
+      music.play().catch(() => {});
+    }
+
+    if(
+      typeof window.startStylensHeroSequence
+      === "function"
+    ){
+      window.startStylensHeroSequence();
+    }
+
+    setTimeout(() => {
+      introVideo.pause();
+      loopVideo.pause();
+      intro.remove();
+    },750);
+  }
+
+  function showMainLoop(){
+    if(loopStage){
+      return;
+    }
+
+    loopStage = true;
+
+    introVideo
+      .classList
+      .remove("is-active");
+
+    introVideo.pause();
+    loopVideo.currentTime = 0;
+
+    loopVideo
+      .classList
+      .add("is-active");
+
+    intro
+      .classList
+      .add("is-loop-stage");
+
+    if(!stopDotField){
+      stopDotField =
+        initDotField();
+    }
+
+    loopVideo
+      .play()
+      .catch(() => {});
+  }
+
+  async function startExperience(){
+    if(started){
+      return;
+    }
+
+    started = true;
+
+    introVideo.currentTime = 0;
+
+    introVideo
+      .play()
+      .catch(showMainLoop);
+
+    if(music){
+      music.currentTime = 0;
+
+      music
+        .play()
+        .catch(() => {});
+    }
+
+    startScreen
+      .classList
+      .add("is-started");
+  }
+
+  startScreen.addEventListener(
+    "click",
+    startExperience
+  );
+
+  startButton.addEventListener(
+    "click",
+    e => {
+      e.stopPropagation();
+      startExperience();
+    }
+  );
+
+  introVideo.addEventListener(
+    "ended",
+    showMainLoop
+  );
+
+  intro.addEventListener(
+    "click",
+    () => {
+      if(
+        started
+        &&
+        loopStage
+      ){
+        enterWebsite();
+      }
+    }
+  );
+
+  document.addEventListener(
+    "keydown",
+    e => {
+      if(
+        e.key === "Enter"
+        ||
+        e.key === " "
+      ){
+        if(!started){
+          startExperience();
+        }else if(loopStage){
+          enterWebsite();
+        }
+      }
+    }
+  );
+
+  introVideo.pause();
+  loopVideo.pause();
+
+  if(music){
+    music.pause();
+  }
+})();
+</script>
+
+<script>
+/* =========================
+   HOME SOUND ON / OFF
+   영상 내부 버튼
+   music.mp4 사용
+========================= */
+(() => {
+  const music =
+    document.getElementById("introMusic");
+
+  const button =
+    document.getElementById("soundToggle");
+
+  if(!music || !button){
+    return;
+  }
+
+  const label =
+    button.querySelector(".sound-toggle__text");
+
+  music.loop = true;
+
+  function updateSoundButton(){
+    const on =
+      !music.paused && !music.ended;
+
+    button.classList.toggle(
+      "is-on",
+      on
+    );
+
+    button.setAttribute(
+      "aria-pressed",
+      String(on)
+    );
+
+    button.setAttribute(
+      "aria-label",
+      on ? "배경 음악 끄기" : "배경 음악 켜기"
+    );
+
+    if(label){
+      label.textContent =
+        on ? "SOUND ON" : "SOUND OFF";
+    }
+  }
+
+  button.addEventListener(
+    "click",
+    async () => {
+      if(music.paused){
+        try{
+          await music.play();
+        }catch(err){
+          console.warn(
+            "STYLENS: music.mp4 재생 실패. 파일 경로와 오디오 트랙을 확인해 주세요.",
+            err
+          );
+        }
+      }else{
+        music.pause();
+      }
+
+      updateSoundButton();
+    }
+  );
+
+  music.addEventListener(
+    "play",
+    updateSoundButton
+  );
+
+  music.addEventListener(
+    "pause",
+    updateSoundButton
+  );
+
+  music.addEventListener(
+    "ended",
+    updateSoundButton
+  );
+
+  music.addEventListener(
+    "error",
+    updateSoundButton
+  );
+
+  updateSoundButton();
+})();
+</script>
+
+
+<script>
+/* 모바일 메뉴: 클릭/ESC/바깥 영역/화면 크기 변경 대응 */
+(() => {
+  const toggle = document.getElementById("mobileMenuToggle");
+  const nav = document.getElementById("siteNav");
+  if (!toggle || !nav) return;
+
+  function closeMenu(returnFocus = false) {
+    nav.classList.remove("is-open");
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-label", "메뉴 열기");
+    if (returnFocus) toggle.focus();
+  }
+
+  toggle.addEventListener("click", () => {
+    const opening = !nav.classList.contains("is-open");
+    nav.classList.toggle("is-open", opening);
+    toggle.setAttribute("aria-expanded", String(opening));
+    toggle.setAttribute("aria-label", opening ? "메뉴 닫기" : "메뉴 열기");
+  });
+
+  nav.querySelectorAll("a").forEach(link => {
+    link.addEventListener("click", () => closeMenu());
+  });
+
+  document.addEventListener("click", event => {
+    if (!nav.contains(event.target) && !toggle.contains(event.target)) {
+      closeMenu();
+    }
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && nav.classList.contains("is-open")) {
+      closeMenu(true);
+    }
+  });
+
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 760) closeMenu();
+  });
+})();
+</script>
+
+</body>
+</html>

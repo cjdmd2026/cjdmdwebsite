@@ -1,0 +1,6894 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>STYLENS — Digital Closet</title>
+
+<style>
+:root{
+  --bg:#050505;
+  --panel:#080808;
+
+  --pink:#AB5998;
+  --pink-light:#E195C6;
+
+  --catalog-pink:#EB80C3;
+
+  --line:rgba(225,149,198,.34);
+
+  --text:#F8F3F6;
+  --muted:#9F979C;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,
+body{
+  margin:0;
+  padding:0;
+
+  width:100%;
+  min-height:100%;
+
+  background:var(--bg);
+  color:#fff;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Pretendard",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+}
+
+body{
+  padding-top:88px;
+
+  word-break:keep-all;
+  overflow-wrap:normal;
+}
+
+button{
+  font:inherit;
+}
+
+button:focus{
+  outline:none;
+}
+
+img{
+  user-select:none;
+  -webkit-user-drag:none;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.site-header{
+  position:fixed;
+
+  left:0;
+  top:0;
+
+  width:100%;
+  height:88px;
+
+  z-index:4000;
+
+  background:rgba(5,5,5,.92);
+
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+
+  border-bottom:
+    1px solid rgba(225,149,198,.18);
+}
+
+.site-header-inner{
+  width:min(calc(100% - 80px),1440px);
+  height:100%;
+
+  margin:auto;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.site-logo{
+  width:190px;
+  height:64px;
+
+  display:flex;
+  align-items:center;
+
+  text-decoration:none;
+}
+
+.site-logo img{
+  display:block;
+
+  width:100%;
+  height:100%;
+
+  object-fit:contain;
+  object-position:left center;
+}
+
+.site-nav{
+  display:flex;
+  align-items:center;
+
+  gap:46px;
+}
+
+.site-nav a{
+  position:relative;
+
+  padding:34px 0;
+
+  color:#8E858C;
+
+  font-size:12px;
+  font-weight:600;
+
+  letter-spacing:.13em;
+
+  text-decoration:none;
+
+  white-space:nowrap;
+
+  transition:.25s;
+}
+
+.site-nav a:hover,
+.site-nav a.active{
+  color:#F8F3F6;
+}
+
+.site-nav a::after{
+  content:"";
+
+  position:absolute;
+
+  left:0;
+  bottom:24px;
+
+  width:0;
+  height:1px;
+
+  background:#E195C6;
+
+  transition:.3s;
+}
+
+.site-nav a:hover::after,
+.site-nav a.active::after{
+  width:100%;
+}
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.stCloset-prototype{
+  width:min(1390px,89vw);
+
+  margin:0 auto;
+
+  padding:46px 0 60px;
+}
+
+.stCloset-prototypeIntro{
+  display:flex;
+
+  justify-content:flex-start;
+  align-items:flex-end;
+
+  gap:40px;
+
+  margin-bottom:27px;
+}
+
+.stCloset-tag{
+  display:inline-flex;
+
+  align-items:center;
+  justify-content:center;
+
+  min-width:145px;
+  height:35px;
+
+  padding:0 22px;
+
+  border:
+    1px solid rgba(171,89,152,.75);
+
+  border-radius:100px;
+
+  color:#EFAFD6;
+
+  font-size:11px;
+  font-weight:600;
+
+  letter-spacing:2.2px;
+}
+
+.stCloset-prototypeTitle{
+  margin:19px 0 0;
+
+  color:#F8F3F6;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(42px,5vw,72px);
+
+  font-style:italic;
+  font-weight:400;
+
+  line-height:.98;
+
+  letter-spacing:-.04em;
+
+  white-space:nowrap;
+}
+
+.stCloset-prototypeDescription{
+  width:min(850px, 60vw);
+
+  margin:0;
+
+  color:#BDB4BA;
+
+  font-size:14px;
+  line-height:1.9;
+}
+
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.stCloset-tools{
+  margin-bottom:16px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:space-between;
+
+  gap:20px;
+}
+
+.stCloset-filters{
+  display:flex;
+
+  align-items:center;
+
+  gap:7px;
+
+  flex-wrap:wrap;
+}
+
+.stCloset-filterBtn{
+  min-width:64px;
+
+  padding:8px 12px;
+
+  border:
+    1px solid rgba(255,255,255,.13);
+
+  border-radius:100px;
+
+  background:transparent;
+
+  color:#AAA1A7;
+
+  font-size:10px;
+  font-weight:600;
+
+  letter-spacing:1px;
+
+  cursor:pointer;
+
+  transition:.25s;
+}
+
+.stCloset-filterBtn:hover{
+  color:#F0E8ED;
+
+  border-color:
+    rgba(171,89,152,.5);
+}
+
+.stCloset-filterBtn.stCloset-filterActive{
+  color:#fff;
+
+  border-color:#AB5998;
+
+  background:
+    rgba(171,89,152,.12);
+}
+
+
+/* =========================================================
+   NEW ITEM BUTTON
+========================================================= */
+
+.stCloset-newItemBtn{
+  min-height:40px;
+
+  padding:0 16px;
+
+  display:inline-flex;
+
+  align-items:center;
+  justify-content:center;
+
+  gap:9px;
+
+  flex:0 0 auto;
+
+  border:
+    1px solid var(--catalog-pink);
+
+  border-radius:999px;
+
+  background:
+    var(--catalog-pink);
+
+  color:#fff;
+
+  font-size:10px;
+  font-weight:800;
+
+  letter-spacing:.06em;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 0 26px rgba(235,128,195,.24);
+
+  transition:.25s;
+}
+
+.stCloset-newItemBtn:hover{
+  transform:
+    translateY(-2px);
+
+  background:#F08DCD;
+
+  box-shadow:
+    0 0 38px rgba(235,128,195,.38);
+}
+
+.stCloset-newItemBtnDot{
+  width:7px;
+  height:7px;
+
+  border-radius:50%;
+
+  background:#fff;
+
+  box-shadow:
+    0 0 9px rgba(255,255,255,.85);
+}
+
+.stCloset-newItemBadge{
+  min-width:34px;
+  height:18px;
+
+  padding:0 7px;
+
+  display:none;
+
+  align-items:center;
+  justify-content:center;
+
+  border-radius:999px;
+
+  background:#fff;
+
+  color:
+    var(--catalog-pink);
+
+  font-size:7px;
+  font-weight:900;
+
+  letter-spacing:.08em;
+
+  animation:
+    newBadgePulse
+    1.1s ease-in-out
+    infinite alternate;
+}
+
+@keyframes newBadgePulse{
+  from{
+    opacity:.7;
+    transform:scale(.95);
+  }
+
+  to{
+    opacity:1;
+    transform:scale(1);
+  }
+}
+
+
+/* =========================================================
+   WORKSPACE
+========================================================= */
+
+.stCloset-workspace{
+  display:grid;
+
+  grid-template-columns:
+    135px
+    minmax(0,1fr);
+
+  gap:24px;
+}
+
+.stCloset-sidebar{
+  padding-top:1px;
+}
+
+.stCloset-dataList{
+  display:flex;
+
+  flex-direction:column;
+
+  gap:9px;
+}
+
+.stCloset-dataBtn{
+  width:100%;
+  height:48px;
+
+  border:
+    1px solid rgba(255,255,255,.15);
+
+  border-radius:100px;
+
+  background:transparent;
+
+  color:#9F979C;
+
+  font-size:10px;
+  font-weight:600;
+
+  letter-spacing:1.2px;
+
+  cursor:pointer;
+
+  transition:.25s;
+}
+
+.stCloset-dataBtn:hover{
+  color:#EEE7EB;
+
+  border-color:
+    rgba(171,89,152,.55);
+}
+
+.stCloset-dataBtn.stCloset-selected{
+  color:#fff;
+
+  border-color:#AB5998;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(171,89,152,.28),
+      rgba(171,89,152,.06)
+    );
+
+  box-shadow:
+    0 0 18px rgba(171,89,152,.10);
+}
+
+.stCloset-autoArea{
+  margin-top:25px;
+
+  padding-top:20px;
+
+  border-top:
+    1px solid rgba(255,255,255,.07);
+
+  text-align:center;
+}
+
+.stCloset-autoBtn{
+  padding:8px 12px;
+
+  border:
+    1px solid rgba(171,89,152,.65);
+
+  border-radius:100px;
+
+  background:transparent;
+
+  color:#E2A5CE;
+
+  font-size:9px;
+  font-weight:600;
+
+  cursor:pointer;
+}
+
+.stCloset-autoText{
+  margin-top:10px;
+
+  color:#91898E;
+
+  font-size:9px;
+
+  line-height:1.75;
+}
+
+
+/* =========================================================
+   CABINET
+========================================================= */
+
+.stCloset-cabinet{
+  position:relative;
+
+  width:100%;
+  height:465px;
+
+  padding:11px;
+
+  background:#050505;
+
+  border:
+    1px solid rgba(218,142,188,.84);
+
+  box-shadow:
+    0 25px 85px rgba(0,0,0,.55),
+    0 0 38px rgba(171,89,152,.06);
+
+  overflow:hidden;
+}
+
+.stCloset-cabinet::before{
+  content:"";
+
+  position:absolute;
+
+  inset:6px;
+
+  pointer-events:none;
+
+  border:
+    1px solid rgba(171,89,152,.16);
+}
+
+.stCloset-cabinetHeader{
+  height:74px;
+
+  display:grid;
+
+  grid-template-columns:
+    110px
+    1fr
+    150px;
+
+  gap:8px;
+
+  margin-bottom:8px;
+}
+
+.stCloset-cabinetSide,
+.stCloset-cabinetStatus{
+  border:
+    1px solid rgba(225,149,198,.88);
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  color:#F6DCEB;
+
+  font-size:10px;
+  font-weight:600;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(171,89,152,.42),
+      rgba(112,53,96,.30)
+    );
+}
+
+.stCloset-cabinetTitle{
+  border:
+    1px solid rgba(218,142,188,.84);
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:29px;
+  font-style:italic;
+
+  color:#DF8FBD;
+
+  letter-spacing:1px;
+}
+
+.stCloset-syncStatus{
+  display:flex;
+
+  align-items:center;
+
+  gap:7px;
+}
+
+.stCloset-syncDot{
+  width:6px;
+  height:6px;
+
+  border-radius:50%;
+
+  background:#AB5998;
+
+  box-shadow:
+    0 0 8px rgba(171,89,152,.65);
+}
+
+.stCloset-archiveGrid{
+  height:
+    calc(100% - 82px);
+
+  display:grid;
+
+  gap:7px;
+
+  grid-template-columns:
+    1.12fr
+    .84fr
+    .92fr
+    1fr;
+
+  grid-template-rows:
+    .68fr
+    1.06fr
+    .68fr;
+
+  grid-template-areas:
+    "top bottom stats bag"
+    "top bottom acc bag"
+    "sync bottom acc bag";
+
+  transition:.35s;
+}
+
+.stCloset-module{
+  position:relative;
+
+  min-width:0;
+  min-height:0;
+
+  overflow:hidden;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  border:
+    1px solid rgba(218,142,188,.66);
+
+  background:
+    radial-gradient(
+      circle at 50% 48%,
+      rgba(171,89,152,.18),
+      rgba(55,19,44,.08) 48%,
+      #070707 82%
+    );
+
+  transition:.3s;
+}
+
+.stCloset-moduleTop{
+  grid-area:top;
+}
+
+.stCloset-moduleBottom{
+  grid-area:bottom;
+}
+
+.stCloset-moduleAcc{
+  grid-area:acc;
+}
+
+.stCloset-moduleBag{
+  grid-area:bag;
+}
+
+.stCloset-moduleStats{
+  grid-area:stats;
+}
+
+.stCloset-moduleSync{
+  grid-area:sync;
+}
+
+.stCloset-prototypeItem{
+  cursor:pointer;
+
+  transform:scale(1);
+
+  transform-origin:center;
+}
+
+.stCloset-prototypeItem:hover{
+  z-index:20;
+
+  transform:
+    scale(1.018);
+
+  border-color:#F0ACD6;
+
+  background:
+    radial-gradient(
+      circle at 50% 48%,
+      rgba(171,89,152,.28),
+      rgba(55,19,44,.14) 48%,
+      #070707 82%
+    );
+
+  box-shadow:
+    0 10px 28px rgba(171,89,152,.20),
+    inset 0 0 0 1px rgba(240,172,214,.12);
+}
+
+.stCloset-module img{
+  width:86%;
+  height:82%;
+
+  object-fit:contain;
+
+  position:relative;
+
+  z-index:2;
+
+  filter:
+    drop-shadow(
+      0 14px 13px rgba(0,0,0,.58)
+    );
+
+  transition:.35s;
+}
+
+.stCloset-moduleAcc img{
+  width:74%;
+  height:72%;
+}
+
+.stCloset-moduleBag img{
+  width:78%;
+  height:72%;
+}
+
+.stCloset-itemCode{
+  position:absolute;
+
+  left:10px;
+  top:9px;
+
+  z-index:10;
+
+  color:
+    rgba(238,174,216,.92);
+
+  font-size:9px;
+  font-weight:600;
+
+  letter-spacing:1.2px;
+}
+
+.stCloset-itemMeta{
+  position:absolute;
+
+  left:10px;
+  right:10px;
+  bottom:9px;
+
+  z-index:10;
+
+  display:flex;
+
+  justify-content:space-between;
+  align-items:center;
+
+  color:
+    rgba(230,184,213,.88);
+
+  font-size:8px;
+
+  opacity:.72;
+}
+
+.stCloset-matchBadge{
+  position:absolute;
+
+  right:9px;
+  top:8px;
+
+  z-index:10;
+
+  padding:5px 7px;
+
+  border:
+    1px solid rgba(171,89,152,.65);
+
+  border-radius:100px;
+
+  color:#F0B7DC;
+
+  background:
+    rgba(171,89,152,.14);
+
+  font-size:8px;
+  font-weight:600;
+
+  letter-spacing:.7px;
+}
+
+.stCloset-metaContent{
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+  justify-content:center;
+
+  gap:7px;
+
+  position:relative;
+
+  z-index:2;
+
+  text-align:center;
+}
+
+.stCloset-metaNumber{
+  color:#FFF0FA;
+
+  font-size:31px;
+  font-weight:300;
+
+  line-height:1;
+}
+
+.stCloset-metaSmall{
+  color:#EFC9E0;
+
+  font-size:9px;
+  font-weight:600;
+
+  letter-spacing:1.3px;
+}
+
+.stCloset-metaBig{
+  color:#fff;
+
+  font-size:13px;
+
+  letter-spacing:1px;
+}
+
+.stCloset-metaLine{
+  width:35px;
+  height:1px;
+
+  background:
+    rgba(255,255,255,.72);
+}
+
+.stCloset-dots{
+  display:flex;
+
+  gap:7px;
+}
+
+.stCloset-dot{
+  width:6px;
+  height:6px;
+
+  border-radius:50%;
+
+  background:#AB5998;
+
+  box-shadow:
+    0 0 8px rgba(171,89,152,.48);
+}
+
+.stCloset-moduleStats,
+.stCloset-moduleSync{
+  cursor:default;
+
+  border-color:
+    rgba(225,149,198,.88);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(171,89,152,.42),
+      rgba(112,53,96,.30)
+    );
+}
+
+.stCloset-emptySlot{
+  display:none;
+
+  flex-direction:column;
+
+  align-items:center;
+  justify-content:center;
+
+  gap:8px;
+
+  position:relative;
+
+  z-index:5;
+}
+
+.stCloset-emptyCircle{
+  width:27px;
+  height:27px;
+
+  border:
+    1px solid rgba(171,89,152,.58);
+
+  border-radius:50%;
+}
+
+.stCloset-emptyText{
+  color:#A77F98;
+
+  font-size:9px;
+  font-weight:600;
+
+  letter-spacing:1.2px;
+}
+
+
+/* =========================================================
+   ANALYTICS
+========================================================= */
+
+.stCloset-analytics{
+  margin:
+    32px
+    0
+    0
+    159px;
+
+  padding:24px;
+
+  position:relative;
+
+  overflow:hidden;
+
+  border:
+    1px solid rgba(218,142,188,.42);
+
+  background:
+    radial-gradient(
+      circle at 12% 0%,
+      rgba(171,89,152,.12),
+      transparent 34%
+    ),
+    #070707;
+
+  box-shadow:
+    0 22px 65px rgba(0,0,0,.34);
+}
+
+.stCloset-analyticsHeader{
+  display:flex;
+
+  align-items:flex-end;
+  justify-content:space-between;
+
+  gap:28px;
+
+  padding-bottom:18px;
+
+  border-bottom:
+    1px solid rgba(255,255,255,.08);
+}
+
+.stCloset-analyticsEyebrow{
+  color:#C18CA9;
+
+  font-size:9px;
+  font-weight:600;
+
+  letter-spacing:2.2px;
+}
+
+.stCloset-analyticsTitle{
+  margin:7px 0 0;
+
+  color:#EEE6EB;
+
+  font-size:22px;
+  font-weight:300;
+
+  letter-spacing:2.2px;
+}
+
+.stCloset-analyticsTitle span{
+  color:#D891BD;
+}
+
+.stCloset-analyticsDescription{
+  margin:8px 0 0;
+
+  color:#AAA2A7;
+
+  font-size:11px;
+
+  line-height:1.8;
+}
+
+.stCloset-analyticsTotal{
+  text-align:right;
+}
+
+.stCloset-analyticsTotalNumber{
+  display:block;
+
+  color:#DFA1CA;
+
+  font-size:34px;
+  font-weight:300;
+}
+
+.stCloset-analyticsTotalLabel{
+  display:block;
+
+  margin-top:5px;
+
+  color:#AA8098;
+
+  font-size:9px;
+  font-weight:600;
+
+  letter-spacing:1.5px;
+}
+
+.stCloset-categorySummary{
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  gap:8px;
+
+  margin-top:16px;
+}
+
+.stCloset-categoryCard{
+  min-height:72px;
+
+  padding:13px 14px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:space-between;
+
+  border:
+    1px solid rgba(255,255,255,.09);
+
+  background:
+    rgba(255,255,255,.012);
+}
+
+.stCloset-categoryCardLabel{
+  color:#AA919F;
+
+  font-size:9px;
+  font-weight:600;
+
+  letter-spacing:1.5px;
+}
+
+.stCloset-categoryCardSub{
+  display:block;
+
+  margin-top:5px;
+
+  color:#817980;
+
+  font-size:8px;
+}
+
+.stCloset-categoryCardValue{
+  color:#D69AC1;
+
+  font-size:25px;
+  font-weight:300;
+}
+
+.stCloset-analyticsGrid{
+  display:grid;
+
+  grid-template-columns:
+    .92fr
+    1.08fr;
+
+  gap:10px;
+
+  margin-top:10px;
+}
+
+.stCloset-chartCard{
+  min-height:230px;
+
+  padding:18px;
+
+  border:
+    1px solid rgba(255,255,255,.09);
+
+  background:#080808;
+}
+
+.stCloset-chartTop{
+  display:flex;
+
+  align-items:flex-start;
+  justify-content:space-between;
+
+  margin-bottom:16px;
+}
+
+.stCloset-chartKicker{
+  color:#AE8299;
+
+  font-size:8px;
+  font-weight:600;
+
+  letter-spacing:1.5px;
+}
+
+.stCloset-chartTitle{
+  margin:5px 0 0;
+
+  color:#E1D6DC;
+
+  font-size:14px;
+  font-weight:400;
+}
+
+.stCloset-chartCount{
+  color:#DDA5C9;
+
+  font-size:10px;
+
+  letter-spacing:1.2px;
+}
+
+.stCloset-donutWrap{
+  min-height:158px;
+
+  display:grid;
+
+  grid-template-columns:
+    144px
+    minmax(0,1fr);
+
+  align-items:center;
+
+  gap:18px;
+}
+
+.stCloset-donut{
+  width:132px;
+  height:132px;
+
+  margin:auto;
+
+  position:relative;
+
+  border-radius:50%;
+
+  background:
+    conic-gradient(
+      #D697C1 0 50%,
+      #9D668B 50% 83.33%,
+      #503747 83.33% 100%
+    );
+
+  box-shadow:
+    0 0 28px rgba(171,89,152,.12);
+}
+
+.stCloset-donut::after{
+  content:"";
+
+  position:absolute;
+
+  inset:22px;
+
+  border-radius:50%;
+
+  background:#080808;
+}
+
+.stCloset-donutCenter{
+  position:absolute;
+
+  inset:0;
+
+  z-index:2;
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+  justify-content:center;
+}
+
+.stCloset-donutNumber{
+  color:#E1A5CD;
+
+  font-size:27px;
+  font-weight:300;
+}
+
+.stCloset-donutText{
+  margin-top:5px;
+
+  color:#A38195;
+
+  font-size:8px;
+  font-weight:600;
+}
+
+.stCloset-legend{
+  display:flex;
+
+  flex-direction:column;
+
+  gap:5px;
+}
+
+.stCloset-legendItem{
+  min-height:21px;
+
+  padding:3px 0;
+
+  display:grid;
+
+  grid-template-columns:
+    8px
+    minmax(0,1fr)
+    auto;
+
+  align-items:center;
+
+  gap:7px;
+
+  border-bottom:
+    1px solid rgba(255,255,255,.035);
+}
+
+.stCloset-legendDot{
+  width:7px;
+  height:7px;
+
+  border-radius:50%;
+
+  box-shadow:
+    0 0 8px currentColor;
+}
+
+.jeans{
+  background:#D697C1;
+}
+
+.skirt{
+  background:#9D668B;
+}
+
+.shorts{
+  background:#503747;
+}
+
+.stCloset-legendName{
+  color:#AAA2A7;
+
+  min-width:0;
+
+  overflow:hidden;
+
+  font-size:8px;
+
+  letter-spacing:.35px;
+
+  line-height:1.25;
+
+  text-overflow:ellipsis;
+
+  white-space:nowrap;
+}
+
+.stCloset-legendMetric{
+  min-width:72px;
+
+  display:flex;
+
+  align-items:baseline;
+  justify-content:flex-end;
+
+  gap:6px;
+}
+
+.stCloset-legendValue{
+  color:#E1B2CF;
+
+  min-width:18px;
+
+  font-size:10px;
+
+  text-align:right;
+}
+
+.stCloset-legendPercent{
+  min-width:42px;
+
+  color:#896B7E;
+
+  font-size:8px;
+
+  text-align:right;
+}
+
+.stCloset-bars{
+  display:flex;
+
+  flex-direction:column;
+
+  gap:7px;
+}
+
+.stCloset-barRow{
+  min-height:20px;
+
+  display:grid;
+
+  grid-template-columns:
+    104px
+    minmax(0,1fr)
+    68px;
+
+  align-items:center;
+
+  gap:11px;
+}
+
+.stCloset-barLabel{
+  color:#AAA3A8;
+
+  font-size:8px;
+
+  letter-spacing:.25px;
+
+  line-height:1.2;
+
+  overflow-wrap:anywhere;
+}
+
+.stCloset-barTrack{
+  height:8px;
+
+  overflow:hidden;
+
+  border-radius:999px;
+
+  background:
+    rgba(255,255,255,.06);
+}
+
+.stCloset-barFill{
+  height:100%;
+
+  border-radius:inherit;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(171,89,152,.45),
+      #D38CBA
+    );
+
+  box-shadow:
+    0 0 12px rgba(171,89,152,.22);
+
+  transition:
+    width .45s ease;
+}
+
+.stCloset-barValue{
+  color:#E2A8CD;
+
+  min-width:18px;
+
+  font-size:10px;
+
+  text-align:right;
+}
+
+.stCloset-barMetric{
+  display:flex;
+
+  align-items:baseline;
+  justify-content:flex-end;
+
+  gap:6px;
+}
+
+.stCloset-barPercent{
+  min-width:42px;
+
+  color:#896B7E;
+
+  font-size:8px;
+
+  text-align:right;
+}
+
+.stCloset-legend::-webkit-scrollbar,
+.stCloset-bars::-webkit-scrollbar{
+  width:3px;
+}
+
+.stCloset-legend::-webkit-scrollbar-thumb,
+.stCloset-bars::-webkit-scrollbar-thumb{
+  background:rgba(214,151,193,.28);
+
+  border-radius:999px;
+}
+
+.stCloset-analyticsFoot{
+  margin-top:10px;
+
+  padding-top:12px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:space-between;
+
+  border-top:
+    1px solid rgba(255,255,255,.06);
+
+  color:#8D858A;
+
+  font-size:8px;
+}
+
+.stCloset-liveDot{
+  width:5px;
+  height:5px;
+
+  display:inline-block;
+
+  margin-right:6px;
+
+  border-radius:50%;
+
+  background:#AB5998;
+
+  box-shadow:
+    0 0 8px rgba(171,89,152,.65);
+}
+
+
+/* =========================================================
+   NEW ITEM POPUP
+========================================================= */
+
+body.stylensPopupLock{
+  overflow:hidden;
+}
+
+.stylensNewItemPopup{
+  position:fixed;
+
+  inset:0;
+
+  z-index:9000;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  padding:28px;
+
+  background:
+    rgba(0,0,0,.72);
+
+  backdrop-filter:blur(9px);
+  -webkit-backdrop-filter:blur(9px);
+
+  opacity:0;
+  visibility:hidden;
+
+  pointer-events:none;
+
+  transition:.3s;
+}
+
+.stylensNewItemPopup.stylensPopupOpen{
+  opacity:1;
+  visibility:visible;
+
+  pointer-events:auto;
+}
+
+.stylensNewItemPanel{
+  width:min(760px,94vw);
+
+  max-height:min(790px,90vh);
+
+  padding:34px;
+
+  overflow:auto;
+
+  border:
+    1px solid rgba(255,255,255,.62);
+
+  border-radius:28px;
+
+  background:
+    var(--catalog-pink);
+
+  color:#fff;
+
+  box-shadow:
+    0 35px 100px rgba(0,0,0,.48),
+    0 0 42px rgba(235,128,195,.26);
+
+  transform:
+    translateY(24px)
+    scale(.975);
+
+  transition:
+    .38s cubic-bezier(.2,.8,.2,1);
+}
+
+.stylensPopupOpen .stylensNewItemPanel{
+  transform:
+    translateY(0)
+    scale(1);
+}
+
+.stylensNewItemTop{
+  display:flex;
+
+  align-items:flex-start;
+  justify-content:space-between;
+
+  gap:28px;
+}
+
+.stylensNewItemEyebrow{
+  color:
+    rgba(255,255,255,.72);
+
+  font-size:9px;
+  font-weight:700;
+
+  letter-spacing:.19em;
+}
+
+.stylensNewItemSync{
+  margin-top:8px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:8px;
+
+  color:#fff;
+
+  font-size:11px;
+  font-weight:700;
+}
+
+.stylensNewItemLiveDot{
+  width:7px;
+  height:7px;
+
+  border-radius:50%;
+
+  background:#fff;
+
+  box-shadow:
+    0 0 10px rgba(255,255,255,.85);
+
+  animation:
+    popupLive
+    .8s ease-in-out
+    infinite alternate;
+}
+
+@keyframes popupLive{
+  from{
+    opacity:.35;
+    transform:scale(.75);
+  }
+
+  to{
+    opacity:1;
+    transform:scale(1.1);
+  }
+}
+
+.stylensNewItemClose{
+  width:42px;
+  height:42px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  border:
+    1px solid rgba(255,255,255,.65);
+
+  border-radius:50%;
+
+  background:transparent;
+
+  color:#fff;
+
+  font-size:25px;
+  font-weight:300;
+
+  line-height:1;
+
+  cursor:pointer;
+}
+
+.stylensNewItemHero{
+  margin-top:40px;
+
+  display:grid;
+
+  grid-template-columns:
+    128px
+    minmax(0,1fr);
+
+  align-items:center;
+
+  gap:28px;
+}
+
+.stylensNewItemIcon{
+  width:128px;
+  height:128px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  border:
+    1px solid rgba(255,255,255,.62);
+
+  border-radius:24px;
+
+  background:
+    rgba(255,255,255,.09);
+
+  color:#fff;
+}
+
+.stylensNewItemIcon svg{
+  width:76px;
+  height:76px;
+
+  fill:none;
+
+  stroke:#fff;
+
+  stroke-width:1.55;
+
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.stylensNewItemKicker{
+  margin:0 0 8px;
+
+  color:
+    rgba(255,255,255,.65);
+
+  font-size:9px;
+  font-weight:800;
+
+  letter-spacing:.18em;
+}
+
+.stylensNewItemTitle{
+  margin:0;
+
+  color:#fff;
+
+  font-size:
+    clamp(28px,4.4vw,48px);
+
+  font-weight:400;
+
+  line-height:1.08;
+
+  letter-spacing:-.035em;
+}
+
+.stylensNewItemCategory{
+  margin:12px 0 0;
+
+  color:
+    rgba(255,255,255,.84);
+
+  font-size:13px;
+
+  line-height:1.7;
+}
+
+.stylensNewItemDetails{
+  margin-top:34px;
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  border-top:
+    1px solid rgba(255,255,255,.42);
+
+  border-left:
+    1px solid rgba(255,255,255,.42);
+}
+
+.stylensNewItemData{
+  min-height:92px;
+
+  padding:17px;
+
+  display:flex;
+
+  flex-direction:column;
+
+  justify-content:space-between;
+
+  gap:12px;
+
+  border-right:
+    1px solid rgba(255,255,255,.42);
+
+  border-bottom:
+    1px solid rgba(255,255,255,.42);
+}
+
+.stylensNewItemLabel{
+  color:
+    rgba(255,255,255,.60);
+
+  font-size:8px;
+  font-weight:800;
+
+  letter-spacing:.14em;
+}
+
+.stylensNewItemData strong{
+  color:#fff;
+
+  font-size:14px;
+  font-weight:600;
+}
+
+.stylensNewItemBottom{
+  margin-top:26px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:space-between;
+
+  gap:24px;
+}
+
+.stylensNewItemSource{
+  display:flex;
+
+  align-items:center;
+
+  flex-wrap:wrap;
+
+  gap:7px;
+
+  color:
+    rgba(255,255,255,.62);
+
+  font-size:8px;
+  font-weight:800;
+
+  letter-spacing:.12em;
+}
+
+.stylensNewItemSpeak{
+  min-height:44px;
+
+  padding:0 17px;
+
+  display:inline-flex;
+
+  align-items:center;
+  justify-content:center;
+
+  gap:9px;
+
+  border:
+    1px solid #fff;
+
+  border-radius:999px;
+
+  background:#fff;
+
+  color:
+    var(--catalog-pink);
+
+  font-size:10px;
+  font-weight:800;
+
+  cursor:pointer;
+
+  transition:.25s;
+}
+
+.stylensNewItemSpeak:hover{
+  transform:
+    translateY(-2px);
+
+  box-shadow:
+    0 10px 28px rgba(77,16,61,.18);
+}
+
+.stylensNewItemSpeaker svg{
+  width:18px;
+  height:18px;
+
+  fill:none;
+
+  stroke:
+    var(--catalog-pink);
+
+  stroke-width:1.8;
+
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:950px){
+  .stCloset-prototypeIntro{
+    display:block;
+  }
+
+  .stCloset-prototypeDescription{
+    width:100%;
+
+    margin-top:19px;
+  }
+
+  .stCloset-tools{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .stCloset-workspace{
+    grid-template-columns:1fr;
+  }
+
+  .stCloset-dataList{
+    display:grid;
+
+    grid-template-columns:
+      repeat(4,1fr);
+  }
+
+  .stCloset-autoArea{
+    display:none;
+  }
+
+  .stCloset-analytics{
+    margin-left:0;
+  }
+}
+
+@media(max-width:760px){
+  body{
+    padding-top:72px;
+  }
+
+  .site-header{
+    height:72px;
+  }
+
+  .site-header-inner{
+    width:
+      calc(100% - 34px);
+  }
+
+  .site-logo{
+    width:140px;
+    height:58px;
+  }
+
+  .site-nav{
+    gap:16px;
+  }
+
+  .site-nav a{
+    padding:27px 0;
+
+    font-size:8px;
+
+    letter-spacing:.08em;
+  }
+
+  .stCloset-newItemBtn{
+    width:100%;
+  }
+
+  .stylensNewItemPopup{
+    padding:15px;
+  }
+
+  .stylensNewItemPanel{
+    padding:24px 20px;
+
+    border-radius:22px;
+  }
+
+  .stylensNewItemHero{
+    grid-template-columns:
+      86px
+      minmax(0,1fr);
+
+    gap:18px;
+  }
+
+  .stylensNewItemIcon{
+    width:86px;
+    height:86px;
+  }
+
+  .stylensNewItemDetails{
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+  }
+
+  .stylensNewItemBottom{
+    align-items:stretch;
+
+    flex-direction:column;
+  }
+
+  .stylensNewItemSpeak{
+    width:100%;
+  }
+
+  .stCloset-categorySummary{
+    grid-template-columns:
+      repeat(2,1fr);
+  }
+
+  .stCloset-analyticsGrid{
+    grid-template-columns:1fr;
+  }
+}
+
+
+/* =========================================================
+   STYLENS / MY CLOSET RESPONSIVE EXTENSION
+   기존 이미지·색상·필터·데이터 전환·Firebase 코드 그대로 유지
+   ========================================================= */
+
+/* 큰 아이맥에서는 과도한 좌우 여백 제거 (맥북 기본 폭 유지) */
+.site-header-inner {
+  width: min(calc(100% - 80px), 2400px);
+  position: relative;
+}
+
+.stCloset-prototype,
+.stCloset-prototypeIntro > *,
+.stCloset-workspace > *,
+.stCloset-analyticsHeader > *,
+.stCloset-analyticsGrid > *,
+.stCloset-categoryCard,
+.stCloset-chartCard,
+.stCloset-cabinet,
+.stCloset-archiveGrid,
+.stCloset-cabinetTitle,
+.stCloset-cabinetStatus,
+.stCloset-module,
+.stCloset-itemMeta,
+.stylensNewItemPanel,
+.stylensNewItemHero > * {
+  min-width:0;
+}
+
+.stCloset-prototypeDescription,
+.stCloset-analyticsDescription,
+.stCloset-itemMeta,
+.stCloset-analyticsFoot,
+.stylensNewItemData strong,
+.stylensNewItemCategory,
+.stylensNewItemTitle {
+  overflow-wrap:break-word;
+}
+
+/* 이전 인덱스·커뮤니티 페이지와 동일한 모바일 내비게이션 */
+.mobile-menu-toggle {
+  display:none;
+  position:relative;
+  width:46px;
+  height:46px;
+  flex:0 0 auto;
+  padding:11px;
+  flex-direction:column;
+  justify-content:space-around;
+  align-items:center;
+  border:1px solid rgba(225,149,198,.34);
+  border-radius:4px;
+  background:rgba(171,89,152,.08);
+  cursor:pointer;
+}
+.mobile-menu-toggle span {
+  display:block;
+  width:100%;
+  height:2px;
+  border-radius:2px;
+  background:var(--pink-light);
+  transition:transform .25s ease,opacity .25s ease;
+}
+.mobile-menu-toggle[aria-expanded="true"] span:first-child {
+  transform:translateY(7.3px) rotate(45deg);
+}
+.mobile-menu-toggle[aria-expanded="true"] span:nth-child(2) {
+  opacity:0;
+}
+.mobile-menu-toggle[aria-expanded="true"] span:last-child {
+  transform:translateY(-7.3px) rotate(-45deg);
+}
+
+/* 화면 내 주요 버튼은 키보드 접근 시 포커스 표시 */
+.mobile-menu-toggle:focus-visible,
+.site-nav a:focus-visible,
+.stCloset-filterBtn:focus-visible,
+.stCloset-dataBtn:focus-visible,
+.stCloset-autoBtn:focus-visible,
+.stCloset-newItemBtn:focus-visible,
+.stylensNewItemClose:focus-visible,
+.stylensNewItemSpeak:focus-visible,
+.stCloset-prototypeItem:focus-visible {
+  outline:2px solid var(--pink-light);
+  outline-offset:3px;
+}
+
+@media (min-width:1600px) {
+  .stCloset-prototype {
+    width:min(calc(100% - 96px),2400px);
+    max-width:none;
+    padding-top:clamp(46px,3vw,80px);
+  }
+  .stCloset-prototypeIntro { margin-bottom:36px; }
+  .stCloset-cabinet { height:clamp(500px,31vw,730px); }
+  .stCloset-cabinetHeader { height:clamp(74px,5vw,102px); }
+  .stCloset-archiveGrid { height:calc(100% - clamp(82px,5vw + 8px,110px)); }
+  .stCloset-cabinetTitle { font-size:clamp(29px,2vw,43px); }
+  .stCloset-module img { max-height:86%; }
+  .stCloset-itemCode { font-size:clamp(9px,.57vw,13px); }
+  .stCloset-itemMeta { font-size:clamp(8px,.56vw,12px); }
+  .stCloset-metaNumber { font-size:clamp(31px,2vw,48px); }
+  .stCloset-metaSmall { font-size:clamp(9px,.62vw,13px); }
+  .stCloset-metaBig { font-size:clamp(13px,.84vw,20px); }
+  .stCloset-categoryCard { min-height:clamp(72px,5.5vw,112px); }
+  .stCloset-chartCard { min-height:clamp(230px,14vw,330px); }
+  .stCloset-analytics { padding:clamp(24px,2vw,42px); }
+}
+
+@media (max-width:1200px) {
+  .stCloset-prototypeIntro { gap:28px; }
+  .stCloset-workspace { gap:18px; grid-template-columns:120px minmax(0,1fr); }
+  .stCloset-analytics { margin-left:138px; }
+  .stCloset-cabinetHeader { grid-template-columns:88px minmax(0,1fr) 110px; }
+  .stCloset-cabinetTitle { font-size:clamp(22px,2.6vw,29px); }
+  .stCloset-donutWrap { grid-template-columns:130px minmax(0,1fr); gap:12px; }
+  .stCloset-donut { width:118px; height:118px; }
+}
+
+@media (max-width:950px) {
+  .stCloset-prototypeIntro { display:flex; flex-direction:column; align-items:flex-start; gap:16px; }
+  .stCloset-prototypeDescription { width:100%; max-width:850px; margin-top:0; }
+  .stCloset-workspace { grid-template-columns:minmax(0,1fr); gap:14px; }
+  .stCloset-autoArea {
+    display:flex; align-items:center; justify-content:flex-start;
+    gap:20px; text-align:left; padding-top:12px; margin-top:12px;
+  }
+  .stCloset-autoText { margin-top:0; }
+  .stCloset-analytics { margin-left:0; }
+  .stCloset-cabinetHeader { grid-template-columns:110px minmax(0,1fr) 120px; }
+  .stCloset-cabinetTitle { font-size:clamp(22px,3.4vw,29px); }
+  .stCloset-tools { gap:14px; }
+  .stCloset-newItemBtn { align-self:flex-start; }
+}
+
+@media (max-width:760px) {
+  body { padding-top:72px; }
+  .site-header { height:72px; }
+  .site-header-inner { width:calc(100% - 36px); }
+  .site-logo { width:clamp(122px,32vw,158px); height:54px; }
+  .mobile-menu-toggle { display:flex; }
+  .site-nav {
+    position:absolute;
+    top:calc(100% + 8px);
+    left:0;
+    right:0;
+    z-index:1000;
+    display:flex;
+    flex-direction:column;
+    gap:0;
+    align-items:stretch;
+    padding:8px;
+    background:rgba(14,11,13,.98);
+    border:1px solid rgba(225,149,198,.34);
+    box-shadow:0 24px 54px rgba(0,0,0,.5);
+    -webkit-backdrop-filter:blur(18px);
+    backdrop-filter:blur(18px);
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(-8px);
+    pointer-events:none;
+    transition:opacity .2s ease,transform .2s ease,visibility .2s;
+  }
+  .site-nav.is-open {
+    opacity:1;
+    visibility:visible;
+    transform:translateY(0);
+    pointer-events:auto;
+  }
+  .site-nav a {
+    display:flex;
+    align-items:center;
+    min-height:48px;
+    padding:12px 16px;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:.08em;
+  }
+  .site-nav a::after { bottom:8px; left:16px; }
+  .site-nav a:hover::after,
+  .site-nav a.active::after { width:calc(100% - 32px); }
+
+  .stCloset-prototype { width:calc(100% - 36px); padding:30px 0 65px; }
+  .stCloset-prototypeTitle { font-size:clamp(43px,10vw,64px); }
+  .stCloset-tag { height:33px; min-width:118px; padding:0 15px; font-size:10px; }
+  .stCloset-prototypeDescription { font-size:13px; line-height:1.85; }
+  .stCloset-tools { flex-direction:column; align-items:stretch; gap:16px; }
+  .stCloset-filters { gap:8px; }
+  .stCloset-filterBtn { min-height:40px; font-size:10px; letter-spacing:.05em; }
+  .stCloset-newItemBtn { align-self:stretch; width:100%; min-height:46px; font-size:12px; }
+
+  .stCloset-dataList { grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; }
+  .stCloset-dataBtn { min-width:0; height:44px; font-size:9px; letter-spacing:.04em; }
+  .stCloset-autoArea { gap:14px; }
+  .stCloset-autoBtn { min-height:40px; white-space:nowrap; }
+  .stCloset-autoText { font-size:9px; }
+
+  /* 디지털 옷장 원래 4열 그리드를 2열 카드로 변환 */
+  .stCloset-cabinet { height:auto; padding:8px; overflow:visible; }
+  .stCloset-cabinetHeader {
+    height:62px;
+    display:grid;
+    grid-template-columns:73px minmax(0,1fr) 83px;
+    gap:5px;
+    margin-bottom:6px;
+  }
+  .stCloset-cabinetSide,.stCloset-cabinetStatus { font-size:9px; }
+  .stCloset-cabinetTitle { font-size:clamp(18px,4vw,26px); letter-spacing:0; white-space:nowrap; }
+  .stCloset-archiveGrid {
+    height:auto;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    grid-template-rows:minmax(160px,1.2fr) minmax(160px,1.2fr) minmax(170px,1fr) minmax(130px,.75fr);
+    grid-template-areas:
+      "top bottom"
+      "top bottom"
+      "acc bag"
+      "stats sync";
+    gap:6px;
+  }
+  .stCloset-prototypeItem:hover { transform:none; }
+  .stCloset-itemCode { left:8px; top:8px; font-size:9px; letter-spacing:.05em; }
+  .stCloset-matchBadge { right:7px; top:30px; font-size:8px; padding:4px 5px; letter-spacing:0; }
+  .stCloset-module img { width:92%; height:68%; }
+  .stCloset-moduleAcc img,.stCloset-moduleBag img { width:86%; height:66%; }
+  .stCloset-itemMeta { left:8px; right:8px; bottom:8px; gap:5px; font-size:8px; flex-wrap:wrap; }
+  .stCloset-moduleStats .stCloset-metaContent,
+  .stCloset-moduleSync .stCloset-metaContent { gap:6px; padding:4px; }
+  .stCloset-metaNumber { font-size:27px; }
+  .stCloset-metaSmall { font-size:8px; letter-spacing:.04em; }
+  .stCloset-metaBig { font-size:11px; letter-spacing:0; }
+  .stCloset-emptyText { font-size:8px; letter-spacing:0; text-align:center; }
+
+  .stCloset-analytics { padding:16px; margin-top:24px; }
+  .stCloset-analyticsHeader { flex-wrap:wrap; align-items:flex-start; gap:12px; }
+  .stCloset-analyticsTitle { font-size:clamp(18px,5vw,24px); letter-spacing:.06em; }
+  .stCloset-analyticsDescription { font-size:11px; }
+  .stCloset-analyticsDescription br { display:none; }
+  .stCloset-analyticsTotal { text-align:left; }
+  .stCloset-analyticsTotalNumber { font-size:30px; }
+  .stCloset-categorySummary { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+  .stCloset-categoryCard { padding:12px; }
+  .stCloset-analyticsGrid { grid-template-columns:minmax(0,1fr); }
+  .stCloset-chartCard { padding:16px; }
+  .stCloset-analyticsFoot { gap:8px; align-items:flex-start; flex-direction:column; font-size:9px; line-height:1.6; }
+  .stCloset-donutWrap { grid-template-columns:135px minmax(0,1fr); gap:12px; }
+
+  .stylensNewItemPopup { padding:12px; }
+  .stylensNewItemPanel {
+    width:min(100%,760px);
+    max-height:calc(100vh - 24px);
+    max-height:calc(100dvh - 24px);
+    padding:22px 18px;
+    border-radius:20px;
+    overscroll-behavior:contain;
+  }
+  .stylensNewItemTitle { font-size:clamp(24px,6vw,36px); }
+  .stylensNewItemHero { margin-top:24px; gap:14px; }
+  .stylensNewItemDetails { margin-top:24px; }
+  .stylensNewItemData { padding:12px; min-height:80px; }
+  .stylensNewItemBottom { margin-top:20px; gap:16px; }
+  .stylensNewItemSpeak { min-height:48px; }
+}
+
+@media (max-width:460px) {
+  .stCloset-prototype { width:calc(100% - 28px); }
+  .site-header-inner { width:calc(100% - 28px); }
+  .stCloset-prototypeTitle { white-space:normal; }
+  .stCloset-filterBtn { padding:7px 11px; min-width:0; }
+  .stCloset-cabinetHeader { grid-template-columns:58px minmax(0,1fr) 67px; height:56px; }
+  .stCloset-cabinetTitle { font-size:clamp(16px,4.4vw,20px); }
+  .stCloset-cabinetSide,.stCloset-cabinetStatus { font-size:8px; }
+  .stCloset-syncStatus { gap:3px; }
+  .stCloset-archiveGrid {
+    grid-template-rows:155px 155px 160px 120px;
+  }
+  .stCloset-itemMeta { flex-direction:column; align-items:flex-start; gap:1px; font-size:8px; }
+  .stCloset-metaBig { font-size:10px; }
+  .stCloset-categoryCardLabel { font-size:8px; letter-spacing:.05em; }
+  .stCloset-donutWrap { grid-template-columns:minmax(0,1fr); justify-items:center; gap:20px; }
+  .stCloset-legend { width:100%; max-width:240px; }
+  .stCloset-bars { gap:16px; }
+  .stCloset-barRow { grid-template-columns:78px minmax(0,1fr) 58px; gap:7px; }
+  .stylensNewItemHero { grid-template-columns:72px minmax(0,1fr); gap:12px; }
+  .stylensNewItemIcon { width:72px; height:72px; border-radius:16px; }
+  .stylensNewItemIcon svg { width:48px; height:48px; }
+  .stylensNewItemDetails { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .stylensNewItemData strong { font-size:12px; }
+  .stylensNewItemSource { font-size:8px; }
+}
+
+@media (max-width:360px) {
+  .stCloset-prototype { width:calc(100% - 24px); }
+  .site-header-inner { width:calc(100% - 24px); }
+  .stCloset-cabinetHeader { grid-template-columns:52px minmax(0,1fr) 61px; }
+  .stCloset-cabinetTitle { font-size:15px; }
+  .stCloset-cabinetSide,.stCloset-cabinetStatus { font-size:7px; }
+  .stCloset-matchBadge { font-size:7px; }
+  .stCloset-moduleStats .stCloset-metaSmall,
+  .stCloset-moduleSync .stCloset-metaSmall { font-size:7px; }
+  .stCloset-autoArea { flex-wrap:wrap; }
+  .stCloset-autoText br { display:none; }
+  .stylensNewItemHero { grid-template-columns:58px minmax(0,1fr); }
+  .stylensNewItemIcon { width:58px; height:58px; }
+  .stylensNewItemIcon svg { width:40px; height:40px; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .mobile-menu-toggle span,
+  .site-nav { transition-duration:.01ms; }
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="site-header">
+
+  <div class="site-header-inner">
+
+    <a
+      class="site-logo"
+      href="../index/index.html"
+      aria-label="Stylens 홈">
+
+      <img
+        src="../index/st_logo.webp"
+        alt="STYLENS">
+
+    </a>
+
+
+    <button
+      class="mobile-menu-toggle"
+      id="mobileMenuToggle"
+      type="button"
+      aria-label="메뉴 열기"
+      aria-controls="siteNav"
+      aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav
+      class="site-nav"
+      id="siteNav"
+      aria-label="주요 메뉴">
+
+      <a href="../stylens/stylens.html">
+        스타일렌즈
+      </a>
+
+      <a
+        class="active"
+        href="../prototype/prototype.html"
+        aria-current="page">
+
+        나의 옷장
+
+      </a>
+
+      <a href="../community/community.html">
+        커뮤니티
+      </a>
+
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+<!-- =========================================================
+     MY CLOSET
+========================================================= -->
+
+<main class="stCloset-prototype">
+
+
+  <div class="stCloset-prototypeIntro">
+
+    <div>
+
+      <div class="stCloset-tag">
+        PROTOTYPE
+      </div>
+
+      <h1 class="stCloset-prototypeTitle">
+        My Closet
+      </h1>
+
+    </div>
+
+
+    <p class="stCloset-prototypeDescription">
+
+      스마트미러에서 등록된 옷은
+      색상, 소재, 계절, 카테고리 등의
+      정보와 함께 저장됩니다.<br>
+
+      웹에서는 저장된 의류를 필터링하고
+      다시 정렬하거나 상세 데이터를 확인할 수 있습니다.
+
+    </p>
+
+  </div>
+
+
+
+  <!-- =====================================================
+       TOOLBAR
+  ====================================================== -->
+
+  <div class="stCloset-tools">
+
+
+    <div class="stCloset-filters">
+
+      <button
+        class="stCloset-filterBtn stCloset-filterActive"
+        data-filter="ALL">
+        ALL
+      </button>
+
+      <button
+        class="stCloset-filterBtn"
+        data-filter="TOP">
+        TOP
+      </button>
+
+      <button
+        class="stCloset-filterBtn"
+        data-filter="BOTTOM">
+        BOTTOM
+      </button>
+
+      <button
+        class="stCloset-filterBtn"
+        data-filter="ACCESSORY">
+        ACCESSORY
+      </button>
+
+      <button
+        class="stCloset-filterBtn"
+        data-filter="BAG">
+        BAG
+      </button>
+
+    </div>
+
+
+    <button
+      id="stylensNewItemBtn"
+      class="stCloset-newItemBtn"
+      type="button">
+
+      <span class="stCloset-newItemBtnDot"></span>
+
+      새 옷 등록 확인
+
+      <span
+        id="stylensNewItemBadge"
+        class="stCloset-newItemBadge">
+        NEW
+      </span>
+
+    </button>
+
+  </div>
+
+
+
+  <!-- =====================================================
+       WORKSPACE
+  ====================================================== -->
+
+  <section class="stCloset-workspace">
+
+
+    <aside class="stCloset-sidebar">
+
+      <div class="stCloset-dataList">
+
+        <button
+          class="stCloset-dataBtn stCloset-selected"
+          data-index="0">
+          DATA 01
+        </button>
+
+        <button
+          class="stCloset-dataBtn"
+          data-index="1">
+          DATA 02
+        </button>
+
+        <button
+          class="stCloset-dataBtn"
+          data-index="2">
+          DATA 03
+        </button>
+
+        <button
+          class="stCloset-dataBtn"
+          data-index="3">
+          DATA 04
+        </button>
+
+      </div>
+
+
+      <div class="stCloset-autoArea">
+
+        <button
+          id="stCloset-autoBtn"
+          class="stCloset-autoBtn">
+
+          AUTO LOOP : ON
+
+        </button>
+
+        <div class="stCloset-autoText">
+
+          저장된 데이터가<br>
+          자동으로 동기화되고<br>
+          재정렬됩니다.
+
+        </div>
+
+      </div>
+
+    </aside>
+
+
+
+    <div class="stCloset-cabinet">
+
+
+      <div class="stCloset-cabinetHeader">
+
+        <div
+          id="stCloset-currentData"
+          class="stCloset-cabinetSide">
+
+          DATA 01
+
+        </div>
+
+
+        <div class="stCloset-cabinetTitle">
+          Digital Closet
+        </div>
+
+
+        <div class="stCloset-cabinetStatus">
+
+          <div class="stCloset-syncStatus">
+
+            <span class="stCloset-syncDot"></span>
+
+            <span>
+              SYNCED
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <div
+        id="stCloset-prototypeGrid"
+        class="stCloset-archiveGrid">
+
+
+        <!-- TOP -->
+
+        <div
+          class="
+            stCloset-module
+            stCloset-moduleTop
+            stCloset-prototypeItem
+          "
+          data-category="TOP">
+
+          <span
+            id="stCloset-topCode"
+            class="stCloset-itemCode">
+            TOP_012
+          </span>
+
+          <span class="stCloset-matchBadge">
+            TODAY'S MATCH
+          </span>
+
+          <img
+            id="stCloset-topImg"
+            src="look01_top.webp"
+            alt="상의">
+
+          <div class="stCloset-itemMeta">
+
+            <span id="stCloset-topColor">
+              PASTEL YELLOW
+            </span>
+
+            <span id="stCloset-topMaterial">
+              JERSEY
+            </span>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- BOTTOM -->
+
+        <div
+          class="
+            stCloset-module
+            stCloset-moduleBottom
+            stCloset-prototypeItem
+          "
+          data-category="BOTTOM">
+
+          <span
+            id="stCloset-bottomCode"
+            class="stCloset-itemCode">
+            BOTTOM_008
+          </span>
+
+          <span class="stCloset-matchBadge">
+            TODAY'S MATCH
+          </span>
+
+          <img
+            id="stCloset-bottomImg"
+            src="look01_bottom.webp"
+            alt="하의">
+
+          <div class="stCloset-itemMeta">
+
+            <span id="stCloset-bottomColor">
+              PASTEL YELLOW
+            </span>
+
+            <span id="stCloset-bottomMaterial">
+              COTTON BLEND
+            </span>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- ACCESSORY -->
+
+        <div
+          class="
+            stCloset-module
+            stCloset-moduleAcc
+            stCloset-prototypeItem
+          "
+          data-category="ACCESSORY">
+
+          <span
+            id="stCloset-accCode"
+            class="stCloset-itemCode">
+            ACC_001
+          </span>
+
+          <span class="stCloset-matchBadge">
+            TODAY'S MATCH
+          </span>
+
+          <img
+            id="stCloset-accImg"
+            src="look01_acc.webp"
+            alt="액세서리">
+
+          <div
+            id="stCloset-emptyAcc"
+            class="stCloset-emptySlot">
+
+            <div class="stCloset-emptyCircle"></div>
+
+            <span class="stCloset-emptyText">
+              NO SAVED ACCESSORY
+            </span>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- BAG -->
+
+        <div
+          class="
+            stCloset-module
+            stCloset-moduleBag
+            stCloset-prototypeItem
+          "
+          data-category="BAG">
+
+          <span
+            id="stCloset-bagCode"
+            class="stCloset-itemCode">
+            BAG_001
+          </span>
+
+          <img
+            id="stCloset-bagImg"
+            src="look01_bag.webp"
+            alt="가방">
+
+          <div
+            id="stCloset-emptyBag"
+            class="stCloset-emptySlot">
+
+            <div class="stCloset-emptyCircle"></div>
+
+            <span class="stCloset-emptyText">
+              NO SAVED BAG
+            </span>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- STATS -->
+
+        <div
+          class="
+            stCloset-module
+            stCloset-moduleStats
+          ">
+
+          <div class="stCloset-metaContent">
+
+            <span
+              id="stCloset-statsTotal"
+              class="stCloset-metaNumber">
+              0
+            </span>
+
+            <span class="stCloset-metaSmall">
+              TOTAL ITEMS
+            </span>
+
+            <div class="stCloset-metaLine"></div>
+
+            <span
+              id="stCloset-statsCategoryLine"
+              class="stCloset-metaSmall">
+              00 TOP / 00 BOTTOM
+            </span>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- SYNC -->
+
+        <div
+          class="
+            stCloset-module
+            stCloset-moduleSync
+          ">
+
+          <div class="stCloset-metaContent">
+
+            <div class="stCloset-dots">
+
+              <span class="stCloset-dot"></span>
+              <span class="stCloset-dot"></span>
+              <span class="stCloset-dot"></span>
+
+            </div>
+
+            <span class="stCloset-metaSmall">
+              SMART MIRROR
+            </span>
+
+            <strong class="stCloset-metaBig">
+              SYNC COMPLETE
+            </strong>
+
+            <span
+              id="stCloset-lastSync"
+              class="stCloset-metaSmall">
+
+              WAITING...
+
+            </span>
+
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =====================================================
+       ANALYTICS
+  ====================================================== -->
+
+  <section class="stCloset-analytics">
+
+
+    <div class="stCloset-analyticsHeader">
+
+      <div>
+
+        <div class="stCloset-analyticsEyebrow">
+          CLOSET DATA ANALYSIS
+        </div>
+
+        <h2 class="stCloset-analyticsTitle">
+
+          MY CLOSET
+          <span>STATISTICS</span>
+
+        </h2>
+
+        <p class="stCloset-analyticsDescription">
+
+          저장된 옷을 카테고리와 세부 종류별로 분류해<br>
+          현재 옷장 구성을 한눈에 확인합니다.
+
+        </p>
+
+      </div>
+
+
+      <div class="stCloset-analyticsTotal">
+
+        <span
+          id="stCloset-totalNumber"
+          class="stCloset-analyticsTotalNumber">
+
+          0
+
+        </span>
+
+        <span class="stCloset-analyticsTotalLabel">
+          TOTAL ARCHIVED ITEMS
+        </span>
+
+      </div>
+
+    </div>
+
+
+
+    <div class="stCloset-categorySummary">
+
+
+      <article class="stCloset-categoryCard">
+
+        <div>
+
+          <span class="stCloset-categoryCardLabel">
+            TOP
+          </span>
+
+          <span class="stCloset-categoryCardSub">
+            상의류
+          </span>
+
+        </div>
+
+        <strong
+          id="stCloset-countTop"
+          class="stCloset-categoryCardValue">
+          00
+        </strong>
+
+      </article>
+
+
+
+      <article class="stCloset-categoryCard">
+
+        <div>
+
+          <span class="stCloset-categoryCardLabel">
+            BOTTOM
+          </span>
+
+          <span class="stCloset-categoryCardSub">
+            하의류
+          </span>
+
+        </div>
+
+        <strong
+          id="stCloset-countBottom"
+          class="stCloset-categoryCardValue">
+          00
+        </strong>
+
+      </article>
+
+
+
+      <article class="stCloset-categoryCard">
+
+        <div>
+
+          <span class="stCloset-categoryCardLabel">
+            BAG
+          </span>
+
+          <span class="stCloset-categoryCardSub">
+            가방
+          </span>
+
+        </div>
+
+        <strong
+          id="stCloset-countBag"
+          class="stCloset-categoryCardValue">
+          00
+        </strong>
+
+      </article>
+
+
+
+      <article class="stCloset-categoryCard">
+
+        <div>
+
+          <span class="stCloset-categoryCardLabel">
+            ACCESSORY
+          </span>
+
+          <span class="stCloset-categoryCardSub">
+            액세서리
+          </span>
+
+        </div>
+
+        <strong
+          id="stCloset-countAcc"
+          class="stCloset-categoryCardValue">
+          00
+        </strong>
+
+      </article>
+
+
+    </div>
+
+
+
+    <div class="stCloset-analyticsGrid">
+
+
+      <article class="stCloset-chartCard">
+
+        <div class="stCloset-chartTop">
+
+          <div>
+
+            <div class="stCloset-chartKicker">
+              BOTTOM CATEGORY
+            </div>
+
+            <h3 class="stCloset-chartTitle">
+              하의 구성
+            </h3>
+
+          </div>
+
+          <span
+            id="stCloset-bottomChartCount"
+            class="stCloset-chartCount">
+            00 ITEMS
+          </span>
+
+        </div>
+
+
+        <div class="stCloset-donutWrap">
+
+          <div
+            id="stCloset-bottomDonut"
+            class="stCloset-donut">
+
+            <div class="stCloset-donutCenter">
+
+              <strong
+                id="stCloset-bottomDonutNumber"
+                class="stCloset-donutNumber">
+                00
+              </strong>
+
+              <span class="stCloset-donutText">
+                BOTTOM
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div
+            id="stCloset-bottomLegend"
+            class="stCloset-legend">
+          </div>
+
+        </div>
+
+      </article>
+
+
+
+      <article class="stCloset-chartCard">
+
+        <div class="stCloset-chartTop">
+
+          <div>
+
+            <div class="stCloset-chartKicker">
+              TOP CATEGORY
+            </div>
+
+            <h3 class="stCloset-chartTitle">
+              상의 구성
+            </h3>
+
+          </div>
+
+          <span
+            id="stCloset-topChartCount"
+            class="stCloset-chartCount">
+            00 ITEMS
+          </span>
+
+        </div>
+
+
+        <div
+          id="stCloset-topBars"
+          class="stCloset-bars">
+        </div>
+
+      </article>
+
+
+    </div>
+
+
+
+    <div class="stCloset-analyticsFoot">
+
+      <span>
+
+        <i class="stCloset-liveDot"></i>
+
+        SMART MIRROR DATA · AUTO UPDATE
+
+      </span>
+
+      <span>
+        REGISTER NEW ITEM 등록 시
+        Firebase 데이터가 실시간 수신됩니다.
+      </span>
+
+    </div>
+
+
+  </section>
+
+
+</main>
+
+
+
+<!-- =========================================================
+     NEW ITEM POPUP
+========================================================= -->
+
+<div
+  id="stylensNewItemPopup"
+  class="stylensNewItemPopup"
+  aria-hidden="true">
+
+
+  <section
+    class="stylensNewItemPanel"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="stylensNewItemTitle">
+
+
+    <div class="stylensNewItemTop">
+
+      <div>
+
+        <div class="stylensNewItemEyebrow">
+          SMART MIRROR · LIVE SYNC
+        </div>
+
+        <div class="stylensNewItemSync">
+
+          <span class="stylensNewItemLiveDot"></span>
+
+          새로운 의류 데이터
+
+        </div>
+
+      </div>
+
+
+      <button
+        id="stylensNewItemClose"
+        class="stylensNewItemClose"
+        type="button"
+        aria-label="팝업 닫기">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+
+    <div class="stylensNewItemHero">
+
+
+      <div
+        id="stylensNewItemIcon"
+        class="stylensNewItemIcon"
+        aria-hidden="true">
+
+        <svg viewBox="0 0 96 96">
+
+          <path
+            d="
+              M31 22
+              18 31
+              l8 17
+              10-5
+              v31
+              h24
+              V43
+              l10 5
+              8-17
+              -13-9
+              -8 8
+              H39
+              l-8-8Z
+            ">
+          </path>
+
+          <path
+            d="
+              M39 30
+              c2.2 4
+              5 6
+              9 6
+              s6.8-2
+              9-6
+            ">
+          </path>
+
+        </svg>
+
+      </div>
+
+
+
+      <div>
+
+        <p class="stylensNewItemKicker">
+          NEW ITEM REGISTERED
+        </p>
+
+        <h2
+          id="stylensNewItemTitle"
+          class="stylensNewItemTitle">
+
+          Firebase 연결 중...
+
+        </h2>
+
+        <p
+          id="stylensNewItemCategory"
+          class="stylensNewItemCategory">
+
+          스마트미러에서 등록된 의류 데이터를 기다리고 있습니다.
+
+        </p>
+
+      </div>
+
+
+    </div>
+
+
+
+    <div
+      id="stylensNewItemDetails"
+      class="stylensNewItemDetails">
+
+      <div class="stylensNewItemData">
+
+        <span class="stylensNewItemLabel">
+          STATUS
+        </span>
+
+        <strong>
+          WAITING
+        </strong>
+
+      </div>
+
+      <div class="stylensNewItemData">
+
+        <span class="stylensNewItemLabel">
+          SOURCE
+        </span>
+
+        <strong>
+          SMART MIRROR
+        </strong>
+
+      </div>
+
+      <div class="stylensNewItemData">
+
+        <span class="stylensNewItemLabel">
+          DATABASE
+        </span>
+
+        <strong>
+          FIREBASE
+        </strong>
+
+      </div>
+
+    </div>
+
+
+
+    <div class="stylensNewItemBottom">
+
+      <div class="stylensNewItemSource">
+
+        SMART MIRROR
+
+        <span>→</span>
+
+        FIREBASE
+
+        <span>→</span>
+
+        MY CLOSET
+
+      </div>
+
+
+      <button
+        id="stylensNewItemSpeak"
+        class="stylensNewItemSpeak"
+        type="button">
+
+        <span
+          class="stylensNewItemSpeaker"
+          aria-hidden="true">
+
+          <svg viewBox="0 0 24 24">
+
+            <path
+              d="
+                M4 10
+                v4
+                h4
+                l5 4
+                V6
+                L8 10
+                H4Z
+              ">
+            </path>
+
+            <path
+              d="
+                M16 9.2
+                c1.4 1.5
+                1.4 4.1
+                0 5.6
+              ">
+            </path>
+
+            <path
+              d="
+                M18.7 6.8
+                c2.8 2.8
+                2.8 7.6
+                0 10.4
+              ">
+            </path>
+
+          </svg>
+
+        </span>
+
+        음성으로 다시 듣기
+
+      </button>
+
+    </div>
+
+
+  </section>
+
+
+</div>
+
+
+
+<!-- =========================================================
+     EXISTING CLOSET UI
+========================================================= -->
+
+<script>
+
+const demoLooks = [
+
+  {
+    name:"DATA 01",
+
+    top:[
+      "TOP_012",
+      "look01_top.webp",
+      "PASTEL YELLOW",
+      "JERSEY"
+    ],
+
+    bottom:[
+      "BOTTOM_008",
+      "look01_bottom.webp",
+      "PASTEL YELLOW",
+      "COTTON BLEND"
+    ],
+
+    acc:[
+      "ACC_001",
+      "look01_acc.webp"
+    ],
+
+    bag:[
+      "BAG_001",
+      "look01_bag.webp"
+    ]
+  },
+
+  {
+    name:"DATA 02",
+
+    top:[
+      "TOP_018",
+      "look02_top.webp",
+      "WHITE",
+      "COTTON"
+    ],
+
+    bottom:[
+      "BOTTOM_011",
+      "look02_bottom.webp",
+      "DARK INDIGO",
+      "DENIM"
+    ],
+
+    acc:null,
+
+    bag:[
+      "BAG_002",
+      "look02_bag.webp"
+    ]
+  },
+
+  {
+    name:"DATA 03",
+
+    top:[
+      "TOP_021",
+      "look03_top.webp",
+      "MINT",
+      "CHIFFON"
+    ],
+
+    bottom:[
+      "BOTTOM_014",
+      "look03_bottom.webp",
+      "WHITE",
+      "COTTON"
+    ],
+
+    acc:[
+      "ACC_003",
+      "look03_acc.webp"
+    ],
+
+    bag:[
+      "BAG_003",
+      "look03_bag.webp"
+    ]
+  },
+
+  {
+    name:"DATA 04",
+
+    top:[
+      "TOP_024",
+      "look04_top.webp",
+      "BLACK",
+      "KNIT"
+    ],
+
+    bottom:[
+      "BOTTOM_017",
+      "look04_bottom.webp",
+      "BROWN",
+      "POLY BLEND"
+    ],
+
+    acc:null,
+
+    bag:[
+      "BAG_004",
+      "look04_bag.webp"
+    ]
+  }
+
+];
+
+
+const $ =
+  id =>
+    document.getElementById(id);
+
+
+let currentIndex = 0;
+
+let autoLoop = true;
+
+let loopTimer = null;
+
+
+
+function setOptional(
+  imgId,
+  codeId,
+  emptyId,
+  item,
+  label
+){
+
+  const img =
+    $(imgId);
+
+  const code =
+    $(codeId);
+
+  const empty =
+    $(emptyId);
+
+
+  if(item){
+
+    img.src =
+      item[1];
+
+    img.style.display =
+      "block";
+
+    code.textContent =
+      item[0];
+
+    empty.style.display =
+      "none";
+
+  }else{
+
+    img.removeAttribute(
+      "src"
+    );
+
+    img.style.display =
+      "none";
+
+    code.textContent =
+      label;
+
+    empty.style.display =
+      "flex";
+
+  }
+}
+
+
+
+function renderLook(index){
+
+  currentIndex =
+    index;
+
+  const d =
+    demoLooks[index];
+
+
+  $("stCloset-currentData")
+    .textContent =
+    d.name;
+
+
+  $("stCloset-topCode")
+    .textContent =
+    d.top[0];
+
+  $("stCloset-topImg")
+    .src =
+    d.top[1];
+
+  $("stCloset-topColor")
+    .textContent =
+    d.top[2];
+
+  $("stCloset-topMaterial")
+    .textContent =
+    d.top[3];
+
+
+  $("stCloset-bottomCode")
+    .textContent =
+    d.bottom[0];
+
+  $("stCloset-bottomImg")
+    .src =
+    d.bottom[1];
+
+  $("stCloset-bottomColor")
+    .textContent =
+    d.bottom[2];
+
+  $("stCloset-bottomMaterial")
+    .textContent =
+    d.bottom[3];
+
+
+  setOptional(
+    "stCloset-accImg",
+    "stCloset-accCode",
+    "stCloset-emptyAcc",
+    d.acc,
+    "ACCESSORY"
+  );
+
+
+  setOptional(
+    "stCloset-bagImg",
+    "stCloset-bagCode",
+    "stCloset-emptyBag",
+    d.bag,
+    "BAG"
+  );
+
+
+  document
+    .querySelectorAll(
+      ".stCloset-dataBtn"
+    )
+    .forEach(
+      (button,i)=>{
+
+        button
+          .classList
+          .toggle(
+            "stCloset-selected",
+            i === index
+          );
+
+      }
+    );
+
+}
+
+
+
+function startLoop(){
+
+  clearInterval(
+    loopTimer
+  );
+
+
+  loopTimer =
+    setInterval(
+      ()=>{
+
+        if(autoLoop){
+
+          renderLook(
+            (
+              currentIndex
+              +
+              1
+            )
+            %
+            demoLooks.length
+          );
+
+        }
+
+      },
+
+      5200
+    );
+
+}
+
+
+startLoop();
+
+
+
+document
+  .querySelectorAll(
+    ".stCloset-dataBtn"
+  )
+  .forEach(
+    button=>{
+
+      button.addEventListener(
+        "click",
+        ()=>{
+
+          renderLook(
+            Number(
+              button.dataset.index
+            )
+          );
+
+          startLoop();
+
+        }
+      );
+
+    }
+  );
+
+
+
+$("stCloset-autoBtn")
+  .addEventListener(
+    "click",
+    function(){
+
+      autoLoop =
+        !autoLoop;
+
+      this.textContent =
+        autoLoop
+        ?
+        "AUTO LOOP : ON"
+        :
+        "AUTO LOOP : OFF";
+
+    }
+  );
+
+
+
+document
+  .querySelectorAll(
+    ".stCloset-filterBtn"
+  )
+  .forEach(
+    button=>{
+
+      button.addEventListener(
+        "click",
+        ()=>{
+
+          document
+            .querySelectorAll(
+              ".stCloset-filterBtn"
+            )
+            .forEach(
+              other=>{
+
+                other.classList.remove(
+                  "stCloset-filterActive"
+                );
+
+              }
+            );
+
+
+          button.classList.add(
+            "stCloset-filterActive"
+          );
+
+
+          const filter =
+            button.dataset.filter;
+
+
+          document
+            .querySelectorAll(
+              ".stCloset-prototypeItem"
+            )
+            .forEach(
+              item=>{
+
+                const hide =
+                  filter !== "ALL"
+                  &&
+                  item.dataset.category !== filter;
+
+
+                item.style.opacity =
+                  hide
+                  ?
+                  ".10"
+                  :
+                  "1";
+
+
+                item.style.filter =
+                  hide
+                  ?
+                  "grayscale(1) blur(.5px)"
+                  :
+                  "none";
+
+
+                item.style.pointerEvents =
+                  hide
+                  ?
+                  "none"
+                  :
+                  "auto";
+
+              }
+            );
+
+        }
+      );
+
+    }
+  );
+
+</script>
+
+
+
+<!-- =========================================================
+     FIREBASE / REALTIME POPUP
+========================================================= -->
+
+<script type="module">
+
+import {
+  initializeApp
+}
+from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
+
+import {
+  getFirestore,
+  collection,
+  onSnapshot
+}
+from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+
+
+/* =========================================================
+   FIREBASE CONFIG
+========================================================= */
+
+const firebaseConfig = {
+
+  apiKey:
+    "AIzaSyD602qO9tMVpzdiXdPXe6VHRGBW7RXFeyM",
+
+  authDomain:
+    "stylens-v2.firebaseapp.com",
+
+  projectId:
+    "stylens-v2",
+
+  storageBucket:
+    "stylens-v2.firebasestorage.app",
+
+  messagingSenderId:
+    "721961362468",
+
+  appId:
+    "1:721961362468:web:ff0bb01125bdfdd5eaa4b1",
+
+  measurementId:
+    "G-RHVT36X1H9"
+
+};
+
+
+/*
+  ★ 스마트미러가 실제로 저장하는 Firestore 컬렉션
+*/
+
+const STYLENS_FIRESTORE_COLLECTION =
+  "wardrobe";
+
+
+
+const stylensFirebaseApp =
+  initializeApp(
+    firebaseConfig
+  );
+
+
+const stylensFirestore =
+  getFirestore(
+    stylensFirebaseApp
+  );
+
+
+window.stylensFirebaseApp =
+  stylensFirebaseApp;
+
+window.stylensFirestore =
+  stylensFirestore;
+
+window.stylensFirebaseData =
+  [];
+
+window.stylensFirebaseConnected =
+  false;
+
+window.stylensLatestItem =
+  null;
+
+
+
+/* =========================================================
+   POPUP ELEMENTS
+========================================================= */
+
+const popup =
+  document.getElementById(
+    "stylensNewItemPopup"
+  );
+
+
+const openBtn =
+  document.getElementById(
+    "stylensNewItemBtn"
+  );
+
+
+const closeBtn =
+  document.getElementById(
+    "stylensNewItemClose"
+  );
+
+
+const speakBtn =
+  document.getElementById(
+    "stylensNewItemSpeak"
+  );
+
+
+const badge =
+  document.getElementById(
+    "stylensNewItemBadge"
+  );
+
+
+const titleEl =
+  document.getElementById(
+    "stylensNewItemTitle"
+  );
+
+
+const categoryEl =
+  document.getElementById(
+    "stylensNewItemCategory"
+  );
+
+
+const detailsEl =
+  document.getElementById(
+    "stylensNewItemDetails"
+  );
+
+
+const iconEl =
+  document.getElementById(
+    "stylensNewItemIcon"
+  );
+
+
+const lastSyncEl =
+  document.getElementById(
+    "stCloset-lastSync"
+  );
+
+
+
+let initialSnapshot =
+  true;
+
+
+let latestItem =
+  null;
+
+
+let latestChangeType =
+  "added";
+
+
+
+/* =========================================================
+   FIELD PICKER
+========================================================= */
+
+function pick(
+  data,
+  keys
+){
+
+  for(
+    const key
+    of
+    keys
+  ){
+
+    const value =
+      data?.[key];
+
+
+    if(
+      value !== undefined
+      &&
+      value !== null
+      &&
+      String(value).trim() !== ""
+    ){
+
+      return String(value);
+
+    }
+
+  }
+
+
+  return "";
+
+}
+
+
+
+function getName(data){
+
+  return pick(
+    data,
+    [
+      "clothingName",
+      "name",
+      "itemName",
+      "clothesName",
+      "의류명",
+      "이름"
+    ]
+  );
+
+}
+
+
+
+function getCategory(data){
+
+  return pick(
+    data,
+    [
+      "category",
+      "type",
+      "clothesType",
+      "카테고리",
+      "종류"
+    ]
+  );
+
+}
+
+
+
+function getColor(data){
+
+  return pick(
+    data,
+    [
+      "color",
+      "colour",
+      "색상",
+      "컬러"
+    ]
+  );
+
+}
+
+
+
+function getMaterial(data){
+
+  return pick(
+    data,
+    [
+      "material",
+      "fabric",
+      "소재",
+      "재질"
+    ]
+  );
+
+}
+
+
+
+function getPattern(data){
+
+  return pick(
+    data,
+    [
+      "pattern",
+      "패턴"
+    ]
+  );
+
+}
+
+
+
+function getSeason(data){
+
+  return pick(
+    data,
+    [
+      "season",
+      "계절"
+    ]
+  );
+
+}
+
+
+
+function getStatus(data){
+
+  return pick(
+    data,
+    [
+      "status",
+      "condition",
+      "상태"
+    ]
+  );
+
+}
+
+
+
+/* =========================================================
+   TIME
+========================================================= */
+
+function timestampValue(value){
+
+  if(!value){
+    return 0;
+  }
+
+
+  if(
+    typeof value?.toMillis
+    ===
+    "function"
+  ){
+
+    return value.toMillis();
+
+  }
+
+
+  if(
+    typeof value?.seconds
+    ===
+    "number"
+  ){
+
+    return value.seconds * 1000;
+
+  }
+
+
+  if(
+    value instanceof Date
+  ){
+
+    return value.getTime();
+
+  }
+
+
+  if(
+    typeof value
+    ===
+    "number"
+  ){
+
+    return value;
+
+  }
+
+
+  const parsed =
+    Date.parse(
+      value
+    );
+
+
+  return Number.isFinite(parsed)
+    ?
+    parsed
+    :
+    0;
+
+}
+
+
+
+function itemTime(data){
+
+  return Math.max(
+
+    timestampValue(
+      data?.createdAt
+    ),
+
+    timestampValue(
+      data?.registeredAt
+    ),
+
+    timestampValue(
+      data?.timestamp
+    ),
+
+    timestampValue(
+      data?.updatedAt
+    ),
+
+    timestampValue(
+      data?.등록시간
+    )
+
+  );
+
+}
+
+
+
+function pickLatestItem(items){
+
+  if(
+    !Array.isArray(items)
+    ||
+    !items.length
+  ){
+
+    return null;
+
+  }
+
+
+  return [...items]
+    .sort(
+      (a,b)=>
+        itemTime(b)
+        -
+        itemTime(a)
+    )[0];
+
+}
+
+
+
+/* =========================================================
+   CATEGORY
+========================================================= */
+
+function categoryKey(data){
+
+  const raw =
+    getCategory(data)
+      .trim();
+
+
+  const value =
+    raw.toUpperCase();
+
+
+  if(
+    value.includes("BOTTOM")
+    ||
+    value.includes("PANTS")
+    ||
+    value.includes("JEANS")
+    ||
+    value.includes("SKIRT")
+    ||
+    raw.includes("하의")
+    ||
+    raw.includes("바지")
+    ||
+    raw.includes("치마")
+  ){
+
+    return "BOTTOM";
+
+  }
+
+
+  if(
+    value.includes("OUTER")
+    ||
+    value.includes("JACKET")
+    ||
+    value.includes("COAT")
+    ||
+    raw.includes("아우터")
+    ||
+    raw.includes("재킷")
+    ||
+    raw.includes("자켓")
+    ||
+    raw.includes("코트")
+  ){
+
+    return "OUTER";
+
+  }
+
+
+  if(
+    value.includes("DRESS")
+    ||
+    raw.includes("원피스")
+  ){
+
+    return "DRESS";
+
+  }
+
+
+  if(
+    value.includes("BAG")
+    ||
+    raw.includes("가방")
+  ){
+
+    return "BAG";
+
+  }
+
+
+  if(
+    value.includes("ACC")
+    ||
+    value.includes("ACCESSORY")
+    ||
+    raw.includes("액세서리")
+  ){
+
+    return "ACCESSORY";
+
+  }
+
+
+  return "TOP";
+
+}
+
+
+
+function categoryKorean(data){
+
+  const key =
+    categoryKey(data);
+
+
+  const labels = {
+
+    TOP:"상의",
+
+    BOTTOM:"하의",
+
+    OUTER:"아우터",
+
+    DRESS:"원피스",
+
+    BAG:"가방",
+
+    ACCESSORY:"액세서리"
+
+  };
+
+
+  return labels[key]
+    ||
+    "의류";
+
+}
+
+
+
+/* =========================================================
+   ICON
+========================================================= */
+
+function iconSvg(key){
+
+  const common =
+    `viewBox="0 0 96 96"
+     fill="none"
+     stroke="currentColor"
+     stroke-width="1.55"
+     stroke-linecap="round"
+     stroke-linejoin="round"`;
+
+
+  if(
+    key === "BOTTOM"
+  ){
+
+    return `
+      <svg ${common}>
+
+        <path
+          d="
+            M33 19
+            h30
+            l-3 58
+            H49
+            L48 46
+            47 77
+            H36
+            L33 19Z
+          ">
+        </path>
+
+        <path
+          d="
+            M39 19
+            v12
+            h18
+            V19
+          ">
+        </path>
+
+      </svg>
+    `;
+
+  }
+
+
+  if(
+    key === "OUTER"
+  ){
+
+    return `
+      <svg ${common}>
+
+        <path
+          d="
+            M35 21
+            23 31
+            l8 18
+            8-5
+            v33
+            h18
+            V44
+            l8 5
+            8-18
+            -12-10
+            -7 8
+            H42
+            l-7-8Z
+          ">
+        </path>
+
+        <path
+          d="
+            M48 29
+            v48
+          ">
+        </path>
+
+      </svg>
+    `;
+
+  }
+
+
+  if(
+    key === "DRESS"
+  ){
+
+    return `
+      <svg ${common}>
+
+        <path
+          d="
+            M40 20
+            h16
+            l4 14
+            -7 9
+            14 34
+            H29
+            l14-34
+            -7-9
+            4-14Z
+          ">
+        </path>
+
+        <path
+          d="
+            M42 20
+            c1 5
+            3 8
+            6 8
+            s5-3
+            6-8
+          ">
+        </path>
+
+      </svg>
+    `;
+
+  }
+
+
+  if(
+    key === "BAG"
+  ){
+
+    return `
+      <svg ${common}>
+
+        <rect
+          x="25"
+          y="36"
+          width="46"
+          height="38"
+          rx="6">
+        </rect>
+
+        <path
+          d="
+            M36 36
+            c0-9
+            5-15
+            12-15
+            s12 6
+            12 15
+          ">
+        </path>
+
+      </svg>
+    `;
+
+  }
+
+
+  if(
+    key === "ACCESSORY"
+  ){
+
+    return `
+      <svg ${common}>
+
+        <circle
+          cx="48"
+          cy="48"
+          r="24">
+        </circle>
+
+        <circle
+          cx="48"
+          cy="48"
+          r="9">
+        </circle>
+
+        <path
+          d="
+            M48 24v15
+            M48 57v15
+            M24 48h15
+            M57 48h15
+          ">
+        </path>
+
+      </svg>
+    `;
+
+  }
+
+
+  return `
+    <svg ${common}>
+
+      <path
+        d="
+          M31 22
+          18 31
+          l8 17
+          10-5
+          v31
+          h24
+          V43
+          l10 5
+          8-17
+          -13-9
+          -8 8
+          H39
+          l-8-8Z
+        ">
+      </path>
+
+      <path
+        d="
+          M39 30
+          c2.2 4
+          5 6
+          9 6
+          s6.8-2
+          9-6
+        ">
+      </path>
+
+    </svg>
+  `;
+
+}
+
+
+
+/* =========================================================
+   POPUP CONTENT
+========================================================= */
+
+function dataCell(
+  label,
+  value
+){
+
+  return `
+    <div class="stylensNewItemData">
+
+      <span class="stylensNewItemLabel">
+        ${label}
+      </span>
+
+      <strong>
+        ${value || "-"}
+      </strong>
+
+    </div>
+  `;
+
+}
+
+
+
+function renderItem(
+  data,
+  changeType="added"
+){
+
+  if(!popup){
+    return;
+  }
+
+
+  if(!data){
+
+    titleEl.textContent =
+      "등록된 의류 데이터를 기다리고 있어요";
+
+
+    categoryEl.textContent =
+      "스마트미러에서 새 옷이 등록되면 이곳에 실시간으로 표시됩니다.";
+
+
+    detailsEl.innerHTML =
+      dataCell(
+        "STATUS",
+        "WAITING FOR FIREBASE"
+      )
+      +
+      dataCell(
+        "SOURCE",
+        "SMART MIRROR"
+      )
+      +
+      dataCell(
+        "SYNC",
+        "LIVE"
+      );
+
+
+    iconEl.innerHTML =
+      iconSvg(
+        "TOP"
+      );
+
+
+    return;
+
+  }
+
+
+  const key =
+    categoryKey(data);
+
+
+  const koCategory =
+    categoryKorean(data);
+
+
+  const name =
+    getName(data)
+    ||
+    data.id
+    ||
+    "새 의류";
+
+
+  const category =
+    getCategory(data)
+    ||
+    koCategory;
+
+
+  const color =
+    getColor(data);
+
+
+  const material =
+    getMaterial(data);
+
+
+  const pattern =
+    getPattern(data);
+
+
+  const season =
+    getSeason(data);
+
+
+  const status =
+    getStatus(data);
+
+
+
+  titleEl.textContent =
+    changeType === "modified"
+    ?
+    "옷 정보가 업데이트되었어요"
+    :
+    "새로운 옷이 등록되었어요";
+
+
+  categoryEl.textContent =
+    `${koCategory} 아이템이 스마트미러에서 나의 옷장으로 동기화되었습니다.`;
+
+
+  iconEl.innerHTML =
+    iconSvg(
+      key
+    );
+
+
+  detailsEl.innerHTML =
+
+    dataCell(
+      "ITEM",
+      name
+    )
+
+    +
+
+    dataCell(
+      "CATEGORY",
+      category
+    )
+
+    +
+
+    dataCell(
+      "COLOR",
+      color
+    )
+
+    +
+
+    dataCell(
+      "MATERIAL",
+      material
+    )
+
+    +
+
+    dataCell(
+      "PATTERN",
+      pattern
+    )
+
+    +
+
+    dataCell(
+      "SEASON",
+      season || status
+    );
+
+}
+
+
+
+/* =========================================================
+   SPEECH
+========================================================= */
+
+function buildSpeechText(
+  data,
+  changeType="added"
+){
+
+  if(!data){
+
+    return
+      "아직 등록된 의류 데이터가 없습니다.";
+
+  }
+
+
+  const parts = [];
+
+
+  parts.push(
+
+    changeType === "modified"
+
+    ?
+
+    "옷 정보가 업데이트되었습니다."
+
+    :
+
+    "새로운 옷 정보가 등록되었습니다."
+
+  );
+
+
+  const name =
+    getName(data);
+
+  const category =
+    getCategory(data);
+
+  const color =
+    getColor(data);
+
+  const material =
+    getMaterial(data);
+
+  const pattern =
+    getPattern(data);
+
+  const season =
+    getSeason(data);
+
+  const status =
+    getStatus(data);
+
+
+  if(name){
+    parts.push(
+      `${name}.`
+    );
+  }
+
+
+  if(category){
+    parts.push(
+      `종류는 ${category}.`
+    );
+  }
+
+
+  if(color){
+    parts.push(
+      `색상은 ${color}.`
+    );
+  }
+
+
+  if(material){
+    parts.push(
+      `소재는 ${material}.`
+    );
+  }
+
+
+  if(pattern){
+    parts.push(
+      `패턴은 ${pattern}.`
+    );
+  }
+
+
+  if(season){
+    parts.push(
+      `계절은 ${season}.`
+    );
+  }
+
+
+  if(status){
+    parts.push(
+      `상태는 ${status}.`
+    );
+  }
+
+
+  return parts.join(
+    " "
+  );
+
+}
+
+
+
+function speakItem(
+  data,
+  changeType="added"
+){
+
+  if(
+    !(
+      "speechSynthesis"
+      in
+      window
+    )
+  ){
+
+    return;
+
+  }
+
+
+  const speechText =
+    buildSpeechText(
+      data,
+      changeType
+    );
+
+
+  window
+    .speechSynthesis
+    .cancel();
+
+
+  const utterance =
+    new SpeechSynthesisUtterance(
+      speechText
+    );
+
+
+  utterance.lang =
+    "ko-KR";
+
+
+  utterance.rate =
+    .92;
+
+
+  utterance.pitch =
+    1;
+
+
+  const voices =
+    window
+      .speechSynthesis
+      .getVoices();
+
+
+  const koreanVoice =
+    voices.find(
+      voice =>
+        String(
+          voice.lang || ""
+        )
+        .toLowerCase()
+        .startsWith(
+          "ko"
+        )
+    );
+
+
+  if(koreanVoice){
+
+    utterance.voice =
+      koreanVoice;
+
+  }
+
+
+  window
+    .speechSynthesis
+    .speak(
+      utterance
+    );
+
+}
+
+
+
+/* =========================================================
+   POPUP
+========================================================= */
+
+function openPopup(
+  data=latestItem,
+  changeType=latestChangeType,
+  autoSpeak=false
+){
+
+  renderItem(
+    data,
+    changeType
+  );
+
+
+  popup
+    .classList
+    .add(
+      "stylensPopupOpen"
+    );
+
+
+  popup
+    .setAttribute(
+      "aria-hidden",
+      "false"
+    );
+
+
+  document.body
+    .classList
+    .add(
+      "stylensPopupLock"
+    );
+
+
+  badge.style.display =
+    "none";
+
+
+  if(
+    autoSpeak
+    &&
+    data
+  ){
+
+    setTimeout(
+      ()=>{
+
+        speakItem(
+          data,
+          changeType
+        );
+
+      },
+      250
+    );
+
+  }
+
+
+  setTimeout(
+    ()=>{
+
+      closeBtn.focus();
+
+    },
+    80
+  );
+
+}
+
+
+
+function closePopup(){
+
+  popup
+    .classList
+    .remove(
+      "stylensPopupOpen"
+    );
+
+
+  popup
+    .setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+
+  document.body
+    .classList
+    .remove(
+      "stylensPopupLock"
+    );
+
+
+  if(
+    "speechSynthesis"
+    in
+    window
+  ){
+
+    window
+      .speechSynthesis
+      .cancel();
+
+  }
+
+}
+
+
+
+function showNewBadge(){
+
+  badge.style.display =
+    "inline-flex";
+
+}
+
+
+
+/* =========================================================
+   BUTTON EVENTS
+========================================================= */
+
+openBtn
+  .addEventListener(
+    "click",
+    ()=>{
+
+      openPopup(
+        latestItem,
+        latestChangeType,
+        true
+      );
+
+    }
+  );
+
+
+closeBtn
+  .addEventListener(
+    "click",
+    closePopup
+  );
+
+
+speakBtn
+  .addEventListener(
+    "click",
+    ()=>{
+
+      speakItem(
+        latestItem,
+        latestChangeType
+      );
+
+    }
+  );
+
+
+popup
+  .addEventListener(
+    "click",
+    event=>{
+
+      if(
+        event.target
+        ===
+        popup
+      ){
+
+        closePopup();
+
+      }
+
+    }
+  );
+
+
+document
+  .addEventListener(
+    "keydown",
+    event=>{
+
+      if(
+        event.key === "Escape"
+        &&
+        popup
+          .classList
+          .contains(
+            "stylensPopupOpen"
+          )
+      ){
+
+        closePopup();
+
+      }
+
+    }
+  );
+
+
+
+/* =========================================================
+   FIRESTORE REALTIME LISTENER
+========================================================= */
+
+const stylensFirebaseUnsubscribe =
+  onSnapshot(
+
+    collection(
+      stylensFirestore,
+      STYLENS_FIRESTORE_COLLECTION
+    ),
+
+
+    snapshot=>{
+
+
+      const receivedData =
+
+        snapshot.docs.map(
+
+          doc=>({
+
+            id:doc.id,
+
+            ...doc.data()
+
+          })
+
+        );
+
+
+      window.stylensFirebaseData =
+        receivedData;
+
+
+      window.stylensFirebaseConnected =
+        true;
+
+
+
+      /*
+        페이지 처음 열렸을 때 Firestore의 기존 문서들은
+        전부 added 상태로 전달됨.
+
+        처음 연결에서는 자동 팝업을 띄우지 않고
+        가장 최근 데이터만 기억함.
+      */
+
+      if(initialSnapshot){
+
+
+        latestItem =
+          pickLatestItem(
+            receivedData
+          );
+
+
+        window.stylensLatestItem =
+          latestItem;
+
+
+        if(latestItem){
+
+          renderItem(
+            latestItem,
+            "added"
+          );
+
+        }else{
+
+          renderItem(
+            null
+          );
+
+        }
+
+
+        initialSnapshot =
+          false;
+
+
+        console.log(
+
+          `[STYLENS] Firebase 연결 성공 / ${STYLENS_FIRESTORE_COLLECTION}`,
+
+          receivedData
+
+        );
+
+
+        return;
+
+      }
+
+
+
+      /*
+        스마트미러에서 새 문서 생성 = added
+        기존 문서 변경 = modified
+
+        실제 변경이 발생하면 팝업을 자동 표시.
+      */
+
+      snapshot
+        .docChanges()
+        .forEach(
+
+          change=>{
+
+
+            if(
+              change.type !== "added"
+              &&
+              change.type !== "modified"
+            ){
+
+              return;
+
+            }
+
+
+            const changedData = {
+
+              id:
+                change.doc.id,
+
+              ...change.doc.data()
+
+            };
+
+
+            latestItem =
+              changedData;
+
+
+            latestChangeType =
+              change.type;
+
+
+            window.stylensLatestItem =
+              changedData;
+
+
+            showNewBadge();
+
+
+            openPopup(
+
+              changedData,
+
+              change.type,
+
+              true
+
+            );
+
+
+            if(lastSyncEl){
+
+              const now =
+                new Date();
+
+
+              lastSyncEl.textContent =
+
+                `LAST ${
+                  String(
+                    now.getHours()
+                  )
+                  .padStart(
+                    2,
+                    "0"
+                  )
+                }:${
+                  String(
+                    now.getMinutes()
+                  )
+                  .padStart(
+                    2,
+                    "0"
+                  )
+                }`;
+
+            }
+
+
+            console.log(
+
+              `[STYLENS] ${change.type.toUpperCase()}`,
+
+              changedData
+
+            );
+
+          }
+
+        );
+
+
+
+      window.dispatchEvent(
+
+        new CustomEvent(
+
+          "stylensFirebaseUpdate",
+
+          {
+
+            detail:{
+
+              collection:
+                STYLENS_FIRESTORE_COLLECTION,
+
+              data:
+                receivedData
+
+            }
+
+          }
+
+        )
+
+      );
+
+    },
+
+
+    error=>{
+
+
+      window.stylensFirebaseConnected =
+        false;
+
+
+      console.error(
+
+        "[STYLENS] Firebase 수신 오류:",
+
+        error
+
+      );
+
+
+      if(!latestItem){
+
+        renderItem(
+          null
+        );
+
+      }
+
+    }
+
+  );
+
+
+
+/* =========================================================
+   CLEAN UP
+========================================================= */
+
+window
+  .addEventListener(
+
+    "beforeunload",
+
+    ()=>{
+
+      stylensFirebaseUnsubscribe();
+
+    },
+
+    {
+      once:true
+    }
+
+  );
+
+</script>
+
+
+
+<script>
+/* STYLENS MOBILE NAVIGATION: 인덱스·커뮤니티와 같은 동작 */
+(() => {
+  const toggle = document.getElementById("mobileMenuToggle");
+  const nav = document.getElementById("siteNav");
+  if (!toggle || !nav) return;
+  const close = () => {
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-label", "메뉴 열기");
+    nav.classList.remove("is-open");
+  };
+  toggle.addEventListener("click", () => {
+    const open = toggle.getAttribute("aria-expanded") !== "true";
+    toggle.setAttribute("aria-expanded", String(open));
+    toggle.setAttribute("aria-label", open ? "메뉴 닫기" : "메뉴 열기");
+    nav.classList.toggle("is-open", open);
+  });
+  nav.querySelectorAll("a").forEach(link => link.addEventListener("click", close));
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") close();
+  });
+  document.addEventListener("click", event => {
+    if (!nav.contains(event.target) && !toggle.contains(event.target)) close();
+  });
+  window.matchMedia("(min-width:761px)").addEventListener("change", event => {
+    if (event.matches) close();
+  });
+})();
+</script>
+
+
+<!-- =========================================
+     STYLENS WEEKLY CLOSET
+     원본 코드 유지 / MON - SUN 추가
+========================================== -->
+
+<script>
+(() => {
+
+  const days = [
+    "MON", "TUE", "WED", "THU",
+    "FRI", "SAT", "SUN"
+  ];
+
+  const dayNames = [
+    "월요일", "화요일", "수요일", "목요일",
+    "금요일", "토요일", "일요일"
+  ];
+
+  const descriptions = [
+    "월요일, 산뜻한 파스텔 톤으로 기분 좋은 한 주를 시작해 보세요.",
+    "화요일, 화이트 셔츠와 데님으로 깔끔하고 단정한 스타일을 완성해 보세요.",
+    "수요일, 부드러운 민트와 화이트 컬러로 산뜻한 분위기를 더해 보세요.",
+    "목요일, 블랙과 브라운의 조합으로 차분하면서도 세련된 룩을 연출해 보세요.",
+    "금요일, 은은한 아이보리와 레이스 스커트로 우아한 분위기를 완성해 보세요.",
+    "토요일, 편안한 후디와 트랙 팬츠에 핑크 포인트를 더해 보세요.",
+    "일요일, 카키 봄버 재킷과 와이드 팬츠로 여유로운 캐주얼 룩을 즐겨 보세요."
+  ];
+
+  /* 기존 4가지 데이터 유지 */
+
+  demoLooks.slice(0, 4).forEach((look, index) => {
+    look.name = days[index];
+  });
+
+  /* 새로운 3가지 코디 등록 */
+
+  demoLooks.push(
+
+    {
+      name: "FRI",
+
+      top: [
+        "TOP_025",
+        "look05_top.webp",
+        "IVORY",
+        "VELVET"
+      ],
+
+      bottom: [
+        "BOTTOM_018",
+        "look05_bottom.webp",
+        "CHAMPAGNE",
+        "SATIN / LACE"
+      ],
+
+      acc: null,
+
+      bag: [
+        "BAG_005",
+        "look05_bag.webp"
+      ]
+    },
+
+    {
+      name: "SAT",
+
+      top: [
+        "TOP_026",
+        "look06_top.webp",
+        "IVORY",
+        "COTTON FLEECE"
+      ],
+
+      bottom: [
+        "BOTTOM_019",
+        "look06_bottom.webp",
+        "BLACK",
+        "TRACK FABRIC"
+      ],
+
+      acc: [
+        "ACC_006",
+        "look06_acc.webp"
+      ],
+
+      bag: null
+    },
+
+    {
+      name: "SUN",
+
+      top: [
+        "TOP_027",
+        "look07_top.webp",
+        "LIGHT GRAY",
+        "COTTON FLEECE"
+      ],
+
+      bottom: [
+        "BOTTOM_020",
+        "look07_bottom.webp",
+        "CHARCOAL",
+        "COTTON TWILL"
+      ],
+
+      outer: [
+        "OUTER_007",
+        "look07_outer.webp"
+      ],
+
+      acc: null,
+
+      bag: [
+        "BAG_007",
+        "look07_bag.webp"
+      ]
+    }
+
+  );
+
+  /* 요일 버튼 01~04 변경 */
+
+  const dayList = document.querySelector(
+    ".stCloset-dataList"
+  );
+
+  dayList.querySelectorAll(
+    ".stCloset-dataBtn"
+  ).forEach((button, index) => {
+
+    button.textContent = days[index];
+    button.dataset.index = index;
+
+    button.setAttribute(
+      "aria-label",
+      dayNames[index] + " 코디 보기"
+    );
+
+  });
+
+  /* FRI / SAT / SUN 버튼 생성 */
+
+  for(let i = 4; i < 7; i++) {
+
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.className = "stCloset-dataBtn";
+    button.dataset.index = i;
+    button.textContent = days[i];
+
+    button.setAttribute(
+      "aria-label",
+      dayNames[i] + " 코디 보기"
+    );
+
+    button.addEventListener("click", () => {
+      renderLook(i);
+      startLoop();
+    });
+
+    dayList.appendChild(button);
+  }
+
+  /* 코디 설명 영역 생성 */
+
+  const title = document.querySelector(
+    ".stCloset-cabinetTitle"
+  );
+
+  const heading = document.createElement("span");
+  heading.className = "stCloset-cabinetHeading";
+  heading.textContent = "Digital Closet";
+
+  const dayDescription = document.createElement("span");
+  dayDescription.className = "stCloset-dayDescription";
+
+  title.replaceChildren(heading, dayDescription);
+
+  /* 일요일 아우터 필터 추가 */
+
+  const topFilter = document.querySelector(
+    '.stCloset-filterBtn[data-filter="TOP"]'
+  );
+
+  const outerFilter = document.createElement("button");
+
+  outerFilter.type = "button";
+  outerFilter.className = "stCloset-filterBtn";
+  outerFilter.dataset.filter = "OUTER";
+  outerFilter.textContent = "OUTER";
+
+  topFilter.insertAdjacentElement(
+    "afterend",
+    outerFilter
+  );
+
+  function applyWeeklyFilter() {
+
+    const active = document.querySelector(
+      ".stCloset-filterBtn.stCloset-filterActive"
+    );
+
+    const filter = active?.dataset.filter || "ALL";
+
+    document.querySelectorAll(
+      ".stCloset-prototypeItem"
+    ).forEach(item => {
+
+      const hidden =
+        filter !== "ALL" &&
+        item.dataset.category !== filter;
+
+      item.style.opacity = hidden ? ".10" : "1";
+
+      item.style.filter = hidden
+        ? "grayscale(1) blur(.5px)"
+        : "none";
+
+      item.style.pointerEvents = hidden
+        ? "none"
+        : "auto";
+
+    });
+
+  }
+
+  outerFilter.addEventListener("click", () => {
+
+    document.querySelectorAll(
+      ".stCloset-filterBtn"
+    ).forEach(button => {
+      button.classList.remove(
+        "stCloset-filterActive"
+      );
+    });
+
+    outerFilter.classList.add(
+      "stCloset-filterActive"
+    );
+
+    applyWeeklyFilter();
+  });
+
+  document.querySelectorAll(
+    '.stCloset-filterBtn:not([data-filter="OUTER"])'
+  ).forEach(button => {
+    button.addEventListener(
+      "click",
+      applyWeeklyFilter
+    );
+  });
+
+  /* 기존 렌더링 함수 보존 */
+
+  const originalRenderLook = renderLook;
+
+  const accPanel = document.querySelector(
+    ".stCloset-moduleAcc"
+  );
+
+  const accEmptyText = document.querySelector(
+    "#stCloset-emptyAcc .stCloset-emptyText"
+  );
+
+  renderLook = function(index) {
+
+    const safeIndex =
+      ((Number(index) % demoLooks.length)
+      + demoLooks.length) % demoLooks.length;
+
+    originalRenderLook(safeIndex);
+
+    const look = demoLooks[safeIndex];
+
+    /* 요일별 설명 변경 */
+
+    dayDescription.textContent =
+      descriptions[safeIndex];
+
+    /* SUN 아우터를 액세서리 칸에 표시 */
+
+    if(look.outer) {
+
+      accPanel.dataset.category = "OUTER";
+
+      setOptional(
+        "stCloset-accImg",
+        "stCloset-accCode",
+        "stCloset-emptyAcc",
+        look.outer,
+        "OUTER"
+      );
+
+      if(accEmptyText) {
+        accEmptyText.textContent =
+          "NO SAVED OUTER";
+      }
+
+    } else {
+
+      accPanel.dataset.category = "ACCESSORY";
+
+      if(accEmptyText) {
+        accEmptyText.textContent =
+          "NO SAVED ACCESSORY";
+      }
+
+    }
+
+    /* 접근성 이미지 설명 */
+
+    $("stCloset-topImg").alt =
+      dayNames[safeIndex] + " 상의";
+
+    $("stCloset-bottomImg").alt =
+      dayNames[safeIndex] + " 하의";
+
+    $("stCloset-accImg").alt =
+      dayNames[safeIndex] +
+      (look.outer ? " 아우터" : " 액세서리");
+
+    $("stCloset-bagImg").alt =
+      dayNames[safeIndex] + " 가방";
+
+    applyWeeklyFilter();
+
+  };
+
+  /* 요일별 설명과 반응형 스타일 */
+
+  const weeklyStyle = document.createElement("style");
+
+  weeklyStyle.textContent = `
+
+    .stCloset-cabinetTitle {
+      flex-direction:column;
+      gap:5px;
+      text-align:center;
+      overflow:hidden;
+    }
+
+    .stCloset-cabinetHeading {
+      font:inherit;
+      line-height:1;
+    }
+
+    .stCloset-dayDescription {
+      max-width:100%;
+      padding:0 8px;
+      color:#E1A6CA;
+      font-family:Pretendard,sans-serif;
+      font-size:11px;
+      font-style:normal;
+      font-weight:500;
+      line-height:1.4;
+      letter-spacing:0;
+    }
+
+    @media(max-width:950px) {
+
+      .stCloset-dataList {
+        grid-template-columns:
+          repeat(7,minmax(0,1fr));
+      }
+
+    }
+
+    @media(max-width:760px) {
+
+      .stCloset-dataList {
+        grid-template-columns:
+          repeat(7,minmax(0,1fr));
+        gap:4px;
+      }
+
+      .stCloset-dataBtn {
+        min-width:0;
+        height:42px;
+        padding:0 2px;
+        font-size:9px;
+        letter-spacing:0;
+      }
+
+      .stCloset-dayDescription {
+        font-size:8px;
+        line-height:1.2;
+      }
+
+    }
+
+    @media(max-width:460px) {
+
+      .stCloset-dataList {
+        gap:3px;
+      }
+
+      .stCloset-dataBtn {
+        height:39px;
+        font-size:8px;
+      }
+
+      .stCloset-dayDescription {
+        font-size:7px;
+      }
+
+    }
+
+  `;
+
+  document.head.appendChild(weeklyStyle);
+
+  /* 첫 화면 월요일 표시 */
+
+  renderLook(0);
+
+  console.log(
+    "[STYLENS] Weekly Closet MON-SUN ready"
+  );
+
+})();
+</script>
+
+<!-- =========================================================
+     WEEKLY OUTFIT CAROUSEL: ORIGINAL LOOK + TWO EXTRA LOOKS
+     Keeps the existing weekday buttons, base wardrobe,
+     filters, AUTO LOOP, analytics and Firebase untouched.
+========================================================== -->
+<style>
+  .stCloset-carouselWrap {
+    min-width: 0;
+    position: relative;
+  }
+  .stCloset-carouselWrap .stCloset-cabinet {
+    width: 100%;
+  }
+  .stCloset-carouselArrow {
+    position: absolute;
+    z-index: 30;
+    top: calc((100% - 32px) / 2 - 18px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid rgba(225,149,198,.70);
+    border-radius: 50%;
+    color: #F5D5E9;
+    background: rgba(19,11,17,.94);
+    box-shadow: 0 5px 22px rgba(0,0,0,.55);
+    cursor: pointer;
+    transition: background .2s ease, border-color .2s ease, transform .2s ease;
+  }
+  .stCloset-carouselArrow:hover {
+    transform: translateY(-2px);
+    background: rgba(171,89,152,.35);
+    border-color: #E195C6;
+  }
+  .stCloset-carouselArrow:focus-visible,
+  .stCloset-carouselDot:focus-visible {
+    outline: 2px solid #E195C6;
+    outline-offset: 3px;
+  }
+  .stCloset-carouselArrow svg {
+    display: block;
+    width: 21px;
+    height: 21px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .stCloset-carouselPrev { left: -20px; }
+  .stCloset-carouselNext { right: -20px; }
+  .stCloset-carouselFooter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    height: 18px;
+    margin-top: 14px;
+  }
+  .stCloset-carouselDot {
+    flex: 0 0 auto;
+    display: block;
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border: 1px solid rgba(225,149,198,.62);
+    border-radius: 50%;
+    background: rgba(171,89,152,.18);
+    cursor: pointer;
+    transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+  }
+  .stCloset-carouselDot.is-active {
+    background: #E195C6;
+    border-color: #E195C6;
+    transform: scale(1.26);
+    box-shadow: 0 0 9px rgba(225,149,198,.52);
+  }
+  .stCloset-archiveGrid[hidden],
+  .stCloset-variantGrid[hidden] {
+    display: none !important;
+  }
+  /* Added looks share the EXACT asymmetrical 4-column silhouette of
+     the original Digital Closet: top / bottom / stats / bag / acc / sync. */
+  .stCloset-variantGrid {
+    height: calc(100% - 82px);
+    min-height: 0;
+    display: grid;
+    gap: 7px;
+    grid-template-columns: 1.12fr .84fr .92fr 1fr;
+    grid-template-rows: .68fr 1.06fr .68fr;
+    grid-template-areas:
+      "top bottom stats bag"
+      "top bottom acc bag"
+      "sync bottom acc bag";
+    animation: stCloset-variantReveal .3s ease-out both;
+  }
+  @keyframes stCloset-variantReveal {
+    from { opacity: .32; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .stCloset-variantGrid > [data-slot="top"] { grid-area: top; }
+  .stCloset-variantGrid > [data-slot="bottom"] { grid-area: bottom; }
+  .stCloset-variantGrid > [data-slot="stats"] { grid-area: stats; }
+  .stCloset-variantGrid > [data-slot="bag"] { grid-area: bag; }
+  .stCloset-variantGrid > [data-slot="acc"] { grid-area: acc; }
+  .stCloset-variantGrid > [data-slot="sync"] { grid-area: sync; }
+  .stCloset-variantCard { cursor: default; }
+  .stCloset-variantCard img { width: 85%; height: 81%; object-fit: contain; }
+  .stCloset-variantCard[data-slot="top"] img { width: 86%; height: 82%; }
+  .stCloset-variantCard[data-slot="bottom"] img { width: 84%; height: 85%; }
+  .stCloset-variantCard[data-slot="bag"] img { width: 78%; height: 76%; }
+  .stCloset-variantCard[data-slot="acc"] img { width: 75%; height: 73%; }
+  .stCloset-variantCard[data-slot="stats"] img,
+  .stCloset-variantCard[data-slot="sync"] img { width: 65%; height: 56%; }
+  /* Shoes look more intentional with extra breathing room in a tall slot. */
+  .stCloset-variantCard[data-slot="bag"][data-category="SHOES"] img {
+    width: 68%; height: 66%;
+  }
+  .stCloset-variantCard[data-slot="stats"] .stCloset-itemCode,
+  .stCloset-variantCard[data-slot="sync"] .stCloset-itemCode {
+    top: 6px; left: 7px; font-size: 8px;
+  }
+  .stCloset-variantCard .stCloset-itemCode { font-size: 9px; letter-spacing: .10em; }
+  .stCloset-variantCard .stCloset-itemMeta {
+    justify-content: space-between; text-align: left;
+    font-size: 8px; letter-spacing: .025em;
+  }
+  .stCloset-variantCard[data-slot="stats"] .stCloset-itemMeta,
+  .stCloset-variantCard[data-slot="sync"] .stCloset-itemMeta {
+    font-size: 7px; justify-content: center;
+    bottom: 6px;
+  }
+  .stCloset-variantCard[data-slot="stats"],
+  .stCloset-variantCard[data-slot="sync"] {
+    background: linear-gradient(145deg,rgba(171,89,152,.28),rgba(52,20,42,.15) 65%,#080708);
+  }
+  /* Keep the original two pink data panels as information tiles when a look
+     has fewer than six pieces, rather than stretching all clothes equally. */
+  .stCloset-variantInfo {
+    background: linear-gradient(135deg,rgba(171,89,152,.42),rgba(112,53,96,.30));
+    border-color: rgba(225,149,198,.88);
+    padding: 9px;
+    text-align: center;
+  }
+  .stCloset-variantInfo .stCloset-metaContent { gap: 5px; }
+  .stCloset-variantInfo .stCloset-metaNumber { font-size: clamp(21px,2vw,31px); }
+  .stCloset-variantInfo .stCloset-metaSmall { font-size: 8px; }
+  .stCloset-variantInfo .stCloset-metaBig { font-size: 11px; }
+  .stCloset-variantInfo[data-slot="acc"] {
+    background: radial-gradient(circle at 50% 45%,rgba(171,89,152,.15),rgba(55,19,44,.07) 55%,#070707 95%);
+  }
+  .stCloset-variantNoteText {
+    max-width: 240px;
+    color: #BA9EAF;
+    line-height: 1.65;
+    font-family: Pretendard,sans-serif;
+    font-size: 9px;
+    word-break: keep-all;
+  }
+  .stCloset-variantMissing {
+    display: none;
+    padding: 14px;
+    color: #B9A2B0;
+    text-align: center;
+    font-size: 10px;
+    line-height: 1.7;
+  }
+  .stCloset-variantCard.is-missing .stCloset-variantMissing { display: block; }
+  @media (min-width: 1600px) {
+    .stCloset-variantGrid {
+      height: calc(100% - clamp(82px,5vw + 8px,110px));
+    }
+  }
+  @media (max-width: 760px) {
+    .stCloset-carouselPrev { left: 2px; }
+    .stCloset-carouselNext { right: 2px; }
+    .stCloset-carouselArrow { width: 34px; height: 34px; }
+    .stCloset-carouselFooter { margin-top: 17px; }
+    .stCloset-variantGrid {
+      height: auto;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      grid-template-rows: 160px 160px 170px 120px;
+      grid-template-areas:
+        "top bottom"
+        "top bottom"
+        "acc bag"
+        "stats sync";
+      gap: 6px;
+    }
+    .stCloset-variantInfo .stCloset-metaNumber { font-size: 27px; }
+    .stCloset-variantInfo .stCloset-metaSmall { font-size: 8px; }
+    .stCloset-dayDescription {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+    }
+    .stCloset-variantCard img { max-width: 90%; max-height: 80%; }
+    .stCloset-variantCard .stCloset-itemCode { font-size: 8px; }
+    .stCloset-variantCard .stCloset-itemMeta { font-size: 8px; }
+  }
+  @media (max-width: 460px) {
+    .stCloset-variantGrid {
+      grid-template-rows: 155px 155px 160px 120px;
+    }
+    .stCloset-variantNoteText { font-size: 8px; }
+  }
+  @media (prefers-reduced-motion:reduce) {
+    .stCloset-carouselArrow,
+    .stCloset-carouselDot { transition: none; }
+  }
+</style>
+<script>
+(() => {
+  /* Keep source paths exactly as named in the prototype folder. */
+  const weeklyExtras = [
+    [
+      { description: "월요일, 차콜과 블랙을 매치한 미니멀한 데일리 코디입니다.", items: [
+        ["outer", "검정 롱 가디건"], ["top", "차콜 브이넥 상의"],
+        ["bottom", "검정 와이드 팬츠"], ["shoes", "검정 로퍼"]
+      ]},
+      { description: "월요일, 레이스 나시와 데님으로 자연스러운 레이어드 룩을 완성해 보세요.", items: [
+        ["outer", "아이보리 가디건"], ["top", "레이스 나시"],
+        ["scarf", "검정 스카프"], ["bottom", "워싱 와이드 데님"],
+        ["shoes", "다크 슬립온"]
+      ]}
+    ],
+    [
+      { description: "화요일, 데님 재킷과 그레이 후디에 브라운 가방을 더한 캐주얼 룩입니다.", items: [
+        ["outer", "워싱 데님 재킷"], ["top", "그레이 후디"],
+        ["bottom", "워싱 데님 팬츠"], ["bag", "브라운 숄더백"]
+      ]},
+      { description: "화요일, 블랙 아우터에 레이스와 롱부츠를 매치한 룩입니다.", items: [
+        ["outer", "블랙 하이넥 아우터"], ["dress", "블랙 레이스 원피스"],
+        ["tights", "레이스 반스타킹"], ["shoes", "블랙 롱부츠"]
+      ]}
+    ],
+    [
+      { description: "수요일, 가죽 재킷과 조거 팬츠에 패턴 가방을 더해 보세요.", items: [
+        ["outer", "블랙 가죽 재킷"], ["top", "화이트 긴팔 상의"],
+        ["bottom", "그레이 조거 팬츠"], ["bag", "호피 가방·체크 스카프"],
+        ["shoes", "블랙 퍼 부츠"]
+      ]},
+      { description: "수요일, 차콜 재킷과 플리츠스커트에 니삭스를 더한 레이어드 룩입니다.", items: [
+        ["outer", "차콜 재킷"], ["bottom", "플리츠 미니스커트"],
+        ["socks", "화이트 니삭스"], ["shoes", "블랙 레이스업 부츠"]
+      ]}
+    ],
+    [
+      { description: "목요일, 그레이 니트와 빈티지 데님에 블랙 액세서리를 매치해 보세요.", items: [
+        ["outer", "차콜 니트 가디건"], ["top", "그레이 나시"],
+        ["bottom", "빈티지 데님"], ["bag", "블랙 숄더백"],
+        ["shoes", "블랙 부츠"], ["acc", "블랙 벨트"]
+      ]},
+      { description: "목요일, 차콜 재킷과 진청 팬츠에 브라운 가방으로 포인트를 주세요.", items: [
+        ["outer", "차콜 재킷"], ["top", "레이스 상의"],
+        ["bottom", "진청 부츠컷"], ["bag", "브라운 숄더백"],
+        ["shoes", "블랙 로퍼"], ["acc", "스트라이프 머플러"]
+      ]}
+    ],
+    [
+      { description: "금요일, 퍼플 상의와 데님에 스트라이프 비니로 포인트를 준 룩입니다.", items: [
+        /* The filenames for these three items are switched in the supplied Finder screenshot. */
+        ["top", "퍼플 반팔 상의"], ["bottom", "워싱 데님"],
+        ["acc", "베이지 숄더백", "BAG"],
+        ["bag", "아이보리 메리제인", "SHOES"],
+        ["shoes", "퍼플 스트라이프 비니", "ACCESSORY"]
+      ]},
+      { description: "금요일, 블랙 후드집업과 민트 나시를 매치한 스트리트 룩입니다.", items: [
+        ["outer", "블랙 후드집업"], ["top", "민트 나시"],
+        ["bottom", "블랙 니트 쇼츠"], ["bag", "블랙 숄더백"],
+        ["shoes", "블랙 롱부츠"]
+      ]}
+    ],
+    [
+      { description: "토요일, 핑크 상의와 레이스 이너에 차콜 팬츠를 매치한 편안한 룩입니다.", items: [
+        ["top", "핑크 오프숄더"], ["inner", "레이스 이너"],
+        ["bottom", "차콜 와이드 팬츠"], ["bag", "블랙 숄더백"],
+        ["shoes", "그레이 스니커즈"]
+      ]},
+      { description: "토요일, 래글런 티셔츠와 프린트 팬츠로 가벼운 캐주얼 룩을 연출해 보세요.", items: [
+        ["top", "래글런 긴팔 티셔츠"], ["bottom", "플라워 프린트 팬츠"],
+        ["shoes", "블랙 슬리퍼"]
+      ]}
+    ],
+    [
+      { description: "일요일, 그래픽 긴팔과 네이비 와이드 팬츠로 편안하게 입어보세요.", items: [
+        ["top", "화이트 그래픽 긴팔"], ["bottom", "네이비 와이드 팬츠"],
+        ["bag", "블랙 숄더백"], ["shoes", "그레이 운동화"]
+      ]},
+      { description: "일요일, 그레이 니트와 아이보리 스커트에 시스루 스카프를 더해 보세요.", items: [
+        ["outer", "차콜 니트 가디건"], ["bottom", "아이보리 프릴 스커트"],
+        ["acc", "시스루 스카프"], ["bag", "블랙 숄더백"],
+        ["shoes", "그레이 롱부츠"]
+      ]}
+    ]
+  ];
+
+  const labelMap = {
+    outer: "OUTER", top: "TOP", inner: "TOP", dress: "DRESS",
+    bottom: "BOTTOM", bag: "BAG", acc: "ACCESSORY",
+    scarf: "ACCESSORY", tights: "ACCESSORY", socks: "ACCESSORY",
+    shoes: "SHOES"
+  };
+  const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+  const dayNames = ["월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일"];
+
+  /* Build statistics from the same two arrays that render My Closet. */
+  const baseCategoryMap = {
+    top: "TOP",
+    bottom: "BOTTOM",
+    bag: "BAG",
+    acc: "ACCESSORY",
+    outer: "OUTER"
+  };
+  const bottomColors = [
+    "#E8B4D6",
+    "#D697C1",
+    "#BF79A7",
+    "#A5618E",
+    "#894D76",
+    "#6A3B5A",
+    "#4D3043"
+  ];
+  const topColors = [
+    "#EBB9DB",
+    "#DEA3CD",
+    "#CF8BBB",
+    "#BC72A4",
+    "#A65E90",
+    "#8C4A78",
+    "#713B62",
+    "#563049"
+  ];
+  const bottomTypeOrder = [
+    "JEANS",
+    "SLACKS",
+    "SKIRT",
+    "SHORTS",
+    "JOGGER",
+    "ETC"
+  ];
+  const topTypeOrder = [
+    "T-SHIRT",
+    "SHIRT",
+    "KNIT",
+    "HOODIE",
+    "BLOUSE",
+    "SLEEVELESS",
+    "ETC"
+  ];
+
+  /*
+   * My Closet has no subtype field yet. These values are keyed by the same
+   * item codes and asset IDs used by demoLooks and weeklyExtras. They were
+   * verified against the registered garment images and their closet labels.
+   */
+  const closetDetailTypeMap = Object.freeze({
+    TOP_012: "T-SHIRT",
+    TOP_018: "SHIRT",
+    TOP_021: "SLEEVELESS",
+    TOP_024: "KNIT",
+    TOP_025: "T-SHIRT",
+    TOP_026: "HOODIE",
+    TOP_027: "HOODIE",
+    BOTTOM_008: "SHORTS",
+    BOTTOM_011: "JEANS",
+    BOTTOM_014: "JEANS",
+    BOTTOM_017: "SKIRT",
+    BOTTOM_018: "SKIRT",
+    BOTTOM_019: "JOGGER",
+    BOTTOM_020: "ETC",
+    "look01-1_top": "T-SHIRT",
+    "look01-1_bottom": "ETC",
+    "look01-2_top": "SLEEVELESS",
+    "look01-2_bottom": "JEANS",
+    "look02-1_top": "HOODIE",
+    "look02-1_bottom": "JEANS",
+    "look03-1_top": "T-SHIRT",
+    "look03-1_bottom": "JOGGER",
+    "look03-2_bottom": "SKIRT",
+    "look04-1_top": "SLEEVELESS",
+    "look04-1_bottom": "JEANS",
+    "look04-2_top": "SLEEVELESS",
+    "look04-2_bottom": "JEANS",
+    "look05-1_top": "T-SHIRT",
+    "look05-1_bottom": "JEANS",
+    "look05-2_top": "SLEEVELESS",
+    "look05-2_bottom": "SHORTS",
+    "look06-1_top": "T-SHIRT",
+    "look06-1_inner": "SLEEVELESS",
+    "look06-1_bottom": "JOGGER",
+    "look06-2_top": "T-SHIRT",
+    "look06-2_bottom": "JOGGER",
+    "look07-1_top": "T-SHIRT",
+    "look07-1_bottom": "JOGGER",
+    "look07-2_bottom": "SKIRT"
+  });
+
+  function normalizeClosetCategory(value) {
+    const category = String(value || "").trim().toUpperCase();
+    if (category === "ACC") return "ACCESSORY";
+    if (category === "INNER") return "TOP";
+    return category;
+  }
+
+  function normalizeDetailType(value) {
+    const type = String(value || "").trim().replace(/_/g, " ");
+    return type ? type.toUpperCase() : "";
+  }
+
+  function objectDetailType(item) {
+    return normalizeDetailType(
+      item?.subCategory
+      || item?.type
+      || item?.detailType
+      || item?.clothesType
+      || item?.clothingType
+      || item?.itemType
+    );
+  }
+
+  function classifyDetailType(category, value) {
+    const detail = normalizeDetailType(value);
+    if (!detail) return "ETC";
+    const normalized = detail.replace(/[-_/]+/g, " ");
+
+    if (category === "BOTTOM") {
+      if (/JEANS?|DENIM|청바지|데님/.test(normalized)) return "JEANS";
+      if (/SLACKS?|TROUSERS?|슬랙스|정장바지/.test(normalized)) return "SLACKS";
+      if (/SKIRTS?|치마|스커트/.test(normalized)) return "SKIRT";
+      if (/SHORTS?|반바지|쇼츠/.test(normalized)) return "SHORTS";
+      if (/TRAINING|JOGGERS?|SWEAT ?PANTS|TRACK ?PANTS|트레이닝|조거|스웨트|트랙/.test(normalized)) {
+        return "JOGGER";
+      }
+      if (/^(BOTTOMS?|PANTS?|하의|하의류|바지)$/.test(normalized)) {
+        return "ETC";
+      }
+      return "ETC";
+    }
+
+    if (category === "TOP") {
+      if (/T ?SHIRTS?|TSHIRT|\bTEE\b|티셔츠|반팔 ?티|긴팔 ?티/.test(normalized)) {
+        return "T-SHIRT";
+      }
+      if (/SHIRTS?|셔츠|남방/.test(normalized)) return "SHIRT";
+      if (/KNIT|SWEATERS?|니트|스웨터/.test(normalized)) return "KNIT";
+      if (/HOODIES?|HOODED|후디|후드/.test(normalized)) return "HOODIE";
+      if (/BLOUSES?|블라우스/.test(normalized)) return "BLOUSE";
+      if (/CAMISOLE|SLEEVELESS|TANK ?TOP|나시|민소매|캐미솔/.test(normalized)) {
+        return "SLEEVELESS";
+      }
+      if (/^(TOPS?|상의|상의류)$/.test(normalized)) return "ETC";
+      return "ETC";
+    }
+
+    return "ETC";
+  }
+
+  function baseClosetItem(item, key, dayIndex) {
+    if (!item) return null;
+    if (!Array.isArray(item)) {
+      const id = item.itemId || item.id || item.code || item.image || item.src;
+      if (!id) return null;
+      const normalizedId = String(id);
+      return {
+        id: normalizedId,
+        category: normalizeClosetCategory(item.category || baseCategoryMap[key]),
+        detail: objectDetailType(item) || closetDetailTypeMap[normalizedId] || ""
+      };
+    }
+    const id = item[0] || item[1] || `base-${dayIndex}-${key}`;
+    return {
+      id: String(id),
+      category: baseCategoryMap[key],
+      detail: normalizeDetailType(item[4] || closetDetailTypeMap[String(id)])
+    };
+  }
+
+  function extraClosetItem(spec, dayIndex, extraIndex, itemIndex) {
+    if (!spec) return null;
+    let suffix;
+    let category;
+    let itemId;
+    let detail;
+
+    if (Array.isArray(spec)) {
+      suffix = spec[0];
+      category = spec[2] || labelMap[suffix];
+      itemId = spec[3];
+      detail = spec[4];
+    } else {
+      suffix = spec.suffix || spec.slot;
+      category = spec.category || labelMap[suffix];
+      itemId = spec.itemId || spec.id || spec.code;
+      detail = objectDetailType(spec);
+    }
+
+    if (!suffix) return null;
+    const stem = `look${String(dayIndex + 1).padStart(2, "0")}-${extraIndex + 1}`;
+    const assetId = `${stem}_${suffix}`;
+    const resolvedId = String(itemId || assetId || `extra-${dayIndex}-${extraIndex}-${itemIndex}`);
+    return {
+      id: resolvedId,
+      category: normalizeClosetCategory(category),
+      detail: normalizeDetailType(
+        detail
+        || closetDetailTypeMap[resolvedId]
+        || closetDetailTypeMap[assetId]
+      )
+    };
+  }
+
+  function collectDigitalClosetItems() {
+    const collected = [];
+
+    demoLooks.forEach((look, dayIndex) => {
+      Object.keys(baseCategoryMap).forEach(key => {
+        const item = baseClosetItem(look?.[key], key, dayIndex);
+        if (item) collected.push(item);
+      });
+    });
+
+    weeklyExtras.forEach((dayLooks, dayIndex) => {
+      dayLooks.forEach((look, extraIndex) => {
+        look.items.forEach((spec, itemIndex) => {
+          const item = extraClosetItem(spec, dayIndex, extraIndex, itemIndex);
+          if (item) collected.push(item);
+        });
+      });
+    });
+
+    const unique = new Map();
+    collected.forEach(item => {
+      const existing = unique.get(item.id);
+      if (existing) {
+        if (!existing.detail && item.detail) existing.detail = item.detail;
+        return;
+      }
+      unique.set(item.id, item);
+    });
+    return [...unique.values()];
+  }
+
+  function typeCounts(items, category) {
+    const counts = new Map();
+    items
+      .filter(item => item.category === category)
+      .forEach(item => {
+        const type = classifyDetailType(category, item.detail);
+        counts.set(type, (counts.get(type) || 0) + 1);
+      });
+    const order = category === "BOTTOM" ? bottomTypeOrder : topTypeOrder;
+    return order.map(name => ({
+      name,
+      count: counts.get(name) || 0
+    }));
+  }
+
+  function formatCount(value) {
+    return String(value).padStart(2, "0");
+  }
+
+  function setText(id, value) {
+    const element = document.getElementById(id);
+    if (element) element.textContent = value;
+  }
+
+  function renderBottomChart(entries, total) {
+    const donut = document.getElementById("stCloset-bottomDonut");
+    const legend = document.getElementById("stCloset-bottomLegend");
+    if (!donut || !legend) return;
+
+    if (total) {
+      let start = 0;
+      const segments = entries.map((entry, index) => {
+        const end = start + entry.count / total * 100;
+        const color = bottomColors[index % bottomColors.length];
+        const segment = `${color} ${start.toFixed(2)}% ${end.toFixed(2)}%`;
+        start = end;
+        return segment;
+      });
+      donut.style.background = `conic-gradient(${segments.join(",")})`;
+    } else {
+      donut.style.background = "rgba(255,255,255,.06)";
+    }
+
+    legend.replaceChildren(...entries.map((entry, index) => {
+      const percentage = total ? entry.count / total * 100 : 0;
+      const row = document.createElement("div");
+      const dot = document.createElement("span");
+      const name = document.createElement("span");
+      const metric = document.createElement("span");
+      const value = document.createElement("strong");
+      const percent = document.createElement("span");
+      row.className = "stCloset-legendItem";
+      row.setAttribute(
+        "aria-label",
+        `${entry.name} ${entry.count}개, ${percentage.toFixed(1)}%`
+      );
+      dot.className = "stCloset-legendDot";
+      dot.style.background = bottomColors[index % bottomColors.length];
+      dot.style.color = bottomColors[index % bottomColors.length];
+      name.className = "stCloset-legendName";
+      name.textContent = entry.name;
+      metric.className = "stCloset-legendMetric";
+      value.className = "stCloset-legendValue";
+      value.textContent = formatCount(entry.count);
+      percent.className = "stCloset-legendPercent";
+      percent.textContent = `${percentage.toFixed(1)}%`;
+      metric.append(value, percent);
+      row.append(dot, name, metric);
+      return row;
+    }));
+  }
+
+  function renderTopChart(entries, total) {
+    const bars = document.getElementById("stCloset-topBars");
+    if (!bars) return;
+    bars.replaceChildren(...entries.map((entry, index) => {
+      const percentage = total ? entry.count / total * 100 : 0;
+      const row = document.createElement("div");
+      const label = document.createElement("span");
+      const track = document.createElement("div");
+      const fill = document.createElement("div");
+      const metric = document.createElement("span");
+      const value = document.createElement("strong");
+      const percent = document.createElement("span");
+      row.className = "stCloset-barRow";
+      row.setAttribute(
+        "aria-label",
+        `${entry.name} ${entry.count}개, ${percentage.toFixed(1)}%`
+      );
+      label.className = "stCloset-barLabel";
+      label.textContent = entry.name;
+      track.className = "stCloset-barTrack";
+      fill.className = "stCloset-barFill";
+      fill.style.width = `${percentage.toFixed(2)}%`;
+      const color = topColors[index % topColors.length];
+      fill.style.background = `linear-gradient(90deg, ${color}66, ${color})`;
+      fill.style.boxShadow = `0 0 12px ${color}45`;
+      track.appendChild(fill);
+      metric.className = "stCloset-barMetric";
+      value.className = "stCloset-barValue";
+      value.textContent = formatCount(entry.count);
+      percent.className = "stCloset-barPercent";
+      percent.textContent = `${percentage.toFixed(1)}%`;
+      metric.append(value, percent);
+      row.append(label, track, metric);
+      return row;
+    }));
+  }
+
+  let closetStatisticsSignature = "";
+
+  function updateClosetStatistics() {
+    const items = collectDigitalClosetItems();
+    const signature = JSON.stringify(items);
+    if (signature === closetStatisticsSignature) return;
+    closetStatisticsSignature = signature;
+
+    const counts = { TOP: 0, BOTTOM: 0, BAG: 0, ACCESSORY: 0 };
+    items.forEach(item => {
+      if (Object.prototype.hasOwnProperty.call(counts, item.category)) {
+        counts[item.category] += 1;
+      }
+    });
+    const topTypes = typeCounts(items, "TOP");
+    const bottomTypes = typeCounts(items, "BOTTOM");
+
+    setText("stCloset-statsTotal", items.length);
+    setText(
+      "stCloset-statsCategoryLine",
+      `${formatCount(counts.TOP)} TOP / ${formatCount(counts.BOTTOM)} BOTTOM`
+    );
+    setText("stCloset-totalNumber", items.length);
+    setText("stCloset-countTop", formatCount(counts.TOP));
+    setText("stCloset-countBottom", formatCount(counts.BOTTOM));
+    setText("stCloset-countBag", formatCount(counts.BAG));
+    setText("stCloset-countAcc", formatCount(counts.ACCESSORY));
+    setText("stCloset-bottomChartCount", `${formatCount(counts.BOTTOM)} ITEMS`);
+    setText("stCloset-bottomDonutNumber", formatCount(counts.BOTTOM));
+    setText("stCloset-topChartCount", `${formatCount(counts.TOP)} ITEMS`);
+    renderBottomChart(bottomTypes, counts.BOTTOM);
+    renderTopChart(topTypes, counts.TOP);
+
+    window.stylensClosetStatistics = {
+      source: "demoLooks + weeklyExtras",
+      total: items.length,
+      counts: { ...counts },
+      topTypes,
+      bottomTypes
+    };
+  }
+
+  window.stylensDigitalClosetData = { demoLooks, weeklyExtras };
+  window.stylensUpdateClosetStatistics = updateClosetStatistics;
+  window.addEventListener("stylensClosetDataUpdate", updateClosetStatistics);
+  updateClosetStatistics();
+  const closetStatisticsTimer = window.setInterval(updateClosetStatistics, 1000);
+  window.addEventListener(
+    "beforeunload",
+    () => window.clearInterval(closetStatisticsTimer),
+    { once: true }
+  );
+
+  const cabinet = document.querySelector(".stCloset-cabinet");
+  const baseGrid = document.getElementById("stCloset-prototypeGrid");
+  const description = document.querySelector(".stCloset-dayDescription");
+  if (!cabinet || !baseGrid || typeof renderLook !== "function" || !description) return;
+
+  const wrap = document.createElement("div");
+  wrap.className = "stCloset-carouselWrap";
+  wrap.setAttribute("role", "region");
+  wrap.setAttribute("aria-roledescription", "carousel");
+  wrap.setAttribute("aria-label", "요일별 코디 3개 보기");
+  cabinet.parentNode.insertBefore(wrap, cabinet);
+  wrap.appendChild(cabinet);
+
+  const variantGrid = document.createElement("div");
+  variantGrid.className = "stCloset-variantGrid";
+  variantGrid.id = "stCloset-variantGrid";
+  variantGrid.hidden = true;
+  cabinet.appendChild(variantGrid);
+
+  function arrowButton(direction) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "stCloset-carouselArrow stCloset-carousel" + (direction === "prev" ? "Prev" : "Next");
+    button.setAttribute("aria-label", direction === "prev" ? "이전 코디" : "다음 코디");
+    const ns = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(ns,"svg");
+    svg.setAttribute("viewBox","0 0 24 24");
+    svg.setAttribute("aria-hidden","true");
+    const path = document.createElementNS(ns,"path");
+    path.setAttribute("d", direction === "prev" ? "M15 18l-6-6 6-6" : "M9 18l6-6-6-6");
+    svg.appendChild(path);
+    button.appendChild(svg);
+    wrap.appendChild(button);
+    return button;
+  }
+  const prev = arrowButton("prev");
+  const next = arrowButton("next");
+  const footer = document.createElement("div");
+  footer.className = "stCloset-carouselFooter";
+  footer.setAttribute("role", "group");
+  footer.setAttribute("aria-label", "코디 선택");
+  const dots = Array.from({length: 3}, (_,index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "stCloset-carouselDot";
+    button.dataset.lookIndex = String(index);
+    button.setAttribute("aria-label", `${index + 1}번째 코디 보기`);
+    footer.appendChild(button);
+    return button;
+  });
+  wrap.appendChild(footer);
+
+  let activeDay = 0;
+  let activeLook = 0;
+  let originalDescription = "";
+  const baseRenderLook = renderLook;
+
+  // Preserve the original look's alternating large photo modules + two
+  // tinted status modules for all extra outfits. Assign each new garment to
+  // the most suitable original grid area (no equal-size catalog cards).
+  const gridSlots = ["top", "bottom", "stats", "bag", "acc", "sync"];
+  function layoutItems(specs) {
+    const unplaced = specs.map(spec => ({
+      spec,
+      category: spec[2] || labelMap[spec[0]] || "ACCESSORY"
+    }));
+    const pick = (...categories) => {
+      let index = unplaced.findIndex(item => categories.includes(item.category));
+      if (index === -1 && categories.length === 0) index = 0;
+      return index >= 0 ? unplaced.splice(index,1)[0] : null;
+    };
+    const result = {
+      top: pick("OUTER") || pick("TOP") || pick("DRESS") || pick(),
+      bottom: pick("BOTTOM") || pick("DRESS") || pick(),
+      bag: pick("BAG") || pick("SHOES") || pick(),
+      acc: pick("TOP") || pick("ACCESSORY") || pick("DRESS") || pick("SHOES") || pick(),
+      stats: pick("SHOES") || pick("ACCESSORY") || pick(),
+      sync: pick()
+    };
+    return result;
+  }
+
+  function makeCard(item, dayIndex, extraIndex, slot) {
+    const [suffix, label] = item.spec;
+    const category = item.category;
+    const stem = `look${String(dayIndex + 1).padStart(2, "0")}-${extraIndex + 1}`;
+    const filename = `${stem}_${suffix}.webp`;
+    const card = document.createElement("article");
+    card.className = "stCloset-module stCloset-prototypeItem stCloset-variantCard";
+    card.dataset.category = category;
+    card.dataset.slot = slot;
+    card.setAttribute("aria-label", `${dayNames[dayIndex]} ${extraIndex + 2}번째 코디, ${label}`);
+
+    const code = document.createElement("span");
+    code.className = "stCloset-itemCode";
+    code.textContent = category;
+    card.appendChild(code);
+
+    if (["top","bottom","acc"].includes(slot)) {
+      const match = document.createElement("span");
+      match.className = "stCloset-matchBadge";
+      match.textContent = "TODAY'S MATCH";
+      card.appendChild(match);
+    }
+    const img = document.createElement("img");
+    img.src = filename;
+    img.alt = label;
+    img.loading = "lazy";
+    img.decoding = "async";
+    const missing = document.createElement("span");
+    missing.className = "stCloset-variantMissing";
+    missing.textContent = "No saved";
+    img.addEventListener("error", () => {
+      img.style.display = "none";
+      card.classList.add("is-missing");
+      console.warn("[STYLENS] 이미지가 없습니다:", filename);
+    });
+    card.appendChild(img);
+    card.appendChild(missing);
+
+    const meta = document.createElement("div");
+    meta.className = "stCloset-itemMeta";
+    const title = document.createElement("span");
+    title.textContent = label;
+    const type = document.createElement("span");
+    type.textContent = category;
+    meta.appendChild(title);
+    if (!["stats","sync"].includes(slot)) meta.appendChild(type);
+    card.appendChild(meta);
+    return card;
+  }
+
+  function makeInfoTile(slot, dayIndex, extraIndex, text) {
+    const tile = document.createElement("div");
+    tile.className = "stCloset-module stCloset-variantInfo";
+    tile.dataset.slot = slot;
+    const content = document.createElement("div");
+    content.className = "stCloset-metaContent";
+    if (slot === "stats") {
+      content.innerHTML = `<span class="stCloset-metaNumber">0${extraIndex + 2}</span>
+        <span class="stCloset-metaSmall">OUTFIT / 03</span>
+        <div class="stCloset-metaLine"></div>
+        <span class="stCloset-metaSmall">${days[dayIndex]} STYLE</span>`;
+    } else if (slot === "sync") {
+      content.innerHTML = `<div class="stCloset-dots">
+          <span class="stCloset-dot"></span><span class="stCloset-dot"></span><span class="stCloset-dot"></span>
+        </div><span class="stCloset-metaSmall">STYLENS</span>
+        <strong class="stCloset-metaBig">DAILY OUTFIT</strong>
+        <span class="stCloset-metaSmall">MY CLOSET</span>`;
+    } else {
+      const heading = document.createElement("span");
+      heading.className = "stCloset-metaSmall";
+      heading.textContent = "STYLE NOTES";
+      const body = document.createElement("span");
+      body.className = "stCloset-variantNoteText";
+      body.textContent = text;
+      content.appendChild(heading);
+      content.appendChild(body);
+    }
+    tile.appendChild(content);
+    return tile;
+  }
+
+  function applyVariantFilter() {
+    const activeFilter = document.querySelector(".stCloset-filterBtn.stCloset-filterActive");
+    const category = activeFilter ? activeFilter.dataset.filter : "ALL";
+    variantGrid.querySelectorAll(".stCloset-variantCard").forEach(card => {
+      const dimmed = category !== "ALL" && card.dataset.category !== category;
+      card.style.opacity = dimmed ? ".10" : "1";
+      card.style.filter = dimmed ? "grayscale(1) blur(.5px)" : "none";
+      card.style.pointerEvents = dimmed ? "none" : "auto";
+    });
+  }
+
+  function showLook() {
+    const isBase = activeLook === 0;
+    baseGrid.hidden = !isBase;
+    variantGrid.hidden = isBase;
+    if (isBase) {
+      description.textContent = originalDescription;
+    } else {
+      const extraIndex = activeLook - 1;
+      const data = weeklyExtras[activeDay][extraIndex];
+      const slots = layoutItems(data.items);
+      const tiles = gridSlots.map(slot => slots[slot]
+        ? makeCard(slots[slot], activeDay, extraIndex, slot)
+        : makeInfoTile(slot, activeDay, extraIndex, data.description));
+      variantGrid.replaceChildren(...tiles);
+      description.textContent = data.description;
+      applyVariantFilter();
+    }
+    const leftLabel = document.getElementById("stCloset-currentData");
+    if (leftLabel) leftLabel.textContent = `${days[activeDay]} ${String(activeLook + 1).padStart(2,"0")}`;
+    dots.forEach((button,i) => {
+      button.classList.toggle("is-active", i === activeLook);
+      button.setAttribute("aria-pressed", String(i === activeLook));
+      button.setAttribute("aria-label", `${dayNames[activeDay]} ${i + 1}번째 코디 보기`);
+    });
+    wrap.setAttribute("aria-label", `${dayNames[activeDay]} ${activeLook + 1} / 3 코디`);
+  }
+
+  function changeLook(index, resetTimer = true) {
+    activeLook = (index % 3 + 3) % 3;
+    showLook();
+    if (resetTimer) startLoop();
+  }
+
+  renderLook = function(dayIndex) {
+    const safe = (Number(dayIndex) % demoLooks.length + demoLooks.length) % demoLooks.length;
+    activeDay = safe;
+    activeLook = 0;
+    baseRenderLook(safe);  // preserve original grid, filters, selected day and wording
+    originalDescription = description.textContent;
+    showLook();
+  };
+
+  /* Existing AUTO LOOP now moves through 3 outfits before changing days. */
+  startLoop = function() {
+    clearInterval(loopTimer);
+    loopTimer = setInterval(() => {
+      if (!autoLoop) return;
+      if (activeLook < 2) {
+        changeLook(activeLook + 1, false);
+      } else {
+        renderLook((currentIndex + 1) % demoLooks.length);
+      }
+    }, 5200);
+  };
+
+  prev.addEventListener("click", () => changeLook(activeLook - 1));
+  next.addEventListener("click", () => changeLook(activeLook + 1));
+  dots.forEach((button, i) => button.addEventListener("click", () => changeLook(i)));
+  wrap.addEventListener("keydown", event => {
+    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+      if (!wrap.contains(document.activeElement)) return;
+      event.preventDefault();
+      changeLook(activeLook + (event.key === "ArrowLeft" ? -1 : 1));
+    }
+  });
+  document.querySelectorAll(".stCloset-filterBtn").forEach(button => {
+    button.addEventListener("click", applyVariantFilter);
+  });
+
+  renderLook(0);
+  startLoop();
+  console.log("[STYLENS] Weekly 7 x 3 outfit carousel ready");
+})();
+</script>
+
+</body>
+</html>

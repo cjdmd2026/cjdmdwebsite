@@ -1,0 +1,3688 @@
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  font-family:
+    "Pretendard",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+
+  background: #fff;
+  color: #1a1a1a;
+
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul,
+li {
+  list-style: none;
+}
+
+.main-content {
+  position: relative;
+  width: 100%;
+  background: #fff;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 75px;
+
+  background: rgba(255,255,255,.96);
+
+  backdrop-filter: blur(8px);
+
+  border-bottom: 2px solid #ff7710;
+
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+
+  transition:
+    transform
+    .35s
+    cubic-bezier(.16,1,.3,1);
+}
+
+.header.is-hidden {
+  transform: translateY(-100%);
+}
+
+.header-inner {
+  width: 90%;
+  max-width: 1240px;
+
+  margin: 0 auto;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-logo-img {
+  height: 36px;
+  width: auto;
+
+  display: block;
+}
+
+.header-menu-list {
+  display: flex;
+
+  gap: 36px;
+}
+
+.header-menu-item a {
+  font-size: 15px;
+  font-weight: 500;
+
+  color: #666;
+}
+
+.header-menu-item a:hover {
+  color: #ff7710;
+}
+
+
+/* =========================================================
+   MOBILE MENU
+========================================================= */
+
+.mobile-menu-toggle {
+  display: none;
+
+  width: 28px;
+  height: 22px;
+
+  position: relative;
+
+  background: none;
+  border: 0;
+
+  cursor: pointer;
+}
+
+.mobile-menu-toggle span {
+  position: absolute;
+
+  left: 0;
+
+  width: 100%;
+  height: 2px;
+
+  background: #111;
+
+  transition: .3s;
+}
+
+.mobile-menu-toggle span:nth-child(1) {
+  top: 0;
+}
+
+.mobile-menu-toggle span:nth-child(2) {
+  top: 9px;
+}
+
+.mobile-menu-toggle span:nth-child(3) {
+  top: 18px;
+}
+
+.mobile-menu-toggle.is-active span:nth-child(1) {
+  top: 9px;
+
+  transform: rotate(45deg);
+}
+
+.mobile-menu-toggle.is-active span:nth-child(2) {
+  opacity: 0;
+}
+
+.mobile-menu-toggle.is-active span:nth-child(3) {
+  top: 9px;
+
+  transform: rotate(-45deg);
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero-scroll-section {
+  position: relative;
+
+  width: 100%;
+  height: 250vh;
+}
+
+.hero-sticky-wrapper {
+  position: sticky;
+
+  top: 0;
+
+  width: 100%;
+  height: 100vh;
+
+  overflow: hidden;
+}
+
+.hero-video {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.scroll-down-icon {
+  position: absolute;
+
+  left: 50%;
+  bottom: 35px;
+
+  transform: translateX(-50%);
+
+  z-index: 5;
+}
+
+.mouse-shape {
+  position: relative;
+
+  width: 26px;
+  height: 48px;
+
+  border: 3px solid #fff;
+
+  border-radius: 20px;
+}
+
+.mouse-wheel {
+  position: absolute;
+
+  left: 50%;
+  top: 8px;
+
+  width: 5px;
+  height: 5px;
+
+  transform: translateX(-50%);
+
+  border-radius: 50%;
+
+  background: #fff;
+
+  animation:
+    mouseWheel
+    2s
+    infinite;
+}
+
+@keyframes mouseWheel {
+
+  0% {
+    opacity: 0;
+
+    transform:
+      translate(-50%,0);
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 1;
+
+    transform:
+      translate(-50%,18px);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translate(-50%,22px);
+  }
+}
+
+
+/* =========================================================
+   DYSLEXIA
+========================================================= */
+
+.dyslexia-info-section {
+  position: relative;
+
+  width: 100%;
+  height: 200vh;
+
+  background: #fff;
+}
+
+.dyslexia-sticky {
+  position: sticky;
+
+  top: 0;
+
+  width: 100%;
+  height: 100vh;
+
+  overflow: hidden;
+}
+
+.dyslexia-content {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  text-align: center;
+}
+
+.dyslexia-title {
+  position: absolute;
+
+  top: 31%;
+  left: 50%;
+
+  width: 100%;
+
+  transform:
+    translate(-50%,40px);
+
+  font-size:
+    clamp(
+      32px,
+      3vw,
+      44px
+    );
+
+  font-weight: 600;
+
+  opacity: 0;
+}
+
+.dyslexia-image-wrap {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+
+  transform:
+    translate(-50%,200px);
+
+  opacity: 0;
+}
+
+.dyslexia-img {
+  display: block;
+
+  width: 250px;
+  height: auto;
+}
+
+
+/* =========================================================
+   ORANGE
+========================================================= */
+
+.orange-transition-section {
+  position: relative;
+
+  width: 100%;
+  height: 190vh;
+}
+
+.orange-sticky {
+  position: sticky;
+
+  top: 0;
+
+  width: 100%;
+  height: 100vh;
+
+  background: #fff;
+}
+
+.orange-content {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+}
+
+.orange-title {
+  font-size:
+    clamp(
+      32px,
+      3vw,
+      44px
+    );
+
+  font-weight: 600;
+
+  color: #fff;
+
+  opacity: 0;
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.keyword-search-section {
+  min-height: 100vh;
+
+  padding: 120px 24px;
+
+  background: #F6F6F6;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.keyword-search-inner {
+  width: 100%;
+  max-width: 1100px;
+
+  text-align: center;
+
+  opacity: 0;
+
+  transform:
+    translateY(30px);
+
+  transition:
+    .8s ease;
+}
+
+.keyword-search-inner.is-visible {
+  opacity: 1;
+
+  transform:
+    translateY(0);
+}
+
+.keyword-search-title {
+  font-size:
+    clamp(
+      28px,
+      2.5vw,
+      36px
+    );
+
+  font-weight: 600;
+
+  margin-bottom: 16px;
+}
+
+.keyword-search-description {
+  font-size: 17px;
+
+  color: #777;
+
+  margin-bottom: 70px;
+}
+
+.keyword-search-area {
+  position: relative;
+
+  width:
+    min(
+      800px,
+      100%
+    );
+
+  margin: 0 auto;
+}
+
+.fake-search-box {
+  position: relative;
+
+  z-index: 2;
+
+  width: 100%;
+  height: 90px;
+
+  padding:
+    0 38px
+    0 200px;
+
+  border-radius: 50px;
+
+  background: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.fake-search-text-area {
+  display: flex;
+  align-items: center;
+}
+
+.fake-search-text {
+  font-size: 31px;
+  font-weight: 700;
+}
+
+.typing-caret {
+  width: 2px;
+  height: 35px;
+
+  margin-left: 4px;
+
+  background: #333;
+
+  animation:
+    caretBlink
+    .8s
+    infinite;
+}
+
+@keyframes caretBlink {
+
+  0%,
+  48% {
+    opacity: 1;
+  }
+
+  49%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.fake-search-actions {
+  display: flex;
+  align-items: center;
+
+  gap: 25px;
+}
+
+.fake-clear-button {
+  width: 28px;
+  height: 28px;
+
+  border-radius: 50%;
+
+  background: #ccc;
+
+  color: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fake-search-icon {
+  width: 34px;
+  height: 34px;
+}
+
+.fake-search-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.search-character {
+  position: absolute;
+
+  z-index: 5;
+
+  pointer-events: none;
+}
+
+.search-character-left {
+  width: 185px;
+
+  left: 10px;
+  bottom: 50px;
+}
+
+.search-character-right {
+  width: 90px;
+
+  right: 80px;
+  bottom: 120px;
+}
+
+.recommended-keywords {
+  margin-top: 20px;
+
+  padding-left: 200px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 25px;
+}
+
+.recommended-label {
+  font-size: 13px;
+
+  color: #777;
+}
+
+.keyword-chips {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 7px;
+}
+
+.keyword-chip {
+  padding:
+    6px
+    12px;
+
+  border-radius: 20px;
+
+  background: #dedede;
+
+  color: #666;
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   TRAINING STANDARD
+========================================================= */
+
+.training-standard-section {
+  position: relative;
+
+  min-height: 100vh;
+
+  padding:
+    90px
+    30px
+    25px;
+
+  background: #ff7a05;
+
+  color: #fff;
+}
+
+.training-standard-inner {
+  width: 100%;
+  max-width: 1320px;
+
+  min-height:
+    calc(
+      100vh -
+      115px
+    );
+
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+
+  text-align: center;
+}
+
+.training-standard-title {
+  font-size:
+    clamp(
+      28px,
+      2.5vw,
+      36px
+    );
+
+  font-weight: 600;
+
+  margin-bottom: 24px;
+}
+
+.training-standard-description {
+  font-size:
+    clamp(
+      15px,
+      1.2vw,
+      19px
+    );
+
+  line-height: 1.6;
+}
+
+.training-character-wrap {
+  width:
+    min(
+      1180px,
+      92vw
+    );
+
+  margin-top: auto;
+}
+
+.training-character-img {
+  display: block;
+
+  width: 100%;
+  height: auto;
+}
+
+
+/* =========================================================
+   MARQUEE
+========================================================= */
+
+.brand-marquee-section {
+  width: 100%;
+  height: 240px;
+
+  overflow: hidden;
+
+  background: #fff;
+
+  border-top:
+    2px
+    solid
+    #ff7a05;
+
+  display: flex;
+  align-items: center;
+}
+
+.brand-marquee {
+  width: 100%;
+
+  overflow: hidden;
+}
+
+.brand-marquee-track {
+  display: flex;
+
+  width: max-content;
+
+  animation:
+    marqueeMove
+    26s
+    linear
+    infinite;
+}
+
+.brand-marquee-group {
+  display: flex;
+  align-items: center;
+
+  flex-shrink: 0;
+
+  gap: 48px;
+
+  padding-right: 48px;
+}
+
+.marquee-character {
+  width: 150px;
+  height: 150px;
+
+  object-fit: contain;
+}
+
+.marquee-service-text {
+  font-size:
+    clamp(
+      38px,
+      3.7vw,
+      58px
+    );
+
+  font-weight: 700;
+
+  color: #ffb400;
+
+  white-space: nowrap;
+}
+
+.marquee-logo-text {
+  font-size:
+    clamp(
+      42px,
+      4vw,
+      62px
+    );
+
+  font-weight: 800;
+
+  white-space: nowrap;
+}
+
+@keyframes marqueeMove {
+
+  from {
+    transform:
+      translateX(0);
+  }
+
+  to {
+    transform:
+      translateX(-50%);
+  }
+}
+
+
+/* =========================================================
+   COMPARISON
+========================================================= */
+
+.comparison-section {
+  position: relative;
+
+  min-height: 100vh;
+
+  padding:
+    110px
+    24px
+    170px;
+
+  background: #FFF9E8;
+
+  overflow: hidden;
+}
+
+.comparison-inner {
+  max-width: 1100px;
+
+  margin: 0 auto;
+}
+
+.comparison-heading {
+  text-align: center;
+
+  margin-bottom: 50px;
+
+  opacity: 0;
+
+  transform:
+    translateY(30px);
+
+  transition:
+    .8s ease;
+}
+
+.comparison-title {
+  font-size:
+    clamp(
+      28px,
+      2.5vw,
+      36px
+    );
+
+  font-weight: 600;
+
+  margin-bottom: 20px;
+}
+
+.comparison-description {
+  font-size: 15px;
+
+  line-height: 1.6;
+
+  color: #707070;
+}
+
+.comparison-table-wrap {
+  opacity: 0;
+
+  transform:
+    translateY(40px);
+
+  transition:
+    .8s ease;
+}
+
+.comparison-section.is-visible
+.comparison-heading,
+
+.comparison-section.is-visible
+.comparison-table-wrap {
+  opacity: 1;
+
+  transform:
+    translateY(0);
+}
+
+.comparison-table {
+  width: 930px;
+  max-width: 100%;
+
+  margin: 0 auto;
+
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    170px
+    1fr;
+
+  background: #fff;
+}
+
+.comparison-cell,
+.comparison-label-cell {
+  min-height: 165px;
+
+  border-bottom:
+    1px
+    solid
+    #e7e7e7;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+}
+
+.comparison-label-cell {
+  background: #ff7a05;
+
+  color: #fff;
+
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.comparison-app-cell {
+  min-height: 250px;
+}
+
+.comparison-app-icon {
+  width: 108px;
+  height: 108px;
+
+  margin-bottom: 20px;
+
+  border:
+    1px
+    solid
+    #ddd;
+
+  border-radius: 12px;
+
+  overflow: hidden;
+}
+
+.comparison-app-logo {
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+}
+
+.comparison-app-name {
+  font-size: 21px;
+}
+
+.comparison-small-text {
+  font-size: 13px;
+
+  color: #666;
+
+  margin-bottom: 8px;
+}
+
+.comparison-value {
+  font-size: 20px;
+}
+
+.comparison-content-text {
+  font-size: 17px;
+
+  line-height: 1.55;
+}
+
+
+/* =========================================================
+   ★ PROCESS
+========================================================= */
+
+.training-process-section {
+  position: relative;
+
+  width: 100%;
+  height: 760vh;
+
+  background: #fff;
+}
+
+.training-process-sticky {
+  position: sticky;
+
+  top: 0;
+
+  width: 100%;
+  height: 100vh;
+
+  overflow: hidden;
+
+  background: #fff;
+}
+
+.training-process-inner {
+  width:
+    min(
+      1450px,
+      100%
+    );
+
+  height: 100%;
+
+  margin: 0 auto;
+
+  padding:
+    80px
+    55px
+    45px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(420px,.95fr)
+    52px
+    minmax(540px,1.15fr);
+
+  gap: 30px;
+
+  align-items: center;
+}
+
+
+/* =========================================================
+   ★ PROCESS IMAGE
+
+   바깥 연한 원
+   → 안쪽 진한 원
+   → 그 안에 캐릭터
+========================================================= */
+
+.process-visual {
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* 바깥 연한 원 */
+
+.process-image-frame {
+  position: relative;
+
+  width: 500px;
+  height: 500px;
+
+  border-radius: 50%;
+
+  background: #FFF9E8;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+}
+
+
+/* 가운데 진한 원 */
+
+.process-image-inner {
+  position: relative;
+
+  width: 72%;
+  height: 72%;
+
+  border-radius: 50%;
+
+  background: #FFF0C7;
+
+  overflow: hidden;
+
+  flex-shrink: 0;
+}
+
+
+/*
+  ★ 캐릭터는
+  process-image-inner 안에서만 보임
+*/
+
+.process-stage-image {
+  position: absolute;
+
+  left: 0;
+  top: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  object-position:
+    center
+    center;
+
+  opacity: 0;
+
+  visibility: hidden;
+
+  transition:
+    opacity
+    .25s
+    ease;
+
+  pointer-events: none;
+}
+
+.process-stage-image.is-active {
+  opacity: 1;
+
+  visibility: visible;
+}
+
+
+/* =========================================================
+   PROCESS LINE
+========================================================= */
+
+.process-progress-area {
+  height: 72vh;
+
+  display: flex;
+  justify-content: center;
+}
+
+.process-progress-track {
+  position: relative;
+
+  width: 14px;
+  height: 100%;
+}
+
+.process-progress-track::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 50%;
+
+  width: 2px;
+  height: 100%;
+
+  transform:
+    translateX(-50%);
+
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      #d5d5d5 0,
+      #d5d5d5 5px,
+      transparent 5px,
+      transparent 11px
+    );
+}
+
+.process-progress-fill {
+  position: absolute;
+
+  top: 0;
+  left: 50%;
+
+  width: 3px;
+  height: 0;
+
+  transform:
+    translateX(-50%);
+
+  background: #ff7a05;
+
+  z-index: 2;
+}
+
+.process-progress-dot {
+  position: absolute;
+
+  top:
+    calc(
+      var(--step)
+      * 20%
+    );
+
+  left: 50%;
+
+  width: 11px;
+  height: 11px;
+
+  transform:
+    translate(
+      -50%,
+      -50%
+    );
+
+  border:
+    2px
+    solid
+    #d3d3d3;
+
+  border-radius: 50%;
+
+  background: #fff;
+
+  z-index: 4;
+}
+
+.process-progress-dot.is-active {
+  border-color: #ff7a05;
+
+  background: #ff7a05;
+}
+
+
+/* =========================================================
+   PROCESS TEXT
+========================================================= */
+
+.process-text-viewport {
+  height: 72vh;
+
+  overflow: hidden;
+}
+
+.process-step-track {
+  transition:
+    transform
+    .48s
+    cubic-bezier(.16,1,.3,1);
+}
+
+.process-step {
+  height: 260px;
+
+  padding:
+    28px
+    0
+    38px;
+
+  border-bottom:
+    1px
+    solid
+    #ddd;
+
+  opacity: .25;
+
+  transition:
+    opacity
+    .3s;
+}
+
+.process-step.is-active {
+  opacity: 1;
+}
+
+.process-step.is-passed {
+  opacity: .45;
+}
+
+.process-step h3 {
+  font-size: 26px;
+
+  margin-bottom: 14px;
+}
+
+.process-step p {
+  font-size: 14px;
+
+  line-height: 1.6;
+
+  color: #555;
+
+  margin-bottom: 18px;
+}
+
+.process-step-box {
+  padding:
+    18px
+    25px;
+
+  border-radius: 12px;
+
+  background: #f6f6f6;
+
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    1fr;
+
+  gap:
+    20px
+    40px;
+}
+
+.process-step-box ul {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+.process-step-box li {
+  font-size: 12px;
+
+  color: #555;
+}
+
+.process-step-box li::before {
+  content: "• ";
+}
+
+
+/* =========================================================
+   PACKAGE
+========================================================= */
+
+.package-scroll-section {
+  position: relative;
+
+  width: 100%;
+  height: 340vh;
+
+  background: #fff4a7;
+}
+
+.package-sticky {
+  position: sticky;
+
+  top: 0;
+
+  width: 100%;
+  height: 100vh;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      180deg,
+      #fff 0%,
+      #fffce8 7%,
+      #fff8c7 18%,
+      #fff3a5 46%,
+      #fff2a2 100%
+    );
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.package-glow {
+  position: absolute;
+
+  left: 50%;
+  top: 58%;
+
+  width: 70vw;
+  height: 50vh;
+
+  transform:
+    translate(
+      -50%,
+      -50%
+    );
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      ellipse
+      at center,
+      rgba(255,255,255,.85),
+      rgba(255,255,255,0)
+      72%
+    );
+
+  filter:
+    blur(22px);
+}
+
+.package-video-wrap {
+  position: relative;
+
+  z-index: 3;
+
+  width:
+    min(
+      760px,
+      73vw
+    );
+}
+
+.package-video {
+  display: block;
+
+  width: 100%;
+  height: auto;
+
+  object-fit: contain;
+}
+
+.confetti-layer {
+  position: absolute;
+
+  inset: 0;
+
+  overflow: hidden;
+
+  z-index: 4;
+
+  pointer-events: none;
+}
+
+.confetti-piece {
+  position: absolute;
+
+  top: -80px;
+  left: var(--x);
+
+  width: var(--w);
+  height: var(--h);
+
+  background:
+    var(--color);
+
+  opacity: 0;
+}
+
+
+/* =========================================================
+   REVIEW
+========================================================= */
+
+.review-section-gap {
+  width: 100%;
+  height: 140px;
+
+  background: #fff;
+}
+
+.review-story-section {
+  position: relative;
+
+  height: 300vh;
+
+  background: #fff;
+}
+
+.review-story-sticky {
+  position: sticky;
+
+  top: 0;
+
+  width: 100%;
+  height: 100vh;
+
+  overflow: hidden;
+}
+
+.review-story-heading {
+  position: absolute;
+
+  top: 9%;
+  left: 50%;
+
+  width: 100%;
+
+  transform:
+    translateX(-50%);
+
+  text-align: center;
+}
+
+.review-story-title {
+  font-size:
+    clamp(
+      34px,
+      3vw,
+      46px
+    );
+
+  margin-bottom: 18px;
+}
+
+.review-story-description {
+  color: #6f6f6f;
+}
+
+.review-slider-window {
+  position: absolute;
+
+  top: 29%;
+  left: 0;
+
+  width: 100%;
+
+  overflow: hidden;
+}
+
+.review-slider-track {
+  display: flex;
+
+  gap: 30px;
+
+  width: max-content;
+
+  will-change: transform;
+}
+
+.review-card {
+  width:
+    clamp(
+      255px,
+      21vw,
+      300px
+    );
+
+  height:
+    clamp(
+      350px,
+      29vw,
+      410px
+    );
+
+  flex:
+    0 0
+    clamp(
+      255px,
+      21vw,
+      300px
+    );
+
+  border-radius: 14px;
+
+  overflow: hidden;
+}
+
+.review-card-text {
+  padding:
+    28px
+    24px
+    24px;
+
+  background:
+    linear-gradient(
+      #ffe76a,
+      #ffc20d
+    );
+
+  display: flex;
+  flex-direction: column;
+}
+
+.review-badge {
+  width: fit-content;
+
+  padding:
+    5px
+    12px;
+
+  margin-bottom: 20px;
+
+  border-radius: 999px;
+
+  background: #fff;
+
+  color: #ffab00;
+
+  font-size: 12px;
+}
+
+.review-card-copy {
+  font-size: 14px;
+
+  line-height: 1.7;
+
+  color: #fff;
+}
+
+.review-author {
+  margin-top: auto;
+
+  color: #fff;
+
+  font-size: 13px;
+}
+
+.review-card-photo img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.review-more-wrap {
+  position: absolute;
+
+  left: 50%;
+  bottom: 5%;
+
+  transform:
+    translateX(-50%);
+}
+
+.review-more-button {
+  width: 260px;
+  height: 62px;
+
+  border-radius: 8px;
+
+  background: #050505;
+
+  color: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 15px;
+}
+
+
+/* =========================================================
+   PARENT GUIDE
+========================================================= */
+
+.parent-guide-section {
+  position: relative;
+
+  width: 100%;
+
+  min-height: 1120px;
+
+  background: #FFF5A8;
+
+  overflow: hidden;
+}
+
+.parent-guide-wave {
+  position: absolute;
+
+  top: -1px;
+  left: 0;
+
+  width: 100%;
+  height: 150px;
+
+  z-index: 1;
+
+  pointer-events: none;
+}
+
+.parent-guide-wave svg {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+}
+
+.parent-guide-inner {
+  position: relative;
+
+  z-index: 2;
+
+  width:
+    min(
+      1050px,
+      92%
+    );
+
+  margin: 0 auto;
+
+  padding:
+    215px
+    25px
+    100px;
+}
+
+.parent-guide-title {
+  text-align: center;
+
+  font-size:
+    clamp(
+      30px,
+      2.7vw,
+      38px
+    );
+
+  font-weight: 700;
+
+  margin-bottom: 75px;
+}
+
+.guide-chat-list {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 65px;
+}
+
+.guide-conversation {
+  width: 100%;
+
+  min-height: 300px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.guide-message-row {
+  opacity: 0;
+
+  visibility: hidden;
+
+  pointer-events: none;
+
+  transition:
+    opacity
+    .42s
+    ease,
+
+    transform
+    .62s
+    cubic-bezier(.22,1.25,.36,1);
+}
+
+.guide-message-row.is-visible {
+  opacity: 1;
+
+  visibility: visible;
+
+  transform:
+    translate3d(0,0,0)
+    scale(1);
+}
+
+
+/* 질문 */
+
+.guide-question-row {
+  width: 470px;
+
+  display: flex;
+  align-items: center;
+
+  align-self: flex-start;
+
+  transform:
+    translate3d(
+      -30px,
+      25px,
+      0
+    )
+    scale(.92);
+}
+
+.guide-question-character {
+  width: 170px;
+
+  flex-shrink: 0;
+
+  margin-right: 15px;
+}
+
+.guide-character img {
+  display: block;
+
+  width: 100%;
+  height: auto;
+}
+
+.guide-question-bubble {
+  position: relative;
+
+  width: 250px;
+  min-height: 64px;
+
+  padding:
+    19px
+    26px;
+
+  border-radius: 9px;
+
+  background: #fff;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  display: flex;
+  align-items: center;
+}
+
+.guide-question-bubble::before {
+  content: "";
+
+  position: absolute;
+
+  left: -22px;
+  top: 21px;
+
+  border-top:
+    11px
+    solid
+    transparent;
+
+  border-bottom:
+    11px
+    solid
+    transparent;
+
+  border-right:
+    23px
+    solid
+    #fff;
+}
+
+
+/* 답변 */
+
+.guide-answer-row {
+  width: 730px;
+
+  align-self: flex-end;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  margin-top: -35px;
+
+  transform:
+    translate3d(
+      30px,
+      25px,
+      0
+    )
+    scale(.93);
+}
+
+.guide-answer-character {
+  width: 180px;
+
+  flex-shrink: 0;
+
+  margin-left: 18px;
+}
+
+.guide-answer-bubble {
+  position: relative;
+
+  width: 520px;
+
+  min-height: 115px;
+
+  padding:
+    24px
+    30px;
+
+  border-radius: 9px;
+
+  background: #ff7005;
+
+  color: #fff;
+
+  display: flex;
+  align-items: center;
+}
+
+.guide-answer-bubble::after {
+  content: "";
+
+  position: absolute;
+
+  right: -31px;
+  top: 29px;
+
+  border-top:
+    15px
+    solid
+    transparent;
+
+  border-bottom:
+    15px
+    solid
+    transparent;
+
+  border-left:
+    32px
+    solid
+    #ff7005;
+}
+
+.guide-answer-text {
+  font-size: 14px;
+
+  line-height: 1.65;
+
+  font-weight: 500;
+
+  opacity: 0;
+
+  transform:
+    translateY(5px);
+
+  transition:
+    opacity
+    .32s
+    ease,
+
+    transform
+    .4s
+    ease;
+}
+
+.guide-answer-row.is-sent
+.guide-answer-text {
+  opacity: 1;
+
+  transform:
+    translateY(0);
+}
+
+.guide-typing {
+  position: absolute;
+
+  left: 30px;
+  top: 50%;
+
+  transform:
+    translateY(-50%);
+
+  display: flex;
+
+  gap: 7px;
+
+  opacity: 0;
+
+  visibility: hidden;
+}
+
+.guide-answer-row.is-typing
+.guide-typing {
+  opacity: 1;
+
+  visibility: visible;
+}
+
+.guide-typing span {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      .95
+    );
+
+  animation:
+    guideTyping
+    .9s
+    infinite
+    ease-in-out;
+}
+
+.guide-typing span:nth-child(2) {
+  animation-delay: .12s;
+}
+
+.guide-typing span:nth-child(3) {
+  animation-delay: .24s;
+}
+
+@keyframes guideTyping {
+
+  0%,
+  60%,
+  100% {
+    transform:
+      translateY(0);
+
+    opacity: .45;
+  }
+
+  30% {
+    transform:
+      translateY(-7px);
+
+    opacity: 1;
+  }
+}
+
+
+/* =========================================================
+   FINAL CTA
+========================================================= */
+
+.final-cta-section {
+  position: relative;
+
+  width: 100%;
+
+  background: #FFF5A8;
+
+  overflow: hidden;
+}
+
+.final-cta-background {
+  position: relative;
+
+  display: block;
+
+  width: 100%;
+  height: auto;
+
+  z-index: 1;
+}
+
+.final-cta-content {
+  position: absolute;
+
+  left: 8%;
+  top: 35%;
+
+  width: 46%;
+
+  z-index: 3;
+
+  opacity: 0;
+
+  transform:
+    translateY(30px);
+
+  transition:
+    opacity
+    .7s
+    ease,
+
+    transform
+    .8s
+    cubic-bezier(.16,1,.3,1);
+}
+
+.final-cta-section.is-visible
+.final-cta-content {
+  opacity: 1;
+
+  transform:
+    translateY(0);
+}
+
+.final-cta-small-title {
+  font-size:
+    clamp(
+      16px,
+      1.6vw,
+      25px
+    );
+
+  font-weight: 700;
+
+  margin-bottom: 8px;
+}
+
+.final-cta-title {
+  font-size:
+    clamp(
+      27px,
+      2.6vw,
+      40px
+    );
+
+  line-height: 1.25;
+
+  font-weight: 750;
+}
+
+.final-cta-buttons {
+  display: flex;
+
+  gap: 14px;
+
+  margin-top: 44px;
+}
+
+.final-cta-button {
+  min-width: 170px;
+  height: 52px;
+
+  padding:
+    0
+    24px;
+
+  border-radius: 5px;
+
+  background: #050505;
+
+  color: #fff;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   TOP BUTTON
+========================================================= */
+
+.scroll-top-btn {
+  position: fixed;
+
+  right: 40px;
+  bottom: 40px;
+
+  width: 52px;
+  height: 52px;
+
+  border:
+    1px
+    solid
+    #eaeaea;
+
+  border-radius: 50%;
+
+  background: #fff;
+
+  box-shadow:
+    0
+    4px
+    12px
+    rgba(0,0,0,.08);
+
+  z-index: 1000;
+
+  cursor: pointer;
+
+  opacity: 0;
+
+  visibility: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    .3s ease;
+}
+
+.scroll-top-btn.is-visible {
+  opacity: 1;
+
+  visibility: visible;
+}
+
+.scroll-top-btn svg {
+  width: 22px;
+  height: 22px;
+
+  color: #888;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.footer {
+  position: relative;
+
+  z-index: 20;
+
+  width: 100%;
+
+  padding:
+    65px
+    20px
+    42px;
+
+  background: #141414;
+
+  color: #888;
+}
+
+.footer-inner {
+  width: 90%;
+  max-width: 1240px;
+
+  margin: 0 auto;
+}
+
+.footer-top {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: flex-start;
+
+  margin-bottom: 42px;
+}
+
+.footer-nav {
+  display: flex;
+  flex-direction: column;
+
+  gap: 14px;
+}
+
+.footer-nav a {
+  color: #fff;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.footer-app-buttons {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+}
+
+.btn-app {
+  min-width: 130px;
+  height: 48px;
+
+  padding:
+    0
+    18px;
+
+  border:
+    1px
+    solid
+    #fff;
+
+  border-radius: 8px;
+
+  color: #fff;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 9px;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.footer-info {
+  font-size: 12px;
+
+  line-height: 1.8;
+
+  color: #777;
+
+  margin-bottom: 28px;
+}
+
+.footer-divider {
+  border: none;
+
+  border-top:
+    1px
+    solid
+    #282828;
+
+  margin:
+    0
+    0
+    28px;
+}
+
+.footer-bottom {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+}
+
+.copyright {
+  font-size: 13px;
+
+  color: #666;
+}
+
+.footer-sns {
+  display: flex;
+  align-items: center;
+
+  gap: 19px;
+}
+
+.footer-sns a {
+  color: #666;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-sns a:hover {
+  color: #fff;
+}
+
+.sns-blog {
+  padding:
+    1px
+    4px;
+
+  border:
+    1px
+    solid
+    currentColor;
+
+  border-radius: 4px;
+
+  font-size: 9px;
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1024px) {
+
+  .training-process-inner {
+    grid-template-columns:
+      minmax(320px,.9fr)
+      40px
+      1fr;
+
+    padding:
+      70px
+      30px
+      40px;
+  }
+
+  .process-image-frame {
+    width: 380px;
+    height: 380px;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+
+  /* HEADER */
+
+  .header {
+    height: 68px;
+  }
+
+  .header-logo-img {
+    height: 30px;
+  }
+
+  .mobile-menu-toggle {
+    display: block;
+  }
+
+  .header-nav {
+    position: absolute;
+
+    top: 68px;
+    left: 0;
+
+    width: 100%;
+
+    padding:
+      10px
+      5%
+      30px;
+
+    background: #fff;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transform:
+      translateY(-10px);
+
+    transition: .3s;
+  }
+
+  .header-nav.is-open {
+    opacity: 1;
+
+    visibility: visible;
+
+    transform:
+      translateY(0);
+  }
+
+  .header-menu-list {
+    flex-direction: column;
+
+    gap: 0;
+  }
+
+  .header-menu-item a {
+    display: block;
+
+    padding:
+      17px
+      5px;
+  }
+
+
+  /* DYSLEXIA */
+
+  .dyslexia-title {
+    top: 32%;
+
+    padding:
+      0
+      20px;
+
+    font-size: 27px;
+
+    line-height: 1.35;
+  }
+
+  .dyslexia-img {
+    width: 180px;
+  }
+
+
+  .orange-title {
+    padding:
+      0
+      25px;
+
+    font-size: 27px;
+
+    text-align: center;
+  }
+
+
+  /* SEARCH */
+
+  .keyword-search-section {
+    min-height: 760px;
+
+    padding:
+      100px
+      18px;
+  }
+
+  .keyword-search-title {
+    font-size: 29px;
+  }
+
+  .keyword-search-description {
+    margin-bottom: 74px;
+
+    font-size: 14px;
+  }
+
+  .fake-search-box {
+    height: 72px;
+
+    padding:
+      0
+      18px
+      0
+      135px;
+
+    border-radius: 40px;
+  }
+
+  .fake-search-text {
+    font-size: 24px;
+  }
+
+  .typing-caret {
+    height: 29px;
+  }
+
+  .search-character-left {
+    width: 100px;
+
+    left: 18px;
+
+    top: -17px;
+
+    bottom: auto;
+  }
+
+  .search-character-right {
+  width: 62px;
+  right: 28px;
+  top: -50px;
+  bottom: auto;
+}
+  .fake-clear-button {
+    display: none;
+  }
+
+  .fake-search-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .recommended-keywords {
+    padding-left: 0;
+
+    margin-top: 31px;
+
+    flex-direction: column;
+
+    gap: 14px;
+  }
+
+  .keyword-chips {
+    justify-content: center;
+  }
+
+
+  /* STANDARD */
+
+  .training-standard-section {
+    min-height: auto;
+
+    padding:
+      90px
+      20px
+      30px;
+  }
+
+  .training-standard-description br {
+    display: none;
+  }
+
+
+  /* MARQUEE */
+
+  .brand-marquee-section {
+    height: 150px;
+  }
+
+  .brand-marquee-group {
+    gap: 25px;
+  }
+
+  .marquee-character {
+    width: 90px;
+    height: 90px;
+  }
+
+  .marquee-service-text {
+    font-size: 30px;
+  }
+
+  .marquee-logo-text {
+    font-size: 33px;
+  }
+
+
+  /* COMPARISON */
+
+  .comparison-section {
+    padding:
+      90px
+      15px
+      100px;
+  }
+
+  .comparison-table {
+    grid-template-columns:
+      1fr
+      92px
+      1fr;
+  }
+
+  .comparison-cell,
+  .comparison-label-cell {
+    min-height: 125px;
+
+    padding: 10px;
+  }
+
+  .comparison-app-cell {
+    min-height: 190px;
+  }
+
+  .comparison-app-icon {
+    width: 75px;
+    height: 75px;
+  }
+
+  .comparison-app-name {
+    font-size: 14px;
+  }
+
+  .comparison-label-cell {
+    font-size: 13px;
+  }
+
+  .comparison-content-text {
+    font-size: 12px;
+  }
+
+
+  /* ======================================================
+     ★ PROCESS MOBILE
+  ====================================================== */
+
+  .training-process-section {
+    height: 700vh;
+  }
+
+  .training-process-sticky {
+    height: 100svh;
+  }
+
+  .training-process-inner {
+    width: 100%;
+    height: 100%;
+
+    padding:
+      20px
+      20px
+      18px;
+
+    display: grid;
+
+    grid-template-columns:
+      44px
+      minmax(0,1fr);
+
+    grid-template-rows:
+      42svh
+      1fr;
+
+    column-gap: 10px;
+
+    row-gap: 0;
+
+    align-items: start;
+  }
+
+
+  /* 모바일 이미지 */
+
+  .process-visual {
+    grid-column:
+      1 / -1;
+
+    grid-row: 1;
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+
+  /*
+    모바일에서도
+    바깥 원
+  */
+
+  .process-image-frame {
+    width:
+      min(
+        62vw,
+        290px
+      );
+
+    height:
+      min(
+        62vw,
+        290px
+      );
+  }
+
+
+  /*
+    안쪽 진한 원
+  */
+
+  .process-image-inner {
+    width: 72%;
+    height: 72%;
+  }
+
+
+  /*
+    캐릭터는 이 안쪽 원에서만 보임
+  */
+
+  .process-stage-image {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    object-position:
+      center
+      center;
+  }
+
+
+  /* 진행선 */
+
+  .process-progress-area {
+    grid-column: 1;
+
+    grid-row: 2;
+
+    width: 44px;
+
+    height: 56svh;
+
+    min-height: 350px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-self: start;
+  }
+
+  .process-progress-track {
+    width: 16px;
+  }
+
+
+  /* 단계 텍스트 */
+
+  .process-text-viewport {
+    grid-column: 2;
+
+    grid-row: 2;
+
+    width: 100%;
+
+    height: 56svh;
+
+    min-height: 350px;
+
+    overflow: hidden;
+  }
+
+  .process-step {
+    width: 100%;
+
+    height: 255px;
+
+    padding:
+      8px
+      0
+      26px;
+  }
+
+  .process-step h3 {
+    font-size: 20px;
+
+    margin-bottom: 14px;
+  }
+
+  .process-step p {
+    font-size: 12px;
+
+    line-height: 1.65;
+
+    margin-bottom: 16px;
+  }
+
+  .process-step-box {
+    padding:
+      15px
+      16px;
+
+    border-radius: 14px;
+
+    gap:
+      8px
+      16px;
+  }
+
+  .process-step-box li {
+    font-size: 10px;
+
+    line-height: 1.45;
+  }
+
+
+  /* PACKAGE */
+
+  .package-video-wrap {
+    width: 92vw;
+  }
+
+
+  /* REVIEW */
+
+  .review-section-gap {
+    height: 75px;
+  }
+
+  .review-story-section {
+    height: 260vh;
+  }
+
+  .review-story-heading {
+    top: 9%;
+
+    padding:
+      0
+      20px;
+  }
+
+  .review-story-title {
+    font-size: 29px;
+  }
+
+  .review-story-description {
+    font-size: 13px;
+
+    line-height: 1.6;
+  }
+
+  .review-slider-window {
+    top: 28%;
+  }
+
+  .review-slider-track {
+    gap: 16px;
+  }
+
+  .review-card {
+    width: 220px;
+    height: 325px;
+
+    flex:
+      0
+      0
+      220px;
+  }
+
+  .review-more-button {
+    width: 210px;
+    height: 53px;
+
+    font-size: 13px;
+  }
+
+
+  /* PARENT GUIDE */
+
+  .parent-guide-section {
+    min-height: auto;
+  }
+
+  .parent-guide-wave {
+    height: 85px;
+  }
+
+  .parent-guide-inner {
+    width:
+      calc(
+        100% -
+        28px
+      );
+
+    padding:
+      130px
+      0
+      75px;
+  }
+
+  .parent-guide-title {
+    font-size: 28px;
+
+    margin-bottom: 50px;
+  }
+
+  .guide-chat-list {
+    gap: 30px;
+  }
+
+  .guide-conversation {
+    min-height: 0;
+
+    gap: 16px;
+  }
+
+  .guide-question-row {
+    width: 92%;
+    max-width: 390px;
+
+    margin: 0;
+
+    transform:
+      translate3d(
+        -15px,
+        15px,
+        0
+      )
+      scale(.94);
+  }
+
+  .guide-question-row.is-visible {
+    transform:
+      translate3d(
+        0,
+        0,
+        0
+      )
+      scale(1);
+  }
+
+  .guide-question-character {
+    width: 94px;
+
+    margin-right: 5px;
+  }
+
+  .guide-question-bubble {
+    width:
+      calc(
+        100% -
+        99px
+      );
+
+    min-height: 58px;
+
+    padding:
+      14px
+      17px;
+
+    font-size: 12px;
+  }
+
+  .guide-answer-row {
+    width: 94%;
+
+    max-width: 430px;
+
+    margin: 0;
+
+    transform:
+      translate3d(
+        15px,
+        15px,
+        0
+      )
+      scale(.94);
+  }
+
+  .guide-answer-row.is-visible {
+    transform:
+      translate3d(
+        0,
+        0,
+        0
+      )
+      scale(1);
+  }
+
+  .guide-answer-character {
+    width: 88px;
+
+    margin-left: 7px;
+  }
+
+  .guide-answer-bubble {
+    width:
+      calc(
+        100% -
+        95px
+      );
+
+    min-height: 100px;
+
+    padding: 18px;
+  }
+
+  .guide-answer-text {
+    font-size: 11px;
+
+    line-height: 1.65;
+  }
+
+  .guide-answer-text br {
+    display: none;
+  }
+
+
+  /* FINAL CTA */
+
+  .final-cta-content {
+    left: 7%;
+
+    top: 29%;
+
+    width: 58%;
+  }
+
+  .final-cta-small-title {
+    font-size: 12px;
+  }
+
+  .final-cta-title {
+    font-size: 20px;
+  }
+
+  .final-cta-buttons {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 7px;
+
+    margin-top: 18px;
+  }
+
+  .final-cta-button {
+    min-width: 135px;
+
+    height: 39px;
+
+    font-size: 10px;
+  }
+
+
+  /* TOP */
+
+  .scroll-top-btn {
+    right: 20px;
+    bottom: 20px;
+
+    width: 44px;
+    height: 44px;
+  }
+
+
+  /* FOOTER */
+
+  .footer {
+    padding:
+      40px
+      20px
+      30px;
+  }
+
+  .footer-inner {
+    width: 100%;
+  }
+
+  .footer-top {
+    flex-direction:
+      column-reverse;
+
+    gap: 28px;
+
+    margin-bottom: 28px;
+  }
+
+  .footer-app-buttons {
+    width: 100%;
+  }
+
+  .btn-app {
+    flex: 1;
+
+    min-width: 0;
+
+    font-size: 12px;
+  }
+
+  .footer-bottom {
+    flex-direction:
+      column-reverse;
+
+    align-items: flex-start;
+
+    gap: 20px;
+  }
+}
+
+/* === 인덱스 부모님 가이드: 점 세 개 대기 제거 === */
+.parent-guide-section .guide-typing { display: none !important; }
+.parent-guide-section .guide-answer-row.is-visible .guide-answer-text {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* === 잔잔한 BGM 제어 버튼 === */
+.ilkko-bgm-toggle {
+  position: fixed;
+  right: 22px;
+  bottom: 84px;
+  z-index: 110;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 13px;
+  border: 1px solid rgba(255, 122, 5, .22);
+  border-radius: 24px;
+  background: rgba(255,255,255,.94);
+  box-shadow: 0 3px 14px rgba(31, 28, 18, .12);
+  color: #e56e00;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.ilkko-bgm-toggle:focus-visible { outline: 3px solid #ff9808; outline-offset: 2px; }
+.ilkko-bgm-toggle[aria-pressed="true"] { background: #fff6e8; }
+.ilkko-bgm-icon { font-size: 18px; line-height: 1; }
+@media (max-width: 768px) {
+  .ilkko-bgm-toggle { right: 14px; bottom: 78px; padding: 9px 10px; }
+}
+
+/* Scroll-scrubbed transparent WebP frames: prevent any black video backdrop */
+.package-video-wrap,
+.package-video-wrap .package-video {
+  background: transparent !important;
+}
+.package-video-wrap .package-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* =========================================================
+   2026-11-14 INDEX: 패키지 축소, 제목용 메이플스토리체, BGM 위치
+   본문 단락은 기존 폰트 유지
+========================================================= */
+@font-face {
+  font-family: "IlkkoMaplestory";
+  src: local("Maplestory OTF Bold"), local("MaplestoryOTFBold"),
+       local("Maplestory Bold"),
+       url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/MaplestoryOTFBold.woff") format("woff");
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+/* 제목과 부제목에만 적용: 긴 본문 설명과 문단은 제외 */
+.dyslexia-title, .orange-title, .keyword-search-title,
+.training-standard-title, .comparison-title, .review-story-title,
+.parent-guide-title, .final-cta-title, .final-cta-small-title,
+.package-gift-heading, .marquee-service-text, .marquee-logo-text,
+.comparison-heading, .recommended-label,
+.process-step-box h3,
+.process-step-box h4,
+.step-detail-title, .step-detail-subtitle,
+.review-story-heading h3,
+[class*="section-subtitle"], [class*="section-title"],
+[class*="heading-subtitle"] {
+  font-family: "IlkkoMaplestory", "Maplestory OTF", sans-serif;
+}
+
+/* 패키지 화면: 제목을 상단에, 박스는 레퍼런스처럼 조금 더 작게 */
+.package-sticky {
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(8px, 1.6vh, 20px);
+}
+.package-gift-heading {
+  position: relative;
+  z-index: 5;
+  color: #ff7a05;
+  text-align: center;
+  font-size: clamp(25px, 2.6vw, 37px);
+  font-weight: 700;
+  line-height: 1.25;
+  flex-shrink: 0;
+  margin: 0 0 6px;
+}
+.package-video-wrap {
+  width: min(580px, 63vw);
+  flex: 0 1 auto;
+}
+.package-video-wrap .package-video {
+  width: 100%;
+  max-height: min(71vh, 670px);
+  height: auto;
+  object-fit: contain;
+}
+/* BGM 버튼은 왼쪽 아래 (데스크톱/모바일 공통) */
+.ilkko-bgm-toggle {
+  left: 22px;
+  right: auto;
+  bottom: 28px;
+}
+@media (max-width: 768px) {
+  .package-sticky { gap: 12px; }
+  .package-gift-heading { font-size: clamp(24px, 6.4vw, 31px); margin-bottom: 0; }
+  .package-video-wrap { width: min(78vw, 470px); }
+  .package-video-wrap .package-video { max-height: 65vh; }
+  .ilkko-bgm-toggle { left: 14px; right: auto; bottom: 78px; }
+}
+
+
+/* 2026-11-14: 패키지 섹션의 노란 배경을 사용자 제공 체크 패턴으로 변경 */
+.package-scroll-section {
+  background: #fffbe6 url("images/package-check-background.webp") center center / cover no-repeat;
+}
+.package-sticky {
+  background: #fffbe6 url("images/package-check-background.webp") center center / cover no-repeat;
+}
+/* 체크 패턴을 가리지 않도록 기존 조명 오버레이만 제거 */
+.package-glow { display: none; }
+
+
+/* ==============================================================
+   읽:꼬 INDEX MOBILE REFINEMENT — 2026-11-14
+   모바일 스타일은 index.css에 통합; PC 배치는 변경하지 않음
+============================================================== */
+.mobile-heading-break { display: none; }
+@media (max-width: 768px) {
+  html, body { max-width: 100%; overflow-x: clip; }
+  main, main > section { max-width: 100%; }
+
+  /* 히어로: 원본 영상 비율 유지, 상하/좌우 잘림 없음 */
+  .hero-scroll-section { height: 185svh; background: #fff; }
+  .hero-sticky-wrapper {
+    height: 100svh; display: flex; align-items: center;
+    justify-content: center; background: #fff;
+  }
+  .hero-video {
+    position: relative; inset: auto; width: 100%; height: 100%;
+    object-fit: contain; object-position: center center; background: #fff;
+  }
+  .scroll-down-icon { bottom: 22px; }
+
+  /* 제목에서 마지막 한 단어가 외롭게 남지 않도록 균형 잡힌 줄바꿈 */
+  .dyslexia-title, .orange-title, .keyword-search-title,
+  .training-standard-title, .comparison-title,
+  .review-story-title, .parent-guide-title,
+  .final-cta-title, .final-cta-small-title,
+  .package-gift-heading {
+    text-wrap: balance; word-break: keep-all;
+    overflow-wrap: break-word; line-height: 1.36;
+  }
+  .mobile-heading-break { display: block; }
+  .dyslexia-title {
+    width: calc(100% - 30px); max-width: 390px;
+    padding: 0; top: 25%;
+    font-size: clamp(22px, 6.2vw, 28px);
+    letter-spacing: -.035em;
+  }
+  .dyslexia-image-wrap { top: 49%; }
+  .dyslexia-img { width: clamp(175px, 54vw, 230px); }
+  .orange-title {
+    max-width: 350px; margin: 0 auto;
+    font-size: clamp(22px, 6.4vw, 29px);
+  }
+
+  /* 검색 바: 캐릭터가 검색창에 붙어서 보이도록 정렬 */
+  .keyword-search-section { min-height: 100svh; padding: 65px 16px 65px; }
+  .keyword-search-inner { max-width: 510px; }
+  .keyword-search-title { font-size: clamp(25px, 7vw, 31px); }
+  .keyword-search-description { margin-bottom: 105px; font-size: 14px; }
+  .keyword-search-area { width: 100%; }
+  .fake-search-box {
+    height: 70px; border-radius: 40px;
+    padding: 0 20px 0 clamp(88px, 26vw, 122px);
+  }
+  .fake-search-text { font-size: clamp(18px, 5.7vw, 24px); }
+  .fake-search-icon { flex-shrink: 0; width: 26px; height: 26px; }
+  .search-character-left { width: 115px; top: auto; bottom: -5px; left: 5px; }
+  .search-character-right { width: 67px; top: auto; bottom: calc(100% - 6px); right: 23px; }
+  .recommended-keywords { margin-top: 27px; gap: 13px; padding: 0; }
+  .recommended-label { font-size: 14px; }
+  .keyword-chips {
+    width: 100%; display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    column-gap: 7px; row-gap: 10px;
+    justify-content: center; justify-items: stretch;
+  }
+  .keyword-chip {
+    grid-column: span 2; white-space: nowrap;
+    padding: 8px 4px; font-size: clamp(10px, 2.75vw, 12px);
+    text-align: center;
+  }
+  .keyword-chip:nth-child(4) { grid-column: 2 / span 2; }
+  .keyword-chip:nth-child(5) { grid-column: 4 / span 2; }
+
+  /* 단계별 구성: 캐릭터 원을 조금 확대하고 텍스트 영역과 간격 확보 */
+  .training-process-inner {
+    padding: 14px 16px 24px;
+    grid-template-columns: 35px minmax(0, 1fr);
+    grid-template-rows: 39svh 1fr; column-gap: 8px;
+  }
+  .process-visual { min-width: 0; }
+  .process-image-frame {
+    width: min(72vw, 330px); height: min(72vw, 330px);
+    max-height: 35svh; max-width: 35svh; aspect-ratio: 1;
+  }
+  .process-image-inner { width: 77%; height: 77%; }
+  .process-progress-area { width: 35px; height: 57svh; }
+  .process-text-viewport { height: 57svh; }
+  .process-step { min-height: 285px; height: 285px; padding: 9px 0 20px; }
+  .process-step h3 { font-size: clamp(19px, 5.4vw, 23px); margin-bottom: 10px; }
+  .process-step p { font-size: 12px; line-height: 1.6; margin-bottom: 13px; }
+  .process-step-box { padding: 12px 9px; column-gap: 8px; row-gap: 5px; }
+  .process-step-box li { font-size: clamp(9px, 2.55vw, 11px); line-height: 1.52; word-break: keep-all; }
+
+  /* 체크무늬 패키지 배경과 투명 프레임 유지 */
+  .package-scroll-section { height: 225svh; }
+  .package-sticky { height: 100svh; gap: 9px; }
+  .package-gift-heading { font-size: clamp(24px, 6.8vw, 30px); margin: 0; }
+  .package-video-wrap { width: min(88vw, 460px); }
+  .package-video-wrap .package-video { max-height: 69svh; }
+
+  /* 후기 설명에서 고아 단어 방지 / 버튼과 카드 간 공백 축소 */
+  .review-story-description, .review-card-copy,
+  .training-standard-description, .comparison-content-text,
+  .final-cta-content p {
+    word-break: keep-all; text-wrap: pretty; overflow-wrap: break-word;
+  }
+  .review-story-description { max-width: 340px; margin: 0 auto; line-height: 1.65; }
+  .review-story-section { height: 195svh; }
+  .review-slider-window { top: 27%; }
+  .review-more-wrap { bottom: 12%; width: 100%; display: flex; justify-content: center; }
+  .review-more-button { min-width: 210px; width: min(76vw, 280px); }
+
+  /* 부모님 가이드 말풍선 꼬리와 잉꼬 이미지가 겹치지 않게 */
+  .guide-chat-list { gap: 24px; }
+  .guide-conversation { gap: 15px; }
+  .guide-question-row, .guide-answer-row { width: 100%; max-width: 100%; }
+  .guide-question-character { width: 76px; margin-right: 15px; flex-shrink: 0; }
+  .guide-answer-character { width: 76px; margin-left: 22px; flex-shrink: 0; position: relative; z-index: 2; }
+  .guide-question-bubble { width: auto; flex: 1; min-width: 0; padding: 13px 13px; }
+  .guide-answer-bubble { width: auto; flex: 1; min-width: 0; padding: 16px 15px; }
+  .guide-answer-bubble::after {
+    right: -13px; top: 24px;
+    border-top-width: 10px; border-bottom-width: 10px;
+    border-left-width: 14px;
+  }
+  .guide-question-bubble::before {
+    left: -12px; top: 18px;
+    border-top-width: 9px; border-bottom-width: 9px;
+    border-right-width: 13px;
+  }
+  .guide-answer-text { font-size: 12px; line-height: 1.6; }
+
+  /* 오른쪽 TOP 버튼과 왼쪽 BGM 버튼 하단 정렬 */
+  .scroll-top-btn { right: 16px; bottom: 20px; width: 44px; height: 44px; }
+  .ilkko-bgm-toggle {
+    left: 16px; right: auto; bottom: 20px;
+    height: 44px; box-sizing: border-box;
+    display: inline-flex; align-items: center; padding: 0 13px;
+  }
+}
+@media (max-width: 360px) {
+  .fake-search-box { padding-left: 90px; }
+  .search-character-left { width: 101px; }
+  .process-step-box li { font-size: 9px; }
+  .guide-answer-character, .guide-question-character { width: 66px; }
+  .guide-answer-character { margin-left: 17px; }
+}
+
+
+/* ==============================================================
+   MOBILE FINISHING PASS — targeted corrections only, 2026-11-14
+   Keep the desktop design and every other mobile section unchanged.
+============================================================== */
+@media (max-width: 768px) {
+  /* Hero starts directly below the header, preserves the video's real ratio. */
+  .hero-scroll-section {
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .hero-sticky-wrapper {
+    position: relative !important;
+    top: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    display: block !important;
+    overflow: hidden;
+  }
+  .hero-video {
+    display: block !important;
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 1554 / 1080;
+    object-fit: contain !important;
+    object-position: center !important;
+  }
+  .hero-scroll-section .scroll-down-icon { display: none !important; }
+
+  /* Keep both search mascots attached to the input, not keyword pills. */
+  .keyword-search-area { position: relative; }
+  .fake-search-box { padding-left: clamp(94px, 27vw, 122px); }
+  .search-character-left {
+    width: clamp(93px, 27vw, 112px) !important;
+    left: 3px !important;
+    top: -18px !important;
+    bottom: auto !important;
+    transform: none;
+  }
+  .search-character-right {
+    width: clamp(52px, 16vw, 67px) !important;
+    right: 20px !important;
+    top: -54px !important;
+    bottom: auto !important;
+  }
+  .recommended-keywords { margin-top: 29px !important; }
+
+  /* Bring the training character directly under the copy (no full-height void). */
+  .training-standard-section { min-height: 0 !important; }
+  .training-standard-inner {
+    min-height: 0 !important;
+    height: auto !important;
+    justify-content: flex-start;
+  }
+  .training-standard-copy { flex: 0 0 auto; }
+  .training-character-wrap {
+    margin-top: 25px !important;
+    margin-bottom: 0;
+    width: min(92vw, 440px);
+  }
+
+  /* Close the empty gap between the story slider and its CTA. */
+  .review-story-section { height: 145svh !important; }
+  .review-slider-window { top: 26% !important; }
+  .review-more-wrap { bottom: 18% !important; }
+  .review-more-button { margin: 0 auto; }
+
+  /* Intentional, legible two-line final message. */
+  .final-cta-title .final-cta-last-line {
+    display: block;
+    padding-left: .45em;
+    white-space: nowrap;
+  }
+  .final-cta-title { width: max-content; max-width: 100%; }
+}
+@media (max-width: 360px) {
+  .final-cta-title .final-cta-last-line { padding-left: .12em; }
+  .final-cta-title { font-size: 18px; }
+}
+
+/* MOBILE FOLLOW-UP 2026-11-14 — only requested layout corrections */
+@media (max-width:768px) {
+  /* The mobile hero is a normal autoplay movie, not a long pinned scroll scene. */
+  .hero-scroll-section, .hero-sticky-wrapper { height:auto !important; min-height:0 !important; }
+  .hero-video { width:100% !important; height:auto !important; max-height:none !important; aspect-ratio:auto !important; object-fit:contain !important; }
+  /* Remove desktop scroll scrub's blank 200vh and show the content immediately. */
+  .dyslexia-info-section { height:auto !important; min-height:0 !important; padding:42px 16px 48px !important; }
+  .dyslexia-sticky { position:relative !important; top:auto !important; height:auto !important; overflow:visible !important; }
+  .dyslexia-content { position:relative !important; height:auto !important; min-height:365px !important; display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:flex-start !important; }
+  .dyslexia-title { position:static !important; opacity:1 !important; transform:none !important; width:100% !important; max-width:440px !important; margin:0 auto 38px !important; padding:0 !important; top:auto !important; left:auto !important; text-align:center !important; }
+  .dyslexia-image-wrap { position:static !important; opacity:1 !important; transform:none !important; margin:0 auto !important; top:auto !important; left:auto !important; }
+  .dyslexia-img { width:clamp(165px,50vw,225px) !important; height:auto !important; }
+  .orange-transition-section { height:auto !important; min-height:0 !important; }
+  .orange-sticky { position:relative !important; top:auto !important; height:auto !important; min-height:250px !important; background:#ff7905 !important; }
+  .orange-content { min-height:250px !important; padding:60px 20px !important; }
+  .orange-title { opacity:1 !important; color:#fff !important; transform:none !important; }
+  /* Question bubble should hug the copy instead of stretching across the row. */
+  .guide-question-row { align-items:center !important; justify-content:flex-start !important; width:100% !important; }
+  .guide-question-character { width:clamp(58px,17vw,76px) !important; margin-right:10px !important; }
+  .guide-question-bubble { flex:0 1 auto !important; width:fit-content !important; max-width:calc(100% - 86px) !important; min-height:0 !important; padding:12px 15px !important; line-height:1.5 !important; }
+  .guide-answer-row { align-items:center !important; }
+  .guide-answer-character { width:clamp(60px,18vw,76px) !important; margin-left:18px !important; }
+  .guide-answer-bubble { flex:1 1 auto !important; }
+  /* Left-aligned 3-line CTA to avoid widowed words. */
+  .final-cta-content { text-align:left !important; }
+  .final-cta-title { width:100% !important; text-align:left !important; font-size:clamp(16px,4.8vw,22px) !important; line-height:1.35 !important; }
+  .final-cta-title .final-cta-last-line { display:block !important; padding-left:0 !important; white-space:normal !important; }
+  .final-cta-title .final-cta-last-line .cta-last-break { display:block !important; }
+}
+
+/* =======================================================
+  2026-11-14 MOBILE FINAL: only requested fixes
+======================================================= */
+@media (max-width:768px) {
+  /* Keep the video frame compact and use its natural aspect ratio. */
+  .hero-scroll-section, .hero-sticky-wrapper {
+    height:auto !important; min-height:0 !important; max-height:none !important;
+  }
+  .hero-video {
+    display:block !important; width:100% !important; height:auto !important;
+    object-fit:contain !important; aspect-ratio:auto !important;
+  }
+  /* Next two panels should not be taller than the video on a phone. */
+  .dyslexia-info-section { padding:24px 14px 26px !important; height:auto !important; }
+  .dyslexia-content { min-height:0 !important; gap:12px !important; }
+  .dyslexia-title {
+    margin:0 auto 8px !important; font-size:clamp(19px,5.6vw,24px) !important;
+    line-height:1.35 !important;
+  }
+  .dyslexia-image-wrap { margin:0 auto !important; }
+  .dyslexia-img { width:clamp(120px,37vw,154px) !important; }
+  .orange-transition-section, .orange-sticky { min-height:0 !important; height:auto !important; }
+  .orange-content { height:auto !important; min-height:135px !important; padding:32px 20px !important; }
+  .orange-title { font-size:clamp(18px,5.4vw,23px) !important; line-height:1.4 !important; }
+  /* First line '지금 바로 읽:꼬를', second indented '만나보세요!' */
+  .final-cta-title .final-cta-last-line {
+    display:inline !important; padding:0 !important; white-space:normal !important;
+  }
+  .final-cta-title .final-cta-last-line .cta-last-break {
+    display:block !important; padding-left:1.25em !important;
+  }
+  .final-cta-buttons { margin-top:14px !important; }
+}
+
+/* 2026-11-14: mobile CTA text alignment + compact keyword section only */
+@media (max-width: 768px) {
+  .final-cta-content,
+  .final-cta-small-title,
+  .final-cta-title {
+    text-align: left !important;
+  }
+  .keyword-search-section {
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 72px 16px 76px !important;
+  }
+  .keyword-search-description {
+    margin-bottom: 85px !important;
+  }
+}
+
+/* === 2026-11-14 mobile: reference-aligned CTA and compact reading panel === */
+@media (max-width: 768px) {
+  /* Final promotional text is left aligned; keep the existing Maplestory font. */
+  .final-cta-section .final-cta-content {
+    text-align: left !important;
+    left: 6% !important;
+    width: 61% !important;
+  }
+  .final-cta-section .final-cta-small-title,
+  .final-cta-section .final-cta-title {
+    text-align: left !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    text-wrap: wrap !important;
+  }
+  .final-cta-section .final-cta-title .final-cta-last-line {
+    display: block !important;
+    padding: 0 !important;
+    white-space: normal !important;
+  }
+  .final-cta-section .final-cta-title .cta-last-break {
+    display: block !important;
+    padding: 0 !important;
+  }
+  .final-cta-section .final-cta-buttons {
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+  }
+  /* Reading difficulty section: compact text and child, like the third reference. */
+  .dyslexia-info-section {
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 34px 16px 26px !important;
+  }
+  .dyslexia-info-section .dyslexia-sticky {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  .dyslexia-info-section .dyslexia-content {
+    height: auto !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 16px !important;
+  }
+  .dyslexia-info-section .dyslexia-title {
+    font-size: clamp(15px, 4.25vw, 19px) !important;
+    line-height: 1.45 !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 auto !important;
+    text-align: center !important;
+    letter-spacing: -0.03em;
+    text-wrap: balance !important;
+  }
+  .dyslexia-info-section .mobile-heading-break { display: none !important; }
+  .dyslexia-info-section .dyslexia-image-wrap {
+    position: static !important;
+    margin: 0 auto !important;
+  }
+  .dyslexia-info-section .dyslexia-img {
+    width: clamp(98px, 29vw, 125px) !important;
+    height: auto !important;
+  }
+  .orange-transition-section, .orange-transition-section .orange-sticky {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  .orange-transition-section .orange-content {
+    min-height: 170px !important;
+    height: auto !important;
+    padding: 44px 15px !important;
+  }
+  .orange-transition-section .orange-title {
+    font-size: clamp(15px, 4.35vw, 19px) !important;
+    line-height: 1.5 !important;
+    text-align: center !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+  }
+}
+
+/* 2026-11-14: FINAL mobile typography — reference screenshot alignment */
+@media (max-width: 768px) {
+  /* Keep only the mobile CTA in two intentional lines. */
+  .final-cta-section .final-cta-content {
+    left: 6% !important;
+    width: 68% !important;
+    text-align: left !important;
+  }
+  .final-cta-section .final-cta-small-title { 
+    font-size: clamp(11px, 3.1vw, 13px) !important;
+    line-height: 1.35 !important;
+    white-space: nowrap;
+  }
+  .final-cta-section .final-cta-title {
+    font-size: clamp(17px, 4.5vw, 19px) !important;
+    line-height: 1.42 !important;
+    text-align: left !important;
+    width: max-content !important;
+    max-width: 100% !important;
+    letter-spacing: -0.035em;
+  }
+  .final-cta-section .cta-line-one,
+  .final-cta-section .cta-line-two {
+    display: block !important;
+    padding: 0 !important;
+    white-space: nowrap !important;
+  }
+  /* Match mobile headings to the compact type scale in the second reference. */
+  .dyslexia-info-section .dyslexia-title,
+  .orange-transition-section .orange-title,
+  .keyword-search-title,
+  .training-standard-title,
+  .comparison-title,
+  .review-story-title,
+  .parent-guide-title,
+  .package-gift-heading {
+    font-size: clamp(16px, 4.4vw, 19px) !important;
+    line-height: 1.45 !important;
+    font-family: "IlkkoMaplestory", "Maplestory OTF", sans-serif !important;
+  }
+}
+@media (max-width: 360px) {
+  .final-cta-section .final-cta-title { font-size: 16px !important; }
+}

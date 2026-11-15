@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+
+  <title>COCO:LANG 성향 테스트</title>
+
+  <!-- 폰트 -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
+  >
+
+  <!-- CSS는 나중에 제작 -->
+  <link
+    rel="stylesheet"
+    href="test.css"
+  >
+</head>
+
+
+<body>
+
+  <main class="question-page">
+
+    <!-- =====================================
+         배경
+    ====================================== -->
+
+    <img
+      src="img/question-bg.webp"
+      class="question-bg"
+      alt=""
+    >
+
+
+    <div class="question-container">
+
+      <!-- =====================================
+           상단 진행도
+      ====================================== -->
+
+      <section
+        class="question-progress"
+        aria-label="성향 테스트 진행도"
+      >
+
+        <div class="question-count">
+
+          <span id="currentQuestionNumber">
+            01
+          </span>
+
+          <span class="question-count-divider">
+            /
+          </span>
+
+          <span id="totalQuestionNumber">
+            12
+          </span>
+
+        </div>
+
+
+        <div
+          class="progress-track"
+          role="progressbar"
+          aria-valuemin="1"
+          aria-valuemax="12"
+          aria-valuenow="1"
+        >
+
+          <div
+            id="progressValue"
+            class="progress-value"
+          ></div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================
+           질문 영역
+      ====================================== -->
+
+      <section class="question-content">
+
+        <!-- 이전 버튼 -->
+
+        <button
+          type="button"
+          id="backButton"
+          class="back-button"
+          aria-label="이전 화면으로 이동"
+        >
+          이전
+        </button>
+
+
+        <!-- 질문 카드 -->
+
+        <div class="question-card-wrap">
+
+          <!-- 선택한 견종 이미지 -->
+
+          <img
+            id="questionDogImage"
+            class="question-dog-image"
+            src=""
+            alt="선택한 강아지 캐릭터"
+          >
+
+
+          <!-- 질문 본문 -->
+
+          <div class="question-card">
+
+            <p
+              id="questionCategory"
+              class="question-category"
+            >
+              활동성
+            </p>
+
+            <h1
+              id="questionTitle"
+              class="question-title"
+            ></h1>
+
+          </div>
+
+        </div>
+
+
+        <!-- =====================================
+             답변 버튼
+        ====================================== -->
+
+        <div class="answer-button-wrap">
+
+          <!-- 첫 번째 답변 -->
+
+          <button
+            type="button"
+            class="answer-card answer-card-left"
+            data-answer-index="0"
+          >
+
+            <span
+              id="answerCodeA"
+              class="answer-code"
+            >
+              A
+            </span>
+
+            <span
+              id="answerTextA"
+              class="answer-text"
+            ></span>
+
+          </button>
+
+
+          <!-- 두 번째 답변 -->
+
+          <button
+            type="button"
+            class="answer-card answer-card-right"
+            data-answer-index="1"
+          >
+
+            <span
+              id="answerCodeB"
+              class="answer-code"
+            >
+              L
+            </span>
+
+            <span
+              id="answerTextB"
+              class="answer-text"
+            ></span>
+
+          </button>
+
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+      /* =====================================
+         select.html에서 선택한 견종 불러오기
+      ====================================== */
+
+      const selectedBreed =
+        localStorage.getItem("selectedBreed");
+
+      const selectedBreedName =
+        localStorage.getItem("selectedBreedName")
+        || "";
+
+
+      /*
+       * 선택한 견종 정보가 없으면
+       * select.html로 돌아감
+       */
+
+      if (!selectedBreed) {
+
+        alert(
+          "선택한 견종 정보가 없습니다.\n견종을 먼저 선택해주세요."
+        );
+
+        window.location.href =
+          "select.html";
+
+        return;
+
+      }
+
+
+      /* =====================================
+         견종별 질문 화면 이미지
+      ====================================== */
+
+
+const questionDogImages = {
+  welly: "img/question-dog-coco.webp",
+  daks: "img/question-dog-coco.webp",
+  mari: "img/question-dog-coco.webp",
+  cori: "img/question-dog-coco.webp",
+  puri: "img/question-dog-coco.webp"
+};
+
+
+
+      /* =====================================
+         HTML 요소
+      ====================================== */
+
+      const questionCategory =
+        document.getElementById(
+          "questionCategory"
+        );
+
+      const questionTitle =
+        document.getElementById(
+          "questionTitle"
+        );
+
+      const questionDogImage =
+        document.getElementById(
+          "questionDogImage"
+        );
+
+      const answerTextA =
+        document.getElementById(
+          "answerTextA"
+        );
+
+      const answerTextB =
+        document.getElementById(
+          "answerTextB"
+        );
+
+      const answerCodeA =
+        document.getElementById(
+          "answerCodeA"
+        );
+
+      const answerCodeB =
+        document.getElementById(
+          "answerCodeB"
+        );
+
+      const currentQuestionNumber =
+        document.getElementById(
+          "currentQuestionNumber"
+        );
+
+      const totalQuestionNumber =
+        document.getElementById(
+          "totalQuestionNumber"
+        );
+
+      const progressValue =
+        document.getElementById(
+          "progressValue"
+        );
+
+      const progressTrack =
+        document.querySelector(
+          ".progress-track"
+        );
+
+      const answerCards =
+        document.querySelectorAll(
+          ".answer-card"
+        );
+
+      const backButton =
+        document.getElementById(
+          "backButton"
+        );
+
+
+      /* =====================================
+         테스트 상태
+      ====================================== */
+
+      let currentIndex = 0;
+      let answerHistory = [];
+      let isMoving = false;
+      let nextQuestionTimer = null;
+
+
+      /* =====================================
+         성향 점수
+
+         활동성: A / L
+         야생성: W / C
+         관계성: E / I
+         의존성: T / N
+      ====================================== */
+
+      let scores = {
+
+        A: 0,
+        L: 0,
+
+        W: 0,
+        C: 0,
+
+        E: 0,
+        I: 0,
+
+        T: 0,
+        N: 0
+
+      };
+
+
+      /* =====================================
+         질문 12개
+      ====================================== */
+
+      const questions = [
+
+        /* =================================
+           Q1 활동성 A / L
+        ================================= */
+
+        {
+          category:
+            "활동성",
+
+          title:
+            '집에서 보호자가 "산책 갈까?" 하고<br>' +
+            "리드줄을 꺼냈을 때 내 강아지는?",
+
+          answers: [
+
+            {
+              text:
+                "문 앞까지 날아가서 펄쩍펄쩍 뛰고 난리가 난다.",
+
+              score:
+                "A"
+            },
+
+            {
+              text:
+                "꼬리를 흔들며 다가오지만, 얌전히 앉아서 줄을 멜 때까지 기다린다.",
+
+              score:
+                "L"
+            }
+
+          ]
+        },
+
+
+        /* =================================
+           Q2 활동성 A / L
+        ================================= */
+
+        {
+          category:
+            "활동성",
+
+          title:
+            "드넓은 애견운동장에 도착해<br>" +
+            "오프리쉬를 했을 때의 행동은?",
+
+          answers: [
+
+            {
+              text:
+                "시동 걸린 자동차처럼 앞만 보고 전속력으로 우다다 뛰어 나간다.",
+
+              score:
+                "A"
+            },
+
+            {
+              text:
+                "먼저 주변을 천천히 킁킁거리며 걸어 다닌다.",
+
+              score:
+                "L"
+            }
+
+          ]
+        },
+
+
+        /* =================================
+           Q3 활동성 A / L
+        ================================= */
+
+        {
+          category:
+            "활동성",
+
+          title:
+            "평소 좋아하는 장난감을 던져주었을 때<br>" +
+            "강아지의 플레이 스타일은?",
+
+          answers: [
+
+            {
+              text:
+                "공이 멈추기도 전에 몸을 날려 잡고, 숨이 찰 때까지 계속 놀자고 한다.",
+
+              score:
+                "A"
+            },
+
+            {
+              text:
+                "장난감을 물어와 씹거나 뜯는 등 정적인 놀이를 더 즐긴다.",
+
+              score:
+                "L"
+            }
+
+          ]
+        },
+
+
+        /* =================================
+           Q4 야생성 W / C
+        ================================= */
+
+        {
+          category:
+            "야생성",
+
+          title:
+            "산책 중 한 번도 가보지 않은<br>" +
+            "낯선 풀숲이나 골목길을 마주쳤을 때?",
+
+          answers: [
+
+            {
+              text:
+                "코를 땅에 바짝 붙이고 흥분해서 먼저 쑥 들어가 버린다.",
+
+              score:
+                "W"
+            },
+
+            {
+              text:
+                "들어가기 전 보호자의 얼굴을 한 번 쳐다보고 눈치를 살핀다.",
+
+              score:
+                "C"
+            }
+
+          ]
+        },
+
+
+        /* =================================
+           Q5 야생성 W / C
+        ================================= */
+
+        {
+          category:
+            "야생성",
+
+          title:
+            "산책로 바닥에서 아주 흥미로운 냄새를<br>" +
+            "발견했을 때 내 강아지는?",
+
+          answers: [
+
+            {
+              text:
+                "보호자가 줄을 당겨도 버티면서 몸을 비비거나 끝까지 냄새를 맡으려고 한다.",
+
+              score:
+                "W"
+            },
+
+            {
+              text:
+                "이름을 부르면 아쉬워도 코를 떼고 보호자를 따라온다.",
+
+              score:
+                "C"
+            }
+
+          ]
+        },
+
+
+        /* =================================
+           Q6 야생성 W / C
+        ================================= */
+
+        {
+          category:
+            "야생성",
+
+          title:
+            "새로운 노즈워크 장난감이나<br>" +
+            "간식이 숨겨진 퍼즐을 주었을 때?",
+
+          answers: [
+
+            {
+              text:
+                "앞발로 치고 이빨로 물어뜯어서라도 어떻게든 파헤쳐서 먹는다.",
+
+              score:
+                "W"
+            },
+
+            {
+              text:
+                "하다가 잘 안되면 보호자를 바라보며 도움을 요청한다.",
+
+              score:
+                "C"
+            }
+
+          ]
+        },
+
+
+        /* =================================
+           Q7 관계성 E / I
+        ================================= */
+
+        {
+          category:
+            "관계성",
+
+          title:
+            "산책로 맞은편에서 처음 보는<br>" +
+            "다른 강아지가 걸어오고 있을 때?",
+
+          answers: [
+
+            {
+              text:
+                "친구다! 하며 꼬리를 흔들고 먼저 다가가 냄새를 맡으려고 한다.",
+
+              score:
+                "E"
+            },
+
+            {
+              text:
+                "슬쩍 피해서 다른 길로 가려고 하거나 보호자 뒤로 숨는다.",
+
+              score:
+                "I"
+            }
+
+          ]
+        },
+
+
+        /* =================================
+           Q8 관계성 E / I
+        ================================= */
+
+        {
+          category:
+            "관계성",
+
+          title:
+            "집에 평소 자주 오지 않던<br>" +
+            "낯선 손님이 방문했을 때 내 강아지는?",
+
+          answers: [
+
+            {
+              text:
+                "처음엔 짖더라도 이내 다가가 만져달라고 하거나 장난감을 물어온다.",
+
+              score:
+                "E"
+            },
+
+            {
+              text:
+                "자기 방이나 방석으로 들어가서 손님이 나갈 때까지 나오지 않는다.",
+
+              score:
+                "I"
+            }
+
+          ]
+        },
+
+
+        /* =================================
+           Q9 관계성 E / I
+        ================================= */
+
+        {
+          category:
+            "관계성",
+
+          title:
+            "애견 카페에서 다른 강아지들이<br>" +
+            "우르르 몰려와 관심을 보인다면?",
+
+          answers: [
+
+            {
+              text:
+                "무리에 자연스럽게 섞여 함께 냄새를 맡고 장난을 친다.",
+
+              score:
+                "E"
+            },
+
+            {
+              text:
+                "으르렁거리며 경고하거나 보호자 의자 밑으로 대피한다.",
+
+              score:
+                "I"
+            }
+
+          ]
+        },
+
+
+        /* =================================
+           Q10 의존성 T / N
+        ================================= */
+
+        {
+          category:
+            "의존성",
+
+          title:
+            "보호자가 외출 준비를 하고<br>" +
+            "문을 나설 때 강아지의 태도는?",
+
+          answers: [
+
+            {
+              text:
+                "나갔다 오나 보네 하는 눈빛으로 쳐다보고 자기 자리에 가서 눕는다.",
+
+              score:
+                "T"
+            },
+
+            {
+              text:
+                "문 앞까지 따라 나와 자기도 데려가라고 울거나 안절부절못한다.",
+
+              score:
+                "N"
+            }
+
+          ]
+        },
+
+
+        /* =================================
+           Q11 의존성 T / N
+        ================================= */
+
+        {
+          category:
+            "의존성",
+
+          title:
+            "집에서 편안하게 쉬고 있는 주말 오후,<br>" +
+            "강아지는 주로 어디에 있나요?",
+
+          answers: [
+
+            {
+              text:
+                "자기가 좋아하는 독립된 공간에서 혼자 편안하게 잠을 잔다.",
+
+              score:
+                "T"
+            },
+
+            {
+              text:
+                "보호자 발등이나 무릎, 옆구리에 몸을 딱 붙이고 있다.",
+
+              score:
+                "N"
+            }
+
+          ]
+        },
+
+
+        /* =================================
+           Q12 의존성 T / N
+        ================================= */
+
+        {
+          category:
+            "의존성",
+
+          title:
+            "보호자가 화장실에 들어가서<br>" +
+            "문을 닫았을 때 문밖의 상황은?",
+
+          answers: [
+
+            {
+              text:
+                "신경 쓰지 않고 거실에서 혼자 장난감을 가지고 놀거나 잔다.",
+
+              score:
+                "T"
+            },
+
+            {
+              text:
+                "화장실 문 앞에 앉아 문이 열릴 때까지 낑낑거리며 기다린다.",
+
+              score:
+                "N"
+            }
+
+          ]
+        }
+
+      ];
+
+
+      /* =====================================
+         성향 코드와 9가지 유형 연결
+      ====================================== */
+
+      const personalityTypeMap = {
+
+        CTEA:
+          "마당발형",
+
+        CNEA:
+          "마당발형",
+
+
+        CTEL:
+          "말랑순둥형",
+
+        CTIL:
+          "말랑순둥형",
+
+
+        WTEL:
+          "킁킁탐험형",
+
+        WNEL:
+          "킁킁탐험형",
+
+
+        WTIL:
+          "눈치만렙형",
+
+        CNEL:
+          "눈치만렙형",
+
+
+        WTEA:
+          "우다다형",
+
+        WNEA:
+          "우다다형",
+
+
+        WNIL:
+          "경계대장형",
+
+        WNIA:
+          "경계대장형",
+
+
+        WTIA:
+          "마이웨이형",
+
+        CNIA:
+          "마이웨이형",
+
+
+        CTIA:
+          "엄마바라기형",
+
+
+        CNIL:
+          "예민보스형"
+
+      };
+
+
+      /* =====================================
+         테스트 초기화
+      ====================================== */
+
+      function resetTest() {
+
+        currentIndex = 0;
+
+        answerHistory = [];
+
+        isMoving = false;
+
+        scores = {
+
+          A: 0,
+          L: 0,
+
+          W: 0,
+          C: 0,
+
+          E: 0,
+          I: 0,
+
+          T: 0,
+          N: 0
+
+        };
+
+      }
+
+
+      /* =====================================
+         선택한 견종 이미지 표시
+      ====================================== */
+
+      function setBreedImage() {
+
+        const imagePath =
+          questionDogImages[selectedBreed];
+
+        if (!imagePath) {
+
+          console.error(
+            "등록되지 않은 견종입니다:",
+            selectedBreed
+          );
+
+          questionDogImage.src =
+            questionDogImages.welly;
+
+          questionDogImage.alt =
+            "강아지 캐릭터";
+
+          return;
+
+        }
+
+        questionDogImage.src =
+          imagePath;
+
+        questionDogImage.alt =
+          selectedBreedName
+            ? selectedBreedName + " 캐릭터"
+            : "선택한 강아지 캐릭터";
+
+      }
+
+
+      /* =====================================
+         질문 화면 출력
+      ====================================== */
+
+      function renderQuestion() {
+
+        const question =
+          questions[currentIndex];
+
+        const currentNumber =
+          currentIndex + 1;
+
+        const totalNumber =
+          questions.length;
+
+        const progress =
+          (currentNumber / totalNumber) * 100;
+
+
+        /*
+         * 질문 정보
+         */
+
+        questionCategory.textContent =
+          question.category;
+
+        questionTitle.innerHTML =
+          "Q" +
+          currentNumber +
+          ". " +
+          question.title;
+
+
+        /*
+         * 답변 정보
+         */
+
+        answerCodeA.textContent =
+          question.answers[0].score;
+
+        answerCodeB.textContent =
+          question.answers[1].score;
+
+        answerTextA.textContent =
+          question.answers[0].text;
+
+        answerTextB.textContent =
+          question.answers[1].text;
+
+
+        /*
+         * 현재 문제 번호
+         */
+
+        currentQuestionNumber.textContent =
+          String(currentNumber).padStart(2, "0");
+
+        totalQuestionNumber.textContent =
+          String(totalNumber).padStart(2, "0");
+
+
+        /*
+         * 진행도 바
+         */
+
+        progressValue.style.width =
+          progress + "%";
+
+        progressTrack.setAttribute(
+          "aria-valuenow",
+          String(currentNumber)
+        );
+
+
+        /*
+         * 이전 버튼 표시 설정
+         *
+         * Q1 : 버튼 숨김
+         * Q2 ~ Q12 : 이전 버튼 표시
+         */
+
+        if (currentIndex === 0) {
+
+          backButton.style.display = "none";
+
+        } else {
+
+          backButton.style.display = "flex";
+          backButton.textContent = "이전";
+
+        }
+
+
+        /*
+         * 답변 버튼 초기화
+         */
+
+        answerCards.forEach(function (card) {
+
+          card.disabled = false;
+
+          card.classList.remove(
+            "selected"
+          );
+
+        });
+
+        isMoving = false;
+
+      }
+
+
+      /* =====================================
+         결과 코드 계산
+
+         코드 순서:
+         야생성 → 의존성 → 관계성 → 활동성
+
+         예:
+         C + N + E + A = CNEA
+      ====================================== */
+
+      function calculateResultCode() {
+
+        const wildness =
+          scores.W > scores.C
+            ? "W"
+            : "C";
+
+        const dependence =
+          scores.T > scores.N
+            ? "T"
+            : "N";
+
+        const relation =
+          scores.E > scores.I
+            ? "E"
+            : "I";
+
+        const activity =
+          scores.A > scores.L
+            ? "A"
+            : "L";
+
+        return (
+          wildness +
+          dependence +
+          relation +
+          activity
+        );
+
+      }
+
+
+      /* =====================================
+         테스트 완료
+      ====================================== */
+
+      function finishTest() {
+
+        const resultCode =
+          calculateResultCode();
+
+        const resultType =
+          personalityTypeMap[resultCode];
+
+
+        /*
+         * 결과 유형을 찾지 못한 경우
+         */
+
+        if (!resultType) {
+
+          console.error(
+            "매핑되지 않은 성향 코드:",
+            resultCode
+          );
+
+          alert(
+            "테스트 결과를 계산하지 못했습니다.\n다시 테스트해주세요."
+          );
+
+          window.location.href =
+            "select.html";
+
+          return;
+
+        }
+
+
+        /*
+         * result.html에서 사용할 값 저장
+         */
+
+        localStorage.setItem(
+          "selectedBreed",
+          selectedBreed
+        );
+
+        localStorage.setItem(
+          "selectedBreedName",
+          selectedBreedName
+        );
+
+        localStorage.setItem(
+          "resultCode",
+          resultCode
+        );
+
+        localStorage.setItem(
+          "resultType",
+          resultType
+        );
+
+        localStorage.setItem(
+          "personalityCode",
+          resultCode
+        );
+
+        localStorage.setItem(
+          "personalityType",
+          resultType
+        );
+
+        localStorage.setItem(
+          "testScores",
+          JSON.stringify(scores)
+        );
+
+
+        console.log(
+          "선택한 견종:",
+          selectedBreed
+        );
+
+        console.log(
+          "성향 코드:",
+          resultCode
+        );
+
+        console.log(
+          "성향 유형:",
+          resultType
+        );
+
+
+        /*
+         * 결과 페이지로 이동
+         */
+
+        window.location.href =
+          "result.html";
+
+      }
+
+
+      /* =====================================
+         답변 선택
+      ====================================== */
+
+      answerCards.forEach(function (card) {
+
+        card.addEventListener(
+          "click",
+          function () {
+
+            /*
+             * 빠른 중복 클릭 방지
+             */
+
+            if (isMoving) {
+              return;
+            }
+
+            isMoving = true;
+
+
+            const answerIndex =
+              Number(
+                card.dataset.answerIndex
+              );
+
+            const selectedAnswer =
+              questions[currentIndex]
+                .answers[answerIndex];
+
+
+            /*
+             * 모든 답변 버튼 잠금
+             */
+
+            answerCards.forEach(
+              function (item) {
+
+                item.disabled = true;
+
+              }
+            );
+
+
+            /*
+             * 선택 효과
+             */
+
+            card.classList.add(
+              "selected"
+            );
+
+
+            /*
+             * 선택 점수 증가
+             */
+
+            scores[
+              selectedAnswer.score
+            ] += 1;
+
+
+            /*
+             * 이전 질문을 위한 답변 기록
+             */
+
+            answerHistory.push({
+
+              questionIndex:
+                currentIndex,
+
+              answerIndex:
+                answerIndex,
+
+              score:
+                selectedAnswer.score
+
+            });
+
+
+            /*
+             * 선택 효과가 보인 후 이동
+             */
+
+            nextQuestionTimer = setTimeout(function () {
+
+  currentIndex += 1;
+
+  if (currentIndex < questions.length) {
+    renderQuestion();
+  } else {
+    finishTest();
+  }
+
+  nextQuestionTimer = null;
+
+}, 300);
+
+          }
+        );
+
+      });
+
+
+/* =====================================
+   이전 버튼
+====================================== */
+
+backButton.addEventListener("click", function () {
+
+  /*
+   * 다음 문제 이동 타이머가 남아 있다면 취소
+   */
+
+  if (nextQuestionTimer) {
+    clearTimeout(nextQuestionTimer);
+    nextQuestionTimer = null;
+  }
+
+  isMoving = false;
+
+
+  /*
+   * 첫 번째 질문에서는 동작하지 않음
+   */
+
+  if (currentIndex === 0) {
+    return;
+  }
+
+
+  /*
+   * 이전 답변 기록 불러오기
+   */
+
+  const previousAnswer = answerHistory.pop();
+
+
+  /*
+   * 이전 답변으로 증가했던 점수 취소
+   */
+
+  if (
+    previousAnswer &&
+    scores[previousAnswer.score] > 0
+  ) {
+    scores[previousAnswer.score] -= 1;
+  }
+
+
+  /*
+   * 이전 문제로 이동
+   */
+
+  currentIndex -= 1;
+
+  renderQuestion();
+
+});
+
+
+      /* =====================================
+         페이지 시작
+      ====================================== */
+
+      resetTest();
+
+      setBreedImage();
+
+      renderQuestion();
+
+    });
+  </script>
+
+<script src="audio.js"></script>
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,878 @@
+/* ========================================== 
+   00. 기본 설정
+   ========================================== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1a1a1a; background: #fff; overflow-x: clip; }
+a { text-decoration: none; color: inherit; }
+ul, li { list-style: none; }
+button { font: inherit; }
+
+@font-face {
+  font-family: 'Maplestory OTF';
+  src:
+    local('Maplestory OTF Bold'),
+    local('MaplestoryOTFBold'),
+    local('Maplestory Bold'),
+    url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/MaplestoryOTFBold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+/* ========================================== 
+   01. 기존 공통 헤더
+   ========================================== */
+.header { position: fixed; top: 0; left: 0; width: 100%; height: 75px; background: rgba(255,255,255,.96); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 2px solid #ff7710; z-index: 1000; display: flex; align-items: center; transition: transform .35s cubic-bezier(.16,1,.3,1); }
+.header.is-hidden { transform: translateY(-100%); }
+.header-inner { width: 90%; max-width: 1240px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+.header-logo-img { height: 36px; width: auto; display: block; }
+.header-menu-list { display: flex; gap: 36px; }
+.header-menu-item a { font-size: 15px; font-weight: 500; color: #666; transition: color .2s; }
+.header-menu-item.active a, .header-menu-item a:hover { color: #ff7710; font-weight: 700; }
+.mobile-menu-toggle { display: none; background: none; border: none; cursor: pointer; width: 28px; height: 22px; position: relative; z-index: 1001; }
+.mobile-menu-toggle span { display: block; width: 100%; height: 2px; background: #111; border-radius: 2px; position: absolute; left: 0; transition: all .3s ease; }
+.mobile-menu-toggle span:nth-child(1) { top: 0; }
+.mobile-menu-toggle span:nth-child(2) { top: 9px; }
+.mobile-menu-toggle span:nth-child(3) { top: 18px; }
+.mobile-menu-toggle.is-active span:nth-child(1) { transform: rotate(45deg); top: 9px; }
+.mobile-menu-toggle.is-active span:nth-child(2) { opacity: 0; }
+.mobile-menu-toggle.is-active span:nth-child(3) { transform: rotate(-45deg); top: 9px; }
+
+/* ========================================== 
+   02. 첫 번째 섹션 - 기존 하늘 PNG + 구름 PNG
+   ========================================== */
+.curriculum-main { padding-top: 75px; min-height: 100vh; background: #fff; }
+.curriculum-hero { position: relative; width: 100%; overflow: hidden; background: #a3dcfd; }
+.curriculum-hero-artwork { position: relative; width: 100%; margin: 0 auto; }
+.curriculum-hero-image { display: block; width: 100%; height: auto; }
+.curriculum-hero-cloud { display: block; position: relative; z-index: 2; width: 100%; height: auto; margin-top: -10%; pointer-events: none; user-select: none; }
+
+/* ==========================================
+   03. 학습 구성: Sticky + 세로 스크롤 연동 가로 이동
+   섹션이 화면 전체에 들어온 시점에만 가로로 이동합니다.
+   휠을 가로 스크롤로 강제 변환하지 않습니다.
+   ========================================== */
+.learning-stages {
+  --stage-card-width: clamp(300px, 35.4vw, 455px);
+  --stage-side-space: 7vw;
+  position: relative;
+  width: 100%;
+  /* JS에서 가로 이동 거리에 맞춰 height를 자동 계산합니다. */
+  min-height: 100vh;
+  background-color: #f2faff;
+}
+
+/* 이 영역이 화면에 고정되므로, 제목과 카드가 모두 보인 상태에서 움직입니다. */
+.learning-stages-sticky {
+  position: sticky;
+  position: -webkit-sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f2faff url('images/curriculum-bg.webp') center center / cover no-repeat;
+}
+
+.learning-stages-content {
+  width: 100%;
+  padding: 20px 0;
+}
+
+.learning-stages-title {
+  margin: 0 18px clamp(32px, 5vh, 60px);
+  text-align: center;
+  font-size: clamp(30px, 3.45vw, 46px);
+  font-weight: 700;
+  line-height: 1.22;
+  letter-spacing: -.045em;
+  color: #070707;
+  font-family: 'Maplestory OTF', 'Maplestory', sans-serif;
+}
+
+/* 실제로는 JS가 stage-track의 transform만 바꿉니다. */
+.stage-viewport {
+  width: 100%;
+  overflow: hidden;
+}
+.stage-viewport:focus-visible {
+  outline: 3px solid #ff7a05;
+  outline-offset: -3px;
+}
+.stage-track {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  width: max-content;
+  padding-inline: var(--stage-side-space);
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  user-select: none;
+  -webkit-user-select: none;
+}
+.stage-item {
+  flex: 0 0 var(--stage-card-width);
+  width: var(--stage-card-width);
+  text-align: center;
+}
+.stage-visual {
+  min-height: clamp(195px, 30vh, 280px);
+  height: auto;
+  border-radius: 0;
+  background: transparent;
+  display: grid;
+  place-items: start center;
+}
+
+/* 6칸 모두 글자 대신 이미지 파일을 그대로 넣는 구조 */
+.stage-artwork {
+  width: min(96%, 420px); /* 기존 268px에서 확대 */
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 0;
+  border-radius: 18px;
+  background: transparent;
+}
+.stage-artwork img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 18px;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.stage-item h3 {
+  margin: clamp(20px, 4vh, 41px) 10px 12px;
+  font-size: clamp(22px, 2.2vw, 29px);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -.055em;
+  color: #050505;
+  font-family: 'Maplestory OTF', 'Maplestory', sans-serif;
+}
+.stage-item h3 span { white-space: nowrap; }
+.stage-item p {
+  color: #666;
+  font-size: clamp(15px, 1.43vw, 19px);
+  font-weight: 650;
+  line-height: 1.32;
+  letter-spacing: -.04em;
+  word-break: keep-all;
+}
+
+/* 낮은 노트북 화면에서도 제목과 카드가 잘리지 않도록 높이를 자동 축소 */
+@media (min-width: 769px) and (max-height: 650px) {
+  .learning-stages-title { margin-bottom: 24px; font-size: 30px; }
+  .stage-visual { height: 190px; }
+  .stage-artwork { width: min(96%, 340px); }
+  .stage-item h3 { margin-top: 16px; font-size: 22px; }
+  .stage-item p { font-size: 14px; }
+}
+
+/* ========================================== 
+   04. 기존 탑 버튼
+   ========================================== */
+.scroll-top-btn { position: fixed; bottom: 40px; right: 40px; width: 52px; height: 52px; border-radius: 50%; background: #fff; border: 1px solid #eaeaea; box-shadow: 0 4px 12px rgba(0,0,0,.08); cursor: pointer; z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transform: translateY(10px); transition: opacity .3s ease, visibility .3s ease, transform .3s ease, background-color .2s ease; }
+.scroll-top-btn.is-visible { opacity: 1; visibility: visible; transform: translateY(0); }
+.scroll-top-btn svg { width: 22px; height: 22px; color: #888; transition: color .2s; }
+.scroll-top-btn:hover { background: #ff7710; border-color: #ff7710; }
+.scroll-top-btn:hover svg { color: #fff; }
+
+/* ========================================== 
+   05. 기존 푸터
+   ========================================== */
+.footer { position: relative; z-index: 20; width: 100%; background: #141414; color: #888; padding: 60px 20px 40px; }
+.footer-inner { max-width: 1040px; margin: 0 auto; }
+.footer-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
+.footer-nav { display: flex; flex-direction: column; gap: 12px; }
+.footer-nav a { color: #fff; font-size: 16px; font-weight: 700; transition: color .2s; }
+.footer-nav a:hover { color: #ccc; }
+.footer-app-buttons { display: flex; gap: 10px; }
+.btn-app { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border: 1px solid #fff; border-radius: 8px; color: #fff; font-size: 13px; font-weight: 700; transition: background-color .2s; }
+.btn-app:hover { background: rgba(255,255,255,.1); }
+.footer-info { font-size: 12px; color: #777; line-height: 1.6; margin-bottom: 24px; }
+.footer-info p { margin: 0 0 4px; overflow-wrap: anywhere; }
+.footer-divider { border: none; border-top: 1px solid #282828; margin: 0 0 24px; }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; }
+.copyright { font-size: 13px; color: #666; }
+.footer-sns { display: flex; align-items: center; gap: 16px; }
+.footer-sns a { color: #666; display: flex; align-items: center; justify-content: center; transition: color .2s; }
+.footer-sns a:hover { color: #fff; }
+.sns-text-icon { font-size: 10px; font-weight: 800; border: 1px solid #666; border-radius: 4px; padding: 1px 4px; }
+
+/* ========================================== 
+   06. 태블릿 / 모바일 반응형
+   ========================================== */
+@media (max-width: 768px) {
+  .mobile-menu-toggle { display: block; }
+  .header-nav { position: absolute; top: 75px; left: 0; width: 100%; background: #fff; padding: 10px 5% 30px; box-shadow: 0 10px 15px rgba(0,0,0,.05); transform: translateY(-10px); opacity: 0; visibility: hidden; transition: transform .3s, opacity .3s, visibility .3s; }
+  .header-nav.is-open { transform: translateY(0); opacity: 1; visibility: visible; }
+  .header-menu-list { flex-direction: column; gap: 0; text-align: left; }
+  .header-menu-item { border-bottom: 1px solid #f4f4f4; }
+  .header-menu-item:last-child { border-bottom: none; }
+  .header-menu-item a { display: block; font-size: 17px; font-weight: 600; color: #222; padding: 18px 5px; }
+  .curriculum-hero-artwork { width: 760px; max-width: none; left: 50%; transform: translateX(-50%); margin: 0; }
+  /* 모바일은 자연스러운 손가락 가로 스와이프 */
+  .learning-stages {
+    --stage-card-width: min(79vw, 350px);
+    --stage-side-space: 6vw;
+    min-height: 0;
+  }
+  .learning-stages-sticky {
+    position: relative;
+    top: auto;
+    height: auto;
+    overflow: visible;
+    background-size: auto 100%;
+  }
+  .learning-stages-content { padding: 110px 0 115px; }
+  .learning-stages-title { font-size: 32px; margin-bottom: 39px; }
+  .stage-viewport { overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .stage-viewport::-webkit-scrollbar { display: none; }
+  .stage-track { gap: 14px; width: max-content; will-change: auto; transform: none !important; }
+  .stage-visual { min-height: 230px; height: auto; border-radius: 0; }
+  .stage-artwork { width: min(96%, 420px); }
+  .stage-item h3 { margin: 26px 10px 10px; font-size: 24px; }
+  .stage-item p { font-size: 15px; line-height: 1.45; }
+  .scroll-top-btn { bottom: 20px; right: 20px; width: 44px; height: 44px; }
+  .footer { padding: 40px 20px 30px; }
+  .footer-top { flex-direction: column-reverse; gap: 28px; margin-bottom: 24px; }
+  .footer-app-buttons { width: 100%; gap: 10px; }
+  .btn-app { flex: 1; justify-content: center; padding: 14px 0; font-size: 14px; border-radius: 10px; }
+  .footer-bottom { flex-direction: column-reverse; align-items: flex-start; gap: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: .01ms !important; }
+}
+
+
+
+/* ==========================================
+   11. 숲속 여행 — 원본 비율 유지 + 더 자연스러운 구름 전환
+   - 배경 원본 비율/캐릭터 위치는 유지
+   - 다음 장면이 아래에서 위로 부드럽게 떠오르듯 올라옴
+   - 전환 앞부분은 하늘색 판이 아니라 구름만 먼저 보이도록 처리
+   - 이전 말풍선/모달/패키지 컨페티 작동 유지
+========================================== */
+.nature-section {
+  position: relative;
+  width: 100%;
+  height: auto;
+  overflow: clip;
+  background: transparent;
+}
+.nature-scene {
+  position: relative;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  background: transparent;
+}
+.nature-chapter {
+  position: sticky;
+  top: var(--nature-pin-top, 0px);
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: var(--scene-width) / var(--scene-height);
+  overflow: hidden;
+  isolation: isolate;
+  background: transparent;
+  --chapter-rise: 0px;
+}
+.nature-chapter--1 { --scene-width: 1889; --scene-height: 2048; }
+.nature-chapter--2 { --scene-width: 1595; --scene-height: 2048; }
+.nature-chapter--3 { --scene-width: 1991; --scene-height: 2048; }
+.nature-chapter--4 { --scene-width: 1924; --scene-height: 2033; }
+.nature-chapter--5 { --scene-width: 1934; --scene-height: 2028; }
+.nature-chapter--6 { --scene-width: 1408; --scene-height: 2048; }
+.nature-chapter--1 { z-index: 1; }
+.nature-chapter--2 { z-index: 2; }
+.nature-chapter--3 { z-index: 3; }
+.nature-chapter--4 { z-index: 4; }
+.nature-chapter--5 { z-index: 5; }
+.nature-chapter--6 { z-index: 6; }
+
+/* bg-02~bg-06 PNG 상단에는 이미 투명한 구름 윤곽이 들어 있습니다.
+   추가 흰색/하늘색 반투명 베일 없이 원본 알파(transparent)를 그대로 사용합니다. */
+.nature-background {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center center;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  transform: translate3d(0, var(--chapter-rise, 0px), 0);
+  will-change: transform;
+}
+.nature-chapter--6::after { content: none; }
+
+.nature-stop {
+  position: absolute;
+  top: 29%;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  z-index: 3;
+  pointer-events: none;
+  transform: translate3d(0, calc(var(--chapter-rise, 0px) * .52), 0);
+  will-change: transform;
+}
+.nature-character, .nature-bubble { pointer-events: auto; }
+.nature-character {
+  position: absolute;
+  display: block;
+  width: 67%;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+  cursor: pointer;
+  transition: transform .55s cubic-bezier(.16,1,.3,1), filter .4s;
+}
+.nature-stop:hover .nature-character,
+.nature-stop:focus-within .nature-character { transform: translateY(-1.5%) scale(1.025); }
+.nature-bubble {
+  position: absolute;
+  display: block;
+  width: 39%;
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(16px) scale(.94);
+  transition: opacity .3s ease, transform .45s cubic-bezier(.2,.8,.2,1), visibility .3s;
+  filter: drop-shadow(0 5px 5px rgba(31,72,94,.08));
+}
+.nature-bubble img { display: block; width: 100%; height: auto; }
+.nature-stop:hover .nature-bubble,
+.nature-stop:focus-within .nature-bubble,
+.nature-stop.is-bubble-open .nature-bubble {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+.nature-bubble:hover { filter: drop-shadow(0 10px 9px rgba(23,64,84,.16)); }
+.nature-bubble:focus-visible { outline: 3px solid #ff7a05; outline-offset: 4px; border-radius: 12px; }
+.nature-character:focus-visible { outline: 3px solid #ff7a05; outline-offset: 4px; border-radius: 10px; }
+
+/* 2026-11-14: 세로 레퍼런스에 맞춘 6개 장면 개별 배치.
+   배경 이미지는 손대지 않고 캐릭터/나뭇가지와 말풍선만 이동합니다.
+   원본 비율은 width + height:auto로 유지합니다. */
+.nature-stop {
+  left: 0;
+  width: 100%;
+  height: 65%;
+}
+.nature-stop .nature-character {
+  display: block;
+  width: 80%; /* 기존 100%보다 20% 축소 */
+  height: auto;
+  max-width: none;
+  left: 0;
+  right: auto;
+  top: 0;
+  object-fit: contain;
+}
+/* 오른쪽 나뭇가지 장면은 오른쪽 가장자리를 기준으로 축소 */
+.nature-stop--1 .nature-character,
+.nature-stop--3 .nature-character,
+.nature-stop--5 .nature-character {
+  left: auto;
+  right: 0;
+}
+/* 나머지 장면은 왼쪽 가장자리를 기준으로 축소 */
+.nature-stop--2 .nature-character,
+.nature-stop--4 .nature-character,
+.nature-stop--6 .nature-character {
+  left: 0;
+  right: auto;
+}
+.nature-stop .nature-bubble {
+  width: 42%;
+  height: auto;
+  z-index: 5;
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+/* 1. 두더지: 맨 위 오른쪽 가지 / 모음 말풍선은 좌상단 */
+.nature-stop--1 { top: 5%; }
+.nature-stop--1 .nature-bubble { left: 4%; right: auto; top: 8%; }
+/* 2. 곰: 왼쪽 가지 / 자음 말풍선은 오른쪽 중상단 */
+.nature-stop--2 { top: 22%; }
+.nature-stop--2 .nature-bubble { right: 4%; left: auto; top: 8%; }
+/* 3. 비버: 오른쪽 가지 / 음운 인식 말풍선은 좌하단 */
+.nature-stop--3 { top: 17%; }
+.nature-stop--3 .nature-bubble { left: 5%; right: auto; top: 57%; }
+/* 4. 코알라: 왼쪽 가지 / 해독 연습 말풍선은 오른쪽 중단 */
+.nature-stop--4 { top: 11%; }
+.nature-stop--4 .nature-bubble { right: 4%; left: auto; top: 8%; }
+/* 5. 카멜레온: 오른쪽 가지 / 음운변동 말풍선은 좌중하단 */
+.nature-stop--5 { top: 23%; }
+.nature-stop--5 .nature-bubble { left: 5%; right: auto; top: 8%; }
+/* 6. 부엉이: 맨 아래 왼쪽 가지 / 철자 말풍선은 우하단 */
+.nature-stop--6 { top: 23%; }
+.nature-stop--6 .nature-bubble { right: 4%; left: auto; top: 8%; }
+
+.nature-package-wrap {
+  position: absolute;
+  width: 50%;   /* 기존 43% → 50% */
+  left: 25%;    /* 가운데 정렬 유지 */
+  top: 69%;     /* 기존 72% → 살짝 위로 */
+  z-index: 4;
+  transform: translate3d(0, calc(var(--chapter-rise, 0px) * .35), 0);
+  will-change: transform;
+}
+.nature-package {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 7px 8px rgba(55,78,38,.08));
+  transition: transform .7s cubic-bezier(.16,1,.3,1);
+}
+.nature-package-wrap.is-visible .nature-package { animation: package-pop .9s cubic-bezier(.18,.85,.2,1) both; }
+@keyframes package-pop {
+  0% { transform: translateY(18px) scale(.85); }
+  60% { transform: translateY(-8px) scale(1.07); }
+  100% { transform: translateY(0) scale(1); }
+}
+@media (max-width: 800px) {
+  .nature-character { max-width: none; }
+  .nature-stop--4 .nature-bubble { top: 8%; }
+
+  .nature-package-wrap {
+    width: 43%;  /* 패키지 확대 */
+    left: 28.5%; /* 중앙 정렬 */
+    top: 74%;
+  }
+}
+@media (hover: none) {
+  .nature-stop.is-bubble-open .nature-bubble { visibility: visible; opacity: 1; }
+}
+
+
+/* 마지막 배경 PNG 맨 아래의 미세한 투명 픽셀로 생기는
+   하늘색 한 줄을 가립니다. 푸터는 이미지에 빈틈 없이 맞닿게 됩니다.
+   화면 너비에 따라 3~18px만 겹치며, 캐릭터/패키지 크기는 그대로 둡니다. */
+.nature-section { margin-bottom: 0; padding-bottom: 0; }
+.curriculum-main { margin-bottom: 0; padding-bottom: 0; }
+@media (min-width: 768px) {
+  footer.footer.ilkko-footer {
+    margin-top: -24px !important;
+    border-top: 0;
+    position: relative;
+    z-index: 30;
+  }
+}
+
+/* ==========================================
+   12. 화면 레퍼런스형 모달 (960 × 770 기준)
+========================================== */
+body.modal-open { overflow: hidden; }
+.training-modal {
+  position:fixed; inset:0; z-index:2100;
+  display:flex; align-items:center; justify-content:center;
+  padding:24px; visibility:hidden; opacity:0; pointer-events:none;
+  transition:opacity .26s ease, visibility .26s;
+}
+.training-modal.is-open { opacity:1; visibility:visible; pointer-events:auto; }
+.training-modal-backdrop {
+  position:absolute; inset:0; background:rgba(15,22,26,.66);
+}
+.training-dialog {
+  position:relative; z-index:1; width:min(960px,100%);
+  height:min(770px, calc(100dvh - 48px)); min-height:0;
+  background:#f9f9f9; border-radius:24px; overflow:hidden;
+  box-shadow:0 25px 75px rgba(8,20,25,.2);
+  display:flex; flex-direction:column;
+  transform:translateY(18px) scale(.98);
+  transition:transform .28s cubic-bezier(.2,.75,.2,1);
+}
+.training-modal.is-open .training-dialog { transform:translateY(0) scale(1); }
+.training-modal-header { position:relative; flex:none; padding:30px 54px 16px; }
+.training-modal-header h2 { margin:0 0 24px; font-size:24px; line-height:1.35; font-weight:850; text-align:center; color:#131313; letter-spacing:-.055em; }
+.training-close { position:absolute; top:20px; right:23px; width:37px; height:37px; padding:0; border:0; background:transparent; font-size:30px; line-height:1; font-weight:500; color:#6b6b6b; cursor:pointer; }
+.training-close:hover { color:#ff7900; }
+.training-tabs { display:flex; justify-content:center; align-items:center; gap:7px; }
+.training-tabs button {
+  width:35px; height:35px; padding:0 0 0 1px; border:0;
+  clip-path:polygon(0 0,73% 0,100% 50%,73% 100%,0 100%,14% 50%);
+  background:#e1e3e9; color:#687691; font-size:17px; font-weight:900;
+  cursor:pointer; transition:background .2s,color .2s,transform .2s;
+}
+.training-tabs button.is-active { background:#ff7900; color:#fff; }
+.training-tabs button:hover { transform:translateY(-2px); }
+.training-tabs button:focus-visible { outline:3px solid #ff7900; outline-offset:3px; clip-path:none; border-radius:4px; }
+.training-modal-scroll { padding:0 55px 38px 43px; flex:1; overflow-y:auto; scrollbar-color:#d6d6d6 transparent; scrollbar-width:thin; }
+.training-modal-scroll::-webkit-scrollbar { width:7px; }
+.training-modal-scroll::-webkit-scrollbar-thumb { background:#d9d9d9; border-radius:10px; }
+.training-modal-body { display:grid; grid-template-columns: 412px 1fr; gap:32px; min-height:350px; align-items:start; padding-top:24px; }
+.training-modal-art { position:relative; padding-top:18px; }
+.training-image-placeholder { width:100%; height:277px; background:#e9e9e9; border-radius:17px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.training-image-placeholder > span { color:#909090; font-size:15px; font-weight:700; }
+.training-image-placeholder img { width:100%; height:100%; object-fit:contain; border-radius:17px; }
+.training-image-placeholder img[hidden] { display:none; }
+.training-ribbon { position:absolute; z-index:1; top:-2px; left:50%; transform:translateX(-50%); width:170px; height:76px; display:grid; place-items:center; color:#fff; background:url('images/modal-ribbon-v2.webp') center center / 100% 100% no-repeat; font-weight:800; font-size:18px; line-height:1; letter-spacing:-.02em; padding-top:0; text-shadow:0 1px 0 rgba(182,86,0,.22); }
+.training-ribbon::before,.training-ribbon::after { content:none; }
+.training-modal-information { align-self:center; padding-top:20px; }
+.training-modal-information h3 { margin:0 0 16px; font-size:23px; font-weight:850; letter-spacing:-.055em; line-height:1.4; color:#202020; word-break:keep-all; }
+.training-modal-information > p { color:#666; font-size:15px; line-height:1.55; font-weight:500; letter-spacing:-.035em; word-break:keep-all; }
+.training-tags { display:flex; flex-wrap:wrap; gap:9px; margin-top:25px; }
+.training-tags span { border:1px solid #ffc182; color:#ff7900; background:#fff; font-size:13px; line-height:1; font-weight:750; padding:9px 13px; border-radius:999px; white-space:nowrap; }
+.training-list-separator { height:1px; background:#e9e9e9; margin:2px 0 32px; }
+.training-overview { display:grid; gap:15px; padding-bottom:3px; }
+.training-overview-item { display:flex; align-items:center; gap:20px; border:1px solid #e8e8e8; border-radius:18px; background:#fff; min-height:94px; padding:17px 22px; color:inherit; cursor:pointer; text-align:left; width:100%; transition:border-color .2s,box-shadow .2s; }
+.training-overview-item:hover,.training-overview-item:focus-visible { border-color:#ffb277; box-shadow:0 5px 18px #fd85001a; outline:none; }
+.training-overview-num { background:#ff7900; color:#fff; font-size:16px; font-weight:850; width:35px; height:35px; border-radius:50%; flex:none; display:grid;place-items:center; }
+.training-overview-item strong { display:block; color:#252525; margin-bottom:5px; font-size:17px; font-weight:800; }
+.training-overview-item small { display:block; font-size:14px; line-height:1.45; color:#777; word-break:keep-all; }
+
+/* ==========================================
+   14. 기존 컨페티
+========================================== */
+.confetti-layer { position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:1900; }
+.confetti-piece { position:absolute; top:-30px; left:var(--x); width:var(--size); height:calc(var(--size)*1.45); opacity:0; border-radius:2px; background:var(--color); animation:confetti-fall var(--duration) linear var(--delay) forwards; }
+@keyframes confetti-fall { 0% {opacity:1;transform:translate3d(0,-20px,0) rotate(0deg);} 85% {opacity:1;} 100% {opacity:0;transform:translate3d(var(--drift),115dvh,0) rotate(var(--rotate));} }
+@media (max-width: 800px) {
+  .training-dialog { width:100%; height:min(760px,calc(100dvh - 30px)); border-radius:19px; }
+  .training-modal { padding:15px; }
+  .training-modal-header { padding:24px 18px 14px; }
+  .training-modal-header h2 { font-size:21px; margin-bottom:20px; }
+  .training-close { right:12px; top:11px; }
+  .training-modal-scroll { padding:0 17px 24px; }
+  .training-modal-body { grid-template-columns:minmax(0,1fr); gap:13px; padding-top:7px; }
+  .training-modal-art { max-width:440px; margin:0 auto; width:100%; }
+  .training-image-placeholder { height:210px; }
+  .training-modal-information { padding:2px 4px 18px; }
+  .training-modal-information h3 { font-size:20px; }
+  .training-list-separator { margin:8px 0 20px; }
+  .training-overview-item { gap:13px; padding:15px; min-height:80px; }
+  .training-overview-item strong { font-size:15px; }
+  .training-overview-item small { font-size:12px; }
+  .training-ribbon { width:150px; height:67px; font-size:15px; }
+}
+@media (prefers-reduced-motion: reduce) {
+ .nature-character,.nature-bubble,.nature-package { animation:none!important;transition:none!important; }
+ .confetti-piece { display:none; }
+}
+.nature-character:focus-visible { outline:3px solid #ff7a05; outline-offset:4px; border-radius:10px; }
+
+/* 움직임 줄이기 환경에서는 자연스러운 일반 스크롤로 전환합니다. */
+@media (prefers-reduced-motion: reduce) {
+  .nature-chapter { position: relative; top: auto; }
+}
+
+
+
+
+/* ============================================================
+   ★ 6단계 개별 위치 조절 ★ (여기 수치만 바꾸면 됩니다)
+   음수가 가능한 이동값: + = 오른쪽/아래, - = 왼쪽/위
+   캐릭터와 말풍선 크기는 그대로 유지됩니다.
+   bubble-top이 음수이면 말풍선이 해당 캐릭터보다 위쪽으로 올라갑니다.
+   ============================================================ */
+/* 1단계 두더지 / 모음 */
+.nature-stop--1 {
+  --scene-top: 11%;
+  --char-width: 80%;
+  --char-move-x: 0px;
+  --char-move-y: 200px;
+  --bubble-left: 3%;
+  --bubble-right: auto;
+  --bubble-top: -5%;
+  --bubble-width: 42%;
+  --bubble-move-x: 0px;
+  --bubble-move-y: 0px;
+}
+/* 2단계 곰 / 자음 */
+.nature-stop--2 {
+  --scene-top: 22%;
+  --char-width: 80%;
+  --char-move-x: 0px;
+  --char-move-y: 400px;
+  --bubble-left: auto;
+  --bubble-right: 3%;
+  --bubble-top: -18%;
+  --bubble-width: 42%;
+  --bubble-move-x: 0px;
+  --bubble-move-y: 500px;
+}
+/* 3단계 비버 / 음운 인식 */
+.nature-stop--3 {
+  --scene-top: 17%;
+  --char-width: 80%;
+  --char-move-x: 0px;
+  --char-move-y: 0px;
+  --bubble-left: 3%;
+  --bubble-right: auto;
+  --bubble-top: 61%;
+  --bubble-width: 42%;
+  --bubble-move-x: 0px;
+  --bubble-move-y: -80px;
+}
+/* 4단계 코알라 / 해독 연습 */
+.nature-stop--4 {
+  --scene-top: 11%;
+  --char-width: 80%;
+  --char-move-x: 0px;
+  --char-move-y: 270px;
+  --bubble-left: auto;
+  --bubble-right: 3%;
+  --bubble-top: -2%;
+  --bubble-width: 42%;
+  --bubble-move-x: 0px;
+  --bubble-move-y: 90px;
+}
+/* 5단계 카멜레온 / 음운 변동 */
+.nature-stop--5 {
+  --scene-top: 23%;
+  --char-width: 80%;
+  --char-move-x: 0px;
+  --char-move-y:180px;
+  --bubble-left: 3%;
+  --bubble-right: auto;
+  --bubble-top: -19%;
+  --bubble-width: 42%;
+  --bubble-move-x: 0px;
+  --bubble-move-y: 180px;
+}
+/* 6단계 부엉이 / 철자 */
+.nature-stop--6 {
+  --scene-top: 23%;
+  --char-width: 80%;
+  --char-move-x: 0px;
+  --char-move-y: 30px;
+  --bubble-left: auto;
+  --bubble-right: 3%;
+  --bubble-top: -19%;
+  --bubble-width: 42%;
+  --bubble-move-x: 0px;
+  --bubble-move-y: 80px;
+}
+/* 위 좌표를 실제 요소에 연결 (기존 분산 규칙보다 우선) */
+.nature-stop { top: var(--scene-top, 20%); }
+.nature-stop .nature-character {
+  width: var(--char-width, 80%);
+  height: auto;
+  translate: var(--char-move-x, 0px) var(--char-move-y, 0px);
+}
+.nature-stop .nature-bubble {
+  left: var(--bubble-left, auto) !important;
+  right: var(--bubble-right, auto) !important;
+  top: var(--bubble-top, 10%) !important;
+  width: var(--bubble-width, 36%) !important;
+  height: auto;
+  translate: var(--bubble-move-x, 0px) var(--bubble-move-y, 0px);
+}
+
+/* ============================================================
+   ★ 리본 표시 조정 ★
+   원본 주황 리본의 불필요한 투명 공간을 잘라냈습니다.
+   --ribbon-text-lift 값을 높이면 글씨는 더 위로 이동합니다.
+   ============================================================ */
+.training-modal-art { --ribbon-text-lift: 8px; }
+.training-modal-art .training-ribbon {
+  width: 170px;
+  height: 62px;
+  top: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 0 0 calc(var(--ribbon-text-lift) * 2) 0;
+  background: url('images/modal-ribbon-orange-trim.webp') center center / 100% 100% no-repeat;
+  color: white;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  text-shadow: 0 1px 1px rgba(144, 68, 0, .17);
+}
+@media (max-width: 800px) {
+  .training-modal-art .training-ribbon {
+    width: 150px;
+    height: 55px;
+    font-size: 15px;
+  }
+}
+
+/* 팝업 영상: 회색 자리 전체에 원본 비율로 표시 (잘림 없음) */
+.training-image-placeholder .training-stage-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  background: #e9e9e9;
+  border-radius: 17px;
+}
+.training-image-placeholder .training-stage-video[hidden] { display: none; }
+
+/* 2026-11-14: 영상 제어 바 숨김 · 학습 제목 두께 완화 */
+.training-modal-header h2 { font-weight: 700; }
+.training-modal-information h3 { font-weight: 700; }
+.training-image-placeholder .training-stage-video { object-fit: contain; }
+.training-stage-video::-webkit-media-controls,
+.training-stage-video::-webkit-media-controls-enclosure { display: none !important; }
+
+
+/* ===============================================================
+   [팝업 영상/글씨 최종 조정] 2026-11-14
+   기존 277px 회색 네모칸을 제거하고 원본 영상 비율 그대로 표시.
+   =============================================================== */
+.training-modal-art .training-image-placeholder {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  aspect-ratio: auto;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 14px;
+  overflow: visible;
+}
+.training-modal-art .training-image-placeholder .training-stage-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: none;
+  aspect-ratio: auto;
+  object-fit: contain;
+  background: transparent;
+  border-radius: 14px;
+  overflow: hidden;
+}
+.training-modal-art .training-image-placeholder .training-stage-video[hidden] { display:none; }
+.training-modal-art .training-image-placeholder > span:not([hidden]) {
+  display: block;
+  padding: 55px 10px;
+  text-align: center;
+}
+.training-modal-header h2 { font-weight: 600; }
+.training-modal-information h3 { font-weight: 600; }
+.training-tags span { font-weight: 600; }
+@media (max-width: 800px) {
+  .training-modal-art .training-image-placeholder {
+    height: auto;
+    min-height: 0;
+  }
+  .training-modal-art .training-image-placeholder .training-stage-video {
+    height: auto;
+  }
+}
+
+
+/* ============================================================
+   캐릭터에 마우스를 올릴 때만 말풍선 등장 (2026-11-14)
+   ★ 위쪽 6단계 위치 조절값과 크기는 변경하지 않습니다.
+   ============================================================ */
+.nature-stop .nature-bubble {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(12px) scale(.96);
+  transition: opacity .24s ease, transform .32s cubic-bezier(.2,.8,.2,1), visibility .24s;
+}
+.nature-stop.is-bubble-hovered .nature-bubble,
+.nature-stop:focus-within .nature-bubble,
+.nature-stop.is-bubble-open .nature-bubble {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .nature-stop .nature-bubble { transition: none; }
+}
+
+
+/* ======================================================================
+   모바일 숲속 커리큘럼 — 2026-11-14
+   이미지(436×2048)의 가로세로 비율을 유지해 단계별 배치가 밀리지 않음.
+   기존 PC 캐릭터 위치 / 말풍선 직접 수정 설정은 그대로 유지.
+   모바일에서는 스크롤 고정 대신 한 장의 하늘 + 여섯 장면을 표시.
+   아래 left/top/width만 변경하면 모바일 개별 위치를 조절할 수 있습니다.
+   ====================================================================== */
+.nature-mobile-scene { display: none; }
+@media (max-width: 767px) {
+  .nature-section { overflow: hidden; width: 100%; padding: 0; margin: 0; }
+  /* 기존 6개 스티키 장면은 모바일에서 감춤 (PC에서는 원래대로 표시) */
+  .nature-section > .nature-scene { display: none !important; }
+  .nature-mobile-scene {
+    display: block;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 436 / 2048;
+    isolation: isolate;
+    margin: 0;
+    overflow: hidden;
+    background: #62b9f5;
+  }
+  .nature-mobile-sky {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    pointer-events: none;
+  }
+  .nature-mobile-character,
+  .nature-mobile-bubble,
+  .nature-mobile-package {
+    position: absolute;
+    display: block;
+    height: auto;
+    z-index: 2;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+  .nature-mobile-character { pointer-events: none; }
+  .nature-mobile-bubble { cursor: pointer; z-index: 3; }
+  .nature-mobile-bubble img { display: block; width: 100%; height: auto; }
+  .nature-mobile-bubble:focus-visible { outline: 2px solid #ff7a05; border-radius: 9px; }
+
+  /* 1단계 두더지 (오른쪽) / 모음 (왼쪽) */
+  .mobile-character-1 { left: 29%; top: 6.3%; width: 78%; }
+  .mobile-bubble-1    { left: -5%; top: 3.75%; width: 51%; }
+  /* 2단계 곰 (왼쪽) / 자음 (오른쪽) */
+  .mobile-character-2 { left: -15%; top: 22.5%; width: 77%; }
+  .mobile-bubble-2    { right: -5%; top: 18.65%; width: 51%; }
+  /* 3단계 비버 (오른쪽) / 음운 인식 (왼쪽) */
+  .mobile-character-3 { left: 30%; top: 33.2%; width: 77%; }
+  .mobile-bubble-3    { left: -5%; top: 37.2%; width: 54%; }
+  /* 4단계 코알라 (왼쪽) / 해독 연습 (오른쪽) */
+  .mobile-character-4 { left: -14%; top: 49%; width: 76%; }
+  .mobile-bubble-4    { right: -2%; top: 46%; width: 50%; }
+  /* 5단계 카멜레온 (오른쪽) / 음운 변동 (왼쪽) */
+  .mobile-character-5 { left: 28%; top: 64%; width: 79%; }
+  .mobile-bubble-5    { left: -2%; top: 61.4%; width: 56%; }
+  /* 6단계 부엉이 (왼쪽) / 철자 (오른쪽) */
+  .mobile-character-6 { left: -8%; top: 79.5%; width: 75%; }
+  .mobile-bubble-6    { right: -2%; top: 78.3%; width: 53%; }
+  .nature-mobile-package { left: 20%; top: 89%; width: 60%; z-index: 4; }
+
+  footer.footer.ilkko-footer { margin-top: 0 !important; }
+}
