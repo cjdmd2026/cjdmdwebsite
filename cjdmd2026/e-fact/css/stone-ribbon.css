@@ -1,0 +1,12 @@
+/* Shared E.FACT topographic ribbons. The same map texture is art-directed per format. */
+:is(.topic-ribbon,.question-ribbon,.archive-ribbon,.pledge-ribbon,.ribbon){--contour-size:1220px auto;--contour-position:88% 50%;position:relative;isolation:isolate;background-color:#080f11!important;background-image:linear-gradient(100deg,#050d0fff 0%,#071011fa 42%,#071011e8 60%,#07101176 78%,#07101128 100%),url("../images/stone-ribbon.svg")!important;background-repeat:no-repeat!important;background-size:100% 100%,var(--contour-size)!important;background-position:center,var(--contour-position)!important;color:#00c2bd!important;border-block:1px solid #63898438;box-shadow:inset 0 1px 0 #b8d5ce12,inset 0 -14px 34px #0005;text-shadow:0 2px 3px #000b}
+:is(.topic-ribbon,.question-ribbon,.archive-ribbon,.pledge-ribbon,.ribbon) :is(span,p,h2,h3,strong,em,i,a,small){color:#00c2bd!important}
+:is(.question-ribbon,.archive-ribbon,.pledge-ribbon,.ribbon) :is(.ribbon-ticks,.ribbon-code,.archive-ribbon-code){color:#77c8c0!important;border-color:#7c9c9455}
+.topic-ribbon i{opacity:.75}.topic-ribbon{min-height:82px}.topic-ribbon span{transition:color .25s,text-shadow .25s}.topic-ribbon span:hover{color:#9df3df!important;text-shadow:0 0 20px #67e6cb66}
+.question-ribbon{--contour-size:1260px auto;--contour-position:94% 51%}
+.topic-ribbon{--contour-size:1160px auto;--contour-position:91% 50%}
+.archive-ribbon{--contour-size:1280px auto;--contour-position:92% 48%}
+.pledge-ribbon{--contour-size:1320px auto;--contour-position:91% 53%}
+@media(max-width:600px){.topic-ribbon{gap:12px;padding:22px 5%;font-size:clamp(9px,2.6vw,14px);letter-spacing:.04em;min-height:66px}:is(.topic-ribbon,.question-ribbon,.archive-ribbon,.pledge-ribbon,.ribbon){--contour-size:auto 125%;--contour-position:82% center;background-image:linear-gradient(90deg,#050d0fff 0%,#071011f5 51%,#07101192 78%,#07101138 100%),url("../images/stone-ribbon.svg")!important}}
+@media(prefers-reduced-motion:reduce){.topic-ribbon span{transition:none}}
+

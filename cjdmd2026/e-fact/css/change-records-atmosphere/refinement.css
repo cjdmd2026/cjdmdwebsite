@@ -1,0 +1,79 @@
+/* Preserve natural skin tones. Teal is an interface accent. */
+.story-index{border:0;left:auto;right:24px;width:auto;padding:0}
+.story-visual>img{filter:saturate(.85) contrast(1.03) brightness(.92)}
+.story-visual-note{left:24px!important;top:20px!important;width:auto!important;max-width:calc(100% - 48px)!important;padding:7px 10px!important;color:#d2dcde!important;background:linear-gradient(90deg,#07101280,#07101228 72%,transparent)!important;border:0!important;border-left:2px solid #00bcc2a6!important;backdrop-filter:blur(2px);box-shadow:none!important;font-size:8px!important;letter-spacing:.08em!important}
+.story-audio{width:min(560px,86%);margin:20px auto 0;display:flex;align-items:center;justify-content:center;gap:16px;color:#859497;font-size:9px}
+.story-audio button{display:flex;align-items:center;gap:10px;min-width:190px;padding:11px 15px;border:1px solid #00bcc266;background:#071012;color:#b8c6c8;font-size:10px;transition:border-color .2s,color .2s,background .2s}
+.story-audio button:hover,.story-audio button.is-playing{border-color:#00bcc2;color:#00bcc2;background:#08181b}
+.story-audio-icon{display:inline-grid;place-items:center;width:18px;height:18px;color:#00bcc2;font-size:9px}
+@media(max-width:700px){.story-audio{flex-direction:column;gap:8px;text-align:center}.story-audio button{justify-content:center}}
+.gallery-item img{filter:saturate(.8) contrast(1.04) brightness(.85)}
+.gallery-item:hover img{filter:saturate(.95) contrast(1.02) brightness(.98)}
+.modal-image{filter:none}
+.story-image-shade{background:linear-gradient(0deg,#080d11e8,transparent 58%)}
+.hero{display:block;min-height:850px;height:112svh;max-height:1250px;padding:0;background:#070c10}
+.hero-world{position:absolute;inset:0;overflow:hidden;isolation:isolate}
+.hero-world>img{position:absolute;width:100%;height:100%;object-fit:cover;will-change:transform}
+.world-sky{inset:0;opacity:.65;filter:saturate(.55)}
+.world-word{position:absolute;top:16%;left:7%;font-size:clamp(110px,20vw,310px);font-weight:700;letter-spacing:-.07em;line-height:1;color:#b6c8c8;opacity:.28;will-change:transform}
+.hero-world .world-factory{width:88%;height:86%;right:-15%;bottom:3%;object-fit:contain;object-position:right bottom;filter:saturate(.65) brightness(.85);z-index:2}
+.hero-world .world-mist{object-fit:contain;filter:grayscale(1) blur(6px);z-index:3;pointer-events:none}
+.hero-world .world-mist-back{width:85%;height:70%;left:-34%;bottom:-15%;opacity:.24}
+.hero-world .world-mist-front{width:80%;height:65%;right:-32%;bottom:-21%;opacity:.35;filter:grayscale(1) blur(12px)}
+.world-shade{position:absolute;inset:0;z-index:4;background:linear-gradient(0deg,#061012 0%,transparent 40%),linear-gradient(90deg,#070c10e8 0%,#070c1070 40%,transparent 70%)}
+.hero-heading{position:absolute;left:8%;bottom:16%;width:84%;margin:0;display:block;max-width:1280px;z-index:5}
+.hero-label{margin-bottom:30px}
+.hero-heading h1{font-size:clamp(78px,9vw,140px);line-height:1.05;margin-bottom:28px}
+.hero-description{max-width:380px;font-size:13px;color:#a9b5b8}
+.hero-description strong{font-size:20px;margin-bottom:8px}.hero-btn{margin-top:20px}
+.hero-footnote{position:absolute;bottom:38px;left:8%;right:8%;z-index:6;display:flex;justify-content:space-between;gap:20px;color:#8a9b9e;font-size:8px;letter-spacing:.12em}
+.archive-ribbon{background:#0b2225;color:#d6e0df;border-top:1px solid #28625f;border-bottom:1px solid #28625f;clip-path:polygon(0 8%,100% 0,100% 92%,0 100%);padding-top:60px;padding-bottom:60px}
+.archive-ribbon-code{color:#52b8af;top:25px}.archive-ribbon small,.archive-ribbon i{color:#00a8a8}.archive-ribbon div{border-top-color:#31504f}
+.record{background:#0b1115;color:#d5dfe0;border-top:1px solid #253638;border-bottom:1px solid #253638}
+.record-number{color:#274a4b}.record .section-label{color:#4fc8bb}.record-left h2{color:#e5eceb}
+.record-left p{color:#9baaae}.record-legend span{color:#9bb8b3;border-color:#36514d;background:transparent}
+.record-btn{color:#58cfbf;border-color:#387f75}.record-btn:hover{background:transparent;color:#aff2e7;box-shadow:none}
+.record-right{border-radius:0;background:#0d181c;border-color:#2c4244;box-shadow:none}
+.record-item:hover{transform:none;background:#122126}.record-title{color:#e0e7e6}.record-description{color:#a4b1b1}.category-btn{color:#9eafac}
+.resident-story{padding-top:115px}.story-card{background:#0e171b}.story-content{color:#d4d9d8}
+.archive-image-band>img{filter:saturate(.45) brightness(.64)}
+@media(max-width:850px){.hero{height:105svh;min-height:850px;max-height:none}.world-word{top:19%;left:5%;font-size:23vw}.hero-world .world-factory{width:140%;right:-48%;height:70%;bottom:21%;opacity:.75}.world-shade{background:linear-gradient(0deg,#061012 0%,#061012d9 25%,transparent 70%),linear-gradient(90deg,#070c1060,transparent)}.hero-heading{left:7%;width:86%;bottom:13%}.hero-heading h1{font-size:76px;margin-bottom:23px}.hero-description{max-width:310px}.hero-label{margin-bottom:20px}.hero-footnote{left:7%;right:7%;bottom:25px;flex-wrap:wrap;font-size:7px}.hero-footnote span:nth-child(2){width:100%;order:3}.hero-world .world-mist-front{width:150%;right:-70%}.hero-world .world-mist-back{width:140%;left:-75%}.record{padding-top:85px;padding-bottom:85px}.archive-ribbon{padding-top:60px;padding-bottom:40px}}
+@media(prefers-reduced-motion:reduce){.hero-world>img,.world-word{transform:none!important}}
+
+/* Record cabinet: quiet interaction and a compact mobile layout. */
+.record{position:relative;gap:6vw;background:radial-gradient(ellipse at 0 35%,#122326 0,transparent 55%),#0b1115}
+.record-number{position:static;height:auto;font-size:clamp(85px,10vw,145px);letter-spacing:-.07em;line-height:1;color:#244345;margin-bottom:28px;font-weight:300}
+.record-left h2{max-width:none;word-break:keep-all;line-height:1.25;margin:24px 0 30px;font-weight:400}
+.record-left>p:not(.section-label){font-size:14px;line-height:1.95}
+.record-left .section-label{letter-spacing:.22em;font-size:9px}
+.record-legend{padding-top:24px;border-top:1px solid #2c4244;gap:8px}
+.record-legend span{font-size:9px;padding:7px 9px}
+.record-right{padding:0;border:0;background:transparent}
+.archive-toolbar{display:flex;align-items:center;justify-content:space-between;padding:0 2px 20px;border-bottom:1px solid #405556;font-size:9px;letter-spacing:.12em;color:#91a6a6;gap:15px}
+.archive-count{color:#59c5b8;font-variant-numeric:tabular-nums;white-space:nowrap}
+.record-category{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:18px 0;margin:0 0 10px;border:0;overflow:visible}
+.category-btn{position:relative;padding:13px 8px;border:1px solid #293d40;border-radius:3px;color:#9caeb0;background:#101c20;font-size:11px;box-shadow:none;transition:background .22s,color .22s,border-color .22s}
+.category-btn.active,.category-btn:hover{background:#173b3b;color:#c9f2e9;border-color:#418b80;box-shadow:none;transform:none}
+.category-btn.active::before{content:'';display:inline-block;width:4px;height:4px;background:#61dac7;border-radius:50%;vertical-align:middle;margin-right:7px}
+.record-list{display:grid;gap:12px}
+.record-item{position:relative;grid-template-columns:28px minmax(0,1fr);gap:10px 16px;padding:25px 23px;border:1px solid #293b3f;border-radius:3px;background:linear-gradient(120deg,#142227,#0f191d);transition:border-color .25s,background .25s,box-shadow .25s;animation:record-enter .4s both;animation-delay:var(--entry-delay,0ms)}
+.record-item:last-child{border-bottom:1px solid #293b3f}
+.record-item:hover,.record-item:focus-visible{padding-left:23px;transform:none;border-color:#4c867e;background:#162a2d;box-shadow:0 10px 24px #0002}
+.record-index{font-size:11px;color:#5d9990;padding-top:5px;font-variant-numeric:tabular-nums}
+.record-title{font-size:18px;font-weight:500;line-height:1.55;letter-spacing:-.03em}
+.record-description{font-size:12px;line-height:1.85;color:#9cacae}
+.record-meta{gap:8px;margin-bottom:13px}.record-badge{font-size:9px}.record-date{font-size:10px;color:#879c9e}
+.record-source{grid-column:2;justify-self:end;font-size:10px;padding-top:9px;color:#79c5b8}
+.record-source i{transition:transform .25s}.record-item:hover .record-source i{transform:translate(2px,-2px)}
+@keyframes record-enter{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:1100px) and (min-width:851px){.record{padding-left:6%;padding-right:6%;gap:4vw;grid-template-columns:.75fr 1.25fr}.record-title{font-size:17px}}
+@media(max-width:850px){.record{gap:38px}.record-number{font-size:80px;margin-bottom:22px}.record-left h2{max-width:none;margin:20px 0;font-size:38px}.record-left>p:not(.section-label){font-size:13px}.record-legend{margin-bottom:10px}.record-btn{margin-top:15px}.record-right{padding:0}.record-item,.record-item:hover,.record-item:focus-visible{padding:21px 17px;gap:10px 12px;grid-template-columns:22px minmax(0,1fr)}.record-title{font-size:17px}.record-category{gap:6px}.category-btn{font-size:10px;padding:12px 5px}.archive-toolbar{font-size:8px}.record-source{max-width:100%;white-space:normal}.record-description{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.record-item{animation:none}.category-btn,.record-item,.record-source i{transition:none}}
+
+/* Generated archive room: distant village and independent foreground notes. */
+.world-sky{opacity:1;filter:none;object-position:60% center}
+.world-word{font-size:clamp(90px,15vw,225px);top:16%;opacity:.12;letter-spacing:-.055em}
+.hero-world .world-factory{width:72%;height:66%;right:-4%;bottom:0;object-fit:contain;object-position:right bottom;filter:brightness(.67) saturate(.7);transform-origin:80% 90%}
+.world-shade{background:linear-gradient(0deg,#061012d9 0%,transparent 25%),linear-gradient(90deg,#070c10ba 0%,#070c1040 43%,transparent 70%)}
+.hero-world .world-mist-back{opacity:.055}.hero-world .world-mist-front{opacity:.07}
+@media(max-width:850px){.world-sky{object-position:70% center;opacity:.8}.hero-world .world-factory{width:135%;height:44%;right:-35%;bottom:3%;opacity:.6;filter:brightness(.45) saturate(.7)}.world-word{font-size:23vw;top:19%;opacity:.16}.world-shade{background:linear-gradient(0deg,#061012e8 0%,#06101260 45%,#06101210 75%),linear-gradient(90deg,#070c10b0,#070c1020)}.hero-heading{bottom:18%}}
