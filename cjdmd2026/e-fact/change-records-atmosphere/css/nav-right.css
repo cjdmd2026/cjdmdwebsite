@@ -1,0 +1,59 @@
+@import url("efact-color-theme.css?v=1");
+
+/* JPG logos are flattened on black; screen blending removes the black plate. */
+header>a img,#header>a img,.site-header>a img,footer>a img{
+  mix-blend-mode:screen;
+}
+
+/* Match the Change Records header exactly on every redesigned E.FACT page. */
+@media (min-width: 761px) {
+  header,#header,.site-header{height:82px!important;min-height:82px!important;padding:0 6vw!important;display:flex!important;align-items:center!important;justify-content:space-between!important}
+  header>a,#header>a,.site-header>a{position:static!important;flex:0 0 100px!important;width:100px!important;height:auto!important;margin:0!important;transform:none!important}
+  header>a img,#header>a img,.site-header>a img{display:block!important;width:100%!important;height:auto!important}
+  header>nav,#header>nav,.site-header>nav{position:static!important;inset:auto!important;transform:none!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;width:auto!important;max-width:none!important;margin:0 0 0 auto!important;padding:0!important;gap:32px!important;grid-column:auto!important;font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif!important}
+  header>nav>a,#header>nav>a,.site-header>nav>a{position:relative!important;display:block!important;flex:0 0 auto!important;margin:0!important;padding:0!important;border:0!important;color:#a9bfba!important;font-family:Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif!important;font-size:12px!important;font-weight:500!important;line-height:normal!important;letter-spacing:normal!important;white-space:nowrap!important}
+  header>nav>a:hover,#header>nav>a:hover,.site-header>nav>a:hover,header>nav>a.active,#header>nav>a.active,.site-header>nav>a.active,header>nav>a[aria-current="page"],#header>nav>a[aria-current="page"],.site-header>nav>a[aria-current="page"]{color:#00bcc2!important}
+  header>nav>a::after,#header>nav>a::after,.site-header>nav>a::after{height:2px!important;background:#00bcc2!important;box-shadow:none!important}
+}
+
+/* Remove legacy header spacers and draw one identical active indicator everywhere. */
+@media (min-width: 761px) {
+  header::after,#header::after,.site-header::after{content:none!important;display:none!important;width:0!important}
+  header>nav>a::after,#header>nav>a::after,.site-header>nav>a::after{
+    content:""!important;
+    position:absolute!important;
+    left:0!important;
+    right:auto!important;
+    bottom:-8px!important;
+    width:0!important;
+    border:0!important;
+    border-radius:50px!important;
+    opacity:1!important;
+    transition:width .35s ease!important;
+  }
+  header>nav>a:hover::after,#header>nav>a:hover::after,.site-header>nav>a:hover::after,
+  header>nav>a.active::after,#header>nav>a.active::after,.site-header>nav>a.active::after,
+  header>nav>a[aria-current="page"]::after,#header>nav>a[aria-current="page"]::after,.site-header>nav>a[aria-current="page"]::after{
+    width:100%!important;
+  }
+}
+
+/* Shared low-saturation teal scrollbar palette. */
+:root{
+  --ef-scroll-track:#020607;
+  --ef-scroll-thumb:#00bcc2;
+  --ef-scroll-thumb-hover:#6bdde0;
+}
+html,*{
+  scrollbar-width:thin;
+  scrollbar-color:var(--ef-scroll-thumb) var(--ef-scroll-track);
+}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:var(--ef-scroll-track)}
+::-webkit-scrollbar-thumb{
+  background:var(--ef-scroll-thumb);
+  border:2px solid var(--ef-scroll-track);
+  border-radius:999px;
+}
+::-webkit-scrollbar-thumb:hover{background:var(--ef-scroll-thumb-hover)}
+::-webkit-scrollbar-corner{background:var(--ef-scroll-track)}

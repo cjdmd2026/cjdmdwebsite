@@ -1,0 +1,7 @@
+/* Preserve the complete facility silhouette across card sizes. */
+.panel-image{position:relative;aspect-ratio:16/9;height:auto;min-height:0;flex-shrink:0;background:#122820;display:grid;place-items:center}
+.panel-image::after{display:none}
+.panel-image img,.case-panel.open .panel-image img{width:100%;height:100%;object-fit:cover;transform:none}
+.case-panel{overflow-y:auto}
+.panel-image .photo-label{position:absolute;bottom:8px;left:12px;padding:4px 8px;border-radius:20px;color:#e5f5ed;background:#071c16d9;font-size:10px}
+@media(max-width:760px){.case-panel{display:flex;flex-direction:column;height:auto;max-height:82svh}.panel-image{height:auto;max-height:none;width:100%}.panel-body{flex:1;min-height:0}}
