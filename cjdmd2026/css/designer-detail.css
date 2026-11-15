@@ -927,7 +927,7 @@ img {
     gap: 8px;
 
     height: 45px;
-    width: 45px;
+    width: fit-content;
 
     border: 1px solid var(--color-gray-500);
     border-radius: 999px;
@@ -936,13 +936,14 @@ img {
     backdrop-filter: blur(11.9px);
     -webkit-backdrop-filter: blur(11.9px);
 
-    padding: 0 0 0 10px;
+    padding: 0 1rem;
+    color: #111;
     font-size: 1rem;
     font-weight: 400;
 
-    opacity: 0.8;
+    opacity: 1;
 
-    transition: 0.4s ease;
+    transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
 }
 
 .main .back-button img {
@@ -951,26 +952,18 @@ img {
 }
 
 .main .back-button span {
-    opacity: 0;
-    font-size: 0rem;
-    transition: 0.4s ease;
-}
-
-.main .back-button:is(:hover, :focus-visible) span {
     opacity: 1;
-    font-size: 1rem;
-    transition: 0.4s ease;
+    font-size: 0.875rem;
 }
 
 .main .back-button:is(:hover, :focus-visible) {
-    height: 45px;
-    width: 128px;
-    padding: 0 1rem;
-    transition: 0.4s ease;
+    background: #111;
+    color: #fff;
+    border-color: #111;
+}
 
-    border: 1px solid var(--color-gray-500);
-
-    opacity: 1;
+.main .back-button:is(:hover, :focus-visible) img {
+    filter: invert(0);
 }
 
 
@@ -1025,12 +1018,12 @@ img {
 
 @media (max-width: 759px), (pointer: coarse) and (max-height: 540px) {
     .main .back-wrap { position: static; width: var(--container-width); padding-top: calc(var(--header-height) + 8px); }
-    .main .back-button, .main .back-button:is(:hover, :focus-visible) {
+    .main .back-button {
         width: fit-content; min-height: 44px; height: auto; padding: 0 8px 0 0; gap: 6px;
         background: transparent; border: 0; backdrop-filter: none; -webkit-backdrop-filter: none; opacity: 1;
     }
     .main .back-button img { width: 18px; height: 18px; }
-    .main .back-button span, .main .back-button:is(:hover, :focus-visible) span { opacity: 1; font-size: .875rem; }
+    .main .back-button span { opacity: 1; font-size: .875rem; }
     .footer { border-top: 1px solid #ebebed; padding: 24px 0 max(24px, env(safe-area-inset-bottom)); }
     .footer .container { margin-block: 0; align-items: center; gap: 12px; }
     .footer .container .footer-info p { font-size: .85rem; }

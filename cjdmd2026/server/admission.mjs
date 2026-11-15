@@ -12,7 +12,7 @@ const expiredMessage = '30분 동안 진행이 없어 임시 파일을 정리했
 // The browser's disabled button is only a hint; every write checks ownership.
 export function createAdmission({ read = readJson, write = writeJson, remove = del, listBlobs = list, readSubmission = readState, writeSubmission = writeState, now = Date.now } = {}) {
   const replace = (previous, data) => write(slotPath, data, previous ? { ifMatch: previous.etag } : {});
-  const busyError = () => new SubmissionError('다른 팀이 제출 중이거나 임시 파일을 정리하고 있습니다. 잠시 후 다시 시도해주세요.', 423);
+  const busyError = () => Object.assign(new SubmissionError('다른 팀이 제출 중이거나 임시 파일을 정리하고 있습니다. 잠시 후 다시 시도해주세요.', 423), { retryable: true, retryAfterMs: 5000 });
 
   async function sweep() {
     const previous = await read(slotPath);
@@ -50,10 +50,13 @@ export function createAdmission({ read = readJson, write = writeJson, remove = d
 
   async function claim(submission, reservedBytes = 0) {
     const previous = await sweep();
-    if (previous && previous.data.phase !== 'idle') throw busyError();
-    const data = { id: submission.id, teamId: submission.teamId, phase: 'active', expiresAt: now() + idleTimeoutMs, tokenExpiresAt: 0 };
-    try { await replace(previous, data); }
-    catch (error) { if (conflict(error)) throw busyError(); throw error; }
+    const owned = previous?.data.phase === 'active' && previous.data.id === submission.id && previous.data.teamId === submission.teamId;
+    if (previous && previous.data.phase !== 'idle' && !owned) throw busyError();
+    const data = owned ? await touch(submission) : { id: submission.id, teamId: submission.teamId, phase: 'active', expiresAt: now() + idleTimeoutMs, tokenExpiresAt: 0 };
+    if (!owned) {
+      try { await replace(previous, data); }
+      catch (error) { if (conflict(error)) throw busyError(); throw error; }
+    }
     try {
       // Include older uploads and any other blobs; never delete unrelated data.
       let cursor, usedBytes = 0;
@@ -62,9 +65,9 @@ export function createAdmission({ read = readJson, write = writeJson, remove = d
         usedBytes += page.blobs.reduce((sum, blob) => sum + blob.size, 0);
         cursor = page.hasMore ? page.cursor : undefined;
       } while (cursor);
-      if (usedBytes + reservedBytes > 900 * 1024 ** 2) throw new SubmissionError('임시 저장공간이 부족합니다. 담당자에게 이전 업로드 정리를 요청해주세요.', 503);
+      if (usedBytes + reservedBytes > 900 * 1024 ** 2) throw Object.assign(new SubmissionError('임시 저장공간이 부족합니다. 담당자에게 이전 업로드 정리를 요청해주세요.', 503), { retryable: false });
       return data;
-    } catch (error) { await finish(submission).catch(() => {}); throw error; }
+    } catch (error) { if (error.retryable === false) await finish(submission).catch(() => {}); throw error; }
   }
 
   async function touch(submission, { issueToken = false } = {}) {

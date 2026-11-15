@@ -74,7 +74,7 @@ export async function confirmFile(submission, state, index, { read = readJson, w
 // Only an explicit finalization can move a folder out of awaiting_upload.
 export async function finalizeFolder(submission, { read = readState, write = writeState, uploaded = uploadedFiles, lock = takeLock, unlock = releaseLock } = {}) {
   const held = await lock(submission.id);
-  if (!held) throw new SubmissionError('다른 요청을 처리하고 있습니다. 잠시 후 상태를 확인해주세요.', 409);
+  if (!held) throw Object.assign(new SubmissionError('다른 요청을 처리하고 있습니다. 잠시 후 상태를 확인해주세요.', 409), { retryable: true, retryAfterMs: 5000 });
   try {
     const state = await read(submission.id);
     if (state?.mode !== 'folder') throw new SubmissionError('접수 기록을 찾을 수 없습니다.', 404);

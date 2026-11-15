@@ -1,0 +1,563 @@
+
+> test
+> node --test tests/*.test.mjs
+
+✔ concurrent teams on separate server instances receive exactly one admission (5.2675ms)
+✔ ownership is required for tokens and activity extends only a live lease (3.0957ms)
+✔ retrying a lost reservation reuses only the same receipt and still checks capacity (2.3882ms)
+✔ four concurrent upload token requests share one lease without losing ownership or extending expired receipts (2.3686ms)
+✔ expired uploads are removed before the next team enters; old workers cannot release the new slot (6.566ms)
+✔ finished uploads retain the slot until issued upload tokens expire, then preserve the receipt (21.1658ms)
+✔ cleanup failure keeps admission closed and retries rather than leaking files (4.647ms)
+✔ storage already occupied by older or unrelated uploads prevents a reservation that would exceed capacity (0.8298ms)
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 503,
+  githubStatus: undefined,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 5000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 409,
+  githubStatus: undefined,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: false,
+  retryAfterMs: undefined
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 502,
+  githubStatus: 503,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 5000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 502,
+  githubStatus: 503,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 10000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 502,
+  githubStatus: 503,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 20000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 502,
+  githubStatus: 503,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 40000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 502,
+  githubStatus: 503,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 80000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 502,
+  githubStatus: 503,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 160000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 502,
+  githubStatus: 503,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 300000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 502,
+  githubStatus: 503,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 300000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 502,
+  githubStatus: 503,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 300000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 502,
+  githubStatus: 503,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 300000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 502,
+  githubStatus: 503,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 300000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 502,
+  githubStatus: 503,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 300000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 503,
+  githubStatus: undefined,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 5000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 503,
+  githubStatus: undefined,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 5000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 503,
+  githubStatus: undefined,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 5000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 503,
+  githubStatus: undefined,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 5000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 503,
+  githubStatus: undefined,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 5000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 503,
+  githubStatus: undefined,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 5000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 503,
+  githubStatus: undefined,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 5000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 503,
+  githubStatus: undefined,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 5000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 503,
+  githubStatus: undefined,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 5000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 503,
+  githubStatus: undefined,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 5000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 503,
+  githubStatus: undefined,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 5000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 503,
+  githubStatus: undefined,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 5000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 502,
+  githubStatus: 408,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 3600000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 502,
+  githubStatus: 425,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 3600000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 502,
+  githubStatus: 429,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 3600000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 502,
+  githubStatus: 500,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 3600000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 502,
+  githubStatus: 502,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 3600000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 502,
+  githubStatus: 503,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 3600000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 502,
+  githubStatus: 401,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: false,
+  retryAfterMs: undefined
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 502,
+  githubStatus: 403,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: false,
+  retryAfterMs: undefined
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 502,
+  githubStatus: 404,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: false,
+  retryAfterMs: undefined
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 502,
+  githubStatus: 422,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: false,
+  retryAfterMs: undefined
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 423,
+  githubStatus: undefined,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: true,
+  retryAfterMs: 5000
+}
+Submission processing failed {
+  id: '62c12225-8afa-478b-8a57-1aad5a411ad5',
+  errorType: 'Error',
+  status: 503,
+  githubStatus: undefined,
+  githubMethod: undefined,
+  githubPath: undefined,
+  githubRequestId: undefined,
+  retryable: false,
+  retryAfterMs: undefined
+}
+✔ auto merge audits every changed/deleted team file and pins the exact reviewed head (7.3824ms)
+✔ auto merge rejects other folders, a similar prefix, and renames from outside the team (2.0068ms)
+✔ changed heads, forks, retargeted branches, and incomplete file lists fail closed (1.1628ms)
+✔ already merged receipts are recovered without merging again (0.4794ms)
+✔ unknown mergeability retries; conflicts and closed PRs require attention (0.878ms)
+✔ repository merge options are respected and rejected merges never report success (2.4444ms)
+✔ processor records merge progress and reports completion only after a confirmed merge (28.921ms)
+✔ merge response loss retries the same pinned PR without reloading files or recreating a PR (15.6851ms)
+✔ permanent merge failures preserve the PR, release storage, and never claim deployment (1.2446ms)
+✔ temporary GitHub failures retain uploaded source after eight attempts and eventually resume (10.5537ms)
+✔ execution slices are resumable beyond eight runs without error backoff or deleting files (5.04ms)
+✔ saved progress stays monotonic and new progress resets retry backoff (2.2387ms)
+✔ rate limits honor server delay but permission and validation errors stop (4.4636ms)
+✔ explicit transient contention preserves processing state and explicit permanent errors stop (2.5246ms)
+✔ PNG and renamed PNG selections are rejected before reserving a slot or uploading (130.6792ms)
+✔ a site with a bundled library license appears in the file list and uploads intact (41.1572ms)
+✔ GIF can still be selected and uploaded (26.9736ms)
+✔ client automatically retries missing files and still requires explicit final confirmation (72.033ms)
+✔ GitHub processing keeps polling beyond the former limit and reconnects without reupload or refinalize (2873.9571ms)
+✔ reopening a finalized paused receipt resumes GitHub storage without selecting or uploading files (11.7724ms)
+✔ a prolonged outage retries beyond five attempts while preserving the receipt and in-flight group (770.254ms)
+✔ configuration and file inventory automatically recover and respect server retry delay (52.4092ms)
+✔ server-marked slot contention retries preparation, while explicit permanent errors stop (18.0133ms)
+✔ switching teams cancels the previous inventory retry without overwriting the new team (3.6208ms)
+✔ lost prepare responses retry the same private key before any file transfer (9.9797ms)
+✔ pausing preparation and reloading retains its key and restores the receipt without starting uploads (9.7049ms)
+✔ finalization retries temporary failures and lock contention without uploading or creating a receipt again (52.3621ms)
+✔ a lost finalization response is reconciled instead of repeating the completed request (14.9985ms)
+✔ reload continues an explicitly requested finalization but never invents confirmation (30.095ms)
+✔ permanent finalization errors clear pending intent and do not retry after reload (7.8932ms)
+✔ cancellation automatically retries transient errors before forgetting the receipt (23.4684ms)
+✔ rate limits, non-JSON server errors and connection loss automatically recover without retransmitting stored files (36.8511ms)
+✔ a late connection failure in a 388-file upload resumes automatically without reuploading completed files (364.0461ms)
+✔ manual pause cancels a pending automatic retry and preserves files for a later resume (12.4223ms)
+✔ authorization and expired receipts stop without scheduling automatic retries (26.6491ms)
+✔ a permanently rejected file is not retried when another file has a temporary failure (21.9623ms)
+✔ four files overlap, progress sums all transfers, and fresh uploads need only one verification each (8.3042ms)
+✔ pause aborts every active upload, starts no queued file and retries on the same receipt (9.7195ms)
+✔ pause also aborts concurrent verification requests and recovers stored files without uploading twice (9.4106ms)
+✔ a lost successful upload response is verified without uploading the file twice (6.0446ms)
+✔ reload restores uploaded files, rejects edited folders, and resumes only the missing file (27.0445ms)
+✔ a waiting team can prepare files but cannot upload until the occupied slot clears (3.8644ms)
+✔ a simultaneous prepare rejection preserves the folder and refreshes the waiting message (5.5024ms)
+✔ starting a replacement submission cancels the previous receipt before forgetting it (21.6361ms)
+✔ merged submissions show deployment pending without claiming the live site is already updated (14.9839ms)
+✔ a restored merge failure shows the preserved receipt without resubmitting (17.0931ms)
+✔ file manager navigates folders and stages new files at the current path without deleting old files (4.4589ms)
+✔ importing a site from a subfolder shows the imported files at the team root (3.7163ms)
+✔ adding a folder keeps its name and the current directory visible (3.0622ms)
+✔ folder deletion is staged, can be undone, and only applies after explicit confirmation (17.335ms)
+✔ new folders accept files and an index deletion blocks final reflection (4.8874ms)
+✔ switching teams clears an unconfirmed deletion instead of applying it to the next team (4.1933ms)
+✔ discarding an edit reloads current files without uploading or deleting anything (6.7951ms)
+✔ a legacy Blob receipt stays preserved while a new R2 receipt can upload (5.9876ms)
+✔ a signing service failure automatically retries the existing receipt before sending file bytes (30.8742ms)
+✔ new folder manifests reject PNG/BMP on both client and server while retaining GIF support (6.3723ms)
+✔ license notices are accepted by both client and server without allowing arbitrary extensionless files (2.3809ms)
+✔ server rejects PNG/BMP renamed as JPG even with matching size and digest, and accepts GIF bytes (39.974ms)
+✔ folder selection preserves nested paths, removes only the selected root and ignores OS metadata (1.212ms)
+✔ folder manifests accept projects above the former ZIP cap but enforce individual and total limits (1.3782ms)
+✔ manifest rejects traversal, secrets, duplicate/colliding paths and bad content digests (1.4053ms)
+✔ reselecting a same-size edited file cannot silently resume an old submission (0.6028ms)
+✔ folder tickets expire and cannot be redirected to another team or storage path (2.0991ms)
+✔ server checks actual bytes and SHA-256, including truncated or oversized content (3.3988ms)
+✔ an unuploaded file is pending with the R2 missing-object error, while access errors still fail (3.2198ms)
+✔ verified files survive retries; corrupt upload is removed without marking it complete (1.6209ms)
+✔ incomplete folders cannot finalize; complete folders finalize once and retries preserve state (3.9652ms)
+✔ GitHub transport loss and unreadable success responses are retryable without exposing payloads (63.7665ms)
+✔ GitHub deadline yields a continuation without making another request (0.642ms)
+✔ GitHub rate limits are recognized from headers and secondary-limit messages (5.5059ms)
+✔ GitHub permission denials retain their status and are not confused with rate limits (1.2844ms)
+✔ instancing uploads one record per sprite, preserving crop, opacity and rotation (10.5524ms)
+✔ buffer growth keeps all sprites and clear resets the instance count (21.3678ms)
+✔ devices without instancing retain the triangle renderer and rotated geometry (1.8756ms)
+✔ long-running animation reuses its buffer and the two poster atlas textures (820.3251ms)
+✔ blurred sprites retain one opacity and one instance per icon (2.4808ms)
+✔ non-instanced blur expands around the original center and preserves crop bounds (2.5332ms)
+✔ missing WebGL and lost contexts can fall back safely; disposal releases both buffers (9.2203ms)
+✔ both render paths use complementary cuts at full opacity for matching icon prints (3.4236ms)
+✔ a lost prepare response reuses the same receipt, ticket, manifest and expiry (8.6064ms)
+✔ preparation storage failures before and after writing recover the same reserved receipt (2.7531ms)
+✔ simultaneous prepare attempts serialize and tell the losing caller to retry (1.2928ms)
+✔ a retry key cannot replace its manifest or team, extend expiry, or restore an expired receipt (1.7459ms)
+✔ invalid keys cannot create storage or reservations (0.8304ms)
+✔ browser sends the File directly with signed headers and reports progress only until response (5.5301ms)
+✔ pause aborts in-flight uploads and server failures retain their status for reconciliation (4.8248ms)
+✔ configuration requires R2 credentials and never silently falls back to blocked Blob (3.1966ms)
+✔ real SDK presigns an exact key, exact content length, create-only write and short expiry without leaking secret (79.8876ms)
+✔ R2 JSON creates and updates use atomic conditions and preserve quoted ETags (2.5755ms)
+✔ only absent objects become null; denied, missing bucket and outage errors fail closed (1.4898ms)
+✔ reads expose stream and metadata and listing follows server pagination (48.1516ms)
+✔ cleanup batches deletes and stops on individual object failures (2.1254ms)
+✔ legacy Blob receipts cannot access or cancel R2 submissions (1.6891ms)
+✔ upload authorization fixes destination and size from stored manifest and requires live ownership (1.566ms)
+✔ 2,000-file batches are accepted while total size remains 500 MiB (26.835ms)
+✔ separate updates preserve earlier files, replace exact paths, and count the resulting size (1.5146ms)
+✔ existing PNG files survive unrelated edits and can be explicitly removed during conversion (1.8134ms)
+✔ the root index must survive; a partial update needs no additional index (0.9386ms)
+✔ subfolder additions preserve both the selected folder name and current destination (0.7602ms)
+✔ GitHub tree keeps untouched files and removes only explicitly requested paths (4.2767ms)
+✔ deletion-only changes finalize and create a PR without uploading blobs (2.5441ms)
+✔ truncated inventories and changed team revisions stop edits and automatic merging (2.3348ms)
+✔ an unchanged batch preserves the website without an empty PR (1.5543ms)
+✔ existing team data maps to fixed, unique, safe site folders (3.9533ms)
+✔ unknown teams and invalid/oversized submissions are rejected (0.9837ms)
+✔ tickets cannot be changed, expired or reused for another team folder (3.5155ms)
+✔ only the configured site and exact preview origins are accepted (37.6582ms)
+✔ missing server secrets fail closed (1.1315ms)
+✔ ZIP normalizes a single wrapper and preserves files with Korean names (34.227ms)
+✔ root index wins over indexes in subpages (4.9835ms)
+✔ ambiguous or missing index is rejected (0.5235ms)
+✔ empty index and malformed ZIP are rejected (3.6657ms)
+✔ path traversal, backslashes, absolute and encoded paths are rejected (0.5604ms)
+✔ development secrets, node_modules and scripts are rejected (10.2596ms)
+✔ symbolic links are rejected (2.3435ms)
+✔ case-colliding filenames are rejected (2.4656ms)
+✔ ZIP uses the same image policy and rejects extension-only renames while allowing GIF (9.1495ms)
+✔ declared expanded size, individual size, count limits are enforced before decompression (2.8872ms)
+✔ ZIP CRC mismatch is rejected (2.6279ms)
+✔ GitHub submission atomically replaces one team subtree on a new PR branch (3.7149ms)
+✔ repeated callback reuses the existing pull request (0.2927ms)
+✔ resumed processing skips already uploaded Git blobs (0.7135ms)
+✔ folder processing loads files individually and skips storage downloads for checkpointed files (1.264ms)
+✔ a GitHub failure between batches resumes from every saved blob without reloading completed files (3.7697ms)
+✔ unconfigured API cannot accept files and does not expose secret names (15.9248ms)
+ℹ tests 133
+ℹ suites 0
+ℹ pass 133
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5177.8082

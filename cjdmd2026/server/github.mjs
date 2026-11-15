@@ -5,22 +5,44 @@ import { siteSnapshot, checkSiteChanges } from './site.mjs';
 
 export function githubClient(token = process.env.SUBMISSION_GITHUB_TOKEN, repository = configuration().repository, fetcher = fetch, deadline = Infinity) {
   return async function github(path, body, method = body ? 'POST' : 'GET') {
-    if (Date.now() > deadline - 1000) throw new SubmissionError('이어서 처리하고 있습니다.', 503);
-    const response = await fetcher(`https://api.github.com/repos/${repository}${path}`, {
+    if (Date.now() > deadline - 1000) throw Object.assign(new SubmissionError('이어서 처리하고 있습니다.', 503), { continuation: true });
+    const context = { githubMethod: method, githubPath: path.split('?')[0] };
+    let response;
+    try { response = await fetcher(`https://api.github.com/repos/${repository}${path}`, {
       method,
       headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', 'Content-Type': 'application/json', 'User-Agent': 'cjdmd2026-submissions' },
       body: body ? JSON.stringify(body) : undefined,
       signal: AbortSignal.timeout(Math.min(20000, Math.max(1000, Math.floor(deadline - Date.now())))),
-    });
+    }); } catch {
+      // A lost response is reconciled by the receipt/branch/PR checks on resume.
+      throw Object.assign(new SubmissionError('저장소 연결을 다시 시도하고 있습니다.', 503), context);
+    }
     if (!response.ok) {
       const error = new SubmissionError(response.status === 403 || response.status === 429 ? '저장소가 잠시 요청을 처리할 수 없습니다. 잠시 후 다시 시도해주세요.' : '저장소에 제출 내용을 전달하지 못했습니다. 담당자에게 접수 번호를 알려주세요.', 502);
       error.githubStatus = response.status;
-      if (response.status === 429 || (response.status === 403 && (response.headers.get('retry-after') || response.headers.get('x-ratelimit-remaining') === '0'))) {
-        error.retryAfterMs = Math.max(65000, Number(response.headers.get('retry-after') || 0) * 1000);
-      }
+      const numericHeader = name => {
+        const value = response.headers.get(name);
+        return value !== null && value.trim() !== '' && Number.isFinite(Number(value)) ? Number(value) : undefined;
+      };
+      const remaining = numericHeader('x-ratelimit-remaining');
+      const resetAt = numericHeader('x-ratelimit-reset');
+      const retryAfter = response.headers.get('retry-after');
+      const seconds = retryAfter === null || retryAfter.trim() === '' ? NaN : Number(retryAfter);
+      const after = Math.max(0, Number.isFinite(seconds) ? seconds * 1000 : (Date.parse(retryAfter || '') || 0) - Date.now());
+      Object.assign(error, context, { githubRequestId: response.headers.get('x-github-request-id'), githubRateLimitRemaining: remaining, githubRateLimitReset: resetAt });
+      const detail = await response.json().catch(() => ({}));
+      const limited = response.status === 429 || (response.status === 403 && (retryAfter !== null || remaining === 0 || /rate[\s-]?limit|abuse detection/i.test(detail?.message || '')));
+      error.githubRateLimited = Boolean(limited);
+      error.retryable = Boolean(limited) || [408, 425].includes(response.status) || response.status >= 500;
+      if (limited) {
+        const reset = remaining === 0 && resetAt !== undefined ? resetAt * 1000 - Date.now() + 1000 : 0;
+        error.retryAfterMs = Math.max(65000, Number.isFinite(after) ? after : 0, Number.isFinite(reset) ? reset : 0);
+      } else if (error.retryable && after > 0) error.retryAfterMs = after;
       throw error;
     }
-    return response.status === 204 ? null : response.json();
+    if (response.status === 204) return null;
+    try { return await response.json(); }
+    catch { throw Object.assign(new SubmissionError('저장소 응답을 다시 확인하고 있습니다.', 502), context); }
   };
 }
 export async function existingPullRequest(submission, github, config) {
@@ -49,7 +71,8 @@ export async function submitToGithub(submission, archive, { github = githubClien
       let content = file.content;
       const expectedSha = file.gitSha || createHash('sha1').update(`blob ${content.length}\0`).update(content).digest('hex');
       let sha = expectedSha;
-      if (!known.has(sha)) {
+      const needsSave = !known.has(sha);
+      if (needsSave) {
         content ??= await file.load();
         if (file.gitSha && createHash('sha1').update(`blob ${content.length}\0`).update(content).digest('hex') !== file.gitSha) throw new SubmissionError('파일 검증에 실패했습니다. 다시 제출해주세요.');
         const blob = await github('/git/blobs', { content: content.toString('base64'), encoding: 'base64' });
@@ -59,8 +82,14 @@ export async function submitToGithub(submission, archive, { github = githubClien
       tree.set(file.path, { path: file.path, mode: '100644', type: 'blob', sha });
       saved.add(sha);
       done++;
-      if (done === 1 || done % 10 === 0 || done === archive.files.length) await onProgress(done, archive.files.length, [...saved]);
+      // Persist every newly saved blob so a later failure never loses a batch.
+      if (needsSave || done === 1 || done % 10 === 0 || done === archive.files.length) await onProgress(done, archive.files.length, [...saved]);
     }
+    // An identical selection needs no GitHub write, including tree creation.
+    if (tree.size === snapshot.files.length && snapshot.files.every(file => {
+      const next = tree.get(file.path);
+      return next?.sha === file.sha && next.mode === (file.mode || '100644');
+    })) return { unchanged: true };
     const siteTree = await github('/git/trees', { tree: [...tree.values()] });
     if (siteTree.sha === snapshot.treeSha) return { unchanged: true };
     const rootTree = await github('/git/trees', { base_tree: snapshot.rootTree, tree: [{ path: target, mode: '040000', type: 'tree', sha: siteTree.sha }] });

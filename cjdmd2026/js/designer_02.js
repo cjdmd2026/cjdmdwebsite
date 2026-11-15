@@ -514,6 +514,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 element.style.transformOrigin = state.origin;
             });
             designerPage.classList.remove("is-view-transitioning");
+            document.dispatchEvent(new CustomEvent("designer:viewtransitionend"));
         }
     }
 

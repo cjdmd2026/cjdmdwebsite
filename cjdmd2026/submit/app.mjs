@@ -9,14 +9,31 @@ const teamSelect = byId('team');
 const input = byId('folder-files');
 const status = byId('submission-status');
 const receiptKey = 'dmd2026-folder-receipt-r2';
+const preparationKey = 'dmd2026-pending-preparation';
+let pendingPrepare = null, treeController = null;
 let entries = [], folderName = '', receipt = null, enabled = false, busy = false;
 let stage = 'draft', polling = false, paused = false;
 const uploadConcurrency = 4;
+const uploadRetryDelays = [2000, 4000, 8000, 16000, 30000];
 const uploadControllers = new Set();
-function pauseUploads() {
+let uploadRunController = null;
+function stopTransfers() {
   paused = true;
   for (const controller of uploadControllers) controller.abort();
   byId('pause-upload').disabled = true;
+}
+function pauseUploads() {
+  uploadRunController?.abort();
+  stopTransfers();
+}
+function waitForUploadRetry(delay, signal) {
+  return new Promise(resolve => {
+    if (signal.aborted) { resolve(false); return; }
+    const finish = ready => { clearTimeout(timer); signal.removeEventListener('abort', cancel); resolve(ready); };
+    const cancel = () => finish(false);
+    const timer = setTimeout(() => finish(true), delay);
+    signal.addEventListener('abort', cancel, { once: true });
+  });
 }
 let admissionState = { busy: false }, refreshing = false, heartbeatPending = false;
 let siteFiles = [], siteTreeSha = null, treeLoaded = false, directory = '', deletions = new Set(), draftFolders = new Set(), pendingRemoval = null;
@@ -32,11 +49,12 @@ initBotId({ protect: [{ path: '/api/submission', method: 'POST' }] });
 for (const team of teams) teamSelect.add(new Option(team.name, team.id));
 
 function controls() {
-  byId('form-fields').disabled = busy || stage !== 'draft';
-  teamSelect.disabled = Boolean(receipt);
-  byId('remove-file').hidden = Boolean(receipt);
+  const fixed = Boolean(receipt || pendingPrepare);
+  byId('form-fields').disabled = busy || stage !== 'draft' || Boolean(pendingPrepare);
+  teamSelect.disabled = Boolean(receipt || pendingPrepare);
+  byId('remove-file').hidden = fixed;
   const pending = entries.filter(entry => entry.state !== 'uploaded');
-  const waiting = admissionState.busy && !receipt;
+  const waiting = admissionState.busy && !receipt && !pendingPrepare;
   let invalid = '';
   if (treeLoaded && hasChanges()) { try { applyFileChanges(siteFiles, entries, [...deletions]); } catch (error) { invalid = error.message; } }
   if (entries.length + deletions.size > 2000) invalid = '한 번에 변경할 파일은 최대 2,000개입니다. 변경을 나눠서 반영해주세요.';
@@ -44,13 +62,13 @@ function controls() {
   byId('upload-button').disabled = !enabled || !treeLoaded || Boolean(invalid) || waiting || busy || stage !== 'draft' || !selectedTeam() || !pending.some(entry => entry.file);
   byId('upload-button').textContent = waiting ? '다른 팀 제출 완료 후 업로드 가능' : !entries.length && deletions.size ? '삭제만 변경할 때는 바로 반영할 수 있어요' : entries.length && allUploaded() ? '모든 파일 업로드 완료' : entries.some(entry => entry.state === 'failed') ? '실패한 파일 다시 업로드 ↑' : receipt ? '남은 파일 이어서 업로드 ↑' : '업로드 시작 ↑';
   byId('submit-button').disabled = !enabled || !treeLoaded || Boolean(invalid) || waiting || busy || stage !== 'draft' || !hasChanges() || !allUploaded() || !byId('confirm').checked;
-  byId('new-submission').hidden = !receipt || busy;
+  byId('new-submission').hidden = !(receipt || pendingPrepare) || busy;
   byId('new-submission').textContent = stage === 'draft' && receipt ? '업로드 취소 · 다시 편집 ↗' : '이 팀 파일 계속 편집 ↗';
-  for (const id of ['choose-file', 'choose-files', 'choose-folder']) byId(id).disabled = !treeLoaded || busy || stage !== 'draft';
-  for (const id of ['new-folder', 'create-folder', 'confirm-delete']) byId(id).disabled = !treeLoaded || busy || stage !== 'draft' || Boolean(receipt);
-  byId('refresh-tree').disabled = busy || stage !== 'draft' || Boolean(receipt) || hasChanges();
-  byId('discard-changes').disabled = busy || stage !== 'draft' || Boolean(receipt) || (!hasChanges() && !draftFolders.size);
-  for (const { button, editing } of managerButtons) button.disabled = !treeLoaded || busy || stage !== 'draft' || (editing && Boolean(receipt));
+  for (const id of ['choose-file', 'choose-files', 'choose-folder']) byId(id).disabled = !treeLoaded || busy || stage !== 'draft' || Boolean(pendingPrepare);
+  for (const id of ['new-folder', 'create-folder', 'confirm-delete']) byId(id).disabled = !treeLoaded || busy || stage !== 'draft' || fixed;
+  byId('refresh-tree').disabled = busy || stage !== 'draft' || fixed || hasChanges();
+  byId('discard-changes').disabled = busy || stage !== 'draft' || fixed || (!hasChanges() && !draftFolders.size);
+  for (const { button, editing } of managerButtons) button.disabled = !treeLoaded || busy || stage !== 'draft' || (editing && fixed);
 }
 
 function managerButton(text, action, editing = false) {
@@ -111,20 +129,26 @@ function renderManager() {
   }
   controls();
 }
-async function loadTree() {
+async function loadTree(preserveDraft = false) {
+  treeController?.abort();
+  const run = new AbortController(); treeController = run;
   const team = selectedTeam();
-  treeLoaded = false; siteFiles = []; siteTreeSha = null; entries = []; deletions = new Set(); draftFolders = new Set(); directory = ''; pendingRemoval = null;
+  treeLoaded = false; siteFiles = [];
+  if (!preserveDraft) { siteTreeSha = null; entries = []; deletions = new Set(); draftFolders = new Set(); directory = ''; pendingRemoval = null; }
   byId('delete-confirmation').hidden = true; byId('folder-create').hidden = true; byId('folder-name').value = ''; byId('confirm').checked = false;
   renderFiles();
-  if (!team) { byId('tree-message').textContent = '팀을 선택하면 저장된 폴더와 파일이 표시됩니다.'; return; }
+  if (!team) { byId('tree-message').textContent = '팀을 선택하면 저장된 폴더와 파일이 표시됩니다.'; setBusy(false); return; }
   treeLoaded = false; byId('tree-message').hidden = false; byId('tree-message').textContent = '저장된 파일을 불러오는 중입니다.';
   setBusy(true);
   try {
-    const snapshot = await api(`tree&teamId=${encodeURIComponent(team.id)}`);
-    siteFiles = snapshot.files; siteTreeSha = snapshot.treeSha; treeLoaded = true;
+    const snapshot = await api(`tree&teamId=${encodeURIComponent(team.id)}`, { signal: run.signal, onRetry: delay => {
+      byId('tree-message').textContent = `파일 목록에 다시 연결하고 있습니다. ${Math.ceil(delay / 1000)}초 후 자동 재시도합니다.`;
+    } });
+    if (run.signal.aborted) return;
+    siteFiles = snapshot.files; if (!preserveDraft) siteTreeSha = snapshot.treeSha; treeLoaded = true;
     renderFiles(); renderManager();
-  } catch (error) { byId('tree-message').textContent = '파일 목록을 불러오지 못했습니다.'; showError(error.message); }
-  finally { setBusy(false); byId('refresh-tree').disabled = Boolean(receipt) || stage !== 'draft'; }
+  } catch (error) { if (!run.signal.aborted) { byId('tree-message').textContent = '파일 목록을 불러오지 못했습니다.'; showError(error.message); } }
+  finally { if (treeController === run) { setBusy(false); byId('refresh-tree').disabled = Boolean(receipt) || stage !== 'draft'; } }
 }
 function renderAdmission() {
   byId('admission-notice').hidden = !enabled;
@@ -141,7 +165,10 @@ async function refreshAdmission() {
   if (refreshing) return;
   refreshing = true; byId('refresh-admission').disabled = true;
   try {
-    const config = await api('config'); enabled = config.enabled === true && ('webkitdirectory' in input);
+    const config = await api('config', { onRetry: delay => {
+      byId('service-notice').hidden = false;
+      byId('service-notice').textContent = `제출 서버에 다시 연결하고 있습니다. ${Math.ceil(delay / 1000)}초 후 자동 재시도합니다.`;
+    } }); enabled = config.enabled === true && ('webkitdirectory' in input);
     admissionState = config.admission || { busy: false };
     byId('service-notice').hidden = enabled;
     if (!enabled) byId('service-notice').textContent = '제출 기능을 준비하고 있어요. 폴더와 파일 목록을 먼저 확인하고, 담당자의 안내 후 제출해주세요.';
@@ -159,6 +186,10 @@ function clearError() { byId('form-error').hidden = true; }
 function saveReceipt(value) {
   receipt = value;
   try { value ? localStorage.setItem(receiptKey, JSON.stringify(value)) : localStorage.removeItem(receiptKey); } catch { /* The open tab can still finish submission. */ }
+}
+function savePreparation(value) {
+  pendingPrepare = value;
+  try { value ? localStorage.setItem(preparationKey, JSON.stringify(value)) : localStorage.removeItem(preparationKey); } catch { /* Retain the key in this tab. */ }
 }
 function showStatus(title, description, progress) {
   status.hidden = false;
@@ -180,7 +211,7 @@ function renderTeam() {
 function updateRow(index) {
   const entry = entries[index], row = rows.get(index);
   if (!row) return;
-  const labels = { pending: entry.file ? '대기' : '폴더 재선택', uploading: `${Math.round(entry.progress || 0)}%`, verifying: '확인 중', uploaded: '완료', failed: '실패' };
+  const labels = { pending: entry.file ? '대기' : '폴더 재선택', uploading: `${Math.round(entry.progress || 0)}%`, verifying: '확인 중', retrying: '자동 재시도 대기', uploaded: '완료', failed: '실패' };
   row.li.dataset.state = entry.state; row.state.textContent = labels[entry.state] || '대기';
   row.error.textContent = entry.error || ''; row.error.hidden = !entry.error;
   byId('file-count').textContent = `${entries.filter(item => item.state === 'uploaded').length} / ${entries.length}개 완료`;
@@ -203,7 +234,7 @@ function renderFiles() {
   renderManager();
 }
 async function chooseFolder(files, kind = 'site') {
-  if (busy || !treeLoaded || !files.length || stage !== 'draft') return;
+  if (busy || pendingPrepare || !treeLoaded || !files.length || stage !== 'draft') return;
   clearError(); setBusy(true);
   try {
     let selected;
@@ -242,43 +273,77 @@ async function chooseFolder(files, kind = 'site') {
   }
   finally { input.value = ''; byId('nested-folder-files').value = ''; byId('single-files').value = ''; setBusy(false); }
 }
-async function api(action, options = {}) {
+async function apiOnce(action, options = {}) {
   const headers = { ...options.headers };
   if (options.body) headers['Content-Type'] = 'application/json';
   let response;
   const timeout = AbortSignal.timeout(action === 'confirm-file' ? 120000 : 30000);
   try { response = await fetch(`/api/submission?action=${action}`, { ...options, headers, cache: 'no-store', signal: options.signal ? AbortSignal.any([options.signal, timeout]) : timeout }); }
-  catch { const error = new Error('제출 서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.'); error.status = 0; throw error; }
+  catch { if (options.signal?.aborted) throw options.signal.reason; const error = new Error('제출 서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.'); error.status = 0; throw error; }
   let data;
   try { data = await response.json(); } catch { const error = new Error('제출 서버 응답을 확인할 수 없습니다. 잠시 후 다시 시도해주세요.'); error.status = response.ok ? 502 : response.status; throw error; }
-  if (!response.ok) { const error = new Error(data.error || '요청을 처리하지 못했습니다.'); error.status = response.status; throw error; }
+  if (!response.ok) { const error = new Error(data.error || '요청을 처리하지 못했습니다.'); error.status = response.status; error.retryable = data.retryable; error.retryAfterMs = data.retryAfterMs; throw error; }
   return data;
+}
+async function api(action, { onRetry, ...options } = {}) {
+  // Upload workers and status/finalization polling own their retry loops. Keep
+  // one loop per operation so failures cannot multiply into nested retries.
+  const retry = ['config', 'tree', 'prepare', 'cancel', 'heartbeat'].includes(action.split('&')[0]);
+  const signal = options.signal || new AbortController().signal;
+  const expires = options.headers?.Authorization ? receipt?.expires : action === 'prepare' ? pendingPrepare?.createdAt + 86400000 : Infinity;
+  for (let attempt = 0; ; attempt++) {
+    if (signal.aborted) throw signal.reason;
+    if (expires <= Date.now()) throw Object.assign(new Error('접수 유효기간이 지났습니다.'), { status: action === 'prepare' ? 410 : 401 });
+    try { return await apiOnce(action, options); }
+    catch (error) {
+      if (!retry || !canRetryUpload(error)) throw error;
+      const delay = retryDelay(error, attempt);
+      if (onRetry) onRetry(delay);
+      else if (action === 'cancel') showStatus('접수 취소를 다시 확인하고 있어요.', `${Math.ceil(delay / 1000)}초 후 자동 재시도합니다.`);
+      if (!await waitForUploadRetry(delay, signal)) throw signal.reason;
+    }
+  }
 }
 const post = (action, body = {}, signal) => api(action, { method: 'POST', headers: receipt ? authorization() : {}, body: JSON.stringify(body), signal });
 const confirmFile = (index, signal) => post('confirm-file', { index }, signal);
+const canRetryUpload = error => error.name !== 'AbortError' && error.retryable !== false && (error.retryable === true || error.status == null || error.status === 0 || [408, 425, 429].includes(error.status) || error.status >= 500);
+const retryDelay = (error, attempt) => Math.max(Number.isFinite(error.retryAfterMs) ? error.retryAfterMs : 0, Math.min(60000, 2000 * 2 ** Math.min(attempt, 5)));
 const shouldPauseUpload = error => error.status === 0 || error.status >= 500 || [401, 403, 410, 423, 429].includes(error.status);
 function uploadSummary() {
   const done = entries.filter(entry => entry.state === 'uploaded').length;
   const failed = entries.filter(entry => entry.state === 'failed').length;
   showStatus(allUploaded() ? '업로드 완료, 마지막 확인만 남았어요.' : '남은 파일을 이어서 올려주세요.', allUploaded() ? '추가·교체·삭제 목록을 확인한 뒤 ‘변경사항 반영’을 눌러주세요. 아직 사이트에 반영되지 않았습니다. 30분 이상 진행이 없으면 임시 파일이 정리됩니다.' : `${done} / ${entries.length}개 완료${failed ? ` · ${failed}개 실패` : ''}\n완료된 파일은 다시 올리지 않습니다. 중단 후 30분 안에 같은 브라우저에서 남은 파일을 같은 위치에 다시 선택해주세요.`, entries.length ? done / entries.length * 100 : 100);
 }
-async function prepareReceipt() {
+async function prepareReceipt(signal, finalizeRequested = false) {
   if (receipt) return;
-  const prepared = await api('prepare', { method: 'POST', body: JSON.stringify({ teamId: selectedTeam().id, files: manifest(), deletions: [...deletions], baseTreeSha: siteTreeSha }) });
-  saveReceipt({ ...prepared, teamId: selectedTeam().id, folderName });
+  if (!pendingPrepare) savePreparation({ requestKey: crypto.randomUUID(), teamId: selectedTeam().id, files: manifest(), deletions: [...deletions], baseTreeSha: siteTreeSha, folderName, createdAt: Date.now(), finalizeRequested });
+  const pending = pendingPrepare;
+  if (pending.createdAt + 86400000 <= Date.now()) { savePreparation(null); throw Object.assign(new Error('접수 요청의 유효기간이 지났습니다.'), { status: 410 }); }
+  let prepared;
+  try { prepared = await api('prepare', { method: 'POST', body: JSON.stringify(pending), signal, onRetry: delay => showStatus('접수를 자동으로 다시 확인합니다.', `같은 접수 요청을 유지하고 있습니다. ${Math.ceil(delay / 1000)}초 후 다시 시도합니다.`) }); }
+  catch (error) {
+    if (error.retryable !== true && ([400, 401, 403, 410, 413, 422, 423].includes(error.status) || error.retryable === false)) savePreparation(null);
+    throw error;
+  }
+  saveReceipt({ ...prepared, teamId: pending.teamId, folderName: pending.folderName, finalizeRequested: pending.finalizeRequested });
+  savePreparation(null);
   // Only a newly created receipt is known to have no previously uploaded files.
   // Restored receipts and every attempted file always reconcile before retrying.
-  for (const entry of entries) entry.needsCheck = false;
+  for (const entry of entries) entry.needsCheck = prepared.resumed === true;
   admissionState = { busy: true, teamId: selectedTeam().id }; renderAdmission();
 }
 async function uploadFiles() {
   if (byId('upload-button').disabled) return;
   clearError(); setBusy(true); paused = false;
+  const run = new AbortController(); uploadRunController = run;
   byId('pause-upload').hidden = false; byId('pause-upload').disabled = false; byId('retry-status').hidden = true;
   showStatus('업로드를 준비하고 있어요.', '파일 목록을 확인합니다.', 0); status.focus();
   try {
-    await prepareReceipt();
+    await prepareReceipt(run.signal);
+    if (run.signal.aborted) { uploadSummary(); return; }
     const activeBytes = new Map();
+    const blockedFiles = new Set();
+    let retryError = null;
     const totalBytes = entries.reduce((sum, entry) => sum + entry.size, 0);
     function renderUploadProgress() {
       if (paused) return;
@@ -313,7 +378,11 @@ async function uploadFiles() {
         }
         if (confirmed.uploaded) entry.state = 'uploaded';
         else if (paused) entry.state = 'pending';
-        else throw new Error(confirmed.message || '전송을 확인하지 못했습니다. 다시 업로드해주세요.');
+        else {
+          const error = new Error(confirmed.message || '전송을 확인하지 못했습니다. 다시 업로드해주세요.');
+          if (confirmed.message) error.status = 422;
+          throw error;
+        }
       } catch (error) {
         // Storage may have received the file even if the browser lost the response.
         let recovered = false;
@@ -323,40 +392,86 @@ async function uploadFiles() {
         }
         entry.state = recovered ? 'uploaded' : paused ? 'pending' : 'failed';
         entry.error = recovered || paused ? '' : error.message;
-        if (!recovered && !paused && shouldPauseUpload(error)) { pauseUploads(); showError(`${error.message}\n남은 파일의 업로드를 멈췄습니다. 접수 상태를 확인한 뒤 다시 시도해주세요.`); }
+        if (!recovered && !paused) {
+          if (canRetryUpload(error)) { retryError = error; stopTransfers(); }
+          else {
+            blockedFiles.add(index);
+            if (shouldPauseUpload(error)) { pauseUploads(); showError(`${error.message}\n남은 파일의 업로드를 멈췄습니다. 접수 상태를 확인한 뒤 다시 시도해주세요.`); }
+          }
+        }
       } finally { uploadControllers.delete(controller); activeBytes.delete(index); updateRow(index); renderUploadProgress(); }
     }
-    let nextIndex = 0;
-    async function worker() {
-      while (!paused && nextIndex < entries.length) {
-        const index = nextIndex++;
-        if (entries[index].state === 'uploaded' || !entries[index].file) continue;
-        await transferFile(index);
+    for (let attempt = 0; !run.signal.aborted; attempt++) {
+      if (receipt.expires <= Date.now()) throw new Error('접수 유효기간이 지났습니다. 접수 상태를 확인해주세요.');
+      retryError = null; paused = false;
+      byId('pause-upload').disabled = false;
+      let nextIndex = 0;
+      async function worker() {
+        while (!paused && nextIndex < entries.length) {
+          const index = nextIndex++;
+          if (entries[index].state === 'uploaded' || !entries[index].file || blockedFiles.has(index)) continue;
+          await transferFile(index);
+        }
       }
+      // Settle cancelled requests before checking storage or starting another round.
+      const workers = await Promise.allSettled(Array.from({ length: Math.min(uploadConcurrency, entries.length) }, worker));
+      const failure = workers.find(result => result.status === 'rejected');
+      if (failure) throw failure.reason;
+      if (!retryError || run.signal.aborted) break;
+      const delay = Math.max(Number.isFinite(retryError.retryAfterMs) ? retryError.retryAfterMs : 0, uploadRetryDelays[Math.min(attempt, uploadRetryDelays.length - 1)]);
+      entries.forEach((entry, index) => {
+        if (entry.state === 'uploaded' || blockedFiles.has(index) || !entry.file) return;
+        entry.state = 'retrying'; entry.error = ''; updateRow(index);
+      });
+      const done = entries.filter(entry => entry.state === 'uploaded').length;
+      showStatus('남은 파일을 자동으로 다시 시도합니다.', `${done} / ${entries.length}개 완료 · 완료된 파일은 유지됩니다.\n${Math.ceil(delay / 1000)}초 후 자동 재시도 ${attempt + 1}회`, entries.length ? done / entries.length * 100 : 0);
+      byId('pause-upload').disabled = false;
+      const resume = await waitForUploadRetry(delay, run.signal);
+      entries.forEach((entry, index) => { if (entry.state === 'retrying') { entry.state = 'pending'; updateRow(index); } });
+      if (!resume) break;
     }
-    // Keep controls locked until all in-flight requests have settled after a pause.
-    const workers = await Promise.allSettled(Array.from({ length: Math.min(uploadConcurrency, entries.length) }, worker));
-    const failure = workers.find(result => result.status === 'rejected');
-    if (failure) throw failure.reason;
     uploadSummary();
-  } catch (error) { showError(error.message || '업로드를 시작하지 못했습니다.'); if (error.status === 423) await refreshAdmission(); }
-  finally { byId('pause-upload').hidden = true; setBusy(false); }
+  } catch (error) { if (error.name !== 'AbortError') showError(error.message || '업로드를 시작하지 못했습니다.'); if (error.status === 423) await refreshAdmission(); }
+  finally { uploadRunController = null; byId('pause-upload').hidden = true; setBusy(false); }
 }
 async function pollStatus() {
   if (polling || !receipt) return;
   polling = true; byId('retry-status').hidden = true;
   let failures = 0;
+  const retryConnection = async error => {
+    if (!canRetryUpload(error)) throw error;
+    const delay = Math.max(Number.isFinite(error.retryAfterMs) ? error.retryAfterMs : 0, Math.min(60000, 5000 * 2 ** Math.min(failures++, 4)));
+    stage = 'processing'; setBusy(true);
+    showStatus('저장 상태를 자동으로 다시 확인합니다.', `업로드한 파일은 유지됩니다. 폴더를 다시 올릴 필요가 없습니다.\n${delay / 1000}초 후 다시 연결합니다. 이 페이지를 열어두세요.\n접수 번호  ${receipt.id.slice(0, 8)}`);
+    await new Promise(resolve => setTimeout(resolve, delay));
+  };
   try {
-    for (let round = 0; receipt && round < 180; round++) {
+    while (receipt) {
+      if (receipt.expires <= Date.now()) throw new Error('접수의 24시간 유효기간이 지났습니다. 담당자에게 접수 번호를 알려주세요.');
       let result;
-      try { result = await api('status', { headers: authorization() }); failures = 0; }
-      catch (error) { if (++failures >= 3 || error.status === 401) throw error; await new Promise(resolve => setTimeout(resolve, 5000)); continue; }
+      try { result = await api('status', { headers: authorization() }); }
+      catch (error) { await retryConnection(error); continue; }
       if (result.phase === 'awaiting_upload' && result.mode === 'folder') {
         const uploaded = new Set(result.uploaded);
         entries = result.files.map((file, i) => ({ ...file, file: entries[i]?.sha256 === file.sha256 && entries[i]?.path === file.path ? entries[i].file : undefined, state: uploaded.has(i) ? 'uploaded' : 'pending' }));
         deletions = new Set(result.deletions || []); siteTreeSha = result.baseTreeSha ?? siteTreeSha;
+        if (receipt.finalizeRequested && allUploaded()) {
+          stage = 'processing'; setBusy(true);
+          showStatus('변경사항 반영을 확인하고 있어요.', '업로드한 파일을 확인했습니다. 같은 접수로 이어서 처리합니다.');
+          try { await post('finalize'); }
+          catch (error) {
+            if (canRetryUpload(error)) { await retryConnection(error); continue; }
+            saveReceipt({ ...receipt, finalizeRequested: false });
+            showError(error.message);
+          }
+          if (receipt.finalizeRequested) { failures = 0; await new Promise(resolve => setTimeout(resolve, 5000)); continue; }
+        } else if (receipt.finalizeRequested) {
+          saveReceipt({ ...receipt, finalizeRequested: false });
+          showError('아직 확인되지 않은 파일이 있습니다. 남은 파일을 업로드한 뒤 변경사항 반영을 눌러주세요.');
+        }
         stage = 'draft'; setBusy(false); renderFiles(); renderAdmission(); uploadSummary(); return;
       }
+      if (receipt.finalizeRequested) saveReceipt({ ...receipt, finalizeRequested: false });
       if (['submitted', 'merge_failed', 'failed', 'cancelled'].includes(result.phase)) {
         stage = 'done'; setBusy(false); const success = result.phase === 'submitted';
         status.classList.toggle('is-complete', success);
@@ -366,11 +481,16 @@ async function pollStatus() {
         byId('upload-progress').hidden = !success; byId('progress-label').textContent = success ? result.unchanged ? '변경 없음' : result.merged ? '저장 완료 · 배포 대기' : '접수 완료' : result.phase === 'merge_failed' ? '자동 반영 확인 필요' : '제출 미완료'; await refreshAdmission(); return;
       }
       stage = 'processing'; setBusy(true);
-      showStatus(result.phase === 'merging' ? '웹사이트에 자동 반영하고 있어요.' : '웹사이트를 전달하고 있어요.', `파일 ${result.completedFiles || 0} / ${result.totalFiles || '…'}개 처리 중\n접수 번호  ${result.id.slice(0, 8)}`);
-      if (result.phase === 'queued' || (result.phase === 'paused' && (!result.resumeAfter || result.resumeAfter <= Date.now()))) await post('process');
+      const retrying = result.phase === 'paused';
+      const seconds = Math.max(0, Math.ceil(((result.resumeAfter || 0) - Date.now()) / 1000));
+      showStatus(retrying ? '저장을 자동으로 다시 시도합니다.' : result.phase === 'merging' ? '웹사이트에 자동 반영하고 있어요.' : '웹사이트를 전달하고 있어요.', `${retrying ? `업로드한 파일은 유지됩니다. ${seconds ? `${seconds}초 후 ` : ''}저장된 부분부터 이어서 처리합니다. 이 페이지를 열어두세요.\n` : ''}파일 ${result.completedFiles || 0} / ${result.totalFiles || '…'}개 처리 중\n접수 번호  ${result.id.slice(0, 8)}`);
+      if (result.phase === 'queued' || (retrying && !seconds)) {
+        try { await post('process'); }
+        catch (error) { await retryConnection(error); continue; }
+      }
+      failures = 0;
       await new Promise(resolve => setTimeout(resolve, 5000));
     }
-    throw new Error('처리가 계속되고 있습니다. 잠시 후 상태를 다시 확인해주세요.');
   } catch (error) {
     setBusy(false); showStatus('접수 상태를 다시 확인해주세요.', `${error.message}\n접수 번호  ${receipt?.id?.slice(0, 8) || ''}`); byId('retry-status').hidden = false;
   } finally { polling = false; controls(); }
@@ -418,7 +538,7 @@ byId('submission-form').addEventListener('submit', async event => {
   event.preventDefault(); if (byId('submit-button').disabled) return;
   clearError(); stage = 'processing'; setBusy(true);
   showStatus('최종 제출을 확인하고 있어요.', '모든 파일의 업로드를 확인합니다.'); status.focus();
-  try { await prepareReceipt(); await post('finalize'); }
+  try { await prepareReceipt(undefined, true); saveReceipt({ ...receipt, finalizeRequested: true }); }
   catch (error) {
     showError(error.message);
     if (!receipt) { stage = 'draft'; setBusy(false); status.hidden = true; if (error.status === 423) await refreshAdmission(); return; }
@@ -429,11 +549,15 @@ byId('submission-form').addEventListener('submit', async event => {
 byId('new-submission').addEventListener('click', async () => {
   if (busy || polling) return;
   setBusy(true);
+  if (!receipt && pendingPrepare) {
+    try { await prepareReceipt(); }
+    catch (error) { showError(error.message); setBusy(false); return; }
+  }
   if (receipt) {
     try { await post('cancel'); }
     catch (error) { if (![401, 410].includes(error.status)) { showError(error.message); setBusy(false); return; } }
   }
-  saveReceipt(null); entries = []; folderName = ''; input.value = ''; stage = 'draft';
+  saveReceipt(null); savePreparation(null); entries = []; folderName = ''; input.value = ''; stage = 'draft';
   deletions = new Set(); draftFolders = new Set(); pendingRemoval = null; byId('delete-confirmation').hidden = true;
   status.hidden = true; status.classList.remove('is-complete');
   byId('status-kicker').textContent = 'SUBMITTING YOUR WORK'; byId('retry-status').hidden = true;
@@ -445,9 +569,14 @@ async function initialize() {
   if (!('webkitdirectory' in input)) { enabled = false; byId('service-notice').textContent = '폴더 선택을 지원하는 PC의 최신 브라우저에서 제출해주세요.'; byId('service-notice').hidden = false; }
   try {
     const saved = JSON.parse(localStorage.getItem(receiptKey));
+    const pending = JSON.parse(localStorage.getItem(preparationKey));
     if (!saved && localStorage.getItem('dmd2026-folder-receipt')) showError('저장소가 변경되었습니다. 이전에 완료하지 못한 업로드는 폴더를 다시 선택해 제출해주세요. 이미 반영된 사이트 파일은 그대로 유지됩니다.');
     if (saved?.ticket && saved?.id && saved.expires > Date.now()) {
-      if (enabled) { receipt = saved; folderName = saved.folderName; teamSelect.value = saved.teamId; renderTeam(); await loadTree(); stage = 'processing'; setBusy(true); await pollStatus(); }
+      if (enabled) { receipt = saved; savePreparation(null); folderName = saved.folderName; teamSelect.value = saved.teamId; renderTeam(); stage = 'processing'; setBusy(true); await pollStatus(); if (stage === 'draft') await loadTree(true); }
+    } else if (!saved && pending?.requestKey && enabled) {
+      savePreparation(pending); teamSelect.value = pending.teamId; folderName = pending.folderName; renderTeam(); setBusy(true);
+      try { await prepareReceipt(); stage = 'processing'; await pollStatus(); if (stage === 'draft') await loadTree(true); }
+      catch (error) { stage = 'draft'; setBusy(false); showError(error.message); }
     } else if (saved) { saveReceipt(null); showError('이전 업로드의 24시간 유효기간이 지났습니다. 폴더를 선택해 새로 제출해주세요.'); }
   } catch { /* Browser storage is optional. */ }
   renderManager();

@@ -77,7 +77,7 @@ test('repository merge options are respected and rejected merges never report su
   await assert.rejects(limited.run(), error => error.retryAfterMs === 65000);
 });
 
-function processor(merge) {
+function processor(merge, overrides = {}) {
   let state = { phase: 'queued', mode: 'folder', finalizedAt: Date.now() };
   const writes = []; let archived = 0, submitted = 0, finished = 0, unlocked = 0;
   const run = createProcessor({
@@ -86,7 +86,7 @@ function processor(merge) {
     gate: { touch: async () => {}, finish: async () => { finished++; } },
     configFor: () => config, client: () => () => {},
     prepareArchive: async () => { archived++; return { files: [{}], bytes: 2 }; },
-    submit: async () => { submitted++; return saved; }, merge,
+    submit: async () => { submitted++; return saved; }, merge, ...overrides,
   });
   return { run: () => run(submission), get state() { return state; }, writes, get counts() { return { archived, submitted, finished, unlocked }; } };
 }
@@ -119,4 +119,95 @@ test('permanent merge failures preserve the PR, release storage, and never claim
   assert.equal(p.state.phase, 'merge_failed'); assert.equal(p.state.pullNumber, 12); assert.equal(p.state.merged, undefined);
   assert.match(p.state.message, /PR #12/); assert.equal(p.counts.finished, 1);
   await p.run(); assert.equal(p.counts.submitted, 1);
+});
+
+test('temporary GitHub failures retain uploaded source after eight attempts and eventually resume', async () => {
+  let attempts = 0;
+  const p = processor(async () => ({ merged: true, sha }), { submit: async (_submission, _archive, { checkpoint, onProgress }) => {
+    if (!attempts) await onProgress(1, 2, [sha]);
+    else assert.deepEqual(checkpoint, [sha]);
+    if (++attempts <= 12) throw Object.assign(new SubmissionError('GitHub unavailable', 502), { githubStatus: 503 });
+    return saved;
+  } });
+  for (let i = 0; i < 12; i++) {
+    const before = Date.now();
+    await p.run();
+    assert.equal(p.state.phase, 'paused');
+    assert.equal(p.counts.finished, 0);
+    assert.deepEqual(p.state.checkpoint, [sha]);
+    assert.equal(p.state.completedFiles, 1);
+    assert.ok(p.state.resumeAfter >= before + Math.min(300000, 5000 * 2 ** i));
+    await p.run(); assert.equal(attempts, i + 1, 'do not retry before resumeAfter');
+    p.state.resumeAfter = 0;
+  }
+  await p.run();
+  assert.equal(p.state.phase, 'submitted');
+  assert.equal(p.counts.finished, 1);
+});
+
+test('execution slices are resumable beyond eight runs without error backoff or deleting files', async () => {
+  let attempts = 0;
+  const p = processor(async () => ({ merged: true, sha }), { submit: async () => {
+    if (++attempts <= 10) throw Object.assign(new SubmissionError('Continue', 503), { continuation: true });
+    return saved;
+  } });
+  for (let i = 0; i < 10; i++) {
+    await p.run(); assert.equal(p.state.phase, 'paused'); assert.equal(p.state.retryFailures, 0);
+    assert.equal(p.counts.finished, 0); p.state.resumeAfter = 0;
+  }
+  await p.run(); assert.equal(p.state.phase, 'submitted');
+});
+
+test('saved progress stays monotonic and new progress resets retry backoff', async () => {
+  let attempt = 0;
+  const p = processor(async () => ({ merged: true, sha }), { submit: async (_submission, _archive, { checkpoint, onProgress }) => {
+    if (++attempt === 1) await onProgress(10, 20, [sha]);
+    else {
+      await onProgress(1, 20, checkpoint);
+      assert.equal(p.state.completedFiles, 10);
+      assert.equal(p.state.retryFailures, 1);
+      await onProgress(11, 20, [...checkpoint, 'b'.repeat(40)]);
+    }
+    throw new SubmissionError('Temporary', 503);
+  } });
+  await p.run(); p.state.resumeAfter = 0; await p.run();
+  assert.equal(p.state.completedFiles, 11); assert.equal(p.state.retryFailures, 1);
+});
+
+test('rate limits honor server delay but permission and validation errors stop', async () => {
+  for (const status of [408, 425, 429, 500, 502, 503]) {
+    const p = processor(async () => { throw Object.assign(new SubmissionError('Temporary', 502), { githubStatus: status, retryAfterMs: 3600000 }); });
+    const before = Date.now(); await p.run();
+    assert.equal(p.state.phase, 'paused'); assert.ok(p.state.resumeAfter >= before + 3600000); assert.equal(p.counts.finished, 0);
+  }
+  for (const status of [401, 403, 404, 422]) {
+    const p = processor(async () => { throw Object.assign(new SubmissionError('Permanent', 502), { githubStatus: status }); });
+    await p.run(); assert.equal(p.state.phase, 'merge_failed'); assert.equal(p.counts.finished, 1);
+  }
+});
+
+test('explicit transient contention preserves processing state and explicit permanent errors stop', async () => {
+  for (const retryable of [true, false]) {
+    const p = processor(async () => { throw Object.assign(new SubmissionError('Storage condition', retryable ? 423 : 503), { retryable }); });
+    await p.run();
+    assert.equal(p.state.phase, retryable ? 'paused' : 'merge_failed');
+    assert.equal(p.counts.finished, retryable ? 0 : 1);
+  }
+});
+
+test('repeated secondary limits back off and persist safe diagnostics without cleaning uploads', async () => {
+  const p = processor(async () => { throw Object.assign(new SubmissionError('private-content test-token', 502), {
+    githubStatus: 403, githubRateLimited: true, retryAfterMs: 65000, githubRateLimitRemaining: 123,
+    githubPath: '/git/blobs', githubMethod: 'POST', githubRequestId: 'request-123',
+  }); });
+  for (const delay of [65000, 130000, 260000]) {
+    const before = Date.now(); await p.run();
+    assert.equal(p.state.phase, 'paused'); assert.equal(p.counts.finished, 0);
+    assert.ok(p.state.resumeAfter >= before + delay);
+    assert.equal(p.state.lastError.githubStatus, 403);
+    assert.equal(p.state.lastError.githubRateLimitRemaining, 123);
+    assert.equal(p.state.lastError.githubRequestId, 'request-123');
+    assert.doesNotMatch(JSON.stringify(p.state.lastError), /private-content|test-token/);
+    p.state.resumeAfter = 0;
+  }
 });

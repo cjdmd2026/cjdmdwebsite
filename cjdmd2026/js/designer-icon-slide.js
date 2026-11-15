@@ -1674,6 +1674,9 @@
       if (!event.target.closest('.icon-hit, .formation-panel')) closeDetails();
     });
     document.addEventListener('designer:viewchange', event => changeFormationView(event.detail.view, event.detail.keepToolbar));
+    document.addEventListener('designer:viewtransitionend', () => {
+      if (loaded) layout();
+    });
     // 그리드의 초성 필터는 적용하지 않고, 공통 검색 입력만 컬러 강조에 사용합니다.
     document.addEventListener('designer-filter-change', () => applyGallerySearch());
     searchInput?.addEventListener('compositionstart', () => { searchComposing = true; });
@@ -1773,7 +1776,12 @@
       }
       stage.classList.add("ready"); setHint();
       if (viewActive) wake();
-      new ResizeObserver(() => layout()).observe(stage);
+      new ResizeObserver(() => {
+        // Reappearing from the grid triggers this while the depth/heading animations
+        // are running. Their temporary bounds must not become gallery coordinates.
+        // The transition-end event measures again after those animations are removed.
+        if (!scene.classList.contains('is-view-transitioning')) layout();
+      }).observe(stage);
       window.GyeolhapIcons = Object.freeze({ snapshot: () => ({
         ready: loaded, word: "결합", wordSource: word.src, wholeIconTypes: sprites.length, count: particles.length,
         embeddedIndividuals: wordArtwork.anchors.map(({ projectId, color, studentId, x, y, width, height }) => ({ projectId, color, studentId, x, y, width, height })),

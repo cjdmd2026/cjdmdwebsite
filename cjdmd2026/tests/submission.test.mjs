@@ -151,6 +151,24 @@ test('resumed processing skips already uploaded Git blobs', async () => {
   await submitToGithub(submission, archive, { github, config, checkpoint: [sha] });
   assert.equal(calls.some(call => call.path === '/git/blobs'), false);
 });
+
+test('unchanged content skips file downloads and every GitHub write', async () => {
+  const sha = createHash('sha1').update('blob 2\0').update('hi').digest('hex');
+  const files = [{ path: 'index.html', type: 'blob', mode: '100644', size: 2, sha }];
+  const github = async (path, body) => {
+    assert.equal(body, undefined, 'unchanged content must not create blobs, trees, commits or PRs');
+    if (path.startsWith('/pulls?')) return [];
+    if (path.startsWith('/git/ref/heads/submissions/')) throw Object.assign(new Error(), { githubStatus: 404 });
+    if (path === '/git/ref/heads/main') return { object: { sha: 'base' } };
+    if (path === '/git/commits/base') return { tree: { sha: 'root' } };
+    if (path === '/git/trees/root') return { tree: [{ path: 'cjdmd2026', type: 'tree', sha: 'site' }] };
+    if (path === '/git/trees/site') return { tree: [{ path: 'ilkko', type: 'tree', sha: 'team' }] };
+    if (path === '/git/trees/team?recursive=1') return { tree: files };
+    assert.fail(`Unexpected request: ${path}`);
+  };
+  const result = await submitToGithub(submission, { files: [{ path: 'index.html', size: 2, gitSha: sha, load: async () => assert.fail('unchanged content must not be downloaded') }], bytes: 2 }, { github, config });
+  assert.deepEqual(result, { unchanged: true });
+});
 test('folder processing loads files individually and skips storage downloads for checkpointed files', async () => {
   const sha = createHash('sha1').update('blob 2\0').update('hi').digest('hex');
   let loads = 0;
@@ -160,6 +178,32 @@ test('folder processing loads files individually and skips storage downloads for
   await submitToGithub(submission, folder, { ...mockGithub(), config });
   assert.equal(loads, 1);
   await assert.rejects(submitToGithub(submission, { ...folder, files: [{ ...folder.files[0], load: async () => Buffer.from('no') }] }, { ...mockGithub(), config }));
+});
+
+test('a GitHub failure between batches resumes from every saved blob without reloading completed files', async () => {
+  const { github: base, calls } = mockGithub();
+  const loads = new Map(), savedBlobs = new Map();
+  const files = Array.from({ length: 25 }, (_, i) => {
+    const content = Buffer.from(`file-${i}`), gitSha = createHash('sha1').update(`blob ${content.length}\0`).update(content).digest('hex');
+    return { path: i ? `assets/${i}.js` : 'index.html', size: content.length, gitSha, load: async () => { loads.set(i, (loads.get(i) || 0) + 1); return content; } };
+  });
+  let requests = 0, checkpoint = [], completed = 0;
+  const github = async (path, body) => {
+    if (path !== '/git/blobs') return base(path, body);
+    if (++requests === 14) throw Object.assign(new Error('GitHub unavailable'), { status: 502, githubStatus: 503 });
+    const content = Buffer.from(body.content, 'base64'), sha = createHash('sha1').update(`blob ${content.length}\0`).update(content).digest('hex');
+    savedBlobs.set(sha, (savedBlobs.get(sha) || 0) + 1);
+    return { sha };
+  };
+  const onProgress = async (done, total, saved) => { completed = done; checkpoint = saved; assert.equal(total, 25); };
+  const folder = { files, bytes: files.reduce((sum, file) => sum + file.size, 0) };
+  await assert.rejects(submitToGithub(submission, folder, { github, config, onProgress }));
+  assert.equal(checkpoint.length, 13); assert.equal(completed, 13);
+  await submitToGithub(submission, folder, { github, config, checkpoint, onProgress });
+  assert.equal(checkpoint.length, 25);
+  assert.ok([...savedBlobs.values()].every(count => count === 1));
+  for (let i = 0; i < 13; i++) assert.equal(loads.get(i), 1);
+  assert.equal(calls.filter(call => call.path === '/pulls').length, 1);
 });
 test('unconfigured API cannot accept files and does not expose secret names', async () => {
   const previous = process.env.SUBMISSIONS_ENABLED;

@@ -49,6 +49,16 @@ test('ownership is required for tokens and activity extends only a live lease', 
   assert.equal((await f.gate.availability()).busy, false);
 });
 
+test('retrying a lost reservation reuses only the same receipt and still checks capacity', async () => {
+  const f = fixture(), a = receipt('ilkko');
+  await f.gate.claim(a, 100);
+  await f.otherInstance().claim(a, 100);
+  assert.equal((await f.gate.availability()).teamId, 'ilkko');
+  await assert.rejects(f.otherInstance().claim({ ...a, teamId: 'curo' }, 100), { status: 423 });
+  f.files.set('other/large', 900 * 1024 ** 2);
+  await assert.rejects(f.gate.claim(a, 100), error => error.status === 503 && error.retryable === false);
+});
+
 test('four concurrent upload token requests share one lease without losing ownership or extending expired receipts', async () => {
   const f = fixture(), a = receipt('ilkko'); await f.gate.claim(a);
   const tokens = await Promise.all(Array.from({ length: 4 }, () => f.otherInstance().touch(a, { issueToken: true })));

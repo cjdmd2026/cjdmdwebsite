@@ -1,8 +1,7 @@
-import { randomUUID } from 'node:crypto';
 import { waitUntil, ipAddress } from '@vercel/functions';
 import { issueUpload, readUploadTicket } from '../server/upload.mjs';
 import { checkBotId } from 'botid/server';
-import { configuration, validateFolderSubmission, signTicket, assertOrigin, limits, SubmissionError } from '../server/policy.mjs';
+import { configuration, validateFolderSubmission, assertOrigin, limits, SubmissionError } from '../server/policy.mjs';
 import { readState, writeState, limitSubmissions, takeLock, releaseLock } from '../server/storage.mjs';
 import { processSubmission } from '../server/process.mjs';
 import { uploadedFiles, confirmFile, finalizeFolder } from '../server/folder.mjs';
@@ -12,6 +11,7 @@ import { siteSnapshot, checkSiteChanges } from '../server/site.mjs';
 import { findTeam } from '../server/teams.mjs';
 import { sourceConfiguration, validateServerSubmission } from '../server/source-policy.mjs';
 import { checkSourceRepository } from '../server/source-github.mjs';
+import { prepareSubmission } from '../server/prepare.mjs';
 
 const json = (body, status = 200) => Response.json(body, { status, headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
 async function smallJson(request) {
@@ -44,7 +44,7 @@ export async function handleRequest(request) {
     const action = url.searchParams.get('action') || 'config';
     const config = configuration();
     if (request.method === 'GET' && action === 'config') return json({ enabled: config.enabled, serverEnabled: sourceConfiguration().enabled, limits, admission: config.enabled ? await admission.availability() : { busy: false } });
-    if (!config.enabled) return json({ error: '제출 기능을 준비하고 있습니다. 담당자의 안내 후 다시 방문해주세요.' }, 503);
+    if (!config.enabled) return json({ error: '제출 기능을 준비하고 있습니다. 담당자의 안내 후 다시 방문해주세요.', retryable: false }, 503);
     if (request.method === 'GET' && action === 'tree') {
       const team = findTeam(url.searchParams.get('teamId'));
       if (!team) throw new SubmissionError('목록에서 팀을 선택해주세요.');
@@ -77,17 +77,14 @@ export async function handleRequest(request) {
       if (body.purpose !== undefined && body.purpose !== 'server') throw new SubmissionError('올바르지 않은 제출 종류입니다.');
       const server = body.purpose === 'server';
       const sourceConfig = sourceConfiguration();
-      if (server && !sourceConfig.enabled) throw new SubmissionError('서버 원본 접수를 준비하고 있습니다. 담당자의 안내 후 다시 제출해주세요.', 503);
+      if (server && !sourceConfig.enabled) throw Object.assign(new SubmissionError('서버 원본 접수를 준비하고 있습니다. 담당자의 안내 후 다시 제출해주세요.', 503), { retryable: false });
       const fields = server ? validateServerSubmission(body) : validateFolderSubmission(body);
       await limitSubmissions(ipAddress(request) || 'local');
-      if (server) fields.sourceDestination = await checkSourceRepository(githubClient(sourceConfig.token, sourceConfig.repository), sourceConfig);
-      else checkSiteChanges(await siteSnapshot(fields.teamId, githubClient(), config), fields);
-      const id = randomUUID();
-      const submission = { storage: 'r2', mode: 'folder', ...(server ? { purpose: 'server' } : {}), teamId: fields.teamId, slug: fields.slug, id, pathname: `submissions/${id}/files/`, expires: Date.now() + 24 * 60 * 60 * 1000 };
-      await admission.claim(submission, fields.totalBytes);
-      try { await writeState(id, { ...fields, storage: 'r2', phase: 'awaiting_upload', createdAt: Date.now() }); }
-      catch (error) { await admission.finish(submission).catch(() => {}); throw error; }
-      return json({ ticket: signTicket(submission), pathname: submission.pathname, id, expires: submission.expires });
+      return json(await prepareSubmission(fields, body.requestKey, async () => {
+        if (server) return { sourceDestination: await checkSourceRepository(githubClient(sourceConfig.token, sourceConfig.repository), sourceConfig) };
+        checkSiteChanges(await siteSnapshot(fields.teamId, githubClient(), config), fields);
+        return {};
+      }));
     }
     if (action === 'heartbeat') {
       const slot = await admission.touch(ticketFromRequest(request));
@@ -96,7 +93,7 @@ export async function handleRequest(request) {
     if (action === 'cancel') {
       const submission = ticketFromRequest(request);
       const held = await takeLock(submission.id);
-      if (!held) throw new SubmissionError('제출을 처리하고 있습니다. 잠시 후 다시 시도해주세요.', 409);
+      if (!held) throw Object.assign(new SubmissionError('제출을 처리하고 있습니다. 잠시 후 다시 시도해주세요.', 409), { retryable: true, retryAfterMs: 5000 });
       try {
         const state = await receiptState(submission);
         if (state && !['awaiting_upload', 'failed', 'cancelled', 'submitted', 'merge_failed'].includes(state.phase)) throw new SubmissionError('최종 제출을 처리하고 있습니다. 처리 완료 후 새 제출을 시작해주세요.', 409);
@@ -132,7 +129,7 @@ export async function handleRequest(request) {
     return json({ error: '요청한 기능을 찾을 수 없습니다.' }, 404);
   } catch (error) {
     if (!(error instanceof SubmissionError)) console.error('Submission API failed', { action: new URL(request.url).searchParams.get('action'), errorType: error.constructor?.name || error.name, status: error.status });
-    return json({ error: error instanceof SubmissionError ? error.message : '요청을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.' }, error.status || 500);
+    return json({ error: error instanceof SubmissionError ? error.message : '요청을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.', ...(typeof error.retryable === 'boolean' ? { retryable: error.retryable } : {}), ...(Number.isFinite(error.retryAfterMs) ? { retryAfterMs: error.retryAfterMs } : {}) }, error.status || 500);
   }
 }
 export default { fetch: handleRequest };

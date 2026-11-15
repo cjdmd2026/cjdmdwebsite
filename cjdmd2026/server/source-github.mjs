@@ -35,7 +35,8 @@ export async function saveServerSource(submission, state, archive, { github, onP
   for (const file of archive.files) {
     const sha = file.gitSha;
     if (!/^[a-f0-9]{40}$/.test(sha || '')) throw new SubmissionError('서버 원본의 검증 기록이 올바르지 않습니다.');
-    if (!known.has(sha)) {
+    const needsSave = !known.has(sha);
+    if (needsSave) {
       const content = await file.load();
       const actual = createHash('sha1').update(`blob ${content.length}\0`).update(content).digest('hex');
       if (actual !== sha) throw new SubmissionError('파일 내용이 변경되었습니다. 다시 제출해주세요.');
@@ -44,7 +45,8 @@ export async function saveServerSource(submission, state, archive, { github, onP
       known.add(sha);
     }
     tree.push({ path: file.path, mode: '100644', type: 'blob', sha });
-    if (++done === 1 || done % 10 === 0 || done === archive.files.length) await onProgress(done, archive.files.length, [...known]);
+    done++;
+    if (needsSave || done === 1 || done % 10 === 0 || done === archive.files.length) await onProgress(done, archive.files.length, [...known]);
   }
   const sourceTree = await github('/git/trees', { tree });
   const record = { receipt: submission.id, teamId: submission.teamId, slug: submission.slug, receivedAt: new Date(state.createdAt).toISOString(), fingerprint, details: state.details, files: state.files, sourceTree: sourceTree.sha, warning: '접수된 원본입니다. 실행·배포 전 검토가 필요합니다. 제출자의 팀 소속은 인증되지 않았습니다.' };

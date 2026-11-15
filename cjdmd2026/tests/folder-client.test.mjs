@@ -19,7 +19,7 @@ function element() {
 }
 function services() {
   const store = new Map(), uploaded = new Set(), counts = new Map();
-  return { store, uploaded, counts, confirmations: [], files: [], siteFiles: [], treeSha: null, deletions: [], phase: 'awaiting_upload', failOnce: true, finalizations: 0, admission: { busy: false }, preparations: 0, cancellations: 0,
+  return { store, uploaded, counts, delays: [], confirmations: [], files: [], siteFiles: [], treeSha: null, deletions: [], phase: 'awaiting_upload', failOnce: true, finalizations: 0, admission: { busy: false }, preparations: 0, cancellations: 0,
     async fetch(url, options = {}) {
       const action = new URL(url, 'http://localhost').searchParams.get('action');
       const body = JSON.parse(options.body || '{}'); let data;
@@ -60,7 +60,9 @@ async function controller(server) {
     document: { getElementById: get, createElement: element }, window: { addEventListener() {} },
     localStorage: { getItem: key => server.store.get(key) || null, setItem: (key, value) => server.store.set(key, value), removeItem: key => server.store.delete(key) },
     __TEAMS__: teams, Option: function () {}, initBotId() {}, folderSelection, validateFiles, validateImageContent, applyFileChanges, ignoredFile,
-    crypto: webcrypto, AbortController, AbortSignal, setTimeout, setInterval() {}, fetch: server.fetch.bind(server), upload: server.upload.bind(server),
+    crypto: webcrypto, AbortController, AbortSignal, clearTimeout,
+    setTimeout(callback, delay) { server.delays.push(delay); return server.scheduleTimeout ? server.scheduleTimeout(callback, delay) : setTimeout(callback, 0); },
+    setInterval() {}, fetch: server.fetch.bind(server), upload: server.upload.bind(server),
   });
   vm.runInContext(source, context); await context.ready;
   return { context, get, async event(id, name) { await get(id).listeners[name]({ preventDefault() {} }); } };
@@ -113,15 +115,14 @@ test('GIF can still be selected and uploaded', async () => {
   assert.ok(server.files.some(file => file.path === 'images/animation.gif'));
 });
 
-test('client retries only failed files and requires explicit final confirmation after every file succeeds', async () => {
+test('client automatically retries missing files and still requires explicit final confirmation', async () => {
   const server = services(), ui = await controller(server);
   await select(ui);
   assert.equal(ui.get('upload-button').disabled, false);
   assert.equal(ui.get('submit-button').disabled, true);
   await ui.event('upload-button', 'click');
-  assert.equal(server.uploaded.size, 1); assert.equal(server.finalizations, 0);
-  assert.match(ui.get('upload-button').textContent, /실패한 파일/);
-  await ui.event('upload-button', 'click');
+  assert.equal(server.uploaded.size, 2); assert.equal(server.finalizations, 0);
+  assert.deepEqual(server.delays, [2000]);
   assert.deepEqual([...server.counts], [[0, 2], [1, 1]]);
   assert.equal(server.finalizations, 0); assert.equal(ui.get('submit-button').disabled, true);
   ui.get('confirm').checked = true; await ui.event('confirm', 'change');
@@ -130,7 +131,57 @@ test('client retries only failed files and requires explicit final confirmation 
   assert.equal(server.finalizations, 1);
   assert.match(ui.get('status-title').textContent, /제출이 완료/);
 });
-test('a server error stops a 922-file batch within the in-flight group and the same receipt can resume', async () => {
+
+test('GitHub processing keeps polling beyond the former limit and reconnects without reupload or refinalize', async () => {
+  const server = services(), ui = await controller(server); server.failOnce = false;
+  await select(ui); await ui.event('upload-button', 'click');
+  const original = server.fetch.bind(server);
+  let reads = 0, resumes = 0, processFailures = 0, resumed = false;
+  // The bound fetch installed in the VM delegates through this configurable hook.
+  const fetch = async (url, options = {}) => {
+    const action = new URL(url, 'http://localhost').searchParams.get('action');
+    if (action === 'status') {
+      if (!server.finalizations) return original(url, options);
+      reads++;
+      if (reads <= 4) return new Response('gateway unavailable', { status: 502 });
+      const result = { id: 'sample', teamId: 'ilkko', slug: 'ilkko', totalFiles: 2, completedFiles: 1, phase: resumed ? 'submitted' : reads <= 185 ? 'saving' : 'paused', merged: resumed };
+      if (reads === 186) result.resumeAfter = Date.now() + 60000;
+      return Response.json(result);
+    }
+    if (action === 'process') {
+      assert.ok(reads > 186, 'wait for server retry time');
+      if (++processFailures <= 4) return Response.json({ error: 'Temporary failure' }, { status: 503 });
+      resumes++; resumed = true; return Response.json({ accepted: true }, { status: 202 });
+    }
+    return original(url, options);
+  };
+  ui.context.fetch = fetch;
+  ui.get('confirm').checked = true; await ui.event('confirm', 'change');
+  await ui.event('submission-form', 'submit');
+  assert.match(ui.get('status-title').textContent, /제출이 완료/);
+  assert.equal(resumes, 1); assert.equal(server.preparations, 1); assert.equal(server.finalizations, 1);
+  assert.deepEqual([...server.counts.values()], [1, 1]);
+  assert.ok(server.delays.includes(40000)); assert.ok(reads > 180);
+});
+
+test('reopening a finalized paused receipt resumes GitHub storage without selecting or uploading files', async () => {
+  const server = services(); server.failOnce = false;
+  const first = await controller(server); await select(first); await first.event('upload-button', 'click');
+  server.phase = 'paused';
+  const original = server.fetch.bind(server);
+  let resumes = 0;
+  server.fetch = async (url, options = {}) => {
+    if (new URL(url, 'http://localhost').searchParams.get('action') === 'process') {
+      resumes++; server.phase = 'submitted'; server.merged = true; return Response.json({ accepted: true }, { status: 202 });
+    }
+    return original(url, options);
+  };
+  const restored = await controller(server);
+  assert.match(restored.get('status-title').textContent, /제출이 완료/);
+  assert.equal(resumes, 1); assert.equal(server.preparations, 1); assert.equal(server.finalizations, 0);
+  assert.deepEqual([...server.counts.values()], [1, 1]);
+});
+test('a prolonged outage retries beyond five attempts while preserving the receipt and in-flight group', async () => {
   const server = services(), ui = await controller(server);
   const files = [sampleFiles()[0], ...Array.from({ length: 921 }, (_, i) => {
     const file = new File(['image'], `${i}.webp`);
@@ -138,33 +189,188 @@ test('a server error stops a 922-file batch within the in-flight group and the s
   })];
   await select(ui, files);
   server.failOnce = false;
-  server.confirmResponse = () => Response.json({ error: '확인 서버 오류' }, { status: 500 });
+  server.confirmResponse = index => {
+    if (server.delays.length < 9) {
+      assert.equal(server.counts.size, 4);
+      return Response.json({ error: '확인 서버 오류' }, { status: 500 });
+    }
+    return Response.json({ uploaded: server.uploaded.has(index) });
+  };
   await ui.event('upload-button', 'click');
-  assert.ok(server.confirmations.length <= 4);
-  assert.equal(server.counts.size, 4);
   assert.equal(server.preparations, 1);
-  assert.match(ui.get('form-error').textContent, /남은 파일의 업로드를 멈췄습니다/);
+  assert.deepEqual(server.delays, [2000, 4000, 8000, 16000, 30000, 30000, 30000, 30000, 30000]);
   assert.equal(server.store.size, 1); assert.equal(server.finalizations, 0);
-  server.confirmResponse = null; server.failOnce = false;
-  await ui.event('upload-button', 'click');
   assert.equal(server.uploaded.size, 922); assert.equal(server.preparations, 1);
   assert.ok([...server.counts.values()].every(count => count === 1));
   assert.equal(server.finalizations, 0);
 });
 
-test('rate limits, non-JSON server errors and connection loss pause without failing subsequent files', async () => {
+test('configuration and file inventory automatically recover and respect server retry delay', async () => {
+  const server = services(), original = server.fetch.bind(server), failures = new Map();
+  server.fetch = async (url, options) => {
+    const action = new URL(url, 'http://localhost').searchParams.get('action');
+    if (['config', 'tree'].includes(action)) {
+      const count = (failures.get(action) || 0) + 1; failures.set(action, count);
+      if (count <= 2) return Response.json({ error: 'temporary', retryAfterMs: 9000 }, { status: 503 });
+    }
+    return original(url, options);
+  };
+  const ui = await controller(server); await select(ui);
+  assert.equal(ui.get('upload-button').disabled, false);
+  assert.deepEqual(server.delays, [9000, 9000, 9000, 9000]);
+});
+
+test('server-marked slot contention retries preparation, while explicit permanent errors stop', async () => {
+  for (const retryable of [true, false]) {
+    const server = services(), ui = await controller(server), original = server.fetch.bind(server);
+    server.failOnce = false; await select(ui); let attempts = 0;
+    ui.context.fetch = async (url, options) => {
+      if (new URL(url, 'http://localhost').searchParams.get('action') === 'prepare' && ++attempts === 1) return Response.json({ error: retryable ? '이전 접수 정리 중' : '설정 확인 필요', retryable, retryAfterMs: 7000 }, { status: retryable ? 423 : 503 });
+      return original(url, options);
+    };
+    await ui.event('upload-button', 'click');
+    assert.equal(attempts, retryable ? 2 : 1);
+    assert.equal(server.uploaded.size, retryable ? 2 : 0);
+    assert.deepEqual(server.delays, retryable ? [7000] : []);
+  }
+});
+
+test('switching teams cancels the previous inventory retry without overwriting the new team', async () => {
+  const server = services(), ui = await controller(server), original = server.fetch.bind(server), waiting = deferred();
+  server.scheduleTimeout = callback => { waiting.resolve(); return setTimeout(callback, 30000); };
+  ui.context.fetch = async (url, options) => {
+    if (url.includes('teamId=ilkko')) return Response.json({ error: 'Temporary' }, { status: 503 });
+    return original(url, options);
+  };
+  ui.get('team').value = 'ilkko'; const first = ui.event('team', 'change'); await waiting.promise;
+  ui.get('team').value = 'curo'; await ui.event('team', 'change'); await first;
+  assert.equal(ui.get('team').value, 'curo');
+  assert.equal(ui.get('form-fields').disabled, false);
+  assert.doesNotMatch(ui.get('form-error').textContent, /불러오지/);
+});
+
+test('lost prepare responses retry the same private key before any file transfer', async () => {
+  const server = services(), ui = await controller(server), original = server.fetch.bind(server), keys = [];
+  server.failOnce = false; await select(ui);
+  ui.context.fetch = async (url, options = {}) => {
+    if (new URL(url, 'http://localhost').searchParams.get('action') === 'prepare') {
+      keys.push(JSON.parse(options.body).requestKey);
+      const result = await original(url, options);
+      if (keys.length === 1) throw new TypeError('response lost');
+      return Response.json({ ...await result.json(), resumed: true });
+    }
+    return original(url, options);
+  };
+  await ui.event('upload-button', 'click');
+  assert.equal(keys.length, 2); assert.equal(new Set(keys).size, 1);
+  assert.deepEqual([...server.counts.values()], [1, 1]);
+  assert.equal(server.store.size, 1); assert.equal(server.finalizations, 0);
+});
+
+test('pausing preparation and reloading retains its key and restores the receipt without starting uploads', async () => {
+  const server = services(), original = server.fetch.bind(server), keys = [], waiting = deferred();
+  let saved;
+  server.fetch = async (url, options = {}) => {
+    if (new URL(url, 'http://localhost').searchParams.get('action') === 'prepare') {
+      keys.push(JSON.parse(options.body).requestKey);
+      if (!saved) { saved = await (await original(url, options)).json(); throw new TypeError('response lost'); }
+      return Response.json({ ...saved, resumed: true });
+    }
+    return original(url, options);
+  };
+  const first = await controller(server); await select(first);
+  server.scheduleTimeout = callback => { waiting.resolve(); return setTimeout(callback, 30000); };
+  const uploading = first.event('upload-button', 'click'); await waiting.promise;
+  await first.event('pause-upload', 'click'); await uploading;
+  assert.equal(server.uploaded.size, 0); assert.equal(server.store.size, 1);
+  server.scheduleTimeout = null;
+  const next = await controller(server);
+  assert.equal(new Set(keys).size, 1); assert.equal(server.preparations, 1);
+  assert.equal(server.store.size, 1); assert.equal(server.counts.size, 0);
+  assert.match(next.get('file-count').textContent, /0 \/ 2/);
+  assert.equal(next.get('choose-file').disabled, false);
+});
+
+test('finalization retries temporary failures and lock contention without uploading or creating a receipt again', async () => {
+  const server = services(), ui = await controller(server), original = server.fetch.bind(server);
+  server.failOnce = false; await select(ui); await ui.event('upload-button', 'click');
+  let attempts = 0;
+  ui.context.fetch = async (url, options) => {
+    if (new URL(url, 'http://localhost').searchParams.get('action') === 'finalize') {
+      attempts++;
+      if (attempts === 1) return new Response('unavailable', { status: 503 });
+      if (attempts === 2) return Response.json({ error: 'busy', retryable: true, retryAfterMs: 12000 }, { status: 409 });
+    }
+    return original(url, options);
+  };
+  ui.get('confirm').checked = true; await ui.event('confirm', 'change'); await ui.event('submission-form', 'submit');
+  assert.equal(attempts, 3); assert.equal(server.finalizations, 1); assert.equal(server.preparations, 1);
+  assert.deepEqual([...server.counts.values()], [1, 1]);
+  assert.ok(server.delays.includes(12000)); assert.match(ui.get('status-title').textContent, /제출이 완료/);
+});
+
+test('a lost finalization response is reconciled instead of repeating the completed request', async () => {
+  const server = services(), ui = await controller(server), original = server.fetch.bind(server);
+  server.failOnce = false; await select(ui); await ui.event('upload-button', 'click');
+  ui.context.fetch = async (url, options) => {
+    const result = await original(url, options);
+    if (new URL(url, 'http://localhost').searchParams.get('action') === 'finalize') throw new TypeError('response lost');
+    return result;
+  };
+  ui.get('confirm').checked = true; await ui.event('confirm', 'change'); await ui.event('submission-form', 'submit');
+  assert.equal(server.finalizations, 1); assert.equal(server.preparations, 1);
+  assert.match(ui.get('status-title').textContent, /제출이 완료/);
+});
+
+test('reload continues an explicitly requested finalization but never invents confirmation', async () => {
+  const server = services(), first = await controller(server); server.failOnce = false;
+  await select(first); await first.event('upload-button', 'click');
+  await controller(server); assert.equal(server.finalizations, 0);
+  const [key, data] = [...server.store][0]; server.store.set(key, JSON.stringify({ ...JSON.parse(data), finalizeRequested: true }));
+  const next = await controller(server);
+  assert.equal(server.finalizations, 1); assert.match(next.get('status-title').textContent, /제출이 완료/);
+});
+
+test('permanent finalization errors clear pending intent and do not retry after reload', async () => {
+  const server = services(), original = server.fetch.bind(server);
+  let attempts = 0;
+  server.fetch = async (url, options) => {
+    if (new URL(url, 'http://localhost').searchParams.get('action') === 'finalize') { attempts++; return Response.json({ error: '변경 내용 확인 필요' }, { status: 409 }); }
+    return original(url, options);
+  };
+  const ui = await controller(server); server.failOnce = false; await select(ui); await ui.event('upload-button', 'click');
+  ui.get('confirm').checked = true; await ui.event('confirm', 'change'); await ui.event('submission-form', 'submit');
+  assert.equal(attempts, 1); assert.match(ui.get('form-error').textContent, /변경 내용 확인 필요/);
+  await controller(server); assert.equal(attempts, 1); assert.equal(server.finalizations, 0);
+});
+
+test('cancellation automatically retries transient errors before forgetting the receipt', async () => {
+  const server = services(), ui = await controller(server), original = server.fetch.bind(server);
+  await select(ui); await ui.event('upload-button', 'click'); let attempts = 0;
+  ui.context.fetch = async (url, options) => {
+    if (new URL(url, 'http://localhost').searchParams.get('action') === 'cancel' && ++attempts === 1) return Response.json({ error: 'temporary' }, { status: 503 });
+    return original(url, options);
+  };
+  await ui.event('new-submission', 'click');
+  assert.equal(attempts, 2); assert.equal(server.cancellations, 1); assert.equal(server.store.size, 0);
+});
+
+test('rate limits, non-JSON server errors and connection loss automatically recover without retransmitting stored files', async () => {
   for (const response of [
     () => Response.json({ error: '잠시 후 다시 시도해주세요.' }, { status: 429 }),
     () => new Response('<html>Bad Gateway</html>', { status: 502 }),
     () => { throw new TypeError('Failed to fetch'); },
   ]) {
     const server = services(), ui = await controller(server); server.failOnce = false; await select(ui);
-    server.confirmResponse = response;
+    server.confirmResponse = () => { server.confirmResponse = null; return response(); };
     await ui.event('upload-button', 'click');
-    assert.ok(server.confirmations.length <= 2);
+    assert.ok(server.confirmations.length <= 4);
     assert.equal(server.counts.size, 2); assert.equal(server.store.size, 1);
+    assert.equal(server.uploaded.size, 2);
+    assert.ok([...server.counts.values()].every(count => count === 1));
+    assert.deepEqual(server.delays, [2000]);
     assert.equal(server.finalizations, 0);
-    assert.match(ui.get('form-error').textContent, /남은 파일의 업로드를 멈췄습니다/);
+    assert.equal(ui.get('upload-progress').value, 100);
   }
 });
 
@@ -173,6 +379,75 @@ function deferred() {
   const promise = new Promise((yes, no) => { resolve = yes; reject = no; });
   return { promise, resolve, reject };
 }
+
+test('a late connection failure in a 388-file upload resumes automatically without reuploading completed files', async () => {
+  const server = services(), ui = await controller(server); server.failOnce = false;
+  await select(ui, manyFiles(388));
+  let interrupted = false;
+  server.confirmResponse = index => {
+    if (index === 348 && !interrupted) { interrupted = true; throw new TypeError('Failed to fetch'); }
+    return Response.json({ uploaded: server.uploaded.has(index) });
+  };
+  await ui.event('upload-button', 'click');
+  assert.equal(interrupted, true); assert.equal(server.uploaded.size, 388);
+  assert.ok([...server.counts.values()].every(count => count === 1));
+  assert.equal(server.preparations, 1); assert.equal(server.finalizations, 0);
+  assert.deepEqual(server.delays, [2000]);
+  assert.equal(ui.get('file-count').textContent, '388 / 388개 완료');
+});
+
+test('manual pause cancels a pending automatic retry and preserves files for a later resume', async () => {
+  const server = services(), ui = await controller(server); server.failOnce = false;
+  await select(ui, manyFiles());
+  const waiting = deferred();
+  server.scheduleTimeout = callback => { waiting.resolve(); return setTimeout(callback, 30000); };
+  server.confirmResponse = () => Response.json({ error: '잠시 후 재시도' }, { status: 503 });
+  const uploading = ui.event('upload-button', 'click'); await waiting.promise;
+  assert.equal(ui.get('pause-upload').disabled, false);
+  assert.match(ui.get('status-title').textContent, /자동으로 다시 시도/);
+  assert.equal(ui.get('file-list').children[0].children[2].textContent, '자동 재시도 대기');
+  await ui.event('pause-upload', 'click'); await uploading;
+  assert.deepEqual(server.delays, [2000]);
+  assert.equal(server.counts.size, 4); assert.equal(server.preparations, 1);
+  assert.equal(ui.get('upload-button').disabled, false);
+  server.confirmResponse = null; server.scheduleTimeout = null;
+  await ui.event('upload-button', 'click');
+  assert.equal(server.uploaded.size, 12);
+  assert.ok([...server.counts.values()].every(count => count === 1));
+  assert.equal(server.finalizations, 0);
+});
+
+test('authorization and expired receipts stop without scheduling automatic retries', async () => {
+  for (const status of [401, 403, 410, 423]) {
+    const server = services(), ui = await controller(server); server.failOnce = false;
+    await select(ui, manyFiles());
+    server.confirmResponse = () => Response.json({ error: '접수 확인 필요' }, { status });
+    await ui.event('upload-button', 'click');
+    assert.deepEqual(server.delays, []);
+    assert.equal(server.counts.size, 4); assert.equal(server.store.size, 1);
+    assert.match(ui.get('form-error').textContent, /접수 확인 필요/);
+    assert.equal(ui.get('upload-button').disabled, false);
+    assert.equal(server.finalizations, 0);
+  }
+});
+
+test('a permanently rejected file is not retried when another file has a temporary failure', async () => {
+  const server = services(), ui = await controller(server); server.failOnce = false;
+  await select(ui, manyFiles());
+  server.uploadHook = async index => { if (index === 0) throw Object.assign(new Error('허용되지 않은 파일'), { status: 422 }); };
+  let interrupted = false;
+  server.confirmResponse = index => {
+    if (index === 4 && !interrupted) { interrupted = true; return Response.json({ error: '잠시 후 재시도' }, { status: 500 }); }
+    return Response.json({ uploaded: server.uploaded.has(index) });
+  };
+  await ui.event('upload-button', 'click');
+  assert.equal(interrupted, true); assert.equal(server.uploaded.size, 11);
+  assert.equal(server.counts.get(0), 1);
+  assert.deepEqual(server.delays, [2000]);
+  assert.equal(ui.get('file-list').children[0].children[2].textContent, '실패');
+  assert.equal(ui.get('submit-button').disabled, true); assert.equal(server.finalizations, 0);
+});
+
 function manyFiles(count = 12) {
   return Array.from({ length: count }, (_, i) => {
     const path = i === 0 ? 'index.html' : `images/${i}.svg`;
@@ -249,6 +524,8 @@ test('a lost successful upload response is verified without uploading the file t
 
 test('reload restores uploaded files, rejects edited folders, and resumes only the missing file', async () => {
   const server = services(), first = await controller(server);
+  server.failOnce = false;
+  server.uploadHook = async index => { if (index === 0) throw Object.assign(new Error('파일 전송 거절'), { status: 400 }); };
   await select(first); await first.event('upload-button', 'click');
   const next = await controller(server);
   assert.match(next.get('file-count').textContent, /1 \/ 2/);
@@ -258,6 +535,7 @@ test('reload restores uploaded files, rejects edited folders, and resumes only t
   assert.equal(next.get('submission-status').hidden, false);
   assert.equal(next.get('new-submission').hidden, false);
   assert.equal(next.get('upload-button').disabled, true);
+  server.uploadHook = null;
   await select(next); await next.event('upload-button', 'click');
   assert.deepEqual([...server.counts], [[0, 2], [1, 1]]);
   assert.equal(server.finalizations, 0);
@@ -421,7 +699,7 @@ test('a legacy Blob receipt stays preserved while a new R2 receipt can upload', 
   assert.equal(server.uploaded.size, 2); assert.equal(server.finalizations, 0);
 });
 
-test('a signing service failure pauses before sending file bytes and retries the existing receipt', async () => {
+test('a signing service failure automatically retries the existing receipt before sending file bytes', async () => {
   const server = services(); server.failOnce = false;
   const originalFetch = server.fetch.bind(server); let unavailable = true, requests = 0;
   server.fetch = async (url, options) => {
@@ -429,15 +707,14 @@ test('a signing service failure pauses before sending file bytes and retries the
       requests++;
       assert.equal(options.headers.Authorization, 'Bearer test-only');
       assert.deepEqual(Object.keys(JSON.parse(options.body)), ['index']);
-      if (unavailable) return Response.json({ error: '저장소 연결 오류' }, { status: 503 });
+      if (unavailable) { unavailable = false; return Response.json({ error: '저장소 연결 오류' }, { status: 503 }); }
     }
     return originalFetch(url, options);
   };
   const ui = await controller(server); await select(ui, manyFiles());
   await ui.event('upload-button', 'click');
-  assert.ok(requests <= 4); assert.equal(server.counts.size, 0);
-  assert.match(ui.get('form-error').textContent, /남은 파일의 업로드를 멈췄습니다/);
-  unavailable = false; await ui.event('upload-button', 'click');
+  assert.ok(requests <= 16); assert.deepEqual(server.delays, [2000]);
   assert.equal(server.preparations, 1); assert.equal(server.uploaded.size, 12);
+  assert.ok([...server.counts.values()].every(count => count === 1));
   assert.equal(server.finalizations, 0);
 });

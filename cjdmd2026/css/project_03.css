@@ -995,6 +995,9 @@ body:has(#slideview:not([hidden])) .footer {
 }
 
 .container .grid-view .filter {
+    --project-filter-background: #111;
+    --project-filter-foreground: #fff;
+
     display: flex;
     align-items: flex-start;
     flex-direction: column;
@@ -1005,6 +1008,30 @@ body:has(#slideview:not([hidden])) .footer {
     top: 10rem;
 
     align-self: start;
+}
+
+.container .grid-view .filter:has(button[data-filter="health"][aria-pressed="true"]) {
+    --project-filter-background: #FA5D5D;
+}
+
+.container .grid-view .filter:has(button[data-filter="education"][aria-pressed="true"]) {
+    --project-filter-background: #FF834E;
+}
+
+.container .grid-view .filter:has(button[data-filter="environment"][aria-pressed="true"]) {
+    --project-filter-background: #9DEF63;
+}
+
+.container .grid-view .filter:has(button[data-filter="culture"][aria-pressed="true"]) {
+    --project-filter-background: #AE63EF;
+}
+
+.container .grid-view .filter:has(button[data-filter="leisure-life"][aria-pressed="true"]) {
+    --project-filter-background: #F78CE5;
+}
+
+.container .grid-view .filter:has(button[data-filter="welfare"][aria-pressed="true"]) {
+    --project-filter-background: #75F0AC;
 }
 
 .container .grid-view .filter button {
@@ -1031,7 +1058,7 @@ body:has(#slideview:not([hidden])) .footer {
 .container .grid-view .filter button[aria-pressed="true"] {
     opacity: 1;
 
-    color: var(--color-black);
+    color: var(--project-filter-foreground);
 }
 
 .container .grid-view .filter .filter-indicator {
@@ -1065,11 +1092,12 @@ body:has(#slideview:not([hidden])) .footer {
 
     display: block;
 
-    background-color: #111;
+    background-color: var(--project-filter-background);
 
     border-radius: 999px;
 
     transform-origin: center;
+    transition: background-color 0.3s ease;
 }   
 
 .container .grid-view .filter .filter-reset {
@@ -1524,7 +1552,7 @@ html[data-project-fluid-view="slide"] .project-warp .search-bar input:focus {
     #slideview { display: none !important; }
     .container .grid-view { display: flex !important; flex-direction: column; gap: 0; margin: 18px 0 64px; }
 
-    .container .grid-view .filter { position: sticky; top: var(--mobile-header); z-index: 30; display: flex; flex-direction: row; align-items: center; width: 100%; padding: 10px var(--mobile-pad); gap: 8px; overflow-x: auto; overscroll-behavior-inline: contain; scroll-snap-type: x proximity; scrollbar-width: none; background: rgba(255, 255, 255, .94); border-bottom: 1px solid #ebebed; backdrop-filter: blur(12px); }
+    .container .grid-view .filter { --project-filter-background: #000; position: sticky; top: var(--mobile-header); z-index: 30; display: flex; flex-direction: row; align-items: center; width: 100%; padding: 10px var(--mobile-pad); gap: 8px; overflow-x: auto; overscroll-behavior-inline: contain; scroll-snap-type: x proximity; scrollbar-width: none; background: rgba(255, 255, 255, .94); border-bottom: 1px solid #ebebed; backdrop-filter: blur(12px); }
     .container .grid-view .filter::-webkit-scrollbar { display: none; }
     .container .grid-view .filter .filter-indicator,
     .container .grid-view .filter .filter-reset { display: none; }
@@ -1547,7 +1575,7 @@ html[data-project-fluid-view="slide"] .project-warp .search-bar input:focus {
         font-weight: 500;
         line-height: 1.3333;
     }
-    .container .grid-view .filter button[aria-pressed="true"] { background: #000; border-color: #000; color: #fff; font-weight: 700; }
+    .container .grid-view .filter button[aria-pressed="true"] { background: var(--project-filter-background); border-color: var(--project-filter-background); color: var(--project-filter-foreground); font-weight: 700; }
 
     .container .grid-view .content { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 10px; padding: 24px var(--mobile-pad) 0; }
     .container .grid-view .content .card { display: flex; flex-direction: column; width: 100%; aspect-ratio: auto; overflow: visible; border-radius: 0; background: transparent; color: #000; outline-offset: 4px; transition: transform .15s ease; }
