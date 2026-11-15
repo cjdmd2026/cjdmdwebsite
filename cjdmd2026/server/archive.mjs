@@ -1,7 +1,7 @@
 import yauzl from 'yauzl';
 import { crc32 } from 'node:zlib';
 import { limits, SubmissionError } from './policy.mjs';
-import { validateFileType, validateImageContent } from '../submit/files.mjs';
+import { validateFileType, validateImageContent, fileSizeMessage } from '../submit/files.mjs';
 
 const forbiddenNames = new Set(['node_modules', 'package.json', 'package-lock.json', 'yarn.lock', 'pnpm-lock.yaml', 'vercel.json', 'netlify.toml']);
 export function safeArchivePath(name) {
@@ -46,7 +46,7 @@ export async function readSiteArchive(buffer, policy = limits) {
           if (entry.fileName.endsWith('/')) { zip.readEntry(); return; }
           if (seen.has(path.toLowerCase())) throw new SubmissionError('이름이 중복되거나 대소문자만 다른 파일이 있습니다. 파일 이름을 정리해주세요.');
           seen.add(path.toLowerCase());
-          if (entry.uncompressedSize > policy.fileBytes) throw new SubmissionError('개별 파일은 95 MiB까지 가능합니다. 큰 영상의 용량을 줄여주세요.');
+          if (entry.uncompressedSize > policy.fileBytes) throw new SubmissionError(fileSizeMessage(path, entry.uncompressedSize, policy.fileBytes));
           total += entry.uncompressedSize;
           if (total > policy.totalBytes || items.length >= policy.files) throw new SubmissionError('압축 해제 후 500 MiB, 최대 500개 파일까지 제출할 수 있습니다.');
           try { validateFileType(path); }

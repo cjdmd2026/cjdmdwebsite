@@ -33,12 +33,12 @@ function storage() {
   return { github, calls, settings };
 }
 
-test('2,000-file batches are accepted while total size remains 500 MiB', () => {
+test('2,000-file batches are accepted while total size remains 1024 MiB', () => {
   const files = [file('index.html'), ...Array.from({ length: 1999 }, (_, i) => file(`assets/${i}.svg`))];
   assert.equal(validateFolderSubmission({ teamId: 'ilkko', files, baseTreeSha: null }).totalFiles, 2000);
   assert.throws(() => validateFolderSubmission({ teamId: 'ilkko', files: [...files, file('one-more.svg')], baseTreeSha: null }));
-  assert.equal(folderLimits.totalBytes, 500 * 1024 ** 2);
-  assert.throws(() => applyFileChanges([file('index.html', folderLimits.totalBytes)], [file('more.svg')]), /500 MiB/);
+  assert.equal(folderLimits.totalBytes, 1024 * 1024 ** 2);
+  assert.throws(() => applyFileChanges([file('index.html', folderLimits.totalBytes)], [file('more.svg')]), /1024 MiB/);
   assert.throws(() => applyFileChanges(files, [file('more.svg')]), /2,000/);
 });
 

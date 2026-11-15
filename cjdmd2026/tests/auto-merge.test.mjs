@@ -211,3 +211,20 @@ test('repeated secondary limits back off and persist safe diagnostics without cl
     p.state.resumeAfter = 0;
   }
 });
+
+test('file-level validation diagnostics persist in the receipt and runtime log', async t => {
+  const logs = [];
+  t.mock.method(console, 'error', (...args) => logs.push(args));
+  const details = { githubStatus: 422, githubMethod: 'POST', githubPath: '/git/blobs', githubMessage: 'Validation Failed',
+    githubErrors: [{ resource: 'Blob', field: 'content', code: 'too_large' }], filePath: 'videos/intro.mp4', fileSize: 90000000, fileIndex: 180 };
+  const p = processor(async () => assert.fail('must not merge'), { submit: async () => {
+    throw Object.assign(new SubmissionError('private-content', 502), details, { body: 'private-content', token: 'test-token', retryable: false });
+  } });
+  await p.run();
+  assert.equal(p.state.phase, 'failed');
+  for (const [key, value] of Object.entries(details)) {
+    assert.deepEqual(p.state.lastError[key], value);
+    assert.deepEqual(logs[0][1][key], value);
+  }
+  assert.doesNotMatch(JSON.stringify([p.state.lastError, logs]), /private-content|test-token/);
+});

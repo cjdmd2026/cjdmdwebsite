@@ -1,6 +1,6 @@
 # R2 제출 저장소 연결
 
-운영 주소는 https://www.dmd2026.com/submit/ 입니다. Vercel은 Hobby로 유지하고, 파일 임시 보관·접수 상태·업로드 순서 관리는 Cloudflare R2를 사용합니다. 최종 파일은 기존 GitHub 저장소의 팀 폴더에 반영합니다.
+운영 주소는 https://www.dmd2026.com/submit/ 입니다. Vercel은 Hobby로 유지하고, 파일 임시 보관·접수 상태·업로드 순서 관리는 Cloudflare R2를 사용합니다. 작은 파일과 공개 파일 목록은 GitHub 팀 폴더에 반영하고, 32 MiB 초과 미디어는 R2에 영구 보관합니다.
 
 ## 1. Cloudflare에서 버킷 생성
 
@@ -20,9 +20,9 @@ Standard의 무료 제공량은 월 10 GB-month, 저장·목록 등 100만 회, 
 [
   {
     "AllowedOrigins": ["https://dmd2026.com", "https://www.dmd2026.com"],
-    "AllowedMethods": ["PUT"],
-    "AllowedHeaders": ["Content-Type", "If-None-Match"],
-    "ExposeHeaders": ["ETag"],
+    "AllowedMethods": ["PUT", "GET", "HEAD"],
+    "AllowedHeaders": ["Content-Type", "If-None-Match", "Range"],
+    "ExposeHeaders": ["ETag", "Content-Length", "Content-Range", "Accept-Ranges"],
     "MaxAgeSeconds": 3600
   }
 ]
@@ -71,12 +71,12 @@ BLOB_READ_WRITE_TOKEN, BLOB_STORE_ID, BLOB_WEBHOOK_PUBLIC_KEY는 새 코드에�
 
 ## 보관과 비용 관리
 
-- 한 팀씩 접수, 4개 파일 동시 업로드, 팀 전체 500 MiB·2,000개·파일당 95 MiB 제한을 유지합니다.
-- R2 버킷의 기존 파일과 새 업로드 예약분을 합쳐 900 MiB가 넘으면 접수를 막습니다. 무료 용량을 고려한 보수적인 운영 제한이며 R2 자체의 최대 용량은 아닙니다. 이 버킷은 제출 전용으로 사용하세요.
+- 한 팀씩 접수, 4개 파일 동시 업로드, 팀 전체 1 GiB·2,000개, 미디어 파일당 500 MiB, 코드 파일당 32 MiB를 허용합니다.
+- R2 버킷의 기존 파일과 새 업로드의 두 배(임시+영구 복사)를 합쳐 기본 8 GiB가 넘으면 접수를 막습니다. Vercel의 Production 환경변수 `SUBMISSION_R2_BUDGET_MIB`에 MiB 단위 한도를 설정하고 재배포하면 변경됩니다(기본 8192). R2 자체의 최대 용량은 아니며, 계정 전체 무료 용량은 다른 버킷 사용량도 합산됩니다. 이 버킷은 제출 전용으로 사용하세요.
 - 파일은 유효기간 최대 10분의 서명 URL로 직접 업로드합니다. URL은 저장 위치·정확한 크기·덮어쓰기 금지 조건에 묶이고 비밀 키는 브라우저로 전달하지 않습니다.
-- 큰 파일도 최대 95 MiB의 단일 PUT으로 전송합니다. 일시정지 중이던 파일 자체는 다시 전송할 수 있으며, 검증 완료 파일은 건너뜁니다.
+- 큰 파일도 최대 500 MiB의 단일 PUT으로 전송합니다. 일시정지 중이던 파일 자체는 다시 전송할 수 있으며, 검증 완료 파일은 건너뜁니다.
 - 성공·실패·취소 후 이미 발급한 업로드 주소의 만료를 기다려 최대 약 12분 뒤 임시 파일을 정리합니다. 파일 내용의 SHA-256 검증, GitHub 폴더 범위 검사, 자동 병합을 유지합니다.
-- 요청이 완전히 끊기면 자동 정리는 다음 요청 때 실행됩니다. 장기간 남는 임시 파일에 대비해 버킷 Settings의 **Object lifecycle rules**에서 submissions/와 submission-limits/를 각각 **7일 후 삭제**하도록 설정하는 것을 권장합니다. 이 규칙은 R2 임시 접수 기록만 대상으로 하며 GitHub 파일에는 적용되지 않습니다. submission-control/에는 적용하지 않습니다. R2의 수명주기 정리는 즉시 실행되는 것이 아닙니다.
+- 요청이 완전히 끊기면 자동 정리는 다음 요청 때 실행됩니다. 장기간 남는 임시 파일에 대비해 버킷 Settings의 **Object lifecycle rules**에서 submissions/와 submission-limits/를 각각 **7일 후 삭제**하도록 설정하는 것을 권장합니다. 이 규칙은 R2 임시 접수 기록만 대상으로 하며 GitHub 파일에는 적용되지 않습니다. submission-control/와 published-assets/에는 적용하지 않습니다. published-assets/를 삭제하면 배포된 영상·모델이 열리지 않습니다. R2의 수명주기 정리는 즉시 실행되는 것이 아닙니다.
 - 사용량은 R2 Overview에서 확인하세요. 위 용량 제한은 월별 작업 횟수나 비용의 절대 상한을 보장하지 않습니다.
 
 ## 오류 확인
@@ -86,6 +86,7 @@ BLOB_READ_WRITE_TOKEN, BLOB_STORE_ID, BLOB_WEBHOOK_PUBLIC_KEY는 새 코드에�
 | 준비 중 안내 | 네 개 R2 변수와 기존 제출 변수, Production 적용 여부, Redeploy 여부 |
 | 저장소 연결 오류·503 | Account ID/버킷 이름/키, 해당 버킷 Object Read & Write 권한, Cloudflare 구독 상태 |
 | 업로드 주소 발급 후 전송 실패 | CORS 두 도메인, PUT, Content-Type 및 If-None-Match 허용 여부 |
+| 영상·모델 조회 실패 | CORS GET/HEAD/Range, published-assets/ 객체, 배포된 파일 목록 확인 |
 | 업로드 후 반영 실패 | GitHub 토큰 권한·만료, PR 충돌, Vercel 함수 로그 |
 
 관련 공식 문서: [R2 시작](https://developers.cloudflare.com/r2/get-started/), [API 인증 정보](https://developers.cloudflare.com/r2/api/tokens/), [CORS](https://developers.cloudflare.com/r2/buckets/cors/), [요금](https://developers.cloudflare.com/r2/pricing/), [수명주기](https://developers.cloudflare.com/r2/buckets/object-lifecycles/).

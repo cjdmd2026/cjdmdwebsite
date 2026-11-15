@@ -10,3 +10,5 @@ output/submit-qa/
 chrome-profile*/
 chromium-profile*/
 browser-profile*/
+
+.generated/

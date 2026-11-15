@@ -5,6 +5,7 @@ import { readFile } from 'node:fs/promises';
 import { webcrypto } from 'node:crypto';
 import { folderSelection, validateFiles, validateImageContent, applyFileChanges, ignoredFile } from '../submit/files.mjs';
 import { teams } from '../server/teams.mjs';
+import { hashFile } from '../submit/hash-file.mjs';
 
 // Exercise the actual controller against a minimal DOM and in-memory services.
 // These tests neither drive a browser nor contact R2/GitHub.
@@ -62,7 +63,7 @@ async function controller(server) {
     __TEAMS__: teams, Option: function () {}, initBotId() {}, folderSelection, validateFiles, validateImageContent, applyFileChanges, ignoredFile,
     crypto: webcrypto, AbortController, AbortSignal, clearTimeout,
     setTimeout(callback, delay) { server.delays.push(delay); return server.scheduleTimeout ? server.scheduleTimeout(callback, delay) : setTimeout(callback, 0); },
-    setInterval() {}, fetch: server.fetch.bind(server), upload: server.upload.bind(server),
+    setInterval() {}, fetch: server.fetch.bind(server), upload: server.upload.bind(server), hashFile,
   });
   vm.runInContext(source, context); await context.ready;
   return { context, get, async event(id, name) { await get(id).listeners[name]({ preventDefault() {} }); } };

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { createR2Storage, StorageConflictError, StorageUnavailableError, StorageNotFoundError } from '../server/r2.mjs';
 import { configuration, signTicket } from '../server/policy.mjs';
 import { readUploadTicket, issueUpload } from '../server/upload.mjs';
+import { folderLimits } from '../submit/files.mjs';
 
 const config = { missing: [], bucket: 'dmd2026-submit', endpoint: 'https://00000000000000000000000000000000.r2.cloudflarestorage.com', credentials: { accessKeyId: 'TEST_ONLY_KEY', secretAccessKey: 'TEST_ONLY_SECRET' } };
 const id = '62c12225-8afa-478b-8a57-1aad5a411ad5', pathname = `submissions/${id}/files/0`;
@@ -24,7 +25,7 @@ test('configuration requires R2 credentials and never silently falls back to blo
 });
 test('real SDK presigns an exact key, exact content length, create-only write and short expiry without leaking secret', async () => {
   const r2 = createR2Storage({ config }), now = Date.now();
-  for (const size of [0, 2, 95 * 1024 ** 2]) {
+  for (const size of [0, 2, folderLimits.fileBytes]) {
     const result = await r2.presignUpload(pathname, size, now + 30000, now), url = new URL(result.url);
     assert.equal(url.pathname, '/' + config.bucket + '/' + pathname);
     assert.equal(url.searchParams.get('X-Amz-Expires'), '30');
@@ -36,7 +37,7 @@ test('real SDK presigns an exact key, exact content length, create-only write an
   const two = await r2.presignUpload(pathname, 2, now + 600000, now), three = await r2.presignUpload(pathname, 3, now + 600000, now);
   assert.notEqual(new URL(two.url).searchParams.get('X-Amz-Signature'), new URL(three.url).searchParams.get('X-Amz-Signature'));
   await assert.rejects(r2.presignUpload('../elsewhere', 2, now + 30000, now));
-  await assert.rejects(r2.presignUpload(pathname, 96 * 1024 ** 2, now + 30000, now));
+  await assert.rejects(r2.presignUpload(pathname, folderLimits.fileBytes + 1, now + 30000, now));
   await assert.rejects(r2.presignUpload(pathname, 2, now, now));
 });
 test('R2 JSON creates and updates use atomic conditions and preserve quoted ETags', async () => {

@@ -1,8 +1,9 @@
 import { createHash } from 'node:crypto';
-import { get, head, list, StorageNotFoundError } from './r2.mjs';
+import { get, head, list, publishAsset, StorageNotFoundError } from './r2.mjs';
 import { readJson, writeJson, readState, writeState, takeLock, releaseLock, del } from './storage.mjs';
 import { SubmissionError } from './policy.mjs';
-import { validateImageContent } from '../submit/files.mjs';
+import { validateImageContent, githubFileBytes } from '../submit/files.mjs';
+import { assetKey, assetContentType } from './site-assets.mjs';
 import { validateSourceText, sourceTextFile } from '../submit/source-files.mjs';
 
 export const filePath = (id, index) => `submissions/${id}/files/${index}`;
@@ -28,34 +29,47 @@ export async function uploadedFiles(id) {
   } while (cursor);
   return indices.sort((a, b) => a - b);
 }
-export async function readVerifiedContent(pathname, file, { getBlob = get, headBlob = head } = {}) {
+export async function verifyFileStream(pathname, file, { getBlob = get, headBlob = head, retain = false } = {}) {
   const meta = await headBlob(pathname);
   if (meta.size !== file.size) throw new SubmissionError('업로드된 파일 크기가 일치하지 않습니다.', 422);
   const result = await getBlob(pathname, { access: 'private', useCache: false });
   if (!result) throw new SubmissionError('업로드된 파일을 찾을 수 없습니다.', 404);
+  if (meta.etag && result.blob?.etag && meta.etag !== result.blob.etag) throw new SubmissionError('검증 중 파일이 변경되었습니다.', 422);
   const chunks = [];
   const hash = createHash('sha256');
+  const gitHash = createHash('sha1').update(`blob ${file.size}\0`);
+  let header = Buffer.alloc(0);
   let size = 0;
   for await (const chunk of result.stream) {
     size += chunk.length;
     if (size > file.size) throw new SubmissionError('파일 크기가 올바르지 않습니다.', 422);
     hash.update(chunk);
-    chunks.push(Buffer.from(chunk));
+    gitHash.update(chunk);
+    if (header.length < 14) header = Buffer.concat([header, Buffer.from(chunk.subarray(0, 14 - header.length))]);
+    if (retain) chunks.push(Buffer.from(chunk));
   }
   if (size !== file.size || hash.digest('hex') !== file.sha256) throw new SubmissionError('파일 전송 내용이 일치하지 않습니다. 이 파일을 다시 업로드해주세요.', 422);
-  const content = Buffer.concat(chunks);
-  try { validateImageContent(file.path, content); }
+  try { validateImageContent(file.path, header); }
   catch (error) { throw new SubmissionError(error.message, 422); }
-  return content;
+  return { gitSha: gitHash.digest('hex'), etag: result.blob?.etag || meta.etag, ...(retain ? { content: Buffer.concat(chunks) } : {}) };
 }
-export async function confirmFile(submission, state, index, { read = readJson, write = writeJson, readContent = readVerifiedContent, remove = del } = {}) {
+export async function readVerifiedContent(pathname, file, options = {}) {
+  return (await verifyFileStream(pathname, file, { ...options, retain: true })).content;
+}
+export async function confirmFile(submission, state, index, { read = readJson, write = writeJson, readContent, verify = verifyFileStream, remove = del } = {}) {
   assertUploading(state);
   const file = folderFile(state, index);
   if (await read(markerPath(submission.id, index))) return { uploaded: true };
   const pathname = filePath(submission.id, index);
-  let content;
+  let content, verified;
   try {
-    content = await readContent(pathname, file);
+    if (readContent) {
+      content = await readContent(pathname, file);
+      verified = { gitSha: createHash('sha1').update(`blob ${content.length}\0`).update(content).digest('hex') };
+    } else {
+      verified = await verify(pathname, file, { retain: state.purpose === 'server' && sourceTextFile(file.path) });
+      content = verified.content;
+    }
     if (state.purpose === 'server' && sourceTextFile(file.path)) {
       try { validateSourceText(file.path, content.toString('utf8')); }
       catch (error) { throw new SubmissionError(error.message, 422); }
@@ -66,8 +80,7 @@ export async function confirmFile(submission, state, index, { read = readJson, w
     if (error.status === 422) { await remove(pathname); return { uploaded: false, message: error.message }; }
     throw error;
   }
-  const gitSha = createHash('sha1').update(`blob ${content.length}\0`).update(content).digest('hex');
-  try { await write(markerPath(submission.id, index), { sha256: file.sha256, gitSha, size: file.size }); }
+  try { await write(markerPath(submission.id, index), { sha256: file.sha256, gitSha: verified.gitSha, etag: verified.etag, size: file.size }); }
   catch (error) { if (!await read(markerPath(submission.id, index))) throw error; }
   return { uploaded: true };
 }
@@ -92,7 +105,17 @@ export async function folderArchive(submission, state) {
     const file = state.files[index];
     const verified = (await readJson(markerPath(submission.id, index)))?.data;
     if (!verified || verified.sha256 !== file.sha256 || verified.size !== file.size || !/^[a-f0-9]{40}$/.test(verified.gitSha)) throw new SubmissionError('파일 검증 기록이 없습니다. 담당자에게 접수 번호를 알려주세요.');
-    files[index] = { path: file.path, size: file.size, gitSha: verified.gitSha, load: () => readVerifiedContent(filePath(submission.id, index), file) };
+    files[index] = { ...file, gitSha: verified.gitSha, load: () => readVerifiedContent(filePath(submission.id, index), file),
+      publish: async () => {
+        if (state.purpose === 'server' || file.size <= githubFileBytes) throw new SubmissionError('공개 미디어 파일이 아닙니다.');
+        const source = filePath(submission.id, index);
+        // Receipts verified by the previous version did not record an ETag.
+        const pinned = verified.etag ? verified : await verifyFileStream(source, file);
+        if (pinned.gitSha !== verified.gitSha) throw new SubmissionError('파일 내용이 변경되었습니다.', 422);
+        const asset = { path: file.path, size: file.size, sha256: file.sha256, gitSha: verified.gitSha, key: assetKey(submission.slug, file.sha256) };
+        await publishAsset(source, asset, assetContentType(file.path), pinned.etag);
+        return asset;
+      } };
   }
   for (let i = 0; i < files.length; i += 8) await Promise.all(Array.from({ length: Math.min(8, files.length - i) }, (_, offset) => prepare(i + offset)));
   return { files, bytes: state.totalBytes, deletions: state.deletions || [], baseTreeSha: state.baseTreeSha };

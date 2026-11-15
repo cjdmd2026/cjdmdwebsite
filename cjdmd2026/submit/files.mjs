@@ -1,5 +1,12 @@
 // Shared by the browser and server; server validation remains authoritative.
-export const folderLimits = Object.freeze({ fileBytes: 95 * 1024 ** 2, totalBytes: 500 * 1024 ** 2, files: 2000 });
+// Larger media lives in R2; code and small assets stay in GitHub.
+export const githubFileBytes = 32 * 1024 ** 2;
+export const folderLimits = Object.freeze({ fileBytes: 500 * 1024 ** 2, totalBytes: 1024 * 1024 ** 2, files: 2000 });
+// Files with relative dependencies (HTML/CSS/JS/glTF) must keep their origin.
+export const externalAsset = path => /\.(?:jpg|jpeg|gif|webp|avif|ico|woff2?|ttf|otf|eot|mp4|webm|ogg|mp3|wav|m4a|glb|bin|wasm|pdf)$/i.test(path);
+export function fileSizeMessage(path, size, limit = folderLimits.fileBytes) {
+  return `${path}: 개별 파일은 ${limit / 1024 ** 2} MiB까지 제출할 수 있습니다.${Number.isSafeInteger(size) && size >= 0 ? ` 현재 ${(size / 1024 ** 2).toFixed(1)} MiB입니다.` : ''}`;
+}
 const extensions = new Set('html htm css js mjs json jpg jpeg gif webp avif svg ico woff woff2 ttf otf eot mp4 webm ogg mp3 wav m4a glb gltf bin wasm txt xml pdf webmanifest map'.split(' '));
 const licenseNames = new Set(['license', 'licence', 'notice']);
 const imageExtensions = new Set('jpg jpeg gif webp avif svg ico'.split(' '));
@@ -35,9 +42,10 @@ export function validateFiles(input, { hashes = true, policy = folderLimits, req
     const key = path.toLowerCase();
     if (seen.has(key)) throw new Error(`${path}: 이름이 중복되거나 대소문자만 다른 파일이 있습니다.`);
     seen.add(key);
-    if (!Number.isSafeInteger(item.size) || item.size < 0 || item.size > policy.fileBytes) throw new Error(`${path}: 개별 파일은 95 MiB까지 가능합니다. 큰 영상은 용량을 줄이거나 외부 링크로 연결해주세요.`);
+    if (!Number.isSafeInteger(item.size) || item.size < 0 || item.size > policy.fileBytes) throw new Error(fileSizeMessage(path, item.size, policy.fileBytes));
+    if (item.size > githubFileBytes && !externalAsset(path)) throw new Error(`${fileSizeMessage(path, item.size, githubFileBytes)} 영상·음원·GLB 등 미디어 파일은 500 MiB까지 가능합니다.`);
     bytes += item.size;
-    if (bytes > policy.totalBytes) throw new Error('전체 파일 용량은 500 MiB까지 제출할 수 있습니다.');
+    if (bytes > policy.totalBytes) throw new Error(`전체 파일 용량은 ${policy.totalBytes / 1024 ** 2} MiB까지 제출할 수 있습니다.`);
     if (hashes && !/^[a-f0-9]{64}$/.test(item.sha256 || '')) throw new Error('파일 확인 정보가 올바르지 않습니다. 폴더를 다시 선택해주세요.');
     return { path, size: item.size, ...(hashes ? { sha256: item.sha256 } : {}) };
   });
@@ -71,7 +79,7 @@ export function applyFileChanges(existing, additions, deletions = [], { requireI
   const result = [...files.values()];
   if (result.length > folderLimits.files) throw new Error('기존 파일을 포함해 최대 2,000개까지 저장할 수 있습니다.');
   const bytes = result.reduce((total, file) => total + file.size, 0);
-  if (!Number.isSafeInteger(bytes) || bytes > folderLimits.totalBytes) throw new Error('기존 파일과 새 파일을 합친 용량은 500 MiB까지 가능합니다. 불필요한 파일을 삭제해주세요.');
+  if (!Number.isSafeInteger(bytes) || bytes > folderLimits.totalBytes) throw new Error(`기존 파일과 새 파일을 합친 용량은 ${folderLimits.totalBytes / 1024 ** 2} MiB까지 가능합니다. 불필요한 파일을 삭제해주세요.`);
   const names = new Set();
   for (const file of result) {
     const key = file.path.normalize('NFC').toLowerCase();

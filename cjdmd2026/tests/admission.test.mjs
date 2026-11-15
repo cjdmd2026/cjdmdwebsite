@@ -9,6 +9,7 @@ function fixture() {
   let time = 100000, version = 0, failRemoval = false;
   const records = new Map(), states = new Map(), files = new Map(), removed = [];
   const ports = {
+    budget: () => 900 * 1024 ** 2,
     now: () => time,
     read: async key => structuredClone(records.get(key) || null),
     write: async (key, data, options = {}) => {

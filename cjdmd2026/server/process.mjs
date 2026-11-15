@@ -6,6 +6,7 @@ import { folderArchive } from './folder.mjs';
 import { admission } from './admission.mjs';
 import { sourceConfiguration } from './source-policy.mjs';
 import { saveServerSource } from './source-github.mjs';
+import { githubDiagnostics } from './github-diagnostics.mjs';
 
 export function createProcessor({ read = readState, write = writeState, lockSubmission = takeLock, unlock = releaseLock, gate = admission, configFor = configuration, sourceConfigFor = sourceConfiguration, client = githubClient, prepareArchive = async (submission, state) => state.mode === 'folder' ? folderArchive(submission, state) : readSiteArchive(await readArchive(submission)), submit = submitToGithub, merge = mergeSubmission, saveSource = saveServerSource } = {}) {
   return async function processSubmission(submission) {
@@ -66,8 +67,8 @@ export function createProcessor({ read = readState, write = writeState, lockSubm
       const retryFailures = error.continuation ? (state.retryFailures || 0) : Math.min((state.retryFailures || 0) + 1, 16);
       const baseDelay = error.githubRateLimited ? 65000 : 5000;
       const delay = error.continuation ? 5000 : Math.max(error.retryAfterMs || 0, Math.min(error.githubRateLimited ? 900000 : 300000, baseDelay * 2 ** (retryFailures - 1)));
-      // Keep only operational metadata, never tokens, file bodies or raw API errors.
-      const lastError = { at: Date.now(), phase: state.phase, attempt: state.attempts, errorType: error.name, status: error.status, githubStatus: error.githubStatus, githubMethod: error.githubMethod, githubPath: error.githubPath, githubRequestId: error.githubRequestId, githubRateLimited: error.githubRateLimited, githubRateLimitRemaining: error.githubRateLimitRemaining, githubRateLimitReset: error.githubRateLimitReset, retryable, retryAfterMs: retryable ? delay : undefined };
+      // GitHub details are sanitized at the client boundary; request bodies stay private.
+      const lastError = { at: Date.now(), phase: state.phase, attempt: state.attempts, errorType: error.name, status: error.status, ...githubDiagnostics(error), retryable, retryAfterMs: retryable ? delay : undefined };
       const message = error instanceof SubmissionError && error.status < 500 ? error.message : state.pullNumber ? `파일은 PR #${state.pullNumber}에 보관되어 있지만 자동 반영을 확인하지 못했습니다. 담당자에게 접수 번호를 알려주세요.` : '제출 처리에 실패했습니다. 접수 번호를 담당자에게 알려주세요.';
       await write(submission.id, { ...state, phase: retryable ? 'paused' : state.pullNumber ? 'merge_failed' : 'failed', retryFailures, lastError, resumeAfter: retryable ? Date.now() + delay : undefined, message: retryable ? '업로드한 파일은 유지됩니다. 저장된 부분부터 자동으로 이어서 처리합니다.' : message }).catch(() => {});
       if (!retryable) await gate.finish(submission).catch(() => {});

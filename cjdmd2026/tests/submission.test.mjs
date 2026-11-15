@@ -152,6 +152,29 @@ test('resumed processing skips already uploaded Git blobs', async () => {
   assert.equal(calls.some(call => call.path === '/git/blobs'), false);
 });
 
+test('failed blob writes identify the exact file and retain the GitHub validation error', async () => {
+  const base = mockGithub();
+  const first = Buffer.from('hi');
+  const checkpoint = [createHash('sha1').update('blob 2\0').update(first).digest('hex')];
+  const failure = Object.assign(new Error('Rejected'), { githubStatus: 422, githubMessage: 'Validation Failed', retryable: false });
+  const github = async (path, body) => { if (path === '/git/blobs') throw failure; return base.github(path, body); };
+  const files = [{ path: 'index.html', content: first }, { path: 'videos/소개.mp4', content: Buffer.from('video') }];
+  await assert.rejects(submitToGithub(submission, { files, bytes: 7 }, { github, config, checkpoint }), error => {
+    assert.equal(error, failure);
+    assert.equal(error.filePath, 'videos/소개.mp4'); assert.equal(error.fileSize, 5); assert.equal(error.fileIndex, 2);
+    assert.equal(error.githubMessage, 'Validation Failed'); assert.equal(error.retryable, false);
+    assert.equal(base.calls.some(call => call.path === '/pulls'), false);
+    return true;
+  });
+});
+
+test('legacy oversized receipts fail before loading files or making any GitHub request', async () => {
+  const file = { path: 'models/bugangli6.glb', size: 500 * 1024 ** 2 + 1, gitSha: 'a'.repeat(40), load: async () => assert.fail('must not load oversized content') };
+  await assert.rejects(submitToGithub(submission, { files: [file], bytes: file.size }, {
+    github: async () => assert.fail('must reject before GitHub requests'), config,
+  }), error => error.status === 413 && error.filePath === file.path && error.fileSize === file.size && /500 MiB/.test(error.message));
+});
+
 test('unchanged content skips file downloads and every GitHub write', async () => {
   const sha = createHash('sha1').update('blob 2\0').update('hi').digest('hex');
   const files = [{ path: 'index.html', type: 'blob', mode: '100644', size: 2, sha }];

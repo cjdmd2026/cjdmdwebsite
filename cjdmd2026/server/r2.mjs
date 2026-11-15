@@ -1,5 +1,6 @@
-import { S3Client, GetObjectCommand, HeadObjectCommand, PutObjectCommand, ListObjectsV2Command, DeleteObjectsCommand } from '@aws-sdk/client-s3';
+import { S3Client, GetObjectCommand, HeadObjectCommand, PutObjectCommand, ListObjectsV2Command, DeleteObjectsCommand, CopyObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { folderLimits } from '../submit/files.mjs';
 
 export function r2Configuration(env = process.env) {
   const missing = ['R2_ACCOUNT_ID', 'R2_BUCKET_NAME', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY'].filter(key => !env[key]);
@@ -63,7 +64,7 @@ export function createR2Storage({ config = r2Configuration(), client, sign = get
     }
   }
   async function presignUpload(pathname, size, validUntil, now = Date.now()) {
-    if (!/^submissions\/[a-f0-9-]{36}\/files\/\d+$/.test(pathname) || !Number.isSafeInteger(size) || size < 0 || size > 95 * 1024 ** 2) throw new Error('Invalid upload');
+    if (!/^submissions\/[a-f0-9-]{36}\/files\/\d+$/.test(pathname) || !Number.isSafeInteger(size) || size < 0 || size > folderLimits.fileBytes) throw new Error('Invalid upload');
     const expiresIn = Math.min(600, Math.floor((validUntil - now) / 1000));
     if (expiresIn < 1) throw new StorageUnavailableError('ExpiredUpload');
     // Sign the exact size and create-only precondition. The browser supplies its
@@ -74,7 +75,26 @@ export function createR2Storage({ config = r2Configuration(), client, sign = get
     if (!['content-length', 'content-type', 'if-none-match'].every(header => signed.includes(header))) throw new StorageUnavailableError('UnsignedUploadConstraint');
     return { url, method: 'PUT', headers: { 'Content-Type': 'application/octet-stream', 'If-None-Match': '*' }, expiresAt: now + expiresIn * 1000 };
   }
-  return { get, head, writeJson, list, del, presignUpload };
+  async function publishAsset(source, asset, contentType, etag) {
+    if (!/^submissions\/[a-f0-9-]{36}\/files\/\d+$/.test(source) || !/^published-assets\/[a-z0-9-]+\/[a-f0-9]{64}$/.test(asset.key) || !etag) throw new Error('Invalid asset copy');
+    // The verified source is pinned by ETag; never read 500 MiB into a function.
+    try {
+      const existing = await head(asset.key);
+      if (existing.size === asset.size) return;
+      throw new StorageUnavailableError('AssetSizeMismatch');
+    } catch (error) { if (!(error instanceof StorageNotFoundError)) throw error; }
+    await send(new CopyObjectCommand({ Bucket: config.bucket, Key: asset.key,
+      CopySource: `${config.bucket}/${source}`, CopySourceIfMatch: etag,
+      MetadataDirective: 'REPLACE', ContentType: contentType, CacheControl: 'public, max-age=31536000, immutable',
+      Metadata: { sha256: asset.sha256 } }));
+    if ((await head(asset.key)).size !== asset.size) throw new StorageUnavailableError('AssetSizeMismatch');
+  }
+  async function presignAsset(pathname, method = 'GET') {
+    if (!/^published-assets\/[a-z0-9-]+\/[a-f0-9]{64}$/.test(pathname) || !['GET', 'HEAD'].includes(method)) throw new Error('Invalid public asset');
+    const Command = method === 'HEAD' ? HeadObjectCommand : GetObjectCommand;
+    return sign(s3(), new Command({ Bucket: config.bucket, Key: pathname }), { expiresIn: 86400 });
+  }
+  return { get, head, writeJson, list, del, presignUpload, publishAsset, presignAsset };
 }
 let storage, fingerprint;
 function activeStorage() {
@@ -88,3 +108,5 @@ export const list = (...args) => activeStorage().list(...args);
 export const del = (...args) => activeStorage().del(...args);
 export const putJson = (...args) => activeStorage().writeJson(...args);
 export const presignUpload = (...args) => activeStorage().presignUpload(...args);
+export const publishAsset = (...args) => activeStorage().publishAsset(...args);
+export const presignAsset = (...args) => activeStorage().presignAsset(...args);

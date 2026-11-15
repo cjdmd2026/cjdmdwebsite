@@ -1,6 +1,7 @@
-import { folderLimits } from './files.mjs';
+import { githubFileBytes, fileSizeMessage } from './files.mjs';
 
-export { folderLimits as sourceLimits };
+export const sourceLimits = Object.freeze({ fileBytes: githubFileBytes, totalBytes: 500 * 1024 ** 2, files: 2000 });
+const folderLimits = sourceLimits;
 const excludedDirectories = new Set(['node_modules', '.git', '.github', '.vercel', '.next', '.nuxt', '.venv', 'venv', '__pycache__', '.idea', '.vscode', 'coverage', '__macosx']);
 const dotfiles = new Set(['.env.example', '.gitignore', '.dockerignore', '.nvmrc', '.python-version']);
 const names = new Set(['dockerfile', 'makefile', 'procfile', 'pipfile', 'pipfile.lock', 'gemfile', 'gemfile.lock', 'license', 'readme']);
@@ -22,7 +23,7 @@ export function validateSourceFiles(input, { hashes = true } = {}) {
     const key = path.toLowerCase();
     if (seen.has(key)) throw new Error(`${path}: 이름이 중복되거나 대소문자만 다른 파일이 있습니다.`);
     seen.add(key);
-    if (!Number.isSafeInteger(item.size) || item.size < 0 || item.size > folderLimits.fileBytes) throw new Error(`${path}: 개별 파일은 95 MiB까지 제출할 수 있습니다.`);
+    if (!Number.isSafeInteger(item.size) || item.size < 0 || item.size > folderLimits.fileBytes) throw new Error(fileSizeMessage(path, item.size, folderLimits.fileBytes));
     bytes += item.size;
     if (bytes > folderLimits.totalBytes) throw new Error('서버 원본 전체 용량은 500 MiB까지입니다.');
     if (hashes && !/^[a-f0-9]{64}$/.test(item.sha256 || '')) throw new Error('파일 확인 정보가 올바르지 않습니다. 폴더를 다시 선택해주세요.');

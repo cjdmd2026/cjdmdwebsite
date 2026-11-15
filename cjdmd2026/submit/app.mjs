@@ -1,4 +1,5 @@
 import { upload } from './upload.mjs';
+import { hashFile } from './hash-file.mjs';
 import { initBotId } from 'botid/client/core';
 import { folderSelection, validateFiles, validateImageContent, applyFileChanges, ignoredFile } from './files.mjs';
 import './header.mjs';
@@ -119,7 +120,7 @@ function renderManager() {
   }
   byId('tree-message').hidden = treeLoaded && visible.size > 0;
   if (treeLoaded) byId('tree-message').textContent = '이 폴더에 파일이 없습니다. 파일을 추가해주세요.';
-  byId('site-usage').textContent = `반영 후 ${files.length.toLocaleString()}개 · ${sizeLabel(files.reduce((sum, file) => sum + file.size, 0))} / 500 MiB`;
+  byId('site-usage').textContent = `반영 후 ${files.length.toLocaleString()}개 · ${sizeLabel(files.reduce((sum, file) => sum + file.size, 0))} / 1 GiB`;
   const added = entries.filter(file => !siteFiles.some(old => old.path === file.path)).length;
   byId('change-summary').textContent = hasChanges() ? `추가 ${added}개 · 교체 ${entries.length - added}개 · 삭제 ${deletions.size}개` : '아직 변경한 파일이 없습니다.';
   byId('deletion-panel').hidden = !deletions.size; byId('deletion-list').replaceChildren();
@@ -246,10 +247,9 @@ async function chooseFolder(files, kind = 'site') {
     for (let i = 0; i < selected.files.length; i++) {
       const entry = selected.files[i];
       showStatus('폴더를 확인하고 있어요.', `${entry.path}\n파일 ${i + 1} / ${selected.files.length}개 확인 중`, i / selected.files.length * 100);
-      const content = await entry.file.arrayBuffer();
-      validateImageContent(entry.path, new Uint8Array(content));
-      const digest = await crypto.subtle.digest('SHA-256', content);
-      entry.sha256 = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
+      entry.sha256 = await hashFile(entry.file, entry.path, loaded => {
+        showStatus('폴더를 확인하고 있어요.', `${entry.path}\n파일 ${i + 1} / ${selected.files.length}개 · ${sizeLabel(loaded)} / ${sizeLabel(entry.size)} 확인 중`, (i + (entry.size ? loaded / entry.size : 1)) / selected.files.length * 100);
+      });
     }
     if (receipt) {
       const original = new Map(entries.map(file => [file.path, file]));
@@ -277,7 +277,7 @@ async function apiOnce(action, options = {}) {
   const headers = { ...options.headers };
   if (options.body) headers['Content-Type'] = 'application/json';
   let response;
-  const timeout = AbortSignal.timeout(action === 'confirm-file' ? 120000 : 30000);
+  const timeout = AbortSignal.timeout(action === 'confirm-file' ? 290000 : 30000);
   try { response = await fetch(`/api/submission?action=${action}`, { ...options, headers, cache: 'no-store', signal: options.signal ? AbortSignal.any([options.signal, timeout]) : timeout }); }
   catch { if (options.signal?.aborted) throw options.signal.reason; const error = new Error('제출 서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.'); error.status = 0; throw error; }
   let data;

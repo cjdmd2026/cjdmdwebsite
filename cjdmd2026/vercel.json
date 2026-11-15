@@ -7,8 +7,12 @@
     "api/submission.js": {
       "maxDuration": 300,
       "includeFiles": "js/project-data.js"
-    }
+    },
+    "api/site-asset.js": { "includeFiles": ".generated/site-assets.json" }
   },
+  "rewrites": [
+    { "source": "/:team(phishing-ddook|apuchika|curo|stylens|ilkko|dadeullim|omix|year-on|jigjijaembeoli|geuneuljab-i|coco-lang|magmoa|e-fact|byeol-ungwan)/:asset*", "destination": "/api/site-asset?path=:team/:asset*" }
+  ],
   "redirects": [
     { "source": "/submit", "destination": "/submit/", "permanent": false }
   ],

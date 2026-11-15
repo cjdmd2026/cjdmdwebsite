@@ -2,16 +2,20 @@ import { createHash } from 'node:crypto';
 import { configuration, targetPath, SubmissionError } from './policy.mjs';
 import { findTeam } from './teams.mjs';
 import { siteSnapshot, checkSiteChanges } from './site.mjs';
+import { githubErrorDetails, githubDiagnostics, withFileContext, assertGithubFileSizes } from './github-diagnostics.mjs';
+import { githubFileBytes, externalAsset } from '../submit/files.mjs';
+import { assetManifestName, serializeAssetManifest, parseAssetManifest } from './site-assets.mjs';
 
 export function githubClient(token = process.env.SUBMISSION_GITHUB_TOKEN, repository = configuration().repository, fetcher = fetch, deadline = Infinity) {
   return async function github(path, body, method = body ? 'POST' : 'GET') {
     if (Date.now() > deadline - 1000) throw Object.assign(new SubmissionError('이어서 처리하고 있습니다.', 503), { continuation: true });
-    const context = { githubMethod: method, githubPath: path.split('?')[0] };
+    const payload = body ? JSON.stringify(body) : undefined;
+    const context = { githubMethod: method, githubPath: path.split('?')[0], ...(payload ? { githubRequestBytes: Buffer.byteLength(payload) } : {}) };
     let response;
     try { response = await fetcher(`https://api.github.com/repos/${repository}${path}`, {
       method,
       headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', 'Content-Type': 'application/json', 'User-Agent': 'cjdmd2026-submissions' },
-      body: body ? JSON.stringify(body) : undefined,
+      body: payload,
       signal: AbortSignal.timeout(Math.min(20000, Math.max(1000, Math.floor(deadline - Date.now())))),
     }); } catch {
       // A lost response is reconciled by the receipt/branch/PR checks on resume.
@@ -31,6 +35,7 @@ export function githubClient(token = process.env.SUBMISSION_GITHUB_TOKEN, reposi
       const after = Math.max(0, Number.isFinite(seconds) ? seconds * 1000 : (Date.parse(retryAfter || '') || 0) - Date.now());
       Object.assign(error, context, { githubRequestId: response.headers.get('x-github-request-id'), githubRateLimitRemaining: remaining, githubRateLimitReset: resetAt });
       const detail = await response.json().catch(() => ({}));
+      Object.assign(error, githubErrorDetails(detail, { token, body }));
       const limited = response.status === 429 || (response.status === 403 && (retryAfter !== null || remaining === 0 || /rate[\s-]?limit|abuse detection/i.test(detail?.message || '')));
       error.githubRateLimited = Boolean(limited);
       error.retryable = Boolean(limited) || [408, 425].includes(response.status) || response.status >= 500;
@@ -52,6 +57,7 @@ export async function existingPullRequest(submission, github, config) {
   return pulls[0] || null;
 }
 export async function submitToGithub(submission, archive, { github = githubClient(), config = configuration(), checkpoint = [], onProgress = async () => {} } = {}) {
+  assertGithubFileSizes(archive.files);
   const team = findTeam(submission.teamId);
   const branch = `submissions/${team.slug}/${submission.id}`;
   const target = targetPath(team.id, config.sitePath);
@@ -63,21 +69,37 @@ export async function submitToGithub(submission, archive, { github = githubClien
     const snapshot = await siteSnapshot(team.id, github, config);
     const combined = checkSiteChanges(snapshot, { files: archive.files.map(file => ({ ...file, size: file.size ?? file.content?.length })), deletions: archive.deletions || [], baseTreeSha: archive.baseTreeSha });
     // Start from the current team files, retaining everything not explicitly removed.
-    const known = new Set([...checkpoint, ...snapshot.files.map(item => item.sha)]);
+    const known = new Set([...checkpoint, ...snapshot.files.filter(item => !item.external).map(item => item.sha)]);
     const saved = new Set(checkpoint);
-    const tree = new Map(combined.files.map(file => [file.path, { path: file.path, mode: file.mode || '100644', type: 'blob', sha: file.sha }]));
+    const tree = new Map(combined.files.filter(file => !file.external).map(file => [file.path, { path: file.path, mode: file.mode || '100644', type: 'blob', sha: file.sha }]));
+    const assets = new Map(combined.files.filter(file => file.external).map(file => [file.path, file.external]));
     let done = 0;
     for (const file of archive.files) {
+      if ((file.size ?? file.content?.length) > githubFileBytes) {
+        try {
+          if (!externalAsset(file.path) || !file.publish) throw Object.assign(new SubmissionError('큰 미디어 파일은 폴더 업로드로 다시 제출해주세요. HTML·CSS·JS 등 코드는 파일당 32 MiB까지 가능합니다.', 413), { retryable: false });
+          const asset = parseAssetManifest({ version: 1, files: [await file.publish()] }, team.slug)[0];
+          if (asset.path !== file.path || asset.size !== file.size || asset.gitSha !== file.gitSha || asset.sha256 !== file.sha256) throw new SubmissionError('대용량 파일 검증 정보가 일치하지 않습니다.', 422);
+          assets.set(file.path, asset);
+          tree.delete(file.path);
+          done++;
+          await onProgress(done, archive.files.length, [...saved]);
+          continue;
+        } catch (error) { throw withFileContext(error, file, done + 1); }
+      }
+      assets.delete(file.path);
       let content = file.content;
       const expectedSha = file.gitSha || createHash('sha1').update(`blob ${content.length}\0`).update(content).digest('hex');
       let sha = expectedSha;
       const needsSave = !known.has(sha);
       if (needsSave) {
-        content ??= await file.load();
-        if (file.gitSha && createHash('sha1').update(`blob ${content.length}\0`).update(content).digest('hex') !== file.gitSha) throw new SubmissionError('파일 검증에 실패했습니다. 다시 제출해주세요.');
-        const blob = await github('/git/blobs', { content: content.toString('base64'), encoding: 'base64' });
-        sha = blob.sha;
-        known.add(sha);
+        try {
+          content ??= await file.load();
+          if (file.gitSha && createHash('sha1').update(`blob ${content.length}\0`).update(content).digest('hex') !== file.gitSha) throw new SubmissionError('파일 검증에 실패했습니다. 다시 제출해주세요.');
+          const blob = await github('/git/blobs', { content: content.toString('base64'), encoding: 'base64' });
+          sha = blob.sha;
+          known.add(sha);
+        } catch (error) { throw withFileContext(error, file, done + 1); }
       }
       tree.set(file.path, { path: file.path, mode: '100644', type: 'blob', sha });
       saved.add(sha);
@@ -86,10 +108,14 @@ export async function submitToGithub(submission, archive, { github = githubClien
       if (needsSave || done === 1 || done % 10 === 0 || done === archive.files.length) await onProgress(done, archive.files.length, [...saved]);
     }
     // An identical selection needs no GitHub write, including tree creation.
-    if (tree.size === snapshot.files.length && snapshot.files.every(file => {
+    const previousFiles = snapshot.files.filter(file => !file.external);
+    const manifest = serializeAssetManifest([...assets.values()], team.slug);
+    const previousManifest = serializeAssetManifest(snapshot.files.filter(file => file.external).map(file => file.external), team.slug);
+    if (manifest === previousManifest && tree.size === previousFiles.length && previousFiles.every(file => {
       const next = tree.get(file.path);
       return next?.sha === file.sha && next.mode === (file.mode || '100644');
     })) return { unchanged: true };
+    if (assets.size) tree.set(assetManifestName, { path: assetManifestName, mode: '100644', type: 'blob', content: manifest });
     const siteTree = await github('/git/trees', { tree: [...tree.values()] });
     if (siteTree.sha === snapshot.treeSha) return { unchanged: true };
     const rootTree = await github('/git/trees', { base_tree: snapshot.rootTree, tree: [{ path: target, mode: '040000', type: 'tree', sha: siteTree.sha }] });
@@ -149,8 +175,8 @@ export async function mergeSubmission(submission, savedPull, { github = githubCl
     if (!result.merged) throw problem('저장소가 자동 병합을 완료하지 못했습니다.');
     return result;
   } catch (error) {
-    if (error.githubStatus === 403 && !error.retryAfterMs) throw problem('저장소 권한 또는 보호 규칙 때문에 자동 반영하지 못했습니다.');
-    if ([405, 409, 422].includes(error.githubStatus)) throw problem('저장소 보호 규칙, 충돌 또는 제출 변경으로 자동 반영하지 못했습니다.');
+    if (error.githubStatus === 403 && !error.retryAfterMs) throw Object.assign(problem('저장소 권한 또는 보호 규칙 때문에 자동 반영하지 못했습니다.'), githubDiagnostics(error));
+    if ([405, 409, 422].includes(error.githubStatus)) throw Object.assign(problem('저장소 보호 규칙, 충돌 또는 제출 변경으로 자동 반영하지 못했습니다.'), githubDiagnostics(error));
     throw error;
   }
 }

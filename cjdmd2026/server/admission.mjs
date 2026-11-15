@@ -7,10 +7,15 @@ export const idleTimeoutMs = 30 * 60 * 1000;
 const tokenLifetimeMs = 10 * 60 * 1000;
 const conflict = error => error instanceof StorageConflictError;
 const expiredMessage = '30분 동안 진행이 없어 임시 파일을 정리했습니다. 폴더를 선택해 새로 제출해주세요.';
+export function storageBudgetBytes(env = process.env) {
+  const mib = Number(env.SUBMISSION_R2_BUDGET_MIB ?? 8192);
+  if (!Number.isSafeInteger(mib) || mib < 1 || !Number.isSafeInteger(mib * 1024 ** 2)) throw new SubmissionError('저장공간 한도 설정을 확인해야 합니다.', 503);
+  return mib * 1024 ** 2;
+}
 
 // A single durable, conditional-write lease works across all Vercel instances.
 // The browser's disabled button is only a hint; every write checks ownership.
-export function createAdmission({ read = readJson, write = writeJson, remove = del, listBlobs = list, readSubmission = readState, writeSubmission = writeState, now = Date.now } = {}) {
+export function createAdmission({ read = readJson, write = writeJson, remove = del, listBlobs = list, readSubmission = readState, writeSubmission = writeState, now = Date.now, budget = storageBudgetBytes } = {}) {
   const replace = (previous, data) => write(slotPath, data, previous ? { ifMatch: previous.etag } : {});
   const busyError = () => Object.assign(new SubmissionError('다른 팀이 제출 중이거나 임시 파일을 정리하고 있습니다. 잠시 후 다시 시도해주세요.', 423), { retryable: true, retryAfterMs: 5000 });
 
@@ -65,7 +70,8 @@ export function createAdmission({ read = readJson, write = writeJson, remove = d
         usedBytes += page.blobs.reduce((sum, blob) => sum + blob.size, 0);
         cursor = page.hasMore ? page.cursor : undefined;
       } while (cursor);
-      if (usedBytes + reservedBytes > 900 * 1024 ** 2) throw Object.assign(new SubmissionError('임시 저장공간이 부족합니다. 담당자에게 이전 업로드 정리를 요청해주세요.', 503), { retryable: false });
+      // Reserve room for both the temporary upload and its permanent media copy.
+      if (usedBytes + reservedBytes * 2 > budget()) throw Object.assign(new SubmissionError('설정된 저장공간 한도에 도달했습니다. 담당자에게 용량 설정 또는 이전 파일 정리를 요청해주세요.', 503), { retryable: false });
       return data;
     } catch (error) { if (error.retryable === false) await finish(submission).catch(() => {}); throw error; }
   }

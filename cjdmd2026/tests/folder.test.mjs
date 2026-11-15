@@ -56,12 +56,20 @@ test('folder selection preserves nested paths, removes only the selected root an
   assert.throws(() => folderSelection([{ name: 'index.html', size: 2 }]));
 });
 test('folder manifests accept projects above the former ZIP cap but enforce individual and total limits', () => {
-  const big = [files[0], ...Array.from({ length: 4 }, (_, i) => ({ path: `video${i}.mp4`, size: 70 * 1024 ** 2, sha256: hash('video') }))];
-  assert.equal(validateFolderSubmission({ teamId: 'ilkko', files: big, baseTreeSha: null }).totalFiles, 5);
+  const big = [files[0], ...Array.from({ length: 8 }, (_, i) => ({ path: `video${i}.mp4`, size: 32 * 1024 ** 2, sha256: hash('video') }))];
+  assert.equal(validateFolderSubmission({ teamId: 'ilkko', files: big, baseTreeSha: null }).totalFiles, 9);
   assert.throws(() => validateFiles([...files, { path: 'huge.mp4', size: folderLimits.fileBytes + 1, sha256: hash('x') }]));
   assert.throws(() => validateFiles(big, { policy: { ...folderLimits, totalBytes: 200 } }));
   assert.throws(() => validateFiles(files, { policy: { ...folderLimits, files: 1 } }));
   assert.throws(() => validateFolderSubmission({ teamId: '../main', files }));
+});
+
+test('the failed 92.5 MiB GLB is now accepted by browser and API for R2 storage', () => {
+  const model = { path: 'models/bugangli6.glb', size: 97011256, sha256: hash('model') };
+  for (const action of [
+    () => folderSelection([{ webkitRelativePath: `site/${model.path}`, size: model.size }], { requireIndex: false }),
+    () => validateFolderSubmission({ teamId: 'cheoma', files: [model], baseTreeSha: null }),
+  ]) assert.doesNotThrow(action);
 });
 test('manifest rejects traversal, secrets, duplicate/colliding paths and bad content digests', () => {
   for (const path of ['../main/index.html', '/index.html', 'a\\x.js', '%2e%2e/x.js', 'a//x.js', '.env', 'node_modules/x.js', 'package.json', 'app.exe', 'INDEX.html']) {

@@ -1,6 +1,8 @@
 import { createHash } from 'node:crypto';
 import { SubmissionError } from './policy.mjs';
 import { sourceFingerprint } from './source-policy.mjs';
+import { withFileContext, assertGithubFileSizes } from './github-diagnostics.mjs';
+import { sourceLimits } from '../submit/source-files.mjs';
 
 export async function checkSourceRepository(github, expected = {}) {
   const repo = await github('');
@@ -18,6 +20,7 @@ export async function checkSourceRepository(github, expected = {}) {
 // Source is archived as data under a receipt directory. No code is installed,
 // executed, merged into the exhibition, or placed in a root workflow directory.
 export async function saveServerSource(submission, state, archive, { github, onProgress = async () => {} }) {
+  assertGithubFileSizes(archive.files, sourceLimits.fileBytes);
   const destination = state.sourceDestination;
   await checkSourceRepository(github, destination);
   const target = `server-submissions/${submission.slug}/${submission.id}`;
@@ -37,12 +40,14 @@ export async function saveServerSource(submission, state, archive, { github, onP
     if (!/^[a-f0-9]{40}$/.test(sha || '')) throw new SubmissionError('서버 원본의 검증 기록이 올바르지 않습니다.');
     const needsSave = !known.has(sha);
     if (needsSave) {
-      const content = await file.load();
-      const actual = createHash('sha1').update(`blob ${content.length}\0`).update(content).digest('hex');
-      if (actual !== sha) throw new SubmissionError('파일 내용이 변경되었습니다. 다시 제출해주세요.');
-      const saved = await github('/git/blobs', { content: content.toString('base64'), encoding: 'base64' });
-      if (saved.sha !== sha) throw new SubmissionError('저장소의 파일 검증에 실패했습니다.', 502);
-      known.add(sha);
+      try {
+        const content = await file.load();
+        const actual = createHash('sha1').update(`blob ${content.length}\0`).update(content).digest('hex');
+        if (actual !== sha) throw new SubmissionError('파일 내용이 변경되었습니다. 다시 제출해주세요.');
+        const saved = await github('/git/blobs', { content: content.toString('base64'), encoding: 'base64' });
+        if (saved.sha !== sha) throw new SubmissionError('저장소의 파일 검증에 실패했습니다.', 502);
+        known.add(sha);
+      } catch (error) { throw withFileContext(error, file, done + 1); }
     }
     tree.push({ path: file.path, mode: '100644', type: 'blob', sha });
     done++;

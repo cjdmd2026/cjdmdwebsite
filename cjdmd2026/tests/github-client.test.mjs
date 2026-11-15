@@ -60,3 +60,30 @@ test('successful writes have no artificial pacing delay', async t => {
   assert.equal(complete, true, 'writes must finish without advancing any delay timers');
   await work; assert.equal(requests, 5);
 });
+
+test('422 diagnostics retain validation details but redact credentials and echoed file content', async () => {
+  const github = githubClient('test-token', 'test/repository', async () => Response.json({
+    message: 'Validation Failed\nBearer test-token',
+    errors: [{ resource: 'Blob', field: 'content', code: 'too_large', message: 'File is too large. private-content', value: 'private-content', token: 'test-token' }],
+    unexpected: 'private-content',
+  }, { status: 422 }));
+  await assert.rejects(github('/git/blobs', { content: 'private-content', encoding: 'base64' }), error => {
+    assert.equal(error.retryable, false);
+    assert.match(error.githubMessage, /Validation Failed/);
+    assert.deepEqual(error.githubErrors, [{ resource: 'Blob', field: 'content', code: 'too_large', message: 'File is too large. [redacted]' }]);
+    assert.doesNotMatch(JSON.stringify(error), /test-token|private-content|unexpected/);
+    return true;
+  });
+});
+
+test('GitHub diagnostics tolerate invalid error shapes and bound long messages and lists', async () => {
+  for (const detail of [null, { message: {}, errors: {} }, { message: 'x '.repeat(2000), errors: Array(20).fill('Validation failed') }]) {
+    const github = githubClient('token', 'test/repository', async () => Response.json(detail, { status: 422 }));
+    await assert.rejects(github('/git/blobs'), error => {
+      assert.equal(error.githubStatus, 422);
+      assert.ok((error.githubMessage?.length || 0) <= 1000);
+      assert.ok((error.githubErrors?.length || 0) <= 8);
+      return true;
+    });
+  }
+});
