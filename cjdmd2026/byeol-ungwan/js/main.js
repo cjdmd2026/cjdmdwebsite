@@ -1,0 +1,1827 @@
+/**
+ * 별운관 — 가로형 메인 사이트 1차 구현
+ * 가로 진행 엔진: wheel / drag 입력을 모두 받아, 이징(lerp)으로 부드럽게
+ * 보간한 뒤 .track 에 translate3d(-x, 0, 0) 를 매 프레임 적용한다.
+ *
+ * REFERENCE_CANALS.md 14번 항목의 구조(입력 정규화 → 중앙 상태값 → DOM
+ * transform 레이어 → UI 메타 반영)를 그대로 따르되, WebGL 레이어는 쓰지
+ * 않고 CSS transform만으로 구현했다.
+ *
+ * 화면 1개 "기준 폭"의 값: window.innerWidth(=100vw) 대신 .viewport
+ * 요소를 getBoundingClientRect() 로 "실측"한 값을 쓴다. 모니터 배율/OS
+ * 디스플레이 설정 등 환경에 따라 100vw 계산이 실제 렌더링 폭과 어긋나는
+ * 경우가 있어, 실제 DOM 측정값을 유일한 기준으로 삼아 모든 모니터
+ * 크기에서 동일하게 동작하도록 했다.
+ *
+ * 화면마다 폭이 다를 수 있다: 각 .screen 은 기본적으로 이 기준 폭 1장
+ * 만큼이지만, data-width-multiplier="3" 처럼 지정하면 그 배수만큼
+ * 넓어진다(예: E-00 뒤에 콘텐츠 없는 여유 공간을 더 둬서, 그 구간을
+ * 지나가는 배경 패럴랙스가 더 오래/크게 보이도록). 그래서 "몇 번째
+ * 화면이 어디서 시작하는지"는 단순히 index*unitWidth가 아니라
+ * screenStarts[] 배열(각 화면의 실제 시작 px, 누적합)로 관리한다.
+ */
+(() => {
+  // A stationary, feathered wash spreads from the point where the pointer enters.
+  document.querySelectorAll('#S-03 .story__ph[data-guardian]').forEach((artwork) => {
+    const image = artwork.querySelector('.story__asset');
+    if (!image) return;
+    const wash = document.createElement('span');
+    wash.className = 'guardian-wash';
+    wash.setAttribute('aria-hidden', 'true');
+    const washImage = image.cloneNode();
+    washImage.removeAttribute('id');
+    wash.append(washImage);
+    artwork.append(wash);
+    artwork.addEventListener('pointerenter', (event) => {
+      if (event.pointerType === 'touch') return;
+      const bounds = artwork.getBoundingClientRect();
+      artwork.style.setProperty('--guardian-origin-x', `${(event.clientX - bounds.left) / bounds.width * 100}%`);
+      artwork.style.setProperty('--guardian-origin-y', `${(event.clientY - bounds.top) / bounds.height * 100}%`);
+    });
+  });
+  const viewport = document.getElementById('viewport');
+  const track = document.getElementById('track');
+  // Keep desktop geometry and input paths intact; mobile shares this engine.
+  const mobileLayout = window.matchMedia('(max-width: 767px), (max-width: 1023px) and (max-height: 500px) and (pointer: coarse)');
+  const screens = Array.from(track.children);
+  const rail = document.querySelector('.rail');
+  const mobileNext = document.getElementById('mobile-next');
+  const loopReturnCue = document.getElementById('loop-return-cue');
+  let loopReturnCueVisible = false;
+  let mobileM00Backdrop = null;
+  const progressFill = document.getElementById('rail-progress-fill');
+  const railNavEntrance = document.getElementById('rail-navitem-entrance');
+  // 2026-10-16: F/C/S 표지(F-00/C-00/S-00)가 생기면서 '입구' 전용이던
+  // is-dimmed 토글을 네 메뉴 전체로 일반화 — 메뉴 ID 접두어(E-/F-/C-/S-)
+  // 별로 자신의 레일 항목을 찾아 매핑해둔다.
+  const railNavByPrefix = [
+    ['E-', railNavEntrance],
+    ['F-', document.getElementById('rail-navitem-fortune')],
+    ['C-', document.getElementById('rail-navitem-constellation')],
+    ['S-', document.getElementById('rail-navitem-story')],
+  ];
+
+  // 화면별 폭 배율 (지정 없으면 1 = 기준 폭 1장)
+  const widthMultipliers = screens.map((s) => parseFloat(s.dataset.widthMultiplier || '1'));
+  // Retain DOM indices and desktop geometry; only these mobile connectors are empty.
+  const mobileSkippedScreenIndices = ['IMG-01', 'IMG-02', 'IMG-03', 'IMG-04', 'IMG-05']
+    .map((id) => screens.findIndex((s) => s.dataset.screenId === id))
+    .filter((index) => index > 0 && index < screens.length - 1);
+
+  const s05ScreenIndex = screens.findIndex((s) => s.dataset.screenId === 'S-05');
+  const c03ScreenIndex = screens.findIndex((s) => s.dataset.screenId === 'C-03');
+  const f01ScreenIndex = screens.findIndex((s) => s.dataset.screenId === 'F-01');
+  const s05Content = s05ScreenIndex >= 0 ? screens[s05ScreenIndex].querySelector('.s05__content') : null;
+  const s05Pin = { start: 0, range: 0 };
+
+  const state = {
+    current: 0,   // 실제로 화면에 적용되는 값 (매 프레임 target 을 따라감)
+    target: 0,    // 입력에 의해 즉시 갱신되는 목표값
+    max: 0,       // 가로로 이동 가능한 최대 거리(px)
+    unitWidth: 0, // 화면 "기준 폭" 1장의 실측 폭(px) — 배율의 기준 단위
+    screenStarts: [], // 화면별 시작 위치(px, 누적합)
+    screenWidths: [], // 화면별 진행 거리(px). S-05는 내부 이동 거리도 포함한다.
+  };
+
+  // 양 끝의 실제 화면만 경계 너머에 배치한다. 복제 DOM이나 추가 화면은 없다.
+  const loop = {
+    enabled: !!s05Content && screens[0].id === 'M-00' && s05ScreenIndex === screens.length - 1,
+    span: 0,          // S-05 내부 이동을 포함한 한 바퀴의 거리
+    physicalSpan: 0,  // 실제 트랙 길이(S-05 내부 이동 제외)
+    placement: '',
+  };
+
+  const EASE = 0.1; // 값이 작을수록 더 느리고 부드럽게 따라감
+
+  // 2026-10-14 9차(성능): rail.getBoundingClientRect()를 매 프레임
+  // updateRailChrome() 안에서 직접 호출하던 것을 없애고, 리사이즈 시
+  // (applySizes 안에서) 한 번만 측정해 캐시해 둔다 — getBoundingClientRect
+  // 는 레이아웃이 "더럽혀져" 있으면 그 자리에서 강제로 동기 레이아웃을
+  // 일으키는 호출이라, 60fps 루프 안에 있으면 "매 프레임 강제 레이아웃"
+  // 이 되어 가장 비싼 축에 속한다(아래 raf() 주석의 실측 트레이스 참고).
+  let cachedRailWidth = 0;
+
+  function clamp(v, min, max) {
+    return Math.min(max, Math.max(min, v));
+  }
+
+  // current/target은 내부 이동까지 포함한 기존의 연속 진행 거리다.
+  // S-05에서 소비한 거리만 바깥 트랙 이동에서 빼고, 가운데 트랙에 적용한다.
+  function renderScrollPosition() {
+    const reverseSeam = loop.enabled && state.current < 0;
+    const innerX = s05Content ? (reverseSeam ? s05Pin.range : clamp(state.current - s05Pin.start, 0, s05Pin.range)) : 0;
+    const outerX = reverseSeam ? state.current : state.current - innerX;
+    const placement = !loop.enabled ? 'normal' : reverseSeam ? 'reverse' : state.current > state.max ? 'forward' : 'normal';
+    if (placement !== loop.placement) {
+      screens[0].style.transform = placement === 'forward' ? `translate3d(${loop.physicalSpan}px, 0, 0)` : '';
+      if (s05Content) screens[s05ScreenIndex].style.transform = placement === 'reverse' ? `translate3d(${-loop.physicalSpan}px, 0, 0)` : '';
+      loop.placement = placement;
+    }
+    track.style.transform = `translate3d(${-outerX}px, 0, 0)`;
+    if (s05Content) s05Content.style.transform = `translate3d(${-innerX}px, 0, 0)`;
+    updateLoopReturnCue();
+  }
+
+  function updateLoopReturnCue() {
+    if (!loopReturnCue) return;
+    const end = s05Pin.start + s05Pin.range;
+    const fade = loop.enabled && s05Pin.range > 0 && state.current >= end - 2
+      ? clamp(1 - Math.max(0, state.current - end) / Math.max(1, state.unitWidth * .65), 0, 1)
+      : 0;
+    const visible = fade > 0 && !document.body.classList.contains('is-o01-active');
+    loopReturnCue.style.setProperty('--return-cue-opacity', String(fade));
+    if (state.current >= end - 2) {
+      loopReturnCue.style.setProperty('--return-cue-shift', `${clamp(state.current - end, 0, state.unitWidth)}px`);
+    }
+    if (visible === loopReturnCueVisible) return;
+    loopReturnCueVisible = visible;
+    loopReturnCue.classList.toggle('is-visible', visible);
+    loopReturnCue.inert = !visible;
+    loopReturnCue.setAttribute('aria-hidden', String(!visible));
+  }
+  loopReturnCue?.addEventListener('click', () => {
+    if (loopReturnCueVisible && loop.enabled) state.target = loop.span;
+  });
+
+  function loopPosition(position) {
+    return loop.enabled && loop.span > 0 ? ((position % loop.span) + loop.span) % loop.span : position;
+  }
+
+  function normalizeLoopPosition() {
+    if (!loop.enabled || loop.span <= 0) return;
+    let shift = 0;
+    if (state.current >= loop.span) shift = -loop.span;
+    else if (state.current <= -state.unitWidth) shift = loop.span;
+    if (!shift) return;
+    state.current += shift;
+    state.target += shift;
+    // 드래그 도중 좌표가 정규화되어도 손가락/포인터의 기준점은 연속이다.
+    if (isDragging) dragStartTarget += shift;
+  }
+
+  // 한 입력이 진입/내부/종료 단계를 통째로 건너뛰지 않도록 경계에서 나눈다.
+  // 별도 잠금 상태가 없어 메뉴 이동이나 역방향 입력으로 항상 벗어날 수 있다.
+  function constrainScrollInput(nextTarget) {
+    const inputDelta = nextTarget - state.target;
+    const { start, range } = s05Pin;
+    if (range > 0) {
+      const end = start + range;
+      const delta = nextTarget - state.target;
+      if (delta > 0) {
+        if (state.current < start - 0.05 && state.target <= start) nextTarget = Math.min(nextTarget, start);
+        else if (state.current < end - 0.05 && state.target <= end) nextTarget = Math.min(nextTarget, end);
+      } else if (delta < 0) {
+        if (state.current > end + 0.05 && state.target >= end) nextTarget = Math.max(nextTarget, end);
+        else if (state.current > start + 0.05 && state.target >= start) nextTarget = Math.max(nextTarget, start);
+      }
+    }
+    if (loop.enabled) {
+      // 시작점도 한 번 온전히 보여준 뒤 추가 역방향 입력으로 경계를 통과한다.
+      if (inputDelta < 0 && state.current > 0.05 && state.target >= 0) nextTarget = Math.max(nextTarget, 0);
+      // 역방향 연결 중 방향을 돌리면 M-00에서 먼저 정착한다.
+      if (inputDelta > 0 && state.current < 0 && state.target <= 0) nextTarget = Math.min(nextTarget, 0);
+    }
+    // C-03은 결과 선택 화면이다. 일반 전진 입력은 이 화면을 온전히
+    // 보여주는 시작점에서 멈추고, 버튼·메뉴의 goToScreenId는 그대로 허용한다.
+    const c03Start = state.screenStarts[c03ScreenIndex];
+    if (c03ScreenIndex >= 0 && nextTarget > state.target && state.target <= c03Start && state.current <= c03Start + 0.05) {
+      nextTarget = Math.min(nextTarget, c03Start);
+    }
+    const f01Start = state.screenStarts[f01ScreenIndex];
+    if (f01ScreenIndex >= 0 && nextTarget > state.target && state.target <= f01Start && state.current <= f01Start + 0.05) {
+      nextTarget = Math.min(nextTarget, f01Start);
+    }
+    return clamp(nextTarget, loop.enabled ? -state.unitWidth : 0, loop.enabled ? loop.span : state.max);
+  }
+
+  function scrollByInput(delta) {
+    let base = state.target;
+    // 내부에서 방향을 바꾸면 남은 보간 목표를 지나칠 때까지 기다리지 않는다.
+    const inInternal = s05Pin.range > 0 && state.current >= s05Pin.start && state.current <= s05Pin.start + s05Pin.range;
+    const inSeam = loop.enabled && (state.current < 0 || state.current > state.max);
+    if ((inInternal || inSeam) &&
+        delta * (state.target - state.current) < 0) base = state.current;
+    state.target = constrainScrollInput(base + delta);
+  }
+
+  // pos(트랙 좌표계의 한 지점)가 속한 화면의 인덱스를 찾는다.
+  // starts/widths를 인자로 받아서, 리사이즈 중 "이전 크기 기준"과
+  // "새 크기 기준" 양쪽에 재사용할 수 있게 했다.
+  function findScreenIndexAtPosition(pos, starts, widths) {
+    for (let i = 0; i < starts.length; i++) {
+      if (pos < starts[i] + widths[i] || i === starts.length - 1) return i;
+    }
+    return starts.length - 1;
+  }
+
+  // 레일이 현재 "겹쳐 있는" 화면을 기준으로 레일 배경/글자/선 색을 그
+  // 화면의 data-rail-theme 값에 맞춰 바꾸고, 좌상단부터 차오르는 진행
+  // 바도 함께 갱신한다. Canals Amsterdam의 nav가 현재 섹션 배경에
+  // 맞춰 색이 바뀌던 것과 같은 원리(REFERENCE_CANALS.md 9, 11번 참고).
+  //
+  // "겹쳐 있다"의 기준점은 레일의 왼쪽 끝(x=0)이 아니라 오른쪽 끝
+  // (x=railWidth)이다 — 다음 화면이 왼쪽으로 밀려 들어올 때, 그
+  // 경계선이 레일의 가장 오른쪽에 닿는 순간 곧바로 색이 바뀌어야
+  // 레일 전체가 새 배경 안에 들어갈 때까지 기다리지 않는다.
+  function updateRailChrome() {
+    if (state.unitWidth <= 0) return;
+
+    const railWidth = mobileLayout.matches ? 0 : cachedRailWidth || rail.getBoundingClientRect().width;
+    // Mobile screen starts can be fractional after the IMG connector widths.
+    const idx = findScreenIndexAtPosition(loopPosition(state.current + railWidth + (mobileLayout.matches ? 0.05 : 0)), state.screenStarts, state.screenWidths);
+    const theme = screens[idx].dataset.railTheme || 'dark';
+    if (rail.dataset.theme !== theme) {
+      rail.dataset.theme = theme;
+    }
+
+    // 네 메뉴(입구/운세 보기/별자리/이야기) 레일 항목은 "클릭 가능 여부"
+    // (is-disabled, 마크업에 고정)와 "현재 그 메뉴 안에 있는지"(is-dimmed,
+    // 매 프레임 갱신)를 분리해서 관리한다 — 페이지가 구현되어 클릭은
+    // 항상 가능하더라도, 지금 스크롤 위치가 그 메뉴 화면(데이터
+    // screenId가 해당 접두어로 시작하는 구간) 안에 있을 때만 밝게
+    // 표시한다. M-00이나 아직 구현 전인 IMG-xx 구간처럼 어떤 접두어와도
+    // 안 맞는 화면에서는 네 메뉴 전부 옅게 보인다(기존 '입구'의 M-00
+    // 처리 규칙을 네 메뉴 공통 규칙으로 일반화).
+    const currentScreenId = screens[idx].dataset.screenId || '';
+    state.activeScreenId = currentScreenId;
+    if (mobileLayout.matches) {
+      if (!mobileM00Backdrop) {
+        mobileM00Backdrop = document.createElement('div');
+        mobileM00Backdrop.className = 'mobile-m00-backdrop';
+        mobileM00Backdrop.hidden = true; // Remains hidden outside the mobile media query.
+        mobileM00Backdrop.setAttribute('aria-hidden', 'true');
+        document.body.prepend(mobileM00Backdrop);
+      }
+      mobileM00Backdrop.classList.toggle('is-active', currentScreenId === 'M-00');
+      if (mobileNext) {
+        const blocked = currentScreenId === 'C-03' || currentScreenId === 'F-01';
+        if (mobileNext.disabled !== blocked) mobileNext.disabled = blocked;
+        const internal = String(currentScreenId === 'S-05');
+        if (mobileNext.dataset.internalScroll !== internal) mobileNext.dataset.internalScroll = internal;
+      }
+    }
+    railNavByPrefix.forEach(([prefix, el]) => {
+      if (el) el.classList.toggle('is-dimmed', !currentScreenId.startsWith(prefix));
+    });
+
+    // M-00(진행도 0%)에서도 바가 완전히 비어 있지 않고, 햄버거 영역
+    // 경계선(65/1024 지점)까지는 이미 내려와 있는 상태로 시작한다.
+    // 스크롤하면 그 지점부터 바닥까지 더 내려간다.
+    const MIN_PROGRESS_PCT = 6.3477; // 65 / 1024 * 100
+    const progress = loop.enabled && state.current < 0 ? -state.current / state.unitWidth
+      : loop.enabled && state.current > state.max ? 1 - (state.current - state.max) / state.unitWidth
+      : state.max > 0 ? state.current / state.max : 0;
+    const pct = MIN_PROGRESS_PCT + clamp(progress, 0, 1) * (100 - MIN_PROGRESS_PCT);
+    progressFill.style.height = `${pct}%`;
+  }
+
+  // ------------------------------------------------------------
+  // 요소별 등장(reveal) 효과
+  // REFERENCE_CANALS.md에서 분석한 "텍스트·이미지가 한 타이밍에
+  // 같이 움직이지 않고 요소마다 조금씩 다른 시점/속도로 나타나며
+  // 입체감을 만드는" 구조(5·6·15-3번 항목)를 CSS transform만으로
+  // 옮긴 것.
+  //
+  // reveal 기준은 "이 화면 자체의 0~1"이 아니라 "바로 이전 화면 →
+  // 이 화면으로 들어오는 전환 구간"이다: 그 화면이 뷰포트에 온전히
+  // 들어오는 순간(local=1) 지정된 구간(data-reveal-start~end)에
+  // 맞춰 이미 자리를 잡는다. 이 전환 구간의 길이는 항상 "기준 폭
+  // 1장"이다 — 이 화면 자신이 data-width-multiplier로 더 넓어져
+  // 있어도(예: E-00), 그 추가분은 전환 구간이 아니라 화면이 자리잡은
+  // "이후" 구간이므로 reveal 타이밍에는 영향이 없다.
+  const revealItems = Array.from(document.querySelectorAll('.reveal')).map((el) => ({
+    el,
+    screenIndex: screens.indexOf(el.closest('.screen')),
+    start: parseFloat(el.dataset.revealStart || '0'),
+    end: parseFloat(el.dataset.revealEnd || '0'),
+    offset: el.classList.contains('reveal--image') ? 32 : 24,
+    byPosition: el.closest('.screen').dataset.revealByPosition === 'true',
+    entranceOffset: 0,
+    entranceWidth: 0,
+    inS05Content: s05Content ? s05Content.contains(el) : false,
+    lastProgress: null,
+  }));
+
+  // 긴 화면의 텍스트는 자기 가로 위치를 기준으로 진입한다.
+  // 좌표 읽기는 리사이즈 때만 수행하고, 렌더 루프는 캐시된 숫자만 사용한다.
+  function cacheRevealEntrances() {
+    revealItems.forEach((item) => {
+      const screen = screens[item.screenIndex];
+      item.entranceOffset = item.byPosition
+        ? Math.max(0, item.inS05Content ? item.el.offsetLeft : item.el.getBoundingClientRect().left - screen.getBoundingClientRect().left)
+        : 0;
+      // 마지막 텍스트도 스크롤 끝에서 완전히 표시되도록 남은 폭으로 제한.
+      item.entranceWidth = item.byPosition
+        ? Math.max(1, Math.min(state.unitWidth, state.screenWidths[item.screenIndex] - item.entranceOffset))
+        : state.unitWidth;
+    });
+  }
+
+  function easeOutCubic(t) {
+    return 1 - Math.pow(1 - t, 3);
+  }
+
+  function updateReveals() {
+    if (state.unitWidth <= 0) return;
+    revealItems.forEach((item) => {
+      const transitionStart = state.screenStarts[item.screenIndex] + item.entranceOffset - state.unitWidth;
+      let position = state.current;
+      if (loop.enabled && item.screenIndex === 0 && state.current > state.max) position -= loop.span;
+      if (loop.enabled && item.screenIndex === s05ScreenIndex && state.current < 0) position = state.max;
+      const local = clamp((position - transitionStart) / item.entranceWidth, 0, 1);
+      const span = item.end - item.start;
+      const raw = span > 0 ? clamp((local - item.start) / span, 0, 1) : (local >= item.start ? 1 : 0);
+      const t = easeOutCubic(raw);
+      // Offscreen/settled items keep the same endpoint. Re-entering, reversing
+      // and loop seams still use the original timing calculation above.
+      if (t === item.lastProgress) return;
+      item.el.style.opacity = String(t);
+      item.el.style.transform = `translateY(${(1 - t) * item.offset}px)`;
+      item.lastProgress = t;
+    });
+  }
+
+  function measureUnitWidth() {
+    return viewport.getBoundingClientRect().width;
+  }
+
+  // ------------------------------------------------------------
+  // E-01 대표 이미지 "들어올 때는 확대, 다 들어오면 원래 크기"
+  // 효과. 원본 사이트(REFERENCE_CANALS.md 5번 — 요소마다 자기만의
+  // 활성 구간을 갖고 그 구간에서 트랜스폼이 변하는 구조)를 참고해,
+  // reveal과 똑같은 "이 화면의 진입 구간(= 바로 전 화면 → 이 화면,
+  // 길이는 항상 unitWidth 1장)"을 재사용한다. 틀(.e0x__photo-wrap)
+  // 크기·위치는 절대 건드리지 않고, 그 안의 img 하나만 scale/zoom을
+  // 바꿔서 "이미지가 안쪽에서 줌되는" 느낌을 낸다.
+  const e01PhotoImg = document.querySelector('.e01__photo-img');
+  const e02PhotoImg = document.querySelector('.e02__photo-img');
+  const e02Twinkles = document.querySelector('.e02__twinkles');
+  const e02PhotoWrap = document.querySelector('.e02__photo-wrap');
+  const e01ScreenIndex = screens.findIndex((s) => s.dataset.screenId === 'E-01');
+  const e02ScreenIndex = screens.findIndex((s) => s.dataset.screenId === 'E-02');
+  const e02Parallax = { exit: 0, lastX: null, arrived: null };
+
+  // E-01은 사진 자체가 가로로 완만한 톤의 실내 사진이라, E-02(별자리
+  // 점·선이라 축척 변화가 눈에 선명하게 드러남)와 같은 배율·같은
+  // easeOutCubic(초반에 급히 변하고 후반은 거의 안 바뀜)로는 체감이
+  // 거의 안 됐다. E-01만 (1) 확대 배율을 훨씬 크게, (2) easeInCubic
+  // (초반엔 거의 안 바뀌다 후반에 몰아서 바뀌는 커브)으로 바꿔서,
+  // 화면에 거의 다 들어올 때까지도 눈에 띄게 확대된 채로 남아 있다가
+  // 막판에 "느리게 줄어들며" 정착하는 느낌을 낸다.
+  const E01_ZOOM_ENTRANCE_FACTOR = 1.35;
+  let e01LastScale = null;
+
+  function easeInCubic(t) {
+    return t * t * t;
+  }
+
+  // 화면이 뷰포트에 들어오기 시작해서(0) 완전히 자리잡을 때까지(1)의
+  // "가공 전" 진행도. updateReveals()의 local 계산과 동일한 기준점을
+  // 쓴다 — 이징은 쓰는 쪽에서 용도에 맞게 따로 적용한다.
+  function screenEntranceLocal(screenIndex) {
+    if (screenIndex < 0 || state.unitWidth <= 0) return 1;
+    const transitionStart = state.screenStarts[screenIndex] - state.unitWidth;
+    return clamp((state.current - transitionStart) / state.unitWidth, 0, 1);
+  }
+
+  function updateImageZooms() {
+    if (e01PhotoImg) {
+      const t = easeInCubic(screenEntranceLocal(e01ScreenIndex));
+      const scale = E01_ZOOM_ENTRANCE_FACTOR + (1 - E01_ZOOM_ENTRANCE_FACTOR) * t; // 1.35 → 1.0
+      if (scale === e01LastScale) return;
+      e01PhotoImg.style.transform = `scale(${scale})`;
+      e01LastScale = scale;
+    }
+  }
+
+  // ------------------------------------------------------------
+  // E-00 → E-01 배경 패럴랙스 (REFERENCE_CANALS.md 5·7·15-3번 참고)
+  //
+  // Canals Amsterdam의 Overview → Noord-Holland 전환을 참고한 구조.
+  // 밤하늘 이미지(.e00-bg-layer)는 .track(전경 — 표지 패널, 본문 등)과
+  // 같은 트랙에 묶이지 않고 완전히 독립된 레이어다. .track은 스크롤
+  // 그대로(배속 1.0) 움직이지만, 이 배경 레이어는 그보다 느린 배속
+  // (COVER_PARALLAX_FACTOR)으로만 움직인다.
+  //
+  // E-00 화면 자체를 data-width-multiplier="3"으로 기준폭의 3배까지
+  // 넓혀뒀다(실제 콘텐츠는 그 중 앞 1장 분량에만 있고 나머지는 빈
+  // 투명 공간). 그래서 패널이 화면을 빠져나간 뒤에도 배경이 "뒤이어
+  // 오는 E-01에 도착하기까지" 훨씬 더 긴 구간 동안 크게 남아있다가
+  // 서서히 덮인다 — 배속(COVER_PARALLAX_FACTOR) 자체는 그대로 두고
+  // 화면 폭만 늘렸을 뿐인데도 효과가 보이는 구간이 그만큼 길어진다.
+  //
+  // 기준점: E-00이 화면에 정확히 다 들어왔을 때(스크롤 진행이 E-00
+  // 시작점과 같을 때) 이미지가 뷰포트에 꽉 차게(왼쪽 끝=0) 둔다.
+  // 이때는 왼쪽 65.14%가 불투명한 패널에 가려져 있어서 오른쪽
+  // 34.86%만 자연스럽게 드러나 보인다 — 지금까지의 고정 크롭과
+  // 시각적으로 동일한 시작 상태.
+  const coverBackgrounds = Array.from(document.querySelectorAll('[data-cover-background]')).map((layer) => {
+    const index = screens.findIndex((screen) => screen.dataset.screenId === layer.dataset.coverBackground);
+    const preview = screens[index]?.querySelector('.cover-mobile-image img');
+    if (preview) preview.src = layer.querySelector('img').getAttribute('src');
+    return { layer, index, lastX: null, lastClip: '', left: 0, width: 0, panelEnd: 0, visible: null };
+  });
+  const COVER_PARALLAX_FACTOR = 0.5; // 1.0 = 전경과 같은 속도, 작을수록 더 느리게(더 오래 남음)
+
+  function updateCoverParallaxBackgrounds() {
+    if (state.unitWidth <= 0) return;
+    coverBackgrounds.forEach((background) => {
+      if (background.index < 0) return;
+      const start = state.screenStarts[background.index];
+      const local = state.current - start;
+      const visible = !mobileLayout.matches && local >= -state.unitWidth && local <= state.screenWidths[background.index];
+      if (visible !== background.visible) {
+        background.layer.style.visibility = visible ? 'visible' : 'hidden';
+        background.visible = visible;
+      }
+      if (!visible) return;
+      // Move the portrait at half speed until its left edge meets the panel.
+      // Then carry both at the same speed, keeping their edges joined.
+      let x = background.layer.dataset.coverBackground === 'C-00'
+        ? Math.min(-local * COVER_PARALLAX_FACTOR, background.panelEnd - background.left - local)
+        : -local * COVER_PARALLAX_FACTOR;
+      if (background.layer.dataset.coverBackground === 'IMG-05') {
+        x = Math.max(x, state.screenWidths[background.index] - local - background.left - background.width);
+      }
+      if (x !== background.lastX) {
+        background.layer.style.transform = `translate3d(${x}px, 0, 0)`;
+        background.lastX = x;
+      }
+      // Each fixed image belongs only to its own moving screen. Without this,
+      // the preceding sky bridge can cover the next transparent cover panel.
+      const leftClip = clamp(-local - background.left - x, 0, background.width);
+      const rightClip = clamp(background.left + background.width + x - (state.screenWidths[background.index] - local), 0, background.width);
+      const clip = `inset(0 ${rightClip}px 0 ${leftClip}px)`;
+      if (clip !== background.lastClip) {
+        background.layer.style.clipPath = clip;
+        background.lastClip = clip;
+      }
+    });
+  }
+
+  // E-02도 E-00과 동일하게 전경 1.0 / 배경 0.5의 속도 차이를 사용한다.
+  // 프레임은 기존 트랙 안에 그대로 두고 내부 이미지에 (1 - 배경 배속)을
+  // 보상하므로, 화면 기준 이미지 속도는 -1 + 0.5 = -0.5가 된다.
+  // E-02 시작점에서 보상값은 0이어서 기존 정착 크롭을 유지한다.
+  function updateE02ParallaxImage() {
+    if (!e02PhotoImg || state.unitWidth <= 0 || e02ScreenIndex < 0) return;
+    const start = state.screenStarts[e02ScreenIndex];
+    const lead = state.unitWidth * (mobileLayout.matches ? 0.15 : 0.08);
+    const arrived = state.activeScreenId === 'E-02' || (state.current >= start - lead && state.current < start);
+    if (arrived !== e02Parallax.arrived) {
+      screens[e02ScreenIndex].classList.toggle('is-arrived', arrived);
+      e02Parallax.arrived = arrived;
+    }
+    const local = clamp(state.current - state.screenStarts[e02ScreenIndex], -state.unitWidth, e02Parallax.exit);
+    const x = local * (1 - COVER_PARALLAX_FACTOR);
+    // 진입 전/프레임 퇴장 후에는 경계값을 유지하며 DOM 쓰기도 건너뛴다.
+    if (x === e02Parallax.lastX) return;
+    e02PhotoImg.style.transform = `translate3d(${x}px, 0, 0)`;
+    if (e02Twinkles) e02Twinkles.style.transform = `translate3d(${x}px, 0, 0)`;
+    e02Parallax.lastX = x;
+  }
+
+  // ------------------------------------------------------------
+  // M-00 표지 배경 패럴랙스 — E-00과 같은 원리지만 훨씬 더 미묘하게.
+  // 화면 폭을 늘리는 건 필요 없고(= M-00은 기준 폭 1장 그대로), 그냥
+  // 스크롤할 때 전경(패널/텍스트, 배속 1.0)과 배경이 완전히 한 덩어리로
+  // 붙어 움직이는 느낌을 살짝 덜어내는 정도만 원해서 배속을 1에 아주
+  // 가깝게(0.85) 둔다. M-00은 항상 트랙의 맨 앞(시작 0)이라 공식이
+  // 더 단순하다.
+  const m00BgLayer = document.getElementById('m00-bg-layer');
+  const m00ScreenIndex = screens.findIndex((s) => s.dataset.screenId === 'M-00');
+  const M00_PARALLAX_FACTOR = 0.85;
+
+  function updateM00ParallaxBg() {
+    if (!m00BgLayer || state.unitWidth <= 0 || m00ScreenIndex < 0) return;
+    const m00Start = state.screenStarts[m00ScreenIndex];
+    const position = loop.enabled && state.current > state.max ? state.current - loop.span : state.current;
+    const x = m00Start * M00_PARALLAX_FACTOR - position * M00_PARALLAX_FACTOR;
+    m00BgLayer.style.transform = `translate3d(${x}px, 0, 0)`;
+    // Extend only the raster sky behind the mobile rail. The existing image,
+    // SVG mounts and their rotation centres stay in the original viewport.
+    if (mobileLayout.matches && mobileM00Backdrop && Math.abs(position) <= state.unitWidth) {
+      mobileM00Backdrop.style.setProperty('--m00-parallax-x', `${x}px`);
+    }
+  }
+
+  // 화면 폭이 바뀌면(창 리사이즈, 모니터 이동, OS 배율 변경, 브라우저
+  // 줌 등) "몇 번째 화면 근처에 있었는지"를 기존 screenStarts 기준으로
+  // 찾아서, 새 크기에서도 그 화면의 시작 지점으로 다시 맞춘다.
+  // .screen / .track 의 실제 px 폭도 여기서 함께 다시 적용한다.
+  function applySizes() {
+    const newWidth = measureUnitWidth();
+    const oldPin = { ...s05Pin };
+    const seamSide = loop.enabled && state.unitWidth > 0
+      ? (state.current < 0 || state.target < 0 ? 'reverse' : state.current > state.max || state.target > state.max ? 'forward' : '') : '';
+    function seamRatio(value) {
+      if (seamSide === 'reverse' && value <= 0) return { side: 'reverse', ratio: value / state.unitWidth };
+      if (seamSide === 'forward' && value >= state.max) return { side: 'forward', ratio: (value - state.max) / state.unitWidth };
+      return null;
+    }
+    const currentSeam = seamRatio(state.current), targetSeam = seamRatio(state.target);
+    const preserveInternal = oldPin.range > 0 &&
+      state.current >= oldPin.start && state.current <= oldPin.start + oldPin.range &&
+      state.target >= oldPin.start && state.target <= oldPin.start + oldPin.range;
+    const currentRatio = preserveInternal ? (state.current - oldPin.start) / oldPin.range : 0;
+    const targetRatio = preserveInternal ? (state.target - oldPin.start) / oldPin.range : 0;
+    // 아래 width 쓰기(screens[i].style.width 등)보다 먼저, viewport
+    // 측정과 같은 타이밍에 함께 읽어서 별도의 강제 레이아웃이 한 번
+    // 더 발생하지 않게 한다 — 두 getBoundingClientRect 호출 모두
+    // "쓰기 전"이라 같은 레이아웃 패스에서 한 번에 처리된다.
+    cachedRailWidth = rail.getBoundingClientRect().width;
+    coverBackgrounds.forEach(background => {
+      const geometry = getComputedStyle(background.layer);
+      background.left = parseFloat(geometry.left) || 0;
+      background.width = parseFloat(geometry.width) || 0;
+      const panel = screens[background.index]?.querySelector('.c00__panel');
+      background.panelEnd = panel ? panel.offsetLeft + panel.getBoundingClientRect().width : 0;
+    });
+
+    const screenWidths = widthMultipliers.map((m, i) =>
+      mobileLayout.matches && mobileSkippedScreenIndices.includes(i) ? 0 :
+        newWidth * (mobileLayout.matches && !screens[i].classList.contains('screen--image') ? 1 : m));
+    let innerWidth = newWidth;
+    if (s05Content) {
+      // offset 치수는 부모 translateX의 영향을 받지 않는다. 측정은 resize 때만 한다.
+      const contentRight = Array.from(s05Content.children).reduce((right, el) => Math.max(right, el.offsetLeft + el.offsetWidth), 0);
+      const lastImage = Array.from(s05Content.querySelectorAll(':scope > .story__ph')).at(-1);
+      const heading = document.getElementById('s05-title');
+      // Keep the final pair reachable until its image aligns with the fixed
+      // chapter heading, rather than ending as soon as its body fits on screen.
+      const alignedRange = lastImage && heading ? Math.max(0, lastImage.offsetLeft - heading.offsetLeft) : 0;
+      s05Pin.range = Math.max(0, contentRight - newWidth, alignedRange);
+      innerWidth = Math.max(screenWidths[s05ScreenIndex], newWidth + s05Pin.range);
+      screenWidths[s05ScreenIndex] = newWidth + s05Pin.range;
+    }
+    const screenStarts = [];
+    let acc = 0;
+    for (let i = 0; i < screenWidths.length; i++) {
+      screenStarts.push(acc);
+      acc += screenWidths[i];
+    }
+    const totalTrackWidth = acc;
+
+    const oldStarts = state.screenStarts.length ? state.screenStarts : screenStarts;
+    const oldWidths = state.screenWidths.length ? state.screenWidths : screenWidths;
+    const indexBefore = findScreenIndexAtPosition(state.target, oldStarts, oldWidths);
+    const clampedIndex = clamp(indexBefore, 0, screens.length - 1);
+
+    screens.forEach((s, i) => { s.style.width = `${s05Content && i === s05ScreenIndex ? newWidth : screenWidths[i]}px`; });
+    track.style.width = `${totalTrackWidth - s05Pin.range}px`;
+    if (s05Content) s05Content.style.width = `${innerWidth}px`;
+
+    state.unitWidth = newWidth;
+    state.screenStarts = screenStarts;
+    state.screenWidths = screenWidths;
+    // 치수는 리사이즈 때만 읽고, 스크롤 중에는 캐시된 퇴장 경계만 사용한다.
+    e02Parallax.exit = e02PhotoWrap ? e02PhotoWrap.offsetLeft + e02PhotoWrap.offsetWidth : 0;
+    s05Pin.start = s05ScreenIndex >= 0 ? screenStarts[s05ScreenIndex] : 0;
+    state.max = Math.max(0, totalTrackWidth - newWidth);
+    loop.span = state.max + newWidth;
+    loop.physicalSpan = loop.span - s05Pin.range;
+    loop.placement = ''; // 리사이즈된 폭으로 경계 배치도 다시 적용한다.
+    state.target = clamp(screenStarts[clampedIndex], 0, state.max);
+    state.current = state.target; // 일반 화면은 기존처럼 시작점으로 맞춤
+    if (preserveInternal) {
+      state.current = s05Pin.start + currentRatio * s05Pin.range;
+      state.target = s05Pin.start + targetRatio * s05Pin.range;
+    }
+    if (currentSeam) state.current = (currentSeam.side === 'forward' ? state.max : 0) + currentSeam.ratio * newWidth;
+    if (targetSeam) state.target = (targetSeam.side === 'forward' ? state.max : 0) + targetSeam.ratio * newWidth;
+
+    renderScrollPosition();
+    cacheRevealEntrances();
+    updateRailChrome();
+    updateReveals();
+    updateCoverParallaxBackgrounds();
+    updateE02ParallaxImage();
+    updateM00ParallaxBg();
+    updateImageZooms();
+    updateC04Sequence();
+  }
+
+  // ------------------------------------------------------------
+  // 전체 메뉴 오버레이 — 햄버거를 누르면 레일 왼쪽 끝부터 네이비 배경이
+  // 오른쪽으로 퍼져나가며(.nav-overlay__bg, CSS transform) 펼쳐지고,
+  // 조금 늦게(.nav-overlay__content, CSS transition-delay) 칼럼 내용이
+  // 드러난다. 열려 있는 동안은 뒤의 가로 스크롤 입력(휠/드래그/화살표)을
+  // 받지 않는다 — 안 그러면 메뉴가 열린 채로 뒤에서 스크롤 위치가 바뀌어
+  // 닫을 때 화면이 갑자기 튀어 보인다.
+  const navOverlay = document.getElementById('nav-overlay');
+  const railBurger = document.getElementById('rail-burger');
+  const otherOverlay = document.getElementById('other-overlay');
+  const railOther = document.getElementById('rail-other');
+  const overlayControls = [[navOverlay, railBurger], [otherOverlay, railOther]];
+  let activeOverlayControl = null;
+
+  function isNavOverlayOpen() {
+    return activeOverlayControl !== null;
+  }
+  function openNavOverlay(control) {
+    if (isNavOverlayOpen()) closeNavOverlay();
+    const [overlay, trigger] = control;
+    activeOverlayControl = control;
+    overlay.inert = false;
+    overlay.classList.add('is-open');
+    overlay.setAttribute('aria-hidden', 'false');
+    trigger.setAttribute('aria-expanded', 'true');
+    trigger.classList.add('is-active');
+    if (mobileLayout.matches) {
+      overlay.querySelector('a,button')?.focus({ preventScroll: true });
+    }
+  }
+  function closeNavOverlay() {
+    if (!activeOverlayControl) return;
+    const [overlay, trigger] = activeOverlayControl;
+    if (overlay.contains(document.activeElement)) trigger.focus({ preventScroll: true });
+    overlay.classList.remove('is-open');
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.inert = true;
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.classList.remove('is-active');
+    activeOverlayControl = null;
+  }
+  overlayControls.forEach((control) => {
+    const [overlay, trigger] = control;
+    trigger.addEventListener('click', () => {
+      if (activeOverlayControl === control) closeNavOverlay(); else openNavOverlay(control);
+    });
+    overlay.querySelector('.nav-overlay__bg').addEventListener('click', closeNavOverlay);
+  });
+  // 배경(칼럼이 아닌 빈 영역)을 눌러도 닫히게 — 흔한 오버레이 UX 관례
+  window.addEventListener('keydown', (e) => {
+    if (document.getElementById('map-viewer')?.open) return;
+    if (e.key === 'Escape' && isNavOverlayOpen()) closeNavOverlay();
+  });
+
+  document.getElementById('nav-opening-return').addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeNavOverlay();
+    goToScreenId('M-00');
+  });
+  document.getElementById('other-opening-return').addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeNavOverlay();
+    if (window.o01Enter) window.o01Enter();
+  });
+
+  // ------------------------------------------------------------
+  // 입력 1: 마우스 휠 / 트랙패드
+  // ------------------------------------------------------------
+  window.addEventListener('wheel', (e) => {
+    if (isNavOverlayOpen()) return;
+    const mobileScroller = mobileLayout.matches && e.target instanceof Element ? e.target.closest('.rail,.s05__content > .story__body,.screen') : null;
+    if (mobileScroller && Math.abs(e.deltaY) > Math.abs(e.deltaX) &&
+        mobileScroller.scrollHeight > mobileScroller.clientHeight + 1) return;
+    e.preventDefault();
+    const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+    scrollByInput(delta);
+  }, { passive: false });
+
+  // ------------------------------------------------------------
+  // 입력 2: 마우스 드래그 / 터치
+  // ------------------------------------------------------------
+  let isDragging = false;
+  let dragStartX = 0;
+  let dragStartTarget = 0;
+  let dragStartY = 0;
+  let dragAxis = '';
+  let dragPointerId = null;
+  let suppressMobileClick = false;
+  let mobileTransitionOrigin = null;
+
+  function onPointerDown(e) {
+    if (isNavOverlayOpen()) return;
+    mobileTransitionOrigin = null;
+    if (mobileLayout.matches) {
+      suppressMobileClick = false;
+      if (!e.isPrimary || e.button !== 0 || e.target.closest('button,a,input,select,textarea,label,[data-mobile-native]')) return;
+      dragStartY = e.clientY;
+      dragAxis = '';
+      dragPointerId = e.pointerId;
+    }
+    isDragging = true;
+    dragStartX = e.clientX;
+    dragStartTarget = state.target;
+    if (mobileLayout.matches && Math.abs(state.target - state.current) < 0.05) {
+      // Reuse the same swipe settlement for each pair beside an empty connector.
+      const index = mobileSkippedScreenIndices.find((i) =>
+        Math.abs(state.target - state.screenStarts[i - 1]) < 0.05 ||
+        Math.abs(state.target - state.screenStarts[i + 1]) < 0.05);
+      if (index !== undefined) mobileTransitionOrigin = { position: state.target, index };
+    }
+    track.style.cursor = 'grabbing';
+  }
+  function onPointerMove(e) {
+    if (!isDragging) return;
+    if (mobileLayout.matches) {
+      if (e.pointerId !== dragPointerId) return;
+      if (!dragAxis) {
+        const dx = Math.abs(e.clientX - dragStartX), dy = Math.abs(e.clientY - dragStartY);
+        if (Math.max(dx, dy) < 8) return;
+        dragAxis = dx > dy ? 'x' : 'y';
+      }
+      if (dragAxis !== 'x') return;
+      suppressMobileClick = true;
+      if (e.cancelable) e.preventDefault();
+    }
+    const delta = dragStartX - e.clientX;
+    const nextTarget = dragStartTarget + delta;
+    state.target = constrainScrollInput(nextTarget);
+    if (Math.abs(state.target - nextTarget) > 0.05) {
+      dragStartX = e.clientX;
+      dragStartTarget = state.target;
+    }
+  }
+  function onPointerUp() {
+    if (isDragging && mobileLayout.matches && dragAxis === 'x' && mobileTransitionOrigin !== null) {
+      const { position, index } = mobileTransitionOrigin;
+      const before = state.screenStarts[index - 1];
+      const after = state.screenStarts[index + 1];
+      if (state.target >= before && state.target <= after && Math.abs(state.target - position) >= 8) {
+        state.target = state.target > position ? after : before;
+      }
+    }
+    mobileTransitionOrigin = null;
+    isDragging = false;
+    track.style.cursor = 'grab';
+  }
+
+  track.addEventListener('pointerdown', onPointerDown);
+  // Child accordions intentionally stop bubbling pointerdown. Clear a previous
+  // swipe's click suppression before those handlers run, so the next tap works.
+  track.addEventListener('pointerdown', () => {
+    if (mobileLayout.matches) suppressMobileClick = false;
+  }, true);
+  window.addEventListener('pointermove', onPointerMove);
+  window.addEventListener('pointerup', onPointerUp);
+  window.addEventListener('pointercancel', () => { if (mobileLayout.matches) onPointerUp(); });
+  track.addEventListener('click', (e) => {
+    if (mobileLayout.matches && suppressMobileClick) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      suppressMobileClick = false;
+    }
+  }, true);
+  track.style.cursor = 'grab';
+
+  // ------------------------------------------------------------
+  // 입력 3: 좌우 화살표 키 (화면 단위 이동 — 브라우저 확인 편의용 보조 기능)
+  // ------------------------------------------------------------
+  window.addEventListener('keydown', (e) => {
+    if (isNavOverlayOpen()) return;
+    if (nearestIndex() === f01ScreenIndex && ['ArrowRight', 'ArrowDown', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      return;
+    }
+    if (mobileLayout.matches && e.target.closest('input,select,textarea')) return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+      if (loop.enabled && (state.target < 0 || state.target >= state.max)) scrollByInput(state.unitWidth);
+      else if (s05Pin.range > 0 && state.target >= s05Pin.start && state.target < s05Pin.start + s05Pin.range) scrollByInput(state.unitWidth);
+      else if (nearestIndex() < screens.length - 1) scrollByInput(state.screenStarts[nearestIndex() + 1] - state.target);
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      if (loop.enabled && (state.target <= 0 || state.target > state.max)) scrollByInput(-state.unitWidth);
+      else if (s05Pin.range > 0 && state.target > s05Pin.start && state.target <= s05Pin.start + s05Pin.range) scrollByInput(-state.unitWidth);
+      else goToIndex(nearestIndex() - 1);
+    }
+  });
+
+  function nearestIndex() {
+    return findScreenIndexAtPosition(loopPosition(state.target), state.screenStarts, state.screenWidths);
+  }
+
+  // One settled step per tap. Keep the engine's easing, connector starts,
+  // C-03 guard, S-05 pin boundaries and final seam in the same input path.
+  mobileNext?.addEventListener('click', () => {
+    if (!mobileLayout.matches || document.body.classList.contains('is-o01-active') ||
+        isNavOverlayOpen() || Math.abs(state.target - state.current) > 0.05) return;
+    // Loop normalization can put a fractional connector boundary a few ulps
+    // before its start. Use the same 0.05px tolerance as the mobile rail.
+    const index = findScreenIndexAtPosition(loopPosition(state.target) + 0.05, state.screenStarts, state.screenWidths);
+    if (index === c03ScreenIndex) return;
+    if (screens[index]?.id === 'F-01') {
+      return;
+    }
+    const internalEnd = s05Pin.start + s05Pin.range;
+    const next = index === s05ScreenIndex
+      ? (state.target < internalEnd - 0.05 ? Math.min(state.target + state.unitWidth, internalEnd) : loop.span)
+      : state.target < 0 ? 0 : state.screenStarts[index + 1];
+    if (Number.isFinite(next)) scrollByInput(next - state.target);
+  });
+  // Keep Enter/Space native to the button and prevent the global arrow-key
+  // navigation from acting on this control as a second input source.
+  mobileNext?.addEventListener('keydown', (event) => event.stopPropagation());
+
+  function goToIndex(i) {
+    let clamped = clamp(i, 0, screens.length - 1);
+    // A backward page step must pass the zero-width connector rather than
+    // returning to the following screen, which shares its mobile start coordinate.
+    if (mobileLayout.matches && mobileSkippedScreenIndices.includes(clamped)) {
+      clamped += i < nearestIndex() ? -1 : 1;
+    }
+    state.target = clamp(state.screenStarts[clamped], 0, state.max);
+  }
+
+  function goToScreenId(id) {
+    if (id === 'F-02' && !document.getElementById('F-02').dataset.birthdate) id = 'F-01';
+    const i = screens.findIndex((s) => s.dataset.screenId === id);
+    if (i >= 0) goToIndex(i);
+  }
+
+  // --------------------------------------------------------------
+  // O-01(오프닝) <-> 메인 사이트 임시 연결 지점
+  //
+  // js/opening.js가 O-01 종료 직후(암전이 안정된 시점) window에 노출된
+  // 이 함수를 호출해, 메인 사이트 스크롤 위치를 M-00(맨 처음)으로
+  // "트랜지션 없이 즉시" 맞춘다 — 오프닝이 아직 화면을 덮고 있는
+  // 동안(페이드 전)에 미리 맞춰두는 것이라, 화면에는 전혀 보이지
+  // 않는다. 전체 메뉴가 열려 있었다면 함께 닫아, M-00이 드러날 때
+  // 메뉴가 그 위에 남아있는 일이 없게 한다.
+  // --------------------------------------------------------------
+  function m00Enter() {
+    goToIndex(screens.findIndex((s) => s.dataset.screenId === 'M-00'));
+    state.current = state.target;
+    renderScrollPosition();
+    updateRailChrome();
+    updateReveals();
+    updateCoverParallaxBackgrounds();
+    updateE02ParallaxImage();
+    updateM00ParallaxBg();
+    updateImageZooms();
+    updateC04Sequence();
+    if (isNavOverlayOpen()) closeNavOverlay();
+  }
+  window.m00Enter = m00Enter;
+
+  // --------------------------------------------------------------
+  // M-00 성도 반짝임 1회 초기화 — js/opening.js의 initChartAnimations와
+  // 같은 이유(성능 — 1447개 전부에 개별 twinkle을 거는 대신 일부만
+  // 무작위로 골라 inline animation을 준다)로 동일한 패턴을 썼다.
+  // O-01과 완전히 같은 함수를 공유하지 않고 파일을 분리해 둔 이유는
+  // "M-00용 스타일/로직은 O-01과 분리"라는 이 프로젝트의 기존 원칙을
+  // 따른 것.
+  // 2026-10-14 5차: 별묶음/연결선 선택자를 svg > g:nth-of-type(N)
+  // 같은 위치 기반 방식에서 명시적 id(#m00-chart-stars/#m00-chart-lines)
+  // 기반으로 바꿨다 — 성도 전체를 감싸는 회전 그룹(#m00-chart-spin)과
+  // 장식 복제 그룹(#m00-chart-deco-group)이 새로 추가되면서 중첩
+  // 단계가 바뀌었는데, 위치 기반 선택자는 이런 구조 변경 때마다
+  // 다시 세어야 해서(과거에 O-01/M-00 간 nth-of-type(2)/(3) 혼동
+  // 버그가 실제로 있었음) 더 안정적인 id 기반으로 정리했다. stars
+  // 선택자(circle.st1)는 범위를 mount 전체로 그대로 둬서, 장식
+  // 복제 그룹 안의 점들도 flare 대상에 자연스럽게 포함되게 했다
+  // (복제도 "같은 밤하늘"이니 반짝임도 같이 적용되는 게 자연스럽다).
+  //
+  // 2026-10-14 6차(성능+템포): "회전이 뚝뚝 끊긴다" 신고의 핵심
+  // 원인은 flare/breathe가 opacity(+fill/filter)를 매 프레임 바꾸는
+  // 대상인데, 이 대상들이 전부 회전 중인 합성 레이어(#m00-chart-spin)
+  // "안"에 있어서 하나라도 다시 칠해지면 그 레이어 전체가 다시
+  // 래스터화된다는 점이었다(회전 자체는 GPU가 텍스처만 돌리면 되는
+  // 저비용 작업인데, flare/breathe가 그 텍스처를 계속 무효화시킴).
+  // duration을 늘리는 것만으로는 "동시에 바뀌고 있는 대상 수"가
+  // 줄지 않으므로(각 요소가 keyframe 전 구간에 걸쳐 매 프레임
+  // 보간되는 건 느리게 돌아도 마찬가지), 성능 쪽은 대상 "개수"를
+  // 줄이는 쪽으로 처리하고, 템포(더 천천히 반짝이는 느낌)는
+  // duration/delay 범위를 늘리는 쪽으로 분리해서 처리했다.
+  //
+  // 2026-10-14 7차: 사용자가 직접 제작한 m-00-celestial-chart-custom.svg로
+  // 교체되며 내부 구조가 바뀌었다 — 이전 파일은 별(circle.st1)과
+  // 연결선(line.st3)이 완전히 분리된 그룹(#m00-chart-stars /
+  // #m00-chart-lines)이었지만, 새 파일은 별자리 330개가 각자 자기
+  // 그룹 안에 별점(circle)과 연결 도형(polygon/path)을 함께 갖고
+  // 있고 클래스도 .st0 하나뿐이다(연결 도형이 stroke 선이 아니라
+  // 채움 폴리곤/패스라서 .st1/.st3처럼 fill/stroke로 나눌 필요가
+  // 없어짐). 그래서 선택자를 실제 구조에 맞게 다시 잡았다 —
+  // 별(flare): mount 전체의 circle.st0(그룹에 속하지 않은 낱개 별
+  // 79개도 포함 — 아래 참고). 연결 도형("line" 호흡 자리):
+  // #m00-chart-stars 아래 모든 polygon.st0/path.st0(어느 깊이에
+  // 중첩돼 있든, 심지어 그룹 밖에 있든 태그명으로 찾음). 묶음
+  // 호흡은 이전과 동일하게 #m00-chart-stars의 바로 아래 자식 <g>만
+  // 대상으로 한다(317개 — 새 SVG의 개별 별자리 묶음).
+  //
+  // 새 SVG를 실제로 열어보니 330개 <g> 묶음 외에, 그 어느 그룹에도
+  // 속하지 않고 #m00-chart-stars 바로 아래 낱개로 떠 있는 요소가
+  // 81개(별 79개 + 연결 도형 2개) 더 있었다 — 사용자가 직접 배치한
+  // 파일 내용 그대로이므로 그룹으로 묶거나 다른 방식으로 손대지
+  // 않았고, 각 선택자가 "그룹 소속 여부와 무관하게" 태그/클래스
+  // 기준으로 잡도록 해서 이 낱개 요소들도 자연스럽게 같은 애니메이션
+  // 대상 풀에 포함되게 했다(별은 flare, 낱개 연결 도형 2개는 호흡
+  // 대상 풀에 들어감 — 묶음 호흡만 "묶여 있는 것"이 전제라 낱개는
+  // 대상에서 빠진다, 의미상 당연한 결과).
+  //
+  // 대상 수/비율 공식(flare는 최대 55개 절대 상한, 묶음·연결 도형
+  // 호흡은 각각 전체의 1/4)은 6차와 동일하게 유지하되, 새 파일의
+  // 실제 개수(별 2043개, 묶음 317개, 연결 도형 432개)에 맞춰 다시
+  // 계산되므로 결과 개수는 55 / 79 / 108로 바뀐다 — "구조(알고리즘)는
+  // 유지, 숫자는 새 SVG 실측에 맞게 자동 반영"이 이번 교체의
+  // 원칙이었다.
+  // --------------------------------------------------------------
+  function shuffleSample(list, count) {
+    const pool = list.slice();
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const tmp = pool[i]; pool[i] = pool[j]; pool[j] = tmp;
+    }
+    return pool.slice(0, count);
+  }
+
+  // 2026-10-14 10차(성능, 핵심 재발견): "일시정지해도 렉이 줄지
+  // 않는다"는 재신고로 CDP Tracing을 다시 떠서 양쪽을 직접 비교했다
+  // — animation-play-state:paused로 "멈춰만" 둔 상태(요소는 그대로
+  // DOM에 있고 style.animation도 그대로 붙어 있음)와, style.animation
+  // 자체를 아예 비워 "애니메이션을 떼어낸" 상태. 결과: play-state만
+  // paused로는 UpdateLayoutTree(~300ms)/Layerize(~700ms)/Paint
+  // (~500ms, 전부 4초 기준)가 "전혀" 줄지 않았는데, style.animation을
+  // 비우자 전부 4초에 1ms 안팎까지 떨어졌다(static 빈 페이지 수준).
+  // 즉 Blink는 "일시정지된" CSS Animation 객체도 매 프레임 계속
+  // 들여다보고 있었다 — paused는 "값이 안 바뀌게" 만들 뿐 "확인
+  // 자체를 안 하게" 만들지는 않는다. 그래서 이번엔 멈출 때
+  // animation-play-state 대신 style.animation을 통째로 비우고
+  // (clearM00Animations), 다시 보일 때 비워뒀던 값을 그대로
+  // 복원한다(applyM00Animations) — 대상 선택/난수(dur/delay)는
+  // 페이지 로드 시 딱 한 번만 뽑고, 이후로는 그 결과를 재사용만
+  // 한다(재선택 안 함 — 매번 다른 별이 반짝이게 바뀌면 "똑같은
+  // 밤하늘"이라는 느낌이 깨짐).
+  // 회전(궤적 2개 + 성도 1개)은 JS가 직접 duration을 주지 않고
+  // css/main.css의 애니메이션을 그대로 쓰므로, 멈출 때 style.animation
+  // = 'none'으로 덮어쓰고, 복원할 때는 style.animation을 비워 다시
+  // CSS 쪽 정의로 돌아가게 하되, "멈춰 있던 동안 돈 것처럼" 보이도록
+  // animation-delay를 경과 시간 기준으로 음수로 계산해 넣는다 —
+  // 그냥 처음부터 다시 돌리면 매번 0도로 튀어 보이기 때문. flare/
+  // 호흡처럼 위치가 random이라 "어디서 멈췄는지"가 의미 없는 것과
+  // 달리, 회전은 계속 한 방향으로 도는 단일 움직임이라 튀는 게
+  // 눈에 띌 수 있어 이렇게 구분했다. */
+  const m00AnimEntries = []; // {el, anim, delay} — flare/묶음호흡/연결도형호흡
+  // 2026-10-14 11차: css/main.css의 회전 duration(85/120/170s ->
+  // 105/147/205s로 감속)과 반드시 같은 값을 유지해야 한다 — 여기
+  // duration은 "멈췄다 재개할 때 경과 시간 기준으로 끊김 없이
+  // 이어지도록" 위상(phase)을 계산하는 데 쓰이므로, CSS 쪽
+  // animation-duration과 어긋나면 재개 시 각도가 미묘하게 틀어져
+  // 보인다.
+  const M00_ROTATIONS = [
+    { id: 'm00-trails-inner', duration: 105 },
+    { id: 'm00-trails-outer', duration: 147 },
+    { id: 'm00-chart-spin', duration: 205 },
+  ];
+  const m00EpochMs = performance.now();
+  let m00AnimationsActive = true;
+
+  function initM00ChartAnimations() {
+    const mount = document.getElementById('m00-chart-mount');
+    if (!mount) return;
+    const stars = Array.from(mount.querySelectorAll('circle.st0'));
+    shuffleSample(stars, Math.min(32, stars.length)).forEach((el) => {
+      const dur = (9 + Math.random() * 6).toFixed(1);
+      const delay = `-${(Math.random() * dur).toFixed(1)}s`;
+      m00AnimEntries.push({ el, anim: `m00-star-flare ${dur}s ease-in-out infinite`, delay });
+    });
+
+    const groups = Array.from(mount.querySelectorAll('#m00-chart-stars > g'));
+    shuffleSample(groups, Math.min(18, groups.length)).forEach((el) => {
+      const dur = (13 + Math.random() * 7).toFixed(1);
+      const delay = `-${(Math.random() * dur).toFixed(1)}s`;
+      m00AnimEntries.push({ el, anim: `m00-chart-breathe ${dur}s ease-in-out infinite`, delay });
+    });
+
+    const connectors = Array.from(mount.querySelectorAll('#m00-chart-stars polygon.st0, #m00-chart-stars path.st0'));
+    shuffleSample(connectors, Math.min(24, connectors.length)).forEach((el) => {
+      const dur = (14 + Math.random() * 7).toFixed(1);
+      const delay = `-${(Math.random() * dur).toFixed(1)}s`;
+      m00AnimEntries.push({ el, anim: `m00-chart-breathe-line ${dur}s ease-in-out infinite`, delay });
+    });
+  }
+  initM00ChartAnimations();
+
+  function applyM00Animations() {
+    m00AnimEntries.forEach(({ el, anim, delay }) => {
+      el.style.animation = anim;
+      el.style.animationDelay = delay;
+    });
+    M00_ROTATIONS.forEach(({ id, duration }) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const elapsedSec = (performance.now() - m00EpochMs) / 1000;
+      el.style.animation = '';
+      el.style.animationDelay = `-${(elapsedSec % duration).toFixed(2)}s`;
+    });
+  }
+
+  function clearM00Animations() {
+    m00AnimEntries.forEach(({ el }) => {
+      el.style.animation = '';
+      el.style.animationDelay = '';
+    });
+    M00_ROTATIONS.forEach(({ id }) => {
+      const el = document.getElementById(id);
+      if (el) el.style.animation = 'none';
+    });
+  }
+
+  // 2026-10-14 9차(성능): M-00이 가로 스크롤로 화면 밖으로 완전히
+  // 밀려난 뒤(E-00/E-01/E-02로 이동한 뒤)에도 애니메이션이 계속
+  // 돌고 있었다 — 기존 일시정지 구조(body.is-o01-active)는 "O-01이
+  // 보일 때"만 걸려 있어서, M-00이 그냥 스크롤로 안 보이게 된
+  // 경우는 전혀 다루지 않았다. IntersectionObserver로 #M-00 섹션이
+  // 실제 화면에 하나도 안 보이는 상태를 감지해 body에 m00-offscreen
+  // 클래스를 붙인다(css/main.css의 :is() 일시정지 규칙도 defense-
+  // in-depth로 계속 유지 — 혹시 아래 JS 쪽 처리가 누락되는 순간이
+  // 있어도 최소한 멈춰는 있도록).
+  // 2026-10-14 10차: 클래스 토글만으로는(위 설명대로) 비용이 안
+  // 줄어서, is-o01-active/m00-offscreen 둘 중 하나라도 켜지면
+  // clearM00Animations()를, 둘 다 꺼지면 applyM00Animations()를
+  // 직접 호출하도록 연결했다. is-o01-active는 js/opening.js가
+  // 토글하는데 그 파일은 이번 라운드 수정 범위 밖이라, body의
+  // class 속성 변화를 MutationObserver로 지켜보는 방식으로 건드리지
+  // 않고 감지한다. */
+  function updateM00AnimationActivity() {
+    const shouldBeActive =
+      !document.body.classList.contains('is-o01-active') &&
+      !document.body.classList.contains('m00-offscreen');
+    if (shouldBeActive === m00AnimationsActive) return;
+    m00AnimationsActive = shouldBeActive;
+    if (shouldBeActive) applyM00Animations();
+    else clearM00Animations();
+  }
+
+  const m00Section = document.getElementById('M-00');
+  if (m00Section && 'IntersectionObserver' in window) {
+    const m00VisibilityObserver = new IntersectionObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      document.body.classList.toggle('m00-offscreen', !entry.isIntersecting);
+      updateM00AnimationActivity();
+    }, { threshold: 0 });
+    m00VisibilityObserver.observe(m00Section);
+  }
+  new MutationObserver(updateM00AnimationActivity)
+    .observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  updateM00AnimationActivity();
+
+  // 내부 링크(별 수록 목차, breadcrumb, 레일 로고, 전체 메뉴 칼럼 등)로
+  // 화면 이동. 전체 메뉴가 열려 있는 상태에서 누른 거라면 이동과 함께
+  // 메뉴도 같이 닫는다. stopPropagation이 필요한 이유: 전체 메뉴의
+  // '입구' 칼럼 자체도 data-target="E-00"을 갖고 있는데, 그 안에
+  // data-target="E-01"/"E-02"인 하위 목록 링크가 중첩되어 있다.
+  // 전파를 막지 않으면 하위 링크를 눌러도 이벤트가 부모까지 올라가
+  // E-01로 이동한 직후 곧바로 E-00으로 덮어써 버린다.
+  document.querySelectorAll('[data-target]').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      goToScreenId(el.dataset.target);
+      if (isNavOverlayOpen()) closeNavOverlay();
+    });
+  });
+
+  // ------------------------------------------------------------
+  // C-01~C-04 share reference identities; C-01 uses its dedicated description.
+  // Compatibility calculations below remain separate from the identity data.
+  // ------------------------------------------------------------
+  const STARS = window.ByeolData.catalog.map(star => ({
+    id: star.id, hanja: star.hanja, name: star.name, group: star.groupName,
+    groupLabel: `${star.groupName} · ${star.direction}7수`,
+    desc: star.shortAnalysis, animal: star.constellationName, dateRange: star.dateRange,
+    dictionaryDescription: star.dictionaryDescription,
+  }));
+  const STAR_GROUPS = ['청룡', '현무', '백호', '주작'];
+  window.ByeolStars = Object.freeze(STARS.map(star => Object.freeze({ ...star })));
+  const STAR_GROUP_LABEL = { 청룡:'청룡 · 동방', 현무:'현무 · 북방', 백호:'백호 · 서방', 주작:'주작 · 남방' };
+  const STAR_GROUP_COLOR = { 청룡:'#0BA295', 현무:'#285C6B', 백호:'#DFCD9D', 주작:'#B15456' };
+  const relationColors = { '천생연분': '#b8eaff', '보완': '#73caff', '주의': '#3195d6' };
+  function relationsOfStar(idx) {
+    const star = STARS[idx];
+    if (!star) return [];
+    return window.ByeolData.featuredOf(star.id).map(row => ({
+      idx: STARS.findIndex(partner => partner.id === row.partner_id),
+      type: row.type, rank: row.rank, color: relationColors[row.type],
+      reason: row.card_text, score: row.score,
+    }));
+  }
+  window.ByeolRelations = Object.freeze({ of: relationsOfStar });
+  function compatibilityOf(pair) {
+    if (!Array.isArray(pair) || pair.length !== 2 || !pair.every(index => Number.isInteger(index) && index >= 0 && index < STARS.length)) return null;
+    const data = window.ByeolData.compatibilityOf(STARS[pair[0]].id, STARS[pair[1]].id);
+    if (!data) return null;
+    return { pair: pair.slice(), relation: { type: data.relation }, score: data.score, data };
+  }
+  function starLabel(s) {
+    return s.animal ? (s.hanja + '宿 · ' + s.animal) : (s.hanja + '宿');
+  }
+
+  // ------------------------------------------------------------
+  // F-01 생년월일 입력 — <select> 3개(년/월/일) 채우기 + 최소한의
+  // 입력값 검증(월이 바뀌면 그 달의 실제 일수만큼만 '일' 옵션을
+  // 다시 채움, 윤년 포함). 입력 이벤트를 fortune.js에 전달해 기준
+  // JSON으로 별자리를 판정하고, 입력값을 저장한 뒤 F-02로 이동한다.
+  // F-01이 없는 화면(E-xx 등)에서는 아무 일도 하지 않는다.
+  // ------------------------------------------------------------
+  const f01Year = document.getElementById('f01-year');
+  const f01Month = document.getElementById('f01-month');
+  const f01Day = document.getElementById('f01-day');
+  function daysInMonth(year, month) {
+    return new Date(year, month, 0).getDate(); // month: 1~12
+  }
+  if (f01Year && f01Month && f01Day) {
+    const now = new Date();
+    const thisYear = now.getFullYear();
+    for (let y = thisYear; y >= 1930; y--) {
+      const opt = document.createElement('option');
+      opt.value = String(y);
+      opt.textContent = String(y);
+      f01Year.appendChild(opt);
+    }
+    for (let m = 1; m <= 12; m++) {
+      const opt = document.createElement('option');
+      opt.value = String(m);
+      opt.textContent = String(m);
+      f01Month.appendChild(opt);
+    }
+    function refreshDayOptions() {
+      const year = parseInt(f01Year.value, 10);
+      const month = parseInt(f01Month.value, 10);
+      const prevDay = parseInt(f01Day.value, 10) || 1;
+      const max = daysInMonth(year, month);
+      f01Day.innerHTML = '';
+      for (let d = 1; d <= max; d++) {
+        const opt = document.createElement('option');
+        opt.value = String(d);
+        opt.textContent = String(d);
+        f01Day.appendChild(opt);
+      }
+      f01Day.value = String(Math.min(prevDay, max));
+    }
+    refreshDayOptions();
+    f01Year.addEventListener('change', refreshDayOptions);
+    f01Month.addEventListener('change', refreshDayOptions);
+  }
+
+  const f01MobileLabel = document.querySelector('.f01__mobile-label');
+  const f01MobileActions = document.querySelector('.f01__mobile-actions');
+  const f01MobileSubmit = document.getElementById('f01-mobile-submit');
+  const f01Find = document.getElementById('f01-find');
+  const f01Hint = document.getElementById('f01-hint');
+  let lastF01Advance = -Infinity;
+  function advanceF01Mobile() {
+    if (mobileLayout.matches) advanceF01();
+  }
+  function advanceF01() {
+    if (!f01Year || !f01Month || !f01Day) return;
+    const hint = f01Hint;
+    suppressMobileClick = false;
+    const year = Number(f01Year.value), month = Number(f01Month.value), day = Number(f01Day.value);
+    const valid = [
+      Number.isInteger(year) && [...f01Year.options].some(option => option.value === f01Year.value),
+      Number.isInteger(month) && month >= 1 && month <= 12,
+      Number.isInteger(day) && day >= 1 && day <= daysInMonth(year, month),
+    ];
+    if (!valid.every(Boolean)) {
+      hint.textContent = '생년월일을 확인해 주세요.';
+      [f01Year, f01Month, f01Day].forEach((field, index) => field.setAttribute('aria-invalid', String(!valid[index])));
+      [f01Year, f01Month, f01Day][valid.indexOf(false)].focus();
+      return;
+    }
+    if (performance.now() - lastF01Advance < 800) return;
+    lastF01Advance = performance.now();
+    [f01Year, f01Month, f01Day].forEach(field => field.removeAttribute('aria-invalid'));
+    hint.textContent = '생년월일을 입력해 주세요.';
+    const birthdate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const result = document.getElementById('F-02');
+    result.dataset.birthdate = birthdate;
+    result.setAttribute('aria-description', `선택한 생년월일 ${year}년 ${month}월 ${day}일의 체험 결과입니다.`);
+    window.dispatchEvent(new CustomEvent('byeol:birthdate', { detail: { year, month, day } }));
+    try {
+      sessionStorage.setItem('byeolungwan-f01-birthdate', JSON.stringify({
+        year: f01Year.value, month: f01Month.value, day: f01Day.value,
+      }));
+    } catch {}
+    goToScreenId('F-02');
+  }
+  function syncF01MobileControls() {
+    if (f01MobileLabel) f01MobileLabel.hidden = !mobileLayout.matches;
+    if (f01MobileActions) f01MobileActions.hidden = !mobileLayout.matches;
+    if (!mobileLayout.matches) {
+      [f01Year, f01Month, f01Day].forEach((field) => field?.removeAttribute('aria-invalid'));
+    }
+  }
+  syncF01MobileControls();
+  mobileLayout.addEventListener('change', syncF01MobileControls);
+  if (f01Year && f01Month && f01Day) {
+    f01Find?.addEventListener('click', advanceF01);
+    f01MobileSubmit?.addEventListener('click', advanceF01Mobile);
+    f01MobileSubmit?.addEventListener('keydown', event => {
+      event.stopPropagation();
+      if (event.key === 'Enter' || event.key === ' ') suppressMobileClick = false;
+    });
+    f01Year.closest('form')?.addEventListener('submit', event => {
+      event.preventDefault();
+      advanceF01();
+    });
+  }
+
+  // ------------------------------------------------------------
+  // C-01 별자리 사전 — 검색·방위 아코디언·기존 그리드의 선택 상태 공유.
+  // ------------------------------------------------------------
+  function setDirectionPanel(toggle, panel, expanded) {
+    // One measurement on opening, never an animation loop. vw keeps the
+    // measured endpoint proportional when the desktop viewport is resized.
+    if (expanded && !mobileLayout.matches) {
+      const first = panel.firstElementChild.getBoundingClientRect();
+      const last = panel.lastElementChild.getBoundingClientRect();
+      const width = last.right - first.left;
+      panel.style.setProperty('--direction-panel-width', `${width / window.innerWidth * 100}vw`);
+    }
+    toggle.setAttribute('aria-expanded', String(expanded));
+    panel.hidden = !expanded;
+    panel.inert = !expanded;
+    panel.setAttribute('aria-hidden', String(!expanded));
+  }
+
+  function refreshOpenDirectionPanels() {
+    if (mobileLayout.matches) return;
+    document.querySelectorAll('#c01-directions [aria-expanded="true"], #c02-directions [aria-expanded="true"], #c03-accordion [aria-expanded="true"]').forEach((toggle) => {
+      setDirectionPanel(toggle, document.getElementById(toggle.getAttribute('aria-controls')), true);
+    });
+  }
+  mobileLayout.addEventListener('change', refreshOpenDirectionPanels);
+  document.fonts.ready.then(refreshOpenDirectionPanels);
+
+  function appendAccordionStarLabel(button, star) {
+    const name = document.createElement('span');
+    name.className = 'accordion__star-name';
+    name.textContent = star.name;
+    const date = document.createElement('span');
+    date.className = 'accordion__star-date';
+    date.textContent = star.dateRange;
+    date.setAttribute('aria-hidden', 'true');
+    button.append(name, date);
+  }
+
+  function initDirectionAccordion(directions, selectStar) {
+    directions.addEventListener('pointerdown', (e) => e.stopPropagation());
+    directions.querySelectorAll('.c01__direction-toggle').forEach((toggle) => {
+      const panel = document.getElementById(toggle.getAttribute('aria-controls'));
+      STARS.forEach((star, index) => {
+        if (star.group !== toggle.dataset.group) return;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'c01__star';
+        button.dataset.idx = String(index);
+        appendAccordionStarLabel(button, star);
+        button.setAttribute('aria-label', `${star.group} ${star.name} ${star.hanja}宿, ${star.dateRange}`);
+        button.addEventListener('click', () => selectStar(index));
+        panel.appendChild(button);
+      });
+      setDirectionPanel(toggle, panel, false);
+      toggle.addEventListener('click', () => {
+        const open = toggle.getAttribute('aria-expanded') !== 'true';
+        directions.querySelectorAll('.c01__direction-toggle').forEach((other) => {
+          const expanded = other === toggle && open;
+          setDirectionPanel(other, document.getElementById(other.getAttribute('aria-controls')), expanded);
+        });
+        directions.classList.toggle('is-expanded', open);
+        if (open && directions.id === 'c01-directions') {
+          window.dispatchEvent(new CustomEvent('byeol:c01-group', { detail: { group: toggle.dataset.group } }));
+        }
+      });
+    });
+  }
+
+  const c01Grid = document.getElementById('c01-grid');
+  if (c01Grid) {
+    const c01Tabs = document.getElementById('c01-tabs');
+    const nameEl = document.getElementById('c01-preview-name');
+    const hanjaEl = document.getElementById('c01-preview-hanja');
+    const descEl = document.getElementById('c01-preview-desc');
+    const directions = document.getElementById('c01-directions');
+    const search = document.getElementById('c01-search');
+    const searchInput = document.getElementById('c01-search-input');
+    const searchStatus = document.getElementById('c01-search-status');
+    const desktopSearchPlaceholder = searchInput.placeholder;
+    let placeholderInView = false;
+    const updateSearchPlaceholder = () => {
+      const placeholder = mobileLayout.matches ? '' : desktopSearchPlaceholder;
+      if (searchInput.placeholder !== placeholder) searchInput.placeholder = placeholder;
+      document.getElementById('C-01').classList.toggle('is-search-placeholder-active',
+        placeholderInView && !document.hidden && !mobileLayout.matches);
+    };
+    updateSearchPlaceholder();
+    const placeholderObserver = new IntersectionObserver(([entry]) => {
+      placeholderInView = entry.isIntersecting;
+      updateSearchPlaceholder();
+    }, { root: viewport, threshold: 0 });
+    placeholderObserver.observe(searchInput);
+    document.addEventListener('visibilitychange', updateSearchPlaceholder);
+    mobileLayout.addEventListener('change', updateSearchPlaceholder);
+    let selectedIndex = STARS.findIndex((s) => s.name === '저수');
+
+    function syncSelection() {
+      document.querySelectorAll('#c01-grid [data-idx], #c01-directions [data-idx]').forEach((button) => {
+        const selected = Number(button.dataset.idx) === selectedIndex;
+        button.classList.toggle('is-selected', selected);
+        button.setAttribute('aria-pressed', String(selected));
+      });
+    }
+    function selectStar(index, { automatic = false } = {}) {
+      const star = STARS[index];
+      if (!star) return;
+      selectedIndex = index;
+      nameEl.textContent = star.name;
+      hanjaEl.textContent = starLabel(star);
+      descEl.textContent = star.dictionaryDescription ?? '별자리 소개 데이터를 불러오지 못했습니다.';
+      descEl.toggleAttribute('data-description-error', star.dictionaryDescription === null);
+      syncSelection();
+      searchStatus.textContent = '';
+      window.dispatchEvent(new CustomEvent('byeol:c01-change', { detail: { index, automatic } }));
+    }
+    window.addEventListener('byeol:c01-select', (event) => selectStar(event.detail.index, { automatic: !!event.detail.automatic }));
+
+    // 입력 커서 조작과 텍스트 선택은 C-01 안에서만 가로 탐색과 분리한다.
+    search.addEventListener('pointerdown', (e) => e.stopPropagation());
+    search.addEventListener('keydown', (e) => e.stopPropagation());
+    search.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const normalize = (value) => value.normalize('NFC').replace(/\s|·/g, '').toLowerCase();
+      const query = normalize(searchInput.value);
+      if (!query) { searchStatus.textContent = '별자리 이름을 입력해 주세요.'; return; }
+      const matches = STARS.map((star, index) => ({ star, index })).filter(({ star }) =>
+        [star.name, star.hanja, star.hanja + '宿', star.animal || '', star.group + star.name, star.name + star.group]
+          .some((key) => key && normalize(key) === query));
+      if (!matches.length) { searchStatus.textContent = '일치하는 별자리가 없습니다.'; return; }
+      const match = matches.find(({ index }) => index === selectedIndex) || matches[0];
+      selectStar(match.index);
+      searchStatus.textContent = matches.length > 1
+        ? match.star.group + ' ' + match.star.name + ' 선택 · 같은 이름은 방위와 함께 검색해 주세요.'
+        : match.star.group + ' ' + match.star.name + ' 선택';
+    });
+    searchInput.addEventListener('input', () => { searchStatus.textContent = ''; });
+
+    initDirectionAccordion(directions, selectStar);
+
+    STARS.forEach((s, i) => {
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'c01__card';
+      card.dataset.idx = String(i);
+      card.dataset.group = s.group;
+      card.innerHTML = '<span class="c01__card-hanja">' + s.hanja + '</span><span class="c01__card-name">' + s.name + '</span>';
+      card.addEventListener('click', () => selectStar(i));
+      c01Grid.appendChild(card);
+    });
+    // 기본 선택: 레퍼런스와 동일한 저수
+    const defaultStar = STARS.findIndex((s) => s.name === '저수');
+    selectStar(defaultStar, { automatic: true });
+    window.addEventListener('byeol:personal-star', event => selectStar(event.detail.index));
+
+    c01Tabs.querySelectorAll('.c01__tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        c01Tabs.querySelectorAll('.c01__tab').forEach((t) => t.classList.remove('is-active'));
+        tab.classList.add('is-active');
+        const g = tab.dataset.group;
+        c01Grid.querySelectorAll('.c01__card').forEach((card) => {
+          card.style.display = (g === 'all' || card.dataset.group === g) ? '' : 'none';
+        });
+      });
+    });
+  }
+
+  // ------------------------------------------------------------
+  // C-02 — C-01과 같은 방위 아코디언으로 기존 선택 정보·관계를 갱신한다.
+  // ------------------------------------------------------------
+  const c02Directions = document.getElementById('c02-directions');
+  if (c02Directions) {
+    const c02Screen = document.getElementById('C-02');
+    const relationBlocks = c02Screen.querySelectorAll('.c02__relation');
+    function syncC02Selection(index) {
+      c02Directions.querySelectorAll('.c01__star').forEach((button) => {
+        const selected = Number(button.dataset.idx) === index;
+        button.classList.toggle('is-selected', selected);
+        button.setAttribute('aria-pressed', String(selected));
+      });
+    }
+    function selectC02(index) {
+      const star = STARS[index];
+      document.getElementById('c02-selected-name').textContent = star.name;
+      document.getElementById('c02-selected-hanja').textContent = starLabel(star);
+      // 기존 관계 조회 규칙과 데이터만 사용하며 회색 지도는 그대로 둔다.
+      relationsOfStar(index).forEach((relation, i) => {
+        const target = STARS[relation.idx];
+        const block = relationBlocks[i];
+        block.querySelector(':scope > p').textContent = relation.type;
+        const paragraphs = block.querySelectorAll('.c02__relation-copy p');
+        const meta = document.createElement('span');
+        meta.className = 'c02__relation-meta';
+        meta.textContent = target.groupLabel;
+        paragraphs[0].replaceChildren(document.createTextNode(target.name + ' '), meta);
+        paragraphs[1].textContent = relation.reason;
+      });
+      syncC02Selection(index);
+      window.dispatchEvent(new CustomEvent('byeol:c02-change', { detail: { index } }));
+    }
+    initDirectionAccordion(c02Directions, selectC02);
+    window.addEventListener('byeol:c02-select', event => selectC02(event.detail.index));
+    mobileLayout.addEventListener('change', () => {
+      const index = Number(c02Screen.dataset.starIndex);
+      if (Number.isInteger(index) && STARS[index]) selectC02(index);
+    });
+    // 초기 레퍼런스 문구는 유지하고 선택 표시만 저수에 맞춘다.
+    selectC02(STARS.findIndex((star) => star.name === '저수'));
+    window.addEventListener('byeol:personal-star', event => selectC02(event.detail.index));
+  }
+
+  // 이전 그래프 구현 보관: 현재 화면에는 마운트가 없어 실행되지 않는다.
+  const c02Diagram = document.getElementById('c02-diagram');
+  if (c02Diagram) {
+    const dotsG = document.getElementById('c02-diagram-lines');
+    const linesG = document.getElementById('c02-diagram-dots');
+    const relWrap = document.getElementById('c02-relations');
+    const selNameEl = document.getElementById('c02-selected-name');
+    const selHanjaEl = document.getElementById('c02-selected-hanja');
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const cx = 280, cy = 280, r = 220;
+    const points = STARS.map((s, i) => {
+      const a = (i / 28) * Math.PI * 2 - Math.PI / 2;
+      return { x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r, color: STAR_GROUP_COLOR[s.group] };
+    });
+    const dotEls = points.map((p, i) => {
+      const c = document.createElementNS(svgNS, 'circle');
+      c.setAttribute('cx', p.x); c.setAttribute('cy', p.y); c.setAttribute('r', i === 2 ? 6 : 4);
+      c.setAttribute('fill', p.color);
+      c.setAttribute('opacity', '0.35');
+      dotsG.appendChild(c);
+      return c;
+    });
+
+    function renderC02(idx) {
+      const s = STARS[idx];
+      selNameEl.textContent = s.name;
+      selHanjaEl.textContent = starLabel(s);
+      linesG.innerHTML = '';
+      dotEls.forEach((el, i) => el.setAttribute('opacity', i === idx ? '1' : '0.35'));
+      dotEls[idx].setAttribute('r', 7);
+      points.forEach((p, i) => { if (i !== idx) dotEls[i].setAttribute('r', '4'); });
+
+      const rels = relationsOfStar(idx);
+      rels.forEach((rel) => {
+        dotEls[rel.idx].setAttribute('opacity', '1');
+        const line = document.createElementNS(svgNS, 'line');
+        line.setAttribute('x1', points[idx].x); line.setAttribute('y1', points[idx].y);
+        line.setAttribute('x2', points[rel.idx].x); line.setAttribute('y2', points[rel.idx].y);
+        line.setAttribute('stroke', rel.color);
+        line.setAttribute('stroke-width', '1.5');
+        line.setAttribute('opacity', '0.8');
+        linesG.appendChild(line);
+      });
+
+      relWrap.innerHTML = '';
+      rels.forEach((rel) => {
+        const target = STARS[rel.idx];
+        const item = document.createElement('div');
+        item.className = 'c02__rel-item';
+        item.innerHTML =
+          '<p class="c02__rel-type" style="color:' + rel.color + '">' + rel.type + '</p>' +
+          '<div class="c02__rel-row">' +
+            '<span class="c02__rel-ph" aria-hidden="true"></span>' +
+            '<div><p class="c02__rel-name">' + target.name + ' (' + target.groupLabel + ')</p>' +
+            '<p class="c02__rel-reason">' + rel.reason + '</p></div>' +
+          '</div>';
+        relWrap.appendChild(item);
+      });
+    }
+    const c02Default = STARS.findIndex((s) => s.name === '저수');
+    renderC02(c02Default);
+    dotEls.forEach((el, i) => el.style.cursor = 'pointer');
+    dotEls.forEach((el, i) => el.addEventListener('click', () => renderC02(i)));
+  }
+
+  // ------------------------------------------------------------
+  // C-03 별자리 궁합 보기 — 방위 아코디언(단일 확장) + 선택 슬롯 2개.
+  // 별자리를 클릭하면 비어있는 슬롯에 순서대로 채워지고, 두 슬롯이
+  // 다 차면 "궁합 보기"가 활성화된다. 궁합 "계산" 자체는 하지 않고
+  // (C-04로 넘길 인덱스만 저장) 실제 관계 판단은 C-04에서 한다.
+  // ------------------------------------------------------------
+  // C-04는 기존 RAF의 위치 갱신 시점에 진입만 감지한다.
+  // 실제 선·점·본문 연출은 CSS가 실행하며, 화면 밖/숨김 탭에서는 정지한다.
+  const c04Screen = document.getElementById('C-04');
+  const c04ScreenIndex = screens.findIndex((screen) => screen.id === 'C-04');
+  let c04SequencePlayed = false;
+  let c04SequenceKey = 'reference';
+  let c04ConnectionAnimation = null;
+  let c04ProgressComplete = false;
+  let c04LastProgress = -1;
+  let c04LastPercent = -1;
+  let c04TargetScore = 100;
+  const c04Progress = c04Screen?.querySelector('.c04__progress');
+  const c04ProgressFill = c04Progress?.querySelector('.c04__progress-fill');
+  const c04ProgressValue = document.getElementById('c04-progress-value');
+  const c04ProgressTitle = c04Progress?.querySelector('.c04__progress-title');
+  const c04ProgressLabel = c04Progress?.querySelector('.c04__progress-label');
+  let c04LabelAnimation = null;
+  let c04LabelGeneration = 0;
+  function syncC04LabelPlayback() {
+    if (!c04LabelAnimation) return;
+    const visible = !document.hidden && c04Screen.classList.contains('is-result-active');
+    if (!visible && c04LabelAnimation.playState === 'running') c04LabelAnimation.pause();
+    else if (visible && c04LabelAnimation.playState === 'paused') c04LabelAnimation.play();
+  }
+  async function finishC04Label() {
+    const generation = ++c04LabelGeneration;
+    const duration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 1 : 180;
+    try {
+      c04LabelAnimation = c04ProgressLabel.animate([{ opacity: 1 }, { opacity: 0 }],
+        { delay: 2000, duration, easing: 'ease', fill: 'both' });
+      syncC04LabelPlayback();
+      await c04LabelAnimation.finished;
+      if (generation !== c04LabelGeneration) return;
+      c04ProgressTitle.textContent = c04TargetScore === null ? '궁합 미정' : '궁합도';
+      c04LabelAnimation.cancel();
+      c04LabelAnimation = c04ProgressLabel.animate([{ opacity: 0 }, { opacity: 1 }],
+        { duration, easing: 'ease', fill: 'both' });
+      syncC04LabelPlayback();
+      await c04LabelAnimation.finished;
+      if (generation !== c04LabelGeneration) return;
+      c04LabelAnimation.cancel();
+      c04LabelAnimation = null;
+    } catch (error) {
+      if (error.name !== 'AbortError') throw error;
+    }
+  }
+  function setC04Progress(progress) {
+    if (!c04Progress || progress === c04LastProgress) return;
+    c04LastProgress = progress;
+    c04ProgressFill.style.transform = 'scaleX(' + progress + ')';
+    const percent = Math.floor(progress * 100 + 1e-7);
+    if (percent !== c04LastPercent) {
+      c04LastPercent = percent;
+      c04ProgressValue.textContent = c04TargetScore === null ? '—' : String(percent);
+      c04Progress.setAttribute('aria-valuenow', String(percent));
+    }
+  }
+  function updateC04Progress() {
+    if (!c04ConnectionAnimation || c04ProgressComplete || document.hidden ||
+        !c04Screen.classList.contains('is-result-active')) return;
+    // Read the existing CSS animation clock, not layout or a second timer.
+    const progress = c04ConnectionAnimation.effect.getComputedTiming().progress;
+    if (progress === null) return;
+    setC04Progress(clamp(progress, 0, 1) * (c04TargetScore || 0) / 100);
+    c04ProgressComplete = progress >= 1;
+    if (c04ProgressComplete) finishC04Label();
+  }
+  if (c04Screen) {
+    const graphic = c04Screen.querySelector('.c04__constellation');
+    const brightLines = graphic.querySelector('.c04__base-lines').cloneNode(true);
+    brightLines.setAttribute('class', 'c04__lit-lines');
+    graphic.insertBefore(brightLines, graphic.querySelector('.c04__points'));
+    graphic.querySelectorAll('circle').forEach((point) => {
+      const progress = clamp((point.cx.baseVal.value - graphic.viewBox.baseVal.x) / graphic.viewBox.baseVal.width, 0, 1);
+      point.style.setProperty('--point-delay', (progress * 3.2) + 's');
+    });
+  }
+  function resetC04Sequence(key, replay = false) {
+    if (!c04Screen || (!replay && key === c04SequenceKey)) return;
+    c04SequenceKey = key;
+    c04SequencePlayed = false;
+    c04ConnectionAnimation = null;
+    c04ProgressComplete = false;
+    c04LabelGeneration++;
+    c04LabelAnimation?.cancel();
+    c04LabelAnimation = null;
+    c04ProgressTitle.textContent = c04TargetScore === null ? '궁합 미정' : '궁합도';
+    c04LastProgress = -1;
+    c04LastPercent = -1;
+    setC04Progress(0);
+    c04Screen.classList.remove('is-constellation-playing', 'is-result-active');
+    // Commit the reset once per selection so a new pair restarts the CSS clock.
+    void c04Screen.offsetWidth;
+  }
+  function updateC04Sequence() {
+    if (!c04Screen || state.unitWidth <= 0) return;
+    const start = state.screenStarts[c04ScreenIndex];
+    const visible = !document.hidden && state.current > start - state.unitWidth && state.current < start + state.unitWidth;
+    c04Screen.classList.toggle('is-result-active', visible);
+    syncC04LabelPlayback();
+    if (!c04SequencePlayed && !document.hidden && Math.abs(state.current - start) < 1) {
+      c04Screen.classList.add('is-constellation-playing');
+      c04SequencePlayed = true;
+      c04ConnectionAnimation = c04Screen.querySelector('.c04__lit-lines').getAnimations()
+        .find((animation) => animation.animationName === 'c04-connect') || null;
+    }
+  }
+  document.addEventListener('visibilitychange', updateC04Sequence);
+
+  const c03Accordion = document.getElementById('c03-accordion');
+  if (c03Accordion) {
+    c03Accordion.addEventListener('pointerdown', (e) => e.stopPropagation());
+    c03Accordion.addEventListener('keydown', (e) => e.stopPropagation());
+    // 아코디언: 한 번에 하나만 펼침
+    c03Accordion.querySelectorAll('.c03__acc-item').forEach((item) => {
+      const head = item.querySelector('.c03__acc-head');
+      const body = item.querySelector('.c03__acc-body');
+      const group = item.dataset.group;
+      STARS.forEach((s, i) => {
+        if (s.group !== group) return;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'c03__acc-star';
+        btn.dataset.idx = String(i);
+        appendAccordionStarLabel(btn, s);
+        btn.setAttribute('aria-label', `${s.name} ${s.hanja}宿, ${s.dateRange} 선택`);
+        body.appendChild(btn);
+      });
+      setDirectionPanel(head, body, false);
+      head.addEventListener('click', () => {
+        const wasOpen = item.classList.contains('is-open');
+        c03Accordion.querySelectorAll('.c03__acc-item').forEach((it) => {
+          const open = it === item && !wasOpen;
+          it.classList.toggle('is-open', open);
+          setDirectionPanel(it.querySelector('.c03__acc-head'), it.querySelector('.c03__acc-body'), open);
+        });
+      });
+    });
+
+    const picked = [null, null];
+    let activeSlot = 0;
+    const pickers = [document.getElementById('c03-picker-0'), document.getElementById('c03-picker-1')];
+    const confirmBtn = document.getElementById('c03-confirm-btn');
+    const confirmLabel = document.getElementById('c03-confirm-label');
+
+    function setActiveSlot(slot) {
+      activeSlot = slot;
+      pickers.forEach((p, i) => {
+        p.classList.toggle('is-active', i === slot);
+        p.setAttribute('aria-pressed', String(i === slot));
+      });
+    }
+    pickers.forEach((p, i) => p.addEventListener('click', () => setActiveSlot(i)));
+    setActiveSlot(0);
+
+    function updatePickedSelection() {
+      c03Accordion.querySelectorAll('.c03__acc-star').forEach(button => {
+        button.setAttribute('aria-pressed', String(picked.includes(Number(button.dataset.idx))));
+      });
+      const complete = picked.every(index => index !== null);
+      confirmBtn.disabled = !complete;
+      confirmLabel.textContent = complete
+        ? STARS[picked[0]].name + ' & ' + STARS[picked[1]].name
+        : '별자리를 2개 골라주세요';
+      window.dispatchEvent(new CustomEvent('byeol:c03-change', { detail: { pair: picked.slice() } }));
+    }
+    window.addEventListener('byeol:personal-star', event => {
+      picked[0] = event.detail.index;
+      setActiveSlot(1);
+      updatePickedSelection();
+    });
+    document.getElementById('c03-reset-btn').addEventListener('click', () => {
+      picked.fill(null);
+      setActiveSlot(0);
+      updatePickedSelection();
+      try { sessionStorage.removeItem('byeolungwan-c03-pair'); } catch {}
+      pickers[0].focus({ preventScroll: true });
+    });
+    c03Accordion.querySelectorAll('.c03__acc-star').forEach(btn => {
+      btn.addEventListener('click', () => {
+        picked[activeSlot] = Number(btn.dataset.idx);
+        updatePickedSelection();
+        if (picked[0] === null) setActiveSlot(0);
+        else if (picked[1] === null) setActiveSlot(1);
+      });
+    });
+
+    confirmBtn.addEventListener('click', () => {
+      if (picked[0] === null || picked[1] === null) return;
+      try {
+        sessionStorage.setItem('byeolungwan-c03-pair', JSON.stringify(picked));
+      } catch (err) { /* 접근 불가해도 화면 갱신은 아래에서 직접 진행 */ }
+      // 2026-10-16: 이 사이트는 실제 페이지 이동(새로고침) 없이 가상
+      // 스크롤만 하는 단일 페이지라, C-04의 DOM은 이미 로드 시점에
+      // 한 번 다 그려져 있다 — sessionStorage만 써두고 C-04가 "다시
+      // 로드될 때" 읽기를 기대하면 절대 갱신되지 않는다(실제로 이
+      // 버그가 있었다). 그래서 여기서 renderC04()를 직접 호출해 C-03
+      // 선택을 즉시 C-04 DOM에 반영한 뒤에 이동한다.
+      renderC04(picked.slice());
+      goToScreenId('C-04');
+    });
+  }
+
+  // ------------------------------------------------------------
+  // C-04 uses the authored pair/same-constellation result, including its
+  // relation, score, description and advice. The CSS clock drives both graphics.
+  // renderC04()는
+  // C-03의 confirm 클릭에서도 직접 호출된다(위 참고 — 단일 페이지라
+  // sessionStorage를 "나중에 다시 읽는" 방식만으로는 갱신되지 않음).
+  // ------------------------------------------------------------
+  function renderC04(pair) {
+    const c04Headline = document.getElementById('c04-headline');
+    if (!c04Headline) return;
+    const result = compatibilityOf(pair);
+    if (!result) return;
+    c04TargetScore = result.score;
+    c04Screen.dataset.pair = JSON.stringify(pair);
+    c04Screen.dataset.relationship = result.relation?.type || '';
+    c04Screen.dataset.score = result.score === null ? '' : result.score;
+    c04Screen.style.setProperty('--c04-unfilled', `${100 - (result.score || 0)}%`);
+    c04Progress.setAttribute('aria-description', '별운관 궁합 데이터의 궁합도입니다.');
+    c04Progress.setAttribute('aria-label', '별자리 궁합도');
+    c04Progress.setAttribute('title', '별운관 궁합 데이터의 궁합도입니다.');
+    c04Progress.querySelector('.c04__progress-unit').hidden = result.score === null;
+    c04Screen.querySelectorAll('.c04__points circle').forEach(point => {
+      const graphic = c04Screen.querySelector('.c04__constellation');
+      const position = clamp((point.cx.baseVal.value - graphic.viewBox.baseVal.x) / graphic.viewBox.baseVal.width, 0, 1);
+      point.classList.toggle('is-unreached', result.score === null || position > result.score / 100);
+      point.style.setProperty('--point-delay', `${result.score ? position / (result.score / 100) * 3.2 : 0}s`);
+    });
+    resetC04Sequence(pair.join(':'), true);
+    const [a, b] = pair;
+    const sa = STARS[a], sb = STARS[b];
+    document.getElementById('c04-name-0').textContent = sa.name;
+    document.getElementById('c04-hanja-0').textContent = starLabel(sa);
+    document.getElementById('c04-name-1').textContent = sb.name;
+    document.getElementById('c04-hanja-1').textContent = starLabel(sb);
+    document.getElementById('c04-result-title').textContent = sa.name + ' & ' + sb.name;
+
+    const data = result.data;
+    const relationshipLine = { '천생연분': '천생연분의 관계입니다.', '보완': '서로를 보완하는 관계입니다.',
+      '주의': '서로의 차이에 주의가 필요한 관계입니다.', '무난': '무난하게 이어지는 관계입니다.' }[data.relation];
+    c04Headline.replaceChildren(document.createTextNode(`${sa.name}와 ${sb.name}는`), document.createElement('br'),
+      document.createTextNode(relationshipLine));
+    document.getElementById('c04-result-desc').textContent = data.title;
+    document.getElementById('c04-result-body').textContent = data.description;
+    document.getElementById('c04-note-title').textContent = '조언';
+    document.getElementById('c04-result-note').textContent = data.advice;
+    document.getElementById('c04-note-body').textContent = '';
+    document.getElementById('c04-note-body').hidden = true;
+    window.dispatchEvent(new CustomEvent('byeol:c04-change', { detail: result }));
+    updateC04Sequence();
+  }
+  window.ByeolCompatibility = Object.freeze({ calculate: compatibilityOf, show: renderC04 });
+  (function initC04FromSession() {
+    if (!document.getElementById('c04-headline')) return;
+    try {
+      const raw = sessionStorage.getItem('byeolungwan-c03-pair');
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr) && arr.length === 2 && arr.every((idx) => Number.isInteger(idx) && idx >= 0 && idx < STARS.length)) {
+          renderC04(arr);
+          return;
+        }
+      }
+    } catch (err) { /* 접근 불가 시 예시로 대체 */ }
+    renderC04([2, 15]);
+  })();
+
+  // ------------------------------------------------------------
+  // 렌더 루프
+  // 2026-10-14 9차(성능, 가장 큰 변경): 이 루프는 이전까지 state.current
+  // 가 실제로 변하는지와 무관하게 매 프레임(최초 로드부터 페이지를
+  // 닫을 때까지, M-00이 보이든 E-00/E-01/E-02가 보이든, 스크롤 중이든
+  // 완전히 멈춰 있든) 무조건 돌며 아래 5개 함수를 전부 호출했다.
+  // 이 함수들(updateRailChrome/updateReveals/updateCoverParallaxBackgrounds/
+  // updateM00ParallaxBg/updateImageZooms)은 전부 state.current "만의"
+  // 함수라서, state.current가 이전 프레임과 같으면 결과도 100% 같다
+  // — 즉 "아무것도 안 바뀌었는데도 매 프레임 style을 다시 쓰고 있던"
+  // 구조였다. Chrome Tracing(Tracing.start, CDP)으로 idle 상태(스크롤
+  // 없음, M-00 반짝임/회전만 도는 중) 4초를 실측해보니
+  // FireAnimationFrame/UpdateLayoutTree(스타일 재계산)/Layout(강제
+  // 레이아웃)/Layerize(레이어 트리 재구성)가 전부 "정확히 241회"로
+  // 똑같이 찍혔다 — 즉 이 루프가 단순히 60fps로 도는 것을 넘어서
+  // "매 프레임 빠짐없이" 레이아웃/스타일 재계산/레이어 재구성을
+  // 유발하고 있었다는 뜻이다(특히 Layerize만 4초에 712ms — 이
+  // 사이트의 핵심 성능 병목 중 하나로 실측 확인됨, IMPLEMENTATION_
+  // STATUS.md 7.30 참고). 고친 방법: state.current가 "실제로"
+  // 바뀐 프레임에서만 저 5개 함수를 호출하고, 안 바뀐 프레임(스크롤이
+  // 완전히 멈춰 목표값에 도달한 뒤)에는 다음 rAF만 예약하고 즉시
+  // 리턴한다 — 활성 스크롤/이징 중에는 지금처럼 매 프레임 그대로
+  // 동작하고(체감 변화 없음), 정지해 있을 때만 이 비용이 통째로
+  // 사라진다. 리사이즈 시에는 applySizes()가 이 5개 함수를 직접(한
+  // 번만) 호출하므로 raf()가 건너뛰어도 반영이 누락되지 않는다. */
+  function raf() {
+    const prevCurrent = state.current;
+    state.current += (state.target - state.current) * EASE;
+    if (Math.abs(state.target - state.current) < 0.05) {
+      state.current = state.target;
+    }
+    normalizeLoopPosition();
+    if (state.current !== prevCurrent) {
+      renderScrollPosition();
+      updateRailChrome();
+      updateReveals();
+      updateCoverParallaxBackgrounds();
+      updateE02ParallaxImage();
+      updateM00ParallaxBg();
+      updateImageZooms();
+      updateC04Sequence();
+    }
+    updateC04Progress();
+    requestAnimationFrame(raf);
+  }
+
+  // window 'resize' 이벤트는 브라우저 줌이나 OS 레벨 배율 변경 등에서
+  // 누락될 수 있어, .viewport 자체 크기 변화를 직접 감시하는
+  // ResizeObserver를 기본으로 쓰고 'resize' 는 보조 수단으로 둔다.
+  if ('ResizeObserver' in window) {
+    new ResizeObserver(applySizes).observe(viewport);
+  } else {
+    window.addEventListener('resize', applySizes);
+  }
+
+  applySizes();
+  requestAnimationFrame(raf);
+})();
