@@ -88,6 +88,20 @@ test('PNG and renamed PNG selections are rejected before reserving a slot or upl
   }
 });
 
+test('a site with a bundled library license appears in the file list and uploads intact', async () => {
+  const server = services(), ui = await controller(server); server.failOnce = false;
+  const license = new File(['Library license notice'], 'LICENSE');
+  const path = 'js/vendor/three/LICENSE';
+  Object.defineProperty(license, 'webkitRelativePath', { value: `website/${path}` });
+  await select(ui, [...sampleFiles(), license]);
+  assert.ok(ui.get('file-list').children.some(row => row.children[0].textContent === path));
+  assert.equal(ui.get('upload-button').disabled, false);
+  await ui.event('upload-button', 'click');
+  assert.equal(server.uploaded.size, 3);
+  assert.ok(server.files.some(file => file.path === path && file.size === license.size));
+  assert.equal(server.finalizations, 0);
+});
+
 test('GIF can still be selected and uploaded', async () => {
   const server = services(), ui = await controller(server); server.failOnce = false;
   const gif = new File(['GIF89a'], 'animation.gif');
@@ -307,6 +321,38 @@ test('file manager navigates folders and stages new files at the current path wi
   assert.deepEqual(server.files.map(file => file.path), ['images/new.svg']);
   assert.deepEqual(server.deletions, []);
   assert.match(ui.get('site-usage').textContent, /3개/);
+});
+
+test('importing a site from a subfolder shows the imported files at the team root', async () => {
+  const server = services(); server.siteFiles = [{ path: 'index.html', size: 2 }, { path: 'images/old.svg', size: 6 }];
+  const ui = await controller(server); ui.get('team').value = 'ilkko'; await ui.event('team', 'change');
+  const folderRow = ui.get('directory-list').children.find(row => row.children[0].textContent.includes('images'));
+  await folderRow.children[0].listeners.click();
+  ui.get('folder-files').files = sampleFiles(); await ui.event('folder-files', 'change');
+  assert.equal(ui.get('folder-breadcrumbs').children.length, 1);
+  assert.ok(ui.get('directory-list').children.some(row => row.children[0].textContent === 'index.html'));
+  const images = ui.get('directory-list').children.find(row => row.children[0].textContent.includes('images'));
+  assert.ok(images);
+  await images.children[0].listeners.click();
+  assert.deepEqual(ui.get('directory-list').children.map(row => row.children[0].textContent).sort(), ['icon.svg', 'old.svg']);
+  assert.equal(server.preparations, 0); assert.equal(server.finalizations, 0);
+});
+
+test('adding a folder keeps its name and the current directory visible', async () => {
+  const server = services(); server.siteFiles = [{ path: 'index.html', size: 2 }, { path: 'images/old.svg', size: 6 }];
+  const ui = await controller(server); ui.get('team').value = 'ilkko'; await ui.event('team', 'change');
+  const folderRow = ui.get('directory-list').children.find(row => row.children[0].textContent.includes('images'));
+  await folderRow.children[0].listeners.click();
+  const file = new File(['<svg/>'], 'icon.svg');
+  Object.defineProperty(file, 'webkitRelativePath', { value: 'icons/icon.svg' });
+  ui.get('nested-folder-files').files = [file]; await ui.event('nested-folder-files', 'change');
+  assert.equal(ui.get('folder-breadcrumbs').children.at(-1).textContent, 'images');
+  const icons = ui.get('directory-list').children.find(row => row.children[0].textContent.includes('icons'));
+  assert.ok(icons);
+  await icons.children[0].listeners.click();
+  assert.equal(ui.get('directory-list').children[0].children[0].textContent, 'icon.svg');
+  assert.equal(ui.get('file-list').children[0].children[0].textContent, 'images/icons/icon.svg');
+  assert.equal(server.preparations, 0); assert.equal(server.finalizations, 0);
 });
 
 test('folder deletion is staged, can be undone, and only applies after explicit confirmation', async () => {

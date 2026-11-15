@@ -21,6 +21,20 @@ test('new folder manifests reject PNG/BMP on both client and server while retain
   }
 });
 
+test('license notices are accepted by both client and server without allowing arbitrary extensionless files', () => {
+  for (const path of ['js/vendor/three/LICENSE', 'vendor/three.js/license', 'vendor/LICENCE', 'vendor/NOTICE']) {
+    const file = { path, size: 7, sha256: hash('license') };
+    const selected = folderSelection([{ webkitRelativePath: `site/${path}`, size: file.size }], { requireIndex: false });
+    assert.equal(selected.files[0].path, path);
+    assert.equal(validateFolderSubmission({ teamId: 'ilkko', files: [file], baseTreeSha: null }).files[0].path, path);
+  }
+  for (const path of ['vendor/unknown', 'vendor/LICENSE.exe', 'vendor/LICENSE.zip', 'vendor/LICENSE/image.PNG', 'node_modules/three/LICENSE', '../LICENSE']) {
+    const file = { path, size: 7, sha256: hash('license') };
+    assert.throws(() => folderSelection([{ webkitRelativePath: `site/${path}`, size: file.size }], { requireIndex: false }), path);
+    assert.throws(() => validateFolderSubmission({ teamId: 'ilkko', files: [file], baseTreeSha: null }), path);
+  }
+});
+
 test('server rejects PNG/BMP renamed as JPG even with matching size and digest, and accepts GIF bytes', async () => {
   const png = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 0]);
   const bmp = Buffer.from([66, 77, ...new Array(12).fill(0)]);

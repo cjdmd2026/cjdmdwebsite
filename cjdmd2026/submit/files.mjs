@@ -1,10 +1,14 @@
 // Shared by the browser and server; server validation remains authoritative.
 export const folderLimits = Object.freeze({ fileBytes: 95 * 1024 ** 2, totalBytes: 500 * 1024 ** 2, files: 2000 });
 const extensions = new Set('html htm css js mjs json jpg jpeg gif webp avif svg ico woff woff2 ttf otf eot mp4 webm ogg mp3 wav m4a glb gltf bin wasm txt xml pdf webmanifest map'.split(' '));
+const licenseNames = new Set(['license', 'licence', 'notice']);
 const imageExtensions = new Set('jpg jpeg gif webp avif svg ico'.split(' '));
 const imageHelp = '사진은 WebP·AVIF·JPG/JPEG로 변환하고, HTML·CSS·JS의 연결 경로도 수정해주세요. SVG·GIF와 파비콘용 ICO는 허용됩니다.';
 export function validateFileType(path) {
-  const extension = path.split('.').pop().toLowerCase();
+  const name = path.split('/').pop().toLowerCase();
+  // Bundled libraries commonly include license notices without a file extension.
+  if (licenseNames.has(name)) return;
+  const extension = name.split('.').pop();
   if (extension === 'png' || extension === 'bmp') throw new Error(`${path}: PNG·BMP 이미지는 새로 제출할 수 없습니다. ${imageHelp}`);
   if (!extensions.has(extension)) throw new Error(`${path}: 웹사이트용 파일만 제출할 수 있습니다. 디자인 원본과 압축 파일은 제외해주세요.`);
 }

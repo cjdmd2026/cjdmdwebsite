@@ -575,8 +575,6 @@ html[data-project-fluid-view="slide"] .header .nav:is(
 }
 
 .container:has(#slideview:not([hidden])) .project-dial {
-    --project-title-bar-width: 5px;
-    --project-title-bar-gap: clamp(12px, 1vw, 20px);
     position: fixed;
 
     top: 0;
@@ -659,8 +657,8 @@ html[data-project-fluid-view="slide"] .header .nav:is(
 
 .container:has(#slideview:not([hidden])) .project-dial-title {
     position: relative;
-    padding-left: var(--project-title-bar-gap);
-    border-left: var(--project-title-bar-width) solid transparent;
+    padding-left: 0;
+    border-left: 0;
     font-family: 'pretendard', var(--font-main);
     font-size: 4rem;
     font-weight: 700;
@@ -669,21 +667,6 @@ html[data-project-fluid-view="slide"] .header .nav:is(
     color: rgba(255, 255, 255, 0.9);
     text-shadow: 0 2px 14px rgb(0 0 0 / 22%);
 }
-
-:where(.container:has(#slideview:not([hidden]))) .project-dial-title::before,
-.project-title-exit::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: calc(-1 * var(--project-title-bar-width));
-    width: var(--project-title-bar-width);
-    background: var(--project-title-accent, transparent);
-    transform: var(--project-title-line-transform, scaleY(1));
-    transform-origin: center top;
-    pointer-events: none;
-}
-
 
 /* ============================== Project Description Layer ============================== */
 
@@ -748,10 +731,10 @@ html[data-project-fluid-view="slide"] .project-warp {
 }
 
 .project-info-block {
-    font-size: calc(1.025rem + clamp(0rem, (100vw - 90rem) / 120, 0.8rem));
+    font-size: calc(1rem + clamp(0rem, (100vw - 128rem) / 120, 0.8rem));
     line-height: 1.6;
     letter-spacing: -0.01rem;
-    font-weight: 450;
+    font-weight: 400;
     text-shadow: 0 1px 3px rgb(0 0 0 / 12%);
 
     color: rgba(255, 255, 255, 0.68);

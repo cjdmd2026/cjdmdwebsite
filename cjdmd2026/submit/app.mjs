@@ -233,6 +233,7 @@ async function chooseFolder(files, kind = 'site') {
       if (next.size + nextDeletes.size > 2000) throw new Error('한 번에 변경할 파일은 최대 2,000개입니다. 변경을 나눠서 반영해주세요.');
       entries = [...next.values()].sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0); deletions = nextDeletes;
     }
+    if (kind === 'site') directory = '';
     folderName = selected.name; byId('confirm').checked = false; renderFiles();
     if (receipt) uploadSummary(); else status.hidden = true;
   } catch (error) {
