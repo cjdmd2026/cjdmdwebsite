@@ -1,0 +1,1958 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+
+<title>COCO LANG</title>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css?family=Montserrat"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="style.css">
+
+    <script
+        src="https://kit.fontawesome.com/65c758839a.js"
+        crossorigin="anonymous"
+    ></script>
+
+    <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+
+
+    <script>
+        window.navermap_authFailure = function () {
+            console.error("네이버 지도 API 인증에 실패했습니다.");
+            console.error(
+                "Client ID, Dynamic Map, Web 서비스 URL 설정을 확인하세요."
+            );
+        };
+    </script>
+
+
+    <!-- 발급받은 실제 Client ID를 넣기 -->
+    <script
+        type="text/javascript"
+        src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=여기에_실제_CLIENT_ID"
+    ></script>
+
+
+    <script>
+        $(function () {
+            $(".headC").click(function () {
+                $(".headB").slideToggle();
+            });
+        });
+    </script>
+</head>
+
+<body class="page-exhibition">
+
+
+<!-- ================= TOP BUTTON ================= -->
+
+<button
+  type="button"
+  id="scrollTopBtn"
+  class="scroll-top-btn is-hidden"
+  aria-label="맨 위로 이동"
+>
+  <i class="fa-solid fa-arrow-up"></i>
+</button>
+
+    <!-- ===================================
+         HEADER
+    =================================== -->
+
+  <!-- =========================
+       HEADER
+       기존 링크 구조 유지
+  ========================== -->
+  <header>
+    <div class="header-inner">
+
+      <div class="container-small">
+      <a href="index.html" class="logo">
+        <img src="img/header-logo.webp" alt="COCO LANG">
+      </a>
+      </div>
+
+<nav class="headB">
+  <ul>
+
+    <li>
+      <a href="brand.html">
+        BRAND
+      </a>
+    </li>
+
+    <li>
+      <a href="app.html">
+        APP
+      </a>
+    </li>
+
+    <li>
+      <a href="community.html">
+        COMMUNITY
+      </a>
+    </li>
+
+    <li>
+      <a href="shop.html">
+        SHOP
+      </a>
+    </li>
+
+  </ul>
+</nav>
+
+      <button class="headC" type="button" aria-label="메뉴 열기">
+        ☰
+      </button>
+
+    </div>
+  </header>
+
+    <!-- exhibition:S -->
+
+<!-- =========================================================
+     NEWS HERO
+========================================================= -->
+<section class="news-hero">
+
+    <span class="news-hero-eyebrow">
+        COCO LANG COMMUNITY
+    </span>
+
+    <h1>
+        News
+    </h1>
+
+    <p>
+        코코랑의 새로운 소식과 이야기를 만나보세요.
+    </p>
+
+</section>
+
+
+
+<!-- =========================================================
+     NEWS CONTENT
+========================================================= -->
+<main class="news-page">
+
+
+    <!-- =====================================================
+         TAB
+    ====================================================== -->
+    <div class="news-tab-wrap">
+
+        <button
+            class="news-tab active"
+            data-tab="notice"
+            type="button"
+        >
+            Notice
+        </button>
+
+        <button
+            class="news-tab"
+            data-tab="faq"
+            type="button"
+        >
+            FAQ
+        </button>
+
+        <button
+            class="news-tab"
+            data-tab="sns"
+            type="button"
+        >
+            SNS
+        </button>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         NOTICE
+    ====================================================== -->
+    <section
+        class="news-panel active"
+        id="noticePanel"
+    >
+
+        <div class="news-section-head">
+
+            <div>
+
+                <span>
+                    NOTICE
+                </span>
+
+                <h2>
+                    코코랑 소식
+                </h2>
+
+                <p>
+                    코코랑의 새로운 기능부터 이벤트까지,<br>
+                    꼭 알아야 할 소식을 확인해보세요.
+                </p>
+
+            </div>
+
+
+            <div class="news-count">
+                총 <strong>8</strong>건
+            </div>
+
+        </div>
+
+
+
+        <div class="notice-list">
+
+
+            <!-- 01 -->
+            <article class="notice-item">
+
+                <button
+                    class="notice-question"
+                    type="button"
+                >
+
+                    <div class="notice-main">
+
+                        <span class="notice-category">
+                            NOTICE
+                        </span>
+
+                        <strong>
+                            코코랑 커뮤니티 이용 가이드 안내
+                        </strong>
+
+                    </div>
+
+
+                    <div class="notice-side">
+
+                        <span>
+                            2026.09.12
+                        </span>
+
+                        <i>
+                            +
+                        </i>
+
+                    </div>
+
+                </button>
+
+
+                <div class="notice-answer">
+
+                    <p>
+                        코코랑을 더 즐겁고 안전하게 이용할 수 있도록
+                        커뮤니티 이용 가이드가 새롭게 정리되었습니다.
+                        산책 메이트에게 처음 인사하는 방법,
+                        반려견의 성향과 교류 의사를 확인하는 방법,
+                        신고 및 차단 기능 이용 방법을 확인해 주세요.
+                        서로의 속도와 거리를 존중하며
+                        편안한 산책 문화를 함께 만들어가요.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- 02 -->
+            <article class="notice-item">
+
+                <button
+                    class="notice-question"
+                    type="button"
+                >
+
+                    <div class="notice-main">
+
+                        <span class="notice-category">
+                            UPDATE
+                        </span>
+
+                        <strong>
+                            우리 동네 산책 지도가 새롭게 업데이트됐어요
+                        </strong>
+
+                    </div>
+
+
+                    <div class="notice-side">
+
+                        <span>
+                            2026.09.08
+                        </span>
+
+                        <i>
+                            +
+                        </i>
+
+                    </div>
+
+                </button>
+
+
+                <div class="notice-answer">
+
+                    <p>
+                        이제 지도에서 현재 주변을 산책 중인 친구를
+                        더욱 쉽게 확인할 수 있어요.
+                        활발, 온순, 낯가림 등 원하는 성향을 선택해
+                        친구를 찾아볼 수 있고,
+                        각 프로필에서 인사 가능 여부와
+                        현재 거리를 함께 확인할 수 있습니다.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- 03 -->
+            <article class="notice-item">
+
+                <button
+                    class="notice-question"
+                    type="button"
+                >
+
+                    <div class="notice-main">
+
+                        <span class="notice-category">
+                            EVENT
+                        </span>
+
+                        <strong>
+                            9월 우리 동네 산책 메이트 챌린지
+                        </strong>
+
+                    </div>
+
+
+                    <div class="notice-side">
+
+                        <span>
+                            2026.09.03
+                        </span>
+
+                        <i>
+                            +
+                        </i>
+
+                    </div>
+
+                </button>
+
+
+                <div class="notice-answer">
+
+                    <p>
+                        새로운 메이트와 함께 동네를 걸어보세요.
+                        9월 한 달 동안 코코랑을 통해
+                        새로운 산책 친구와 세 번 이상 산책하면
+                        특별 활동 배지를 받을 수 있습니다.
+                        산책 후 서로의 매너를 확인하고
+                        짧은 후기를 남기면 참여가 완료됩니다.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- 04 -->
+            <article class="notice-item">
+
+                <button
+                    class="notice-question"
+                    type="button"
+                >
+
+                    <div class="notice-main">
+
+                        <span class="notice-category">
+                            GUIDE
+                        </span>
+
+                        <strong>
+                            처음 만나는 친구에게 인사하는 방법
+                        </strong>
+
+                    </div>
+
+
+                    <div class="notice-side">
+
+                        <span>
+                            2026.08.28
+                        </span>
+
+                        <i>
+                            +
+                        </i>
+
+                    </div>
+
+                </button>
+
+
+                <div class="notice-answer">
+
+                    <p>
+                        처음 만나는 반려견에게 바로 가까이 다가가기보다
+                        먼저 상대의 성향과 보호자의 교류 의사를 확인해 주세요.
+                        충분한 거리를 유지한 상태에서 천천히 접근하고,
+                        서로 편안해 보일 때 짧게 인사하는 것이 좋아요.
+                        낯가림이나 경계 성향이 있는 친구에게는
+                        조금 더 여유로운 시간을 주세요.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- 05 -->
+            <article class="notice-item">
+
+                <button
+                    class="notice-question"
+                    type="button"
+                >
+
+                    <div class="notice-main">
+
+                        <span class="notice-category">
+                            UPDATE
+                        </span>
+
+                        <strong>
+                            산책 기록 기능이 더 편리해졌어요
+                        </strong>
+
+                    </div>
+
+
+                    <div class="notice-side">
+
+                        <span>
+                            2026.08.20
+                        </span>
+
+                        <i>
+                            +
+                        </i>
+
+                    </div>
+
+                </button>
+
+
+                <div class="notice-answer">
+
+                    <p>
+                        오늘 누구와 걸었는지,
+                        얼마나 걸었는지 한눈에 확인해보세요.
+                        산책 거리와 시간뿐 아니라
+                        함께한 메이트와 산책 코스,
+                        활동 배지까지 한곳에서 기록할 수 있도록
+                        산책 기록 화면을 개선했습니다.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- 06 -->
+            <article class="notice-item">
+
+                <button
+                    class="notice-question"
+                    type="button"
+                >
+
+                    <div class="notice-main">
+
+                        <span class="notice-category">
+                            UPDATE
+                        </span>
+
+                        <strong>
+                            반려견 성향 배지가 추가되었어요
+                        </strong>
+
+                    </div>
+
+
+                    <div class="notice-side">
+
+                        <span>
+                            2026.08.14
+                        </span>
+
+                        <i>
+                            +
+                        </i>
+
+                    </div>
+
+                </button>
+
+
+                <div class="notice-answer">
+
+                    <p>
+                        친구를 만나기 전에 서로의 성향을
+                        조금 더 쉽게 이해할 수 있도록
+                        성향 배지가 추가되었습니다.
+                        활발한 친구, 천천히 인사하고 싶은 친구,
+                        낯선 환경에 조심스러운 친구 등
+                        현재 성향을 프로필에서 확인할 수 있습니다.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- 07 -->
+            <article class="notice-item">
+
+                <button
+                    class="notice-question"
+                    type="button"
+                >
+
+                    <div class="notice-main">
+
+                        <span class="notice-category">
+                            NOTICE
+                        </span>
+
+                        <strong>
+                            안전한 산책을 위한 기본 매너를 확인해주세요
+                        </strong>
+
+                    </div>
+
+
+                    <div class="notice-side">
+
+                        <span>
+                            2026.08.06
+                        </span>
+
+                        <i>
+                            +
+                        </i>
+
+                    </div>
+
+                </button>
+
+
+                <div class="notice-answer">
+
+                    <p>
+                        모든 산책 친구가 편안하게 이용할 수 있도록
+                        리드줄 착용, 상대 반려견의 의사 확인,
+                        무리한 접촉 금지 등 기본 산책 매너를 지켜주세요.
+                        불편한 상황이 발생했다면
+                        앱의 신고 및 차단 기능을 이용할 수 있습니다.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- 08 -->
+            <article class="notice-item">
+
+                <button
+                    class="notice-question"
+                    type="button"
+                >
+
+                    <div class="notice-main">
+
+                        <span class="notice-category">
+                            EVENT
+                        </span>
+
+                        <strong>
+                            코코랑 첫 산책 웰컴 배지 이벤트
+                        </strong>
+
+                    </div>
+
+
+                    <div class="notice-side">
+
+                        <span>
+                            2026.07.30
+                        </span>
+
+                        <i>
+                            +
+                        </i>
+
+                    </div>
+
+                </button>
+
+
+                <div class="notice-answer">
+
+                    <p>
+                        코코랑에서 첫 산책을 시작한 신규 이용자에게
+                        특별한 웰컴 배지를 드립니다.
+                        반려견 프로필을 완성한 뒤
+                        첫 산책 기록을 남기면 자동으로 참여됩니다.
+                    </p>
+
+                </div>
+
+            </article>
+
+        </div>
+
+
+
+        <button
+            class="news-more-btn"
+            type="button"
+        >
+            더보기
+            <span>
+                ↓
+            </span>
+        </button>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         FAQ
+    ====================================================== -->
+    <section
+        class="news-panel"
+        id="faqPanel"
+    >
+
+        <div class="faq-top">
+
+            <div class="faq-copy">
+
+                <span>
+                    NEED HELP?
+                </span>
+
+                <p>
+                    코코랑 이용 중 궁금한 점이 있다면<br>
+                    자주 묻는 질문에서 확인해보세요.
+                </p>
+
+                <h2>
+                    FAQ
+                </h2>
+
+            </div>
+
+
+            <div class="faq-search">
+
+                <input
+                    type="text"
+                    id="faqSearchInput"
+                    placeholder="궁금한 내용을 검색해주세요."
+                >
+
+                <button
+                    type="button"
+                    aria-label="검색"
+                >
+                    ⌕
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="faq-list">
+
+
+            <!-- FAQ 01 -->
+            <article class="faq-item">
+
+                <button
+                    class="faq-question"
+                    type="button"
+                >
+
+                    <div>
+
+                        <span>
+                            메이트
+                        </span>
+
+                        <strong>
+                            산책 메이트는 어떻게 찾을 수 있나요?
+                        </strong>
+
+                    </div>
+
+                    <i>
+                        +
+                    </i>
+
+                </button>
+
+
+                <div class="faq-answer">
+
+                    <p>
+                        지도에서 현재 주변을 산책 중인 친구들을 확인할 수 있어요.
+                        원하는 친구를 선택하면 성향,
+                        인사 가능 여부와 간단한 프로필을 확인할 수 있습니다.
+                        나와 잘 맞는 친구를 찾았다면
+                        산책 메이트 요청을 보내보세요.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- FAQ 02 -->
+            <article class="faq-item">
+
+                <button
+                    class="faq-question"
+                    type="button"
+                >
+
+                    <div>
+
+                        <span>
+                            지도
+                        </span>
+
+                        <strong>
+                            지도에 표시되는 친구는 어떤 기준인가요?
+                        </strong>
+
+                    </div>
+
+                    <i>
+                        +
+                    </i>
+
+                </button>
+
+
+                <div class="faq-answer">
+
+                    <p>
+                        현재 산책 중으로 설정되어 있고
+                        위치 공개에 동의한 친구가 지도에 표시됩니다.
+                        사용자의 현재 위치를 기준으로 가까운 친구부터 확인할 수 있으며,
+                        성향 필터를 이용하면 원하는 유형의 친구만 볼 수 있습니다.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- FAQ 03 -->
+            <article class="faq-item">
+
+                <button
+                    class="faq-question"
+                    type="button"
+                >
+
+                    <div>
+
+                        <span>
+                            성향
+                        </span>
+
+                        <strong>
+                            반려견 성향은 어떻게 설정하나요?
+                        </strong>
+
+                    </div>
+
+                    <i>
+                        +
+                    </i>
+
+                </button>
+
+
+                <div class="faq-answer">
+
+                    <p>
+                        반려견 프로필 등록 과정에서
+                        평소 산책 행동과 친구를 만났을 때의 반응을 선택하면
+                        성향 정보를 설정할 수 있습니다.
+                        이후 MY 페이지에서 언제든 수정할 수 있어요.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- FAQ 04 -->
+            <article class="faq-item">
+
+                <button
+                    class="faq-question"
+                    type="button"
+                >
+
+                    <div>
+
+                        <span>
+                            인사
+                        </span>
+
+                        <strong>
+                            ‘인사 가능’ 표시는 어떤 의미인가요?
+                        </strong>
+
+                    </div>
+
+                    <i>
+                        +
+                    </i>
+
+                </button>
+
+
+                <div class="faq-answer">
+
+                    <p>
+                        현재 산책 중 다른 친구와의 가벼운 교류를
+                        원하는 상태라는 의미예요.
+                        다만 인사 가능 표시가 있더라도
+                        실제 만남에서는 보호자와 반려견의 반응을
+                        한 번 더 확인한 뒤 천천히 접근해 주세요.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- FAQ 05 -->
+            <article class="faq-item">
+
+                <button
+                    class="faq-question"
+                    type="button"
+                >
+
+                    <div>
+
+                        <span>
+                            매칭
+                        </span>
+
+                        <strong>
+                            추천 메이트는 어떤 기준으로 보여주나요?
+                        </strong>
+
+                    </div>
+
+                    <i>
+                        +
+                    </i>
+
+                </button>
+
+
+                <div class="faq-answer">
+
+                    <p>
+                        반려견의 성향과 산책 스타일,
+                        주로 걷는 시간대와 거리 등을 바탕으로
+                        함께 산책하기 편한 친구를 추천합니다.
+                        추천 결과는 참고용이며,
+                        실제 만남 전에는 상대 프로필을 꼭 확인해주세요.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- FAQ 06 -->
+            <article class="faq-item">
+
+                <button
+                    class="faq-question"
+                    type="button"
+                >
+
+                    <div>
+
+                        <span>
+                            기록
+                        </span>
+
+                        <strong>
+                            산책 기록에는 어떤 정보가 저장되나요?
+                        </strong>
+
+                    </div>
+
+                    <i>
+                        +
+                    </i>
+
+                </button>
+
+
+                <div class="faq-answer">
+
+                    <p>
+                        산책 날짜와 시간,
+                        이동 거리,
+                        함께 걸은 메이트,
+                        선택한 산책 코스 등을 기록할 수 있습니다.
+                        누적된 기록은 MY 페이지에서 확인할 수 있어요.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- FAQ 07 -->
+            <article class="faq-item">
+
+                <button
+                    class="faq-question"
+                    type="button"
+                >
+
+                    <div>
+
+                        <span>
+                            후기
+                        </span>
+
+                        <strong>
+                            산책 후기는 언제 작성할 수 있나요?
+                        </strong>
+
+                    </div>
+
+                    <i>
+                        +
+                    </i>
+
+                </button>
+
+
+                <div class="faq-answer">
+
+                    <p>
+                        함께한 산책이 종료된 뒤
+                        해당 메이트에 대한 간단한 후기를 작성할 수 있습니다.
+                        후기에는 산책 매너와 함께 걷기 편했는지 등을 기록할 수 있고,
+                        이후 더 잘 맞는 메이트를 추천하는 데 활용됩니다.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- FAQ 08 -->
+            <article class="faq-item">
+
+                <button
+                    class="faq-question"
+                    type="button"
+                >
+
+                    <div>
+
+                        <span>
+                            안전
+                        </span>
+
+                        <strong>
+                            불편한 사용자를 신고하거나 차단할 수 있나요?
+                        </strong>
+
+                    </div>
+
+                    <i>
+                        +
+                    </i>
+
+                </button>
+
+
+                <div class="faq-answer">
+
+                    <p>
+                        네. 상대방 프로필의 메뉴에서
+                        신고 또는 차단을 선택할 수 있습니다.
+                        차단한 사용자는 이후
+                        지도와 메이트 추천 목록에서 표시되지 않습니다.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- FAQ 09 -->
+            <article class="faq-item">
+
+                <button
+                    class="faq-question"
+                    type="button"
+                >
+
+                    <div>
+
+                        <span>
+                            프로필
+                        </span>
+
+                        <strong>
+                            반려견 프로필은 언제든 수정할 수 있나요?
+                        </strong>
+
+                    </div>
+
+                    <i>
+                        +
+                    </i>
+
+                </button>
+
+
+                <div class="faq-answer">
+
+                    <p>
+                        MY 페이지에서 반려견 이름과 사진,
+                        성향, 나이, 소개 문구 등을 수정할 수 있습니다.
+                        최근 성향이 달라졌다면
+                        정보를 업데이트해두는 것을 추천해요.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- FAQ 10 -->
+            <article class="faq-item">
+
+                <button
+                    class="faq-question"
+                    type="button"
+                >
+
+                    <div>
+
+                        <span>
+                            위치
+                        </span>
+
+                        <strong>
+                            정확한 위치가 다른 사용자에게 공개되나요?
+                        </strong>
+
+                    </div>
+
+                    <i>
+                        +
+                    </i>
+
+                </button>
+
+
+                <div class="faq-answer">
+
+                    <p>
+                        코코랑의 지도는 동네에서 산책 중인 친구를 찾기 위한 기능으로,
+                        다른 이용자에게 불필요한 개인정보가 노출되지 않도록
+                        서비스에 필요한 범위 안에서 위치 정보를 제공합니다.
+                        산책 종료 후에는 산책 중 상태가 해제됩니다.
+                    </p>
+
+                </div>
+
+            </article>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         SNS
+    ====================================================== -->
+    <section
+        class="news-panel"
+        id="snsPanel"
+    >
+
+        <div class="sns-head">
+
+            <div>
+
+                <span>
+                    SOCIAL
+                </span>
+
+                <h2>
+                    SNS
+                </h2>
+
+                <p>
+                    오늘의 산책부터 새로운 친구와의 만남까지,<br>
+                    코코랑의 일상을 함께 만나보세요.
+                </p>
+
+            </div>
+
+
+            <a
+                href="#"
+                class="sns-account"
+            >
+                @coco_lang
+                <span>
+                    ↗
+                </span>
+            </a>
+
+        </div>
+
+
+
+        <div class="sns-grid">
+
+
+            <!-- SNS 01 -->
+            <a
+                href="#"
+                class="sns-card"
+            >
+
+                <img
+                    src="img/community-moment-1.webp"
+                    alt="오늘 처음 만난 산책 메이트"
+                >
+
+                <div class="sns-card-overlay">
+
+                    <div>
+
+                        <small>
+                            FIRST MEET
+                        </small>
+
+                        <strong>
+                            오늘 처음 만난<br>
+                            산책 메이트
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+
+
+            <!-- SNS 02 -->
+            <a
+                href="#"
+                class="sns-card"
+            >
+
+                <img
+                    src="img/community-moment-2.webp"
+                    alt="함께 걷는 산책"
+                >
+
+                <div class="sns-card-overlay">
+
+                    <div>
+
+                        <small>
+                            WALK TOGETHER
+                        </small>
+
+                        <strong>
+                            같이 걸어서<br>
+                            더 즐거운 길
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+
+
+            <!-- SNS 03 -->
+            <a
+                href="#"
+                class="sns-card"
+            >
+
+                <img
+                    src="img/community-moment-3.webp"
+                    alt="동네 산책 코스"
+                >
+
+                <div class="sns-card-overlay">
+
+                    <div>
+
+                        <small>
+                            WALK COURSE
+                        </small>
+
+                        <strong>
+                            오늘 발견한<br>
+                            새로운 산책길
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+
+
+            <!-- SNS 04 -->
+            <a
+                href="#"
+                class="sns-card"
+            >
+
+                <img
+                    src="img/community-moment-4.webp"
+                    alt="두 강아지의 첫 인사"
+                >
+
+                <div class="sns-card-overlay">
+
+                    <div>
+
+                        <small>
+                            SAY HELLO
+                        </small>
+
+                        <strong>
+                            천천히 건넨<br>
+                            첫 번째 인사
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+
+
+            <!-- SNS 05 -->
+            <a
+                href="#"
+                class="sns-card"
+            >
+
+                <img
+                    src="img/community-moment-5.webp"
+                    alt="오늘의 산책 기록"
+                >
+
+                <div class="sns-card-overlay">
+
+                    <div>
+
+                        <small>
+                            WALK RECORD
+                        </small>
+
+                        <strong>
+                            오늘의 산책도<br>
+                            좋은 추억으로
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+
+
+            <!-- SNS 06 -->
+            <a
+                href="#"
+                class="sns-card"
+            >
+
+                <img
+                    src="img/community-moment-6.webp"
+                    alt="새로운 동네 친구"
+                >
+
+                <div class="sns-card-overlay">
+
+                    <div>
+
+                        <small>
+                            NEW FRIEND
+                        </small>
+
+                        <strong>
+                            우리 동네에 생긴<br>
+                            새로운 친구
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+
+
+            <!-- SNS 07 -->
+            <a
+                href="#"
+                class="sns-card"
+            >
+
+                <img
+                    src="img/community-sns-7.webp"
+                    alt="코코랑 성향 테스트"
+                >
+
+                <div class="sns-card-overlay">
+
+                    <div>
+
+                        <small>
+                            PERSONALITY
+                        </small>
+
+                        <strong>
+                            우리 아이의<br>
+                            산책 성향은?
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+
+
+            <!-- SNS 08 -->
+            <a
+                href="#"
+                class="sns-card"
+            >
+
+                <img
+                    src="img/community-sns-8.webp"
+                    alt="코코랑 추천 산책 코스"
+                >
+
+                <div class="sns-card-overlay">
+
+                    <div>
+
+                        <small>
+                            TODAY'S COURSE
+                        </small>
+
+                        <strong>
+                            오늘은 여기서<br>
+                            같이 걸어요
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    
+
+</main>
+
+
+    <!-- exhibition:E -->
+
+
+    <script>
+document.addEventListener("DOMContentLoaded", function(){
+
+    /* =========================================================
+       TAB
+    ========================================================= */
+
+    const tabs =
+        document.querySelectorAll(".news-tab");
+
+    const panels = {
+        notice:
+            document.getElementById("noticePanel"),
+
+        faq:
+            document.getElementById("faqPanel"),
+
+        sns:
+            document.getElementById("snsPanel")
+    };
+
+
+    tabs.forEach(function(tab){
+
+        tab.addEventListener("click", function(){
+
+            const target =
+                tab.dataset.tab;
+
+
+            /* 모든 탭 비활성화 */
+            tabs.forEach(function(item){
+
+                item.classList.remove("active");
+
+            });
+
+
+            /* 모든 콘텐츠 숨기기 */
+            document
+                .querySelectorAll(".news-panel")
+                .forEach(function(panel){
+
+                    panel.classList.remove("active");
+
+                });
+
+
+            /* 선택 탭 활성화 */
+            tab.classList.add("active");
+
+
+            if(panels[target]){
+
+                panels[target].classList.add("active");
+
+            }
+
+        });
+
+    });
+
+
+
+    /* =========================================================
+       NOTICE ACCORDION
+    ========================================================= */
+
+    const noticeButtons =
+        document.querySelectorAll(
+            ".notice-question"
+        );
+
+
+    noticeButtons.forEach(function(button){
+
+        button.addEventListener("click", function(){
+
+            const item =
+                button.closest(".notice-item");
+
+            const answer =
+                item.querySelector(".notice-answer");
+
+            const isOpen =
+                item.classList.contains("open");
+
+
+            /*
+            다른 공지사항 닫기
+            */
+            document
+                .querySelectorAll(".notice-item")
+                .forEach(function(otherItem){
+
+                    otherItem.classList.remove("open");
+
+                    const otherAnswer =
+                        otherItem.querySelector(
+                            ".notice-answer"
+                        );
+
+                    if(otherAnswer){
+
+                        otherAnswer.style.maxHeight =
+                            null;
+
+                    }
+
+                });
+
+
+            /*
+            클릭한 공지가 닫혀있었다면 열기
+            */
+            if(!isOpen){
+
+                item.classList.add("open");
+
+                answer.style.maxHeight =
+                    answer.scrollHeight + "px";
+
+            }
+
+        });
+
+    });
+
+
+
+    /* =========================================================
+       FAQ ACCORDION
+    ========================================================= */
+
+    const faqButtons =
+        document.querySelectorAll(
+            ".faq-question"
+        );
+
+
+    faqButtons.forEach(function(button){
+
+        button.addEventListener("click", function(){
+
+            const item =
+                button.closest(".faq-item");
+
+            const answer =
+                item.querySelector(".faq-answer");
+
+            const isOpen =
+                item.classList.contains("open");
+
+
+            /*
+            한 번에 하나만 열고 싶으면
+            다른 FAQ 전부 닫기
+            */
+            document
+                .querySelectorAll(".faq-item")
+                .forEach(function(otherItem){
+
+                    if(otherItem !== item){
+
+                        otherItem.classList.remove("open");
+
+                        const otherAnswer =
+                            otherItem.querySelector(
+                                ".faq-answer"
+                            );
+
+                        if(otherAnswer){
+
+                            otherAnswer.style.maxHeight =
+                                null;
+
+                        }
+
+                    }
+
+                });
+
+
+            /*
+            현재 FAQ 토글
+            */
+            if(isOpen){
+
+                item.classList.remove("open");
+
+                answer.style.maxHeight =
+                    null;
+
+            }
+
+            else{
+
+                item.classList.add("open");
+
+                answer.style.maxHeight =
+                    answer.scrollHeight + "px";
+
+            }
+
+        });
+
+    });
+
+
+
+    /* =========================================================
+       FAQ SEARCH
+    ========================================================= */
+
+    const faqSearchInput =
+        document.getElementById(
+            "faqSearchInput"
+        );
+
+
+    if(faqSearchInput){
+
+        faqSearchInput.addEventListener(
+            "input",
+            function(){
+
+                const keyword =
+                    faqSearchInput
+                        .value
+                        .trim()
+                        .toLowerCase();
+
+
+                document
+                    .querySelectorAll(".faq-item")
+                    .forEach(function(item){
+
+                        const text =
+                            item
+                                .textContent
+                                .toLowerCase();
+
+
+                        if(
+                            keyword === "" ||
+                            text.includes(keyword)
+                        ){
+
+                            item.style.display =
+                                "block";
+
+                        }
+
+                        else{
+
+                            item.style.display =
+                                "none";
+
+                        }
+
+                    });
+
+            }
+        );
+
+    }
+
+
+
+    /* =========================================================
+       MORE BUTTON
+    ========================================================= */
+
+    const moreButton =
+        document.querySelector(
+            ".news-more-btn"
+        );
+
+
+    if(moreButton){
+
+        const noticeItems =
+            Array.from(
+                document.querySelectorAll(
+                    ".notice-item"
+                )
+            );
+
+
+        /*
+        처음에는 5개만 보이게
+        */
+        noticeItems.forEach(
+            function(item, index){
+
+                if(index >= 5){
+
+                    item.style.display =
+                        "none";
+
+                }
+
+            }
+        );
+
+
+        let expanded =
+            false;
+
+
+        moreButton.addEventListener(
+            "click",
+            function(){
+
+                expanded =
+                    !expanded;
+
+
+                noticeItems.forEach(
+                    function(item, index){
+
+                        if(index >= 5){
+
+                            item.style.display =
+                                expanded
+                                ? "block"
+                                : "none";
+
+                        }
+
+                    }
+                );
+
+
+                if(expanded){
+
+                    moreButton.innerHTML =
+                        `
+                        접기
+                        <span>↑</span>
+                        `;
+
+                }
+
+                else{
+
+                    moreButton.innerHTML =
+                        `
+                        더보기
+                        <span>↓</span>
+                        `;
+
+                }
+
+            }
+        );
+
+    }
+
+
+
+    /* =========================================================
+       SNS CARD
+    ========================================================= */
+
+    const snsCards =
+        document.querySelectorAll(
+            ".sns-card"
+        );
+
+
+    snsCards.forEach(function(card){
+
+        card.addEventListener(
+            "click",
+            function(event){
+
+                /*
+                아직 실제 SNS 링크가 없어서
+                # 이동 방지
+                */
+                const href =
+                    card.getAttribute("href");
+
+
+                if(
+                    !href ||
+                    href === "#"
+                ){
+
+                    event.preventDefault();
+
+                }
+
+            }
+        );
+
+    });
+
+
+
+    /* =========================================================
+       URL PARAMETER
+       ex)
+       community-news.html?tab=faq
+       community-news.html?tab=sns
+    ========================================================= */
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const tabFromUrl =
+        params.get("tab");
+
+
+    if(
+        tabFromUrl &&
+        panels[tabFromUrl]
+    ){
+
+        const targetTab =
+            document.querySelector(
+                '.news-tab[data-tab="' +
+                tabFromUrl +
+                '"]'
+            );
+
+
+        if(targetTab){
+
+            targetTab.click();
+
+        }
+
+    }
+
+});
+</script>
+
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+
+    <div class="footer-left">
+      <ul>
+        <li><a href="#"><span class="fa-brands fa-instagram"></span></a></li>
+        <li><a href="#"><span class="fa-brands fa-facebook-f"></span></a></li>
+        <li><a href="#"><span class="fa-brands fa-x-twitter"></span></a></li>
+        <li><a href="#"><span class="fa-brands fa-youtube"></span></a></li>
+      </ul>
+    </div>
+
+    <div class="footer-center">
+      <img src="img/footer-logo.webp" alt="COCOLANG Logo" class="footer-logo">
+    </div>
+
+    <div class="footer-right">
+      <p>ⓒ 2026 COCOLANG. All rights reserved</p>
+    </div>
+
+  </div>
+</footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+  if (!scrollTopBtn) return;
+
+  // 클릭하면 맨 위로 부드럽게 이동
+  scrollTopBtn.addEventListener("click", function () {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  });
+
+  // 스크롤 200px 이상에서 버튼 표시
+  function updateScrollTopBtn() {
+    if (window.scrollY > 200) {
+      scrollTopBtn.classList.remove("is-hidden");
+    } else {
+      scrollTopBtn.classList.add("is-hidden");
+    }
+  }
+
+  window.addEventListener("scroll", updateScrollTopBtn, {
+    passive: true
+  });
+
+  window.addEventListener("pageshow", updateScrollTopBtn);
+
+  updateScrollTopBtn();
+
+});
+</script>
+
+
+</body>
+</html>

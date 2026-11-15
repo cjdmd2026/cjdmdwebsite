@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+
+  <title>COCO:LANG 성향 테스트 결과</title>
+
+  <!-- Pretendard -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
+  >
+
+  <!-- CSS -->
+  <link
+    rel="stylesheet"
+    href="test.css?v=33"
+  >
+
+  <!-- QR 인식 -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+</head>
+
+
+<body>
+
+  <main class="result-page">
+
+    <div class="result-stage">
+
+
+      <!-- 배경 -->
+      <img
+        src="img/result-bg.webp"
+        class="result-bg"
+        alt=""
+        aria-hidden="true"
+      >
+
+
+      <div class="result-content">
+
+
+        <!-- 결과 이미지 -->
+        <section
+          class="result-image-area"
+          aria-label="강아지 성향 결과 이미지"
+        >
+
+          <img
+            id="resultMainImage"
+            class="result-main-image"
+            src=""
+            alt="강아지 성향 결과"
+          >
+
+        </section>
+
+
+        <!-- 결과 제목 -->
+        <header class="result-header">
+
+          <p class="result-title-prefix">
+            우리 강아지는
+          </p>
+
+
+          <div class="result-title-row">
+
+            <h1
+              id="resultTypeName"
+              class="result-type-name"
+            >
+              마당발형
+            </h1>
+
+
+            <span class="result-title-suffix">
+              이에요!
+            </span>
+
+          </div>
+
+        </header>
+
+
+        <!-- 한 줄 설명 -->
+        <section class="result-one-line-card">
+
+          <p
+            id="resultOneLine"
+            class="result-one-line"
+          ></p>
+
+        </section>
+
+
+        <!-- QR -->
+        <button
+          type="button"
+          id="qrScanButton"
+          class="qr-scan-button"
+        >
+
+          <img
+            src="img/camera.webp"
+            class="qr-camera-icon"
+            alt=""
+          >
+
+          <span class="qr-scan-text">
+            QR 인식하기
+          </span>
+
+        </button>
+
+
+        <!-- 버튼 -->
+        <div class="result-button-wrap">
+
+          <button
+            type="button"
+            id="detailButton"
+            class="result-detail-button"
+          >
+            결과 자세히 보기
+          </button>
+
+
+          <button
+            type="button"
+            id="viewOtherTypeButton"
+            class="result-other-button"
+          >
+            다른 유형 보러가기
+          </button>
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+
+    <!-- QR 모달 -->
+    <div
+      id="qrScannerModal"
+      class="qr-scanner-modal"
+      aria-hidden="true"
+    >
+
+      <div class="qr-scanner-box">
+
+        <button
+          type="button"
+          id="qrScannerCloseButton"
+          class="qr-scanner-close-button"
+          aria-label="QR 인식 닫기"
+        >
+          ×
+        </button>
+
+
+        <h2 class="qr-scanner-title">
+          QR 코드를 인식해주세요
+        </h2>
+
+
+        <p class="qr-scanner-description">
+          주민증의 QR 코드를<br>
+          카메라 화면 안에 맞춰주세요.
+        </p>
+
+
+        <div
+          id="qrReader"
+          class="qr-reader"
+        ></div>
+
+
+        <p
+          id="qrScanStatus"
+          class="qr-scan-status"
+        >
+          카메라를 준비하고 있어요.
+        </p>
+
+      </div>
+
+    </div>
+
+  </main>
+
+
+  <script>
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      function () {
+
+
+        /* =====================================
+           저장된 결과
+        ====================================== */
+
+        const selectedBreed =
+          localStorage.getItem(
+            "selectedBreed"
+          );
+
+        const selectedBreedName =
+          localStorage.getItem(
+            "selectedBreedName"
+          ) || "";
+
+
+        const resultCode =
+          localStorage.getItem(
+            "resultCode"
+          )
+          ||
+          localStorage.getItem(
+            "personalityCode"
+          );
+
+
+        const resultType =
+          localStorage.getItem(
+            "resultType"
+          )
+          ||
+          localStorage.getItem(
+            "personalityType"
+          );
+
+
+        if (
+          !selectedBreed ||
+          !resultCode ||
+          !resultType
+        ) {
+
+          alert(
+            "테스트 결과가 없습니다.\n테스트를 먼저 진행해주세요."
+          );
+
+          window.location.href =
+            "select.html";
+
+          return;
+
+        }
+
+
+        /*
+         * 상세페이지에서 다른 유형을 보고
+         * 돌아온 경우 남아있는 임시값 제거
+         */
+
+        localStorage.removeItem(
+          "detailViewType"
+        );
+
+
+        /* =====================================
+           유형 이미지 ID
+        ====================================== */
+
+        const resultTypeIdMap = {
+
+          "마당발형": "madang",
+          "말랑순둥형": "mallang",
+          "킁킁탐험형": "explorer",
+          "눈치만렙형": "smart",
+          "우다다형": "udadada",
+          "경계대장형": "guard",
+          "마이웨이형": "myway",
+          "엄마바라기형": "mom",
+          "예민보스형": "sensitive"
+
+        };
+
+
+        /* =====================================
+           한 줄 설명
+        ====================================== */
+
+        const resultData = {
+
+          "마당발형": {
+
+            oneLine:
+              "다양한 친구들과 함께할 때 가장 즐겁게<br>" +
+              "산책을 즐기는 " +
+              "<span class='result-highlight'>사교왕</span>"
+
+          },
+
+
+          "말랑순둥형": {
+
+            oneLine:
+              "편안한 분위기 속에서 천천히 마음을 나누는<br>" +
+              "<span class='result-highlight'>다정한 친구</span>"
+
+          },
+
+
+          "킁킁탐험형": {
+
+            oneLine:
+              "새로운 냄새와 장소를 함께 발견하며<br>" +
+              "추억을 만드는 " +
+              "<span class='result-highlight'>탐험가</span>"
+
+          },
+
+
+          "눈치만렙형": {
+
+            oneLine:
+              "상대의 신호를 잘 살피며 서로를 배려하는<br>" +
+              "<span class='result-highlight'>" +
+              "센스 있는 산책 메이트" +
+              "</span>"
+
+          },
+
+
+          "우다다형": {
+
+            oneLine:
+              "신나는 에너지로 함께 뛰어놀며<br>" +
+              "즐거움을 전하는 " +
+              "<span class='result-highlight'>" +
+              "분위기 메이커" +
+              "</span>"
+
+          },
+
+
+          "경계대장형": {
+
+            oneLine:
+              "천천히 가까워질수록 깊은 신뢰를 쌓아가는<br>" +
+              "<span class='result-highlight'>" +
+              "신중한 친구" +
+              "</span>"
+
+          },
+
+
+          "마이웨이형": {
+
+            oneLine:
+              "각자의 페이스를 존중하며 여유로운<br>" +
+              "산책을 즐기는 " +
+              "<span class='result-highlight'>" +
+              "자유로운 메이트" +
+              "</span>"
+
+          },
+
+
+          "엄마바라기형": {
+
+            oneLine:
+              "보호자와 함께하는 시간을 가장<br>" +
+              "소중하게 생각하는 " +
+              "<span class='result-highlight'>" +
+              "애정 가득한 친구" +
+              "</span>"
+
+          },
+
+
+          "예민보스형": {
+
+            oneLine:
+              "섬세한 관찰력으로 주변을 살피며<br>" +
+              "안정감을 만들어주는 " +
+              "<span class='result-highlight'>" +
+              "든든한 친구" +
+              "</span>"
+
+          }
+
+        };
+
+
+        /* =====================================
+           HTML 요소
+        ====================================== */
+
+        const resultTypeName =
+          document.getElementById(
+            "resultTypeName"
+          );
+
+
+        const resultMainImage =
+          document.getElementById(
+            "resultMainImage"
+          );
+
+
+        const resultOneLine =
+          document.getElementById(
+            "resultOneLine"
+          );
+
+
+        const detailButton =
+          document.getElementById(
+            "detailButton"
+          );
+
+
+        const viewOtherTypeButton =
+          document.getElementById(
+            "viewOtherTypeButton"
+          );
+
+
+        const qrScanButton =
+          document.getElementById(
+            "qrScanButton"
+          );
+
+
+        const qrScannerModal =
+          document.getElementById(
+            "qrScannerModal"
+          );
+
+
+        const qrScannerCloseButton =
+          document.getElementById(
+            "qrScannerCloseButton"
+          );
+
+
+        const qrScanStatus =
+          document.getElementById(
+            "qrScanStatus"
+          );
+
+
+        let qrScanner = null;
+
+        let isQrScannerRunning =
+          false;
+
+
+        /* =====================================
+           결과 출력
+        ====================================== */
+
+        function renderResult() {
+
+          const result =
+            resultData[
+              resultType
+            ];
+
+
+          const resultTypeId =
+            resultTypeIdMap[
+              resultType
+            ];
+
+
+          if (
+            !result ||
+            !resultTypeId
+          ) {
+
+            alert(
+              "결과 정보를 찾을 수 없습니다."
+            );
+
+            window.location.href =
+              "select.html";
+
+            return;
+
+          }
+
+
+          resultTypeName.textContent =
+            resultType;
+
+
+          resultTypeName.classList.toggle(
+            "long-type-name",
+            resultType ===
+              "엄마바라기형"
+          );
+
+
+          resultOneLine.innerHTML =
+            result.oneLine;
+
+
+resultMainImage.src =
+  "img/results/coco-" +
+  resultTypeId +
+  ".webp";
+
+
+          resultMainImage.alt =
+            selectedBreedName +
+            " " +
+            resultType +
+            " 결과 이미지";
+
+        }
+
+
+        /* =====================================
+           결과 자세히 보기
+        ====================================== */
+
+        detailButton.addEventListener(
+          "click",
+          function () {
+
+
+            /*
+             * 현재 resultType은
+             * 실제 내 결과이므로 따로 보존
+             */
+
+            localStorage.setItem(
+              "originalResultType",
+              resultType
+            );
+
+
+            localStorage.setItem(
+              "originalResultCode",
+              resultCode
+            );
+
+
+            /*
+             * 상세페이지 첫 화면은
+             * 내 결과를 보여줌
+             */
+
+            localStorage.setItem(
+              "detailViewType",
+              resultType
+            );
+
+
+            window.location.href =
+              "result-detail.html";
+
+          }
+        );
+
+
+        /* =====================================
+           다른 유형 보러가기
+        ====================================== */
+
+        viewOtherTypeButton.addEventListener(
+          "click",
+          function () {
+
+            localStorage.removeItem(
+              "detailViewType"
+            );
+
+            window.location.href =
+              "types.html";
+
+          }
+        );
+
+
+        /* =====================================
+           QR 실행
+        ====================================== */
+
+        qrScanButton.addEventListener(
+          "click",
+          async function () {
+
+
+            qrScannerModal.classList.add(
+              "active"
+            );
+
+
+            qrScannerModal.setAttribute(
+              "aria-hidden",
+              "false"
+            );
+
+
+            qrScanStatus.textContent =
+              "카메라 권한을 허용해주세요.";
+
+
+            try {
+
+
+              if (!qrScanner) {
+
+                qrScanner =
+                  new Html5Qrcode(
+                    "qrReader"
+                  );
+
+              }
+
+
+              await qrScanner.start(
+
+                {
+                  facingMode:
+                    "environment"
+                },
+
+
+                {
+                  fps: 10,
+
+                  qrbox: {
+                    width: 240,
+                    height: 240
+                  }
+                },
+
+
+                async function (
+                  decodedText
+                ) {
+
+
+                  qrScanStatus.textContent =
+                    "QR 인식 완료!";
+
+
+                  const cardResult = {
+
+                    cardId:
+                      decodedText,
+
+                    breedId:
+                      selectedBreed,
+
+                    breedName:
+                      selectedBreedName,
+
+                    resultCode:
+                      resultCode,
+
+                    resultType:
+                      resultType
+
+                  };
+
+
+                  localStorage.setItem(
+                    decodedText,
+                    JSON.stringify(
+                      cardResult
+                    )
+                  );
+
+
+                  alert(
+                    "주민증 등록 완료!\n\n" +
+                    "카드번호 : " +
+                    cardResult.cardId +
+                    "\n견종 : " +
+                    cardResult.breedName +
+                    "\n성향 : " +
+                    cardResult.resultType +
+                    "\n성향 코드 : " +
+                    cardResult.resultCode
+                  );
+
+
+                  await stopQrScanner();
+
+                },
+
+
+                function () {
+
+                }
+
+              );
+
+
+              isQrScannerRunning =
+                true;
+
+
+              qrScanStatus.textContent =
+                "주민증 QR 코드를 화면 안에 맞춰주세요.";
+
+
+            } catch (error) {
+
+
+              console.error(
+                "카메라 실행 오류:",
+                error
+              );
+
+
+              qrScanStatus.textContent =
+                "카메라를 실행할 수 없습니다.";
+
+            }
+
+          }
+        );
+
+
+        /* =====================================
+           QR 종료
+        ====================================== */
+
+        async function stopQrScanner() {
+
+
+          if (
+            qrScanner &&
+            isQrScannerRunning
+          ) {
+
+
+            try {
+
+              await qrScanner.stop();
+
+              await qrScanner.clear();
+
+            } catch (error) {
+
+              console.error(
+                "카메라 종료 오류:",
+                error
+              );
+
+            }
+
+          }
+
+
+          qrScanner = null;
+
+          isQrScannerRunning =
+            false;
+
+
+          qrScannerModal.classList.remove(
+            "active"
+          );
+
+
+          qrScannerModal.setAttribute(
+            "aria-hidden",
+            "true"
+          );
+
+        }
+
+
+        qrScannerCloseButton.addEventListener(
+          "click",
+          stopQrScanner
+        );
+
+
+        qrScannerModal.addEventListener(
+          "click",
+          function (event) {
+
+            if (
+              event.target ===
+              qrScannerModal
+            ) {
+
+              stopQrScanner();
+
+            }
+
+          }
+        );
+
+
+        renderResult();
+
+      }
+    );
+
+  </script>
+
+<script src="audio.js"></script>
+
+
+</body>
+
+</html>
