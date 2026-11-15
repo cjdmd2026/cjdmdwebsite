@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>처마 아카이브</title>
+  <link rel="stylesheet" href="./css/style.css?v=20261115-11">
+  <link rel="stylesheet" href="./css/archive-gallery.css?v=20261115-02">
+</head>
+<body data-page="archive">
+<header class="site-header">
+  <a class="logo-button" href="./index.html" aria-label="처마 · Cheoma — Home"><img class="site-logo" src="./assets/brand/cheoma-logo-updated.webp" width="879" height="338" alt="처마 · Cheoma" decoding="async" /></a>
+  <nav class="top-nav">
+    <div class="lang-switch">
+      <button class="lang-button" data-lang="en" type="button">EN</button>
+      <button class="lang-button active" data-lang="ko" type="button">KR</button>
+    </div>
+    <button class="hamburger-button" type="button" aria-label="메뉴 열기"><img src="assets/icons/menu.svg" alt=""></button>
+  </nav>
+</header>
+
+<div class="menu-overlay" id="menuOverlay" aria-hidden="true">
+  <button class="menu-close" type="button" aria-label="메뉴 닫기">×</button>
+  <nav class="menu-list">
+    <a href="./index.html" data-i18n="menuHome">HOME</a>
+    <a href="./viewer.html" data-i18n="menuViewer">VIEWER</a>
+    <a href="./archive.html" data-i18n="menuArchive">ARCHIVING</a>
+    <a href="./about.html" data-i18n="menuAbout">ABOUT</a>
+  </nav>
+</div>
+
+<main class="archive-gallery page" id="archiveGallery">
+  <header class="archive-gallery-head">
+    <button class="archive-gallery-back" type="button" data-archive-back hidden>← <span>뒤로</span></button>
+    <h1>ARCHIVING</h1>
+  </header>
+  <div data-archive-content></div>
+  <p class="archive-gallery-status" data-archive-status role="status" aria-live="polite"></p>
+</main>
+
+<div class="content-modal archive-detail-modal" id="archiveModal" aria-hidden="true">
+  <div class="modal-backdrop" data-close-modal></div>
+  <article class="modal-card archive-detail-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" type="button" data-close-modal aria-label="상세 닫기">×</button>
+    <div class="modal-image" role="img" aria-label="아카이브 자료 이미지"></div>
+    <button class="archive-modal-nav archive-modal-nav--prev" type="button" data-modal-prev aria-label="이전 사진">←</button>
+    <button class="archive-modal-nav archive-modal-nav--next" type="button" data-modal-next aria-label="다음 사진">→</button>
+    <aside class="modal-info">
+      <h3 id="modalTitle">자료명</h3>
+      <div class="modal-meta" id="modalMeta"></div>
+      <p id="modalDesc">자료 설명 영역입니다.</p>
+      <div class="modal-related">
+        <span data-i18n="archiveRelatedStructure">관련 구조</span>
+        <strong id="modalRelatedPart">서까래</strong>
+      </div>
+    </aside>
+  </article>
+</div>
+
+<script src="./js/main.js?v=20261114-02" type="module"></script>
+</body>
+</html>
