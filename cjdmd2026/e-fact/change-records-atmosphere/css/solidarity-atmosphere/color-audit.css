@@ -1,0 +1,19 @@
+/* Final cyan palette audit: remove residual green cast from the signature UI. */
+.signature-section{--cyan:#00bcc2;--line:#00bcc252;--line-soft:#00bcc22d}
+.signature-intro>p:not(.eyebrow),.signature-intro .storage-note{color:#9aa7aa!important}
+.steps{border-top-color:var(--line)!important}
+.steps li{border-bottom-color:var(--line-soft)!important;color:#8e9da0!important}
+.steps b{color:#00a9b0!important}.steps .current,.steps .current b{color:var(--cyan)!important}
+.local-count{border-top-color:var(--line)!important;color:#8d9da0!important}.local-count strong{color:var(--cyan)!important}
+.signature-form{background:#090c0e!important;border-color:#00bcc257!important;box-shadow:none!important}
+.signature-form::before{background:var(--cyan)!important}
+.form-heading{border-bottom-color:var(--line)!important}.form-heading>span,.optional,.length{color:#859397!important}
+.signature-form label,.signature-form legend{color:#c9d1d2!important}
+.signature-form input:not([type=checkbox]):not([type=radio]),.signature-form select,.signature-form textarea{background:#07090b!important;border-color:#465054!important;color:#edf4f4!important;color-scheme:dark}
+.signature-form input::placeholder,.signature-form textarea::placeholder{color:#718184!important;opacity:1}
+.signature-form input:focus,.signature-form select:focus,.signature-form textarea:focus{border-color:var(--cyan)!important;outline:1px solid #00bcc240!important}
+.signature-form .choice{color:#a2adaf!important}.signature-form .choice input{accent-color:var(--cyan)!important}
+.signature-form .consent{border-top-color:var(--line)!important}
+.signature-form details,.signature-form summary{color:#909da0!important}
+.signature-form .submit{background:var(--cyan)!important;border-color:var(--cyan)!important;color:#001719!important}
+#form-status{color:#62cbd0!important}
