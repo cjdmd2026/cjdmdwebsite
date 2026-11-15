@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ko" class="viewer-document">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eave Structure Learning Viewer</title>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+      }
+    }
+  </script>
+<link rel="stylesheet" href="./css/style.css?v=20261113-07" />
+</head>
+<body data-page="viewer">
+<header class="site-header">
+  <a class="logo-button" href="./index.html" aria-label="처마 · Cheoma — Home"><img class="site-logo" src="./assets/brand/cheoma-logo-updated.webp" width="879" height="338" alt="처마 · Cheoma" decoding="async" /></a>
+  <nav class="top-nav">
+    <div class="lang-switch">
+      <button class="lang-button" data-lang="en" type="button">EN</button>
+      <button class="lang-button active" data-lang="ko" type="button">KR</button>
+    </div>
+    <button class="hamburger-button" type="button" aria-label="menu"><img src="assets/icons/menu.svg" alt=""></button>
+  </nav>
+</header>
+
+<div class="menu-overlay" id="menuOverlay">
+  <button class="menu-close" type="button" aria-label="close">x</button>
+  <nav class="menu-list">
+    <a href="./index.html" data-i18n="menuHome">HOME</a>
+    <a href="./viewer.html" data-i18n="menuViewer">VIEWER</a>
+    <a href="./archive.html" data-i18n="menuArchive">ARCHIVING</a>
+    <a href="./about.html" data-i18n="menuAbout">ABOUT</a>
+  </nav>
+</div>
+
+<main class="viewer-layout learning-viewer viewer-floating-layout" id="viewerLayout">
+  <section class="viewer-stage" id="viewerStage">
+    <div class="viewer-loading" id="viewerLoading" role="status" aria-live="polite">
+      <div class="viewer-loading-inner">
+        <p id="viewerLoadingMessage">처마 아래, 빛이 머무는 자리를 봅니다</p>
+        <div class="viewer-loading-track" aria-hidden="true"><span id="viewerLoadingProgress"></span></div>
+      </div>
+    </div>
+    <div class="viewer-building-loading" id="viewerBuildingLoading" role="status" aria-live="polite" aria-hidden="true">
+      <div class="viewer-building-loading-card">
+        <span class="viewer-building-loading-name" id="viewerBuildingLoadingName">민가</span>
+        <svg class="viewer-building-drawing" viewBox="0 0 260 128" aria-hidden="true">
+          <g class="is-active" data-building-loading-drawing="minga">
+            <path class="viewer-building-drawing-structure" data-building-draw pathLength="1" d="M35 108C78 106 181 106 225 108M43 103H217" />
+            <path class="viewer-building-drawing-detail" data-building-draw pathLength="1" d="M48 103l3-4h12l3 4M97 103l3-4h12l3 4M146 103l3-4h12l3 4M195 103l3-4h12l3 4" />
+            <path class="viewer-building-drawing-structure" data-building-draw pathLength="1" d="M56 67V99M106 65V99M154 65V99M204 67V99" />
+            <path class="viewer-building-drawing-structure" data-building-draw pathLength="1" d="M43 68C88 66 172 66 217 68M48 73H212" />
+            <path class="viewer-building-drawing-detail" data-building-draw pathLength="1" d="M72 76V96M93 76V96M118 75V96M142 75V96M167 76V96M188 76V96" />
+            <path class="viewer-building-drawing-detail" data-building-draw pathLength="1" d="M81 31C107 28 153 28 179 31M82 32C67 39 53 47 29 53M178 32C193 39 207 47 231 53" />
+            <path class="viewer-building-drawing-structure" data-building-draw pathLength="1" d="M18 51C24 55 31 57 41 57C74 57 101 53 130 48C159 53 186 57 219 57C229 57 236 55 242 51" />
+            <path class="viewer-building-drawing-detail" data-building-draw pathLength="1" d="M23 47C56 52 91 49 130 42C169 49 204 52 237 47M37 57l5 7m14-7 4 7m14-8 3 7m105-7-3 7m21-6-4 7m22-7-5 7" />
+            <path class="viewer-building-drawing-accent" data-building-draw pathLength="1" d="M18 51C24 55 31 57 41 57C74 57 101 53 130 48C159 53 186 57 219 57C229 57 236 55 242 51" />
+            <path class="viewer-building-drawing-scan" pathLength="1" d="M18 51C24 55 31 57 41 57C74 57 101 53 130 48C159 53 186 57 219 57C229 57 236 55 242 51" />
+          </g>
+          <g data-building-loading-drawing="sachal">
+            <path class="viewer-building-drawing-structure" data-building-draw pathLength="1" d="M39 109H221M47 104H213M55 99H205" />
+            <path class="viewer-building-drawing-detail" data-building-draw pathLength="1" d="M54 99l3-4h12l3 4M101 99l3-4h12l3 4M144 99l3-4h12l3 4M191 99l3-4h12l3 4" />
+            <path class="viewer-building-drawing-structure" data-building-draw pathLength="1" d="M62 64V95M109 62V95M151 62V95M198 64V95" />
+            <path class="viewer-building-drawing-detail" data-building-draw pathLength="1" d="M67 69l8 5 8-5 8 5 8-5M161 69l8 5 8-5 8 5 8-5" />
+            <path class="viewer-building-drawing-structure" data-building-draw pathLength="1" d="M48 66C93 63 167 63 212 66M54 72H206" />
+            <path class="viewer-building-drawing-detail" data-building-draw pathLength="1" d="M75 77V92M96 77V92M119 76V92M141 76V92M164 77V92M185 77V92" />
+            <path class="viewer-building-drawing-detail" data-building-draw pathLength="1" d="M91 27C110 24 150 24 169 27M92 28C74 36 61 45 35 51M168 28C186 36 199 45 225 51" />
+            <path class="viewer-building-drawing-structure" data-building-draw pathLength="1" d="M23 48C29 53 37 55 48 55C78 55 105 50 130 43C155 50 182 55 212 55C223 55 231 53 237 48" />
+            <path class="viewer-building-drawing-detail" data-building-draw pathLength="1" d="M29 43C61 49 94 46 130 37C166 46 199 49 231 43M39 55l6 8m14-8 5 8m15-9 4 8m98-8-4 8m20-7-5 8m23-8-6 8" />
+            <path class="viewer-building-drawing-accent" data-building-draw pathLength="1" d="M23 48C29 53 37 55 48 55C78 55 105 50 130 43C155 50 182 55 212 55C223 55 231 53 237 48" />
+            <path class="viewer-building-drawing-scan" pathLength="1" d="M23 48C29 53 37 55 48 55C78 55 105 50 130 43C155 50 182 55 212 55C223 55 231 53 237 48" />
+          </g>
+          <g data-building-loading-drawing="gate">
+            <path class="viewer-building-drawing-structure" data-building-draw pathLength="1" d="M17 110C58 108 202 108 243 110" />
+            <path class="viewer-building-drawing-detail" data-building-draw pathLength="1" d="M24 76H88M172 76H236M24 84H88M172 84H236M24 92H88M172 92H236M24 100H88M172 100H236" />
+            <path class="viewer-building-drawing-structure" data-building-draw pathLength="1" d="M23 72V108H91V87C91 79 97 75 105 75H155C163 75 169 79 169 87V108H237V72" />
+            <path class="viewer-building-drawing-detail" data-building-draw pathLength="1" d="M105 108V88Q105 83 111 83H149Q155 83 155 88V108M130 83V108" />
+            <path class="viewer-building-drawing-structure" data-building-draw pathLength="1" d="M83 69H177M90 63H170" />
+            <path class="viewer-building-drawing-structure" data-building-draw pathLength="1" d="M98 43V63M120 41V63M140 41V63M162 43V63" />
+            <path class="viewer-building-drawing-detail" data-building-draw pathLength="1" d="M93 48l7 5 7-5 7 5 7-5M139 48l7 5 7-5 7 5 7-5" />
+            <path class="viewer-building-drawing-detail" data-building-draw pathLength="1" d="M103 21C117 18 143 18 157 21M104 22C91 28 82 35 68 40M156 22C169 28 178 35 192 40" />
+            <path class="viewer-building-drawing-structure" data-building-draw pathLength="1" d="M56 38C61 43 68 45 77 45C98 45 115 41 130 34C145 41 162 45 183 45C192 45 199 43 204 38" />
+            <path class="viewer-building-drawing-detail" data-building-draw pathLength="1" d="M62 34C84 39 106 36 130 29C154 36 176 39 198 34M72 45l5 7m13-7 4 7m72-7-4 7m21-7-5 7" />
+            <path class="viewer-building-drawing-accent" data-building-draw pathLength="1" d="M56 38C61 43 68 45 77 45C98 45 115 41 130 34C145 41 162 45 183 45C192 45 199 43 204 38" />
+            <path class="viewer-building-drawing-scan" pathLength="1" d="M56 38C61 43 68 45 77 45C98 45 115 41 130 34C145 41 162 45 183 45C192 45 199 43 204 38" />
+          </g>
+        </svg>
+        <strong id="viewerBuildingLoadingLabel">공간을 전환하는 중</strong>
+      </div>
+    </div>
+    <canvas id="threeCanvas"></canvas>
+
+    <!-- 건축 유형 전환: 3D 위 중앙 플로팅 UI -->
+    <nav class="viewer-building-switch" aria-label="building categories">
+      <span class="building-selection-indicator" aria-hidden="true"></span>
+      <button class="building-tab active" type="button" data-building="minga" data-i18n="catMinga">House</button>
+      <button class="building-tab" type="button" data-building="sachal" data-i18n="catSachal">Temple</button>
+      <button class="building-tab" type="button" data-building="gate" data-i18n="catGate">Gate/Pavilion</button>
+    </nav>
+
+    <nav class="viewer-part-pager" id="selectorStepper" aria-label="selected structure navigation" hidden>
+      <button class="structure-step-button" id="prevPartButton" type="button" aria-label="previous structure">
+        <img src="./assets/icons/viewer/chevron-left.svg" alt="" />
+      </button>
+      <div class="viewer-part-count" aria-live="polite">
+        <span id="currentPartIndex">01</span><span>/</span><span id="selectorPartCount">04</span>
+      </div>
+      <button class="structure-step-button" id="nextPartButton" type="button" aria-label="next structure">
+        <img src="./assets/icons/viewer/chevron-right.svg" alt="" />
+      </button>
+      <button class="visually-hidden" id="currentPartButton" type="button" tabindex="-1"><strong id="currentPartName"></strong></button>
+    </nav>
+
+    <!-- 초기 안내 -->
+    <div class="viewer-default-guide" id="viewerDefaultGuide" aria-hidden="true"></div>
+
+    <!-- 오른쪽 구조 선택:
+         선택 전 = 전체 목록
+         선택 후 = 이전 < 현재 구조 > 다음 -->
+    <aside class="structure-selector" id="structureSelector" aria-label="eave structure selector">
+      <div class="structure-selector-all" id="selectorAll">
+        <h2 data-i18n="partTitle">구조 선택</h2>
+        <div class="part-list learning-part-list structure-part-list">
+          <button class="part-button" type="button" data-part="giwa"><span>01</span><b data-i18n="partGiwa">기와</b></button>
+          <button class="part-button" type="button" data-part="gaepan"><span>02</span><b data-i18n="partGaepan">개판 덮개</b></button>
+          <button class="part-button" type="button" data-part="seokkarae"><span>03</span><b data-i18n="partSeokkarae">서까래</b></button>
+          <button class="part-button" type="button" data-part="gidung"><span>04</span><b data-i18n="partGidung">기둥</b></button>
+        </div>
+      </div>
+
+      <button class="visually-hidden" id="showAllPartsButton" type="button" tabindex="-1">All structures</button>
+    </aside>
+
+    <aside class="learning-summary-card" id="learningSummaryCard" aria-hidden="true">
+      <h2 id="learningSummaryCardTitle">서까래</h2>
+      <p id="learningSummaryCardText"></p>
+      <button id="learningDetailButton" type="button"><span data-i18n="viewerExploreDetail">상세히 보기</span><span>→</span></button>
+    </aside>
+
+    <!-- 왼쪽 학습 정보: 선택 후 등장 -->
+    <aside class="learning-panel floating-learning-panel" id="learningPanel" aria-hidden="true">
+      <button
+        class="learning-visibility-button"
+        id="learningPanelVisibilityButton"
+        type="button"
+        aria-label="back to structure summary"
+        title="Back to structure summary"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path>
+          <circle cx="12" cy="12" r="2.7"></circle>
+        </svg>
+      </button>
+
+      <div class="learning-panel-scroll">
+        <header class="learning-panel-head">
+          <div class="learning-title-row">
+            <span class="learning-part-number" id="learningPartNumber">01</span>
+            <h2 id="learningPartTitle">서까래</h2>
+            <span id="learningPartEn">RAFTER</span>
+          </div>
+          <p class="learning-summary" id="learningSummary"></p>
+        </header>
+
+        <section class="learning-section learning-section-role">
+          <span class="learning-section-index">01 / ROLE</span>
+          <h3 id="learningRoleTitle">구조적 역할</h3>
+          <ul class="learning-bullet-list" id="learningRoleText"></ul>
+          <div class="learning-diagram role-diagram" aria-hidden="true">
+          </div>
+        </section>
+
+        <section class="learning-section learning-section-light">
+          <span class="learning-section-index">02 / LIGHT &amp; SHADOW</span>
+          <h3 id="learningLightTitle">빛과 그림자</h3>
+          <ul class="learning-bullet-list" id="learningLightText"></ul>
+          <div class="learning-diagram light-diagram" aria-hidden="true">
+          </div>
+        </section>
+
+        <section class="learning-section learning-section-case learning-section-tmi">
+          <span class="learning-section-index">03 / TMI</span>
+          <h3 id="learningTmiTitle">TMI</h3>
+          <ul class="learning-bullet-list" id="learningTmiList"></ul>
+        </section>
+
+        <section class="learning-section learning-section-related">
+          <span class="learning-section-index">04 / RELATED ARCHIVE</span>
+          <div class="learning-related-head">
+            <h3 data-i18n="viewerRelatedArchive">관련 아카이브</h3>
+            <span id="learningArchiveCount">00 RECORDS</span>
+          </div>
+          <div class="learning-related-grid" id="learningRelatedGrid"></div>
+          <a class="learning-archive-link" id="learningArchiveLink" href="./archive.html">관련 아카이브 전체 보기 <span>-&gt;</span></a>
+        </section>
+
+        <section class="learning-section learning-section-sources">
+          <span class="learning-section-index">05 / SOURCES</span>
+          <h3 id="learningSourcesTitle">출처</h3>
+          <ol class="learning-source-list" id="learningSourcesList"></ol>
+        </section>
+
+        <!-- Existing JS expects this node. Keep it hidden; comparison UI is intentionally not added to the wireframe. -->
+        <div class="visually-hidden" id="learningCompare"></div>
+      </div>
+    </aside>
+
+    <div class="viewer-controls learning-controls">
+      <button class="audio-toggle active" type="button" id="soundMasterButton" aria-pressed="true"><img src="./assets/icons/viewer/music.svg" alt="" /><span>BGM</span></button>
+      <button type="button" id="resetCameraButton"><img src="./assets/icons/viewer/reset.svg" alt="" /><span data-i18n="viewerReset">초기화</span></button>
+      <button type="button" id="fullscreenButton"><img src="./assets/icons/viewer/fullscreen.svg" alt="" /><span data-i18n="viewerFull">전체 화면</span></button>
+      <button type="button" id="explodeAllButton"><img src="./assets/icons/viewer/layers.svg" alt="" /><span data-i18n="viewerExplode">분해</span></button>
+    </div>
+
+    <div class="viewer-time-control" id="viewerLightPanel" aria-label="빛 살펴보기">
+      <div class="viewer-light-context">
+        <div class="viewer-light-seasons" id="viewerLightSeasons" role="group" aria-label="계절 선택">
+          <button type="button" data-light-season="summer" aria-pressed="true" disabled>SUMMER</button>
+          <button type="button" data-light-season="winter" aria-pressed="false" disabled>WINTER</button>
+        </div>
+        <button class="viewer-time-toggle" id="viewerTimeToggle" type="button" aria-label="시간 자동재생 일시정지" aria-pressed="false" title="일시정지">
+          <span class="viewer-time-toggle-icon" aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="viewer-time-track" id="viewerTimeTrack">
+        <svg class="viewer-sun-path" viewBox="0 0 150 110" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <g class="viewer-sun-path-ticks" id="viewerSunPathTicks"></g>
+          <path class="viewer-sun-path-base" id="viewerSunPathLine" pathLength="100" d="M12.5 88 A62.5 62.5 0 0 1 137.5 88" />
+          <path class="viewer-sun-path-trail" id="viewerSunPathTrail" d="" />
+        </svg>
+        <span class="viewer-time-phase viewer-time-phase--morning">일출</span>
+        <span class="viewer-time-phase viewer-time-phase--noon">12:00</span>
+        <span class="viewer-time-phase viewer-time-phase--evening">일몰</span>
+        <input id="viewerTimeSlider" type="range" min="0" max="1" step="0.001" value="0.08" aria-label="time of day" />
+        <span class="viewer-sun-handle" aria-hidden="true">
+          <img src="./assets/icons/viewer/sun.svg?v=20260918-01" alt="" draggable="false" />
+        </span>
+        <div class="viewer-sun-center">
+          <span class="viewer-time-label" data-i18n="lightTime">시간</span>
+          <strong class="viewer-time-readout" id="viewerTimeReadout">06:58</strong>
+        </div>
+      </div>
+    </div>
+
+    <button class="visually-hidden" type="button" id="dragInfoButton" tabindex="-1" aria-hidden="true"></button>
+    <button class="visually-hidden" type="button" id="explodeSelectedButton" tabindex="-1" aria-hidden="true"></button>
+    <button class="visually-hidden" type="button" id="resetExplodeButton" tabindex="-1" aria-hidden="true"></button>
+    <button class="visually-hidden audio-toggle active" type="button" id="natureAudioButton" tabindex="-1" aria-hidden="true"></button>
+    <button class="visually-hidden audio-toggle active" type="button" id="bgmAudioButton" tabindex="-1" aria-hidden="true"></button>
+
+    <audio id="natureAudio" src="./assets/audio/nature-sunny-day.mp3" preload="auto" loop autoplay></audio>
+    <audio id="bgmAudio" src="./assets/audio/bgm-bossa-nova.mp3" preload="auto" loop></audio>
+
+    <div class="hotspot-layer" id="hotspotLayer">
+      <button class="hotspot" style="left:42%; top:25%;" type="button" data-part="giwa"><span>01</span></button>
+      <button class="hotspot" style="left:53%; top:56%;" type="button" data-part="gaepan"><span>02</span></button>
+      <button class="hotspot" style="left:54%; top:38%;" type="button" data-part="seokkarae"><span>03</span></button>
+      <button class="hotspot" style="left:53%; top:58%;" type="button" data-part="gidung"><span>04</span></button>
+    </div>
+
+    <!-- 위치 확인용 최소 Callout -->
+    <div class="part-callout learning-callout compact-callout" id="partCallout" aria-live="polite">
+      <svg class="part-callout-svg" aria-hidden="true">
+        <defs>
+          <mask id="partCalloutLineMask" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
+            <path class="part-callout-line-mask" id="partCalloutLineMaskPath"></path>
+          </mask>
+        </defs>
+        <path class="part-callout-line" id="partCalloutLine" mask="url(#partCalloutLineMask)"></path>
+        <rect class="part-callout-outline" id="partCalloutOutline" pathLength="1"></rect>
+      </svg>
+      <article class="part-callout-box" id="partCalloutBox">
+        <div class="part-callout-content">
+          <span class="part-callout-kicker" id="partCalloutNumber">PART 01</span>
+          <h3 id="partCalloutTitle">Part title</h3>
+          <p id="partCalloutDesc">Selected structure position.</p>
+        </div>
+      </article>
+    </div>
+
+    <button class="viewer-tutorial-help" id="viewerTutorialHelp" type="button" aria-label="사용법 보기" hidden>?</button>
+    <div class="viewer-tutorial" id="viewerTutorial" role="dialog" aria-labelledby="viewerTutorialTitle" hidden>
+      <div class="viewer-tutorial-backdrop" aria-hidden="true"></div>
+      <h2 class="visually-hidden" id="viewerTutorialTitle" aria-live="polite">뷰어 움직이기</h2>
+      <div class="viewer-tutorial-motion" id="viewerTutorialMotion" data-tutorial-step="0">
+        <article class="viewer-tutorial-gesture">
+          <svg class="viewer-tutorial-mouse" viewBox="0 0 128 128" aria-hidden="true">
+            <path class="tutorial-mouse-accent" d="M64 28C51 28 41 38 41 51v12h23Z" />
+            <rect x="41" y="28" width="46" height="74" rx="23" />
+            <path d="M64 28v35M41 63h46" />
+            <g class="tutorial-rotate-arrow"><path d="M25 83C8 64 19 36 34 31M25 29l10 1-1 10M103 46c17 19 6 47-9 52M103 100l-10-1 1-10" /></g>
+          </svg>
+          <div><h3><span lang="ko">회전하기</span><span lang="en">Rotate</span></h3>
+          <p lang="ko">마우스 왼쪽 버튼을 누른 채 드래그해 건물을 회전할 수 있습니다.</p>
+          <p lang="en">Left-drag to rotate the building.</p></div>
+        </article>
+        <article class="viewer-tutorial-gesture">
+          <svg class="viewer-tutorial-mouse" viewBox="0 0 128 128" aria-hidden="true">
+            <rect x="41" y="28" width="46" height="74" rx="23" />
+            <path d="M64 28v35M41 63h46" />
+            <rect class="tutorial-mouse-accent tutorial-wheel" x="59" y="38" width="10" height="18" rx="5" />
+            <g class="tutorial-wheel-arrows"><path d="M105 40v48M99 46l6-6 6 6M99 82l6 6 6-6" /></g>
+          </svg>
+          <div><h3><span lang="ko">확대·축소하기</span><span lang="en">Zoom</span></h3>
+          <p lang="ko">마우스 휠을 움직여 확대하거나 축소할 수 있습니다.</p>
+          <p lang="en">Use the mouse wheel to zoom in and out.</p></div>
+        </article>
+        <article class="viewer-tutorial-gesture">
+          <svg class="viewer-tutorial-mouse" viewBox="0 0 128 128" aria-hidden="true">
+            <path class="tutorial-mouse-accent" d="M64 28c13 0 23 10 23 23v12H64Z" />
+            <rect x="41" y="28" width="46" height="74" rx="23" />
+            <path d="M64 28v35M41 63h46" />
+            <g class="tutorial-pan-arrows"><path d="M64 5v13M58 11l6-6 6 6M64 110v13M58 117l6 6 6-6M6 65h23M12 59l-6 6 6 6M99 65h23M116 59l6 6-6 6" /></g>
+          </svg>
+          <div><h3><span lang="ko">시점 이동하기</span><span lang="en">Pan</span></h3>
+          <p lang="ko">마우스 오른쪽 버튼을 누른 채 드래그해 카메라를 이동할 수 있습니다.</p>
+          <p lang="en">Right-drag to move the camera.</p></div>
+        </article>
+      </div>
+      <article class="viewer-tutorial-note viewer-tutorial-note--structure" data-tutorial-step="1" hidden>
+        <h3><span lang="ko">2. 구조 살펴보기</span><span lang="en">Explore the Structure</span></h3>
+        <p lang="ko">번호 버튼을 선택하면 해당 구조의 위치와 자세한 설명을 확인할 수 있습니다.</p>
+        <p lang="en">Select a numbered button to locate a part and learn more about it.</p>
+      </article>
+      <article class="viewer-tutorial-note viewer-tutorial-note--controls" data-tutorial-step="2" hidden>
+        <h3><span lang="ko">3. 빛과 뷰어 조절하기</span><span lang="en">Light and Viewer Controls</span></h3>
+        <p lang="ko">슬라이더를 움직여 시간에 따른 빛의 변화를 살펴보세요.</p>
+        <p lang="en">Move the slider to explore how light changes over time.</p>
+        <p class="viewer-tutorial-secondary" lang="ko">하단 버튼으로 소리, 시점 초기화, 전체 화면, 건물 분해를 조절할 수 있습니다.</p>
+        <p class="viewer-tutorial-secondary" lang="en">Use the bottom controls for sound, reset, fullscreen and the exploded view.</p>
+      </article>
+      <article class="viewer-tutorial-note viewer-tutorial-note--building" data-tutorial-step="3" hidden>
+        <h3><span lang="ko">4. 건물 선택하기</span><span lang="en">Choose a Building</span></h3>
+        <p lang="ko">민가·사찰·성문을 선택해 각 건물의 구조와 빛을 살펴보세요.</p>
+        <p lang="en">Choose a building above to explore its structure and light.</p>
+      </article>
+      <nav class="viewer-tutorial-actions" aria-label="Tutorial navigation">
+        <button id="viewerTutorialBack" type="button" hidden>이전</button>
+        <div class="viewer-tutorial-progress"><span id="viewerTutorialStep">01 / 04</span><span class="viewer-tutorial-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span></div>
+        <button class="viewer-tutorial-next" id="viewerTutorialNext" type="button">다음 <span aria-hidden="true">→</span></button>
+        <button class="viewer-tutorial-skip" id="viewerTutorialSkip" type="button">건너뛰기</button>
+      </nav>
+    </div>
+
+  </section>
+</main>
+
+<div class="content-modal" id="archiveModal" aria-hidden="true">
+  <div class="modal-backdrop" data-close-modal></div>
+  <article class="modal-card">
+    <button class="modal-close" type="button" data-close-modal>x</button>
+    <div class="modal-image"></div>
+    <aside class="modal-info">
+      <h3 id="modalTitle">Record title</h3>
+      <p id="modalDesc">Record description</p>
+      <button class="small-button" type="button" data-close-modal data-i18n="continueArchive">Continue in archive</button>
+    </aside>
+  </article>
+</div>
+
+<script src="./js/main.js?v=20261114-02" type="module"></script>
+</body>
+</html>

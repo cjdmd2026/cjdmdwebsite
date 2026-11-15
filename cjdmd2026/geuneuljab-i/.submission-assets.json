@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "files": [
+    {
+      "path": "models/bugangli6.glb",
+      "size": 97011256,
+      "sha256": "990d8daab2775ce0ac6ca663afcd20fc3eeceaed4100f0695d62c26068dbac96",
+      "gitSha": "07db67202ae0310fbcfdc3a473b48a35d1122c10",
+      "key": "published-assets/geuneuljab-i/990d8daab2775ce0ac6ca663afcd20fc3eeceaed4100f0695d62c26068dbac96"
+    },
+    {
+      "path": "models/mt_castle.glb",
+      "size": 53833908,
+      "sha256": "78c46ece89592cdafd802b0a584ea2c41e170686ca6c1674c86644ea1e7d2a21",
+      "gitSha": "5ec692be3b9aa3d333564bcd40a1314bea9691df",
+      "key": "published-assets/geuneuljab-i/78c46ece89592cdafd802b0a584ea2c41e170686ca6c1674c86644ea1e7d2a21"
+    }
+  ]
+}
