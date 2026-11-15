@@ -9,19 +9,19 @@ window.CURO_STORY = {
   unlocked: 1,                                   // 1화부터 몇 화까지 열려 있는지 (나머지는 자물쇠)
   placeholder: 'assets/images/story/hero.webp',  // 영상이 아직 없을 때 영상 자리에 보이는 임시 배경
   episodes: [
-    { title: '큐로 가디언즈의 시작', thumb: 'assets/images/story/ep-1.webp?v=69', video: 'https://player.mux.com/029pK5x9JcrlyMa1acjdqo02I3WnUtydXO8uR022W1XQnE',   // 359차: Mux 영상 교체 (354차 영상 대신)
+    { title: '두근 두근! 큐로 가디언즈, 변신!', thumb: 'assets/images/story/ep-1.webp?v=69', video: 'https://player.mux.com/029pK5x9JcrlyMa1acjdqo02I3WnUtydXO8uR022W1XQnE',   // 359차: Mux 영상 교체 (354차 영상 대신)
       summary: ['콩이는 주사기에서 나온 동물 친구들을 만나게 돼요.', '“우리는 콩이의 몸을 지켜주는 가디언즈야!”', '가디언즈에게 주사 방법을 배우고, 주사 연습 벨트를 착용해 직접 연습하며 주사에 대한 두려움을 이겨내요.'] },
-    { title: '주사 준비 대작전', thumb: 'assets/images/story/ep-2.webp?v=69', video: '',
+    { title: '출동! 주사 준비 대작전', thumb: 'assets/images/story/ep-2.webp?v=69', video: '',
       summary: ['주사를 맞으려던 콩이는 필요한 물건들이 흩어져 있는 것을 발견해요.', '“어라? 주사를 맞으려면 뭐가 필요하지?”', '가디언즈와 함께 필요한 준비물을 하나씩 확인하며 주사를 준비하는 방법을 배워요.'] },
-    { title: '깨끗깨끗! 손 씻기', thumb: 'assets/images/story/ep-3.webp?v=69', video: '',
+    { title: '뽀득뽀득, 세균을 물리쳐라!', thumb: 'assets/images/story/ep-3.webp?v=69', video: '',
       summary: ['주사를 맞으려던 콩이를 미오가 급하게 불러요.', '“잠깐! 주사하기 전에 손부터 깨끗하게 씻어야 해!”', '콩이는 가디언즈와 함께 손을 깨끗하게 씻으며 주사 전 위생 관리 방법을 배워요.'] },
-    { title: '어디에 놓을까?', thumb: 'assets/images/story/ep-4.webp?v=69', video: '',
+    { title: '콕콕! 주사 자리를 찾아라!', thumb: 'assets/images/story/ep-4.webp?v=69', video: '',
       summary: ['주사를 맞으려던 콩이는 어디에 주사를 놓아야 할지 고민해요.', '“주사는 어디에 놓아야 하지?”', '가디언즈에게 주사할 위치를 확인하는 방법을 배우며 올바른 주사 위치를 알아가요.'] },
-    { title: '용감하게 하나, 둘!', thumb: 'assets/images/story/ep-5.webp?v=69', video: '',
+    { title: '용기를 내! 하나, 둘, 셋!', thumb: 'assets/images/story/ep-5.webp?v=69', video: '',
       summary: ['이번에는 콩이가 가디언즈의 도움 없이 직접 해보기로 해요.', '“이번에는 내가 직접 해볼래!”', '콩이는 배운 순서대로 차근차근 주사를 연습하고, 가디언즈는 곁에서 응원해줘요.'] },
-    { title: '주사 후에도 꼼꼼하게!', thumb: 'assets/images/story/ep-6.webp?v=69', video: '',
+    { title: '주사가 끝나도 방심은 금물!', thumb: 'assets/images/story/ep-6.webp?v=69', video: '',
       summary: ['주사를 끝낸 콩이는 신이 나서 바로 놀러 가려고 해요.', '“콩이야! 주사가 끝났다고 끝난 게 아니야!”', '베어리와 함께 사용한 물품을 정리하고 주사 후 해야 할 일을 확인해요.'] },
-    { title: '오늘의 주사 기록하기', thumb: 'assets/images/story/ep-7.webp?v=69', video: '',
+    { title: '오늘도 성공! 주사 일기 쓰기', thumb: 'assets/images/story/ep-7.webp?v=69', video: '',
       summary: ['주사를 마친 콩이는 오늘의 주사 이야기를 일기에 적어보기로 해요.', '“오늘은 내가 혼자서 주사 연습에 성공했어!”', '가디언즈와 함께 오늘의 주사 과정을 기록하며 주사 후 기록하는 습관을 배워요.'] }
   ],
   icons: { play: 'assets/icons/play.svg', lock: 'assets/icons/lock.svg' }
