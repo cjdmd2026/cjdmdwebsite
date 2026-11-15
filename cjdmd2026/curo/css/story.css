@@ -39,7 +39,7 @@ html.st-watch .st-watch-view { display: block; }
   content: ''; position: absolute; inset: 0; pointer-events: none;
   background: linear-gradient(90deg, rgba(121, 89, 65, 0.86) 0%, rgba(121, 89, 65, 0.74) 26%, rgba(121, 89, 65, 0.42) 40%, rgba(121, 89, 65, 0) 54%);
 }
-.st-hero-in { position: relative; z-index: 1; color: #FFFFFF; transform: translateY(calc(-22 * var(--hu))); }
+.st-hero-in { position: relative; z-index: 1; color: #FFFFFF; }   /* 369차: 제목~버튼 묶음 = 배너 세로 가운데 (위로 올리던 translateY 삭제) */
 .st-title { font-family: 'BM JUA', sans-serif; font-weight: 400; font-size: calc(57.5 * var(--hu)); line-height: 1.15; color: #FFFFFF; }
 .st-sub { margin-top: calc(22 * var(--hu)) !important; font-size: max(15px, calc(21 * var(--hu))); line-height: 1.4; font-weight: 500; color: #FFFFFF; }
 .st-cta {
