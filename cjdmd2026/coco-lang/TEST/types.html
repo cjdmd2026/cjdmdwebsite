@@ -1,0 +1,375 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+
+  <title>COCO:LANG 다른 유형 둘러보기</title>
+
+  <!-- Pretendard -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
+  >
+
+  <!-- 기존 CSS 유지 -->
+  <link
+    rel="stylesheet"
+    href="test.css?v=3"
+  >
+
+</head>
+
+<body>
+
+  <main class="types-page">
+
+    <div class="types-stage">
+
+      <!-- 전체 배경 -->
+      <img
+        src="img/types-bg.webp"
+        class="types-background-image"
+        alt=""
+      >
+
+      <!-- 9가지 성향 카드 -->
+      <section
+        id="typesGrid"
+        class="types-grid"
+        aria-label="다른 유형 둘러보기"
+      >
+      </section>
+
+      <!-- 결과로 돌아가기 -->
+      <button
+        type="button"
+        id="backResultButton"
+        class="back-result-button"
+      >
+        결과로 돌아가기
+      </button>
+
+    </div>
+
+  </main>
+
+
+  <script>
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      function () {
+
+        /* =====================================
+           기존 견종 정보 유지
+        ====================================== */
+
+        const selectedBreed =
+          localStorage.getItem("selectedBreed");
+
+        if (!selectedBreed) {
+
+          alert(
+            "선택된 견종 정보가 없습니다.\n견종을 먼저 선택해주세요."
+          );
+
+          window.location.href = "select.html";
+
+          return;
+        }
+
+
+        /* =====================================
+           9가지 성향 정보
+        ====================================== */
+
+        const personalityTypes = [
+
+          {
+            name: "마당발형",
+            imageId: "madang",
+            code: "CTEA"
+          },
+
+          {
+            name: "말랑순둥형",
+            imageId: "mallang",
+            code: "CTEL"
+          },
+
+          {
+            name: "킁킁탐험형",
+            imageId: "explorer",
+            code: "WTEL"
+          },
+
+          {
+            name: "눈치만렙형",
+            imageId: "smart",
+            code: "WTIL"
+          },
+
+          {
+            name: "우다다형",
+            imageId: "udadada",
+            code: "WTEA"
+          },
+
+          {
+            name: "경계대장형",
+            imageId: "guard",
+            code: "WNIL"
+          },
+
+          {
+            name: "마이웨이형",
+            imageId: "myway",
+            code: "WTIA"
+          },
+
+          {
+            name: "엄마바라기형",
+            imageId: "mom",
+            code: "CTIA"
+          },
+
+          {
+            name: "예민보스형",
+            imageId: "sensitive",
+            code: "CNIL"
+          }
+
+        ];
+
+
+        /* =====================================
+           코코 캐릭터 이미지 경로
+
+           실제 폴더:
+           img/match/
+        ====================================== */
+
+        const typeImageMap = {
+
+          madang:
+            "img/match/coco-madang.webp",
+
+          mallang:
+            "img/match/coco-mallang.webp",
+
+          explorer:
+            "img/match/coco-explorer.webp",
+
+          smart:
+            "img/match/coco-smart.webp",
+
+          udadada:
+            "img/match/coco-udadada.webp",
+
+          guard:
+            "img/match/coco-guard.webp",
+
+          myway:
+            "img/match/coco-myway.webp",
+
+          mom:
+            "img/match/coco-mom.webp",
+
+          sensitive:
+            "img/match/coco-sensitive.webp"
+
+        };
+
+
+        /* =====================================
+           HTML 요소
+        ====================================== */
+
+        const typesGrid =
+          document.getElementById("typesGrid");
+
+        const backResultButton =
+          document.getElementById("backResultButton");
+
+
+        /* =====================================
+           유형 카드 생성
+        ====================================== */
+
+        personalityTypes.forEach(
+          function (type, index) {
+
+            const card =
+              document.createElement("button");
+
+            card.type = "button";
+
+            card.className =
+              "type-card type-card-" +
+              String(index + 1).padStart(2, "0");
+
+            card.dataset.type = type.name;
+
+            card.dataset.code = type.code;
+
+            card.setAttribute(
+              "aria-label",
+              type.name + " 결과 보기"
+            );
+
+
+            /* =====================================
+               이미지 경로 수정 완료
+            ====================================== */
+
+            const imagePath =
+              typeImageMap[type.imageId];
+
+
+            /* =====================================
+               카드 HTML
+            ====================================== */
+
+            card.innerHTML = `
+
+              <span class="type-card-image-wrap">
+
+                <img
+                  src="${imagePath}"
+                  class="type-card-image"
+                  alt="코코 ${type.name} 캐릭터"
+                  loading="eager"
+                >
+
+              </span>
+
+              <strong class="type-card-name">
+                ${type.name}
+              </strong>
+
+            `;
+
+
+            /* =====================================
+               이미지 오류 처리
+            ====================================== */
+
+            const cardImage =
+              card.querySelector(".type-card-image");
+
+            cardImage.addEventListener(
+              "error",
+              function () {
+
+                console.error(
+                  "캐릭터 이미지 로드 실패:",
+                  imagePath
+                );
+
+                this.style.display = "none";
+
+                this.parentElement.classList.add(
+                  "image-error"
+                );
+
+              }
+            );
+
+
+            /* =====================================
+               이미지 정상 로드
+            ====================================== */
+
+            cardImage.addEventListener(
+              "load",
+              function () {
+
+                this.style.display = "block";
+
+                this.parentElement.classList.remove(
+                  "image-error"
+                );
+
+              }
+            );
+
+
+            /* =====================================
+               카드 클릭 시 결과 이동
+
+               기존 기능 유지
+            ====================================== */
+
+            card.addEventListener(
+              "click",
+              function () {
+
+                localStorage.setItem(
+                  "resultType",
+                  type.name
+                );
+
+                localStorage.setItem(
+                  "personalityType",
+                  type.name
+                );
+
+                localStorage.setItem(
+                  "resultCode",
+                  type.code
+                );
+
+                localStorage.setItem(
+                  "personalityCode",
+                  type.code
+                );
+
+                window.location.href =
+                  "result.html";
+
+              }
+            );
+
+
+            /* =====================================
+               카드 화면에 추가
+            ====================================== */
+
+            typesGrid.appendChild(card);
+
+          }
+        );
+
+
+        /* =====================================
+           결과로 돌아가기
+        ====================================== */
+
+        backResultButton.addEventListener(
+          "click",
+          function () {
+
+            window.location.href =
+              "result.html";
+
+          }
+        );
+
+      }
+    );
+
+  </script>
+
+  <script src="audio.js"></script>
+
+</body>
+
+</html>

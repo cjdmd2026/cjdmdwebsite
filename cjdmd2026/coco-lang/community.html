@@ -1,0 +1,3072 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+
+<title>COCO LANG</title>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css?family=Montserrat"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="style.css">
+
+    <script
+        src="https://kit.fontawesome.com/65c758839a.js"
+        crossorigin="anonymous"
+    ></script>
+
+    <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+
+
+    <script>
+        window.navermap_authFailure = function () {
+            console.error("네이버 지도 API 인증에 실패했습니다.");
+            console.error(
+                "Client ID, Dynamic Map, Web 서비스 URL 설정을 확인하세요."
+            );
+        };
+    </script>
+
+
+    <!-- 발급받은 실제 Client ID를 넣기 -->
+    <script
+        type="text/javascript"
+        src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=여기에_실제_CLIENT_ID"
+    ></script>
+
+
+    <script>
+        $(function () {
+            $(".headC").click(function () {
+                $(".headB").slideToggle();
+            });
+        });
+    </script>
+</head>
+
+<body class="page-community">
+
+    <!-- ================= TOP BUTTON ================= -->
+
+<button
+  type="button"
+  id="scrollTopBtn"
+  class="scroll-top-btn is-hidden"
+  aria-label="맨 위로 이동"
+>
+  <i class="fa-solid fa-arrow-up"></i>
+</button>
+
+
+          <!-- =========================================================
+     FLOATING PERSONALITY TEST
+========================================================= -->
+
+<a
+  href="test/test-index.html"
+  target="_blank"
+  rel="noopener noreferrer"
+  class="floating-test"
+>
+  <img
+    src="img/fast-test-character.webp"
+    alt="성향 테스트 캐릭터"
+    class="floating-test-character"
+  >
+
+  <div class="floating-test-button">
+    성향테스트
+  </div>
+</a>
+
+
+    <!-- ===================================
+         HEADER
+    =================================== -->
+
+  <!-- =========================
+       HEADER
+       기존 링크 구조 유지
+  ========================== -->
+  <header>
+    <div class="header-inner">
+
+      <div class="container-small">
+      <a href="index.html" class="logo">
+        <img src="img/header-logo.webp" alt="COCO LANG">
+      </a>
+      </div>
+
+<nav class="headB">
+  <ul>
+
+    <li>
+      <a href="brand.html">
+        BRAND
+      </a>
+    </li>
+
+    <li>
+      <a href="app.html">
+        APP
+      </a>
+    </li>
+
+    <li>
+<a href="community.html" class="active" aria-current="page">
+    COMMUNITY
+</a>
+    </li>
+
+    <li>
+      <a href="shop.html">
+        SHOP
+      </a>
+    </li>
+
+  </ul>
+</nav>
+
+      <button class="headC" type="button" aria-label="메뉴 열기">
+        ☰
+      </button>
+
+    </div>
+  </header>
+
+    <!-- exhibition:S -->
+
+<!-- =========================================================
+     COMMUNITY INTRO BANNER
+========================================================= -->
+
+<section class="community-intro">
+
+    <div class="community-intro-card">
+
+        <!-- LEFT TEXT -->
+        <div class="community-intro-text">
+
+            <p class="community-intro-eyebrow">
+                산책길에서 시작되는 새로운 만남
+            </p>
+
+            <h1>
+                우리 동네에서<br>
+                함께 걸을 친구를<br>
+                만나보세요.
+            </h1>
+
+            <p class="community-intro-description">
+                반려견의 성향을 확인하고<br>
+                나와 잘 맞는 산책 메이트를 찾아보세요.
+            </p>
+
+            <a href="#community-story" class="community-intro-button">
+                커뮤니티 둘러보기
+                <span>→</span>
+            </a>
+
+        </div>
+
+
+        <!-- RIGHT VISUAL -->
+<div class="community-intro-visual">
+
+    <!-- 배경 장식 -->
+    <div class="intro-circle intro-circle-1"></div>
+    <div class="intro-circle intro-circle-2"></div>
+
+    <span class="intro-dot intro-dot-1"></span>
+    <span class="intro-dot intro-dot-2"></span>
+    <span class="intro-dot intro-dot-3"></span>
+
+    <span class="intro-spark intro-spark-1">✦</span>
+    <span class="intro-spark intro-spark-2">✦</span>
+
+
+    <!-- 캐릭터 그룹 -->
+    <img
+        src="img/community-intro-dogs.webp"
+        alt="코코랑 동네 산책 친구들"
+        class="community-intro-characters"
+    >
+
+</div>
+
+            <!-- 배경 장식 -->
+            <div class="intro-circle intro-circle-1"></div>
+            <div class="intro-circle intro-circle-2"></div>
+
+            <span class="intro-dot intro-dot-1"></span>
+            <span class="intro-dot intro-dot-2"></span>
+            <span class="intro-dot intro-dot-3"></span>
+
+            <span class="intro-spark intro-spark-1">✦</span>
+            <span class="intro-spark intro-spark-2">✦</span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     COMMUNITY MESSAGE HERO
+========================================================= -->
+
+<section class="community-hero" id="community-story">
+
+    <!-- 배경 장식 -->
+    <div class="community-bg-shape bg-shape-top-left"></div>
+    <div class="community-bg-shape bg-shape-top-right"></div>
+    <div class="community-bg-shape bg-shape-bottom-left"></div>
+    <div class="community-bg-shape bg-shape-bottom-right"></div>
+
+
+    <!-- 전체 콘텐츠 -->
+    <div class="community-hero-stage">
+
+
+        <!-- TOP -->
+
+        <div class="community-pill pill-title">
+            함께 걸으면,
+        </div>
+
+        <div class="community-pill pill-top-small">
+            우리 동네가
+        </div>
+
+        <div class="community-character character-top">
+            <img src="img/community-dog-1.webp" alt="">
+        </div>
+
+        <div class="community-pill pill-top-right">
+            더 가까워지고
+        </div>
+
+
+        <!-- MIDDLE -->
+
+        <div class="community-character character-left">
+            <img src="img/community-dog-2.webp" alt="">
+        </div>
+
+        <div class="community-pill pill-middle-left">
+            새로운 메이트와
+        </div>
+
+        <div class="community-pill pill-middle-right">
+            산책을 나누고
+        </div>
+
+        <div class="community-character character-right">
+            <img src="img/community-dog-3.webp" alt="">
+        </div>
+
+
+        <!-- BOTTOM -->
+
+        <div class="community-pill pill-bottom-left">
+            오늘도
+        </div>
+
+        <div class="community-character character-bottom">
+            <img src="img/community-dog-4.webp" alt="">
+        </div>
+
+        <div class="community-pill pill-bottom-main">
+            같이 걸어요
+        </div>
+
+        <div class="community-pill pill-bottom-circle">
+            +
+        </div>
+
+
+        <!-- DECORATION -->
+
+        <span class="community-deco deco-dot deco-dot-1"></span>
+        <span class="community-deco deco-dot deco-dot-2"></span>
+        <span class="community-deco deco-dot deco-dot-3"></span>
+
+        <span class="community-deco deco-flower deco-flower-1">✿</span>
+        <span class="community-deco deco-flower deco-flower-2">✿</span>
+
+        <span class="community-deco deco-line deco-line-1">///</span>
+        <span class="community-deco deco-line deco-line-2">///</span>
+
+    </div>
+
+
+
+</section>
+
+
+<!-- =========================================================
+     COMMUNITY MAP SECTION
+========================================================= -->
+
+<section class="community-map-section" id="community-map">
+
+    <div class="community-map-inner">
+
+        <!-- =================================================
+             LEFT CONTENT
+        ================================================== -->
+
+        <div class="community-map-content">
+
+            <div class="community-map-label">
+                <span></span>
+                우리 동네 산책 지도
+            </div>
+
+            <h2 class="community-map-title">
+                오늘 우리 동네에서는
+                <strong>산책 중인 친구들을 만나보세요.</strong>
+            </h2>
+
+            <p class="community-map-description">
+                지금 주변에서 산책 중인 친구들을 확인하고<br>
+                나와 잘 맞는 산책 메이트를 찾아보세요.
+            </p>
+
+
+            <!-- FILTER -->
+            <div class="community-map-filter">
+
+                <button
+                    class="community-filter-btn active"
+                    data-filter="all"
+                    type="button"
+                >
+                    전체
+                </button>
+
+                <button
+                    class="community-filter-btn"
+                    data-filter="active"
+                    type="button"
+                >
+                    활발
+                </button>
+
+                <button
+                    class="community-filter-btn"
+                    data-filter="gentle"
+                    type="button"
+                >
+                    온순
+                </button>
+
+                <button
+                    class="community-filter-btn"
+                    data-filter="shy"
+                    type="button"
+                >
+                    낯가림
+                </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 SELECTED DOG CARD
+            ================================================== -->
+
+            <div
+                class="community-profile-card"
+                id="communityProfileCard"
+            >
+
+                <div class="community-profile-top">
+
+                    <span class="community-profile-kicker">
+                        TODAY'S MATE
+                    </span>
+
+                    <span class="community-profile-live">
+                        <i></i>
+                        산책 중
+                    </span>
+
+                </div>
+
+
+                <div class="community-profile-main">
+
+                    <!-- IMAGE -->
+                    <div class="community-profile-image">
+
+                        <img
+                            id="profileImage"
+                            src="img/community-dog-1.webp"
+                            alt="루디"
+                        >
+
+                    </div>
+
+
+                    <!-- INFO -->
+                    <div class="community-profile-info">
+
+                        <div class="community-profile-name-row">
+
+                            <h3 id="profileName">
+                                루디
+                            </h3>
+
+                            <span id="profileCode">
+                                #CO01
+                            </span>
+
+                        </div>
+
+
+                        <p
+                            class="community-profile-meta"
+                            id="profileMeta"
+                        >
+                            푸들 · 2살
+                        </p>
+
+
+                        <div class="community-profile-tags">
+
+                            <span
+                                id="profilePersonality"
+                                class="profile-tag profile-tag-yellow"
+                            >
+                                활발
+                            </span>
+
+                            <span
+                                id="profileGreeting"
+                                class="profile-tag profile-tag-green"
+                            >
+                                인사 가능
+                            </span>
+
+                        </div>
+
+
+                        <p
+                            class="community-profile-message"
+                            id="profileMessage"
+                        >
+                            친구들과 뛰어노는 걸 좋아해요!
+                        </p>
+
+
+                        <p
+                            class="community-profile-distance"
+                            id="profileDistance"
+                        >
+                            <span></span>
+                            현재 1.2km
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="community-profile-button"
+                    id="profileDetailButton"
+                    type="button"
+                >
+                    프로필 자세히 보기
+                    <span>→</span>
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             RIGHT MAP
+        ================================================== -->
+
+        <div class="community-map-area">
+
+            <!-- 산책 중 숫자 -->
+            <div class="community-map-live-count">
+                <span></span>
+                <strong id="liveCount">
+                    5마리 산책 중
+                </strong>
+            </div>
+
+
+            <!-- =================================================
+                 MAP CANVAS
+            ================================================== -->
+
+            <div
+                class="community-map-canvas"
+                id="communityMapCanvas"
+            >
+
+                <img
+                    src="img/community-map.webp"
+                    alt="코코랑 우리 동네 지도"
+                    class="community-map-image"
+                >
+
+
+                <!-- 루디 -->
+                <button
+                    class="community-map-marker active"
+                    data-id="rudy"
+                    data-type="active"
+                    style="left:27%; top:27%;"
+                    type="button"
+                    aria-label="루디 정보 보기"
+                >
+                    <span class="marker-circle">
+                        <img
+                            src="img/community-dog-1.webp"
+                            alt="루디"
+                        >
+                    </span>
+
+                    <i class="marker-dot marker-dot-green"></i>
+
+                    <span class="marker-name">
+                        루디
+                    </span>
+                </button>
+
+
+                <!-- 코코 -->
+                <button
+                    class="community-map-marker"
+                    data-id="coco"
+                    data-type="gentle"
+                    style="left:54%; top:43%;"
+                    type="button"
+                    aria-label="코코 정보 보기"
+                >
+                    <span class="marker-circle">
+                        <img
+                            src="img/community-dog-4.webp"
+                            alt="코코"
+                        >
+                    </span>
+
+                    <i class="marker-dot marker-dot-green"></i>
+
+                    <span class="marker-name">
+                        코코
+                    </span>
+                </button>
+
+
+                <!-- 몽이 -->
+                <button
+                    class="community-map-marker"
+                    data-id="mong"
+                    data-type="shy"
+                    style="left:34%; top:64%;"
+                    type="button"
+                    aria-label="몽이 정보 보기"
+                >
+                    <span class="marker-circle">
+                        <img
+                            src="img/community-dog-1.webp"
+                            alt="몽이"
+                        >
+                    </span>
+
+                    <i class="marker-dot marker-dot-yellow"></i>
+
+                    <span class="marker-name">
+                        몽이
+                    </span>
+                </button>
+
+
+                <!-- 보리 -->
+                <button
+                    class="community-map-marker"
+                    data-id="bori"
+                    data-type="active"
+                    style="left:65%; top:67%;"
+                    type="button"
+                    aria-label="보리 정보 보기"
+                >
+                    <span class="marker-circle">
+                        <img
+                            src="img/community-dog-3.webp"
+                            alt="보리"
+                        >
+                    </span>
+
+                    <i class="marker-dot marker-dot-yellow"></i>
+
+                    <span class="marker-name">
+                        보리
+                    </span>
+                </button>
+
+
+                <!-- 두부 -->
+                <button
+                    class="community-map-marker"
+                    data-id="dubu"
+                    data-type="shy"
+                    style="left:75%; top:34%;"
+                    type="button"
+                    aria-label="두부 정보 보기"
+                >
+                    <span class="marker-circle">
+                        <img
+                            src="img/community-dog-2.webp"
+                            alt="두부"
+                        >
+                    </span>
+
+                    <i class="marker-dot marker-dot-coral"></i>
+
+                    <span class="marker-name">
+                        두부
+                    </span>
+                </button>
+
+
+                <!-- DECORATION -->
+                <span class="map-tree tree-1"></span>
+                <span class="map-tree tree-2"></span>
+                <span class="map-tree tree-3"></span>
+
+            </div>
+
+
+            <!-- MAP CONTROL -->
+            <div class="community-map-controls">
+
+                <button
+                    id="mapZoomIn"
+                    type="button"
+                    aria-label="지도 확대"
+                >
+                    +
+                </button>
+
+                <button
+                    id="mapZoomOut"
+                    type="button"
+                    aria-label="지도 축소"
+                >
+                    −
+                </button>
+
+            </div>
+
+
+            <button
+                class="community-map-reset"
+                id="mapReset"
+                type="button"
+                aria-label="지도 초기화"
+            >
+                ◎
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     COMMUNITY WALK STORY
+========================================================= -->
+<section class="community-story-section">
+
+    <!-- HEADER -->
+    <div class="community-story-head">
+
+        <div class="community-story-copy">
+
+            <p class="community-story-eyebrow">
+                함께 걸었던 순간들
+            </p>
+
+            <h2>
+                우리 동네의<br>
+                산책 이야기
+            </h2>
+
+            <p class="community-story-desc">
+                코코랑에서 만난 메이트들과 함께한<br>
+                작은 산책 이야기를 만나보세요.
+            </p>
+
+        </div>
+
+        <div class="community-story-bg-title">
+            WALK STORY
+        </div>
+
+    </div>
+
+
+    <!-- SLIDER -->
+    <div
+        class="community-story-slider"
+        id="storySlider"
+    >
+
+        <div
+            class="community-story-track"
+            id="storyTrack"
+        >
+
+            <!-- 01 -->
+            <article class="story-pill-card story-card-pink">
+
+                <div class="story-pill-content">
+
+                    <span class="story-pill-category">
+                        동네 친구
+                    </span>
+
+                    <h3>
+                        자주 마주치던 친구와<br>
+                        진짜 친구가 됐어요.
+                    </h3>
+
+                    <button
+                        class="story-pill-button"
+                        type="button"
+                    >
+                        후기 보기
+                        <span>→</span>
+                    </button>
+
+                </div>
+
+                <img
+                    src="img/community-dog-1.webp"
+                    alt="루디"
+                    class="story-pill-character"
+                >
+
+            </article>
+
+
+            <!-- 02 -->
+            <article class="story-pill-card story-card-yellow">
+
+                <div class="story-pill-content">
+
+                    <span class="story-pill-category">
+                        추천 메이트
+                    </span>
+
+                    <h3>
+                        생각보다 더<br>
+                        잘 맞았어요.
+                    </h3>
+
+                    <button
+                        class="story-pill-button"
+                        type="button"
+                    >
+                        후기 보기
+                        <span>→</span>
+                    </button>
+
+                </div>
+
+                <img
+                    src="img/community-dog-3.webp"
+                    alt="보리"
+                    class="story-pill-character"
+                >
+
+            </article>
+
+
+            <!-- 03 -->
+            <article class="story-pill-card story-card-green">
+
+                <div class="story-pill-content">
+
+                    <span class="story-pill-category">
+                        메이트 후기
+                    </span>
+
+                    <h3>
+                        처음 만났는데도<br>
+                        금방 편해졌어요.
+                    </h3>
+
+                    <button
+                        class="story-pill-button"
+                        type="button"
+                    >
+                        후기 보기
+                        <span>→</span>
+                    </button>
+
+                </div>
+
+                <img
+                    src="img/community-dog-1.webp"
+                    alt="루디"
+                    class="story-pill-character"
+                >
+
+            </article>
+
+
+            <!-- 04 -->
+            <article class="story-pill-card story-card-peach">
+
+                <div class="story-pill-content">
+
+                    <span class="story-pill-category">
+                        산책 코스
+                    </span>
+
+                    <h3>
+                        익숙한 동네에서<br>
+                        새로운 길을 찾았어요.
+                    </h3>
+
+                    <button
+                        class="story-pill-button"
+                        type="button"
+                    >
+                        후기 보기
+                        <span>→</span>
+                    </button>
+
+                </div>
+
+                <img
+                    src="img/community-dog-3.webp"
+                    alt="보리"
+                    class="story-pill-character"
+                >
+
+            </article>
+
+
+            <!-- 05 -->
+            <article class="story-pill-card story-card-blue">
+
+                <div class="story-pill-content">
+
+                    <span class="story-pill-category">
+                        매칭 성공
+                    </span>
+
+                    <h3>
+                        잘 맞는 친구를<br>
+                        만났어요.
+                    </h3>
+
+                    <button
+                        class="story-pill-button"
+                        type="button"
+                    >
+                        후기 보기
+                        <span>→</span>
+                    </button>
+
+                </div>
+
+                <img
+                    src="img/community-dog-2.webp"
+                    alt="두부"
+                    class="story-pill-character"
+                >
+
+            </article>
+
+
+            <!-- 06 -->
+            <article class="story-pill-card story-card-sage">
+
+                <div class="story-pill-content">
+
+                    <span class="story-pill-category">
+                        오늘의 산책
+                    </span>
+
+                    <h3>
+                        혼자 걷던 길을<br>
+                        함께 걷게 됐어요.
+                    </h3>
+
+                    <button
+                        class="story-pill-button"
+                        type="button"
+                    >
+                        후기 보기
+                        <span>→</span>
+                    </button>
+
+                </div>
+
+                <img
+                    src="img/community-dog-4.webp"
+                    alt="코코"
+                    class="story-pill-character"
+                >
+
+            </article>
+
+        </div>
+
+    </div>
+
+
+    <!-- CONTROL -->
+    <div class="community-story-controls">
+
+        <button
+            id="storyPrev"
+            type="button"
+            aria-label="이전 후기"
+        >
+            ←
+        </button>
+
+        <button
+            id="storyNext"
+            type="button"
+            aria-label="다음 후기"
+        >
+            →
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     COMMUNITY MOMENTS
+========================================================= -->
+<section class="community-moments-section">
+
+    <div class="community-moments-head">
+
+        <span class="community-moments-eyebrow">
+            COMMUNITY MOMENTS
+        </span>
+
+        <h2>
+            우리 동네에서<br>
+            함께 만든 순간들
+        </h2>
+
+        <p>
+            코코랑 메이트들과 함께한<br>
+            다양한 산책 순간을 만나보세요.
+        </p>
+
+    </div>
+
+
+    <div class="community-moments-grid">
+
+        <!-- 01 -->
+        <article class="community-moment-card moment-card-1">
+
+            <img
+                src="img/community-moment-1.webp"
+                alt="산책 메이트 첫 만남"
+            >
+
+            <div class="community-moment-overlay">
+
+                <span>FIRST MEET</span>
+
+                <h3>
+                    오늘 처음 만난<br>
+                    산책 메이트
+                </h3>
+
+            </div>
+
+        </article>
+
+
+        <!-- 02 -->
+        <article class="community-moment-card moment-card-2">
+
+            <img
+                src="img/community-moment-2.webp"
+                alt="함께 걷는 산책"
+            >
+
+            <div class="community-moment-overlay">
+
+                <span>WALK TOGETHER</span>
+
+                <h3>
+                    같이 걸어서<br>
+                    더 즐거운 길
+                </h3>
+
+            </div>
+
+        </article>
+
+
+        <!-- 03 -->
+        <article class="community-moment-card moment-card-3">
+
+            <img
+                src="img/community-moment-3.webp"
+                alt="동네 산책 코스"
+            >
+
+            <div class="community-moment-overlay">
+
+                <span>OUR COURSE</span>
+
+                <h3>
+                    우리가 발견한<br>
+                    동네 산책 코스
+                </h3>
+
+            </div>
+
+        </article>
+
+
+        <!-- 04 -->
+        <article class="community-moment-card moment-card-4">
+
+            <img
+                src="img/community-moment-4.webp"
+                alt="강아지 첫 인사"
+            >
+
+            <div class="community-moment-overlay">
+
+                <span>HELLO FRIEND</span>
+
+                <h3>
+                    조심스럽게 건넨<br>
+                    첫 번째 인사
+                </h3>
+
+            </div>
+
+        </article>
+
+
+        <!-- 05 -->
+        <article class="community-moment-card moment-card-5">
+
+            <img
+                src="img/community-moment-5.webp"
+                alt="오늘의 산책 기록"
+            >
+
+            <div class="community-moment-overlay">
+
+                <span>WALK RECORD</span>
+
+                <h3>
+                    오늘도 하나씩<br>
+                    쌓여가는 산책 기록
+                </h3>
+
+            </div>
+
+        </article>
+
+
+        <!-- 06 -->
+        <article class="community-moment-card moment-card-6">
+
+            <img
+                src="img/community-moment-6.webp"
+                alt="새로운 산책 친구"
+            >
+
+            <div class="community-moment-overlay">
+
+                <span>NEW FRIEND</span>
+
+                <h3>
+                    우리 동네에 생긴<br>
+                    새로운 친구
+                </h3>
+
+            </div>
+
+        </article>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     COCO:LANG NEWS / NOTICE
+========================================================= -->
+
+<section class="community-news-section" id="communityNews">
+
+    <div class="community-news-inner">
+
+        <!-- =================================================
+             LEFT
+        ================================================== -->
+        <div class="community-news-content">
+
+            <div class="community-news-head">
+
+                <div>
+                    <span class="community-news-eyebrow">
+                        COMMUNITY NEWS
+                    </span>
+
+                    <h2>
+                        코코랑 소식
+                    </h2>
+
+                    <p>
+                        코코랑의 새로운 소식과<br>
+                        업데이트를 확인해보세요.
+                    </p>
+                </div>
+
+
+                <button
+                    class="community-news-more"
+                    type="button"
+                     onclick="location.href='community-news.html'"
+                    >
+                    전체보기
+                <span>→</span>
+                </button>
+
+            </div>
+
+
+            <!-- =============================================
+                 NOTICE LIST
+            ============================================== -->
+            <div class="community-news-list">
+
+
+                <!-- 01 -->
+                <button
+                    class="community-news-item"
+                    type="button"
+                    data-category="NOTICE"
+                    data-title="코코랑 커뮤니티 이용 가이드 안내"
+                    data-date="2026.09.12"
+                    data-description="더 즐겁고 안전한 산책 커뮤니티 이용을 위해 코코랑 이용 가이드가 새롭게 업데이트되었어요."
+                >
+
+                    <div class="community-news-item-left">
+
+                        <span class="community-news-category">
+                            NOTICE
+                        </span>
+
+                        <strong>
+                            코코랑 커뮤니티 이용 가이드 안내
+                        </strong>
+
+                    </div>
+
+                    <div class="community-news-item-right">
+
+                        <span class="community-news-date">
+                            2026.09.12
+                        </span>
+
+                        <span class="community-news-arrow">
+                            →
+                        </span>
+
+                    </div>
+
+                </button>
+
+
+                <!-- 02 -->
+                <button
+                    class="community-news-item"
+                    type="button"
+                    data-category="UPDATE"
+                    data-title="우리 동네 산책 지도 기능이 업데이트됐어요"
+                    data-date="2026.09.08"
+                    data-description="주변에서 산책 중인 친구를 더 쉽게 확인할 수 있도록 지도와 성향 필터 기능을 개선했어요."
+                >
+
+                    <div class="community-news-item-left">
+
+                        <span class="community-news-category">
+                            UPDATE
+                        </span>
+
+                        <strong>
+                            우리 동네 산책 지도 기능이 업데이트됐어요
+                        </strong>
+
+                    </div>
+
+                    <div class="community-news-item-right">
+
+                        <span class="community-news-date">
+                            2026.09.08
+                        </span>
+
+                        <span class="community-news-arrow">
+                            →
+                        </span>
+
+                    </div>
+
+                </button>
+
+
+                <!-- 03 -->
+                <button
+                    class="community-news-item"
+                    type="button"
+                    data-category="EVENT"
+                    data-title="9월 우리 동네 산책 메이트 이벤트"
+                    data-date="2026.09.03"
+                    data-description="새로운 산책 메이트를 만나고 함께 걸어보세요. 9월 한 달 동안 특별한 산책 배지를 받을 수 있어요."
+                >
+
+                    <div class="community-news-item-left">
+
+                        <span class="community-news-category">
+                            EVENT
+                        </span>
+
+                        <strong>
+                            9월 우리 동네 산책 메이트 이벤트
+                        </strong>
+
+                    </div>
+
+                    <div class="community-news-item-right">
+
+                        <span class="community-news-date">
+                            2026.09.03
+                        </span>
+
+                        <span class="community-news-arrow">
+                            →
+                        </span>
+
+                    </div>
+
+                </button>
+
+
+                <!-- 04 -->
+                <button
+                    class="community-news-item"
+                    type="button"
+                    data-category="GUIDE"
+                    data-title="처음 만나는 친구에게 인사하는 방법"
+                    data-date="2026.08.28"
+                    data-description="강아지의 성향을 먼저 확인하고 천천히 다가가 주세요. 편안한 첫 만남을 위한 간단한 산책 매너를 소개합니다."
+                >
+
+                    <div class="community-news-item-left">
+
+                        <span class="community-news-category">
+                            GUIDE
+                        </span>
+
+                        <strong>
+                            처음 만나는 친구에게 인사하는 방법
+                        </strong>
+
+                    </div>
+
+                    <div class="community-news-item-right">
+
+                        <span class="community-news-date">
+                            2026.08.28
+                        </span>
+
+                        <span class="community-news-arrow">
+                            →
+                        </span>
+
+                    </div>
+
+                </button>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             RIGHT CHARACTER
+        ================================================== -->
+        <div class="community-news-character">
+
+            <div class="community-news-character-bg">
+                COCO
+            </div>
+
+            <img
+                src="img/community-coco-news.webp"
+                alt="코코"
+            >
+
+            <div class="community-news-bubble">
+                새로운 소식이<br>
+                도착했어요!
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- =========================================================
+     COMMUNITY APP CTA
+========================================================= -->
+<section class="community-app-cta">
+
+    <div class="community-app-cta-bg"></div>
+    <div class="community-app-cta-overlay"></div>
+
+    <div class="community-app-cta-content">
+
+
+        <h2>
+            오늘의 산책을<br>
+            코코랑과 함께 시작해보세요.
+        </h2>
+
+        <p class="community-app-cta-desc">
+            우리 동네에서 나와 잘 맞는 산책 메이트를 만나보세요.
+        </p>
+
+
+    </div>
+
+</section>
+
+
+
+
+<!-- exhibition:E -->
+
+
+
+
+<!-- =========================================
+     COMMUNITY DOG PROFILE POPUP
+========================================= -->
+
+<div
+    class="community-dog-modal"
+    id="communityDogModal"
+    role="dialog"
+    aria-modal="true"
+    aria-label="강아지 프로필"
+    aria-hidden="true"
+>
+    <div class="community-dog-modal-bg"></div>
+
+    <div class="community-dog-modal-card">
+
+        <button
+            class="community-modal-close"
+            id="communityModalClose"
+            type="button"
+            aria-label="프로필 닫기"
+        >
+            ×
+        </button>
+
+        <!-- 강아지 이미지 -->
+        <div class="community-modal-image">
+            <img
+                id="modalDogImage"
+                src="img/community-dog-1.webp"
+                alt="강아지 프로필"
+            >
+        </div>
+
+        <!-- 프로필 정보 -->
+        <div class="community-modal-content">
+
+            <span
+                class="community-modal-code"
+                id="modalDogCode"
+            >
+                #CO01
+            </span>
+
+            <h3 id="modalDogName">루디</h3>
+
+            <p
+                class="community-modal-meta"
+                id="modalDogMeta"
+            >
+                푸들 · 2살
+            </p>
+
+            <div class="community-modal-tags">
+                <span id="modalDogPersonality">활발</span>
+                <span id="modalDogGreeting">인사 가능</span>
+            </div>
+
+            <p
+                class="community-modal-message"
+                id="modalDogMessage"
+            >
+                친구들과 뛰어노는 걸 좋아해요!
+            </p>
+
+            <div class="community-modal-info">
+
+                <div>
+                    <small>산책 성향</small>
+                    <strong id="modalDogType">활발</strong>
+                </div>
+
+                <div>
+                    <small>인사 스타일</small>
+                    <strong id="modalDogStyle">인사 가능</strong>
+                </div>
+
+                <div>
+                    <small>현재 상태</small>
+                    <strong>산책 중</strong>
+                </div>
+
+            </div>
+
+            <p
+                class="community-modal-distance"
+                id="modalDogDistance"
+            >
+                ● 현재 1.2km
+            </p>
+
+        </div>
+
+    </div>
+</div>
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* ===============================
+       DOG DATA
+    =============================== */
+
+    const dogs = {
+
+        rudy: {
+            name: "루디",
+            code: "#CO01",
+            meta: "푸들 · 2살",
+            personality: "활발",
+            greeting: "인사 가능",
+            message: "친구들과 뛰어노는 걸 좋아해요!",
+            distance: "현재 1.2km",
+            image: "img/community-dog-1.webp",
+            type: "active"
+        },
+
+        coco: {
+            name: "코코",
+            code: "#CO02",
+            meta: "웰시코기 · 1살",
+            personality: "온순",
+            greeting: "인사 가능",
+            message: "천천히 냄새 맡으며 걷는 걸 좋아해요.",
+            distance: "현재 800m",
+            image: "img/community-dog-4.webp",
+            type: "gentle"
+        },
+
+        mong: {
+            name: "몽이",
+            code: "#CO03",
+            meta: "푸들 · 3살",
+            personality: "낯가림",
+            greeting: "천천히",
+            message: "처음에는 천천히 다가와 주세요.",
+            distance: "현재 1.5km",
+            image: "img/community-dog-1.webp",
+            type: "shy"
+        },
+
+        bori: {
+            name: "보리",
+            code: "#CO04",
+            meta: "닥스훈트 · 2살",
+            personality: "활발",
+            greeting: "인사 가능",
+            message: "새로운 친구를 만나면 먼저 다가가요!",
+            distance: "현재 600m",
+            image: "img/community-dog-3.webp",
+            type: "active"
+        },
+
+        dubu: {
+            name: "두부",
+            code: "#CO05",
+            meta: "보더콜리 · 1살",
+            personality: "낯가림",
+            greeting: "조심히",
+            message: "익숙해지면 먼저 다가오는 친구예요.",
+            distance: "현재 2.1km",
+            image: "img/community-dog-2.webp",
+            type: "shy"
+        }
+
+    };
+
+
+    /* ===============================
+       ELEMENT
+    =============================== */
+
+    const markers =
+        document.querySelectorAll(".community-map-marker");
+
+    const filterButtons =
+        document.querySelectorAll(".community-filter-btn");
+
+    const profileCard =
+        document.getElementById("communityProfileCard");
+
+    const profileImage =
+        document.getElementById("profileImage");
+
+    const profileName =
+        document.getElementById("profileName");
+
+    const profileCode =
+        document.getElementById("profileCode");
+
+    const profileMeta =
+        document.getElementById("profileMeta");
+
+    const profilePersonality =
+        document.getElementById("profilePersonality");
+
+    const profileGreeting =
+        document.getElementById("profileGreeting");
+
+    const profileMessage =
+        document.getElementById("profileMessage");
+
+    const profileDistance =
+        document.getElementById("profileDistance");
+
+    const liveCount =
+        document.getElementById("liveCount");
+
+    const mapCanvas =
+        document.getElementById("communityMapCanvas");
+
+    const zoomIn =
+        document.getElementById("mapZoomIn");
+
+    const zoomOut =
+        document.getElementById("mapZoomOut");
+
+    const reset =
+        document.getElementById("mapReset");
+
+
+    /* 지도 확대 배율 */
+
+    let mapScale = 1;
+
+
+    /* ===============================
+       PROFILE CHANGE
+    =============================== */
+
+    function showDog(id) {
+
+        const dog = dogs[id];
+
+        if (!dog) {
+            return;
+        }
+
+
+        /* 카드 전환 효과 */
+
+        if (profileCard) {
+            profileCard.style.opacity = "0.35";
+        }
+
+
+        setTimeout(function () {
+
+            if (profileImage) {
+                profileImage.src = dog.image;
+                profileImage.alt = dog.name;
+            }
+
+            if (profileName) {
+                profileName.textContent = dog.name;
+            }
+
+            if (profileCode) {
+                profileCode.textContent = dog.code;
+            }
+
+            if (profileMeta) {
+                profileMeta.textContent = dog.meta;
+            }
+
+            if (profilePersonality) {
+                profilePersonality.textContent =
+                    dog.personality;
+            }
+
+            if (profileGreeting) {
+                profileGreeting.textContent =
+                    dog.greeting;
+            }
+
+            if (profileMessage) {
+                profileMessage.textContent =
+                    dog.message;
+            }
+
+            if (profileDistance) {
+                profileDistance.innerHTML =
+                    "<span></span>" + dog.distance;
+            }
+
+
+            /* ===============================
+               성향 태그 색상
+            =============================== */
+
+            if (profilePersonality) {
+
+                profilePersonality.className =
+                    "profile-tag";
+
+                if (dog.type === "active") {
+
+                    profilePersonality.classList.add(
+                        "profile-tag-yellow"
+                    );
+
+                }
+
+                if (dog.type === "gentle") {
+
+                    profilePersonality.classList.add(
+                        "profile-tag-green"
+                    );
+
+                }
+
+                if (dog.type === "shy") {
+
+                    profilePersonality.classList.add(
+                        "profile-tag-pink"
+                    );
+
+                }
+
+            }
+
+
+            /* ===============================
+               인사 상태 태그
+            =============================== */
+
+            if (profileGreeting) {
+
+                profileGreeting.className =
+                    "profile-tag";
+
+                if (dog.greeting === "인사 가능") {
+
+                    profileGreeting.classList.add(
+                        "profile-tag-green"
+                    );
+
+                } else {
+
+                    profileGreeting.classList.add(
+                        "profile-tag-blue"
+                    );
+
+                }
+
+            }
+
+
+            if (profileCard) {
+                profileCard.style.opacity = "1";
+            }
+
+        }, 150);
+
+
+        /* ===============================
+           선택 마커 표시
+        =============================== */
+
+        markers.forEach(function (marker) {
+
+            marker.classList.remove("active");
+
+        });
+
+
+        const selected =
+            document.querySelector(
+                '.community-map-marker[data-id="' +
+                id +
+                '"]'
+            );
+
+
+        if (selected) {
+            selected.classList.add("active");
+        }
+
+    }
+
+
+
+/* =====================================
+   DOG PROFILE MODAL
+===================================== */
+
+const detailButton =
+    document.getElementById("profileDetailButton");
+
+const dogModal =
+    document.getElementById("communityDogModal");
+
+const modalClose =
+    document.getElementById("communityModalClose");
+
+let lastFocusedElement = null;
+
+function openDogModal() {
+
+    const activeMarker =
+        document.querySelector(
+            ".community-map-marker.active"
+        );
+
+    const id = activeMarker
+        ? activeMarker.dataset.id
+        : "rudy";
+
+    const dog = dogs[id];
+
+    if (!dog || !dogModal) return;
+
+    const setText = (elementId, value) => {
+        const element = document.getElementById(elementId);
+        if (element) element.textContent = value;
+    };
+
+    const image =
+        document.getElementById("modalDogImage");
+
+    if (image) {
+        image.src = dog.image;
+        image.alt = dog.name;
+    }
+
+    setText("modalDogCode", dog.code);
+    setText("modalDogName", dog.name);
+    setText("modalDogMeta", dog.meta);
+    setText("modalDogPersonality", dog.personality);
+    setText("modalDogGreeting", dog.greeting);
+    setText("modalDogMessage", dog.message);
+    setText("modalDogType", dog.personality);
+    setText("modalDogStyle", dog.greeting);
+    setText("modalDogDistance", "● " + dog.distance);
+
+    lastFocusedElement = document.activeElement;
+
+    dogModal.classList.add("show");
+    dogModal.setAttribute("aria-hidden", "false");
+
+    document.body.style.overflow = "hidden";
+
+    if (modalClose) modalClose.focus();
+}
+
+function closeDogModal() {
+
+    if (!dogModal) return;
+
+    dogModal.classList.remove("show");
+    dogModal.setAttribute("aria-hidden", "true");
+
+    document.body.style.overflow = "";
+
+    if (lastFocusedElement) {
+        lastFocusedElement.focus();
+    }
+}
+
+/* 프로필 버튼 클릭 */
+
+if (detailButton) {
+    detailButton.addEventListener(
+        "click",
+        openDogModal
+    );
+}
+
+/* 닫기 버튼 */
+
+if (modalClose) {
+    modalClose.addEventListener(
+        "click",
+        closeDogModal
+    );
+}
+
+/* 팝업 바깥 배경 클릭 */
+
+if (dogModal) {
+    dogModal.addEventListener("click", function(e) {
+
+        if (
+            e.target === dogModal ||
+            e.target.classList.contains(
+                "community-dog-modal-bg"
+            )
+        ) {
+            closeDogModal();
+        }
+
+    });
+}
+
+/* ESC 키로 닫기 */
+
+document.addEventListener("keydown", function(e) {
+
+    if (!dogModal || !dogModal.classList.contains("show")) {
+        return;
+    }
+
+    if (e.key === "Escape") {
+        closeDogModal();
+    }
+
+    if (e.key === "Tab") {
+        const focusable = Array.from(
+            dogModal.querySelectorAll(
+                'button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'
+            )
+        );
+
+        if (!focusable.length) return;
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+        }
+    }
+
+});
+
+
+
+
+    /* ===============================
+       MARKER CLICK
+    =============================== */
+
+    markers.forEach(function (marker) {
+
+        marker.addEventListener(
+            "click",
+            function () {
+
+                const id =
+                    marker.dataset.id;
+
+                showDog(id);
+
+            }
+        );
+
+    });
+
+
+    /* ===============================
+       FILTER
+    =============================== */
+
+    filterButtons.forEach(function (button) {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                /* 버튼 active 초기화 */
+
+                filterButtons.forEach(function (btn) {
+
+                    btn.classList.remove("active");
+
+                });
+
+
+                button.classList.add("active");
+
+
+                const filter =
+                    button.dataset.filter;
+
+
+                let count = 0;
+                let firstDog = null;
+
+
+                markers.forEach(function (marker) {
+
+                    const id =
+                        marker.dataset.id;
+
+                    const dog =
+                        dogs[id];
+
+
+                    if (!dog) {
+                        return;
+                    }
+
+
+                    const show =
+                        filter === "all" ||
+                        dog.type === filter;
+
+
+                    if (show) {
+
+                        marker.style.display = "block";
+
+                        count++;
+
+
+                        if (!firstDog) {
+                            firstDog = id;
+                        }
+
+                    } else {
+
+                        marker.style.display = "none";
+
+                    }
+
+                });
+
+
+                /* 숫자 변경 */
+
+                if (liveCount) {
+
+                    liveCount.textContent =
+                        count + "마리 산책 중";
+
+                }
+
+
+                /* 첫 번째 해당 강아지 자동 선택 */
+
+                if (firstDog) {
+
+                    showDog(firstDog);
+
+                }
+
+            }
+        );
+
+    });
+
+
+    /* ===============================
+       ZOOM +
+    =============================== */
+
+    if (zoomIn && mapCanvas) {
+
+        zoomIn.addEventListener(
+            "click",
+            function () {
+
+                mapScale += 0.08;
+
+
+                if (mapScale > 1.35) {
+                    mapScale = 1.35;
+                }
+
+
+                mapCanvas.style.transform =
+                    "translate(-50%, -50%) scale(" +
+                    mapScale +
+                    ")";
+
+            }
+        );
+
+    }
+
+
+    /* ===============================
+       ZOOM -
+    =============================== */
+
+    if (zoomOut && mapCanvas) {
+
+        zoomOut.addEventListener(
+            "click",
+            function () {
+
+                mapScale -= 0.08;
+
+
+                if (mapScale < 0.9) {
+                    mapScale = 0.9;
+                }
+
+
+                mapCanvas.style.transform =
+                    "translate(-50%, -50%) scale(" +
+                    mapScale +
+                    ")";
+
+            }
+        );
+
+    }
+
+
+    /* ===============================
+       RESET
+    =============================== */
+
+    if (reset && mapCanvas) {
+
+        reset.addEventListener(
+            "click",
+            function () {
+
+                /* 지도 크기 초기화 */
+
+                mapScale = 1;
+
+
+                mapCanvas.style.transform =
+                    "translate(-50%, -50%) scale(1)";
+
+
+                /* 모든 마커 표시 */
+
+                markers.forEach(function (marker) {
+
+                    marker.style.display = "block";
+
+                    marker.classList.remove("hidden");
+
+                });
+
+
+                /* 필터 초기화 */
+
+                filterButtons.forEach(function (btn) {
+
+                    btn.classList.remove("active");
+
+                });
+
+
+                const all =
+                    document.querySelector(
+                        '[data-filter="all"]'
+                    );
+
+
+                if (all) {
+
+                    all.classList.add("active");
+
+                }
+
+
+                /* 카운트 초기화 */
+
+                if (liveCount) {
+
+                    liveCount.textContent =
+                        markers.length +
+                        "마리 산책 중";
+
+                }
+
+
+                /* 첫 캐릭터 초기화 */
+
+                showDog("rudy");
+
+            }
+        );
+
+    }
+
+
+    /* ===============================
+       INITIAL MAP
+    =============================== */
+
+    if (mapCanvas) {
+
+        mapCanvas.style.transform =
+            "translate(-50%, -50%) scale(1)";
+
+    }
+
+
+    /* 처음 화면 */
+
+    showDog("rudy");
+
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const slider =
+        document.getElementById("storySlider");
+
+    const track =
+        document.getElementById("storyTrack");
+
+    const prev =
+        document.getElementById("storyPrev");
+
+    const next =
+        document.getElementById("storyNext");
+
+
+    if (!slider || !track || !prev || !next) {
+        return;
+    }
+
+
+    /* =====================================================
+       ORIGINAL CARDS
+    ===================================================== */
+
+    const originalCards =
+        Array.from(
+            track.querySelectorAll(
+                ":scope > .story-pill-card"
+            )
+        );
+
+
+    const originalCount =
+        originalCards.length;
+
+
+    if (!originalCount) {
+        return;
+    }
+
+
+    /* =====================================================
+       CLONE
+       무한 슬라이드용 앞/뒤 복제
+    ===================================================== */
+
+    const before =
+        document.createDocumentFragment();
+
+    const after =
+        document.createDocumentFragment();
+
+
+    originalCards.forEach(function (card) {
+
+        const clone =
+            card.cloneNode(true);
+
+        clone.classList.add(
+            "story-clone"
+        );
+
+        clone.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+        after.appendChild(clone);
+
+    });
+
+
+    originalCards
+        .slice()
+        .reverse()
+        .forEach(function (card) {
+
+            const clone =
+                card.cloneNode(true);
+
+            clone.classList.add(
+                "story-clone"
+            );
+
+            clone.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+            before.insertBefore(
+                clone,
+                before.firstChild
+            );
+
+        });
+
+
+    track.insertBefore(
+        before,
+        track.firstChild
+    );
+
+
+    track.appendChild(
+        after
+    );
+
+
+    /* =====================================================
+       STATE
+    ===================================================== */
+
+    let currentIndex =
+        originalCount;
+
+    let isMoving =
+        false;
+
+    let verticalPhase =
+        false;
+
+
+    /* =====================================================
+       CARD POSITION
+    ===================================================== */
+
+    function getCards() {
+
+        return Array.from(
+            track.children
+        );
+
+    }
+
+
+    function getTargetX(index) {
+
+        const cards =
+            getCards();
+
+        const target =
+            cards[index];
+
+
+        if (!target) {
+            return 0;
+        }
+
+
+        /*
+        화면 왼쪽에 카드가 너무 딱 붙지 않게
+        약간 여유
+        */
+
+        return target.offsetLeft - 30;
+
+    }
+
+
+    /* =====================================================
+       MOVE
+    ===================================================== */
+
+    function moveTo(
+        index,
+        animate = true
+    ) {
+
+        const x =
+            getTargetX(index);
+
+
+        track.style.transition =
+            animate
+            ? "transform .55s cubic-bezier(.22,.8,.22,1)"
+            : "none";
+
+
+        track.style.transform =
+            "translate3d(" +
+            (-x) +
+            "px,0,0)";
+
+    }
+
+
+    /* =====================================================
+       위아래 위치 변경
+    ===================================================== */
+
+    function changeVerticalPhase() {
+
+        verticalPhase =
+            !verticalPhase;
+
+
+        track.classList.toggle(
+            "is-shifted",
+            verticalPhase
+        );
+
+    }
+
+
+    /* =====================================================
+       INITIAL
+    ===================================================== */
+
+    requestAnimationFrame(function () {
+
+        moveTo(
+            currentIndex,
+            false
+        );
+
+    });
+
+
+    /* =====================================================
+       NEXT
+    ===================================================== */
+
+    next.addEventListener(
+        "click",
+        function () {
+
+            if (isMoving) {
+                return;
+            }
+
+
+            isMoving = true;
+
+            currentIndex++;
+
+
+            /*
+            누를 때마다
+            카드 위아래 배치 반전
+            */
+
+            changeVerticalPhase();
+
+
+            moveTo(
+                currentIndex,
+                true
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       PREV
+    ===================================================== */
+
+    prev.addEventListener(
+        "click",
+        function () {
+
+            if (isMoving) {
+                return;
+            }
+
+
+            isMoving = true;
+
+            currentIndex--;
+
+
+            changeVerticalPhase();
+
+
+            moveTo(
+                currentIndex,
+                true
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       INFINITE LOOP
+    ===================================================== */
+
+    track.addEventListener(
+        "transitionend",
+        function (event) {
+
+            if (
+                event.propertyName !==
+                "transform"
+            ) {
+                return;
+            }
+
+
+            isMoving = false;
+
+
+            /* 마지막 다음 → 첫 번째 */
+
+            if (
+                currentIndex >=
+                originalCount * 2
+            ) {
+
+                currentIndex =
+                    originalCount;
+
+
+                moveTo(
+                    currentIndex,
+                    false
+                );
+
+            }
+
+
+            /* 첫 번째 이전 → 마지막 */
+
+            else if (
+                currentIndex <
+                originalCount
+            ) {
+
+                currentIndex =
+                    originalCount * 2 - 1;
+
+
+                moveTo(
+                    currentIndex,
+                    false
+                );
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       RESIZE
+    ===================================================== */
+
+    window.addEventListener(
+        "resize",
+        function () {
+
+            moveTo(
+                currentIndex,
+                false
+            );
+
+        }
+    );
+
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+    const newsItems =
+        document.querySelectorAll(
+            ".community-news-item"
+        );
+
+    const moreButton =
+        document.getElementById(
+            "communityNewsMore"
+        );
+
+
+    /* =====================================================
+       NOTICE CLICK
+    ===================================================== */
+
+    newsItems.forEach(function(item){
+
+        item.addEventListener(
+            "click",
+            function(){
+
+                const category =
+                    item.dataset.category;
+
+                const title =
+                    item.dataset.title;
+
+                const date =
+                    item.dataset.date;
+
+                const description =
+                    item.dataset.description;
+
+
+                openCommunityNewsModal(
+                    category,
+                    title,
+                    date,
+                    description
+                );
+
+            }
+        );
+
+    });
+
+
+    /* =====================================================
+       ALL NEWS BUTTON
+    ===================================================== */
+
+    if(moreButton){
+
+        moreButton.addEventListener(
+            "click",
+            function(){
+
+                /*
+                나중에 공지사항 상세 페이지 만들면
+                community-notice.html로 변경 가능
+                */
+
+                const firstItem =
+                    document.querySelector(
+                        ".community-news-item"
+                    );
+
+
+                if(firstItem){
+
+                    firstItem.scrollIntoView({
+                        behavior:"smooth",
+                        block:"center"
+                    });
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       MODAL
+    ===================================================== */
+
+    function openCommunityNewsModal(
+        category,
+        title,
+        date,
+        description
+    ){
+
+        const oldModal =
+            document.querySelector(
+                ".community-news-modal"
+            );
+
+
+        if(oldModal){
+            oldModal.remove();
+        }
+
+
+        const modal =
+            document.createElement("div");
+
+
+        modal.className =
+            "community-news-modal";
+
+
+        modal.innerHTML = `
+
+            <div class="community-news-modal-bg"></div>
+
+            <div class="community-news-modal-card">
+
+                <button
+                    class="community-news-modal-close"
+                    type="button"
+                    aria-label="닫기"
+                >
+                    ×
+                </button>
+
+                <span class="community-news-modal-category">
+                    ${category}
+                </span>
+
+                <h3>
+                    ${title}
+                </h3>
+
+                <span class="community-news-modal-date">
+                    ${date}
+                </span>
+
+                <p>
+                    ${description}
+                </p>
+
+            </div>
+
+        `;
+
+
+        document.body.appendChild(
+            modal
+        );
+
+
+        requestAnimationFrame(
+            function(){
+
+                modal.classList.add(
+                    "show"
+                );
+
+            }
+        );
+
+
+        function closeModal(){
+
+            modal.classList.remove(
+                "show"
+            );
+
+
+            setTimeout(
+                function(){
+
+                    modal.remove();
+
+                },
+                250
+            );
+
+        }
+
+
+        modal
+        .querySelector(
+            ".community-news-modal-close"
+        )
+        .addEventListener(
+            "click",
+            closeModal
+        );
+
+
+        modal
+        .querySelector(
+            ".community-news-modal-bg"
+        )
+        .addEventListener(
+            "click",
+            closeModal
+        );
+
+    }
+
+});
+
+/* =========================================================
+   COMMUNITY APP CTA
+========================================================= */
+
+const downloadCocoButton =
+    document.getElementById('downloadCocoButton');
+
+if(downloadCocoButton){
+
+    downloadCocoButton.addEventListener(
+        'click',
+        function(){
+
+            window.location.href =
+                'download.html';
+
+        }
+    );
+
+}
+
+</script>
+
+
+<!-- =========================================
+     COMMUNITY REVIEW POPUP
+========================================= -->
+
+<div
+    class="community-review-overlay"
+    id="communityReviewOverlay"
+>
+    <div
+        class="community-review-popup"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="reviewPopupTitle"
+    >
+
+        <button
+            class="community-review-close"
+            id="reviewPopupClose"
+            type="button"
+            aria-label="후기 닫기"
+        >
+            ×
+        </button>
+
+        <div class="community-review-image">
+            <img id="reviewPopupImage" src="" alt="">
+        </div>
+
+        <div class="community-review-content">
+
+            <span
+                class="community-review-tag"
+                id="reviewPopupTag"
+            ></span>
+
+            <h2 id="reviewPopupTitle"></h2>
+
+            <p
+                class="community-review-author"
+                id="reviewPopupAuthor"
+            ></p>
+
+            <p
+                class="community-review-description"
+                id="reviewPopupDescription"
+            ></p>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+/* =========================================
+   COMMUNITY REVIEW POPUP
+========================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+const reviews = [
+
+    {
+        author: "루디의 산책 이야기",
+        title: "자주 마주치던 친구와 진짜 친구가 됐어요.",
+        category: "동네 친구",
+        content: "산책할 때마다 마주치던 친구와 코코랑을 통해 인사했어요. 이제는 함께 산책하는 사이가 되었답니다."
+    },
+
+    {
+        author: "보리의 산책 이야기",
+        title: "생각보다 더 잘 맞았어요.",
+        category: "추천 메이트",
+        content: "서로의 성향을 미리 확인하고 만났어요. 처음에는 조심스러웠지만 금방 편안하게 산책할 수 있었어요."
+    },
+
+    {
+        author: "루디의 산책 이야기",
+        title: "처음 만났는데도 금방 편해졌어요.",
+        category: "메이트 후기",
+        content: "처음에는 조금 어색했지만 함께 걷다 보니 자연스럽게 친해졌어요. 다음 산책도 기대돼요!"
+    },
+
+    {
+        author: "보리의 산책 이야기",
+        title: "익숙한 동네에서 새로운 길을 찾았어요.",
+        category: "산책 코스",
+        content: "항상 걷던 길 대신 새로운 산책 코스를 발견했어요. 친구와 함께 걸으니 평범한 동네도 새롭게 느껴졌어요."
+    },
+
+    {
+        author: "두부의 산책 이야기",
+        title: "잘 맞는 친구를 만났어요.",
+        category: "매칭 성공",
+        content: "코코랑에서 우리 강아지와 성향이 잘 맞는 친구를 찾았어요. 함께 뛰어놀며 즐거운 산책을 했답니다."
+    },
+
+    {
+        author: "코코의 산책 이야기",
+        title: "혼자 걷던 길을 함께 걷게 됐어요.",
+        category: "오늘의 산책",
+        content: "혼자 하던 산책이 이제는 친구와 함께하는 시간이 되었어요. 매일 산책 시간이 기다려져요!"
+    }
+
+];
+
+    const overlay = document.getElementById(
+        "communityReviewOverlay"
+    );
+
+    const closeButton = document.getElementById(
+        "reviewPopupClose"
+    );
+
+    const cards = [
+        ...document.querySelectorAll(
+            "#storyTrack > .story-pill-card:not(.story-clone)"
+        )
+    ];
+
+    const normalize = text =>
+        text.replace(/\s+/g, " ").trim();
+
+    function openReview(card) {
+
+        const title = normalize(
+            card.querySelector("h3").textContent
+        );
+
+        const index = cards.findIndex(original => {
+            return normalize(
+                original.querySelector("h3").textContent
+            ) === title;
+        });
+
+        if (index < 0 || !reviews[index]) return;
+
+        const review = reviews[index];
+
+        document.getElementById(
+            "reviewPopupTitle"
+        ).textContent = review.title;
+
+        document.getElementById(
+            "reviewPopupTag"
+        ).textContent = review.category;
+
+        document.getElementById(
+            "reviewPopupAuthor"
+        ).textContent = review.author;
+
+        document.getElementById(
+            "reviewPopupDescription"
+        ).textContent = review.content;
+
+        const character = card.querySelector(
+            ".story-pill-character"
+        );
+
+        const popupImage = document.getElementById(
+            "reviewPopupImage"
+        );
+
+        popupImage.src = character.src;
+        popupImage.alt = character.alt;
+
+        overlay.classList.add("active");
+        document.body.style.overflow = "hidden";
+
+        closeButton.focus();
+    }
+
+    function closeReview() {
+        overlay.classList.remove("active");
+        document.body.style.overflow = "";
+    }
+
+    /* 후기 보기 버튼 클릭 */
+
+    document.getElementById("storyTrack")
+        .addEventListener("click", event => {
+
+            const button = event.target.closest(
+                ".story-pill-button"
+            );
+
+            if (!button) return;
+
+            const card = button.closest(
+                ".story-pill-card"
+            );
+
+            if (card) openReview(card);
+        });
+
+    /* X 버튼 */
+
+    closeButton.addEventListener(
+        "click",
+        closeReview
+    );
+
+    /* 팝업 바깥 클릭 */
+
+    overlay.addEventListener("click", event => {
+        if (event.target === overlay) {
+            closeReview();
+        }
+    });
+
+    /* ESC 키 */
+
+    document.addEventListener("keydown", event => {
+        if (
+            event.key === "Escape" &&
+            overlay.classList.contains("active")
+        ) {
+            closeReview();
+        }
+    });
+
+});
+
+</script>
+
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+
+    <div class="footer-left">
+      <ul>
+        <li><a href="#"><span class="fa-brands fa-instagram"></span></a></li>
+        <li><a href="#"><span class="fa-brands fa-facebook-f"></span></a></li>
+        <li><a href="#"><span class="fa-brands fa-x-twitter"></span></a></li>
+        <li><a href="#"><span class="fa-brands fa-youtube"></span></a></li>
+      </ul>
+    </div>
+
+    <div class="footer-center">
+      <img src="img/footer-logo.webp" alt="COCOLANG Logo" class="footer-logo">
+    </div>
+
+    <div class="footer-right">
+      <p>ⓒ 2026 COCOLANG. All rights reserved</p>
+    </div>
+
+  </div>
+</footer>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+  if (!scrollTopBtn) return;
+
+  /* TOP 버튼 클릭 시 맨 위로 이동 */
+  scrollTopBtn.addEventListener("click", function () {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  });
+
+  /* 스크롤 시 TOP 버튼 표시 */
+  function updateScrollTopBtn() {
+    if (window.scrollY > 200) {
+      scrollTopBtn.classList.remove("is-hidden");
+    } else {
+      scrollTopBtn.classList.add("is-hidden");
+    }
+  }
+
+  window.addEventListener("scroll", updateScrollTopBtn, {
+    passive: true
+  });
+
+  window.addEventListener("pageshow", updateScrollTopBtn);
+
+  updateScrollTopBtn();
+
+});
+</script>
+
+
+</body>
+</html>

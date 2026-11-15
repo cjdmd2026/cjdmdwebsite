@@ -1,0 +1,2938 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>COCO LANG</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=20261102-16">
+<script src="https://kit.fontawesome.com/65c758839a.js" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+<script>
+$(function(){
+  $(".headC").click(function(){
+    $(".headB").slideToggle();
+  });
+});
+</script>
+
+</head>
+<body class="page-shop">
+
+
+<!-- ==========================================
+     SHOP EVENT POPUP
+========================================== -->
+
+<div id="shopEventPopup" class="shop-event-popup" hidden>
+
+  <!-- 어두운 배경 -->
+  <div class="shop-event-backdrop"></div>
+
+  <!-- 팝업 본체 -->
+  <section
+    class="shop-event-popup-card"
+    role="dialog"
+    aria-modal="true"
+    aria-label="코코랑 이벤트 안내"
+  >
+
+    <!-- 이벤트 이미지 슬라이더 -->
+    <div class="shop-event-slider">
+
+      <!-- EVENT 02 : 출석체크 -->
+      <a
+        href="shop-event2.html"
+        class="shop-event-slide"
+        aria-label="코코랑 출석체크 이벤트 자세히 보기"
+        tabindex="-1"
+        aria-hidden="true"
+      >
+        <img
+          src="img/shop-event-popup-2.webp"
+          alt="코코랑 출석체크 이벤트"
+        >
+      </a>
+
+            <!-- EVENT 01 : 산책 굿즈 기획전 -->
+      <a
+        href="shop-event.html"
+        class="shop-event-slide active"
+        aria-label="산책 굿즈 기획전 자세히 보기"
+      >
+        <img
+          src="img/shop-event-popup-1.webp"
+          alt="산책 굿즈 기획전"
+        >
+      </a>
+
+    </div>
+
+    <!-- 하단 컨트롤 -->
+    <div class="shop-event-popup-bottom">
+
+      <!-- 오늘 하루 보지 않기 -->
+      <button
+        type="button"
+        id="shopEventHideToday"
+        class="shop-event-hide-today"
+      >
+        <span class="shop-event-check">✓</span>
+        오늘 하루 보지 않기
+      </button>
+
+      <!-- 이전 / 다음 -->
+      <div class="shop-event-controls">
+
+        <button
+          type="button"
+          id="shopEventPrev"
+          aria-label="이전 이벤트"
+        >‹</button>
+
+        <span class="shop-event-counter">
+          <strong id="shopEventCurrent">1</strong>
+          /
+          <span id="shopEventTotal">2</span>
+        </span>
+
+        <button
+          type="button"
+          id="shopEventNext"
+          aria-label="다음 이벤트"
+        >›</button>
+
+      </div>
+
+      <!-- 닫기 -->
+      <button
+        type="button"
+        id="shopEventClose"
+        class="shop-event-close"
+      >
+        닫기
+      </button>
+
+    </div>
+  </section>
+</div>
+
+
+  <!-- =========================
+       HEADER
+       기존 링크 구조 유지
+  ========================== -->
+  <header>
+    <div class="header-inner">
+
+      <div class="container-small">
+      <a href="index.html" class="logo">
+        <img src="img/header-logo.webp" alt="COCOLANG">
+      </a>
+      </div>
+
+<nav class="headB">
+  <ul>
+
+
+    <li>
+      <a href="brand.html">
+        BRAND
+      </a>
+    </li>
+
+    <li>
+      <a href="app.html">
+        APP
+      </a>
+    </li>
+
+    <li>
+      <a href="community.html">
+        COMMUNITY
+      </a>
+    </li>
+
+    <li>
+<a href="shop.html" class="active" aria-current="page">
+    SHOP
+</a>
+    </li>
+
+  </ul>
+</nav>
+
+
+<!-- SHOP HEADER ICONS -->
+<div class="shop-header-actions">
+
+
+<!-- 검색 아이콘 -->
+<button
+  type="button"
+  class="shop-header-icon shop-search-icon"
+  aria-label="상품 검색 열기"
+  aria-haspopup="dialog"
+  aria-expanded="false"
+  aria-controls="cocoSearchOverlay"
+  title="검색"
+>
+  <svg viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="1.7"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       aria-hidden="true">
+    <circle cx="10.8" cy="10.8" r="7.3"/>
+    <path d="m16.2 16.2 5 5"/>
+  </svg>
+</button>
+
+
+  <!-- 마이페이지 -->
+  <a href="shop-mypage.html"
+     class="shop-header-icon"
+     aria-label="마이페이지"
+     title="마이페이지">
+
+    <svg viewBox="0 0 24 24" fill="none"
+         stroke="currentColor"
+         stroke-width="1.7"
+         stroke-linecap="round"
+         stroke-linejoin="round">
+      <circle cx="12" cy="7" r="4"/>
+      <path d="M4 21v-2a8 8 0 0 1 16 0v2"/>
+    </svg>
+  </a>
+
+  <!-- 장바구니 -->
+  <a href="shop-cart.html"
+     class="shop-header-icon shop-cart-header-icon"
+     aria-label="장바구니"
+     title="장바구니">
+
+    <svg viewBox="0 0 24 24" fill="none"
+         stroke="currentColor"
+         stroke-width="1.7"
+         stroke-linecap="round"
+         stroke-linejoin="round">
+      <path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L20 8H7"/>
+      <circle cx="10" cy="20" r="1"/>
+      <circle cx="17" cy="20" r="1"/>
+    </svg>
+
+  </a>
+
+</div>
+
+
+      <button class="headC" type="button" aria-label="메뉴 열기">
+        ☰
+      </button>
+
+    </div>
+
+    </div>
+
+<!-- COCO:LANG SHOP SEARCH -->
+<div class="coco-search-overlay" id="cocoSearchOverlay" hidden>
+
+  <div class="coco-search-backdrop"
+       data-search-close></div>
+
+  <section class="coco-search-panel"
+           role="dialog"
+           aria-modal="true"
+           aria-label="코코랑 상품 검색">
+
+    <div class="coco-search-inner">
+
+      <form class="coco-search-form"
+            id="cocoSearchForm">
+
+        <input
+          type="search"
+          id="cocoSearchInput"
+          placeholder="어떤 산책 아이템을 찾으시나요?"
+          aria-label="상품 검색어"
+          autocomplete="off"
+          required
+        >
+
+        <button type="submit"
+                aria-label="검색하기">
+          <svg viewBox="0 0 24 24"
+               fill="none"
+               stroke="currentColor"
+               stroke-width="2"
+               stroke-linecap="round">
+            <circle cx="10.5" cy="10.5" r="7"/>
+            <path d="m16 16 5 5"/>
+          </svg>
+        </button>
+
+      </form>
+
+      <button
+        type="button"
+        class="coco-search-close"
+        data-search-close
+        aria-label="검색창 닫기"
+      >×</button>
+
+      <div class="coco-search-content">
+
+        <div class="coco-search-keywords">
+          <h3>Best Keyword</h3>
+
+          <ol>
+            <li><button type="button"
+              data-keyword="하네스">하네스</button></li>
+            <li><button type="button"
+              data-keyword="리드줄">리드줄</button></li>
+            <li><button type="button"
+              data-keyword="스티커">스티커</button></li>
+            <li><button type="button"
+              data-keyword="장난감">장난감</button></li>
+            <li><button type="button"
+              data-keyword="키링">키링</button></li>
+          </ol>
+        </div>
+
+        <div class="coco-search-recent">
+          <div class="coco-search-recent-head">
+            <h3>Recent Searches</h3>
+            <button type="button"
+                    id="cocoClearSearch">전체삭제</button>
+          </div>
+
+          <ul id="cocoRecentSearches">
+            <li class="coco-search-empty">
+              최근 검색어가 없습니다.
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</div>
+
+
+  </header>
+
+
+      <!-- shop:S -->
+
+
+      <!-- =========================================================
+     FLOATING PERSONALITY TEST
+========================================================= -->
+
+<!-- FLOATING BUTTONS -->
+<div class="floating-buttons">
+
+  <!-- 기존 성향테스트 버튼 -->
+  <a
+    href="test/test-index.html"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="floating-test"
+  >
+    <img
+      src="img/fast-test-character.webp"
+      alt="코코"
+      class="floating-test-character"
+    >
+
+    <div class="floating-test-button">
+      성향 테스트
+    </div>
+  </a>
+
+  <!-- 맨 위로 이동 버튼 -->
+  <button
+    type="button"
+    id="scrollTopBtn"
+    class="scroll-top-btn"
+    aria-label="맨 위로 이동"
+  >
+    <i class="fa-solid fa-arrow-up"></i>
+  </button>
+
+</div>
+
+<!-- =========================================================
+     SHOP HERO
+========================================================= -->
+<section class="shop-hero">
+
+    <div class="shop-hero-slider" id="shopHeroSlider">
+<!-- SLIDE 01 -->
+<div class="shop-slide active">
+    <img src="img/shop-banner-1.webp" alt="코코랑 배너 1">
+</div>
+
+<!-- SLIDE 02 -->
+<div class="shop-slide">
+    <img src="img/shop-banner-2.webp" alt="코코랑 배너 2">
+</div>
+
+<!-- SLIDE 03 -->
+<div class="shop-slide">
+    <img src="img/shop-banner-3.webp" alt="코코랑 배너 3">
+</div>
+
+
+        <!-- 어두운 그라데이션 -->
+        <div class="shop-hero-overlay"></div>
+
+
+        <!-- 하단 컨트롤 -->
+        <div class="shop-hero-bottom">
+
+            <!-- 진행선 -->
+            <div class="shop-hero-progress">
+
+                <button
+                    class="shop-progress-item active"
+                    type="button"
+                    aria-label="1번 배너"
+                >
+                    <span></span>
+                </button>
+
+                <button
+                    class="shop-progress-item"
+                    type="button"
+                    aria-label="2번 배너"
+                >
+                    <span></span>
+                </button>
+
+                <button
+                    class="shop-progress-item"
+                    type="button"
+                    aria-label="3번 배너"
+                >
+                    <span></span>
+                </button>
+
+            </div>
+
+
+            <!-- 페이지 + 화살표 -->
+            <div class="shop-hero-control">
+
+                <div class="shop-hero-count">
+                    <strong id="shopHeroCurrent">01</strong>
+                    <span>/</span>
+                    <span>03</span>
+                </div>
+
+                <button
+                    class="shop-hero-arrow"
+                    id="shopHeroPrev"
+                    type="button"
+                    aria-label="이전 배너"
+                >
+                    ←
+                </button>
+
+                <button
+                    class="shop-hero-arrow"
+                    id="shopHeroNext"
+                    type="button"
+                    aria-label="다음 배너"
+                >
+                    →
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     TOP CATEGORIES
+========================================================= -->
+
+<section class="shop-category-section">
+
+    <h2>TOP CATEGORIES</h2>
+
+    <div class="shop-category-wrap">
+
+        <!-- 01 -->
+        <div class="shop-category">
+
+            <div class="category-img">
+                <img
+                    src="img/category-1.webp"
+                    alt="산책용품"
+                >
+            </div>
+
+            <p>산책용품</p>
+
+        </div>
+
+
+        <!-- 02 -->
+        <div class="shop-category">
+
+            <div class="category-img">
+                <img
+                    src="img/category-2.webp"
+                    alt="장난감"
+                >
+            </div>
+
+            <p>장난감</p>
+
+        </div>
+
+
+        <!-- 03 -->
+        <div class="shop-category">
+
+            <div class="category-img">
+                <img
+                    src="img/category-3.webp"
+                    alt="간식"
+                >
+            </div>
+
+            <p>간식</p>
+
+        </div>
+
+
+        <!-- 04 -->
+        <div class="shop-category">
+
+            <div class="category-img">
+                <img
+                    src="img/category-4.webp"
+                    alt="굿즈"
+                >
+            </div>
+
+            <p>굿즈</p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     BEST PRODUCT
+========================================================= -->
+
+<section class="shop-best-section">
+
+    <div class="shop-best-inner">
+
+        <!-- TITLE -->
+        <div class="shop-best-title">
+            <span>COCO LANG PICK</span>
+            <h2>BEST</h2>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="shop-best-content">
+
+            <!-- LEFT CATEGORY -->
+            <div class="shop-best-menu">
+
+                <button
+                    class="best-menu-btn active"
+                    data-best="0"
+                    type="button"
+                >
+                    WALK
+                </button>
+
+                <button
+                    class="best-menu-btn"
+                    data-best="1"
+                    type="button"
+                >
+                    LEASH
+                </button>
+
+                <button
+                    class="best-menu-btn"
+                    data-best="2"
+                    type="button"
+                >
+                    SNACK
+                </button>
+
+                <button
+                    class="best-menu-btn"
+                    data-best="3"
+                    type="button"
+                >
+                    GOODS
+                </button>
+
+            </div>
+
+            <!-- MAIN -->
+            <div class="shop-best-main">
+
+                <!-- PRODUCT NUMBER -->
+                <span
+                    class="shop-best-number"
+                    id="bestNumber"
+                >
+                    01
+                </span>
+
+                <!-- BIG BACK TEXT -->
+                <div
+                    class="shop-best-bg-text"
+                    id="bestBgText"
+                >
+                    WALK
+                </div>
+
+                <!-- PRODUCT IMAGE -->
+                <div class="shop-best-image-wrap">
+
+                    <img
+                        id="bestMainImage"
+                        src="img/best-product-1.webp"
+                        alt="코코랑 데일리 하네스"
+                    >
+
+                </div>
+
+                <!-- PRODUCT INFO -->
+                <div class="shop-best-info">
+
+                    <span
+                        class="shop-best-tag"
+                        id="bestTag"
+                    >
+                        BEST WALK ITEM
+                    </span>
+
+                    <h3 id="bestName">
+                        코코랑 데일리 하네스
+                    </h3>
+
+                    <p id="bestDesc">
+                        부드러운 쿠션과 메시 소재로
+                        편안한 산책을 도와주는 데일리 하네스
+                    </p>
+
+                    <strong id="bestPrice">
+                        29,000원
+                    </strong>
+
+                   
+<a
+  href="shop-product-detail.html?product=2"
+  class="shop-best-more"
+  id="bestViewMore"
+>
+  View more
+  <span>→</span>
+</a>
+
+
+                </div>
+
+            </div>
+
+            <!-- RIGHT THUMBNAILS -->
+            <div class="shop-best-thumbs">
+
+                <button
+                    class="best-thumb active"
+                    data-best="0"
+                    type="button"
+                >
+                    <img
+                        src="img/best-product-1.webp"
+                        alt="코코랑 데일리 하네스"
+                    >
+                </button>
+
+                <button
+                    class="best-thumb"
+                    data-best="1"
+                    type="button"
+                >
+                    <img
+                        src="img/best-product-2.webp"
+                        alt="코코랑 데일리 리드줄"
+                    >
+                </button>
+
+                <button
+                    class="best-thumb"
+                    data-best="2"
+                    type="button"
+                >
+                    <img
+                        src="img/best-product-3.webp"
+                        alt="코코랑 발바닥 간식통"
+                    >
+                </button>
+
+                <button
+                    class="best-thumb"
+                    data-best="3"
+                    type="button"
+                >
+                    <img
+                        src="img/best-product-4.webp"
+                        alt="코코랑 배변봉투 파우치"
+                    >
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- BOTTOM CONTROL -->
+        <div class="shop-best-controls">
+
+            <button
+                id="bestPrev"
+                type="button"
+                aria-label="이전 상품"
+            >
+                ←
+            </button>
+
+            <div class="shop-best-dots">
+
+                <button
+                    class="active"
+                    data-best="0"
+                    type="button"
+                ></button>
+
+                <button
+                    data-best="1"
+                    type="button"
+                ></button>
+
+                <button
+                    data-best="2"
+                    type="button"
+                ></button>
+
+                <button
+                    data-best="3"
+                    type="button"
+                ></button>
+
+            </div>
+
+            <button
+                id="bestNext"
+                type="button"
+                aria-label="다음 상품"
+            >
+                →
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     ONLY FOR YOU
+========================================================= -->
+
+<section class="shop-only-section">
+
+    <div class="shop-only-inner">
+
+        <!-- HEADER -->
+        <div class="shop-only-head">
+
+            <div class="shop-only-title">
+                <span>COCO LANG PICK</span>
+                <h2>ONLY FOR YOU</h2>
+            </div>
+
+            <div class="shop-only-tabs">
+
+                <button
+                    class="only-tab active"
+                    data-only="walk"
+                    type="button"
+                >
+                    산책 필수템
+                </button>
+
+                <button
+                    class="only-tab"
+                    data-only="toy"
+                    type="button"
+                >
+                    놀이 아이템
+                </button>
+
+                <button
+                    class="only-tab"
+                    data-only="gift"
+                    type="button"
+                >
+                    코코랑 굿즈
+                </button>
+
+                <button
+                    class="only-tab"
+                    data-only="daily"
+                    type="button"
+                >
+                    데일리 추천
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- PRODUCT LIST -->
+        <div class="shop-only-products">
+
+
+            <!-- 01 -->
+            <article
+                class="only-product-card"
+                data-category="walk"
+            >
+
+                <div class="only-product-image">
+
+                    <img
+                        src="img/only-product-1.webp"
+                        alt="코코랑 산책 하네스"
+                    >
+
+                    <span class="only-product-badge">
+                        BEST
+                    </span>
+
+                </div>
+
+                <h3>
+                    코코랑 데일리 하네스
+                </h3>
+
+                <p>
+                    가볍고 편안한 산책용 하네스
+                </p>
+
+                <strong>
+                    29,000원
+                </strong>
+
+            </article>
+
+
+            <!-- 02 -->
+            <article
+                class="only-product-card"
+                data-category="walk"
+            >
+
+                <div class="only-product-image">
+
+                    <img
+                        src="img/only-product-2.webp"
+                        alt="코코랑 리드줄"
+                    >
+
+                </div>
+
+                <h3>
+                    코코랑 데일리 리드줄
+                </h3>
+
+                <p>
+                    매일 산책에 잘 어울리는 리드줄
+                </p>
+
+                <strong>
+                    18,000원
+                </strong>
+
+            </article>
+
+
+            <!-- 03 -->
+            <article
+                class="only-product-card"
+                data-category="walk"
+            >
+
+                <div class="only-product-image">
+
+                    <img
+                        src="img/only-product-3.webp"
+                        alt="산책 파우치"
+                    >
+
+                </div>
+
+                <h3>
+                    산책 미니 파우치
+                </h3>
+
+                <p>
+                    간식과 소지품을 가볍게 보관해요
+                </p>
+
+                <strong>
+                    15,000원
+                </strong>
+
+            </article>
+
+
+            <!-- 04 -->
+            <article
+                class="only-product-card"
+                data-category="walk"
+            >
+
+                <div class="only-product-image">
+
+                    <img
+                        src="img/only-product-4.webp"
+                        alt="코코랑 산책 물병"
+                    >
+
+                </div>
+
+                <h3>
+                    코코랑 산책 물병
+                </h3>
+
+                <p>
+                    산책 중 간편하게 물을 챙겨요
+                </p>
+
+                <strong>
+                    12,000원
+                </strong>
+
+            </article>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     PRODUCT COLLECTION
+========================================================= -->
+
+<section class="shop-product-section">
+
+  <div class="shop-product-inner">
+
+    <!-- FILTER -->
+    <div class="shop-product-filter">
+
+      <button
+        class="shop-filter-btn active"
+        data-filter="all"
+        type="button"
+      >
+        ALL
+      </button>
+
+      <button
+        class="shop-filter-btn"
+        data-filter="sticker"
+        type="button"
+      >
+        STICKER
+      </button>
+
+      <button
+        class="shop-filter-btn"
+        data-filter="harness"
+        type="button"
+      >
+        HARNESS
+      </button>
+
+      <button
+        class="shop-filter-btn"
+        data-filter="leash"
+        type="button"
+      >
+        LEASH
+      </button>
+
+      <button
+        class="shop-filter-btn"
+        data-filter="toy"
+        type="button"
+      >
+        TOY
+      </button>
+
+    </div>
+
+
+    <!-- CONTENT -->
+    <div class="shop-product-layout">
+
+
+      <!-- PRODUCT GRID -->
+      <div class="shop-product-grid">
+
+
+        <!-- 01 -->
+        <article
+          class="shop-product-card"
+          data-category="sticker"
+        >
+
+          <div class="shop-product-image">
+
+            <img
+              src="img/shop-product-1.webp"
+              alt="코코랑 캐릭터 스티커"
+            >
+
+            <div class="shop-product-actions">
+
+              <!-- HEART -->
+              <button
+                class="product-action-btn product-like-btn"
+                type="button"
+                aria-label="찜하기"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>
+                </svg>
+              </button>
+
+              <!-- CART -->
+              <button
+                class="product-action-btn product-cart-btn"
+                type="button"
+                aria-label="장바구니 담기"
+              >
+
+                <svg class="cart-icon" viewBox="0 0 24 24">
+                  <path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L20 8H7"/>
+                  <circle cx="10" cy="20" r="1"/>
+                  <circle cx="17" cy="20" r="1"/>
+                </svg>
+
+                <svg class="check-icon" viewBox="0 0 24 24">
+                  <path d="M5 12.5l4 4L19 7"/>
+                </svg>
+
+              </button>
+
+            </div>
+
+          </div>
+
+          <h3>코코랑 캐릭터 스티커</h3>
+
+          <div class="shop-product-meta">
+            <span>데일리 포인트 스티커</span>
+            <strong>4,500원</strong>
+          </div>
+
+        </article>
+
+
+        <!-- 02 -->
+        <article
+          class="shop-product-card"
+          data-category="harness"
+        >
+
+          <div class="shop-product-image">
+
+            <img
+              src="img/shop-product-2.webp"
+              alt="코코랑 데일리 하네스"
+            >
+
+            <div class="shop-product-actions">
+
+              <button
+                class="product-action-btn product-like-btn"
+                type="button"
+                aria-label="찜하기"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>
+                </svg>
+              </button>
+
+              <button
+                class="product-action-btn product-cart-btn"
+                type="button"
+                aria-label="장바구니 담기"
+              >
+
+                <svg class="cart-icon" viewBox="0 0 24 24">
+                  <path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L20 8H7"/>
+                  <circle cx="10" cy="20" r="1"/>
+                  <circle cx="17" cy="20" r="1"/>
+                </svg>
+
+                <svg class="check-icon" viewBox="0 0 24 24">
+                  <path d="M5 12.5l4 4L19 7"/>
+                </svg>
+
+              </button>
+
+            </div>
+
+          </div>
+
+          <h3>코코랑 데일리 하네스</h3>
+
+          <div class="shop-product-meta">
+            <span>가볍고 편안한 산책 하네스</span>
+            <strong>29,000원</strong>
+          </div>
+
+        </article>
+
+
+        <!-- 03 -->
+        <article
+          class="shop-product-card"
+          data-category="harness"
+        >
+
+          <div class="shop-product-image">
+
+            <img
+              src="img/shop-product-3.webp"
+              alt="코코랑 컬러 하네스"
+            >
+
+            <div class="shop-product-actions">
+
+              <button
+                class="product-action-btn product-like-btn"
+                type="button"
+                aria-label="찜하기"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>
+                </svg>
+              </button>
+
+              <button
+                class="product-action-btn product-cart-btn"
+                type="button"
+                aria-label="장바구니 담기"
+              >
+
+                <svg class="cart-icon" viewBox="0 0 24 24">
+                  <path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L20 8H7"/>
+                  <circle cx="10" cy="20" r="1"/>
+                  <circle cx="17" cy="20" r="1"/>
+                </svg>
+
+                <svg class="check-icon" viewBox="0 0 24 24">
+                  <path d="M5 12.5l4 4L19 7"/>
+                </svg>
+
+              </button>
+
+            </div>
+
+          </div>
+
+          <h3>코코랑 컬러 하네스</h3>
+
+          <div class="shop-product-meta">
+            <span>산뜻한 컬러 포인트</span>
+            <strong>32,000원</strong>
+          </div>
+
+        </article>
+
+
+        <!-- 04 -->
+        <article
+          class="shop-product-card"
+          data-category="sticker"
+        >
+
+          <div class="shop-product-image">
+
+            <img
+              src="img/shop-product-4.webp"
+              alt="코코랑 산책 스티커팩"
+            >
+
+            <div class="shop-product-actions">
+
+              <button
+                class="product-action-btn product-like-btn"
+                type="button"
+                aria-label="찜하기"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>
+                </svg>
+              </button>
+
+              <button
+                class="product-action-btn product-cart-btn"
+                type="button"
+                aria-label="장바구니 담기"
+              >
+
+                <svg class="cart-icon" viewBox="0 0 24 24">
+                  <path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L20 8H7"/>
+                  <circle cx="10" cy="20" r="1"/>
+                  <circle cx="17" cy="20" r="1"/>
+                </svg>
+
+                <svg class="check-icon" viewBox="0 0 24 24">
+                  <path d="M5 12.5l4 4L19 7"/>
+                </svg>
+
+              </button>
+
+            </div>
+
+          </div>
+
+          <h3>산책 스티커팩</h3>
+
+          <div class="shop-product-meta">
+            <span>산책 기록을 귀엽게 꾸며요</span>
+            <strong>6,000원</strong>
+          </div>
+
+        </article>
+
+
+        <!-- 05 -->
+        <article
+          class="shop-product-card"
+          data-category="toy"
+        >
+
+          <div class="shop-product-image">
+
+            <img
+              src="img/shop-product-5.webp"
+              alt="코코랑 노즈워크 토이"
+            >
+
+            <div class="shop-product-actions">
+
+              <button
+                class="product-action-btn product-like-btn"
+                type="button"
+                aria-label="찜하기"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>
+                </svg>
+              </button>
+
+              <button
+                class="product-action-btn product-cart-btn"
+                type="button"
+                aria-label="장바구니 담기"
+              >
+
+                <svg class="cart-icon" viewBox="0 0 24 24">
+                  <path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L20 8H7"/>
+                  <circle cx="10" cy="20" r="1"/>
+                  <circle cx="17" cy="20" r="1"/>
+                </svg>
+
+                <svg class="check-icon" viewBox="0 0 24 24">
+                  <path d="M5 12.5l4 4L19 7"/>
+                </svg>
+
+              </button>
+
+            </div>
+
+          </div>
+
+          <h3>코코랑 노즈워크 토이</h3>
+
+          <div class="shop-product-meta">
+            <span>냄새를 찾으며 즐겁게 놀아요</span>
+            <strong>18,000원</strong>
+          </div>
+
+        </article>
+
+
+        <!-- 06 -->
+        <article
+          class="shop-product-card"
+          data-category="toy"
+        >
+
+          <div class="shop-product-image">
+
+            <img
+              src="img/shop-product-6.webp"
+              alt="코코랑 패브릭 토이"
+            >
+
+            <div class="shop-product-actions">
+
+              <button
+                class="product-action-btn product-like-btn"
+                type="button"
+                aria-label="찜하기"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>
+                </svg>
+              </button>
+
+              <button
+                class="product-action-btn product-cart-btn"
+                type="button"
+                aria-label="장바구니 담기"
+              >
+
+                <svg class="cart-icon" viewBox="0 0 24 24">
+                  <path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L20 8H7"/>
+                  <circle cx="10" cy="20" r="1"/>
+                  <circle cx="17" cy="20" r="1"/>
+                </svg>
+
+                <svg class="check-icon" viewBox="0 0 24 24">
+                  <path d="M5 12.5l4 4L19 7"/>
+                </svg>
+
+              </button>
+
+            </div>
+
+          </div>
+
+          <h3>코코랑 패브릭 토이</h3>
+
+          <div class="shop-product-meta">
+            <span>부드럽게 물고 놀기 좋은 장난감</span>
+            <strong>14,000원</strong>
+          </div>
+
+        </article>
+
+
+      </div>
+
+
+      <!-- SIDE BANNER -->
+      <aside class="shop-product-banner">
+
+        <img
+          src="img/shop-side-banner.webp"
+          alt="코코랑 추천 상품"
+        >
+
+        <div class="shop-product-banner-overlay"></div>
+
+        <div class="shop-product-banner-copy">
+
+          <span>COCO LANG PICK</span>
+
+          <h3>
+            산책이 더 즐거워지는<br>
+            코코랑 아이템
+          </h3>
+
+          <p>
+            매일의 산책에 필요한<br>
+            인기 아이템을 만나보세요.
+          </p>
+
+          <a href="shop-product.html"
+          class="shop-product-banner-btn">
+            View more
+            <i>→</i>
+          </a>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- =========================================================
+     CART PARKING ZONE
+     PRODUCT COLLECTION 아래 장바구니 전용 공간
+========================================================= -->
+<section class="shop-cart-zone">
+
+<div class="shop-cart-dock" id="shopCartDock">
+
+    <div class="shop-cart-dock-inner">
+
+        <!-- COCO CHARACTER -->
+        <div class="shop-cart-character">
+
+            <img
+                src="img/shop-cart-coco.webp"
+                alt="코코"
+            >
+
+        </div>
+
+
+        <!-- CART SLOTS -->
+        <div class="shop-cart-slots">
+
+            <button
+                class="shop-cart-slot"
+                type="button"
+                aria-label="장바구니 상품 1"
+            >
+                <span class="shop-cart-plus">+</span>
+            </button>
+
+
+            <button
+                class="shop-cart-slot"
+                type="button"
+                aria-label="장바구니 상품 2"
+            >
+                <span class="shop-cart-plus">+</span>
+            </button>
+
+
+            <button
+                class="shop-cart-slot"
+                type="button"
+                aria-label="장바구니 상품 3"
+            >
+                <span class="shop-cart-plus">+</span>
+            </button>
+
+
+            <button
+                class="shop-cart-slot"
+                type="button"
+                aria-label="장바구니 상품 4"
+            >
+                <span class="shop-cart-plus">+</span>
+            </button>
+
+        </div>
+
+
+
+<!-- CART BUTTON -->
+<button
+    class="shop-cart-go"
+    id="shopCartGo"
+    type="button"
+>
+    <span>장바구니 바로가기</span>
+    <i>→</i>
+</button>
+
+
+
+</div>
+
+</div>
+
+
+
+
+
+</section>
+
+
+
+
+<!-- =========================================================
+     SET COLLECTION
+========================================================= -->
+
+<section class="shop-set-section">
+
+    <div class="shop-set-inner">
+
+        <!-- TITLE -->
+        <div class="shop-set-heading">
+
+            <span>
+                COCO LANG STYLE
+            </span>
+
+            <h2>
+                SET COLLECTION
+            </h2>
+
+            <p>
+                코코랑 아이템을 함께 매치해<br>
+                산책을 위한 하나의 세트로 만나보세요.
+            </p>
+
+        </div>
+
+
+        <!-- =================================================
+             SET 01
+        ================================================== -->
+
+        <div class="shop-set-item">
+
+            <!-- LEFT : SET STYLING IMAGE -->
+            <div class="shop-set-main">
+
+                <img
+                    src="img/shop-set-1.webp"
+                    alt="코코랑 산책 세트"
+                >
+
+
+
+<!-- 01 : 코코랑 산책 물병 -->
+<button
+  class="shop-set-point point-01"
+  type="button"
+  aria-label="코코랑 산책 물병 상세보기"
+  onclick="location.href='shop-product-detail.html?product=7'"
+>
+  +
+</button>
+
+<!-- 02 : 코코랑 데일리 리드줄 -->
+<button
+  class="shop-set-point point-02"
+  type="button"
+  aria-label="코코랑 데일리 리드줄 상세보기"
+  onclick="location.href='shop-product-detail.html?product=8'"
+>
+  +
+</button>
+
+<!-- 03 : 코코랑 데일리 하네스 -->
+<button
+  class="shop-set-point point-03"
+  type="button"
+  aria-label="코코랑 데일리 하네스 상세보기"
+  onclick="location.href='shop-product-detail.html?product=9'"
+>
+  +
+</button>
+
+
+            </div>
+
+
+            <!-- RIGHT -->
+            <div class="shop-set-info">
+
+                <div class="shop-set-product-image">
+
+                    <img
+                        src="img/shop-product-2.webp"
+                        alt="코코랑 데일리 하네스"
+                    >
+
+                </div>
+
+
+                <div class="shop-set-copy">
+
+                    <span class="shop-set-number">
+                        SET 01
+                    </span>
+
+                    <h3>
+                        WALK TOGETHER SET
+                    </h3>
+
+                    <p>
+                        매일의 산책을 가볍고 즐겁게.<br>
+                        코코랑의 데일리 산책 아이템
+                        하나의 세트로 구성했어요.
+                    </p>
+
+
+                    <div class="shop-set-tags">
+
+                        <span>HARNESS</span>
+
+                        <span>STICKER</span>
+
+                        <span>TOY</span>
+
+                    </div>
+
+
+                    <a
+                        href="shop-product.html"
+                        class="shop-set-view"
+                    >
+
+                        <span>
+                            View more
+                        </span>
+
+                        <i>
+                            →
+                        </i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     EVENT PROMOTION
+========================================================= -->
+
+<section class="shop-event-section">
+
+    <div class="shop-event-inner">
+
+        <!-- LEFT TEXT -->
+        <div class="shop-event-copy">
+
+            <span class="shop-event-label">
+                COCO LANG EVENT
+            </span>
+
+            <h2>
+    <span>Walk More,</span>
+    <span>Get More</span>
+</h2>
+
+<p>
+    코코랑과 함께 산책을 준비해보세요.<br>
+    인기 산책 아이템을 특별한 혜택으로 만나보세요.
+</p>
+
+            
+<a href="shop-event-list.html" class="shop-event-btn">
+  Event Now
+  <i>→</i>
+</a>
+
+
+        </div>
+
+
+        <!-- RIGHT IMAGE -->
+        <div class="shop-event-visual">
+
+            <img
+                src="img/shop-event.webp"
+                alt="코코랑 산책 이벤트"
+            >
+
+        </div>
+
+    </div>
+
+</section>
+
+    <!-- shop:E -->
+
+
+
+
+
+
+
+
+<!-- =========================================================
+     SHOP CART + HEART INTEGRATION
+========================================================= -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const CART_KEY = "cocolangCart";
+    const WISH_KEY = "cocolangWishList";
+
+    const productSection = document.querySelector(".shop-product-section");
+    const cartZone = document.querySelector(".shop-cart-zone");
+    const cartDock = document.getElementById("shopCartDock");
+    const cartGo = document.getElementById("shopCartGo");
+
+    const cartSlots = Array.from(
+        document.querySelectorAll(".shop-cart-slot")
+    );
+
+    /* ===============================
+       LOCAL STORAGE
+    =============================== */
+
+    function readData(key) {
+        try {
+            const data = JSON.parse(
+                localStorage.getItem(key) || "[]"
+            );
+
+            return Array.isArray(data) ? data : [];
+        } catch (error) {
+            console.error("데이터 읽기 오류:", error);
+            return [];
+        }
+    }
+
+    function saveData(key, data) {
+        try {
+            localStorage.setItem(key, JSON.stringify(data));
+            return true;
+        } catch (error) {
+            console.error("데이터 저장 오류:", error);
+            alert("상품 정보를 저장하지 못했어요.");
+            return false;
+        }
+    }
+
+    /* ===============================
+       PRODUCT INFORMATION
+    =============================== */
+
+    function getProduct(card) {
+        if (!card) return null;
+
+        const image = card.querySelector(".shop-product-image img");
+        const name = card.querySelector("h3");
+        const desc = card.querySelector(".shop-product-meta span");
+        const price = card.querySelector(".shop-product-meta strong");
+
+        if (!image || !name || !price) return null;
+
+        const imagePath = image.getAttribute("src");
+
+        return {
+            id: imagePath,
+            image: imagePath,
+            name: name.textContent.trim(),
+            description: desc ? desc.textContent.trim() : "",
+            price: Number(
+                price.textContent.replace(/[^0-9]/g, "")
+            ) || 0
+        };
+    }
+
+    /* ===============================
+       CART DOCK DISPLAY
+    =============================== */
+
+    function renderCartDock() {
+        const cart = readData(CART_KEY);
+
+        cartSlots.forEach(function (slot, index) {
+            const item = cart[index];
+
+            slot.replaceChildren();
+
+            if (item) {
+                const image = document.createElement("img");
+
+                image.src = item.image;
+                image.alt = item.name;
+
+                slot.appendChild(image);
+                slot.classList.add("filled");
+                slot.dataset.cartId = item.id;
+
+                slot.setAttribute(
+                    "aria-label",
+                    item.name + " 삭제"
+                );
+            } else {
+                const plus = document.createElement("span");
+
+                plus.className = "shop-cart-plus";
+                plus.textContent = "+";
+
+                slot.appendChild(plus);
+                slot.classList.remove("filled");
+
+                delete slot.dataset.cartId;
+
+                slot.setAttribute(
+                    "aria-label",
+                    "빈 장바구니 칸"
+                );
+            }
+        });
+    }
+
+    /* ===============================
+       CART ANIMATION
+    =============================== */
+
+    function animateCart() {
+        if (!cartDock) return;
+
+        cartDock.classList.remove("cart-pop");
+        void cartDock.offsetWidth;
+        cartDock.classList.add("cart-pop");
+    }
+
+    /* ===============================
+       HEART + CART BUTTONS
+    =============================== */
+
+    let wishList = readData(WISH_KEY);
+
+    document.querySelectorAll(
+        ".shop-product-card"
+    ).forEach(function (card) {
+
+        const product = getProduct(card);
+
+        if (!product) return;
+
+        const cartButton = card.querySelector(
+            ".product-cart-btn"
+        );
+
+        const heartButton = card.querySelector(
+            ".product-like-btn"
+        );
+
+        /* ADD TO CART */
+
+        if (cartButton) {
+            cartButton.addEventListener(
+                "click",
+                function (event) {
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    if (cartButton.classList.contains("added")) {
+                        return;
+                    }
+
+                    const cart = readData(CART_KEY);
+
+                    const existing = cart.find(function (item) {
+                        return item.id === product.id;
+                    });
+
+                    if (existing) {
+                        existing.quantity =
+                            Math.max(
+                                1,
+                                Number(existing.quantity) || 1
+                            ) + 1;
+
+                        existing.selected = true;
+                    } else {
+                        cart.push({
+                            ...product,
+                            quantity: 1,
+                            selected: true
+                        });
+                    }
+
+                    if (!saveData(CART_KEY, cart)) return;
+
+                    renderCartDock();
+                    animateCart();
+
+                    cartButton.classList.add("added");
+                    cartButton.setAttribute(
+                        "aria-label",
+                        "장바구니에 담겼습니다"
+                    );
+
+                    setTimeout(function () {
+                        cartButton.classList.remove("added");
+                        cartButton.setAttribute(
+                            "aria-label",
+                            "장바구니 담기"
+                        );
+                    }, 1000);
+                }
+            );
+        }
+
+        /* HEART */
+
+        if (heartButton) {
+
+            function updateHeart() {
+                const liked = wishList.includes(product.id);
+
+                heartButton.classList.toggle("active", liked);
+
+                heartButton.setAttribute(
+                    "aria-pressed",
+                    String(liked)
+                );
+
+                heartButton.setAttribute(
+                    "aria-label",
+                    liked ? "찜 취소하기" : "찜하기"
+                );
+            }
+
+            updateHeart();
+
+            heartButton.addEventListener(
+                "click",
+                function (event) {
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    let nextWishList;
+
+                    if (wishList.includes(product.id)) {
+                        nextWishList = wishList.filter(
+                            id => id !== product.id
+                        );
+                    } else {
+                        nextWishList = [
+                            ...wishList,
+                            product.id
+                        ];
+                    }
+
+                    if (!saveData(WISH_KEY, nextWishList)) {
+                        return;
+                    }
+
+                    wishList = nextWishList;
+                    updateHeart();
+                }
+            );
+        }
+    });
+
+    /* ===============================
+       REMOVE FROM CART DOCK
+    =============================== */
+
+    cartSlots.forEach(function (slot) {
+
+        slot.addEventListener("click", function () {
+
+            const id = slot.dataset.cartId;
+
+            if (!id) return;
+
+            const cart = readData(CART_KEY).filter(
+                item => item.id !== id
+            );
+
+            if (!saveData(CART_KEY, cart)) return;
+
+            renderCartDock();
+        });
+    });
+
+    /* ===============================
+       GO TO CART PAGE
+    =============================== */
+
+    if (cartGo) {
+        cartGo.addEventListener("click", function () {
+            window.location.href = "shop-cart.html";
+        });
+    }
+
+    /* ===============================
+       CART BAR POSITION
+    =============================== */
+
+    function updateCartDockPosition() {
+
+        if (!productSection || !cartZone || !cartDock) {
+            return;
+        }
+
+        const productRect =
+            productSection.getBoundingClientRect();
+
+        const zoneRect =
+            cartZone.getBoundingClientRect();
+
+        const viewportHeight = window.innerHeight;
+        const dockHeight = cartDock.offsetHeight || 112;
+
+        const trigger =
+            viewportHeight - 22 - dockHeight - 20;
+
+        cartDock.classList.remove(
+            "is-hidden",
+            "is-fixed",
+            "is-parked"
+        );
+
+        if (productRect.top >= viewportHeight - 100) {
+
+            cartDock.classList.add("is-hidden");
+
+        } else if (zoneRect.top > trigger) {
+
+            cartDock.classList.add("is-fixed");
+
+        } else {
+
+            cartDock.classList.add("is-parked");
+
+        }
+    }
+
+    window.addEventListener(
+        "scroll",
+        updateCartDockPosition,
+        { passive: true }
+    );
+
+    window.addEventListener(
+        "resize",
+        updateCartDockPosition
+    );
+
+    window.addEventListener("pageshow", function () {
+        renderCartDock();
+        updateCartDockPosition();
+    });
+
+    renderCartDock();
+    updateCartDockPosition();
+
+});
+</script>
+
+
+
+
+<!-- shop:E -->
+
+
+
+
+<!-- SHOP HERO BANNER SLIDER -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const slider = document.getElementById("shopHeroSlider");
+  if (!slider) return;
+
+  const slides = Array.from(
+    slider.querySelectorAll(".shop-slide")
+  );
+
+  const progress = Array.from(
+    slider.querySelectorAll(".shop-progress-item")
+  );
+
+  const prev = document.getElementById("shopHeroPrev");
+  const next = document.getElementById("shopHeroNext");
+  const currentText = document.getElementById("shopHeroCurrent");
+
+  if (!slides.length) return;
+
+  let current = 0;
+  let timer = null;
+
+  function show(index) {
+    current = (index + slides.length) % slides.length;
+
+    slides.forEach(function (slide, i) {
+      const active = i === current;
+
+      slide.classList.toggle("active", active);
+      slide.setAttribute("aria-hidden", String(!active));
+    });
+
+    progress.forEach(function (button, i) {
+      button.classList.toggle("active", i === current);
+      button.setAttribute("aria-pressed", String(i === current));
+    });
+
+    if (currentText) {
+      currentText.textContent =
+        String(current + 1).padStart(2, "0");
+    }
+  }
+
+  function stop() {
+    if (timer !== null) {
+      clearInterval(timer);
+      timer = null;
+    }
+  }
+
+  function start() {
+    stop();
+
+    if (document.hidden || slides.length < 2) return;
+
+    timer = setInterval(function () {
+      show(current + 1);
+    }, 5000);
+  }
+
+  function navigate(index) {
+    show(index);
+    start();
+  }
+
+  if (prev) {
+    prev.addEventListener("click", function () {
+      navigate(current - 1);
+    });
+  }
+
+  if (next) {
+    next.addEventListener("click", function () {
+      navigate(current + 1);
+    });
+  }
+
+  progress.forEach(function (button, i) {
+    button.addEventListener("click", function () {
+      navigate(i);
+    });
+  });
+
+  slider.addEventListener("mouseenter", stop);
+  slider.addEventListener("mouseleave", start);
+
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) {
+      stop();
+    } else {
+      start();
+    }
+  });
+
+  show(0);
+  start();
+
+});
+</script>
+
+
+
+<!-- =========================================================
+     BEST PRODUCT JAVASCRIPT
+========================================================= -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+
+const bestProducts = [
+  {
+    number: "01",
+    menu: "WALK",
+    tag: "BEST WALK ITEM",
+    name: "코코랑 데일리 하네스",
+    desc: "부드러운 쿠션과 메시 소재로 편안한 산책을 도와주는 데일리 하네스",
+    price: "29,000원",
+    image: "img/best-product-1.webp",
+    detailId: "2"
+  },
+  {
+    number: "02",
+    menu: "LEASH",
+    tag: "BEST LEASH ITEM",
+    name: "코코랑 데일리 리드줄",
+    desc: "푹신한 손잡이와 귀여운 발바닥 패턴으로 매일의 산책을 더욱 편안하게",
+    price: "18,000원",
+    image: "img/best-product-2.webp",
+    detailId: "8"
+  },
+  {
+    number: "03",
+    menu: "SNACK",
+    tag: "BEST SNACK ITEM",
+    name: "코코랑 발바닥 간식통",
+    desc: "귀여운 뼈다귀와 발바닥 모양 간식을 담아두는 코코랑 전용 간식통",
+    price: "12,000원",
+    image: "img/best-product-3.webp",
+    detailId: "10"
+  },
+  {
+    number: "04",
+    menu: "GOODS",
+    tag: "BEST GOODS ITEM",
+    name: "코코랑 배변봉투 파우치",
+    desc: "앙증맞은 뼈다귀 디자인에 배변봉투를 간편하게 보관하는 산책 필수 아이템",
+    price: "9,900원",
+    image: "img/best-product-4.webp",
+    detailId: "11"
+  }
+];
+
+
+    const bestViewMore = document.getElementById("bestViewMore");
+    const mainImage = document.getElementById("bestMainImage");
+    const number = document.getElementById("bestNumber");
+    const bgText = document.getElementById("bestBgText");
+    const tag = document.getElementById("bestTag");
+    const name = document.getElementById("bestName");
+    const desc = document.getElementById("bestDesc");
+    const price = document.getElementById("bestPrice");
+
+    const menuButtons = document.querySelectorAll(".best-menu-btn");
+    const thumbs = document.querySelectorAll(".best-thumb");
+    const dots = document.querySelectorAll(".shop-best-dots button");
+
+    const prev = document.getElementById("bestPrev");
+    const next = document.getElementById("bestNext");
+
+    if (
+        !mainImage ||
+        !number ||
+        !bgText ||
+        !tag ||
+        !name ||
+        !desc ||
+        !price
+    ) {
+        return;
+    }
+
+    let current = 0;
+    let changeTimer = null;
+
+    function showBest(index) {
+
+        current = (
+            index + bestProducts.length
+        ) % bestProducts.length;
+
+        const product = bestProducts[current];
+
+
+if (bestViewMore) {
+  bestViewMore.href =
+    "shop-product-detail.html?product=" + product.detailId;
+}
+
+
+        mainImage.style.opacity = "0";
+        mainImage.style.transform =
+            "translateY(8px) scale(.97)";
+
+        clearTimeout(changeTimer);
+
+        changeTimer = setTimeout(function () {
+
+            mainImage.src = product.image;
+            number.textContent = product.number;
+            bgText.textContent = product.menu;
+            tag.textContent = product.tag;
+            name.textContent = product.name;
+            desc.textContent = product.desc;
+            price.textContent = product.price;
+
+            mainImage.style.opacity = "1";
+            mainImage.style.transform =
+                "translateY(0) scale(1)";
+
+        }, 180);
+
+        menuButtons.forEach(function (button, i) {
+            button.classList.toggle("active", i === current);
+        });
+
+        thumbs.forEach(function (button, i) {
+            button.classList.toggle("active", i === current);
+        });
+
+        dots.forEach(function (button, i) {
+            button.classList.toggle("active", i === current);
+        });
+    }
+
+    menuButtons.forEach(function (button, index) {
+        button.addEventListener("click", function () {
+            showBest(index);
+        });
+    });
+
+    thumbs.forEach(function (button, index) {
+        button.addEventListener("click", function () {
+            showBest(index);
+        });
+    });
+
+    dots.forEach(function (button, index) {
+        button.addEventListener("click", function () {
+            showBest(index);
+        });
+    });
+
+    if (prev) {
+        prev.addEventListener("click", function () {
+            showBest(current - 1);
+        });
+    }
+
+    if (next) {
+        next.addEventListener("click", function () {
+            showBest(current + 1);
+        });
+    }
+
+    showBest(0);
+
+});
+</script>
+
+
+<!-- =========================================================
+     ONLY FOR YOU TABS
+========================================================= -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const onlyTabs = document.querySelectorAll(".only-tab");
+
+    onlyTabs.forEach(function (tab) {
+
+        tab.addEventListener("click", function () {
+
+            onlyTabs.forEach(function (item) {
+                item.classList.remove("active");
+            });
+
+            tab.classList.add("active");
+
+        });
+
+    });
+
+});
+</script>
+
+
+<!-- =========================================================
+     PRODUCT COLLECTION FILTER
+========================================================= -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const filterButtons = document.querySelectorAll(
+        ".shop-filter-btn"
+    );
+
+    const productCards = document.querySelectorAll(
+        ".shop-product-card"
+    );
+
+    filterButtons.forEach(function (button) {
+
+        button.addEventListener("click", function () {
+
+            filterButtons.forEach(function (btn) {
+                btn.classList.remove("active");
+            });
+
+            button.classList.add("active");
+
+            const filter = button.dataset.filter;
+
+            productCards.forEach(function (card) {
+
+                const category = card.dataset.category;
+
+                card.classList.toggle(
+                    "hide",
+                    filter !== "all" && category !== filter
+                );
+
+            });
+
+        });
+
+    });
+
+});
+</script>
+
+
+<!-- 상품 클릭 시 상세 페이지로 이동 -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const cards = document.querySelectorAll(".shop-product-card");
+
+  cards.forEach(function (card, index) {
+
+    const productNumber = index + 1;
+
+    card.style.cursor = "pointer";
+    card.tabIndex = 0;
+    card.setAttribute("role", "link");
+    card.setAttribute("aria-label", "상품 상세 페이지 보기");
+
+    function openDetail() {
+      window.location.href =
+        "shop-product-detail.html?product=" + productNumber;
+    }
+
+    card.addEventListener("click", function (event) {
+
+      // 하트 및 장바구니 버튼을 눌렀을 때는 이동하지 않음
+      if (event.target.closest(".product-action-btn")) {
+        return;
+      }
+
+      // 다른 링크를 클릭했을 때도 이동하지 않음
+      if (event.target.closest("a, button")) {
+        return;
+      }
+
+      openDetail();
+
+    });
+
+    card.addEventListener("keydown", function (event) {
+
+      if (
+        event.target === card &&
+        (event.key === "Enter" || event.key === " ")
+      ) {
+        event.preventDefault();
+        openDetail();
+      }
+
+    });
+
+  });
+
+});
+</script>
+
+
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+
+    <div class="footer-left">
+      <ul>
+        <li><a href="#"><span class="fa-brands fa-instagram"></span></a></li>
+        <li><a href="#"><span class="fa-brands fa-facebook-f"></span></a></li>
+        <li><a href="#"><span class="fa-brands fa-x-twitter"></span></a></li>
+        <li><a href="#"><span class="fa-brands fa-youtube"></span></a></li>
+      </ul>
+    </div>
+
+    <div class="footer-center">
+      <img src="img/footer-logo.webp" alt="COCOLANG Logo" class="footer-logo">
+    </div>
+
+    <div class="footer-right">
+      <p>ⓒ 2026 COCOLANG. All rights reserved</p>
+    </div>
+
+  </div>
+</footer>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const overlay = document.getElementById("cocoSearchOverlay");
+    const openButtons = document.querySelectorAll(".shop-search-icon");
+    const closeButtons = overlay?.querySelectorAll("[data-search-close]");
+
+    const form = document.getElementById("cocoSearchForm");
+    const input = document.getElementById("cocoSearchInput");
+    const recentList = document.getElementById("cocoRecentSearches");
+    const clearButton = document.getElementById("cocoClearSearch");
+
+    if (!overlay || !form || !input || !recentList) return;
+
+    const STORAGE_KEY = "cocolangRecentSearches";
+    let lastFocused = null;
+    let closeTimer = null;
+
+    function readRecent() {
+        try {
+            const data = JSON.parse(
+                localStorage.getItem(STORAGE_KEY) || "[]"
+            );
+            return Array.isArray(data) ? data : [];
+        } catch {
+            return [];
+        }
+    }
+
+    function saveRecent(items) {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+        } catch (error) {
+            console.warn("최근 검색어 저장 실패", error);
+        }
+    }
+
+    function renderRecent() {
+        const items = readRecent();
+        recentList.replaceChildren();
+
+        if (!items.length) {
+            const li = document.createElement("li");
+            li.className = "coco-search-empty";
+            li.textContent = "최근 검색어가 없습니다.";
+            recentList.appendChild(li);
+            return;
+        }
+
+        items.forEach((keyword) => {
+            const li = document.createElement("li");
+            li.className = "coco-search-recent-item";
+
+            const word = document.createElement("button");
+            word.type = "button";
+            word.textContent = keyword;
+            word.addEventListener("click", () => search(keyword));
+
+            const remove = document.createElement("button");
+            remove.type = "button";
+            remove.className = "coco-recent-remove";
+            remove.textContent = "×";
+            remove.setAttribute("aria-label", keyword + " 삭제");
+
+            remove.addEventListener("click", () => {
+                saveRecent(readRecent().filter(item => item !== keyword));
+                renderRecent();
+            });
+
+            li.append(word, remove);
+            recentList.appendChild(li);
+        });
+    }
+
+    function openSearch() {
+        clearTimeout(closeTimer);
+        lastFocused = document.activeElement;
+
+        overlay.hidden = false;
+        document.body.style.overflow = "hidden";
+
+        requestAnimationFrame(() => {
+            overlay.classList.add("is-open");
+            input.focus();
+        });
+
+        openButtons.forEach(button =>
+            button.setAttribute("aria-expanded", "true")
+        );
+
+        renderRecent();
+    }
+
+    function closeSearch() {
+        overlay.classList.remove("is-open");
+        document.body.style.overflow = "";
+
+        openButtons.forEach(button =>
+            button.setAttribute("aria-expanded", "false")
+        );
+
+        clearTimeout(closeTimer);
+        closeTimer = setTimeout(() => {
+            overlay.hidden = true;
+        }, 350);
+
+        lastFocused?.focus?.();
+    }
+
+    function search(value) {
+        const keyword = value.trim();
+        if (!keyword) return;
+
+        const recent = readRecent().filter(
+            item => item !== keyword
+        );
+
+        recent.unshift(keyword);
+        saveRecent(recent.slice(0, 8));
+
+        window.location.href =
+            "shop-product.html?search=" + encodeURIComponent(keyword);
+    }
+
+    openButtons.forEach(button =>
+        button.addEventListener("click", openSearch)
+    );
+
+    closeButtons?.forEach(button =>
+        button.addEventListener("click", closeSearch)
+    );
+
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && !overlay.hidden) {
+            closeSearch();
+        }
+
+        if (event.key === "Tab" && !overlay.hidden) {
+            const focusable = Array.from(
+                overlay.querySelectorAll(
+                    'button:not([disabled]), input:not([disabled])'
+                )
+            ).filter(el => el.getClientRects().length);
+
+            if (!focusable.length) return;
+
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+            }
+        }
+    });
+
+    form.addEventListener("submit", event => {
+        event.preventDefault();
+        search(input.value);
+    });
+
+    document.querySelectorAll("[data-keyword]").forEach(button => {
+        button.addEventListener("click", () => {
+            search(button.dataset.keyword);
+        });
+    });
+
+    clearButton?.addEventListener("click", () => {
+        saveRecent([]);
+        renderRecent();
+    });
+
+    renderRecent();
+
+});
+</script>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const params = new URLSearchParams(window.location.search);
+    const keyword = (params.get("search") || "").trim();
+
+    if (!keyword) return;
+
+    const normalized = keyword.toLocaleLowerCase("ko-KR");
+
+    const cards = document.querySelectorAll(".product-list-card");
+    const count = document.getElementById("productCount");
+
+    let found = 0;
+
+    cards.forEach(card => {
+        const text = card.textContent.toLocaleLowerCase("ko-KR");
+
+        const matched = text.includes(normalized);
+
+        card.classList.toggle("hide", !matched);
+
+        if (matched) found++;
+    });
+
+    if (count) count.textContent = found;
+
+    const section = document.querySelector(".product-list-section");
+    section?.scrollIntoView({ behavior: "instant", block: "start" });
+
+    const grid = document.getElementById("productListGrid");
+
+    if (grid && found === 0) {
+        const empty = document.createElement("p");
+        empty.className = "coco-search-no-results";
+        empty.textContent = `"${keyword}" 검색 결과가 없습니다.`;
+        grid.appendChild(empty);
+    }
+
+});
+</script>
+
+
+<!-- ==========================================
+     SHOP EVENT POPUP JAVASCRIPT
+========================================== -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const popup = document.getElementById("shopEventPopup");
+    if (!popup) return;
+
+    const slides = Array.from(
+        popup.querySelectorAll(".shop-event-slide")
+    );
+
+    const prevBtn = document.getElementById("shopEventPrev");
+    const nextBtn = document.getElementById("shopEventNext");
+    const closeBtn = document.getElementById("shopEventClose");
+    const hideTodayBtn = document.getElementById("shopEventHideToday");
+
+    const currentText = document.getElementById("shopEventCurrent");
+    const totalText = document.getElementById("shopEventTotal");
+
+    const STORAGE_KEY = "cocolangShopEventHideUntil";
+
+    let currentIndex = 0;
+    let closeTimer = null;
+    let previousFocus = null;
+    let previousOverflow = "";
+
+    if (!slides.length) return;
+
+    /* 슬라이드 전환 */
+    function showSlide(index) {
+
+        currentIndex =
+            (index + slides.length) % slides.length;
+
+        slides.forEach(function(slide, i) {
+            const active = i === currentIndex;
+
+            slide.classList.toggle("active", active);
+            slide.setAttribute("aria-hidden", String(!active));
+            slide.tabIndex = active ? 0 : -1;
+        });
+
+        currentText.textContent = currentIndex + 1;
+        totalText.textContent = slides.length;
+    }
+
+    /* 다음 / 이전 */
+    nextBtn.addEventListener("click", function () {
+        showSlide(currentIndex + 1);
+    });
+
+    prevBtn.addEventListener("click", function () {
+        showSlide(currentIndex - 1);
+    });
+
+    /* 오늘 하루 숨김 여부 */
+    function isHiddenToday() {
+        try {
+            const until = Number(
+                localStorage.getItem(STORAGE_KEY)
+            );
+
+            return until > Date.now();
+        } catch {
+            return false;
+        }
+    }
+
+    /* 팝업 열기 */
+    function openPopup() {
+
+        if (isHiddenToday()) return;
+
+        clearTimeout(closeTimer);
+
+        previousFocus = document.activeElement;
+        previousOverflow = document.body.style.overflow;
+
+        showSlide(0);
+
+        popup.hidden = false;
+        document.body.style.overflow = "hidden";
+
+        requestAnimationFrame(function () {
+            popup.classList.add("is-open");
+            closeBtn.focus();
+        });
+    }
+
+    /* 팝업 닫기 */
+    function closePopup() {
+
+        if (popup.hidden) return;
+
+        popup.classList.remove("is-open");
+        document.body.style.overflow = previousOverflow;
+
+        clearTimeout(closeTimer);
+
+        const reducedMotion = window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+        ).matches;
+
+        closeTimer = setTimeout(function () {
+            popup.hidden = true;
+        }, reducedMotion ? 0 : 350);
+
+        previousFocus?.focus?.();
+    }
+
+    /* 닫기 버튼 */
+    closeBtn.addEventListener("click", closePopup);
+
+    /* 오늘 하루 보지 않기 */
+    hideTodayBtn.addEventListener("click", function () {
+
+        const tomorrow = new Date();
+        tomorrow.setHours(24, 0, 0, 0);
+
+        try {
+            localStorage.setItem(
+                STORAGE_KEY,
+                String(tomorrow.getTime())
+            );
+        } catch (error) {
+            console.warn("팝업 설정 저장 실패:", error);
+        }
+
+        closePopup();
+    });
+
+    /* 키보드 조작 */
+    document.addEventListener("keydown", function (event) {
+
+        if (popup.hidden) return;
+
+        if (event.key === "Escape") {
+            event.preventDefault();
+            closePopup();
+            return;
+        }
+
+        if (event.key === "ArrowRight") {
+            showSlide(currentIndex + 1);
+        }
+
+        if (event.key === "ArrowLeft") {
+            showSlide(currentIndex - 1);
+        }
+
+        if (event.key === "Tab") {
+            const focusable = Array.from(
+                popup.querySelectorAll(
+                    '.shop-event-slide.active[href], button:not([disabled])'
+                )
+            ).filter(el => el.getClientRects().length);
+
+            if (!focusable.length) return;
+
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+
+            if (event.shiftKey &&
+                document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey &&
+                       document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+            }
+        }
+    });
+
+    /* SHOP 접속 시 자동 실행 */
+    openPopup();
+
+});
+</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const scrollTopBtn = document.getElementById("scrollTopBtn");
+  const mainBanner = document.querySelector(".main-video-banner");
+
+  if (!scrollTopBtn) return;
+
+  /* 맨 위로 부드럽게 이동 */
+  scrollTopBtn.addEventListener("click", function () {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  });
+
+  /* 메인 영상이 보일 때 TOP 버튼 숨기기 */
+  function updateScrollTopBtn() {
+
+    if (!mainBanner) return;
+
+    const bannerBottom = mainBanner.getBoundingClientRect().bottom;
+
+    if (bannerBottom > window.innerHeight * 0.5) {
+      scrollTopBtn.classList.add("is-hidden");
+    } else {
+      scrollTopBtn.classList.remove("is-hidden");
+    }
+
+  }
+
+  window.addEventListener("scroll", updateScrollTopBtn, {
+    passive: true
+  });
+
+  window.addEventListener("resize", updateScrollTopBtn);
+
+  updateScrollTopBtn();
+
+});
+</script>
+
+
+</body>
+</html>

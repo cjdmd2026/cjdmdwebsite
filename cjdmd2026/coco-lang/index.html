@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>COCO LANG</title>
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
+  >
+
+<link rel="stylesheet" href="style.css?v=20261102-03">
+
+<!-- Font Awesome SNS 아이콘 -->
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+>
+
+
+  <!-- 추가 홈 섹션 전용 스타일: style.css 캐시/우선순위와 무관하게 확실히 적용 -->
+  <style id="home-extra-critical">
+    .index-content .home-story-bridge{
+      position:relative !important;
+      width:100% !important;
+      min-height:560px !important;
+      padding:72px 8% 48px !important;
+      display:flex !important;
+      flex-direction:column !important;
+      align-items:center !important;
+      justify-content:center !important;
+      box-sizing:border-box !important;
+      overflow:hidden !important;
+      background:#FFFDF9 !important;
+      text-align:center !important;
+    }
+
+    .index-content .home-story-bridge .bridge-copy{
+      position:relative !important;
+      z-index:5 !important;
+      width:100% !important;
+      text-align:center !important;
+    }
+
+    .index-content .bridge-kicker{
+      display:block !important;
+      margin:0 0 14px !important;
+      color:#FF7154 !important;
+      font-size:11px !important;
+      font-weight:800 !important;
+      letter-spacing:.18em !important;
+    }
+
+    .index-content .home-story-bridge h2,
+    .index-content .home-walk-service h2,
+    .index-content .home-character-moment h2{
+      margin:0 !important;
+      color:#4B4541 !important;
+      font-size:clamp(32px,2.7vw,46px) !important;
+      font-weight:800 !important;
+      line-height:1.2 !important;
+      letter-spacing:-.045em !important;
+    }
+
+    .index-content .home-story-bridge p,
+    .index-content .home-character-moment p{
+      margin:16px 0 0 !important;
+      color:#7A716C !important;
+      font-size:14px !important;
+      font-weight:500 !important;
+      line-height:1.75 !important;
+    }
+
+    .index-content .bridge-characters{
+      position:relative !important;
+      width:min(900px,82%) !important;
+      height:205px !important;
+      margin:24px auto 0 !important;
+    }
+
+    .index-content .bridge-dog{
+      position:absolute !important;
+      bottom:0 !important;
+      z-index:3 !important;
+      display:block !important;
+      width:clamp(95px,9vw,150px) !important;
+      height:auto !important;
+      object-fit:contain !important;
+    }
+
+    .index-content .bridge-dog.dog-1{ left:7% !important; }
+    .index-content .bridge-dog.dog-2{ left:31% !important; bottom:18px !important; }
+    .index-content .bridge-dog.dog-3{ right:29% !important; bottom:4px !important; }
+    .index-content .bridge-dog.dog-4{ right:7% !important; }
+
+    .index-content .bridge-path{
+      display:flex !important;
+      align-items:center !important;
+      justify-content:center !important;
+      gap:18px !important;
+      margin:5px auto 0 !important;
+      color:#F5C3CC !important;
+      font-size:7px !important;
+    }
+
+    .index-content .home-walk-service{
+      position:relative !important;
+      width:100% !important;
+      min-height:590px !important;
+      padding:78px 8% 84px !important;
+      box-sizing:border-box !important;
+      overflow:hidden !important;
+      background:linear-gradient(180deg,#FFFFFF 0%,#FFF8F4 100%) !important;
+    }
+
+    .index-content .walk-service-head{
+      width:100% !important;
+      text-align:center !important;
+    }
+
+    .index-content .walk-service-head .bridge-kicker{
+      color:#73B5E8 !important;
+    }
+
+    .index-content .walk-service-flow{
+      width:min(1080px,88%) !important;
+      margin:56px auto 0 !important;
+      display:flex !important;
+      align-items:center !important;
+      justify-content:center !important;
+    }
+
+    .index-content .walk-feature{
+      width:220px !important;
+      flex:0 0 220px !important;
+      text-align:center !important;
+    }
+
+    .index-content .walk-feature-icon{
+      width:76px !important;
+      height:76px !important;
+      margin:0 auto 18px !important;
+      display:flex !important;
+      align-items:center !important;
+      justify-content:center !important;
+      box-sizing:border-box !important;
+      border:1.5px solid #B8DCF4 !important;
+      border-radius:50% !important;
+      background:#FFFFFF !important;
+      color:#73B5E8 !important;
+      font-size:13px !important;
+      font-weight:900 !important;
+      box-shadow:5px 6px 0 rgba(184,220,244,.45) !important;
+    }
+
+    .index-content .walk-feature strong{
+      display:block !important;
+      color:#4B4541 !important;
+      font-size:17px !important;
+      font-weight:800 !important;
+    }
+
+    .index-content .walk-feature p{
+      margin:9px 0 0 !important;
+      color:#817975 !important;
+      font-size:13px !important;
+      line-height:1.65 !important;
+      font-weight:500 !important;
+    }
+
+    .index-content .walk-flow-line{
+      width:110px !important;
+      height:1px !important;
+      flex:0 0 110px !important;
+      margin:0 26px !important;
+      background:repeating-linear-gradient(to right,#F5C3CC 0 7px,transparent 7px 14px) !important;
+    }
+
+    .index-content .home-character-moment{
+      position:relative !important;
+      width:100% !important;
+      min-height:610px !important;
+      padding:70px 8% !important;
+      display:flex !important;
+      align-items:center !important;
+      justify-content:space-between !important;
+      gap:5% !important;
+      box-sizing:border-box !important;
+      overflow:hidden !important;
+      background:linear-gradient(135deg,#FFF3F5 0%,#FDECEF 55%,#FFF7F8 100%) !important;
+    }
+
+    .index-content .character-moment-copy{
+      position:relative !important;
+      z-index:5 !important;
+      width:34% !important;
+    }
+
+    .index-content .character-moment-stage{
+      position:relative !important;
+      width:61% !important;
+      height:430px !important;
+    }
+
+    .index-content .moment-dog{
+      position:absolute !important;
+      bottom:15px !important;
+      z-index:3 !important;
+      display:block !important;
+      width:clamp(120px,11vw,190px) !important;
+      height:auto !important;
+      object-fit:contain !important;
+    }
+
+    .index-content .moment-dog.dog-1{ left:2% !important; }
+    .index-content .moment-dog.dog-2{ left:25% !important; bottom:45px !important; }
+    .index-content .moment-dog.dog-3{ right:25% !important; bottom:24px !important; }
+    .index-content .moment-dog.dog-4{ right:1% !important; }
+
+    .index-content .character-bubble{
+      position:absolute !important;
+      z-index:5 !important;
+      padding:10px 16px !important;
+      border-radius:999px !important;
+      background:#FFFFFF !important;
+      color:#7B6569 !important;
+      font-size:11px !important;
+      font-weight:800 !important;
+      box-shadow:0 8px 20px rgba(120,85,93,.08) !important;
+    }
+
+    .index-content .bubble-1{ left:20% !important; top:20% !important; }
+    .index-content .bubble-2{ right:16% !important; top:12% !important; }
+
+    .index-content .home-app .index-title,
+    .index-content .home-shop .index-title,
+    .index-content .home-exhibition .index-title{
+      font-size:clamp(38px,3.25vw,58px) !important;
+      line-height:1.13 !important;
+    }
+
+    .index-content .home-brand .index-title{
+      font-size:clamp(70px,7vw,118px) !important;
+    }
+  </style>
+
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+
+
+</head>
+
+<body>
+
+
+
+<!-- COCO:LANG LOADING SCREEN -->
+<div id="coco-loader" role="status" aria-label="페이지 로딩 중">
+  <div class="loader-inner">
+
+    <img
+      src="img/fast-test-character.webp"
+      alt="코코 캐릭터"
+      class="loader-character"
+    >
+
+
+    <p class="loader-text">
+      산책에서 시작되는 새로운 연결
+    </p>
+
+    <div class="loader-progress">
+      <div class="loader-progress-bar"></div>
+    </div>
+
+    <span class="loader-caption">LOADING...</span>
+
+  </div>
+</div>
+
+
+  <!-- =========================
+       HEADER
+       기존 링크 구조 유지
+  ========================== -->
+  <header>
+    <div class="header-inner">
+
+      <div class="container-small">
+
+<a href="index.html" class="logo">
+
+  <!-- 일반 페이지 및 스크롤 이후 로고 -->
+  <img
+    src="img/header-logo.webp"
+    alt="COCO LANG"
+    class="header-logo-default"
+  >
+
+  <!-- 메인 영상 위 전용 흰색 로고 -->
+  <img
+    src="img/header-whitelogo.webp"
+    alt=""
+    class="header-logo-white"
+    aria-hidden="true"
+  >
+
+</a>
+
+      </div>
+
+<nav class="headB">
+  <ul>
+
+    <li>
+      <a href="brand.html">
+        BRAND
+      </a>
+    </li>
+
+    <li>
+      <a href="app.html">
+        APP
+      </a>
+    </li>
+
+    <li>
+      <a href="community.html">
+        COMMUNITY
+      </a>
+    </li>
+
+    <li>
+      <a href="shop.html">
+        SHOP
+      </a>
+    </li>
+
+  </ul>
+</nav>
+
+      <button class="headC" type="button" aria-label="메뉴 열기">
+        ☰
+      </button>
+
+    </div>
+  </header>
+
+
+  <main class="index-content">
+
+
+
+<!-- =========================
+     1. MAIN VIDEO BANNER
+========================== -->
+
+
+<!-- =========================
+     MAIN VIDEO BANNER
+========================== -->
+
+<section class="main-video-banner">
+
+  <!-- 배경 영상 -->
+  <video
+    class="main-banner-video"
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="metadata"
+    poster="img/main-banner.webp"
+  >
+    <source
+      src="video/main-banner.mp4"
+      type="video/mp4"
+    >
+  </video>
+
+  <!-- 영상 위 가독성 그라데이션 -->
+  <div class="main-video-overlay"></div>
+
+  <!-- 중앙 콘텐츠 -->
+  <div class="main-video-content">
+
+    <!-- 코코랑 로고 -->
+    <img
+      src="img/header-2dlogo.webp"
+      alt="COCO LANG"
+      class="main-video-title-logo"
+    >
+
+
+<!-- 메인 소개 문구 -->
+<div class="main-video-text">
+  <h1>
+    우리 동네 강아지와 함께하는 특별한 산책!<br>
+    나와 꼭 맞는 산책 친구를 코코랑에서 만나보세요.
+  </h1>
+</div>
+
+
+
+
+<div class="main-video-buttons">
+
+  <!-- 첫 번째: 코코랑 영상 보기 -->
+  <button
+    type="button"
+    class="main-video-btn primary"
+    id="openCocoVideo"
+  >
+    코코랑 영상 보기
+    <span>▶</span>
+  </button>
+
+  <!-- 두 번째: 성향 테스트 하기 -->
+  <a
+    href="test/test-index.html"
+    class="main-video-btn secondary"
+  >
+    성향 테스트 하기
+    <span>→</span>
+  </a>
+
+</div> <!-- main-video-buttons 끝 -->
+
+</div> <!-- main-video-content 끝 -->
+
+<!-- 하단 스크롤 안내 -->
+
+<a
+  href="#home-brand"
+  class="main-video-scroll"
+  aria-label="다음 BRAND 섹션으로 이동"
+>
+  <span class="scroll-mouse"></span>
+  <span>SCROLL</span>
+  <span class="scroll-line"></span>
+</a>
+
+
+</section> <!-- main-video-banner 끝 -->
+
+
+
+
+    <!-- =========================
+     2. BRAND
+========================== -->
+<section class="index-section home-brand" id="home-brand">
+  <!-- BRAND 배경 이미지 -->
+  <img
+    src="img/brand-bg.webp"
+    alt=""
+    class="home-brand-bg"
+  >
+
+  <div class="home-brand-inner motion-item">
+
+    <span class="index-eyebrow">
+      BRAND
+    </span>
+
+<div class="home-brand-logo">
+  <img src="img/header-logo.webp" alt="COCO LANG">
+</div>
+
+    <p class="index-desc">
+      산책으로 시작되는<br>
+      우리 동네의 새로운 만남
+    </p>
+
+    <a href="brand.html" class="index-more-btn">
+      BRAND STORY
+      <span>→</span>
+    </a>
+
+  </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     TEST SECTION
+========================================================= -->
+
+<div class="coco-scroll-showcase">
+
+  <section class="home-test coco-slide">
+
+  <!-- 배경 장식 -->
+  <div class="home-test-deco home-test-deco-2">♥</div>
+  <div class="home-test-deco home-test-deco-3">✦</div>
+
+
+  <div class="home-test-inner">
+
+    <!-- =========================
+         LEFT : TEST VISUAL
+    ========================== -->
+
+    <div class="home-test-visual">
+
+      <img
+        src="img/test-character.webp"
+        alt="반려견 성향 테스트"
+        class="test-character"
+      >
+
+
+    </div>
+
+
+    <!-- =========================
+         RIGHT : TEXT
+    ========================== -->
+
+    <div class="home-test-content">
+
+      <span class="home-test-eyebrow">
+        TEST
+      </span>
+
+
+      <h2 class="home-test-title">
+        우리 강아지의<br>
+        산책 성향을 알아보세요.
+      </h2>
+
+
+      <p class="home-test-desc">
+        간단한 성향 테스트를 통해<br>
+        우리 강아지의 산책 스타일을 알아보고,<br>
+        잘 맞는 산책 친구를 만나보세요.
+      </p>
+
+
+
+<a
+  href="test/test-index.html"
+  target="_self"
+  class="home-test-btn"
+>
+  TEST START
+  <span>→</span>
+</a>
+
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<!-- =========================
+     3. APP
+========================== -->
+<section class="index-section home-app coco-slide">
+  <div class="home-app-copy motion-item">
+
+    <span class="index-eyebrow">
+      APP
+    </span>
+
+    <h2 class="index-title">
+      우리 동네에서<br>
+      산책 친구를 만나보세요.
+    </h2>
+
+    <p class="index-desc">
+      성향을 확인하고,
+      친구를 만나고,
+      함께 걸어요.
+    </p>
+
+    <a href="app.html" class="index-more-btn">
+      APP 보러가기
+      <span>→</span>
+    </a>
+
+  </div>
+
+
+
+<!-- APP 이미지 -->
+<div class="home-app-visual">
+
+  <img
+    src="img/app-visual.webp"
+    alt="코코랑 산책 친구 서비스"
+    class="home-app-main-image motion-item"
+  >
+
+</div>
+
+
+</section>
+
+
+<!-- =========================================================
+     COMMUNITY
+========================================================= -->
+<section class="index-section home-community coco-slide">
+  <!-- 왼쪽 비주얼 -->
+  <div class="home-community-visual">
+
+
+    <!-- 커뮤니티 메인 이미지 -->
+    <img
+      src="img/community-visual.webp"
+      alt="COCO LANG 커뮤니티"
+      class="home-community-main-image motion-item"
+    >
+
+  </div>
+
+
+  <!-- 오른쪽 텍스트 -->
+  <div class="home-community-copy motion-item">
+
+    <span class="index-eyebrow">
+      COMMUNITY
+    </span>
+
+    <h2 class="index-title">
+      산책으로 이어지는<br>
+      우리 동네 이야기
+    </h2>
+
+    <p class="index-desc">
+      산책 메이트의 일상을 만나고,<br>
+      우리 동네의 산책 정보와 이야기를 나눠보세요.
+    </p>
+
+    <div class="community-tags">
+      <span>산책 이야기</span>
+      <span>동네 정보</span>
+      <span>메이트 소식</span>
+    </div>
+
+    <a href="community.html" class="index-more-btn community-more-btn">
+      COMMUNITY
+      <span>→</span>
+    </a>
+
+  </div>
+
+</section>
+
+
+
+<!-- =========================
+     4. SHOP
+========================== -->
+<section class="index-section home-shop coco-slide">
+  <div class="home-shop-copy motion-item">
+
+    <span class="index-eyebrow">
+      SHOP
+    </span>
+
+    <h2 class="index-title">
+      산책의 즐거움을<br>
+      일상에서도 만나보세요.
+    </h2>
+
+    <p class="index-desc">
+      코코랑의 캐릭터와<br>
+      산책 감성을 담은 굿즈를 만나보세요.
+    </p>
+
+    <a href="shop.html" class="index-more-btn">
+      SHOP 보러가기
+      <span>→</span>
+    </a>
+
+  </div>
+
+
+  <div class="home-shop-visual">
+
+    <!-- 기존 원 유지 -->
+    <div class="home-shop-circle"></div>
+
+    <!-- SHOP 주변 꾸밈요소 -->
+    <img
+      src="img/shop-particle.webp"
+      alt=""
+      class="home-shop-particle"
+    >
+
+    <!-- 기존 SHOP 메인 이미지 -->
+    <img
+      src="img/shop-visual.webp"
+      alt="COCO LANG SHOP"
+      class="home-shop-main-image motion-item"
+    >
+
+  </div>
+
+</section>
+
+</div> <!-- coco-scroll-showcase 끝 -->
+<!-- ==========================================
+     COCO:LANG APP DOWNLOAD
+========================================== -->
+<section class="home-app-download" id="app-download">
+
+  <div class="home-download-inner">
+
+    <!-- 왼쪽 다운로드 안내 -->
+    <div class="home-download-content">
+
+      <span class="home-download-eyebrow">
+        COCO:LANG APP
+      </span>
+
+      <h2>
+        우리 동네 산책 친구,<br>
+        <span>지금 코코랑에서 만나보세요!</span>
+      </h2>
+
+      <p class="home-download-desc">
+        나와 잘 맞는 산책 메이트를 찾고,<br>
+        함께 걷는 즐거움을 경험해 보세요.
+      </p>
+
+      <div class="home-download-actions">
+
+        <!-- 앱 스토어 버튼 -->
+        <div class="home-download-stores">
+
+          <a href="https://www.apple.com/kr/app-store/"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="home-download-store">
+            <i class="fa-brands fa-apple"></i>
+            <span>App Store</span>
+          </a>
+
+          <a href="https://play.google.com/store/apps"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="home-download-store">
+            <i class="fa-brands fa-google-play"></i>
+            <span>Google Play</span>
+          </a>
+
+        </div>
+
+        <!-- QR 코드 -->
+        <div class="home-download-qr">
+
+          <img
+            src="img/app-download-qr.webp"
+            alt="코코랑 앱 다운로드 QR 코드"
+          >
+
+          <span>앱 다운로드 QR 코드</span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+<!-- 오른쪽 코코 캐릭터 영상 -->
+<div class="home-download-visual">
+
+  <div class="home-download-circle"></div>
+
+  <video
+    class="home-download-character"
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="auto"
+    poster="img/story-character.webp"
+  >
+    <source
+      src="video/coco-greeting.mp4"
+      type="video/mp4"
+    >
+    브라우저에서 영상을 재생할 수 없습니다.
+  </video>
+
+</div>
+
+
+
+    </div>
+
+  </div>
+
+</section>
+</main>
+
+
+<!-- FLOATING TEST BUTTON -->
+<a
+  href="test/test-index.html"
+  target="_blank"
+  rel="noopener noreferrer"
+  class="floating-test"
+>
+  <img
+    src="img/fast-test-character.webp"
+    alt="코코"
+    class="floating-test-character"
+  >
+
+  <div class="floating-test-button">
+    성향 테스트
+  </div>
+</a>
+
+
+
+
+<!-- TOP BUTTON -->
+<button
+  type="button"
+  id="scrollTopBtn"
+  class="scroll-top-btn"
+  aria-label="맨 위로 이동"
+>
+  <i class="fa-solid fa-arrow-up"></i>
+</button>
+
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer>
+  <div class="footer-inner">
+
+    <div class="footer-left">
+      <ul>
+        <li>
+          <a href="#" aria-label="인스타그램">
+            <span class="fa-brands fa-instagram"></span>
+          </a>
+        </li>
+
+        <li>
+          <a href="#" aria-label="페이스북">
+            <span class="fa-brands fa-facebook-f"></span>
+          </a>
+        </li>
+
+        <li>
+          <a href="#" aria-label="엑스">
+            <span class="fa-brands fa-x-twitter"></span>
+          </a>
+        </li>
+
+        <li>
+          <a href="#" aria-label="유튜브">
+            <span class="fa-brands fa-youtube"></span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-center">
+      <img
+        src="img/footer-logo.webp"
+        alt="COCOLANG Logo"
+        class="footer-logo"
+      >
+    </div>
+
+    <div class="footer-right">
+      <p>
+        ⓒ 2026 COCOLANG. All rights reserved
+      </p>
+    </div>
+
+  </div>
+</footer>
+
+
+
+<script>
+/* =====================================================
+   COCO:LANG FRIENDS AUTO SLIDER
+   3초마다 자동 전환 + DOT 클릭 전환
+===================================================== */
+(() => {
+  const slider = document.querySelector('.friends-slider');
+  if (!slider) return;
+
+  const slides = [...slider.querySelectorAll('.friend-slide')];
+  const dots = [...slider.querySelectorAll('.friend-dot')];
+
+  let current = 0;
+  let timer = null;
+  const interval = 3000;
+
+  function showSlide(index) {
+    current = (index + slides.length) % slides.length;
+
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('active', i === current);
+    });
+
+    dots.forEach((dot, i) => {
+      const active = i === current;
+      dot.classList.toggle('active', active);
+      dot.setAttribute('aria-current', active ? 'true' : 'false');
+    });
+  }
+
+  function startAuto() {
+    clearInterval(timer);
+    timer = setInterval(() => showSlide(current + 1), interval);
+  }
+
+  dots.forEach((dot, index) => {
+    dot.addEventListener('click', () => {
+      showSlide(index);
+      startAuto();
+    });
+  });
+
+  slider.addEventListener('mouseenter', () => clearInterval(timer));
+  slider.addEventListener('mouseleave', startAuto);
+
+  showSlide(0);
+  startAuto();
+})();
+</script>
+
+
+
+
+<script>
+/* ==========================================
+   COCO:LANG SCROLL TRANSITION
+   TEST → APP → COMMUNITY → SHOP
+========================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  if (!window.gsap || !window.ScrollTrigger) return;
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const area = document.querySelector(".coco-scroll-showcase");
+  if (!area) return;
+
+  const slides = gsap.utils.toArray(
+    ".coco-scroll-showcase > .coco-slide"
+  );
+
+  if (slides.length < 2) return;
+
+  const visualSelector = [
+    ".home-test-visual",
+    ".home-app-visual",
+    ".home-community-visual",
+    ".home-shop-visual"
+  ].join(", ");
+
+  const copySelector = [
+    ".home-test-content",
+    ".home-app-copy",
+    ".home-community-copy",
+    ".home-shop-copy"
+  ].join(", ");
+
+  const mm = gsap.matchMedia();
+
+  mm.add(
+    "(min-width: 901px) and (prefers-reduced-motion: no-preference)",
+    () => {
+
+      const visuals = slides.map(slide =>
+        slide.querySelector(visualSelector)
+      );
+
+      const copies = slides.map(slide =>
+        slide.querySelector(copySelector)
+      );
+
+      // 모든 슬라이드 초기화
+      gsap.set(slides, {
+        autoAlpha: 0,
+        zIndex: 1,
+        pointerEvents: "none"
+      });
+
+      // TEST 화면 먼저 표시
+      gsap.set(slides[0], {
+        autoAlpha: 1,
+        zIndex: 2,
+        pointerEvents: "auto"
+      });
+
+      gsap.set(
+        [...visuals, ...copies].filter(Boolean),
+        {
+          clearProps: "transform,opacity,visibility"
+        }
+      );
+
+      // 전환 설정
+      const transitionDuration = 0.85;
+      const briefPause = 0.12;
+
+      const tl = gsap.timeline({
+
+        defaults: {
+          ease: "none"
+        },
+
+        scrollTrigger: {
+          trigger: area,
+
+          start: "top top+=48",
+
+          // 기존보다 짧은 스크롤 거리
+          end: () =>
+            "+=" + Math.round(
+              window.innerHeight *
+              (slides.length - 1) *
+              0.82
+            ),
+
+          // 스크롤 반응 속도
+          scrub: 0.28,
+
+          pin: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+
+          onUpdate(self) {
+
+            const current = Math.min(
+              slides.length - 1,
+              Math.max(
+                0,
+                Math.round(
+                  self.progress * (slides.length - 1)
+                )
+              )
+            );
+
+            slides.forEach((slide, i) => {
+              slide.style.pointerEvents =
+                i === current ? "auto" : "none";
+            });
+
+          }
+        }
+      });
+
+      // 슬라이드 순서대로 전환
+      for (let i = 1; i < slides.length; i++) {
+
+        const previous = slides[i - 1];
+        const next = slides[i];
+
+        const previousCopy = copies[i - 1];
+        const nextCopy = copies[i];
+
+        const previousVisual = visuals[i - 1];
+        const nextVisual = visuals[i];
+
+        const at = tl.duration();
+
+        // 다음 슬라이드 준비
+        tl.set(next, {
+          visibility: "visible",
+          zIndex: i + 2
+        }, at);
+
+        // 배경 전환
+        tl.fromTo(
+          next,
+          {
+            opacity: 0
+          },
+          {
+            opacity: 1,
+            duration: transitionDuration,
+            immediateRender: false
+          },
+          at
+        );
+
+        // 이전 글씨 위로 사라짐
+        if (previousCopy) {
+
+          tl.to(previousCopy, {
+            y: -95,
+            autoAlpha: 0,
+            duration: 0.55,
+            ease: "power2.in"
+          }, at);
+
+        }
+
+        // 다음 글씨 아래에서 위로 등장
+        if (nextCopy) {
+
+          tl.fromTo(
+            nextCopy,
+            {
+              y: 95,
+              autoAlpha: 0
+            },
+            {
+              y: 0,
+              autoAlpha: 1,
+              duration: 0.7,
+              ease: "power2.out",
+              immediateRender: false
+            },
+            at + 0.04
+          );
+
+        }
+
+        // 이전 이미지 사라짐
+        if (previousVisual) {
+
+          tl.to(previousVisual, {
+            y: -30,
+            opacity: 0,
+            duration: 0.55,
+            ease: "power1.in"
+          }, at);
+
+        }
+
+        // 다음 이미지 등장
+        if (nextVisual) {
+
+          tl.fromTo(
+            nextVisual,
+            {
+              y: 45,
+              opacity: 0
+            },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.7,
+              ease: "power2.out",
+              immediateRender: false
+            },
+            at + 0.04
+          );
+
+        }
+
+        // 이전 슬라이드 숨김
+        tl.set(previous, {
+          visibility: "hidden"
+        }, at + transitionDuration);
+
+        // 불필요한 대기 구간 최소화
+        if (i < slides.length - 1) {
+
+          tl.to({}, {
+            duration: briefPause
+          });
+
+        }
+
+      }
+
+      // 화면 크기 변경 시 초기화
+      return () => {
+
+        gsap.set(slides, {
+          clearProps: "all"
+        });
+
+        gsap.set(
+          [...visuals, ...copies].filter(Boolean),
+          {
+            clearProps: "all"
+          }
+        );
+
+      };
+
+    }
+  );
+
+  window.addEventListener("load", () => {
+    ScrollTrigger.refresh();
+  }, { once: true });
+
+});
+</script>
+
+
+<!-- =====================================
+     COCO:LANG VIDEO POPUP
+===================================== -->
+
+<div
+  class="coco-video-modal"
+  id="cocoVideoModal"
+  role="dialog"
+  aria-modal="true"
+  aria-label="코코랑 홍보 영상"
+  aria-hidden="true"
+  tabindex="-1"
+>
+  <div class="coco-video-modal-inner">
+
+    <!-- 닫기 -->
+    <button
+      type="button"
+      class="coco-video-close"
+      id="closeCocoVideo"
+      aria-label="영상 닫기"
+    >
+      &times;
+    </button>
+
+    <!-- 팝업 영상 -->
+    <video
+      id="cocoPopupVideo"
+      controls
+      playsinline
+      preload="none"
+    >
+      <source
+        src="video/main-banner.mp4"
+        type="video/mp4"
+      >
+      영상을 재생할 수 없습니다.
+    </video>
+
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const openBtn = document.getElementById("openCocoVideo");
+  const closeBtn = document.getElementById("closeCocoVideo");
+  const modal = document.getElementById("cocoVideoModal");
+  const video = document.getElementById("cocoPopupVideo");
+
+  if (!openBtn || !closeBtn || !modal || !video) return;
+
+  let lastFocusedElement = null;
+
+  function openModal() {
+    lastFocusedElement = document.activeElement;
+
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("coco-modal-open");
+
+    closeBtn.focus();
+
+    video.currentTime = 0;
+
+    const playPromise = video.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch(() => {
+        // 자동 재생이 막히면 사용자가 재생 버튼을 누를 수 있음
+      });
+    }
+  }
+
+  function closeModal() {
+    video.pause();
+    video.currentTime = 0;
+
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("coco-modal-open");
+
+    if (lastFocusedElement) {
+      lastFocusedElement.focus();
+    }
+  }
+
+  openBtn.addEventListener("click", openModal);
+  closeBtn.addEventListener("click", closeModal);
+
+  // 어두운 배경 클릭 시 닫기
+  modal.addEventListener("click", function (event) {
+    if (event.target === modal) {
+      closeModal();
+    }
+  });
+
+  // ESC 키로 닫기
+  document.addEventListener("keydown", function (event) {
+    if (!modal.classList.contains("is-open")) return;
+
+    if (event.key === "Escape") {
+      closeModal();
+    }
+
+    if (event.key === "Tab") {
+      // 팝업 안에서 키보드 포커스 유지
+      const focusable = [closeBtn, video];
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+  });
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const banner = document.querySelector(".main-video-banner");
+  if (!banner || !testButton) return;
+
+  const observer = new IntersectionObserver(([entry]) => {
+    testButton.style.opacity = entry.isIntersecting ? "0" : "1";
+    testButton.style.pointerEvents = entry.isIntersecting ? "none" : "auto";
+  }, {
+    threshold: 0.5
+  });
+
+  observer.observe(banner);
+});
+</script>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const mainBanner = document.querySelector(".main-video-banner");
+  const floatingTest = document.querySelector(".floating-test");
+
+  if (!mainBanner || !floatingTest) return;
+
+  function updateFloatingTest() {
+    const bannerBottom = mainBanner.getBoundingClientRect().bottom;
+
+    // 메인 영상 배너가 보이는 동안 숨김
+    if (bannerBottom > window.innerHeight * 0.5) {
+      floatingTest.classList.add("is-hidden");
+    } else {
+      floatingTest.classList.remove("is-hidden");
+    }
+  }
+
+  window.addEventListener("scroll", updateFloatingTest, {
+    passive: true
+  });
+
+  window.addEventListener("resize", updateFloatingTest);
+
+  updateFloatingTest();
+
+});
+</script>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const banner = document.querySelector(".main-video-banner");
+  const header = document.querySelector("header");
+
+  if (!banner || !header) return;
+
+  function updateHomeHeader() {
+    const bannerBottom = banner.getBoundingClientRect().bottom;
+    const headerHeight = header.getBoundingClientRect().height;
+
+    // 메인 영상이 헤더 뒤에 있으면 투명 메뉴
+    const isVideoVisible = bannerBottom > headerHeight;
+
+    document.body.classList.toggle(
+      "home-video-active",
+      isVideoVisible
+    );
+  }
+
+  // 최초 실행
+  updateHomeHeader();
+
+  // 스크롤할 때 갱신
+  window.addEventListener("scroll", updateHomeHeader, {
+    passive: true
+  });
+
+  // 브라우저 크기가 바뀌면 갱신
+  window.addEventListener("resize", updateHomeHeader);
+
+  window.addEventListener("pageshow", updateHomeHeader);
+
+});
+</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  if (!window.gsap || !window.ScrollTrigger) return;
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const brandSection = document.querySelector(".home-brand");
+
+  if (!brandSection || !brandDeco) return;
+
+
+});
+</script>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const brand = document.querySelector(".home-brand");
+  const deco = document.querySelector(".home-brand-bg");
+
+  if (!brand || !deco) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        deco.classList.toggle(
+          "deco-visible",
+          entry.isIntersecting
+        );
+      });
+    },
+    {
+      threshold: 0.3
+    }
+  );
+
+  observer.observe(brand);
+
+});
+</script>
+
+
+<script>
+(function () {
+  const loader = document.getElementById("coco-loader");
+  if (!loader) return;
+
+  const startedAt = performance.now();
+  const minimumDuration = 1200;
+  let finished = false;
+
+  function hideLoader() {
+    if (finished) return;
+    finished = true;
+
+    const elapsed = performance.now() - startedAt;
+    const remaining = Math.max(0, minimumDuration - elapsed);
+
+    setTimeout(() => {
+      loader.classList.add("is-hidden");
+
+      loader.addEventListener("transitionend", (event) => {
+        if (event.propertyName === "opacity") {
+          loader.remove();
+        }
+      }, { once: true });
+
+      // GSAP 스크롤 위치 재계산
+      if (window.ScrollTrigger) {
+        window.ScrollTrigger.refresh();
+      }
+    }, remaining);
+  }
+
+  if (document.readyState === "complete") {
+    hideLoader();
+  } else {
+    window.addEventListener("load", hideLoader, { once: true });
+  }
+})();
+</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const scrollTopBtn = document.getElementById("scrollTopBtn");
+  const mainBanner = document.querySelector(".main-video-banner");
+
+  if (!scrollTopBtn) return;
+
+  /* TOP 버튼 클릭 */
+  scrollTopBtn.addEventListener("click", function () {
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+  });
+
+  /* 스크롤 위치에 따라 버튼 표시 */
+  function updateScrollTopBtn() {
+
+    const bannerBottom = mainBanner
+      ? mainBanner.getBoundingClientRect().bottom
+      : 0;
+
+    if (bannerBottom > window.innerHeight * 0.5) {
+
+      scrollTopBtn.classList.add("is-hidden");
+
+    } else {
+
+      scrollTopBtn.classList.remove("is-hidden");
+
+    }
+
+  }
+
+  window.addEventListener("scroll", updateScrollTopBtn, {
+    passive: true
+  });
+
+  window.addEventListener("resize", updateScrollTopBtn);
+
+  updateScrollTopBtn();
+
+});
+</script>
+
+
+<!-- 코코랑 강아지 스크롤 등장 -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const dog = document.querySelector(
+    "#app-download .coco-greeting-reveal"
+  );
+
+  if (!dog) return;
+
+  const observer = new IntersectionObserver((entries) => {
+
+    entries.forEach((entry) => {
+
+      if (entry.isIntersecting) {
+        dog.classList.add("is-visible");
+      } else {
+        dog.classList.remove("is-visible");
+      }
+
+    });
+
+  }, {
+    threshold: 0.2
+  });
+
+  observer.observe(dog);
+
+});
+</script>
+
+</body>
+</html>
