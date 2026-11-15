@@ -869,7 +869,6 @@ h2.sec.tip-on .q-tip { opacity: 1; }
 .reco-wrap { position: relative; }
 .reco-wrap.is-fold .reco { max-height: 318px; overflow: hidden; }
 .reco-more { display: block; position: relative; z-index: 1; width: calc(100% - 56px); height: 42px; margin: -34px auto 0; border: 1px solid var(--mint); border-radius: 10px; background: #fff; color: var(--mint); font-size: 16px; cursor: pointer; }
-.reco-more::before { content: ''; position: absolute; left: -1px; right: -1px; bottom: 100%; height: 26px; background: linear-gradient(rgba(255,255,255,0), #fff); pointer-events: none; }
 /* 불러오기: 하루 식사 사진 칸 꽉 채우고 둥글게 */
 .day-meal figure { border: 0; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px #EEE inset; cursor: pointer; }
 .day-meal figure > img { border-radius: 12px; height: 172px; }
@@ -885,3 +884,19 @@ h2.sec.tip-on .q-tip { opacity: 1; }
 h2.sec svg.q { border: 0; border-radius: 0; background: none; width: 16px; height: 16px; color: #BDBDBD; display: block; }
 /* 368차: 30일 로드맵 시트 위 ═ 손잡이 삭제 → 달력 머리 위 여백만 */
 .road-sheet { padding-top: 24px; }
+/* 370차: 더보기 버튼 = 시안처럼 네 변 모두 보이는 둥근 박스 (위 흰 그라데이션이 윗선을 덮던 것 삭제) · 연한 민트 테두리 */
+.reco-more { border: 1px solid #9FDAD2; box-shadow: 0 2px 6px rgba(0,0,0,.04); }
+/* 371차: 음식 상세 (시안) — 더보기 = 둘째 줄 사진 위쪽 ~116 보이고 버튼 가운데까지 사진이 뒤로 이어짐 · 한 끼 선택 = 아래 고정 흰 바 · TOP = 바 위 오른쪽 (더보기 오른쪽 끝에 겹침) */
+.reco-wrap.is-fold .reco { max-height: 351px; }
+.reco-more { margin-top: -21px; }
+.fd-gap { margin: 16px 0 0; }
+.fd-bar { position: sticky; bottom: 0; z-index: 20; background: #fff; padding: 16px 28px 34px; box-shadow: 0 -3px 10px rgba(0,0,0,.04); }
+.fd-bar .btn { height: 38px; line-height: 38px; border-radius: 8px; font-size: 17px; }
+.fd-bar .fd-top { right: 22px; bottom: calc(100% + 22px); }
+/* 372차: 한 끼 선택 바 위 회색 선 삭제 → 시안 그림자만 (Drop shadow Y-4 · Blur 12 · #3A3430 7%) */
+.fd-gap { height: 0; margin: 20px 0 0; background: none; }
+.fd-bar { box-shadow: 0 -4px 12px rgba(58,52,48,.07); }
+.fd-bar .fd-top { bottom: calc(100% + 20px); }
+/* 373차: 바 그림자는 위쪽만 (PC 처럼 화면이 좁은 앱 틀일 때 양옆에 그림자가 보이던 것) — 그림자를 ::before 로 옮기고 위만 남기고 자름 */
+.fd-bar { box-shadow: none; }
+.fd-bar::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; box-shadow: 0 -4px 12px rgba(58,52,48,.07); clip-path: inset(-24px 0 0 0); }

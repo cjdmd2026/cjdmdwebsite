@@ -135,11 +135,11 @@
     rabby: { pose: [0.071, 0.073, 0.175], after: [0.024, 0.022, 0.233] }, mio: { pose: [0.083, 0.085, 0.185], after: [0.022, 0.022, 0.117] }
   };
   const AR = { pose: 286.66 / 353.87, after: 129 / 150 };
-  // 175차: 판 왼쪽 끝 = 큰 캐릭터 보이는 폭의 가운데 (판 모서리가 캐릭터 뒤로 묻힘). 앞·옆·뒤 위치는 그대로(기둥에서 306 부터)
-  const PAD_R = { beary: { pose: 0.10, after: 0.137 }, ellie: { pose: 0.098, after: 0.12 }, rabby: { pose: 0.188, after: 0.233 }, mio: { pose: 0.185, after: 0.118 } };
+  // 369차: 판 왼쪽 끝 = 큰 캐릭터 그림이 위(판 위 끝)부터 발끝까지 빈틈없이 덮는 세로줄 (다리 사이·발 옆에 판 모서리가 보이지 않게)
+  //   그림 알파를 재서 찾은 값(보이는 그림 왼쪽 끝 기준 u) — 그림 파일을 바꾸면 다시 재기
+  const PL = { beary: { pose: 163, after: 171 }, ellie: { pose: 202, after: 177 }, rabby: { pose: 131, after: 126 }, mio: { pose: 153, after: 172 } };
   function plateFit(after) {
-    const k = after ? 'after' : 'pose', [t, b, l] = PAD[id][k], h = HERO_H / (1 - t - b), vis = h * AR[k] * (1 - l - PAD_R[id][k]);
-    const pl = Math.round(vis * 0.5);
+    const pl = PL[id][after ? 'after' : 'pose'];
     return `--pl:${pl};--pp:${306 - pl}`;
   }
   function heroFit(after) {
