@@ -8,7 +8,8 @@ export function createContentOne(section,reducedMotion){
   let target=0,current=0,frame=0,lastTime=0,initialized=false;
 
   function render(){
-    const timeline=current*rows.length;
+    // End the timeline at the last row's completed fill, without a trailing pause.
+    const timeline=current*(rows.length-1+.52);
     rows.forEach((row,index)=>{
       const fill=clamp((timeline-index)/.52);
       row.style.setProperty('--read-progress',String(fill));

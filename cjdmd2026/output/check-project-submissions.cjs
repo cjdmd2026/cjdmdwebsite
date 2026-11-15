@@ -17,7 +17,7 @@ const reports = [];
     const assets = JSON.parse(await fs.readFile(path.join(root, 'output/figma/project-assets-20261107.json'), 'utf8'));
     assert.equal(projects.length, 14);
     assert.equal(assets.length, 84);
-    assert.equal(projects.find(p => p.id === 'cheoma').title, '처마');
+    assert.equal(projects.find(p => p.id === 'cheoma').title, '그늘잡이');
     for (const p of projects) {
         const source = submissions.teams.find(t => t.nodeId === assets.find(a => a.projectId === p.id).teamNodeId);
         assert.equal(p.description, source.fields.find(f => f.name.endsWith('_공통소개글')).values.join('\n').trim());

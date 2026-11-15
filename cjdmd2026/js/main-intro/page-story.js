@@ -27,6 +27,7 @@ export function createPageStory(){
   createReadingHover(heroTitle,reducedMotion,'[data-hover-text]');
   const captionKeywords=createCaptionKeywords(captions,reducedMotion);
   const intro=document.querySelector('#content01');
+  const readingTitle=intro.querySelector('.individuality-title');
   const contentOne=createContentOne(intro,reducedMotion);
   let active=-1,reading=0;
 
@@ -42,8 +43,10 @@ export function createPageStory(){
       element.style.opacity=String((element===year ? .7 : 1)*(1-fade));
       element.style.filter=`blur(${reducedMotion.matches?0:fade*12}px)`;
     }
-    // Shift the reading window down by 10% of the viewport, keeping its pace.
-    reading=clamp((innerHeight*.60-intro.getBoundingClientRect().top)/innerHeight);
+    // Finish as the last line reaches 60% of the viewport height.
+    const bounds=intro.getBoundingClientRect();
+    const readingDistance=readingTitle.getBoundingClientRect().bottom-bounds.top;
+    reading=clamp((innerHeight*.60-bounds.top)/Math.max(1,readingDistance));
     contentOne.update(reading);
   }
   function update(timeline){

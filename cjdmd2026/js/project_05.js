@@ -1225,16 +1225,16 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             }
 
             html[data-project-fluid-view="slide"] {
-                --project-dial-icon-size:clamp(2.7rem,4.5vw,4.5rem);
+                --project-dial-icon-size:clamp(2.4rem,4vw,4rem);
                 --project-icon-left:clamp(2rem,4.5vw,5rem);
                 --project-copy-bottom:10vh;
-                --project-copy-width:max(30vw,22rem);
+                --project-copy-width:max(33vw,26rem);
                 --project-copy-left:calc(var(--project-icon-left) + var(--project-dial-icon-size) + 2rem);
             }
-            /* Continue smoothly from the standard 4.5rem icon at 110rem viewport width. */
+            /* Continue smoothly from the standard 4rem icon at 110rem viewport width. */
             @media (min-width:110rem) {
                 html[data-project-fluid-view="slide"] {
-                    --project-dial-icon-size:min(10.8rem,calc(90vw / 22));
+                    --project-dial-icon-size:min(9.6rem,calc(80vw / 22));
                 }
             }
             .container:has(#slideview:not([hidden])) .project-dial.has-project-icons {
@@ -1261,7 +1261,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             }
             @media (max-height:640px) {
                 html[data-project-fluid-view="slide"] {
-                    --project-copy-width:max(30vw,34rem);
+                    --project-copy-width:max(33vw,34rem);
                 }
             }
             @property --project-icon-hover-progress {

@@ -662,7 +662,7 @@ html[data-project-fluid-view="slide"] .header .nav:is(
     padding-left: var(--project-title-bar-gap);
     border-left: var(--project-title-bar-width) solid transparent;
     font-family: 'pretendard', var(--font-main);
-    font-size: 4.5rem;
+    font-size: 4rem;
     font-weight: 700;
     line-height: 1;
 

@@ -14,7 +14,7 @@ window.PROJECTS = [
         id: "phishing-ddook",
         url: "./phishing-ddook/",
         title: "피싱뚝!",
-        gridDescription: "‘피싱 뚝!’은 70대 이상 고령층이 보이스피싱 위험을 직접 체험하고, 스스로 판단해 대응하는 능력을 기르는 예방 교육입니다.",
+        gridDescription: "‘피싱 뚝!’은 70대 이상 고령층이 보이스피싱 위험을 직접 체험하고 \n 스스로 판단해 대응하는 능력을 기르는 예방 교육입니다.",
         members: [
             "남나영",
             "김지유",
@@ -50,7 +50,7 @@ window.PROJECTS = [
         id: "apuchika",
         url: "./apuchika/",
         title: "아푸치카",
-        gridDescription: "아푸치카는 유아기 아동이 애니메이션과 교구, AR 가이드로 올바른 양치법을 익히고 실천하도록 돕는 체험형 구강교육 프로젝트다.",
+        gridDescription: "아푸치카는 유아기 아동이 애니메이션과 교구, AR 가이드로 올바른 \n 양치법을 익히고 실천하도록 돕는 체험형 구강교육 프로젝트다.",
         members: [
             "윤태균",
             "안나경",
@@ -86,7 +86,7 @@ window.PROJECTS = [
         id: "curo",
         url: "./curo/",
         title: "CURO",
-        gridDescription: "1형 당뇨가 있는 아이의 첫 인슐린 자가 주사를 돕습니다. 수호대 친구들과 30일간 주사에 친숙해지고 연습 벨트로 실전을 준비합니다.",
+        gridDescription: "1형 당뇨가 있는 아이의 첫 인슐린 자가 주사를 돕습니다. \n 수호대 친구들과 30일간 주사에 친숙해지고 연습 벨트로 실전을 준비합니다.",
         members: [
             "주보민",
             "유혜진",
@@ -121,7 +121,7 @@ window.PROJECTS = [
         id: "stylens",
         url: "./stylens/",
         title: "Stylens",
-        gridDescription: "저시력자가 스스로 옷을 고르도록 돕는 스마트미러입니다. 거울 앞에 옷을 들면 옷의 특징을 말해 주고 어울리는 코디를 추천합니다.",
+        gridDescription: "저시력자가 스스로 옷을 고르도록 돕는 스마트미러입니다. \n 거울 앞에 옷을 들면 옷의 특징을 말해 주고 어울리는 코디를 추천합니다.",
         members: [
             "김다현",
             "김하원"
@@ -156,7 +156,7 @@ window.PROJECTS = [
         id: "ilkko",
         url: "./ilkko/",
         title: "읽:꼬",
-        gridDescription: "난독증 아동이 집에서 즐기는 한글 읽기 놀이입니다. 태블릿으로 동화를 듣고 한글 타일을 손으로 맞추며 낱말을 익힙니다.",
+        gridDescription: "난독증 아동이 집에서 즐기는 한글 읽기 놀이입니다. \n 태블릿으로 동화를 듣고 한글 타일을 손으로 맞추며 낱말을 익힙니다.",
         members: [
             "서연우",
             "조은교",
@@ -191,7 +191,7 @@ window.PROJECTS = [
         id: "dadeullim",
         url: "./dadeullim/",
         title: "다들림",
-        gridDescription: "청각장애 운전자를 위한 실시간 주행 정보 서비스입니다. HUD와 디스플레이의 빛, 핸들의 진동으로 위험의 방향과 거리를 알려줍니다.",
+        gridDescription: "청각장애 운전자를 위한 실시간 주행 정보 서비스입니다. \n HUD와 디스플레이의 빛, 핸들의 진동으로 위험의 방향과 거리를 알려줍니다.",
         members: [
             "윤지원",
             "김도연",
@@ -226,7 +226,7 @@ window.PROJECTS = [
         id: "omix",
         url: "./omix/",
         title: "OMIX",
-        gridDescription: "전통 불교의 소리와 현대적인 비트를 결합한 새로운 DJ 체험입니다. 108초 동안 나만의 음악을 만들고, 완성된 결과를 기록하고 공유합니다.",
+        gridDescription: "전통 불교의 소리와 현대적인 비트를 결합한 새로운 DJ 체험입니다. \n 108초 동안 나만의 음악을 만들고, 완성된 결과를 기록하고 공유합니다.",
         members: [
             "노민영",
             "함대연",
@@ -264,7 +264,7 @@ window.PROJECTS = [
         id: "year-on",
         url: "./year-on/",
         title: "YEAR-ON",
-        gridDescription: "김홍도의 풍속화를 손짓으로 탐색하는 미디어아트입니다.\n손끝으로 그림 속 인물을 이으면 이들이 나누는 이야기가 들려옵니다.",
+        gridDescription: "김홍도의 풍속화를 손짓으로 탐색하는 미디어아트입니다. \n 손끝으로 그림 속 인물을 이으면 이들이 나누는 이야기가 들려옵니다.",
         members: [
             "민지호",
             "권민성"
@@ -299,7 +299,7 @@ window.PROJECTS = [
         id: "jikji",
         url: "./jikji/",
         title: "직지잼버리",
-        gridDescription: "아이들이 직지의 금속활자 제작 과정을 경험하는 AR 체험입니다. 캐릭터의 이야기를 따라 활자를 만들며 직지의 역사를 배웁니다.",
+        gridDescription: "아이들이 직지의 금속활자 제작 과정을 경험하는 AR 체험입니다. \n 캐릭터의 이야기를 따라 활자를 만들며 직지의 역사를 배웁니다.",
         members: [
             "김주연"
         ],
@@ -331,8 +331,8 @@ window.PROJECTS = [
     {
         id: "cheoma",
         url: "./cheoma/",
-        title: "처마",
-        gridDescription: "한옥의 처마를 가까이 들여다보는 AR 전시입니다. 처마의 모양과 시간에 따라 그 아래로 드는 빛과 그늘이 어떻게 달라지는지 살펴봅니다.",
+        title: "그늘잡이",
+        gridDescription: "한옥의 처마를 가까이 들여다보는 AR 전시입니다. 처마의 모양과 시간에 \n 따라 그 아래로 드는 빛과 그늘이 어떻게 달라지는지 살펴봅니다.",
         members: [
             "김민재",
             "조우성"
@@ -366,7 +366,7 @@ window.PROJECTS = [
         id: "cocorang",
         url: "./cocorang/",
         title: "COCO LANG",
-        gridDescription: "COCO LANG은 반려견의 성향과 보호자의 교류 의사를 바탕으로 산책 친구를 연결하고, 일상 속 만남이 동네 이웃과의 관계로 이어지도록 돕는 서비스입니다.",
+        gridDescription: "COCO LANG은 반려견의 성향과 보호자의 교류 의사를 바탕으로 산책 친구를 연결하고 일상 속 만남이 동네 이웃과의 관계로 이어지도록 돕는 서비스입니다.",
         members: [
             "김지유",
             "김지윤"
@@ -400,7 +400,7 @@ window.PROJECTS = [
         id: "magmoa",
         url: "./magmoa/",
         title: "마그모아",
-        gridDescription: "마그모아는 여행지에서 디지털 마그넷을 수집하는 위치 기반 여행 기록 서비스다. 나만의 지도를 완성하고 추억을 공유하며 실물 굿즈로도 간직한다.",
+        gridDescription: "마그모아는 여행지에서 디지털 마그넷을 수집하는 위치 기반 여행 기록 서비스다. \n 나만의 지도를 완성하고 추억을 공유하며 실물 굿즈로도 간직한다.",
         members: [
             "송유진",
             "손예진"
@@ -434,7 +434,7 @@ window.PROJECTS = [
         id: "efact",
         url: "./efact/",
         title: "E.FACT",
-        gridDescription: "E.FACT는 청주 소각장 과밀집 문제를 게임과 웹사이트로 알리고, 시민 참여형 인터랙션을 통해 환경 문제에 대한 관심과 연대를 이끌어내는 프로젝트입니다.",
+        gridDescription: "E.FACT는 청주 소각장 과밀집 문제를 게임과 웹사이트로 알리고 시민 참여형 인터랙션을 통해 환경 문제에 대한 관심과 연대를 이끌어내는 프로젝트입니다.",
         members: [
             "고비주",
             "김혜진"
@@ -469,7 +469,7 @@ window.PROJECTS = [
         id: "28",
         url: "./28/",
         title: "별운관",
-        gridDescription: "동아시아 전통 별자리 28수로 보는 디지털 운세소입니다. 생년월일을 입력하고 카드를 고르면 점술가가 별의 운세를 들려줍니다.",
+        gridDescription: "동아시아 전통 별자리 28수로 보는 디지털 운세소입니다. \n 생년월일을 입력하고 카드를 고르면 점술가가 별의 운세를 들려줍니다.",
         members: [
             "박윤지",
             "주예진"
