@@ -1228,7 +1228,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
                 --project-dial-icon-size:clamp(2.4rem,4vw,4rem);
                 --project-icon-left:clamp(2rem,4.5vw,5rem);
                 --project-copy-bottom:10vh;
-                --project-copy-width:max(33vw,26rem);
+                --project-copy-width:max(36vw,26rem);
                 --project-copy-left:calc(var(--project-icon-left) + var(--project-dial-icon-size) + 2rem);
             }
             /* Continue smoothly from the standard 4rem icon at 110rem viewport width. */
@@ -1261,7 +1261,7 @@ async function captureForeground(target, {includeHidden = false} = {}) {
             }
             @media (max-height:640px) {
                 html[data-project-fluid-view="slide"] {
-                    --project-copy-width:max(33vw,34rem);
+                    --project-copy-width:max(36vw,34rem);
                 }
             }
             @property --project-icon-hover-progress {
