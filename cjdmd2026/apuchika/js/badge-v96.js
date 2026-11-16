@@ -13,7 +13,7 @@ try{sessionStorage.removeItem(STORAGE_KEY)}catch{}
 function saveDraft(){}
 let stream=null,cameraGeneration=0,timerGeneration=0,photo=null,step='intro',captureBusy=false;
 let finalized=false,stampDone=false,participantGeneration=0;
-let outputBlob=null,outputURL=null,shareID=null,shareBusy=false;
+let outputBlob=null,outputURL=null,shareID=null,shareDeleteToken=null,shareBusy=false;
 const fontsReady=Promise.all([document.fonts.load('40px ApuNavHeading'),document.fonts.load('30px ApuNavBody'),document.fonts.load('64px BadgeInfo')]);
 const cardAssets={};
 async function loadImage(src){const image=new Image();image.src=src;await image.decode();return image}
@@ -134,17 +134,17 @@ $('shoot').onclick=async()=>{
  stopCamera();
  try{await showResult()}catch(error){$('cameraStatus').textContent=error.message;$('retryCamera').hidden=false;$('cameraPlaceholder').hidden=false}
 };
-function resetShare(){shareID=null;$('qrResult').hidden=true;$('makeQR').hidden=false;$('qrStatus').textContent='';$('qrImage').removeAttribute('src')}
+function resetShare(){shareID=null;shareDeleteToken=null;$('qrResult').hidden=true;$('makeQR').hidden=false;$('qrStatus').textContent='';$('qrImage').removeAttribute('src')}
 function setShareBusy(value){shareBusy=value;$('saveDialog').classList.toggle('is-loading',value);for(const id of ['makeQR','edit','restart','retake','revoke','clearSignature'])$(id).disabled=value}
 $('edit').onclick=()=>{if(!shareBusy)showStep('name')};
 async function createShareQR(){
  if(!outputBlob||shareBusy)return;const participant=participantGeneration;setShareBusy(true);$('qrStatus').textContent='다운로드 QR을 만들고 있어요';
- try{const response=await fetch('/api/badges',{method:'POST',headers:{'Content-Type':'image/png'},body:outputBlob,signal:AbortSignal.timeout(30000)});const result=await response.json();if(participant!==participantGeneration)return;if(!response.ok)throw new Error(result.error||'QR 생성에 실패했어요.');shareID=result.id;$('qrImage').src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(result.qr);$('qrResult').hidden=false;$('makeQR').hidden=true;$('qrStatus').textContent='스마트폰으로 QR코드를 스캔해 이미지를 다운로드 해 보세요.'}
+ try{const response=await fetch('/apuchika/api/badges',{method:'POST',headers:{'Content-Type':'image/png'},body:outputBlob,signal:AbortSignal.timeout(30000)});const result=await response.json();if(participant!==participantGeneration)return;if(!response.ok)throw new Error(result.error||'QR 생성에 실패했어요.');shareID=result.id;shareDeleteToken=result.deleteToken;$('qrImage').src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(result.qr);$('qrResult').hidden=false;$('makeQR').hidden=true;$('qrStatus').textContent='스마트폰으로 QR코드를 스캔해 이미지를 다운로드 해 보세요.'}
  catch(error){$('qrStatus').textContent=error.name==='TimeoutError'?'연결이 늦어지고 있어요. 다시 시도해 주세요.':error.message||'인터넷 연결을 확인한 뒤 다시 시도해 주세요.'}
  finally{setShareBusy(false)}
 };
 $('makeQR').onclick=createShareQR;
-$('revoke').onclick=async()=>{if(!shareID||shareBusy)return;setShareBusy(true);try{const r=await fetch('/api/badges/'+encodeURIComponent(shareID),{method:'DELETE'});if(!r.ok)throw new Error();resetShare();$('qrStatus').textContent='다운로드 링크와 업로드한 이미지를 삭제했어요.'}catch{$('qrStatus').textContent='삭제하지 못했어요. 다시 눌러 주세요.'}finally{setShareBusy(false)}};
+$('revoke').onclick=async()=>{if(!shareID||!shareDeleteToken||shareBusy)return;setShareBusy(true);try{const r=await fetch('/apuchika/api/badges/'+encodeURIComponent(shareID),{method:'DELETE',headers:{Authorization:'Bearer '+shareDeleteToken}});if(!r.ok)throw new Error();resetShare();$('qrStatus').textContent='다운로드 링크와 업로드한 이미지를 삭제했어요.'}catch{$('qrStatus').textContent='삭제하지 못했어요. 다시 눌러 주세요.'}finally{setShareBusy(false)}};
 function resetParticipant(){renderID++;participantGeneration++;signing=false;clearTimeout(stampTimer);document.querySelectorAll('.stamp-overlay').forEach(e=>e.remove());stampDone=false;finalized=false;signatureCanvas.style.visibility='';signatureCanvas.parentElement.classList.remove('has-signature');stopCamera();photo=null;signatureContext.clearRect(0,0,820,390);signatureDirty=false;outputBlob=null;if(outputURL)URL.revokeObjectURL(outputURL);outputURL=null;$('resultImage').removeAttribute('src');$('download').removeAttribute('href');draft={name:'',role:'',frame:'apu'};saveDraft();$('memberName').value='';$('nameError').hidden=true;resetShare();updateSelections();showStep('intro')}
 $('restart').onclick=resetParticipant;
 window.addEventListener('pagehide',stopCamera);

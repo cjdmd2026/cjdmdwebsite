@@ -79,3 +79,8 @@ body.badge-page :is(#memberName,#nameHint,#nameError,.badge-stepbar ol,.badge-st
 @keyframes letter-receive{0%{top:78vh;transform:translate(-50%,-50%) rotate(-2deg) scale(1);opacity:1}92%{opacity:1}100%{top:31vh;transform:translate(-50%,-50%) rotate(0) scale(.34);opacity:0}}
 @keyframes departure-caption{0%,70%{opacity:0;transform:translateY(1vh)}80%,100%{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){#badgeFarewell.flight :is(.arrival-world,.arrival-port,.arrival-beam,.sky-letter,h2,.arrival-dust i){animation:none}#badgeFarewell .sky-letter{top:60vh;width:18vh}}
+
+/* Keep the connected API's revoke and retry actions available in the QR dialog. */
+#saveDialog #revoke{display:inline-block;margin-top:8px}
+#saveDialog #qrResult .access-note{display:block;font:12px/1.5 ApuNavBody,sans-serif;color:#60798b;margin:10px 0 0}
+#saveDialog:not(.is-loading) #makeQR:not([hidden]){display:inline-block!important}

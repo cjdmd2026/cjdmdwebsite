@@ -13,10 +13,16 @@ const slugs = {
   cheoma: 'geuneuljab-i',
   '28': 'byeol-ungwan',
 };
-export const teams = JSON.parse(JSON.stringify(context.window.PROJECTS.map(project => ({
-  id: project.id,
-  name: project.title,
-  members: project.members,
-  slug: slugs[project.id] || project.id,
-}))));
+export const teams = JSON.parse(JSON.stringify(context.window.PROJECTS.flatMap(project => {
+  const team = {
+    id: project.id,
+    name: project.title,
+    members: project.members,
+    slug: slugs[project.id] || project.id,
+  };
+  // E.FACT has a second submission folder alongside its original site.
+  return project.id === 'efact'
+    ? [team, { ...team, id: 'efact2', name: `${team.name} 2`, slug: 'e-fact2' }]
+    : [team];
+})));
 export const findTeam = id => teams.find(team => team.id === id);

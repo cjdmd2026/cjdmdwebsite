@@ -95,7 +95,7 @@ window.MAIN_COMMITTEE = [
 ];
 
 /* 교수진
- * message: 카드 하단 소감 문구 (\n 으로 줄바꿈) — 현재 모두 임시 문구, 전달받으면 교체
+ * message: 카드 하단 소감 문구 (\n 으로 줄바꿈) — 미수신 문구는 임시로 표시하고 전달받으면 교체
  * image가 비어 있으면 '사진 준비 중' 카드가 나옵니다.
  * 처음 가운데에 올 교수님은 MAIN_PROFESSOR_START 로 지정합니다.
  */
@@ -109,7 +109,7 @@ window.MAIN_PROFESSORS = [
     {
         name: "백승범",
         major: "인터랙션 디자인",
-        message: "[임시] 교수님 소개 문구가 들어갈 자리입니다.\n문구 전달 후 교체 예정입니다.",
+        message: "치열한 고민 끝에 펼쳐낸 여러분만의 세계가\n더 많은 사람의 마음에 닿길 바랍니다.",
         image: "../assets/images/professor/baekseungbeom.webp"
     },
     {

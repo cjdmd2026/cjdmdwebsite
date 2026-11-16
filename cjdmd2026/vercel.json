@@ -11,7 +11,10 @@
     "api/site-asset.js": { "includeFiles": ".generated/site-assets.json" }
   },
   "rewrites": [
-    { "source": "/:team(phishing-ddook|apuchika|curo|stylens|ilkko|dadeullim|omix|year-on|jigjijaembeoli|geuneuljab-i|coco-lang|magmoa|e-fact|byeol-ungwan)/:asset*", "destination": "/api/site-asset?path=:team/:asset*" }
+    { "source": "/apuchika/api/badges", "destination": "/api/apuchika?resource=badges" },
+    { "source": "/apuchika/api/badges/:id", "destination": "/api/apuchika?resource=badges&id=:id" },
+    { "source": "/apuchika/api/inquiries", "destination": "/api/apuchika?resource=inquiries" },
+    { "source": "/:team(phishing-ddook|apuchika|curo|stylens|ilkko|dadeullim|omix|year-on|jigjijaembeoli|geuneuljab-i|coco-lang|magmoa|e-fact|e-fact2|byeol-ungwan)/:asset*", "destination": "/api/site-asset?path=:team/:asset*" }
   ],
   "redirects": [
     { "source": "/submit", "destination": "/submit/", "permanent": false }

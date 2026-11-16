@@ -723,6 +723,77 @@
         });
     }
 
+    /* ==================== 프로젝트 바로가기 ==================== */
+
+    function mountProjectShortcut(card, image) {
+        // Match the project detail page's QR card follow and return timing.
+        const maxOffset = 25;
+        const followMs = 115;
+        const returnMs = 330;
+        const scrollPosition = () => Math.max(0, Math.min(window.scrollY, root.scrollHeight - window.innerHeight));
+        let lastScrollY = scrollPosition();
+        let offset = 0;
+        let target = 0;
+        let frame = 0;
+        let lastTime = 0;
+
+        function syncImageRatio() {
+            if (image.naturalWidth && image.naturalHeight) {
+                card.style.setProperty("--shortcut-image-height-ratio", image.naturalHeight / image.naturalWidth);
+            }
+        }
+
+        function resetMotion() {
+            cancelAnimationFrame(frame);
+            frame = 0;
+            offset = target = 0;
+            lastScrollY = scrollPosition();
+            card.style.removeProperty("transform");
+        }
+
+        function animate(time) {
+            const elapsed = Math.max(0, time - lastTime);
+            lastTime = time;
+            offset += (target - offset) * (1 - Math.exp(-elapsed / followMs));
+            target *= Math.exp(-elapsed / returnMs);
+            if (Math.abs(target) < .1 && Math.abs(offset) < .1) {
+                resetMotion();
+                return;
+            }
+            card.style.transform = `translateY(${offset}px)`;
+            frame = requestAnimationFrame(animate);
+        }
+
+        function followScroll() {
+            const y = scrollPosition();
+            const delta = y - lastScrollY;
+            lastScrollY = y;
+            if (card.hidden || reducedMotion.matches || !delta) return;
+            target = Math.max(-maxOffset, Math.min(maxOffset, target - delta * .27));
+            if (!frame) {
+                lastTime = performance.now();
+                frame = requestAnimationFrame(animate);
+            }
+        }
+
+        image.addEventListener("load", syncImageRatio);
+        syncImageRatio();
+        window.addEventListener("scroll", followScroll, { passive: true });
+        window.addEventListener("resize", resetMotion);
+        window.addEventListener("pagehide", resetMotion);
+        reducedMotion.addEventListener("change", resetMotion);
+
+        return () => {
+            resetMotion();
+            image.removeEventListener("load", syncImageRatio);
+            card.style.removeProperty("--shortcut-image-height-ratio");
+            window.removeEventListener("scroll", followScroll);
+            window.removeEventListener("resize", resetMotion);
+            window.removeEventListener("pagehide", resetMotion);
+            reducedMotion.removeEventListener("change", resetMotion);
+        };
+    }
+
     /* ==================== 화면 렌더링 ==================== */
 
     function renderDetail() {
@@ -755,6 +826,14 @@
         listTitle.textContent = "전시 목록";
         projectLink.hidden = true;
         projectLink.removeAttribute("href");
+        const projectShortcut = document.querySelector(".profile-project-shortcut");
+        const shortcutImage = projectShortcut?.querySelector("img");
+        if (projectShortcut) {
+            projectShortcut.hidden = true;
+            projectShortcut.removeAttribute("href");
+            projectShortcut.removeAttribute("aria-label");
+            shortcutImage?.removeAttribute("src");
+        }
 
         renderCleanups.forEach(cleanup => cleanup());
         renderCleanups = [];
@@ -879,6 +958,13 @@
         }
 
         const courseCards = getCourseCards(project);
+        if (projectShortcut && shortcutImage && project.url && project.image) {
+            projectShortcut.href = new URL(project.url, new URL("project/", siteRoot)).href;
+            projectShortcut.setAttribute("aria-label", `${project.title || "참여"} 프로젝트 상세페이지로 이동`);
+            shortcutImage.src = resolveAssetPath(project.image);
+            projectShortcut.hidden = false;
+            renderCleanups.push(mountProjectShortcut(projectShortcut, shortcutImage));
+        }
         if (compactLayout.matches) {
             listTitle.textContent = project.title || "전시 목록";
             if (project.url) {

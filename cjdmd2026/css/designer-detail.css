@@ -89,6 +89,7 @@
     --card-radius: 20px;
     --stage-height: 100vh;
     --motion-travel: 310vh;
+    --profile-shortcut-image-size: clamp(55px, 5.1vw, 79px);
 }
 
 [data-theme="light"] {
@@ -906,6 +907,73 @@ img {
 }
 
 /* ============================== Button ============================== */
+.profile-project-shortcut {
+    --shortcut-current-width: var(--profile-shortcut-image-size);
+    --shortcut-current-height: var(--profile-shortcut-image-size);
+    position: fixed;
+    right: calc(1rem + env(safe-area-inset-right, 0px));
+    bottom: calc(3rem + env(safe-area-inset-bottom, 0px));
+    z-index: 40;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    width: calc(var(--shortcut-current-width) + 1.75rem + 2px);
+    gap: .4rem;
+    padding: .875rem .875rem .6rem;
+    border: 1px solid #d6d6d6;
+    border-radius: 10px;
+    background: #fff;
+    color: #222;
+    font-size: .75rem;
+    font-weight: 650;
+    white-space: nowrap;
+    transition: border-color .4s ease-in-out, width .4s ease-in-out;
+}
+
+.profile-project-shortcut[hidden] { display: none; }
+
+.profile-project-shortcut img {
+    width: 100%;
+    height: var(--shortcut-current-height);
+    object-fit: cover;
+    object-position: center;
+    border-radius: 8px;
+    transition: height .4s ease-in-out;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .profile-project-shortcut:hover {
+        --shortcut-current-width: calc(var(--profile-shortcut-image-size) * 1.15);
+        --shortcut-current-height: calc(var(--profile-shortcut-image-size) * 1.15 * var(--shortcut-image-height-ratio, 1));
+    }
+}
+
+.profile-project-shortcut:focus-visible {
+    --shortcut-current-width: calc(var(--profile-shortcut-image-size) * 1.15);
+    --shortcut-current-height: calc(var(--profile-shortcut-image-size) * 1.15 * var(--shortcut-image-height-ratio, 1));
+}
+
+.profile-project-shortcut:is(:hover, :focus-visible) { border-color: currentColor; }
+.profile-project-shortcut:is(:hover, :focus-visible) span { text-decoration: underline; }
+.profile-project-shortcut:focus-visible { outline: 3px solid #1959db; outline-offset: 4px; }
+
+@media (max-width: 999px) {
+    .profile-project-shortcut { font-size: .68rem; }
+}
+
+@media (max-width: 440px) {
+    :root { --profile-shortcut-image-size: 51px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .profile-project-shortcut,
+    .profile-project-shortcut img { transition: none; }
+}
+
+@media print {
+    .profile-project-shortcut { display: none; }
+}
+
 /* 버튼을 배치할 1220px 영역 */
 .main .back-wrap {
     position: absolute;
@@ -983,6 +1051,11 @@ img {
 
     margin-top: 1rem;
     margin-bottom: 1rem;
+}
+
+body:has(.profile-project-shortcut:not([hidden])) .footer .container {
+    flex-wrap: wrap;
+    padding-inline-end: calc(var(--profile-shortcut-image-size) + 2.75rem + 2px + env(safe-area-inset-right, 0px));
 }
 
 .footer .container .footer-info {

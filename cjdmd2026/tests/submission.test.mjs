@@ -20,7 +20,7 @@ function zip(files) {
   });
 }
 test('existing team data maps to fixed, unique, safe site folders', () => {
-  assert.equal(teams.length, 14);
+  assert.equal(teams.length, 15);
   assert.equal(teams.find(team => team.id === 'ilkko').slug, 'ilkko');
   assert.equal(new Set(teams.map(team => team.slug)).size, teams.length);
   assert.ok(teams.every(team => /^[a-z0-9-]+$/.test(team.slug)));

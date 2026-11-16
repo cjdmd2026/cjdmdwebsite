@@ -67,6 +67,7 @@ GitHub 토큰을 `VITE_`, `NEXT_PUBLIC_` 등 브라우저에 공개되는 환경
 | 피싱뚝! | `/phishing-ddook/` |
 | OMIX | `/omix/` |
 | E.FACT | `/e-fact/` |
+| E.FACT 2 (추가 폴더) | `/e-fact2/` |
 | Stylens | `/stylens/` |
 | 직지잼버리 | `/jigjijaembeoli/` |
 | 마그모아 | `/magmoa/` |
