@@ -255,50 +255,9 @@ h1 > span:not(.title-dot) {
   color: #605c57;
   word-break: keep-all;
 }
-.submission-countdown {
-  max-width: 350px;
-  margin: 14px 0 28px;
-}
-.countdown-stage {
-  display: grid;
-  place-items: center;
-  min-width: 0;
-  padding: 32px 22px;
-  overflow: hidden;
-}
-.submission-countdown .d-day {
-  --dday-matter-width: 100%;
-  --dday-matter-height: 130px;
-  width: 100%;
-  height: 130px;
-  display: grid;
-  place-items: center;
-  font: 900 80px/1 "Arial Black", Pretendard, sans-serif;
-  letter-spacing: -4px;
-}
-.submission-countdown figcaption {
-  text-align: center;
-  font-size: 11px;
-  color: #605c57;
-}
-.countdown-date {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: baseline;
-  gap: 7px;
-  margin-top: 5px;
-  font-size: 12px;
-  letter-spacing: .4px;
-  font-variant-numeric: tabular-nums;
-}
-.countdown-date > span {
-  font-size: 9px;
-  color: var(--muted);
-  letter-spacing: 0;
-}
 .guide {
   border-top: 1px solid var(--line);
+  margin-top: 28px;
   padding-top: 23px;
   max-width: 350px;
 }
@@ -797,9 +756,6 @@ progress::-webkit-progress-value {
   .intro-text {
     font-size: 12px;
     margin-top: 15px;
-  }
-  .submission-countdown {
-    margin: 8px auto 20px;
   }
   .guide {
     max-width: none;
