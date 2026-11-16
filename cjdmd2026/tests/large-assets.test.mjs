@@ -29,7 +29,7 @@ function githubFixture(assets = []) {
     if (path === '/git/trees/team?recursive=1') return { tree: [index, ...(assets.length ? [{ path: assetManifestName, type: 'blob', mode: '100644', sha: 'manifest', size: Buffer.byteLength(content) }] : [])] };
     if (path === '/git/blobs/manifest') return { encoding: 'base64', content: Buffer.from(content).toString('base64') };
     if (path === '/git/blobs') return { sha: 'd'.repeat(40) };
-    if (path === '/git/trees') return { sha: body.base_tree ? 'new-root' : 'new-team' };
+    if (path === '/git/trees') return { sha: body.base_tree === 'root' ? 'new-root' : 'new-team' };
     if (path === '/git/commits') return { sha: 'new-commit' };
     if (path === '/git/refs') return {};
     if (path === '/pulls') return { number: 1 };
@@ -76,8 +76,9 @@ test('large uploads publish once to R2 and store only a manifest in GitHub', asy
   assert.equal(copies, 1);
   assert.equal(f.calls.some(call => call.path === '/git/blobs'), false);
   const tree = f.calls.find(call => call.path === '/git/trees').body.tree;
-  assert.deepEqual(tree.map(file => file.path), ['index.html', assetManifestName]);
-  assert.deepEqual(parseAssetManifest(JSON.parse(tree[1].content), 'ilkko'), [asset]);
+  assert.equal(f.calls.find(call => call.path === '/git/trees').body.base_tree, 'team');
+  assert.deepEqual(tree.map(file => file.path), [assetManifestName]);
+  assert.deepEqual(parseAssetManifest(JSON.parse(tree[0].content), 'ilkko'), [asset]);
 });
 
 test('published media remains visible/editable and unchanged submissions create no writes', async () => {
@@ -93,8 +94,8 @@ test('explicit deletion removes public metadata; a small replacement goes back i
   for (const files of [[], [{ path: asset.path, size: 3, content: Buffer.from('new') }]]) {
     const f = githubFixture([asset]);
     await submitToGithub(submission, { files, bytes: 3, deletions: files.length ? [] : [asset.path] }, { github: f.github, config });
-    const tree = f.calls.find(call => call.path === '/git/trees').body.tree;
-    assert.equal(tree.some(file => file.path === assetManifestName), false);
+    const tree = f.calls.filter(call => call.path === '/git/trees' && call.body.base_tree !== 'root').flatMap(call => call.body.tree);
+    assert.deepEqual(tree.find(file => file.path === assetManifestName), { path: assetManifestName, mode: '100644', type: 'blob', sha: null });
     assert.equal(tree.some(file => file.path === asset.path), Boolean(files.length));
   }
 });

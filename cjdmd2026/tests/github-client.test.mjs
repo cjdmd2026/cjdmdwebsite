@@ -87,3 +87,21 @@ test('GitHub diagnostics tolerate invalid error shapes and bound long messages a
     });
   }
 });
+
+test('422 tree timeouts retry while validation errors and other endpoints remain terminal', async () => {
+  for (const [path, method, message, retryable] of [
+    ['/git/trees', 'POST', "Sorry, your request timed out. It's likely that your input was too large to process.", true],
+    ['/git/trees', 'POST', 'Validation Failed', false],
+    ['/git/trees', 'POST', 'Tree is too large', false],
+    ['/git/blobs', 'POST', 'Sorry, your request timed out.', false],
+    ['/git/trees', 'GET', 'Sorry, your request timed out.', false],
+  ]) {
+    const github = githubClient('test', 'test/repository', async () => Response.json({ message }, { status: 422, headers: { 'retry-after': '30' } }));
+    await assert.rejects(github(path, method === 'POST' ? { tree: [] } : undefined, method), error => {
+      assert.equal(error.retryable, retryable);
+      assert.equal(error.githubRateLimited, false);
+      assert.equal(error.retryAfterMs, retryable ? 30000 : undefined);
+      return true;
+    });
+  }
+});

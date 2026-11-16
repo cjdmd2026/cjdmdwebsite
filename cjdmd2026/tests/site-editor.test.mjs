@@ -23,7 +23,7 @@ function storage() {
     if (path === '/git/trees/site') return { tree: [{ path: 'ilkko', type: 'tree', sha: oldTree }] };
     if (path === `/git/trees/${oldTree}?recursive=1`) return { truncated: settings.truncated, tree: existing.map(item => ({ ...item, type: 'blob' })) };
     if (path === '/git/blobs') return { sha: 'new-blob' };
-    if (path === '/git/trees') return { sha: body.base_tree ? 'new-root' : settings.unchanged ? oldTree : 'new-team' };
+    if (path === '/git/trees') return { sha: body.base_tree === 'root' ? 'new-root' : settings.unchanged ? oldTree : 'new-team' };
     if (path === '/git/commits') return { sha: 'new-commit' };
     if (path === '/git/refs') return {};
     if (path === '/pulls') return { number: 12 };
@@ -74,13 +74,14 @@ test('subfolder additions preserve both the selected folder name and current des
 test('GitHub tree keeps untouched files and removes only explicitly requested paths', async () => {
   const f = storage();
   await submitToGithub(team, { files: [{ path: 'images/new.svg', content: Buffer.from('hi') }], bytes: 2, deletions: ['images/delete.svg'], baseTreeSha: oldTree }, { ...f, config });
-  const tree = f.calls.find(call => call.path === '/git/trees' && !call.body.base_tree).body.tree;
-  assert.deepEqual(tree, [
-    { path: 'index.html', mode: '100644', type: 'blob', sha: 'index-sha' },
-    { path: 'images/keep.svg', mode: '100644', type: 'blob', sha: 'keep-sha' },
+  const writes = f.calls.filter(call => call.path === '/git/trees');
+  assert.deepEqual(writes[0].body, { base_tree: oldTree, tree: [
+    { path: 'images/delete.svg', mode: '100644', type: 'blob', sha: null },
+  ] });
+  assert.deepEqual(writes[1].body, { base_tree: 'new-team', tree: [
     { path: 'images/new.svg', mode: '100644', type: 'blob', sha: 'new-blob' },
-  ]);
-  assert.deepEqual(f.calls.find(call => call.path === '/git/trees' && call.body.base_tree).body.tree, [{ path: 'cjdmd2026/ilkko', mode: '040000', type: 'tree', sha: 'new-team' }]);
+  ] });
+  assert.deepEqual(writes[2].body, { base_tree: 'root', tree: [{ path: 'cjdmd2026/ilkko', mode: '040000', type: 'tree', sha: 'new-team' }] });
 });
 
 test('deletion-only changes finalize and create a PR without uploading blobs', async () => {

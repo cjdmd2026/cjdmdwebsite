@@ -37,8 +37,12 @@ export function githubClient(token = process.env.SUBMISSION_GITHUB_TOKEN, reposi
       const detail = await response.json().catch(() => ({}));
       Object.assign(error, githubErrorDetails(detail, { token, body }));
       const limited = response.status === 429 || (response.status === 403 && (retryAfter !== null || remaining === 0 || /rate[\s-]?limit|abuse detection/i.test(detail?.message || '')));
+      // GitHub can report tree creation timeouts as 422, not just 5xx.
+      // Keep actual validation errors terminal; replaying a tree write is safe.
+      const treeTimeout = response.status === 422 && method === 'POST' && path === '/git/trees'
+        && typeof detail?.message === 'string' && /\brequest timed out\b/i.test(detail.message);
       error.githubRateLimited = Boolean(limited);
-      error.retryable = Boolean(limited) || [408, 425].includes(response.status) || response.status >= 500;
+      error.retryable = Boolean(limited) || treeTimeout || [408, 425].includes(response.status) || response.status >= 500;
       if (limited) {
         const reset = remaining === 0 && resetAt !== undefined ? resetAt * 1000 - Date.now() + 1000 : 0;
         error.retryAfterMs = Math.max(65000, Number.isFinite(after) ? after : 0, Number.isFinite(reset) ? reset : 0);
@@ -115,8 +119,29 @@ export async function submitToGithub(submission, archive, { github = githubClien
       const next = tree.get(file.path);
       return next?.sha === file.sha && next.mode === (file.mode || '100644');
     })) return { unchanged: true };
-    if (assets.size) tree.set(assetManifestName, { path: assetManifestName, mode: '100644', type: 'blob', content: manifest });
-    const siteTree = await github('/git/trees', { tree: [...tree.values()] });
+    // Reuse the existing team tree and send only changes. Rebuilding every
+    // nested path in one request can time out even when few files were uploaded.
+    const previous = new Map(previousFiles.map(file => [file.path, file]));
+    const removals = previousFiles.filter(file => !tree.has(file.path))
+      .map(file => ({ path: file.path, mode: file.mode || '100644', type: 'blob', sha: null }));
+    const updates = [...tree.values()].filter(file => {
+      const before = previous.get(file.path);
+      return !before || before.sha !== file.sha || (before.mode || '100644') !== file.mode;
+    });
+    if (manifest !== previousManifest) {
+      if (assets.size) updates.push({ path: assetManifestName, mode: '100644', type: 'blob', content: manifest });
+      else removals.push({ path: assetManifestName, mode: '100644', type: 'blob', sha: null });
+    }
+    let siteTree = { sha: snapshot.treeSha };
+    // Delete before adding so file-to-folder replacements cannot collide.
+    // Intermediate trees stay uncommitted until all batches have succeeded.
+    for (const changes of [removals, updates]) {
+      for (let start = 0; start < changes.length; start += 100) {
+        siteTree = await github('/git/trees', {
+          ...(siteTree.sha ? { base_tree: siteTree.sha } : {}), tree: changes.slice(start, start + 100),
+        });
+      }
+    }
     if (siteTree.sha === snapshot.treeSha) return { unchanged: true };
     const rootTree = await github('/git/trees', { base_tree: snapshot.rootTree, tree: [{ path: target, mode: '040000', type: 'tree', sha: siteTree.sha }] });
     const next = await github('/git/commits', { message: `[웹사이트 제출] ${team.name} (${submission.id.slice(0, 8)})`, tree: rootTree.sha, parents: [snapshot.baseCommit] });
