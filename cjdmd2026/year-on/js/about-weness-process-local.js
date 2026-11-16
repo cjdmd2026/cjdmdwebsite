@@ -14,15 +14,15 @@
  svg.querySelector('title')?.remove();svg.setAttribute('aria-label','개인에서 우리성으로 이어지는 관계');svg.removeAttribute('aria-labelledby');
  const en=()=>window.YEARON_LANG==='en'||document.documentElement.lang==='en';
  function copy(index){stage=index;label.textContent=`STEP 0${index+1} · ${steps[index][0]}`;ko.textContent=steps[index][en()?2:1];translation.textContent=steps[index][2];translation.hidden=en();name.textContent=en()?'WE':'우리';nodes.forEach(n=>n.text.textContent=en()?'Individual':'개인')}
- function render(value){const input=clamp(value),overall=input<=.32?input/.32*.40:input<=.58?.40+(input-.32)/.26*.09:.49+(input-.58)/.42*.51;lastValue=input;window.YEARONWenessAppearance?.(input);progress=clamp(overall/.42);root.classList.remove('is-static');const collapse=range(progress,.60,.73),index=progress<.22?0:progress<.65?1:2,exit=1;if(index!==stage)copy(index);
-  const gathering=range(progress,.04,.17);nodes.forEach((n,i)=>{const x=(i-2.5)*85+(n.x-(i-2.5)*85)*gathering,y=n.y*gathering;n.group.setAttribute('transform',`translate(${500+x*(1-collapse)} ${270+y*(1-collapse)})`);n.group.style.opacity=String(1-range(progress,.68,.74))});
+ function render(value){const input=clamp(value),overall=input<=.32?input/.32*.40:input<=.58?.40+(input-.32)/.26*.09:.49+(input-.58)/.42*.51;lastValue=input;window.YEARONWenessAppearance?.(input);progress=clamp(overall/.42);root.classList.remove('is-static');const collapse=range(progress,.30,.73),index=progress<.22?0:progress<.65?1:2,exit=1;if(index!==stage)copy(index);
+  const gathering=range(progress,.04,.17);nodes.forEach((n,i)=>{const x=(i-2.5)*85+(n.x-(i-2.5)*85)*gathering,y=n.y*gathering;n.px=500+x*(1-collapse);n.py=270+y*(1-collapse);n.group.setAttribute('transform',`translate(${n.px} ${n.py})`);n.group.style.opacity=String(1-range(progress,.68,.74))});
   edges.forEach(({path,a,b,i})=>{
-   const scale=1-collapse,ax=500+centres[a][0]*scale,ay=270+centres[a][1]*scale,bx=500+centres[b][0]*scale,by=270+centres[b][1]*scale;
+   const ax=nodes[a].px,ay=nodes[a].py,bx=nodes[b].px,by=nodes[b].py;
    const dx=bx-ax,dy=by-ay,distance=Math.hypot(dx,dy),inset=34;
    // Stop just outside both glass rims; hide the segment as the nodes overlap.
    if(distance<=inset*2){path.setAttribute('d','M0 0');path.style.opacity='0';}
    else{const ux=dx/distance,uy=dy/distance;path.setAttribute('d',`M${ax+ux*inset} ${ay+uy*inset}L${bx-ux*inset} ${by-uy*inset}`);path.style.opacity='1';}
-   path.style.strokeDasharray='1';path.style.strokeDashoffset=String(1-range(progress,.22+i*.025,.34+i*.025));
+   path.removeAttribute('pathLength');path.removeAttribute('stroke-dasharray');path.removeAttribute('stroke-dashoffset');path.style.strokeDasharray='none';path.style.strokeDashoffset='0';
   });
   people.style.opacity=String(exit);links.style.opacity=String(range(progress,.20,.28)*(1-range(progress,.68,.75))*exit);result.style.opacity=String(range(progress,.70,.76)*exit);result.setAttribute('r',String(104*range(progress,.67,.75)));const morph=range(overall,.495,.555),reveal=range(overall,.55,.62),handoff=range(overall,.70,.77);
   name.style.opacity=String(range(progress,.74,.78)*(1-morph)*(1-handoff));
@@ -51,7 +51,7 @@
    prefix.textContent=en()?'Our':'우리';suffix.textContent=word;
    name.style.opacity=String(segment===2?range(phase,0,.18)*(1-morph):range(phase,0,.18)*(1-range(phase,.78,1)));
    name.style.transform=`translateY(${reduced.matches?0:-5*morph}px)`;
-   suffix.style.opacity='1';name.style.fontSize=en()?'22px':'28px';
+   suffix.style.opacity='1';name.style.fontSize=en()?'20px':'24px';
   }
   else{name.style.removeProperty('font-size');name.style.transform='none';}
   const copyOpacity=index===0?1-range(progress,.17,.22):index===1?range(progress,.22,.27)*(1-range(progress,.60,.65)):range(progress,.65,.71);

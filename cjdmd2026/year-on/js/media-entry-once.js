@@ -1,9 +1,7 @@
 /* One entrance per tab session; never replay on device changes, reload or back. */
 (()=>{
  const entry=document.querySelector('.media-entry-crt');if(!entry)return;
- const nav=performance.getEntriesByType('navigation')[0];
- let seen=false;try{seen=sessionStorage.getItem('yearon-media-entry-seen')==='1';sessionStorage.setItem('yearon-media-entry-seen','1')}catch(_){}
- const skip=seen||nav?.type==='back_forward'||nav?.type==='reload';
+ const skip=false;
  window.YEARON_MEDIA_ENTRY={started:performance.now(),skip};
  const remove=()=>{entry.remove();const sound=document.getElementById('mediaEntrySound');if(sound){sound.pause();sound.remove()}};
  if(skip){remove();return;}

@@ -20,7 +20,7 @@
   if(video.readyState<2)return;
   try{
   const box=art.getBoundingClientRect(),h=Math.max(1,Math.round(320*box.height/Math.max(1,box.width)));
-  if(canvas.width!==320||canvas.height!==h){canvas.width=320;canvas.height=h;}
+  if(canvas.width!==320||canvas.height!==h){canvas.width=320;canvas.height=h;ctx.fillStyle='#d9c39f';ctx.fillRect(0,0,320,h);}
   sc.drawImage(video,0,0,96,54);const pixels=sc.getImageData(0,0,96,54).data;
   const rect=video.getBoundingClientRect(),top=(rect.top-box.top)/box.height,ratio=rect.height/box.height;
   for(let y=0;y<h;y++){

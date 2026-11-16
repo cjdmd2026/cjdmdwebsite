@@ -11,7 +11,7 @@ function typeOpeningCopy(visible){
  introLine.setAttribute('aria-label',introText);
  const letters=Array.from(introText);let count=0;
  introLine.textContent='';introLine.classList.add('is-typing');
- function next(){introLine.textContent=letters.slice(0,++count).join('');if(count<letters.length)introTimer=setTimeout(next,letters[count-1]===' '?150:85);else introTimer=setTimeout(()=>{introLine.classList.remove('is-typing');requestUpdate()},250);}
+ function next(){introLine.textContent=letters.slice(0,++count).join('');if(count<letters.length)introTimer=setTimeout(next,letters[count-1]===' '?150:85);else introTimer=setTimeout(()=>{introLine.classList.remove('is-typing');requestUpdate()},150);}
  introTimer=setTimeout(next,180);
 }
 const entry=document.querySelector('#entry');

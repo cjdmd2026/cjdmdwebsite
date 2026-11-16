@@ -18,7 +18,7 @@
  }
  function wait(){
   if(phase!=='reading')return;
-  if(entry.dataset.openingCopyReady==='true'){if(!readyAt)readyAt=performance.now();if(performance.now()-readyAt>=650){begin();return}}
+  if(entry.dataset.openingCopyReady==='true'){if(!readyAt)readyAt=performance.now();if(performance.now()-readyAt>=350){begin();return}}
   else readyAt=0;
   timer=setTimeout(wait,80);
  }
