@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>E.FACT — 연기 너머의 이야기</title>
+  <link rel="stylesheet" href="../css/main-atmosphere/intro.css?v=20261115-logo-jpg">
+</head>
+<body>
+  <main class="cinema" aria-label="E.FACT 인트로 영상">
+    <video id="film" autoplay muted playsinline preload="auto" poster="../images/main-atmosphere/assets/reference-facility.jpg" aria-label="소각장을 주제로 한 인트로 영상"><source src="../images/main-atmosphere/assets/intro-film.mp4" type="video/mp4"></video>
+    <div class="shade" aria-hidden="true"></div>
+    <header><img src="../images/main-atmosphere/assets/logo.jpg" alt="E.FACT"><span>청주 환경정보 확인하기</span><a href="index.html">인트로 건너뛰기 ↗</a></header>
+    <section class="invitation" id="invitation" aria-hidden="true" inert>
+      <p class="eyebrow">BEYOND THE SMOKE</p>
+      <h1>연기 너머,<br>우리가 마주해야 할 이야기</h1>
+      <p class="description">사라진 쓰레기는 어디로 향할까요.<br>소각장과 그 곁의 삶을 들여다봅니다.</p>
+      <a class="enter" href="index.html"><span>청주 소각시설 현황</span><span aria-hidden="true">↗</span></a>
+    </section>
+    <button class="play-gate" id="play-gate" hidden>영상 재생 <span aria-hidden="true">▷</span></button>
+    <footer><span class="chapter">PROLOGUE <i></i> E.FACT</span><div class="controls"><button id="replay" hidden>다시 보기 ↺</button><button id="pause" aria-label="영상 일시정지">일시정지 Ⅱ</button><button id="sound" aria-pressed="false">소리 켜기</button></div><span id="time" aria-hidden="true">00:00</span></footer>
+    <div class="progress" aria-hidden="true"><span id="progress"></span></div>
+    <p id="status" class="sr-only" role="status"></p>
+  </main>
+  <script src="../js/main-atmosphere/intro.js?v=20261115-logo-jpg"></script>
+</body>
+</html>

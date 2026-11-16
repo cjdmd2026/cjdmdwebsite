@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>국내외 사례 | E.FACT</title>
+
+    <!-- CSS 연결 -->
+    <link rel="stylesheet" href="../css/pages/Chapter2.css">
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link rel="stylesheet" href="../css/nav-right.css?v=20261001-8">
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header id="header">
+
+        <a
+            href="../main-atmosphere/index.html"
+            class="logo"
+            aria-label="E.FACT 메인 페이지"
+        >
+
+            <img
+                src="../images/pages/img/Logo1.jpg"
+                alt="E.FACT 로고"
+            >
+
+        </a>
+
+
+        <nav>
+
+            <a href="../main-atmosphere/chapter1/index.html">
+                소각장이란
+            </a>
+
+            <a href="CheongjuStatus.html">
+                청주현황
+            </a>
+
+            <a href="CaseMap.html" class="active" aria-current="page">
+                국내외사례
+            </a>
+
+            <a href="../change-records-atmosphere/index.html">
+                변화의 기록
+            </a>
+
+            <a href="../solidarity-atmosphere/index.html">연대서명</a>
+
+        </nav>
+
+
+    </header>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main>
+
+        <!-- ================= HERO ================= -->
+
+        <section class="hero">
+
+            <div class="hero-background"></div>
+
+
+            <!-- 왼쪽 텍스트 -->
+
+            <div class="hero-text">
+
+                <p class="hero-label">
+                    GLOBAL ENVIRONMENT ARCHIVE
+                </p>
+
+                <h1>
+                    세계는<br>
+                    어떻게<br>
+                    환경을<br>
+                    지키고 있을까?
+                </h1>
+
+                <p class="hero-description">
+                    국내외 18개 소각시설의 위치를 확인하고,
+                    공간·주민 참여·에너지 활용 방식의
+                    차이를 지도 위에서 살펴보세요.
+                </p>
+
+                <a
+                    href="#effort"
+                    class="hero-btn"
+                >
+
+                    자세히 보기
+
+                    <i class="fa-solid fa-arrow-down"></i>
+
+                </a>
+
+            </div>
+
+
+            <!-- 18개 사례 인터랙티브 세계지도 -->
+
+            <div class="world-case-explorer" id="world-case-explorer">
+
+                <div class="world-case-map" id="world-case-map">
+
+                    <div class="world-map-zoom" id="world-map-zoom">
+
+                        <img
+                            src="../images/pages/img/world-map.jpg"
+                            alt="18개 국내외 소각시설 사례 위치가 표시된 세계지도"
+                        >
+
+                        <div
+                            class="world-case-markers"
+                            id="world-case-markers"
+                        ></div>
+
+                    </div>
+
+                    <div class="map-guide" id="map-guide">
+                        <i class="fa-solid fa-location-dot"></i>
+                        지역 핀을 선택해 사례를 확인하세요
+                    </div>
+
+                    <button
+                        class="map-reset-button"
+                        id="map-reset-button"
+                        type="button"
+                    >
+                        <i class="fa-solid fa-earth-asia"></i>
+                        전체 지도
+                    </button>
+
+                </div>
+
+
+                <aside
+                    class="map-case-panel"
+                    id="map-case-panel"
+                    aria-live="polite"
+                >
+
+                    <button
+                        class="map-panel-close"
+                        id="map-panel-close"
+                        type="button"
+                        aria-label="사례 설명 닫기"
+                    >
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+
+                    <div class="map-panel-image">
+                        <img id="map-panel-image" src="" alt="">
+                    </div>
+
+                    <span class="map-panel-label" id="map-panel-label"></span>
+
+                    <h2 id="map-panel-title"></h2>
+
+                    <p class="map-panel-location" id="map-panel-location"></p>
+
+                    <p class="map-panel-summary" id="map-panel-summary"></p>
+
+                    <div class="map-panel-tags" id="map-panel-tags"></div>
+
+                    <a class="map-panel-link" id="map-panel-link" href="#">
+                        사례 상세보기
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+
+                </aside>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= CASE CRITERIA INTRO ================= -->
+
+        <section class="case-intro reveal">
+
+            <div class="section-label">
+                THREE CASE STUDY CRITERIA
+            </div>
+
+            <h2>
+                사례를 바라보는 세 가지 기준
+            </h2>
+
+            <p>
+                국내외 소각시설을 공간과 도시의 재구성,
+                주민 참여와 투명한 운영, 에너지 회수와 자원순환으로 나누어 살펴봅니다.
+                하나의 시설이 여러 특징을 가질 수 있지만 가장 핵심적인 기준으로 분류했습니다.
+            </p>
+
+        </section>
+
+
+        <!-- ================= 공간과 도시의 재구성 ================= -->
+
+        <section
+            class="effort citizen-effort space-effort"
+            id="effort"
+        >
+
+            <div class="effort-text reveal">
+
+                <div class="effort-number">
+                    01
+                </div>
+
+                <p class="section-label">
+                    SPACE & URBAN INTEGRATION
+                </p>
+
+                <h2>
+                    공간과 도시의 재구성
+                </h2>
+
+                <p>
+                    시설을 지하화하거나 공원과 문화공간을 결합해
+                    소각시설을 도시 경관과 시민의 일상 안에
+                    통합한 7개의 사례를 살펴봅니다.
+                </p>
+
+                <button
+                    class="more-btn"
+                    type="button"
+                    data-case-filter="space"
+                >
+
+                    공간 사례 7개 보기
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </button>
+
+            </div>
+
+
+            <div class="effort-content reveal">
+
+                <div class="effort-top">
+
+                    <span>
+                        지하화
+                    </span>
+
+                    <span>
+                        공원화
+                    </span>
+
+                    <span>
+                        랜드마크
+                    </span>
+
+                    <span>
+                        복합문화
+                    </span>
+
+                    <span>
+                        경관 통합
+                    </span>
+
+                </div>
+
+
+                <div class="effort-items">
+
+                    <article class="effort-item">
+
+                        <div class="circle">
+
+                            <i class="fa-solid fa-arrow-down"></i>
+
+                        </div>
+
+                        <h3>
+                            시설 지하화
+                        </h3>
+
+                        <p>
+                            처리시설을 지하에 배치해
+                            지상 공간의 활용도를 높입니다.
+                        </p>
+
+                    </article>
+
+
+                    <article class="effort-item">
+
+                        <div class="circle">
+
+                            <i class="fa-solid fa-tree-city"></i>
+
+                        </div>
+
+                        <h3>
+                            지상 공원화
+                        </h3>
+
+                        <p>
+                            시설 상부를 공원과 녹지로
+                            시민에게 돌려줍니다.
+                        </p>
+
+                    </article>
+
+
+                    <article class="effort-item">
+
+                        <div class="circle">
+
+                            <i class="fa-solid fa-mountain-city"></i>
+
+                        </div>
+
+                        <h3>
+                            도시 랜드마크
+                        </h3>
+
+                        <p>
+                            산업시설의 외관과 기능을
+                            도시의 상징으로 전환합니다.
+                        </p>
+
+                    </article>
+
+
+                    <article class="effort-item">
+
+                        <div class="circle">
+
+                            <i class="fa-solid fa-people-roof"></i>
+
+                        </div>
+
+                        <h3>
+                            주민 편익시설
+                        </h3>
+
+                        <p>
+                            전망대와 체육·문화시설을
+                            지역 주민과 공유합니다.
+                        </p>
+
+                    </article>
+
+
+                    <article class="effort-item">
+
+                        <div class="circle">
+
+                            <i class="fa-solid fa-city"></i>
+
+                        </div>
+
+                        <h3>
+                            주변 경관 통합
+                        </h3>
+
+                        <p>
+                            주변 건축과 자연환경을 고려해
+                            시설의 경계를 완화합니다.
+                        </p>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= 주민 참여와 투명한 운영 ================= -->
+
+        <section class="effort nation-effort participation-effort">
+
+            <div class="effort-text reveal">
+
+                <div class="effort-number">
+                    02
+                </div>
+
+                <p class="section-label">
+                    PARTICIPATION & TRANSPARENCY
+                </p>
+
+                <h2>
+                    주민 참여와 투명한 운영
+                </h2>
+
+                <p>
+                    입지 결정부터 반입 검사와 배출 감시까지
+                    주민이 운영 과정에 참여하고 정보를 확인하는
+                    6개의 사례를 살펴봅니다.
+                </p>
+
+                <button
+                    class="more-btn"
+                    type="button"
+                    data-case-filter="participation"
+                >
+
+                    주민 참여 사례 6개 보기
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </button>
+
+            </div>
+
+
+            <div class="effort-content reveal">
+
+                <div class="effort-top">
+
+                    <span>
+                        계획 참여
+                    </span>
+
+                    <span>
+                        주민 감시
+                    </span>
+
+                    <span>
+                        정보 공개
+                    </span>
+
+                    <span>
+                        주민 협약
+                    </span>
+
+                    <span>
+                        지역 환원
+                    </span>
+
+                </div>
+
+
+                <div class="effort-items">
+
+                    <article class="effort-item">
+
+                        <div class="circle">
+
+                            <i class="fa-solid fa-people-group"></i>
+
+                        </div>
+
+                        <h3>
+                            계획 단계 참여
+                        </h3>
+
+                        <p>
+                            시설 계획과 입지 논의에
+                            주민의 의견을 반영합니다.
+                        </p>
+
+                    </article>
+
+
+                    <article class="effort-item">
+
+                        <div class="circle">
+
+                            <i class="fa-solid fa-eye"></i>
+
+                        </div>
+
+                        <h3>
+                            주민 감시
+                        </h3>
+
+                        <p>
+                            주민이 반입과 운영 과정을
+                            직접 확인하고 감시합니다.
+                        </p>
+
+                    </article>
+
+
+                    <article class="effort-item">
+
+                        <div class="circle">
+
+                            <i class="fa-solid fa-chart-line"></i>
+
+                        </div>
+
+                        <h3>
+                            운영정보 공개
+                        </h3>
+
+                        <p>
+                            배출과 가동 정보를 공개해
+                            운영의 투명성을 높입니다.
+                        </p>
+
+                    </article>
+
+
+                    <article class="effort-item">
+
+                        <div class="circle">
+
+                            <i class="fa-solid fa-handshake"></i>
+
+                        </div>
+
+                        <h3>
+                            주민 협약
+                        </h3>
+
+                        <p>
+                            지원과 관리 원칙을 협약으로
+                            정하고 지속적으로 이행합니다.
+                        </p>
+
+                    </article>
+
+
+                    <article class="effort-item">
+
+                        <div class="circle">
+
+                            <i class="fa-solid fa-coins"></i>
+
+                        </div>
+
+                        <h3>
+                            지역 수익 환원
+                        </h3>
+
+                        <p>
+                            시설 수익과 기금을 주민 복지와
+                            지역 사업에 활용합니다.
+                        </p>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= 에너지 회수와 자원순환 ================= -->
+
+        <section class="effort local-effort energy-effort">
+
+            <div class="effort-text reveal">
+
+                <div class="effort-number">
+                    03
+                </div>
+
+                <p class="section-label">
+                    ENERGY & CIRCULARITY
+                </p>
+
+                <h2>
+                    에너지 회수와 자원순환
+                </h2>
+
+                <p>
+                    소각 과정에서 발생한 열과 잔여 자원을
+                    전기, 난방, 산업용 증기와 금속 회수로 연결한
+                    5개의 사례를 살펴봅니다.
+                </p>
+
+                <button
+                    class="more-btn"
+                    type="button"
+                    data-case-filter="energy"
+                >
+
+                    에너지 사례 5개 보기
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </button>
+
+            </div>
+
+
+            <div class="effort-content reveal">
+
+                <div class="effort-top">
+
+                    <span>
+                        지역난방
+                    </span>
+
+                    <span>
+                        산업 스팀
+                    </span>
+
+                    <span>
+                        전력 생산
+                    </span>
+
+                    <span>
+                        금속 회수
+                    </span>
+
+                    <span>
+                        순환 교육
+                    </span>
+
+                </div>
+
+
+                <div class="effort-items">
+
+                    <article class="effort-item">
+
+                        <div class="circle">
+
+                            <i class="fa-solid fa-temperature-arrow-up"></i>
+
+                        </div>
+
+                        <h3>
+                            지역난방 공급
+                        </h3>
+
+                        <p>
+                            소각열을 회수해 주거지역의
+                            난방과 온수에 공급합니다.
+                        </p>
+
+                    </article>
+
+
+                    <article class="effort-item">
+
+                        <div class="circle">
+
+                            <i class="fa-solid fa-industry"></i>
+
+                        </div>
+
+                        <h3>
+                            산업 스팀 활용
+                        </h3>
+
+                        <p>
+                            회수한 증기를 인근 산업체의
+                            생산 에너지로 활용합니다.
+                        </p>
+
+                    </article>
+
+
+                    <article class="effort-item">
+
+                        <div class="circle">
+
+                            <i class="fa-solid fa-bolt"></i>
+
+                        </div>
+
+                        <h3>
+                            전력 생산
+                        </h3>
+
+                        <p>
+                            고온 연소에서 발생한 열로
+                            전기를 생산하고 공급합니다.
+                        </p>
+
+                    </article>
+
+
+                    <article class="effort-item">
+
+                        <div class="circle">
+
+                            <i class="fa-solid fa-magnet"></i>
+
+                        </div>
+
+                        <h3>
+                            소각재 금속 회수
+                        </h3>
+
+                        <p>
+                            소각재에 남은 금속을 선별해
+                            다시 자원으로 회수합니다.
+                        </p>
+
+                    </article>
+
+
+                    <article class="effort-item">
+
+                        <div class="circle">
+
+                            <i class="fa-solid fa-graduation-cap"></i>
+
+                        </div>
+
+                        <h3>
+                            자원순환 교육
+                        </h3>
+
+                        <p>
+                            처리시설과 재활용센터를 연결해
+                            순환 과정을 교육합니다.
+                        </p>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= CASE ARCHIVE ================= -->
+
+        <section class="archive-heading reveal" id="case-archive">
+
+            <p class="section-label">
+                GLOBAL & DOMESTIC CASE ARCHIVE
+            </p>
+
+            <h2>
+                국내외 소각시설 사례
+            </h2>
+
+            <p>
+                공간 변화, 주민 참여, 에너지 활용이라는 세 가지 관점으로
+                국내외 18개 사례를 비교합니다. 사례를 누르면 상세 페이지로 이동합니다.
+            </p>
+
+        </section>
+
+
+        <section class="case-tools reveal" aria-label="사례 검색과 분류">
+
+            <div class="filter-group" role="group" aria-label="사례 분류">
+                <button class="filter-button active" type="button" data-filter="all">전체</button>
+                <button class="filter-button" type="button" data-filter="global">해외 사례</button>
+                <button class="filter-button" type="button" data-filter="domestic">국내 사례</button>
+                <button class="filter-button" type="button" data-filter="space">공간 변화</button>
+                <button class="filter-button" type="button" data-filter="participation">주민 참여</button>
+                <button class="filter-button" type="button" data-filter="energy">에너지·기술</button>
+            </div>
+
+            <label class="archive-search-box" for="case-search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input
+                    id="case-search"
+                    type="search"
+                    placeholder="국가, 도시, 사례명 검색"
+                    autocomplete="off"
+                >
+            </label>
+
+        </section>
+
+
+        <p class="result-status" id="result-status" aria-live="polite"></p>
+
+        <section
+            class="case-grid"
+            id="case-grid"
+            aria-label="국내외 소각시설 사례 목록"
+        ></section>
+
+
+        <section class="comparison-note reveal">
+
+            <p class="section-label">
+                WHAT E.FACT LEARNS
+            </p>
+
+            <h2>
+                청주에 적용할 때 확인해야 할 기준
+            </h2>
+
+            <div class="comparison-points">
+
+                <article>
+                    <b>01</b>
+                    <h3>시설보다 총량</h3>
+                    <p>시설 한 곳의 외관뿐 아니라 특정 지역에 집중된 전체 소각량과 누적 영향을 함께 봅니다.</p>
+                </article>
+
+                <article>
+                    <b>02</b>
+                    <h3>보상보다 참여</h3>
+                    <p>편의시설 제공을 넘어 주민이 계획, 운영, 감시에 참여할 실질적인 권한이 필요합니다.</p>
+                </article>
+
+                <article>
+                    <b>03</b>
+                    <h3>홍보보다 검증</h3>
+                    <p>이미지 개선보다 배출, 반입, 가동, 사후관리 정보를 지속해서 공개하고 검증해야 합니다.</p>
+                </article>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div class="footer-container">
+
+            <div class="footer-brand">
+
+                <a
+                    href="../main-atmosphere/index.html"
+                    class="footer-logo"
+                >
+
+                    <img
+                        src="../images/pages/img/Logo1.jpg"
+                        alt="E.FACT 로고"
+                    >
+
+                </a>
+
+                <p>
+                    청주 소각장 과밀집 문제를
+                    게임, 웹사이트, 시민 연대 인터랙션으로 전달합니다.
+                </p>
+
+            </div>
+
+
+            <div class="footer-menu">
+
+                <div>
+
+                    <h4>
+                        사이트
+                    </h4>
+
+                    <a href="../main-atmosphere/chapter1/index.html">
+                        소각장이란
+                    </a>
+
+                    <a href="#">
+                        청주현황
+                    </a>
+
+                    <a href="Chapter2.html">
+                        국내외사례
+                    </a>
+
+                    <a href="../change-records-atmosphere/index.html">
+                        변화의기록
+                    </a>
+
+                </div>
+
+
+                <div>
+
+                    <h4>
+                        참여
+                    </h4>
+
+                    <a href="../solidarity-atmosphere/index.html">
+                        시민 연대
+                    </a>
+
+                    <a href="../solidarity-atmosphere/index.html">
+                        연대서명
+                    </a>
+
+                    <a href="#">
+                        문의하기
+                    </a>
+
+                </div>
+
+
+                <div>
+
+                    <h4>
+                        Contact
+                    </h4>
+
+                    <p>
+                        E.FACT Project
+                    </p>
+
+                    <p>
+                        Cheongju, Korea
+                    </p>
+
+                    <p>
+                        2026 Graduation Exhibition
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                © 2026 E.FACT Project. All Rights Reserved.
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <!-- JS 연결 -->
+    <script src="../js/pages/Chapter2.js"></script>
+
+</body>
+
+</html>

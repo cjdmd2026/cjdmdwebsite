@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사례 상세 | E.FACT</title>
+    <link rel="stylesheet" href="../css/pages/CaseDetail.css?v=20261115-logo-jpg">
+    <link rel="stylesheet" href="../css/pages/CaseDetailModern.css?v=20261115-logo-jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="../css/pages/case-sources.css?v=20261115-logo-jpg">    <link rel="stylesheet" href="../css/nav-right.css?v=20261115-logo-jpg">
+</head>
+<body>
+    <header id="header">
+        <a class="logo" href="../main-atmosphere/index.html" aria-label="E.FACT 메인 페이지">
+            <img src="../images/pages/img/Logo1.jpg" alt="E.FACT 로고">
+        </a>
+        <button class="menu-toggle" aria-expanded="false" aria-controls="main-nav">메뉴 <span>＋</span></button>
+        <nav id="main-nav" aria-label="주요 메뉴">
+            <a href="../main-atmosphere/chapter1/index.html">소각장이란</a>
+            <a href="CheongjuStatus.html">청주현황</a>
+            <a class="active" href="CaseMap.html" aria-current="page">국내외사례</a>
+            <a href="../change-records-atmosphere/index.html">변화의 기록</a>
+            <a href="../solidarity-atmosphere/index.html">연대서명</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="case-hero" aria-labelledby="case-title">
+            <img class="case-hero-image" src="../images/pages/img/국내외 디테일01.jpg" alt="프랑스 Isséane 자원회수시설 외관">
+            <div class="case-hero-overlay"></div>
+            <a class="back-link" href="CaseMap.html"><i class="fa-solid fa-arrow-left"></i> 사례 지도</a>
+            <div class="case-hero-content">
+                <p class="eyebrow" id="case-archive">GLOBAL CASE 01 · FRANCE</p>
+                <h1 id="case-title">도시 안에 숨은<br>자원회수시설</h1>
+                <p class="hero-summary" id="case-summary">시설을 지하화하고 도시 경관과 연결한 프랑스 Isséane 사례</p>
+                <div class="hero-meta" id="hero-meta"></div>
+            </div>
+            <span class="hero-number" aria-hidden="true">01</span>
+        </section>
+
+        <section class="case-layout">
+            <aside class="case-nav" aria-label="사례 상세 목차">
+                <p>CASE INDEX</p>
+                <a class="active" href="#overview">01 개요</a>
+                <a href="#background">02 배경</a>
+                <a href="#response">03 대응</a>
+                <a href="#result">04 결과</a>
+                <a href="#evaluation">05 장점과 한계</a>
+                <a href="#application">06 청주 적용점</a>
+                <a href="#sources">07 출처</a>
+            </aside>
+
+            <div class="case-content">
+                <section class="content-section intro-section reveal" id="overview">
+                    <p class="section-label">CASE OVERVIEW</p>
+                    <h2>한눈에 보는 사례</h2>
+                    <p class="lead" id="overview-lead"></p>
+                    <div class="fact-grid" id="fact-grid"></div>
+                </section>
+
+                <section class="content-section split-section reveal" id="background">
+                    <div><p class="section-label">BACKGROUND</p><h2>왜 변화가 필요했나</h2></div>
+                    <div class="body-copy" id="background-copy"></div>
+                </section>
+
+                <section class="content-section reveal" id="response">
+                    <p class="section-label">RESPONSE</p>
+                    <h2>어떤 방식으로 대응했나</h2>
+                    <div class="response-grid" id="response-grid"></div>
+                </section>
+
+                <section class="content-section split-section reveal" id="result">
+                    <div><p class="section-label">RESULT</p><h2>운영 이후 확인된 변화</h2></div>
+                    <div class="body-copy" id="result-copy"></div>
+                </section>
+
+                <section class="content-section reveal" id="evaluation">
+                    <p class="section-label">STRENGTH &amp; LIMITATION</p>
+                    <h2>성과와 한계를 함께 보기</h2>
+                    <div class="evaluation-grid">
+                        <article class="evaluation-card strength"><span>STRENGTH</span><h3>주목할 장점</h3><ul id="strength-list"></ul></article>
+                        <article class="evaluation-card limitation"><span>LIMITATION</span><h3>놓치면 안 될 한계</h3><ul id="limitation-list"></ul></article>
+                    </div>
+                </section>
+
+                <section class="application-section reveal" id="application">
+                    <p class="section-label">APPLY TO CHEONGJU</p>
+                    <h2>청주에 그대로 복제하지 말고<br>운영 원칙을 가져오기</h2>
+                    <div class="application-list" id="application-list"></div>
+                    <p class="application-note" id="application-note"></p>
+                </section>
+
+                <section class="content-section source-section reveal" id="sources">
+                    <p class="section-label">SOURCE ARCHIVE</p>
+                    <h2>검증에 사용한 자료</h2>
+                    <ol id="source-list"></ol>
+                    <p class="source-note">운영기관 자료와 관련 보도를 함께 살펴볼 수 있습니다. 사진 출처는 상단 이미지 아래에서 확인하세요.</p>
+                </section>
+
+                <nav class="case-pager" aria-label="사례 이동">
+                    <a id="previous-case" href="CaseMap.html"><span>PREVIOUS</span><strong>사례 지도로</strong></a>
+                    <a id="next-case" href="CaseMap.html"><span>NEXT CASE</span><strong>사례 지도로</strong></a>
+                </nav>
+            </div>
+        </section>
+    </main>
+
+    <footer><p>© 2026 E.FACT Project. All Rights Reserved.</p></footer>
+    <script src="../js/pages/case-sources.js?v=20261115-logo-jpg"></script><script src="../js/pages/CaseDetailModern.js?v=20261115-logo-jpg"></script>
+</body>
+</html>

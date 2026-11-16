@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#061011">
+  <title>국내외 사례 지도 | E.FACT</title>
+  <meta name="description" content="세계 지도에서 국내외 소각시설 사례 18곳을 탐색합니다.">
+  <link rel="stylesheet" href="../css/pages/CaseMap.css?v=20261115-logo-jpg">
+<link rel="stylesheet" href="../css/pages/CaseMapPhotos.css?v=20261115-logo-jpg">
+<link rel="stylesheet" href="../css/pages/case-sources.css?v=20261115-logo-jpg">    <link rel="stylesheet" href="../css/nav-right.css?v=20261115-logo-jpg">
+</head>
+<body>
+  <a class="skip-link" href="#case-map">사례 지도 바로가기</a>
+
+  <header class="site-header" id="site-header">
+    <a class="brand" href="../main-atmosphere/index.html" aria-label="E.FACT 메인 페이지">
+      <img src="../images/pages/img/Logo1.jpg" alt="E.FACT">
+    </a>
+    <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">
+      <span></span><span></span><span></span><span class="sr-only">메뉴 열기</span>
+    </button>
+    <nav id="primary-nav" aria-label="주 메뉴">
+      <a href="../main-atmosphere/chapter1/index.html">소각장이란</a>
+      <a href="CheongjuStatus.html">청주현황</a>
+      <a href="CaseMap.html" aria-current="page">국내외사례</a>
+      <a href="../change-records-atmosphere/index.html">변화의 기록</a>
+      <a href="../solidarity-atmosphere/index.html">연대서명</a>
+    </nav>
+  </header>
+
+  <main class="map-page">
+    <section class="map-intro" aria-labelledby="page-title">
+      <div class="intro-top">
+        <p class="eyebrow">GLOBAL CASE ARCHIVE / 18</p>
+        <h1 id="page-title">다른 지역에서는 소각시설을<br><em>어떻게 운영할까요?</em></h1>
+        <p class="intro-copy">지도 위 지역을 선택하고, 18개 시설이 공간·주민 참여·에너지 활용을 어떻게 풀어냈는지 살펴보세요.</p>
+      </div>
+
+      <div class="region-index" aria-label="지역 바로 선택">
+        <p>REGION INDEX</p>
+        <div id="region-buttons"></div>
+      </div>
+
+      <div class="intro-foot">
+        <span><i></i> 지도 스팟을 선택하세요</span>
+        <small>18 CASES · 6 COUNTRIES/REGIONS</small>
+      </div>
+    </section>
+
+    <section class="map-explorer" id="case-map" aria-label="국내외 환경시설 사례 지도">
+      <div class="map-toolbar">
+        <div class="map-route" id="map-route" aria-live="polite">
+          <span>WORLD</span><b>전체 사례 지도</b>
+        </div>
+        <div class="map-actions">
+          <span id="map-count">5 REGION SPOTS</span>
+        </div>
+      </div>
+
+      <div class="map-viewport" id="map-viewport">
+        <div class="map-grid" aria-hidden="true"></div>
+        <div class="map-orbit orbit-a" aria-hidden="true"></div>
+        <div class="map-orbit orbit-b" aria-hidden="true"></div>
+        <div class="map-picture" id="map-picture">
+          <img id="map-image" src="../images/pages/img/world-map.jpg" alt="국내외 환경시설 사례 세계 지도">
+          <div class="map-markers" id="map-markers"></div>
+        </div>
+        <div class="map-hint" id="map-hint"><span>+</span> 지역 스팟을 눌러 확대</div>
+        <p class="map-disclaimer">위치는 사례 탐색을 위한 개념도이며 실제 경계·정확한 좌표를 뜻하지 않습니다.</p>
+      </div>
+
+      <aside class="case-panel" id="case-panel" aria-hidden="true" aria-live="polite">
+        <button class="panel-close" id="panel-close" type="button" aria-label="사례 정보 닫기">×</button>
+        <div class="panel-image"><img id="panel-image" src="" alt=""></div>
+        <div class="panel-body">
+          <div class="panel-meta"><span id="panel-number">CASE 01</span><span id="panel-country">FRANCE</span></div>
+          <h2 id="panel-title"></h2>
+          <p class="panel-name" id="panel-name"></p>
+          <p class="panel-summary" id="panel-summary"></p>
+          <div class="panel-tags" id="panel-tags"></div>
+          <a class="panel-link" id="panel-link" href="CaseDetailModern.html">
+            <span>사례 자세히 보기</span><b aria-hidden="true">↗</b>
+          </a>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="../js/pages/case-sources.js?v=20261115-logo-jpg"></script><script src="../js/pages/CaseMap.js?v=20261115-logo-jpg"></script>
+</body>
+</html>
