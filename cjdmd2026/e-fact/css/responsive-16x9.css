@@ -24,6 +24,7 @@ header nav a {
   .intro,
   .feature .section-heading,
   .feature-wrap,
+  .search-section,
   .decode-content,
   .decode-card-heading,
   .decode-card-section {
@@ -45,7 +46,11 @@ header nav a {
   }
 
   .intro-lead {
-    max-width: 1050px;
+    width: 100%;
+    max-width: none;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
   }
 
   /* Three equal, readable columns: number → title → description. */
@@ -107,6 +112,160 @@ header nav a {
   .feature {
     padding-left: 0 !important;
     padding-right: 0 !important;
+  }
+
+  /* Change records: headings, cards and controls share the 6vw grid. */
+  .resident-story {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .resident-story > .section-heading,
+  .resident-story > .story-slider,
+  .resident-story > .story-audio {
+    box-sizing: border-box;
+    width: 88% !important;
+    max-width: none !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .resident-story > .section-heading {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .resident-story > .story-slider {
+    display: block !important;
+  }
+
+  .story-slider .story-viewport {
+    width: 100%;
+  }
+
+  .story-slider .slider-btn {
+    position: absolute;
+    top: 50%;
+    z-index: 5;
+    transform: translateY(-50%);
+  }
+
+  .story-slider .slider-btn:hover {
+    transform: translateY(-50%);
+  }
+
+  .story-slider .slider-btn.prev {
+    left: -76px;
+  }
+
+  .story-slider .slider-btn.next {
+    right: -76px;
+  }
+
+  .record-left {
+    box-sizing: border-box;
+    width: 88% !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding: 88px 0 76px !important;
+  }
+
+  .record-left .record-number {
+    position: static !important;
+    margin: 0 0 24px !important;
+  }
+
+  .record-left h2,
+  .record-left > p {
+    max-width: 1100px !important;
+  }
+
+  .record-left .record-legend {
+    width: 100%;
+  }
+
+  .record-right .chip-face {
+    padding-left: 25% !important;
+    padding-right: 20% !important;
+  }
+
+  .record-right .chip-type {
+    max-width: 100% !important;
+  }
+
+  .gallery-heading {
+    box-sizing: border-box;
+    width: 88% !important;
+    max-width: none !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding: 120px 0 65px !important;
+  }
+
+  /* Shared desktop rhythm across the five primary navigation pages. */
+  .section,
+  body:has(.air-scene) .wrap,
+  body:has(.pledge-stage) .pledge-stage,
+  body:has(.pledge-stage) .pledge-hero .hero-gauge {
+    box-sizing: border-box;
+    width: 88% !important;
+    max-width: none !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  body:has(.air-scene) .intro {
+    box-sizing: border-box;
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 6vw !important;
+    padding-right: 6vw !important;
+  }
+
+  body:has(.resident-story) .hero-heading {
+    left: 6vw !important;
+    width: 88% !important;
+    max-width: none !important;
+  }
+
+  body:has(.resident-story) .hero-footnote,
+  .hero-meta {
+    left: 6vw !important;
+    right: 6vw !important;
+  }
+
+  .history-intro,
+  .integrated-intro .history-intro,
+  .history-scene,
+  .history-outro,
+  .history-sources {
+    box-sizing: border-box;
+    padding-left: 6vw !important;
+    padding-right: 6vw !important;
+  }
+
+  /* Korean display type needs breathing room; labels retain their tracking. */
+  .history-intro h2 {
+    letter-spacing: -.03em !important;
+  }
+
+  .history-intro h2 span {
+    letter-spacing: -.02em !important;
+  }
+
+  body:has(.editorial-hero) .hero-heading h1,
+  body:has(.air-scene) h1,
+  body:has(.map-page) .map-intro h1,
+  body:has(.resident-story) .section-heading h2,
+  body:has(.resident-story) .record-left h2,
+  body:has(.resident-story) .gallery-heading h2,
+  body:has(.pledge-stage) .pledge-copy h1,
+  body:has(.pledge-stage) .section h2 {
+    letter-spacing: -.025em !important;
   }
 }
 

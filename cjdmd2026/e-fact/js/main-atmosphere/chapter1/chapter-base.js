@@ -26,6 +26,14 @@ const detailImageTitle = document.querySelector(
     ".detail-image-title"
 );
 
+const detailImageFrame = document.querySelector(
+    ".detail-image"
+);
+
+const detailProcessVideo = document.querySelector(
+    "#incineration-process-video"
+);
+
 const searchInput = document.querySelector(
     "#decode-search-input"
 );
@@ -446,6 +454,17 @@ function changeDecodeContent(topic){
 
     renderDetailPoints(data.points);
 
+    const showProcessVideo = topic === "process";
+
+    detailImageFrame?.classList.toggle(
+        "is-video",
+        showProcessVideo
+    );
+
+    if(!showProcessVideo){
+        detailProcessVideo?.pause();
+    }
+
     if(detailImage){
 
         detailImage.style.opacity = "0";
@@ -479,6 +498,18 @@ decodeTabs.forEach(tab => {
 
         changeDecodeContent(
             tab.dataset.topic
+        );
+
+    });
+
+});
+
+document.querySelectorAll("[data-topic-link]").forEach(link => {
+
+    link.addEventListener("click",() => {
+
+        changeDecodeContent(
+            link.dataset.topicLink
         );
 
     });
