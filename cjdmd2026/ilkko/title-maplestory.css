@@ -1,7 +1,7 @@
 /* 읽:꼬 전체 페이지: 제목/부제목 전용 메이플스토리체 */
 @font-face {
   font-family: "IlkkoSiteMaplestory";
-  src: local("Maplestory OTF Bold"), local("MaplestoryOTFBold"), local("Maplestory Bold"),
+  src: url("fonts/Maplestory-Bold.otf") format("opentype"),
        url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/MaplestoryOTFBold.woff") format("woff");
   font-style: normal;
   font-weight: 400 900;
@@ -14,4 +14,32 @@ h1, h2, h3, h4, h5, h6,
 .process-step > h3, .training-standard-title,
 .package-gift-heading {
   font-family: "IlkkoSiteMaplestory", "Maplestory OTF", "Maplestory", sans-serif;
+}
+
+/* Nexon Korea. See fonts/Maplestory-license.txt. */
+@font-face {
+  font-family: "IlkkoSiteMaplestoryLight";
+  src: url("fonts/Maplestory-Light.otf") format("opentype"),
+       url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/MaplestoryOTFLight.woff") format("woff");
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+}
+
+.header .header-menu-list .header-menu-item a {
+  font-family: "IlkkoSiteMaplestoryLight", sans-serif;
+  font-weight: 300;
+  font-synthesis: none;
+}
+
+:root :is(button:not(.ilkko-package-flip), input[type="button"], input[type="submit"],
+  .review-more-button, .final-cta-button, .card-more-btn, .btn-more-reviews, .btn-app) {
+  font-family: "IlkkoSiteMaplestory", sans-serif;
+}
+
+.testimonial-section .testimonial-card .review-title,
+.review-list-section .review-list-inner .item-title {
+  font-family: "IlkkoSiteMaplestory", sans-serif;
+  font-weight: 700;
+  font-synthesis: none;
 }

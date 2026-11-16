@@ -1,4 +1,4 @@
-.hero-scroll-frame, .hero-frame-canvas, .review-story-note { display: none; }
+.hero-desktop-poster, .hero-desktop-canvas, .hero-desktop-video, .review-story-note { display: none; }
 
 /* Playback is available on mobile while desktop uses scroll-driven frames. */
 .hero-playback {
@@ -20,13 +20,14 @@
 }
 
 @media (max-width: 768px) {
+  .header .header-link-service { display: none; }
   .hero-playback { right: 12px; bottom: 12px; }
   .review-slider-track .review-card-example { display: none; }
 }
 
 @media (min-width: 769px) {
   :root {
-    --desktop-header-height: 75px;
+    --desktop-header-height: clamp(68px, 5vw, 76px);
     --section-title-size: clamp(30px, 2.3vw, 44px);
     --item-title-size: clamp(21px, 1.35vw, 27px);
     --body-copy-size: clamp(15px, .94vw, 18px);
@@ -40,17 +41,49 @@
     width: calc(100% - 2 * clamp(30px, 5.4vw, 116px));
     max-width: none;
   }
-  .header-menu-list { gap: clamp(25px, 3vw, 58px); }
+  .header {
+    height: var(--desktop-header-height);
+    background: #fff;
+    border-bottom-width: 2px;
+  }
+  .header .header-logo-img { height: calc(clamp(32px, 2.8vw, 44px) - 2px); }
+  .header .header-nav {
+    width: 56%;
+    margin-inline-end: calc(-1 * clamp(21px, 4.6vw, 78px));
+  }
+  .header .header-menu-list {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    align-items: center;
+    gap: 0;
+  }
+  .header .header-link-character { display: none; }
+  .header .header-menu-item a {
+    display: block;
+    color: #777;
+    text-align: center;
+    white-space: nowrap;
+    font-size: clamp(14px, 1.15vw, 17px);
+  }
+  .header .header-menu-item a:hover,
+  .header .header-menu-item.active a { color: #ff7710; }
+
+  :is(.book-page, .character-main, .curriculum-main) {
+    padding-top: var(--desktop-header-height);
+  }
+  .character-main .character-hero-section { top: var(--desktop-header-height); }
+  main.help-page { margin-top: calc(var(--desktop-header-height) + 5px); }
+  .review-list-section#reviews { scroll-margin-top: calc(var(--desktop-header-height) + 16px); }
   .ilkko-footer .ilkko-footer-inner {
     width: calc(100% - 2 * clamp(106px, 6.7vw, 144px));
     margin-inline: auto;
     padding-inline: 0;
   }
 
-  .hero-scroll-section { height: 320vh; }
+  .hero-scroll-section { height: calc(100svh + clamp(820px, 134svh, 1370px)); }
+  .hero-scroll-section .hero-sticky-wrapper { height: 100svh; }
   .hero-playback, .hero-sticky-wrapper .hero-video { display: none; }
-  .hero-sticky-wrapper .hero-scroll-frame,
-  .hero-sticky-wrapper .hero-frame-canvas:not([hidden]) {
+  .hero-sticky-wrapper :is(.hero-desktop-poster, .hero-desktop-canvas, .hero-desktop-video) {
     display: block;
     position: absolute;
     inset: var(--desktop-header-height) 0 0;
@@ -59,10 +92,13 @@
     object-fit: cover;
     object-position: center;
   }
+  .hero-sticky-wrapper :is(.hero-desktop-canvas, .hero-desktop-video):not(.is-visible) {
+    visibility: hidden;
+  }
   .hero-sticky-wrapper .scroll-down-icon { bottom: clamp(19px, 3vh, 34px); }
 
   .main-content .training-process-inner {
-    width: min(94%, 1450px);
+    width: min(92%, 1580px);
     padding: clamp(22px, 5vh, 62px) 0;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1.18fr);
     gap: clamp(14px, 2vw, 30px);
@@ -134,7 +170,7 @@
   .comparison-section {
     padding-inline: clamp(26px, 5vw, 100px);
   }
-  .comparison-section .comparison-inner { max-width: 1400px; }
+  .comparison-section .comparison-inner { max-width: min(78vw, 1580px); }
   .comparison-inner .comparison-heading { margin-bottom: clamp(64px, 7vw, 138px); }
   .comparison-heading .comparison-title { font-size: clamp(30px, 2.25vw, 46px); }
   .comparison-heading .comparison-description {
@@ -144,7 +180,6 @@
   .comparison-inner .comparison-table {
     width: 100%;
     grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 2fr);
-    border-top: 3px solid #e2d5c0;
   }
   .comparison-table .comparison-cell,
   .comparison-table .comparison-label-cell {
@@ -217,7 +252,7 @@
     border-radius: 999px;
   }
 
-  .parent-guide-section .parent-guide-inner { width: min(86%, 1260px); }
+  .parent-guide-section .parent-guide-inner { width: min(89%, 1510px); }
   .guide-chat-list .guide-question-row { width: min(490px, 100%); }
   .guide-chat-list .guide-answer-row { width: min(730px, 100%); }
   .guide-question-row .guide-question-bubble {
@@ -261,28 +296,28 @@
 
   .book-page .book-hero-inner {
     max-width: 1400px;
-    min-height: clamp(710px, 88vh, 955px);
-    padding: clamp(65px, 9vh, 104px) var(--content-gutter) clamp(72px, 9vh, 110px);
+    min-height: clamp(535px, 54vw, 900px);
+    padding: clamp(35px, 5vw, 90px) var(--content-gutter) clamp(26px, 4.2vw, 79px);
     justify-content: center;
   }
   .book-hero-inner .hero-speech-wrap {
-    max-width: min(660px, 63vw);
+    max-width: min(690px, 51vw);
     margin-bottom: clamp(10px, 2vh, 24px);
   }
   .book-hero-inner .hero-books-row {
-    max-width: 1060px;
+    max-width: min(60vw, 1190px);
     gap: clamp(10px, 1.25vw, 25px);
   }
-  .book-hero-inner .hero-book { width: clamp(136px, 11.6vw, 232px); }
+  .book-hero-inner .hero-book { width: clamp(93px, 14.2vw, 280px); }
   .book-hero-inner .book-2,
   .book-hero-inner .book-4 { margin-bottom: clamp(34px, 4.4vw, 84px); }
 
-  .book-page .package-inner { max-width: 1400px; }
+  .book-page .package-inner { max-width: min(78vw, 1480px); }
   .book-page .package-section {
     padding-inline: var(--content-gutter);
     padding-bottom: var(--section-space);
   }
-  .book-page .package-grid { gap: clamp(18px, 1.5vw, 30px); }
+  .book-page .package-grid { gap: clamp(18px, 2vw, 40px); }
   .book-page .package-card {
     min-height: clamp(465px, 30vw, 600px);
     padding: clamp(31px, 2.35vw, 47px) clamp(14px, 1.3vw, 28px) clamp(28px, 2.4vw, 47px);
@@ -303,14 +338,15 @@
   .book-page .storybook-feature-content { padding-block: clamp(48px, 4vw, 78px) 0; }
   .book-page .storybook-feature-copy { min-height: clamp(125px, 8vw, 157px); }
   .book-page .storybook-feature-carousel {
-    --book-spread-width: clamp(400px, 34vw, 705px);
-    --book-slide-step: clamp(550px, 52vw, 1060px);
-    --book-slide-height: clamp(335px, 26vw, 538px);
+    --book-spread-width: clamp(360px, 46vw, 900px);
+    --book-slide-step: clamp(530px, 71vw, 1430px);
+    --book-slide-height: clamp(310px, 33.5vw, 680px);
+    --book-arrow-inset: max(12px, calc((100% - var(--book-spread-width)) / 2 - clamp(105px, 10vw, 200px)));
   }
   .book-page .storybook-feature-viewport,
   .book-page .storybook-feature-slide { height: var(--book-slide-height); }
-  .book-page .storybook-feature-arrow--prev { left: max(3%, calc(18% - 35px)); }
-  .book-page .storybook-feature-arrow--next { right: max(3%, calc(18% - 35px)); }
+  .book-page .storybook-feature-arrow--prev { left: var(--book-arrow-inset); }
+  .book-page .storybook-feature-arrow--next { right: var(--book-arrow-inset); }
   .book-page .storybook-feature-pagination {
     min-height: 0;
     padding-block: 32px clamp(58px, 5vw, 96px);
@@ -319,46 +355,42 @@
   .book-page .ilkko-package-section {
     padding: var(--section-space) var(--content-gutter) calc(var(--section-space) + 12px);
   }
-  .book-page .ilkko-package-heading { margin-bottom: clamp(55px, 5vw, 96px); }
-  .book-page .ilkko-package-grid { max-width: 1220px; gap: clamp(22px, 1.5vw, 30px); }
-  .book-page .ilkko-package-flip { aspect-ratio: 4 / 5; }
-  .book-page .ilkko-package-card-front { padding: clamp(25px, 3.2vw, 64px) clamp(20px, 2.8vw, 55px); }
+  .book-page .ilkko-package-heading { margin-bottom: clamp(38px, 4vw, 72px); }
+  .book-page .ilkko-package-grid { max-width: min(clamp(510px, 64vw, 970px), 100%); gap: clamp(16px, 1.5vw, 30px); }
+  .book-page .ilkko-package-flip { aspect-ratio: 5 / 7; }
+  .book-page .ilkko-package-card-front { padding: clamp(20px, 2.2vw, 41px) clamp(14px, 1.7vw, 32px); }
   .book-page .ilkko-package-card-label { font-size: clamp(14px, .94vw, 18px); }
   .book-page .ilkko-package-card-thumbnail {
     width: 58%;
-    max-width: 270px;
-    height: 47%;
-    margin-top: clamp(19px, 2vw, 40px);
+    max-width: 200px;
+    height: 45%;
+    margin-top: clamp(16px, 1.65vw, 32px);
     flex-shrink: 1;
   }
   .book-page .ilkko-package-card-description {
     max-width: 420px;
-    margin-top: clamp(22px, 2.5vw, 50px);
+    margin-top: clamp(18px, 1.9vw, 38px);
   }
-  .book-page .ilkko-package-card-cover { object-fit: contain; }
   .book-page .three-step-section {
-    min-height: min(940px, calc(100svh - 24px));
+    min-height: clamp(730px, 82vw, 1240px);
   }
+  .book-page .three-step-section::before { width: 100%; }
   .three-step-section .three-step-inner {
-    padding-block: clamp(66px, 12vh, 130px) clamp(60px, 10vh, 100px);
+    --sketchbook-offset: clamp(34px, 4.2vh, 54px);
+    padding-block: calc(clamp(102px, 16vh, 180px) + var(--sketchbook-offset))
+      calc(clamp(52px, 9vh, 90px) - var(--sketchbook-offset));
   }
 
   .community-hero-pinned-viewport .community-hero-text-wrap {
-    top: max(106px, 15%);
+    top: max(calc(var(--desktop-header-height) + 25px), 15%);
   }
   .community-hero-pinned-viewport .community-hero-main-title {
-    font-size: clamp(48px, min(8.2vw, 11vh), 106px);
+    font-size: clamp(45px, min(7.2vw, 9.8vh), 91px);
   }
   .community-hero-pinned-viewport .community-hero-char-wrap {
-    width: min(44vw, 550px, 61vh);
+    width: min(39vw, 480px, 55vh);
     bottom: clamp(-42px, -3.8vh, -22px);
   }
-  .community-review-section {
-    padding-block: clamp(72px, 12vh, 126px) clamp(64px, 10vh, 104px);
-  }
-  .community-review-section .review-header { margin-bottom: clamp(24px, 4vh, 48px); }
-  .community-review-section .review-card-container { margin-top: 0; }
-
   main.help-page { max-width: min(92%, 1080px); }
   .help-page .help-header { padding-top: clamp(36px, 7vh, 76px); }
 
@@ -369,7 +401,6 @@
     .learning-stages-title, .carousel-main-title, .concern-title, .package-title,
     .three-step-title, #storybookFeatureHeading, .ilkko-package-heading, .ilkko-purchase-heading
   ),
-  .community-review-section .review-header h2,
   .testimonial-section .header-titles h2,
   .help-page .help-header h1 {
     font-size: var(--section-title-size);
@@ -377,9 +408,7 @@
     line-height: 1.25;
   }
 
-  main :is(.process-step h3, .package-item-title, #storybookFeatureTitle, .ilkko-package-card-title),
-  .testimonial-section .testimonial-card .review-title,
-  .review-list-section .review-list-inner .item-title {
+  main :is(.process-step h3, .package-item-title, #storybookFeatureTitle, .ilkko-package-card-title) {
     font-size: var(--item-title-size);
     font-weight: 700;
     line-height: 1.35;
@@ -390,7 +419,6 @@
     .review-story-description, .carousel-sub-title, .package-desc, #storybookFeatureDescription,
     .ilkko-package-card-description
   ),
-  .community-review-section .review-header p,
   .testimonial-section .header-titles p,
   .testimonial-section .testimonial-card .review-content,
   .review-list-section .review-list-inner .item-text,
@@ -400,6 +428,11 @@
     line-height: 1.65;
   }
 
+  .testimonial-section .testimonial-card .review-content,
+  .review-list-section .review-list-inner .item-text {
+    font-size: calc(var(--body-copy-size) - 1px);
+  }
+
   .book-page :is(.concern-section, .ilkko-purchase-section),
   .testimonial-section {
     padding-block: var(--section-space) calc(var(--section-space) + 12px);
@@ -407,4 +440,10 @@
   .comparison-section { padding-top: var(--section-space); }
   .help-page .help-header { margin-bottom: clamp(36px, 3vw, 58px); }
 
+}
+
+@media (min-width: 769px) and (hover: hover) and (pointer: fine) {
+  .book-page .ilkko-package-section .ilkko-package-flip {
+    cursor: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2261%22%20height%3D%2238%22%20viewBox%3D%220%200%2061%2038%22%3E%3Cpath%20d%3D%22M3%202v20l5-5%203%207%204-2-3-6h7z%22%20fill%3D%22%23151515%22%20stroke%3D%22white%22%20stroke-width%3D%221.5%22%20stroke-linejoin%3D%22round%22%2F%3E%3Crect%20x%3D%2218%22%20y%3D%2216%22%20width%3D%2242%22%20height%3D%2221%22%20rx%3D%2210.5%22%20fill%3D%22%23151515%22%20stroke%3D%22white%22%2F%3E%3Ctext%20x%3D%2239%22%20y%3D%2230%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-family%3D%22sans-serif%22%20font-size%3D%2210%22%20font-weight%3D%22700%22%3ECLICK%3C%2Ftext%3E%3C%2Fsvg%3E") 3 2, pointer;
+  }
 }
