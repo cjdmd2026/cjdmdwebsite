@@ -1,0 +1,84 @@
+/* A restrained museum label below the opened scroll, with no badges on the artwork. */
+html body.media-time-body .scroll-scene-shelf{position:absolute;z-index:14;left:50%;bottom:4vh;transform:translateX(-50%) translateY(6px);width:min(640px,64vw);color:#2c3d4c;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s ease,transform .3s ease,visibility .3s}
+html body.media-time-body .scroll-scene-shelf.is-visible{opacity:1;visibility:visible;transform:translateX(-50%);pointer-events:auto}
+.scroll-scene-shelf nav{display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
+html body.media-time-body .scroll-scene-shelf .scene-pin{position:relative!important;inset:auto!important;width:100%!important;height:auto!important;display:flex!important;align-items:baseline;gap:12px;padding:10px 0!important;border:0!important;border-top:1px solid #8997a266!important;border-radius:0!important;background:none!important;box-shadow:none!important;color:#6b7882!important;text-align:left!important;cursor:pointer!important;transition:color .2s,border-color .2s}
+html body.media-time-body .scroll-scene-shelf .scene-pin[aria-pressed="true"],html body.media-time-body .scroll-scene-shelf .scene-pin:hover{color:#273d50!important;border-top-color:#334f65!important}
+.scroll-scene-shelf .scene-pin small{font:400 9px/1.5 Arial,sans-serif;letter-spacing:.06em}
+.scroll-scene-shelf .scene-pin span{font:400 15px/1.5 'Apple SD Gothic Neo','Noto Sans KR',sans-serif;letter-spacing:-.02em}
+.scroll-scene-shelf .scene-pin:focus-visible{outline:1px solid #536f85;outline-offset:4px}
+.scroll-scene-reading{display:flex;gap:22px;align-items:baseline;margin-top:9px;min-height:32px;font:400 11px/1.7 'Apple SD Gothic Neo','Noto Sans KR',sans-serif}
+.scroll-scene-reading>span{flex-shrink:0;color:#3a5266}
+.scroll-scene-reading>p{margin:0;color:#647581}
+@media(max-width:700px){html body.media-time-body .scroll-scene-shelf{width:82vw;bottom:5vh}.scroll-scene-shelf nav{gap:16px}.scroll-scene-shelf .scene-pin span{font-size:13px}.scroll-scene-reading{display:block;font-size:10px;margin-top:5px}.scroll-scene-reading>span{display:none}}
+@media(prefers-reduced-motion:reduce){html body.media-time-body .scroll-scene-shelf{transition:none}}
+html body.media-time-body #scrollMedia:focus-visible{outline:none!important}
+html body.media-time-body #scrollMedia:focus-visible .media-trigger{opacity:.85!important;text-decoration:underline;text-underline-offset:4px}
+
+/* Artwork hotspots share the scene label selection. */
+html body.media-time-body #scrollMedia .scroll-art-point{position:absolute;z-index:22;transform:translate(-50%,-50%);display:grid;place-items:center;width:40px;height:40px;border:0;border-radius:50%;background:transparent;color:#fff;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .3s,background .2s}
+html body.media-time-body #scrollMedia.fully-open .scroll-art-point{opacity:1;pointer-events:auto}
+.scroll-art-point i{width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 0 5px #ffffff26,0 1px 8px #14212c88;transition:box-shadow .2s}
+.scroll-art-point span{position:absolute;left:32px;top:4px;font:10px/1.5 Arial,sans-serif;letter-spacing:.05em;text-shadow:0 1px 4px #000;opacity:0;transition:opacity .2s}
+.scroll-art-point:hover i,.scroll-art-point[aria-pressed="true"] i{box-shadow:0 0 0 8px #ffffff33,0 0 0 9px #ffffff88}
+.scroll-art-point:hover span,.scroll-art-point[aria-pressed="true"] span{opacity:1}
+.scroll-art-point:focus-visible{outline:1px solid #fff;outline-offset:3px}
+html body.media-time-body #scrollMedia.fully-open .scroll-art-point{display:grid!important;padding:0!important}
+html body.media-time-body #scrollMedia .scroll-art-point:before,html body.media-time-body #scrollMedia .scroll-art-point:after{display:none!important;content:none!important}
+html body.media-time-body #scrollMedia .scroll-art-point>i{display:block!important;position:static!important;width:8px!important;height:8px!important;transform:none!important}
+
+html body.media-time-body #scrollMedia>.interaction-cue{left:calc(7% + 60px)!important;top:50%!important;--cue-line:28px;max-width:155px!important}
+/* Keep the paper's natural tone and match the moving right roller to the left. */
+html body.media-time-body #scrollMedia>.open>img{
+  content:url('../assets/images/scroll-unrolled.webp')!important;
+  filter:saturate(.78) brightness(1.035) contrast(.96) drop-shadow(0 12px 9px rgba(19,33,46,.16))!important;
+}
+html body.media-time-body #scrollMedia>.open::after{
+  content:''!important;display:block!important;position:absolute!important;z-index:25!important;
+  left:auto!important;right:-1px!important;top:0!important;height:100%!important;
+  width:clamp(34px,3.5vw,62px)!important;
+  background-image:url('../assets/images/scroll-unrolled.webp')!important;
+  background-position:left center!important;background-repeat:no-repeat!important;
+  background-size:88vw 100%!important;
+  filter:saturate(.78) brightness(1.035) contrast(.96) drop-shadow(-3px 1px 4px #0003)!important;
+  opacity:1!important;pointer-events:none!important;
+}
+@media(max-width:800px){html body.media-time-body #scrollMedia>.open::after{background-size:90vw 100%!important}}
+
+/* Two matching rollers meet when closed; the painting stays behind them. */
+html body.media-time-body #scrollMedia>.open,
+html body.media-time-body #scrollMedia.opened>.open{min-width:7vw!important}
+html body.media-time-body #scrollMedia>.open>img{opacity:clamp(0,calc(var(--reveal,0)*35),1)!important}
+html body.media-time-body #scrollMedia>.open::before{
+ content:'';position:absolute;z-index:26;left:0;top:0;width:3.5vw;height:100%;
+ background:url('../assets/images/scroll-unrolled.webp') left center/88vw 100% no-repeat;
+ filter:saturate(.78) brightness(1.035) contrast(.96);pointer-events:none;
+}
+html body.media-time-body #scrollMedia>.open::after{width:3.5vw!important;right:0!important;filter:saturate(.78) brightness(1.035) contrast(.96)!important}
+@media(max-width:800px){html body.media-time-body #scrollMedia>.open::before{background-size:90vw 100%}}
+@media(max-width:700px){html body.media-time-body #scrollMedia>.open::before,html body.media-time-body #scrollMedia>.open::after{background-size:94vw 100%!important}}
+
+/* Quiet, neutral labels; keep the closed pair touching. */
+html body.media-time-body #scrollMedia>.open,html body.media-time-body #scrollMedia.opened>.open{min-width:5.2vw!important}
+html body.media-time-body #scrollMedia>.open::before,html body.media-time-body #scrollMedia>.open::after{width:2.6vw!important;background-position:-.8vw center!important}
+html body.media-time-body .scroll-scene-shelf{color:#303438!important;width:min(660px,64vw)}
+html body.media-time-body .scroll-scene-shelf .scene-pin{color:#696b6d!important;border-top-color:#5555!important;font-size:14px!important}
+html body.media-time-body .scroll-scene-shelf .scene-pin[aria-pressed="true"]{color:#242627!important;border-top-color:#303438!important}
+.scroll-scene-reading>span{color:#333!important}.scroll-scene-reading>p{color:#666!important}
+html body.media-time-body #scrollMedia .scroll-art-point i{width:5px!important;height:5px!important;box-shadow:0 0 0 3px #ffffff20,0 1px 4px #0006!important}
+html body.media-time-body #scrollMedia .scroll-art-point span{display:none!important}
+html body.media-time-body #scrollMedia .media-trigger{display:none!important}
+html body.media-time-body:has(#scrollMedia:not(.opened)) #scrollMedia>.interaction-cue{left:calc(7% + 42px)!important}
+
+
+/* The artwork layer contains a baked-in left roller. Exclude it so that
+   the two explicit end rollers are the only rollers at every drag position. */
+html body.media-time-body #scrollMedia>.open>img{
+ left:-.8vw!important;clip-path:inset(0 0 0 3.4vw)!important;
+}
+
+html body.media-time-body #scrollMedia>.open,html body.media-time-body #scrollMedia.opened>.open{min-width:4.9vw!important}
+
+/* The completed artwork includes both original wooden end handles. */
+html body.media-time-body #scrollMedia.fully-open>.open>img{content:url('../assets/images/scroll-open-both-handles.webp')!important;left:0!important;width:100%!important;clip-path:none!important;object-fit:fill!important}
+html body.media-time-body #scrollMedia.fully-open>.open::before,html body.media-time-body #scrollMedia.fully-open>.open::after{display:none!important}

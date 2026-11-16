@@ -1,0 +1,11 @@
+/* One native cursor per location; no following DOM overlay. */
+.yearon-cursor{display:none!important}
+@media(any-pointer:fine){
+ html body:not(#cursor-a):not(#cursor-b):not(#cursor-c):not(#cursor-d),html body:not(#cursor-a):not(#cursor-b):not(#cursor-c):not(#cursor-d) *{cursor:url('../assets/cursor-glow.svg') 20 20,default!important}
+ html body:not(#cursor-a):not(#cursor-b):not(#cursor-c):not(#cursor-d) :is(.scroll-right-roller,#paperMedia,#paperMedia *,.radio-antenna,.radio-frequency,.radio-volume,.rg-tuner,.dial-hit,#channelDial,.culture-feed,.pc-titlebar,.radio-power){cursor:grab!important}
+ html body:not(#cursor-a):not(#cursor-b):not(#cursor-c):not(#cursor-d) :is(.scroll-right-roller,#paperMedia,#paperMedia *,.radio-antenna,.radio-frequency,.radio-volume,.rg-tuner,.dial-hit,#channelDial,.culture-feed,.pc-titlebar,.radio-power):active,html body:not(#cursor-a):not(#cursor-b):not(#cursor-c):not(#cursor-d) :is(.dragging,.is-turning,.is-dragging) :is(.scroll-right-roller,#paperMedia,#paperMedia *,.radio-antenna,.radio-frequency,.radio-volume,.rg-tuner,.dial-hit,#channelDial,.culture-feed,.pc-titlebar,.radio-power){cursor:grabbing!important}
+ html body:not(#cursor-a):not(#cursor-b):not(#cursor-c):not(#cursor-d) .pc-screen-ui,html body:not(#cursor-a):not(#cursor-b):not(#cursor-c):not(#cursor-d) .pc-screen-ui *{cursor:url('../assets/cursor-classic.svg') 2 1,default!important}
+ html body:not(#cursor-a):not(#cursor-b):not(#cursor-c):not(#cursor-d) .pc-screen-ui .pc-titlebar{cursor:grab!important}
+ html body:not(#cursor-a):not(#cursor-b):not(#cursor-c):not(#cursor-d) .pc-screen-ui .pc-titlebar:active{cursor:grabbing!important}
+ html body:not(#cursor-a):not(#cursor-b):not(#cursor-c):not(#cursor-d) :is(textarea,input[type=text],input[type=search],input[type=email],input[type=password],[contenteditable=true]){cursor:text!important}
+}

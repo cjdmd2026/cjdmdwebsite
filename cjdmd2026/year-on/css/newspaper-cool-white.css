@@ -1,0 +1,20 @@
+/* Clean white paper; keep the ink neutral and legible. */
+html body.media-time-body #paperMedia :is(.paper-fixed,.paper-left-rest,.paper-flex-front,.paper-flex-back){background-color:#f5f8fb!important;background-blend-mode:multiply!important;filter:grayscale(1) brightness(1) contrast(1.08)!important}
+html body.media-time-body #paperMedia :is(.paper-fixed,.paper-left-rest,.paper-flex-front,.paper-flex-back)::before{opacity:.12!important}
+html body.media-time-body #paperMedia :is(.paper-cover,.paper-spread img){filter:grayscale(1) brightness(1) contrast(1.08)!important}
+html body.media-time-body #paperMedia#paperMedia .paper-page-nav{justify-content:center!important}
+html body.media-time-body #paperMedia#paperMedia .paper-page-nav>button{display:none!important}
+
+/* Matte newsprint grain is attached to every face and follows the page turn. */
+html body.media-time-body #paperMedia :is(.paper-fixed,.paper-left-rest,.paper-flex-front,.paper-flex-back)::before{background-image:url('../assets/images/newsprint-fibres.svg?v=soft-hanji-20261115')!important;background-size:240px 240px!important;mix-blend-mode:multiply!important;pointer-events:none!important}
+html body.media-time-body #paperMedia :is(.paper-fixed,.paper-left-rest){box-shadow:0 1px 2px #111b2530,0 5px 12px #111b2520!important}
+html body.media-time-body #paperMedia .paper-book::after{background:linear-gradient(90deg,#73818b35,#edf1f444,#73818b20)!important}
+
+/* One quiet contact shadow; avoid a dark rectangular halo and mesh banding. */
+html body.media-time-body #paperMedia :is(.paper-fixed,.paper-left-rest){box-shadow:0 2px 5px #15202a14!important}
+html body.media-time-body #paperMedia :is(.paper-flex-front,.paper-flex-back)::after{background:linear-gradient(90deg,#26344035,transparent 75%)!important;opacity:calc(var(--strip-shade,0)*.48)!important}
+html body.media-time-body #paperMedia .paper-fixed::after{background:linear-gradient(90deg,#26344028,transparent 65%)!important;opacity:calc(var(--paper-lift,0)*.22)!important}
+html body.media-time-body #paperMedia .paper-book::after{width:1px!important;background:#53616d18!important}
+
+/* Crop the two-pixel scan border outside the final sheet. */
+html body.media-time-body #paperMedia .paper-left-rest[style*="newspaper-user-final-20261109"]{background-size:100.3% 100.2%!important;background-position:left top!important}

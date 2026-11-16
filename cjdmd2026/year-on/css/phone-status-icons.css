@@ -1,0 +1,11 @@
+/* Filled status glyphs, each with its native aspect ratio. Shared by camera and home. */
+html body .phone-media .culture-status-icons{height:4.5cqw!important;gap:1.1cqw!important;right:6%!important;top:5cqw!important;align-items:center!important}
+html body .phone-media .culture-status-icons svg{flex:0 0 auto!important;max-width:none!important;stroke:none!important;transform:none!important;overflow:visible;object-fit:contain}
+html body .phone-media .culture-status-icons .status-cellular{width:5.3cqw!important;height:3.975cqw!important}
+html body .phone-media .culture-status-icons .status-wifi{width:5.7cqw!important;height:4.165cqw!important}
+html body .phone-media .culture-status-icons .culture-battery{width:7.5cqw!important;height:3.97cqw!important}
+html body .phone-media .culture-status-icons .culture-battery rect:first-child{fill:currentColor!important}
+html body .phone-media .culture-status-icons .culture-battery text{font-family:Arial,sans-serif!important;font-size:13.5px!important;font-weight:700!important;letter-spacing:-.4px!important;fill:#343b47!important}
+html body .phone-media .culture-sns.phone-is-home .culture-status-icons{color:#fff}
+html body .phone-media .culture-sns:not(.phone-is-home):not(.phone-is-locked) .culture-status-icons{color:#17191d}
+html body .phone-media .culture-sns:not(.phone-is-home):not(.phone-is-locked) .culture-status-icons .culture-battery text{fill:#fff!important}

@@ -1,0 +1,18 @@
+/* Optical reflections remain visible on unlit displays. */
+html body.media-time-body .pc-screen-ui::after{content:"";position:absolute;inset:0;z-index:90;pointer-events:none;border-radius:inherit;background:linear-gradient(128deg,transparent 12%,rgba(223,241,255,.075) 13%,rgba(223,241,255,.025) 35%,transparent 36%),radial-gradient(ellipse 100% 60% at 35% -15%,rgba(231,247,255,.17),transparent 75%);box-shadow:inset 0 2px 3px #e7f5ff55,inset 2px 0 5px #e0f1ff22,inset -2px -3px 9px #02060e99}
+html body.media-time-body #screenWindow .crt-glass-surface{z-index:30!important;pointer-events:none!important;background:radial-gradient(ellipse 105% 70% at 30% -20%,#eff9ff55,#e4f3ff0d 55%,transparent 76%),linear-gradient(125deg,transparent 15%,#dff1ff0b 16%,transparent 46%)!important}
+.radio-control-guide{position:absolute;left:7%;top:3%;display:flex;gap:16px;color:#d4e8f4;font:400 10px/1.5 Arial,sans-serif;pointer-events:none;z-index:25}
+.radio-control-guide span{white-space:nowrap}
+html body #radioMedia .radio-four-dials .radio-frequency{opacity:1;background:#b5def318;outline:1px solid #b5def377;outline-offset:3px}
+
+/* A separate, quiet instruction line rather than text over the glass shell. */
+html body.media-time-body #radioMedia .radio-control-guide{position:absolute!important;left:50%!important;right:auto!important;top:calc(100% + 24px)!important;bottom:auto!important;transform:translateX(-50%)!important;width:max-content!important;max-width:90vw!important;display:flex!important;flex-wrap:wrap!important;justify-content:center!important;gap:9px 20px!important;padding:0!important;color:#b8c9d6!important;background:none!important;border:0!important;font:400 10px/1.7 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif!important;letter-spacing:.02em!important;text-shadow:none!important;pointer-events:none!important;z-index:25!important}
+html body.media-time-body #radioMedia .radio-control-guide span{white-space:nowrap!important}
+@media(max-width:700px){html body.media-time-body #radioMedia .radio-control-guide{width:84vw!important;top:calc(100% + 18px)!important;gap:5px 15px!important;font-size:9px!important}}
+
+html body #radioMedia .radio-power:is(:hover,:focus-visible) {
+ outline:none;
+ border-radius:42% 42% 27% 27% / 28% 28% 22% 22%;
+ background:linear-gradient(100deg,#e0f1ff55,transparent 32%,transparent 66%,#cce8ff42);
+ box-shadow:inset 0 1px 2px #e5f5ffd9,0 0 7px #a0d2ff4d;
+}

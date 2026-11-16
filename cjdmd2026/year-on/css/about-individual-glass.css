@@ -1,0 +1,6 @@
+/* Individual nodes: softly shaded translucent glass, as in the reference. */
+html body.about-body #ypInfographic .wn-individuals circle.wn-person-glass{fill:url(#wnIndividualBody);stroke:url(#wnIndividualRim);stroke-width:1.1;vector-effect:non-scaling-stroke;filter:drop-shadow(0 2px 3px #10172520)}
+html body.about-body #ypInfographic .wn-individuals .wn-person-word{fill:#f5f5f2;font-family:Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;font-size:14px;font-weight:400;letter-spacing:-.04em;filter:drop-shadow(0 1px 1px #121b2b66)}
+html[lang=en] body.about-body #ypInfographic .wn-individuals .wn-person-word{font-size:10px;letter-spacing:-.02em}
+
+html body.about-body #ypInfographic .wn-connections path{stroke:#d6e2ee;stroke-opacity:.34;stroke-width:.75;vector-effect:non-scaling-stroke;stroke-linecap:round}

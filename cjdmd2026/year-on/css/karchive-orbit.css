@@ -1,0 +1,25 @@
+/* Additional Orbit / Scatter mode: original views and filters remain available. */
+#archiveStage[data-layout=orbit] #archiveObjects{transform-style:preserve-3d;perspective:1548px;isolation:isolate}
+#archiveStage[data-layout=orbit] .ka-object{border:1px solid #ffffff20;border-radius:4px;overflow:hidden;box-shadow:0 8px 20px #0005;transition:filter .25s,border-color .25s;backface-visibility:hidden}
+#archiveStage[data-layout=orbit] .ka-object img{width:100%;height:100%;object-fit:cover;filter:none!important;border-radius:3px}
+#archiveStage[data-layout=orbit] .ka-glass-edge,#archiveStage[data-layout=orbit] .ka-glass-reflection,#archiveStage[data-layout=orbit] .ka-curve-indicator{display:none!important}
+@media(hover:hover){#archiveStage[data-layout=orbit] #archiveObjects:has(.ka-object:hover) .ka-object:not(:hover){filter:brightness(.35)!important}#archiveStage[data-layout=orbit] .ka-object:hover{filter:brightness(1.14)!important;border-color:#ffffff90}}
+#archiveStage[data-layout=orbit] .ka-object:focus-visible{outline:2px solid #b6d4ed;outline-offset:5px}
+#archiveFocus.ka-orbit-focus{background:#06080bef;backdrop-filter:blur(12px);border:0;color:#e8edf0;max-width:none;width:100vw;height:100dvh;max-height:none;padding:0;inset:0;margin:0}
+#archiveFocus.ka-orbit-focus::backdrop{background:#000b}
+#archiveFocus.ka-orbit-focus .ka-detail{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;gap:16px;padding:65px 8vw 85px;box-sizing:border-box}
+#archiveFocus.ka-orbit-focus figure{margin:0;max-width:78vw;display:flex;flex-direction:column;align-items:center}
+#archiveFocus.ka-orbit-focus figure>img{width:auto!important;height:auto!important;max-height:57dvh!important;max-width:76vw!important;object-fit:contain;border-radius:3px;box-shadow:0 20px 70px #0008;animation:kaOrbitFocus .45s cubic-bezier(.2,.7,.2,1)}
+#archiveFocus.ka-orbit-focus figcaption{font-size:10px;opacity:.6;margin-top:9px;max-width:70vw}
+#archiveFocus.ka-orbit-focus .ka-detail-copy{position:static;max-width:650px;text-align:center;margin:0;padding:0}
+#archiveFocus.ka-orbit-focus .ka-detail-copy h2{font-size:clamp(20px,2.1vw,30px);font-weight:400;margin:8px 0 12px}
+#archiveFocus.ka-orbit-focus .ka-detail-copy p{font-size:13px;line-height:1.7;margin:4px 0;color:#b6bfc7}
+#archiveFocus.ka-orbit-focus .ka-detail-copy small{font-size:10px;letter-spacing:.1em;color:#8eabbc}
+.ka-orbit-step{position:absolute;bottom:24px;display:flex;gap:22px;align-items:center;font:11px Arial;letter-spacing:.12em}
+.ka-orbit-step button{border:1px solid #ffffff35;border-radius:50%;width:38px;height:38px;background:transparent;color:#fff;cursor:pointer}
+@keyframes kaOrbitFocus{from{opacity:0;transform:translateY(18px) scale(.94)}to{opacity:1;transform:none}}
+@media(max-width:760px){#archiveStage[data-layout=orbit] .ka-controls{max-width:94vw}#archiveFocus.ka-orbit-focus .ka-detail{padding:64px 6vw 85px;gap:12px}#archiveFocus.ka-orbit-focus figure>img{max-height:48dvh!important;max-width:88vw!important}#archiveFocus.ka-orbit-focus figure{max-width:90vw}#archiveFocus.ka-orbit-focus .ka-detail-copy p{font-size:12px}}
+@media(prefers-reduced-motion:reduce){#archiveFocus.ka-orbit-focus figure>img{animation:none}}
+html body #archiveFocus.ka-orbit-focus[open]{position:fixed!important;inset:0!important;width:100vw!important;max-width:100vw!important;height:100dvh!important;max-height:100dvh!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:#06080bef!important;overflow:auto!important}
+html body #archiveFocus.ka-orbit-focus .ka-detail{min-height:100dvh!important;height:auto!important;max-height:none!important;padding-bottom:92px!important;position:relative}
+html body #archiveFocus.ka-orbit-focus .ka-orbit-step{bottom:24px!important}

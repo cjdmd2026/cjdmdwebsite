@@ -1,0 +1,23 @@
+/* One left edge connects the image, point, date and reading column. */
+html body.about-body #ypMediaAnchor{--era-width:clamp(360px,36vw,580px);--art-width:clamp(96px,10vw,150px);--timeline-axis:53%}
+html body.about-body #ypMediaAnchor .media-story-heading{inset:calc(var(--header-h,74px) + 32px) 6vw auto}
+html body.about-body #ypMediaAnchor .media-story-heading h2{font:400 clamp(25px,2.5vw,40px)/1.15 Arial,sans-serif;letter-spacing:-.035em}
+html body.about-body #ypMediaAnchor .media-story-subheading{margin-top:14px;color:#abbac6;font:400 clamp(12px,1vw,15px)/1.5 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;letter-spacing:.015em}
+html body.about-body #ypMediaAnchor .media-story-track{padding-left:calc(50vw - var(--art-width)/2);padding-right:calc(50vw - var(--era-width) + var(--art-width)/2)}
+html body.about-body #ypMediaAnchor .media-story-row{flex:0 0 var(--era-width);--timeline-node-x:0px;--media-focus:0}
+html body.about-body #ypMediaAnchor .media-story-image{left:0;bottom:calc(100% - var(--timeline-axis) + 30px);width:var(--art-width);transform:scale(calc(1 + var(--media-focus)*.055));transform-origin:left bottom;filter:grayscale(calc(1 - var(--media-focus))) brightness(calc(.58 + var(--media-focus)*.42)) drop-shadow(0 0 5px rgb(188 219 245 / calc(var(--media-focus)*.14)));will-change:filter,transform}
+html body.about-body #ypMediaAnchor .media-story-image img{width:100%;height:clamp(72px,12svh,118px);object-fit:contain;object-position:left bottom}
+html body.about-body #ypMediaAnchor .media-story-node{left:0;width:10px;height:10px;transform:translateY(-50%)}
+html body.about-body #ypMediaAnchor .media-story-copy{left:0;right:auto;top:calc(var(--timeline-axis) + 28px);width:clamp(260px,25vw,350px);max-width:calc(var(--era-width) - 65px);opacity:calc(.5 + var(--media-focus)*.5)}
+html body.about-body #ypMediaAnchor .media-story-date{font:400 clamp(25px,2.4vw,36px)/1.15 Arial,sans-serif;letter-spacing:-.035em}
+html body.about-body #ypMediaAnchor .media-story-label{display:block;margin:10px 0 17px;color:#d7e1e9;font:500 clamp(11px,.85vw,13px)/1.4 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif}
+html body.about-body #ypMediaAnchor .media-story-description{font:400 clamp(10px,.72vw,12px)/1.8 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;color:#a8b5bf;letter-spacing:0;word-break:keep-all}
+html body.about-body #ypMediaAnchor .media-story-cue{left:50%;transform:translateX(-50%);font-size:9px;color:#8f9ca7}
+@media(max-width:760px){html body.about-body #ypMediaAnchor{--era-width:85vw;--art-width:108px;--timeline-axis:49%}html body.about-body #ypMediaAnchor .media-story-heading{top:calc(var(--header-h,74px) + 26px)}html body.about-body #ypMediaAnchor .media-story-copy{width:68vw;max-width:300px}html body.about-body #ypMediaAnchor .media-story-description{font-size:11px}html body.about-body #ypMediaAnchor .media-story-date{font-size:27px}html body.about-body #ypMediaAnchor .media-story-subheading{font-size:11px;max-width:80vw}html body.about-body #ypMediaAnchor .media-story-link{bottom:65px;font-size:9px}}
+@media(max-height:550px){html body.about-body #ypMediaAnchor{--timeline-axis:48%}html body.about-body #ypMediaAnchor .media-story-image img{height:48px}html body.about-body #ypMediaAnchor .media-story-heading{top:calc(var(--header-h,74px) + 10px)}html body.about-body #ypMediaAnchor .media-story-subheading{margin-top:5px}html body.about-body #ypMediaAnchor .media-story-copy{top:calc(var(--timeline-axis) + 18px)}html body.about-body #ypMediaAnchor .media-story-label{margin:5px 0 8px}}
+@media(prefers-reduced-motion:reduce){html body.about-body #ypMediaAnchor .media-story-image{transform:none;will-change:auto}}
+/* The existing header controller opens the language menu through aria-expanded. */
+html body.about-body .global-header:has(.globe-button[aria-expanded="true"]) .language-menu{visibility:visible!important;opacity:1!important;pointer-events:auto!important;transform:none!important}
+
+/* The timeline exits by opacity, never by sliding behind the fixed header. */
+html body.about-body #ypMediaAnchor .media-story-stage.about-fixed-scene{background:#000;transform:none!important}

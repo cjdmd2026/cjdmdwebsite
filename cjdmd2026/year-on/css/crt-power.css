@@ -1,0 +1,56 @@
+/* Physical power control only. Original CRT visuals remain unchanged. */
+.crt-power-layer{position:absolute;inset:0;z-index:38;pointer-events:none;opacity:0;background:#030305}
+html body.media-time-body #screenWindow[data-power="off"] .crt-power-layer{opacity:1}
+html body.media-time-body #screenWindow[data-power="off"] :is(#channelStage,#staticCanvas,.scanlines,.roll,.osd,.color-bars){visibility:hidden!important}
+html body.media-time-body #television>.tv-power-control{position:absolute;left:80.55%;top:53.2%;width:10.4%;height:16.2%;z-index:51;background:none;border:0;padding:0;border-radius:50%;cursor:pointer;touch-action:manipulation}
+.tv-power-control>span{position:absolute;left:50%;bottom:110%;transform:translateX(-50%);font:500 8px/1 Arial;white-space:nowrap;background:#101923e0;color:#eee;padding:5px 7px;opacity:0;pointer-events:none}
+.tv-power-control:is(:hover,:focus-visible)>span{opacity:1}.tv-power-control:focus-visible{outline:1px solid #e6f4ff;outline-offset:3px}
+html body.media-time-body #television>.tv-power-control{top:25.05%!important}
+html body.media-time-body .tv-time-panel #channelDial{top:53.2%!important}
+html body.media-time-body #screenWindow[data-power="off"]{background:#020304!important}
+html body.media-time-body #television.tv-is-off>.interaction-cue{display:none!important}
+.tv-power-hint{position:absolute;z-index:52;left:101%;top:27%;width:180px;color:#e6edf3;pointer-events:none;text-align:left}
+.tv-power-hint[hidden]{display:none!important}
+.tv-power-hint:before{content:'';position:absolute;right:calc(100% + 10px);top:7px;width:var(--power-guide-length,45px);height:1px;background:#d5e0e580}
+.tv-power-hint b,.tv-power-hint span{display:block;font-family:Arial,sans-serif;font-weight:400}
+.tv-power-hint b{font-size:11px;line-height:1.5}.tv-power-hint span{font-size:9px;line-height:1.6;color:#b4c1cb;margin-top:6px}
+@media(max-width:760px){.tv-power-hint{left:55%;top:-42px;width:170px}.tv-power-hint:before{display:none}.tv-power-hint b{font-size:10px}.tv-power-hint span{font-size:8px;margin-top:3px}}
+/* Power uses the top of the three small buttons beside the two large dials. */
+html body.media-time-body #television>.tv-power-control{left:91.7%!important;top:28.6%!important;width:4.7%!important;height:6.1%!important}
+html body.media-time-body .tv-time-panel #channelDial{top:25.05%!important}
+.tv-power-hint{top:29.3%}
+
+/* CRT beam expansion/collapse on deliberate power presses only. */
+.crt-power-layer:after{content:'';position:absolute;left:4%;top:50%;width:92%;height:2px;margin-top:-1px;background:#f1f5fa;box-shadow:0 0 8px 2px #e7edf7,0 0 22px 5px #a4bdd97d;border-radius:50%;opacity:0}
+html body.media-time-body #screenWindow.crt-starting .crt-power-layer{animation:crtPowerVeilOn .7s linear both}
+html body.media-time-body #screenWindow.crt-starting .crt-power-layer:after{animation:crtPowerBeamOn .7s ease-out both}
+html body.media-time-body #screenWindow.crt-starting :is(#channelStage,#staticCanvas){animation:crtPowerOpen .7s cubic-bezier(.16,.7,.2,1) both}
+html body.media-time-body #screenWindow.crt-stopping .crt-power-layer{animation:crtPowerVeilOff .46s linear both}
+html body.media-time-body #screenWindow.crt-stopping .crt-power-layer:after{animation:crtPowerBeamOff .46s ease-out both}
+html body.media-time-body #screenWindow.crt-stopping :is(#channelStage,#staticCanvas){animation:crtPowerClose .46s cubic-bezier(.55,.02,.85,.5) both}
+@keyframes crtPowerVeilOn{0%,12%{opacity:1}45%{opacity:.65}100%{opacity:0}}
+@keyframes crtPowerBeamOn{0%{opacity:0;transform:scaleX(.01)}15%{opacity:1;transform:scaleX(1)}40%{opacity:.7;transform:scaleY(4)}75%,100%{opacity:0;transform:scaleY(25)}}
+@keyframes crtPowerOpen{0%,18%{clip-path:inset(49.8% 42%)}35%{clip-path:inset(47% 0)}75%,100%{clip-path:inset(0)}}
+@keyframes crtPowerVeilOff{0%,45%{opacity:0}70%,100%{opacity:1}}
+@keyframes crtPowerBeamOff{0%,35%{opacity:0;transform:scaleX(1)}60%{opacity:1;transform:scaleX(1)}85%{opacity:.9;transform:scaleX(.015)}100%{opacity:0;transform:scaleX(0)}}
+@keyframes crtPowerClose{0%{clip-path:inset(0)}60%{clip-path:inset(49.8% 0)}85%{clip-path:inset(49.8% 49.5%)}100%{clip-path:inset(50%)}}
+/* Power and channel controls have separate guides, with no overlapping labels. */
+@media(min-width:761px){
+ .tv-power-hint{top:15%!important;left:101%!important;width:150px}
+ .tv-power-hint:before{right:calc(100% + 8px);top:8px;width:38px;height:65px;background:none;border-top:1px solid #d5e0e580;border-left:1px solid #d5e0e580;box-sizing:border-box}
+}
+
+/* First-use highlight follows the round channel dial, then disappears after tuning. */
+html body.media-time-body #television:not(.tv-is-off) #channelDial:is(:hover,:focus-visible,.is-dragging)::after{content:''!important;display:block!important;opacity:1!important;position:absolute;left:50%;top:50%;width:89%;height:auto!important;aspect-ratio:1;transform:translate(-50%,-50%);box-sizing:border-box;border-radius:50%;border:2px solid #b9e5fa;background:#a2dcf52b;box-shadow:0 0 0 4px #b4e4f31a,inset 0 0 10px #9fdcf54a,0 0 15px #9fdcf570;pointer-events:none;z-index:5}
+#television>.tv-power-hint{display:none!important}
+
+/* Trace the physical power button when its hit target is active. */
+html body.media-time-body #television > .tv-power-control:is(:hover, :focus-visible)::after {
+  content: "";
+  position: absolute;
+  inset: 5%;
+  border: 1px solid #c4efff;
+  border-radius: 50%;
+  box-shadow: 0 0 5px #8fd8ffb0, inset 0 0 3px #8fd8ff66;
+  pointer-events: none;
+}

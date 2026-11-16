@@ -1,0 +1,197 @@
+*{box-sizing:border-box}.karchive-body{margin:0;height:100svh;overflow:hidden;background:#fff!important;color:#14212a;font-family:Arial,sans-serif}.ka-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}.ka{height:100svh;background:#fff!important}.ka-scroll,.ka-stage{position:relative;width:100%;height:100%;overflow:hidden}.ka-stage{background:#fff;color:#14212a;transition:background .55s,color .55s}.ka-topline{position:absolute;z-index:400;left:42px;right:42px;top:calc(var(--header-h,96px) + 22px);display:flex;justify-content:space-between;font:700 9px Arial;letter-spacing:.15em}.ka-opening-copy{position:absolute;z-index:250;left:50%;top:51%;transform:translate(-50%,-50%);width:min(620px,72vw);text-align:center;pointer-events:none}.ka-opening-copy p{margin:0;font-size:clamp(44px,4.5vw,74px);font-weight:400;letter-spacing:-.055em}.ka-opening-copy span{display:block;margin-top:12px;font-size:14px;color:#6b7e8b}.ka-opening-copy small{display:block;margin-top:29px;font-size:8px;letter-spacing:.18em;color:#9badb9}.ka-objects{position:absolute;inset:0;z-index:100}.ka-object{position:absolute;padding:0;border:0;border-radius:16px;background:#e6e9eb;overflow:visible;box-shadow:0 13px 29px rgba(26,38,49,.13);cursor:pointer;will-change:left,top,width,height,opacity,transform;transition:box-shadow .25s}.ka-object img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit;transition:filter .4s,transform .35s}.ka-object:hover{box-shadow:0 20px 42px rgba(25,36,45,.24)}.ka-object:hover img{transform:scale(1.025)}.ka-card-caption{position:absolute;top:calc(100% + 8px);left:0;font:700 8px Arial;letter-spacing:.11em;white-space:nowrap;color:currentColor}.ka-network-lines{position:absolute;inset:0;z-index:80;width:100%;height:100%;pointer-events:none}.ka-network-lines line{stroke:rgba(116,130,141,.43);stroke-width:.7}.ka-network-lines line.is-related{stroke:#97afc1;stroke-width:1.15;opacity:1}.ka-image-index{position:absolute;z-index:420;left:50%;bottom:20px;transform:translateX(-50%);font:700 8px Arial;letter-spacing:.12em;opacity:0;white-space:nowrap}.ka-image-index.is-visible{opacity:1}.ka-controls{position:absolute;z-index:420;left:42px;right:42px;bottom:24px;display:flex;justify-content:space-between;border-top:1px solid rgba(41,58,69,.22);padding-top:11px;transition:top .4s,bottom .4s}.ka-control-group{display:flex;align-items:center;gap:16px}.ka-controls span,.ka-controls button{font:700 8px Arial;letter-spacing:.12em}.ka-controls button{border:0;border-bottom:1px solid transparent;background:none;color:inherit;padding:0 0 7px;opacity:.46;cursor:pointer}.ka-controls button[aria-pressed=true]{opacity:1;border-bottom-color:currentColor}.ka-stage.is-network .ka-controls{top:calc(var(--header-h,96px) + 20px);bottom:auto}.ka-stage.is-network .ka-topline{opacity:0}.ka-stage.is-network .ka-opening-copy{display:none}.ka-stage.is-network .ka-image-index{bottom:18px}.ka-stage.is-network .ka-object img{filter:grayscale(1) brightness(.24)}.ka-stage.is-network .ka-object:not(.is-muted) img{filter:none}.ka-stage.is-network .ka-object{box-shadow:none}.ka-stage.is-switching .ka-object{transition:left .75s cubic-bezier(.2,.75,.2,1),top .75s cubic-bezier(.2,.75,.2,1),width .75s,height .75s,opacity .6s,transform .75s}
+body.ka-filter-active,body.ka-filter-active .ka,body.ka-filter-active .ka-stage{background:#050505!important;color:#f5f5f5!important}body.ka-filter-active .global-header{background:#050505!important;border-color:#292929!important}body.ka-filter-active .global-header :is(a,button,.brand-word){color:#f5f5f5!important}body.ka-filter-active .brand-mark{filter:none!important}body.ka-filter-active .ka-controls{border-color:#333}
+body.ka-network-active,
+body.ka-network-active .ka,
+body.ka-network-active .ka-stage{background:#050505!important;color:#f5f5f5!important}
+body.ka-network-active .global-header{background:#050505!important;border-color:#292929!important}
+body.ka-network-active .global-header :is(a,button,.brand-word){color:#f5f5f5!important}
+body.ka-network-active .brand-mark{filter:none!important}
+body.ka-network-active .ka-controls{color:#8f8f8f!important;border-bottom-color:#333!important}
+body.ka-network-active .ka-controls .ka-control-group>span{color:#777!important}
+body.ka-network-active .ka-controls button{color:#8f8f8f!important}
+body.ka-network-active .ka-controls button[aria-pressed="true"]{color:#f5f5f5!important;border-bottom-color:#f5f5f5!important}
+body.ka-network-active .ka-image-index{color:#bdbdbd!important}
+.ka-focus{inset:0;width:100%;max-width:none;height:100%;max-height:none;margin:0;padding:0;border:0;background:#f5f5f2;color:#111;overflow:auto}.ka-focus::backdrop{background:rgba(0,0,0,.55)}.ka-focus-head{display:flex;justify-content:space-between;padding:32px 42px 25px;border-bottom:1px solid #bbb}.ka-focus-head small,.ka-actions{font:700 9px Arial;letter-spacing:.13em}.ka-focus-head h2{margin:12px 0 8px;font-size:clamp(60px,9vw,150px);line-height:.8;letter-spacing:-.07em}.ka-close{align-self:start;border:0;background:none;font:700 10px Arial;cursor:pointer}.ka-editorial{display:grid;grid-template-columns:1.25fr .75fr;gap:3vw;align-items:end;padding:8vh 6vw}.ka-editorial figure{margin:0}.ka-editorial img{display:block;width:100%;max-height:72vh;object-fit:cover}.ka-editorial figcaption{margin-top:8px;font:700 8px Arial;letter-spacing:.11em}.ka-past{display:grid;grid-template-columns:.7fr 1.3fr;gap:7vw;padding:9vh 6vw 14vh;border-top:1px solid #aaa}.ka-past-label,.ka-past nav button{font:700 9px Arial;letter-spacing:.11em}.ka-past p{font-size:18px;line-height:1.5}.ka-past nav{display:flex;gap:18px;border-bottom:1px solid;padding-bottom:12px}.ka-past nav button{border:0;background:none;opacity:.38;cursor:pointer}.ka-past nav button[aria-pressed=true]{opacity:1}.ka-past-result{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:35px}.ka-past-result img{width:100%;max-height:48vh;object-fit:contain}.ka-past-result strong{font-size:36px}.ka-past-result p{font-size:16px}
+@media(max-width:760px){.ka-topline,.ka-controls{left:16px;right:16px}.ka-opening-copy p{font-size:13vw}.ka-opening-copy span{font-size:11px}.ka-control-group{gap:9px}.ka-controls span{display:none}.ka-editorial,.ka-past,.ka-past-result{grid-template-columns:1fr}.ka-focus-head{padding:22px 18px}.ka-editorial,.ka-past{padding-left:18px;padding-right:18px}}
+
+/* Lift the browse controls and restore the cool-gray type hierarchy. */
+.ka-stage:not(.is-network) .ka-controls{bottom:52px}
+.ka-stage:not(.is-network) .ka-image-index{bottom:54px;color:#647783}
+.ka-controls{color:#97a1a8}
+.ka-controls .ka-control-group>span{color:#526570}
+.ka-controls button{color:#96a0a7;opacity:1}
+.ka-controls button[aria-pressed="true"]{color:#405a69;opacity:1;border-bottom-color:#405a69}
+.ka-image-index{color:#647783}
+.ka-topline{color:#72828c}
+
+/* Captions belong to the focused browse state, never the turning circle. */
+.ka-card-caption{opacity:0!important;visibility:hidden!important}
+.ka-stage.is-line .ka-object.is-current .ka-card-caption{opacity:1!important;visibility:visible!important;color:#667983!important;font-weight:600!important}
+
+/* View and category controls stay directly below the global header. */
+.ka-controls,
+.ka-stage:not(.is-network) .ka-controls,
+.ka-stage.is-network .ka-controls{
+  top:calc(var(--header-h,96px) + 20px)!important;
+  bottom:auto!important;
+}
+.ka-stage.is-ready .ka-topline{opacity:0;pointer-events:none}
+
+/* Labels sit above the rule. */
+.ka-controls{
+  border-top:0!important;
+  border-bottom:1px solid rgba(41,58,69,.22)!important;
+  padding-top:0!important;
+  padding-bottom:11px!important;
+}
+body.ka-filter-active .ka-controls{border-bottom-color:#333!important}
+
+/* Remove the redundant archive phase labels. */
+.ka-topline{display:none!important}
+
+/* Final vertical alignment for the archive navigation and center title. */
+.ka-controls,
+.ka-stage:not(.is-network) .ka-controls,
+.ka-stage.is-network .ka-controls{
+  top:calc(var(--header-h,96px) + 6px)!important;
+}
+.ka-opening-copy p{
+  font-size:clamp(54px,5.2vw,86px)!important;
+  line-height:.9!important;
+  letter-spacing:-.06em!important;
+}
+
+/* Match the original light, restrained K-ARCHIVE title. */
+.ka-opening-copy p{
+  font-size:clamp(42px,3.55vw,58px)!important;
+  font-weight:300!important;
+  line-height:1!important;
+  letter-spacing:-.045em!important;
+  color:#17303f!important;
+}
+
+/* CONNECTIONS stays light until a category is chosen. */
+body.ka-network-active:not(.ka-filter-active),
+body.ka-network-active:not(.ka-filter-active) .ka,
+body.ka-network-active:not(.ka-filter-active) .ka-stage{
+  background:#fff!important;
+  color:#14212a!important;
+}
+body.ka-network-active:not(.ka-filter-active) .global-header{
+  background:rgba(255,255,255,.94)!important;
+  border-color:rgba(20,33,42,.12)!important;
+  color:#14212a!important;
+}
+body.ka-network-active:not(.ka-filter-active) .global-header :is(a,button,.brand-word,.brand-year,.brand-colon,.brand-on){color:#14212a!important}
+body.ka-network-active:not(.ka-filter-active) .global-header svg{stroke:#14212a!important;color:#14212a!important}
+body.ka-network-active:not(.ka-filter-active) .ka-controls{color:#96a0a7!important;border-bottom-color:rgba(41,58,69,.22)!important}
+body.ka-network-active:not(.ka-filter-active) .ka-controls .ka-control-group>span{color:#526570!important}
+body.ka-network-active:not(.ka-filter-active) .ka-controls button{color:#96a0a7!important}
+body.ka-network-active:not(.ka-filter-active) .ka-controls button[aria-pressed="true"]{color:#405a69!important;border-bottom-color:#405a69!important}
+body.ka-network-active:not(.ka-filter-active) .ka-network-lines line{stroke:rgba(116,130,141,.34)}
+
+/* Category mode follows the supplied dark network reference. */
+body.ka-filter-active .global-header :is(a,button,.brand-word,.brand-year,.brand-colon,.brand-on){color:#f5f5f5!important}
+body.ka-filter-active .global-header svg,
+body.ka-filter-active .global-header svg *{stroke:#f5f5f5!important;color:#f5f5f5!important}
+body.ka-filter-active .menu-lines i{background:#f5f5f5!important}
+body.ka-filter-active .ka-stage.is-network .ka-object.is-muted img{filter:grayscale(1) brightness(.2)!important}
+body.ka-filter-active .ka-stage.is-network .ka-object:not(.is-muted) img{filter:none!important}
+
+/* Keep archive controls quiet so the collection remains the focal point. */
+.ka-controls,
+.ka-stage:not(.is-network) .ka-controls,
+.ka-stage.is-network .ka-controls{
+  top:var(--header-h,96px)!important;
+  padding-bottom:7px!important;
+  border-bottom-color:rgba(41,58,69,.12)!important;
+  opacity:.62;
+  transition:opacity .24s ease,border-color .24s ease!important;
+}
+.ka-controls:hover,.ka-controls:focus-within{opacity:1}
+.ka-control-group{gap:14px}
+.ka-controls span,.ka-controls button{
+  font-size:7px!important;
+  font-weight:600!important;
+  letter-spacing:.14em!important;
+}
+.ka-controls .ka-control-group>span{color:rgba(64,84,96,.68)!important}
+.ka-controls button{color:rgba(89,106,117,.62)!important}
+.ka-controls button[aria-pressed="true"]{
+  color:rgba(47,73,88,.88)!important;
+  border-bottom-color:rgba(47,73,88,.68)!important;
+}
+
+/* Lift the archive controls and remove the long divider. */
+.ka-controls,
+.ka-stage:not(.is-network) .ka-controls,
+.ka-stage.is-network .ka-controls{
+ top:calc(var(--header-h,96px) - 10px)!important;
+ border-top:0!important;
+ border-bottom:0!important;
+ padding-top:0!important;
+ padding-bottom:0!important;
+}
+body.ka-filter-active .ka-controls,
+body.ka-network-active:not(.ka-filter-active) .ka-controls{border:0!important}
+
+/* Definitive archive toolbar placement. */
+html body.karchive-body .ka-controls,
+html body.karchive-body .ka-stage:not(.is-network) .ka-controls,
+html body.karchive-body .ka-stage.is-network .ka-controls{
+ top:calc(var(--header-h,96px) - 18px)!important;
+ bottom:auto!important;
+ border:0!important;
+ box-shadow:none!important;
+ padding:0!important;
+}
+html body.karchive-body .ka-controls::before,
+html body.karchive-body .ka-controls::after{content:none!important;display:none!important}
+
+/* One toolbar baseline and a clear central reading hierarchy. */
+html body.karchive-body .ka-controls,html body.karchive-body .ka-stage:not(.is-network) .ka-controls,html body.karchive-body .ka-stage.is-network .ka-controls{top:calc(var(--header-h,74px) + 20px)!important;left:4vw!important;right:4vw!important;opacity:1!important}
+html body.karchive-body .ka-controls span,html body.karchive-body .ka-controls button{font-size:9px!important;font-weight:500!important;letter-spacing:.1em!important;color:#6e7a83!important}
+html body.karchive-body .ka-controls button[aria-pressed="true"]{color:#1b2831!important;border-bottom-color:#1b2831!important}
+.ka-opening-copy{top:56%!important;width:min(540px,54vw)!important}
+.ka-opening-copy p{font-size:clamp(32px,3.9vw,58px)!important;font-weight:400!important;letter-spacing:-.045em!important}
+.ka-opening-copy span{font-size:13px!important;line-height:1.65!important;max-width:390px;margin:16px auto 0!important;color:#687782!important}
+.ka-opening-copy small{font-size:8px!important;margin-top:24px!important;letter-spacing:.14em!important}
+.ka-object{border-radius:8px!important;box-shadow:0 5px 18px #1b263414!important}
+@media(max-width:760px){html body.karchive-body .ka-controls{flex-direction:column;gap:10px;top:calc(var(--header-h,64px) + 14px)!important}.ka-control-group{gap:11px;flex-wrap:wrap}.ka-opening-copy{width:65vw!important}.ka-opening-copy p{font-size:30px!important}.ka-opening-copy span{font-size:11px!important;max-width:210px}}
+body:not(.ka-filter-active) .ka-stage:not(.is-line):not(.is-network) .ka-opening-copy{opacity:1!important}
+
+html body.karchive-body .ka-controls .ka-control-group>:is(span,button){font-family:Arial,sans-serif!important;font-size:9px!important;font-weight:500!important;letter-spacing:.1em!important;line-height:1.4!important}
+
+html body.karchive-body .ka-control-group{align-items:baseline!important}
+
+/* Scene-specific image captions and visible source credits. */
+.ka-editorial figcaption{display:flex;flex-direction:column;gap:5px;padding-top:9px;line-height:1.5!important;white-space:normal!important}
+.ka-editorial .ka-photo-title{font:400 12px/1.5 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;color:inherit}
+.ka-editorial figcaption a{font:400 9px/1.5 Arial,sans-serif;color:#76818a;text-decoration:none;overflow-wrap:anywhere;letter-spacing:0}
+.ka-editorial figcaption a:hover{text-decoration:underline;color:inherit}
+
+/* A calm photo sphere opens directly, then unfolds into the existing archive. */
+.ka-stage.is-sphere .ka-opening-copy{top:calc(var(--header-h,74px) + 80px);width:85vw;z-index:250}
+.ka-stage.is-sphere .ka-opening-copy p{font:400 19px/1.2 Arial,sans-serif;letter-spacing:.03em}
+.ka-stage.is-sphere .ka-opening-copy span{font:400 10px/1.5 Arial,sans-serif;margin-top:9px}
+.ka-stage.is-sphere .ka-opening-copy small{display:none}
+.ka-stage.is-sphere .ka-object{border-radius:2px!important;box-shadow:none!important;backface-visibility:visible}
+.ka-stage.is-sphere .ka-card-caption{display:none!important}
+.ka-stage.is-sphere .ka-object img{border-radius:2px!important}
+.ka-sphere-cue{position:absolute;z-index:390;bottom:25px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;opacity:var(--sphere-cue,1);font:400 8px/1.4 Arial,sans-serif;letter-spacing:.13em;color:#77818a}
+.ka-sphere-cue svg{width:15px;height:24px}
+.ka-sphere-cue path{animation:yearonCueWheel 1.8s ease-in-out infinite}
+.ka-stage:not(.is-sphere) .ka-sphere-cue{display:none}
+@media(prefers-reduced-motion:reduce){.ka-sphere-cue path{animation:none}}
+
+.ka-stage.is-sphere .ka-opening-copy{top:calc(var(--header-h,74px) + 65px)!important;width:85vw!important}
+.ka-stage.is-sphere .ka-opening-copy p{font-size:19px!important;letter-spacing:.03em!important}
+.ka-stage.is-sphere .ka-opening-copy span{font-size:10px!important;margin-top:9px!important}
+/* Dark archive modes keep all navigation legible. */
+html body.ka-network-active .global-header.global-header,html body.ka-filter-active .global-header.global-header{background:#050505!important;color:#e5e9ec!important;backdrop-filter:none!important;border-bottom-color:#ffffff18!important}
+html body.ka-network-active .global-header.global-header .brand,html body.ka-filter-active .global-header.global-header .brand{filter:brightness(0) invert(1)!important}
+html body.ka-network-active .global-header.global-header nav a,html body.ka-filter-active .global-header.global-header nav a{color:#dce1e5!important}
+html body.ka-network-active .global-header.global-header nav a.active,html body.ka-filter-active .global-header.global-header nav a.active{color:#91b5cf!important}
+html body.ka-network-active .ka-controls,html body.ka-network-active .ka-controls button,html body.ka-filter-active .ka-controls,html body.ka-filter-active .ka-controls button{color:#b9c3cb!important}
+
+html body .ka-stage.is-line .ka-opening-copy{display:none!important}

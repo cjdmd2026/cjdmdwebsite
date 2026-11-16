@@ -1,0 +1,202 @@
+/* Active MEDIA BY ERA heading: quiet media label above a precision year counter. */
+html body.media-time-body .era-bridge #timeNav button .era-current-heading{
+  display:none;
+}
+
+/* Adjacent eras are supporting navigation, so their decade labels stay light. */
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'] b{
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif!important;
+  font-weight:100!important;
+  font-size:clamp(27px,2.2vw,34px)!important;
+  letter-spacing:.015em!important;
+}
+
+html body.media-time-body .era-bridge #timeNav button.active > b,
+html body.media-time-body .era-bridge #timeNav button.active > span{
+  display:none!important;
+}
+
+html body.media-time-body .era-bridge #timeNav button.active span.era-current-heading{
+  display:flex!important;
+  width:100%;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  margin:0!important;
+  color:#edf3f7!important;
+  pointer-events:none;
+}
+
+html body.media-time-body .era-bridge #timeNav button.active .era-current-heading span{
+  margin:0!important;
+  line-height:inherit!important;
+}
+
+html body.media-time-body .era-bridge #timeNav button.active .era-current-medium{
+  display:grid!important;
+  width:100%;
+  grid-template-columns:clamp(40px,6vw,90px) auto clamp(40px,6vw,90px);
+  justify-content:center;
+  align-items:center;
+  gap:clamp(13px,1.5vw,24px);
+  margin:0!important;
+  color:rgba(223,231,237,.78)!important;
+  font-family:Arial,sans-serif!important;
+  font-size:clamp(8px,.62vw,10px)!important;
+  font-weight:300!important;
+  letter-spacing:.18em!important;
+  line-height:1!important;
+  white-space:nowrap;
+  text-transform:uppercase;
+}
+
+html body.media-time-body .era-current-medium::before,
+html body.media-time-body .era-current-medium::after{
+  content:"";
+  display:block;
+  height:1px;
+  background:linear-gradient(90deg,rgba(207,218,226,0),rgba(222,231,237,.58));
+}
+
+html body.media-time-body .era-current-medium::after{
+  transform:scaleX(-1);
+}
+
+html body.media-time-body .era-bridge #timeNav button.active span.era-odometer{
+  display:flex!important;
+  align-items:baseline;
+  justify-content:center;
+  margin:clamp(17px,2.2vh,23px) 0 0!important;
+  color:#e6edf2!important;
+  font-family:Arial,sans-serif!important;
+  font-size:clamp(38px,3.4vw,48px)!important;
+  font-weight:300!important;
+  letter-spacing:-.045em!important;
+  line-height:.92!important;
+  font-variant-numeric:tabular-nums;
+  text-shadow:0 1px 10px rgba(173,196,214,.07);
+  -webkit-font-smoothing:antialiased;
+}
+
+html body.media-time-body .era-bridge #timeNav button.active .era-odometer-digit{
+  position:relative;
+  display:block!important;
+  width:.62em;
+  height:.92em;
+  overflow:hidden;
+  font-size:inherit!important;
+  font-weight:inherit!important;
+  line-height:inherit!important;
+}
+
+html body.media-time-body .era-bridge #timeNav button.active .era-odometer-reel{
+  display:flex!important;
+  flex-direction:column;
+  width:100%;
+  will-change:transform;
+  font-size:inherit!important;
+  font-weight:inherit!important;
+  line-height:inherit!important;
+}
+
+html body.media-time-body .era-bridge #timeNav button.active .era-odometer-reel > i{
+  display:flex!important;
+  flex:0 0 .92em;
+  height:.92em;
+  align-items:center;
+  justify-content:center;
+  font:inherit;
+  font-style:normal;
+}
+
+html body.media-time-body .era-bridge #timeNav button.active .era-odometer-suffix{
+  display:block!important;
+  margin-left:.10em;
+  color:rgba(219,227,233,.68);
+  font-size:.5em!important;
+  font-weight:400;
+  letter-spacing:.10em!important;
+  transform:translateY(-.08em);
+}
+
+@media(max-width:700px){
+  html body.media-time-body .era-bridge #timeNav button.active{
+    width:82vw!important;
+  }
+  html body.media-time-body .era-current-medium{
+    gap:12px;
+    font-size:8px;
+  }
+  html body.media-time-body .era-bridge #timeNav button.active span.era-odometer{
+    margin-top:14px!important;
+    font-size:clamp(34px,9.8vw,42px)!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  html body.media-time-body .era-odometer-reel{will-change:auto}
+}
+
+/* Lift the active medium/year lockup as one unit. */
+html body.media-time-body .era-bridge #timeNav button.active{
+  top:calc(clamp(42px,6.3vh,70px) - 10px)!important;
+}
+@media(max-width:700px){
+  html body.media-time-body .era-bridge #timeNav button.active{
+    top:calc(clamp(42px,6.3vh,70px) - 6px)!important;
+  }
+}
+
+html body.media-time-body .era-bridge #timeNav button.active .era-odometer,html body.media-time-body .era-bridge #timeNav button.active .era-odometer *{font-family:"Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif!important}
+html body.media-time-body .era-bridge #timeNav button.active .era-current-medium{font-family:Arial,sans-serif!important}
+
+/* Every selected era uses the same heading box, independent of label length. */
+html body.media-time-body .era-bridge #timeNav button.active{
+  position:fixed!important;
+  top:calc(var(--header-h,74px) + clamp(42px,6.3vh,70px) - 10px)!important;
+  left:50%!important;right:auto!important;bottom:auto!important;
+  transform:translateX(-50%)!important;
+  width:min(680px,82vw)!important;height:110px!important;
+  min-height:0!important;padding:0!important;
+  display:block!important;transition:none!important;
+}
+html body.media-time-body .era-bridge #timeNav button.active span.era-current-heading{
+  position:absolute!important;inset:0!important;height:110px!important;padding:0!important;
+}
+html body.media-time-body .era-bridge #timeNav button.active .era-current-medium{
+  height:12px!important;min-height:12px!important;flex-shrink:0;
+}
+html body.media-time-body .era-bridge #timeNav button.active .era-odometer-suffix{
+  font-size:.62em!important;line-height:1!important;align-self:flex-end;transform:translateY(.02em)!important;
+}
+@media(max-width:700px){
+ html body.media-time-body .era-bridge #timeNav button.active{top:calc(64px + 36px)!important;height:100px!important}
+}
+
+html body.media-time-body .era-bridge #timeNav button.active .era-current-medium{position:absolute!important;top:0!important;left:0!important;line-height:12px!important}
+html body.media-time-body .era-bridge #timeNav button.active span.era-odometer{position:absolute!important;top:36px!important;left:0!important;width:100%!important;margin:0!important}
+html body.media-time-body .era-bridge #timeNav button:not(.active)>b{font:100 clamp(27px,2.2vw,34px)/1.1 "Helvetica Neue",Arial,sans-serif!important;letter-spacing:.015em!important;white-space:nowrap!important}
+html body.media-time-body .era-bridge #timeNav button:not(.active)>span:not(.era-current-heading){font:500 7px/1.5 Arial,sans-serif!important;letter-spacing:.12em!important;white-space:nowrap!important;overflow-wrap:normal!important;word-break:normal!important;margin-top:7px!important}
+
+/* Small shared lift of the medium / rules / decade lockup. */
+html body.media-time-body .era-bridge #timeNav button.active{top:calc(var(--header-h,74px) + clamp(42px,6.3vh,70px) - 18px)!important}
+@media(max-width:700px){html body.media-time-body .era-bridge #timeNav button.active{top:calc(64px + 28px)!important}}
+
+/* A minute increase in stroke, preserving the light numeral face. */
+html body.media-time-body .era-bridge #timeNav button.active .era-odometer{-webkit-text-stroke:.16px currentColor}
+
+/* Quiet one-line context below each selected decade. */
+html body.media-time-body .era-bridge #timeNav button.active .era-current-description{position:absolute!important;top:96px!important;left:50%!important;transform:translateX(-50%);width:max-content;max-width:90vw;display:block!important;margin:0!important;color:#b8bec5!important;font:400 clamp(10px,.76vw,12px)/1.5 "Apple SD Gothic Neo","Helvetica Neue",Arial,sans-serif!important;letter-spacing:0!important;white-space:nowrap!important;text-transform:none!important;-webkit-text-stroke:0!important}
+@media(max-width:700px){html body.media-time-body .era-bridge #timeNav button.active .era-current-description{top:85px!important;font-size:10px!important}}
+
+html body.media-time-body .era-bridge #timeNav button.active .era-current-description{top:86px!important;font-size:clamp(9px,.66vw,10px)!important;font-weight:300!important;color:#aeb5bd!important;letter-spacing:-.015em!important}
+@media(max-width:700px){html body.media-time-body .era-bridge #timeNav button.active .era-current-description{top:76px!important;font-size:9px!important}}
+
+html body.media-time-body .era-bridge #timeNav button.active .era-current-description{font-weight:200!important}
+
+/* Balance the decade between the medium label and its description. */
+html body.media-time-body .era-bridge #timeNav button.active span.era-odometer{top:30px!important}
+
+html body.media-time-body .era-bridge.at-present .era-now{display:flex!important;position:fixed!important;right:0!important;top:58%!important;align-items:center;gap:22px;color:#b9c2ca!important;font:300 10px/1 Arial,sans-serif;letter-spacing:.15em}html body.media-time-body .era-bridge.at-present .era-now:after{content:"";display:block;width:6.5vw;height:1px;background:#c7cdd255}html body.media-time-body .era-bridge.at-present .era-now b{font:inherit!important;color:inherit!important}
+
+html body.media-time-body .era-bridge #timeNav button.active .era-current-description{color:#b4bcc4!important;opacity:.75!important}

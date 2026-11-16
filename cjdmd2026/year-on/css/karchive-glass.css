@@ -1,0 +1,36 @@
+/* Inkwell-inspired archive mode; existing four layouts are untouched. */
+html body.karchive-body #archiveStage[data-layout="fan"]{isolation:isolate}
+html body.karchive-body .ka-stage[data-layout="fan"] .ka-object{overflow:visible!important;border:0!important;border-radius:12px!important;background:transparent!important;box-shadow:none!important;transform-style:preserve-3d!important;transition:filter .25s;}
+html body.karchive-body .ka-stage[data-layout="fan"] .ka-object img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;border-radius:11px!important;transform:translateZ(1px);box-shadow:inset 0 0 1px #fff;}
+html body.karchive-body .ka-stage[data-layout="fan"] .ka-object::before{content:""!important;position:absolute;inset:0;border-radius:12px;background:linear-gradient(125deg,#e4f2f3b3,#6d8b9155 40%,#e8f6f87a);transform:translate3d(5px,-2px,-7px);border:1px solid #eaf8ff99;box-shadow:2px 2px 2px #07141b66;}
+html body.karchive-body .ka-stage[data-layout="fan"] .ka-glass-edge{position:absolute;inset:0;border-radius:12px;transform:translateZ(3px);border:1px solid #edfaff9c;box-shadow:inset 1px 1px 1px #ffffffc4,inset -2px -1px 2px #49676d80,1px 0 0 #cbdfe5b3,2px -1px 0 #8aa2aa99,3px -1px 0 #d3e5eb99,4px -2px 0 #88a2ac80;pointer-events:none;}
+html body.karchive-body .ka-stage[data-layout="fan"] .ka-glass-reflection{position:absolute;inset:0;border-radius:12px;transform:translateZ(4px);background:linear-gradient(118deg,#f0fbff18,transparent 35%,transparent 65%,#e6f6ff0a 83%,#fff2);box-shadow:inset 0 0 0 4px #edfaff10;pointer-events:none;}
+html body.karchive-body .ka-stage:not([data-layout="fan"]) :is(.ka-glass-edge,.ka-glass-reflection){display:none}
+html body.karchive-body .ka-stage[data-layout="fan"] .ka-scene-record{display:block!important;position:absolute!important;left:50%!important;top:auto!important;bottom:116px!important;width:min(540px,80vw)!important;text-align:center!important;pointer-events:auto!important;transform:translateX(-50%)!important;}
+html body.karchive-body .ka-stage[data-layout="fan"] .ka-record-meta{justify-content:center;font-size:10px;letter-spacing:.12em;opacity:.65;margin-bottom:10px}
+html body.karchive-body .ka-stage[data-layout="fan"] .ka-scene-record h2{font-size:20px!important;font-weight:400!important;line-height:1.5!important;margin:0 0 6px!important;}
+html body.karchive-body .ka-stage[data-layout="fan"] :is(.ka-record-ko,.ka-record-actions){display:none!important}
+html body.karchive-body .ka-stage[data-layout="fan"] .ka-record-en{font-size:12px!important;line-height:1.6!important;margin:0!important;color:#9aabb5!important}
+.ka-glass-detail{margin-top:14px;padding:5px 0;border:0;border-bottom:1px solid #8b9ca66b;background:none;color:#d8e2e8;font:10px/1.5 inherit;letter-spacing:.12em;cursor:pointer}
+html body.karchive-body .ka-stage:not([data-layout="fan"]) .ka-glass-detail{display:none}
+html body.karchive-body .ka-stage[data-layout="fan"] .ka-fan-toggle{right:40px!important;top:125px!important;bottom:auto!important}
+html body.karchive-body .ka-stage[data-layout="fan"] .ka-curve-indicator{display:none!important}
+@media(max-height:650px){html body.karchive-body .ka-stage[data-layout="fan"] .ka-scene-record{bottom:85px!important}.ka-stage[data-layout="fan"] .ka-record-en{display:none}}
+
+html body.karchive-body .ka-stage[data-layout="fan"] .ka-scene-record{color:#e3e9ed!important}
+html body.karchive-body .ka-stage[data-layout="fan"] .ka-scene-record h2{color:#e3e9ed!important}
+html body.karchive-body .ka-stage[data-layout="fan"] .ka-record-meta{color:#9aabb5!important}
+html body.karchive-body .ka-stage[data-layout="fan"] .ka-glass-detail{font-family:inherit;font-size:10px;line-height:1.5}
+
+/* Polished solid glass, without an opaque white picture frame. */
+html body.karchive-body #archiveStage[data-layout="fan"] .ka-object{border-radius:12px!important;overflow:visible!important}
+html body.karchive-body #archiveStage[data-layout="fan"] .ka-object img{border-radius:11px!important;opacity:.96;transform:translateZ(3px)!important}
+html body.karchive-body #archiveStage[data-layout="fan"] .ka-glass-edge{border:1px solid #dcecf04d!important;box-shadow:inset 1px 1px 1px #fff6,inset -1px -1px 2px #263b4655,1px 0 0 #7896a366,2px -1px 0 #bacdd577,3px -1px 1px #425f6b66,4px -2px 0 #b5ccd366!important}
+html body.karchive-body #archiveStage[data-layout="fan"] .ka-object::before{background:linear-gradient(125deg,#e4f2f34d,#41647733 50%,#d8eff24d)!important;border-color:#c8e3eb66!important;transform:translate3d(6px,-2px,-8px)!important;box-shadow:2px 3px 5px #0007!important}
+html body.karchive-body #archiveStage[data-layout="fan"] .ka-glass-reflection{background:linear-gradient(115deg,#f2fbff21,transparent 23%,transparent 66%,#effaff0a 84%,#fff2)!important;box-shadow:inset 0 0 0 3px #d2e7ed0c,inset 0 1px 1px #f0fbff4d!important}
+
+.ka-glass-webgl{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;display:none}
+#archiveStage[data-layout="fan"] .ka-glass-webgl{display:block}
+html body.karchive-body #archiveStage.has-glass-renderer[data-layout="fan"] .ka-object{box-shadow:none!important;background:none!important;border:0!important}
+html body.karchive-body #archiveStage.has-glass-renderer[data-layout="fan"] .ka-object :is(img,.ka-glass-edge,.ka-glass-reflection){opacity:0!important}
+html body.karchive-body #archiveStage.has-glass-renderer[data-layout="fan"] .ka-object::before,html body.karchive-body #archiveStage.has-glass-renderer[data-layout="fan"] .ka-object::after{display:none!important}

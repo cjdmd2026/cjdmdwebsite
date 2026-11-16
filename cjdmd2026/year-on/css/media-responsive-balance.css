@@ -1,0 +1,33 @@
+/* Preserve the desktop composition while reserving independent mobile controls. */
+@media(max-width:800px){
+ html body.media-time-body .tv-time-panel #television{top:51%!important;width:min(82vw,calc((100svh - 320px)*1.2),540px)!important}
+ html body.media-time-body .tv-time-panel .channel-footer{top:auto!important;bottom:calc(108px + env(safe-area-inset-bottom,0px))!important;translate:0!important;width:88vw!important;left:50%!important;transform:translateX(-50%)!important;gap:10px!important}
+ html body.media-time-body .channel-nav{flex:1;min-width:0;gap:8px!important}
+ html body.media-time-body .channel-nav button{min-height:44px!important;min-width:0!important}
+ html body.media-time-body .channel-nav button :is(b,span){font-size:8px!important}
+ html body.media-time-body .era-bridge #timeNav button:not(.active){top:auto!important;bottom:calc(12px + env(safe-area-inset-bottom,0px))!important;height:76px!important;width:104px!important;transform:none!important}
+ html body.media-time-body .era-bridge #timeNav button:not(.active)>b{font-size:22px!important}
+ html body.media-time-body .era-bridge #timeNav button:not(.active)>span:not(.era-current-heading){font-size:7px!important;margin-top:4px!important}
+ html body.media-time-body .era-bridge #timeNav button:not(.active) :is(img,.era-thumb){max-width:50px!important;max-height:30px!important;object-fit:contain!important}
+ html body.media-time-body .time-panel .interaction-cue{display:none!important}
+ html body.media-time-body .time-panel[data-era="2002"] .pc-media{top:51%!important;width:min(90vw,calc((100svh - 315px)*1.5))!important}
+ html body.media-time-body .time-panel[data-era="2026"] .phone-media{top:51%!important;width:min(49vw,calc((100svh - 300px)*.53),260px)!important}
+ html body.media-time-body .time-panel[data-era="1920"]>#paperMedia .paper-book{top:49%!important;width:min(150vw,76svh)!important;max-width:calc((100svh - 285px)*1.36)!important}
+}
+@media(min-width:801px) and (max-width:1200px){html body.media-time-body .tv-time-panel #television{width:min(64vw,calc((100svh - 245px)*1.35),845px)!important}html body.media-time-body .time-panel .interaction-cue{max-width:100px;font-size:9px}}
+@media(max-height:600px) and (orientation:landscape){html body.media-time-body .era-bridge #timeNav button.active{top:70px!important;transform:translateX(-50%) scale(.78)!important;transform-origin:top center}html body.media-time-body .tv-time-panel #television{top:52%!important;width:min(49vw,calc((100svh - 150px)*1.2))!important}html body.media-time-body .tv-time-panel .channel-footer{bottom:14px!important;width:47vw!important}html body.media-time-body .era-bridge #timeNav button:not(.active){bottom:14px!important}}
+@media(max-width:800px){html body.media-time-body .era-bridge #timeNav button:not(.active){height:90px!important;bottom:18px!important;padding:0!important;box-sizing:border-box!important;gap:2px!important;color:#5c6c7b!important}html body.media-time-body .era-bridge #timeNav button:not(.active)>b,html body.media-time-body .era-bridge #timeNav button:not(.active)>span:not(.era-current-heading){color:#5c6c7b!important}}
+@media(max-width:800px){html body.media-time-body .time-panel[data-era="2002"] .pc-media{left:50%!important;transform:translate(-50%,-50%)!important}html body.media-time-body .era-bridge #timeNav button:not(.active)>b,html body.media-time-body .era-bridge #timeNav button:not(.active)>span:not(.era-current-heading){-webkit-text-fill-color:#5c6c7b!important;text-shadow:none!important}}
+/* Distinguish era navigation from the television's channel controls. */
+@media(max-width:800px){
+html body.media-time-body .era-bridge #timeNav button[data-neighbour="true"]{height:78px!important;bottom:calc(16px + env(safe-area-inset-bottom,0px))!important;width:42vw!important;padding:23px 12px 8px!important;border-top:1px solid #5b718440!important;align-items:center!important;justify-content:center!important;gap:0!important;background:#dce7f216!important;border-radius:0!important}
+html body.media-time-body .era-bridge #timeNav button[data-side=past][data-neighbour=true]{left:5vw!important;right:auto!important}
+html body.media-time-body .era-bridge #timeNav button[data-side=future][data-neighbour=true]{left:auto!important;right:5vw!important}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour=true]>.era-thumb{display:none!important}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour=true]::after{position:absolute!important;top:7px!important;left:0!important;right:0!important;color:#556b7e!important;font:400 9px/1.4 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif!important;letter-spacing:.04em!important;content:'← 이전 매체'!important;display:block!important}
+html body.media-time-body .era-bridge #timeNav button[data-side=future][data-neighbour=true]::after{content:'다음 매체 →'!important}
+html[lang=en] body.media-time-body .era-bridge #timeNav button[data-side=past][data-neighbour=true]::after{content:'← PREVIOUS ERA'!important}
+html[lang=en] body.media-time-body .era-bridge #timeNav button[data-side=future][data-neighbour=true]::after{content:'NEXT ERA →'!important}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour=true]>b{font-size:20px!important}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour=true]>span:not(.era-current-heading){margin-top:3px!important}
+}

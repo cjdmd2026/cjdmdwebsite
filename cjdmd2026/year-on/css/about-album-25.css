@@ -1,0 +1,39 @@
+html body.about-body #abrArchive{height:1560svh!important}
+.abr-pending-art{width:100%;height:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;border:1px solid #c3cdd22b;background:#dce4eb03;color:#b9c4cc;text-align:center}
+.abr-pending-art>span{font:300 clamp(24px,3vw,45px)/1.4 'Helvetica Neue','Apple SD Gothic Neo','Noto Sans KR',sans-serif;letter-spacing:-.04em}
+.abr-pending-art>small{font:400 10px/1.5 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;letter-spacing:.12em;color:#72808b}
+.abr-pending-art>em{font:300 12px/1.6 Arial,sans-serif;font-style:normal;color:#8e9ba4}
+
+html body.about-body #abrArchive .abr-work figcaption {
+  text-align: right !important;
+}
+html body.about-body #abrArchive .abr-work figcaption p {
+  margin: 10px 0 0 auto;
+  font: 300 clamp(12px, .98vw, 14px)/1.85 "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  color: #b8bdc0;
+  word-break: keep-all;
+  text-wrap: balance;
+}
+@media (min-width: 761px) {
+  #abrArchive .abr-work {
+    --work-width: min(43vw, 650px, calc(min(70svh, 730px) * var(--work-ratio)));
+    --work-height: calc(var(--work-width) / var(--work-ratio));
+  }
+  html body.about-body #abrArchive .abr-work-image {
+    width: var(--work-width);
+    height: var(--work-height);
+  }
+  html body.about-body #abrArchive .abr-work figcaption {
+    left: auto;
+    right: calc(50% + var(--work-width) / 2 + clamp(14px, 1.9vw, 27px));
+    bottom: calc(50% - var(--work-height) / 2 + 5px);
+    width: min(22vw, 248px);
+  }
+  #abrArchive .abr-work h3 { font-weight: 300; }
+}
+@media (max-width: 760px) {
+  html body.about-body #abrArchive .abr-work figcaption {
+    top: calc(64.5svh + 12px);
+    bottom: auto !important;
+  }
+}

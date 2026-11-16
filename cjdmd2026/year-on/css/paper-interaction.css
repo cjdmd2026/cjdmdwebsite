@@ -1,0 +1,74 @@
+html body .paper-media { touch-action:none; user-select:none; }
+html body .paper-media > .paper-cover,html body .paper-media > .paper-spread { display:none!important; }
+.paper-book{position:absolute;left:50%;top:50%;width:min(78vw,76vh);aspect-ratio:1072/960;transform:translate(-50%,-50%);perspective:1600px;--fold:0deg;--shade:0}
+.paper-fixed,.paper-leaf{position:absolute;left:50%;top:0;width:50%;height:100%;background:#fff}
+.paper-fixed{background:#fff url('../assets/images/newspaper-user-spread-02-20261109.webp') right center/200% 100% no-repeat}
+.paper-leaf{transform-origin:left center;transform:rotateY(var(--fold));transform-style:preserve-3d;will-change:transform}
+.paper-front,.paper-back{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#fff}
+.paper-front{background:#fff url('../assets/images/newspaper-front-user-v1.webp') center/100% 100% no-repeat}
+.paper-back{transform:rotateY(180deg);background:#fff url('../assets/images/newspaper-user-spread-02-20261109.webp') left center/200% 100% no-repeat}
+.paper-front:after,.paper-back:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.3),transparent 65%);opacity:var(--shade);pointer-events:none}
+.paper-book:after{content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;background:#0002;pointer-events:none}
+html body .paper-media:focus-visible{outline:1px solid #9ac4eb;outline-offset:5px}
+
+/* Leave breathing room below the decade description. */
+html body.media-time-body .paper-media .paper-book{top:calc(50% + 48px)!important}
+
+html body.media-time-body #paperMedia>span{display:none!important}
+html body.media-time-body .time-panel[data-era="1920"]>#paperMedia .paper-book{top:calc(54% + 30px)!important}
+/* Slightly smaller newspaper, retaining its hinge and vertical placement. */
+html body.media-time-body .time-panel[data-era="1920"]>#paperMedia .paper-book{width:min(71.76vw,69.92vh)!important}
+
+/* Thin flexible sheet: narrow connected strips form a continuous curved surface. */
+html body.media-time-body .time-panel[data-era="1920"]>#paperMedia .paper-book{top:calc(54% + 15px)!important;perspective:1800px}
+.paper-flex-leaf{transform:none!important;background:transparent!important;pointer-events:none}
+.paper-flex-strip{position:absolute;left:0;top:0;height:100%;transform-origin:left center;transform-style:preserve-3d;will-change:transform;background:transparent}
+.paper-flex-front,.paper-flex-back{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background-color:#f4f2ed;background-repeat:no-repeat}
+.paper-flex-front{background-image:url('../assets/images/newspaper-front-user-v1.webp');background-size:2800% 100%}
+.paper-flex-back{transform:rotateY(180deg);background-image:url('../assets/images/newspaper-user-spread-02-20261109.webp');background-size:5600% 100%}
+.paper-flex-front::after,.paper-flex-back::after{content:'';position:absolute;inset:0;background:#312b22;opacity:var(--strip-shade,0);pointer-events:none}
+.paper-book>.paper-fixed::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#24201c80,transparent 75%);opacity:calc(var(--paper-lift,0)*.38);pointer-events:none}
+.paper-book::after{width:1px;background:#0002}
+
+html body.media-time-body .time-panel[data-era="1920"]>#paperMedia .paper-book{top:calc(54% - 10px)!important}
+.paper-left-rest{position:absolute;left:0;top:0;width:50%;height:100%;background-repeat:no-repeat;background-color:#fff}
+.paper-left-rest[hidden]{display:none}
+.paper-page-nav{position:absolute;left:0;right:0;top:calc(100% + 12px);display:flex;justify-content:space-between;align-items:center;color:#525c66;font:10px/1.5 Arial,sans-serif;letter-spacing:.04em;z-index:25}
+.paper-page-nav button{border:0;background:none;padding:5px 8px;color:inherit;font:inherit;cursor:pointer}
+.paper-page-nav button:disabled{opacity:.25;cursor:default}
+.paper-page-nav button:focus-visible{outline:1px solid currentColor;outline-offset:2px}
+html body.media-time-body #paperMedia .paper-page-nav{position:absolute!important;inset:calc(100% + 12px) 0 auto!important;display:flex!important;flex-direction:row!important;justify-content:space-between!important;align-items:center!important;gap:20px!important;width:100%!important;height:auto!important;min-height:0!important;margin:0!important;padding:0!important;transform:none!important;border:0!important;background:none!important;overflow:visible!important}
+html body.media-time-body #paperMedia .paper-page-nav>button,html body.media-time-body #paperMedia .paper-page-nav>span{position:static!important;inset:auto!important;transform:none!important;display:block!important;width:auto!important;height:auto!important;margin:0!important;padding:5px 8px!important;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;color:#4f5963!important;font:400 10px/1.5 Arial,sans-serif!important;letter-spacing:.03em!important;white-space:nowrap!important;opacity:1!important}
+html body.media-time-body #paperMedia .paper-page-nav>button:disabled{opacity:.25!important}
+html body.media-time-body #paperMedia .paper-page-nav>button::before,html body.media-time-body #paperMedia .paper-page-nav>button::after,html body.media-time-body #paperMedia .paper-page-nav>span::before,html body.media-time-body #paperMedia .paper-page-nav>span::after{display:none!important}
+
+/* Fine newsprint fibres follow each face; the ink remains clear. */
+.paper-flex-front::before,.paper-flex-back::before,.paper-fixed::before,.paper-left-rest::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:2;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78 .34' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%237b7263' opacity='.55' filter='url(%23n)' d='M0 0h180v180H0z'/%3E%3C/svg%3E");background-position:var(--paper-grain-x,0px) 0;mix-blend-mode:multiply;opacity:.17}
+.paper-flex-front,.paper-flex-back,.paper-fixed,.paper-left-rest{background-color:#f5f3ed!important;filter:sepia(.055) contrast(.98)}
+.paper-flex-front::after,.paper-flex-back::after{background:linear-gradient(90deg,#3d3429b0,#76644955 60%,#ffffff80)!important;opacity:var(--strip-shade,0)}
+.paper-fixed,.paper-left-rest{box-shadow:0 2px 3px #24211d15,0 7px 15px #24211d18}
+.paper-fixed::after{background:linear-gradient(90deg,#352f2680,transparent 65%)!important}
+.paper-book::after{width:3px!important;background:linear-gradient(90deg,#55483d22,#ffffff4d,#55483d13)!important}
+
+/* Fine paper surface: diagonal curl cells retain both printed faces. */
+.paper-flex-strip{height:auto;transform-origin:left center;backface-visibility:visible}
+.paper-flex-leaf{filter:drop-shadow(0 8px 6px #0003);transform-style:preserve-3d}
+.paper-flex-front::after,.paper-flex-back::after{background:linear-gradient(90deg,#302b2470,#ffffff18 65%,#ffffff55)!important}
+.paper-flex-front::before,.paper-flex-back::before{opacity:.055!important}
+
+/* A continuous cylindrical sheet, without independently displaced tile rows. */
+.paper-flex-leaf{filter:none!important;transform-style:preserve-3d}
+.paper-flex-strip{height:100%;transform-style:preserve-3d}
+.paper-flex-front::after,.paper-flex-back::after{background:linear-gradient(90deg,#201e1b88,#ffffff22)!important}
+
+/* Preserve depth through the strip mesh and soften the moving sheet shadow. */
+.paper-book{transform-style:preserve-3d}
+.paper-flex-strip{contain:layout style}
+.paper-flex-leaf{z-index:4}
+.paper-fixed{z-index:1}
+.paper-left-rest{z-index:1}
+html body.media-time-body #paperMedia{cursor:grab}
+html body.media-time-body #paperMedia.dragging{cursor:grabbing}
+
+/* One page = 708:960; a spread contains two pages. Preserve artwork proportions. */
+html body.media-time-body .time-panel[data-era="1920"]>#paperMedia .paper-book{aspect-ratio:1416/960!important;height:auto!important}

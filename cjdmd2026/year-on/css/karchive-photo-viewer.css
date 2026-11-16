@@ -1,0 +1,32 @@
+/* A photo lightbox, with the archive still visible behind it. */
+html body #archiveFocus.ka-focus[open]{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;overflow:hidden!important;backdrop-filter:none!important;color:#eff3f7!important}
+html body #archiveFocus.ka-focus::backdrop{background:#050a104a!important;backdrop-filter:blur(7px) saturate(.72);-webkit-backdrop-filter:blur(7px) saturate(.72)}
+.ka-photo-viewer{box-sizing:border-box;width:100%;height:100%;display:grid;place-items:center;padding:55px 7vw 75px;pointer-events:none}
+.ka-photo-figure{width:fit-content;max-width:100%;margin:0!important;display:flex;flex-direction:column;align-items:center;pointer-events:auto}
+html body #archiveFocus.ka-focus .ka-photo-figure>img{display:block!important;width:auto!important;height:auto!important;max-width:min(84vw,1200px)!important;max-height:72dvh!important;object-fit:contain!important;border:0!important;border-radius:0!important;box-shadow:0 16px 45px #0005!important;animation:kaPhotoArrive .25s ease-out}
+html body #archiveFocus.ka-focus .ka-photo-figure figcaption{margin:15px 0 0!important;max-width:82vw!important;text-align:center!important;color:#eff3f7!important}
+html body #archiveFocus.ka-focus #archiveFocusTitle{margin:0!important;font:400 clamp(14px,1.15vw,18px)/1.5 Arial,"Apple SD Gothic Neo",sans-serif!important;letter-spacing:-.015em!important;color:#eff3f7!important}
+.ka-photo-meta{display:flex;justify-content:center;gap:18px;margin:6px 0 0;font:400 10px/1.5 Arial,sans-serif;letter-spacing:.08em;color:#b1c0cc}
+.ka-photo-close,.ka-photo-source{position:absolute;top:22px;pointer-events:auto;color:#eff3f7!important;background:transparent!important;border:0!important;text-decoration:none}
+.ka-photo-close{right:25px;width:40px;height:40px;font:300 29px/1 Arial,sans-serif;cursor:pointer}
+.ka-photo-source{left:28px;padding:12px 0;font:400 10px/1.5 Arial,sans-serif;letter-spacing:.1em;color:#c1cdd7!important}
+.ka-photo-step{position:absolute;bottom:20px;left:50%;translate:-50% 0;display:flex;align-items:center;gap:22px;pointer-events:auto}
+.ka-photo-step button{width:36px;height:36px;padding:0;border:0;background:transparent;color:#eff3f7;font:400 20px/1 Arial,sans-serif;cursor:pointer}
+.ka-photo-step span{font:400 10px/1 Arial,sans-serif;color:#adbdca;letter-spacing:.12em}
+.ka-photo-viewer button:focus-visible,.ka-photo-viewer a:focus-visible{outline:1px solid #d3e6f2;outline-offset:3px}
+@keyframes kaPhotoArrive{from{opacity:0;transform:scale(.975)}to{opacity:1;transform:none}}
+@media(max-width:760px){.ka-photo-viewer{padding:60px 4vw 78px}html body #archiveFocus.ka-focus .ka-photo-figure>img{max-width:92vw!important;max-height:67dvh!important}.ka-photo-meta{gap:12px;font-size:9px}.ka-photo-source{left:18px}.ka-photo-close{right:12px}}
+@media(prefers-reduced-motion:reduce){html body #archiveFocus.ka-focus .ka-photo-figure>img{animation:none}}
+
+html body:has(#archiveFocus[open]) #archiveObjects .ka-photo-selected{opacity:0!important;pointer-events:none!important}
+
+/* Raise the image carousel and its ruler together, keeping their spacing. */
+html body.karchive-body .ka-stage[data-layout="curve"] .ka-curve-indicator{translate:0 -48px!important}
+@media(max-width:760px){html body.karchive-body .ka-stage[data-layout="curve"] .ka-curve-indicator{translate:0 -30px!important}}
+
+/* Quiet, readable source credit kept with the title and date. */
+html body #archiveFocus.ka-focus .ka-photo-credit{display:flex;justify-content:center;align-items:baseline;flex-wrap:wrap;column-gap:5px;row-gap:2px;max-width:min(78vw,640px);margin:7px auto 0!important;font:400 9px/1.55 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif!important;letter-spacing:0;color:#9baab7!important}
+html body #archiveFocus.ka-focus .ka-photo-credit a{color:#aebdca!important;text-decoration:none;border-bottom:1px solid #b6c7d126}
+html body #archiveFocus.ka-focus .ka-photo-credit a:hover{color:#edf6ff!important;border-bottom-color:#c8dbe599}
+html body #archiveFocus.ka-focus .ka-photo-credit>span{color:#83939f;font-size:8px;margin-left:3px}
+@media(max-width:760px){html body #archiveFocus.ka-focus .ka-photo-figure>img{max-height:63dvh!important}html body #archiveFocus.ka-focus .ka-photo-credit{font-size:8px!important;max-width:86vw}}

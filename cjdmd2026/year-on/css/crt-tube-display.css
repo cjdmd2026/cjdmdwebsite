@@ -1,0 +1,19 @@
+/* CRT picture treatment only. The television cabinet and page layout stay untouched. */
+html body.media-time-body #screenWindow{isolation:isolate;background:#010305;box-shadow:inset 0 0 0 1px rgba(205,224,235,.16),inset 0 0 16px 5px rgba(0,0,0,.68)}
+html body.media-time-body #screenWindow .channel-stage{overflow:hidden;border-radius:inherit;background:#010305}
+html body.media-time-body #screenWindow.crt-webgl-ready #channelVideo{position:absolute;inset:0;width:100%;height:100%;opacity:0!important;filter:none!important;transform:none!important;pointer-events:none}
+html body.media-time-body #screenWindow .crt-tube-canvas{position:absolute;inset:0;z-index:6;width:100%;height:100%;display:block;border-radius:inherit;pointer-events:none}
+
+/* A restrained reflection separated from the phosphor image creates the glass depth. */
+html body.media-time-body #screenWindow .crt-tube-glass{position:absolute;inset:0;z-index:19;overflow:hidden;border-radius:inherit;pointer-events:none;background:radial-gradient(ellipse 116% 88% at 31% -21%,rgba(235,247,255,.105) 0%,rgba(218,237,249,.028) 37%,transparent 64%),radial-gradient(ellipse 92% 118% at 50% 47%,transparent 64%,rgba(4,10,15,.09) 82%,rgba(0,3,7,.42) 100%);box-shadow:inset 0 1px 1px rgba(236,247,253,.20),inset 1px 0 2px rgba(217,235,246,.11),inset -2px -2px 5px rgba(0,5,10,.40),inset 0 0 15px 4px rgba(0,4,9,.24)}
+html body.media-time-body #screenWindow .crt-tube-glass:before{content:"";position:absolute;left:7%;right:8%;top:2.5%;height:27%;border-radius:50%;border-top:1px solid rgba(244,250,255,.15);background:radial-gradient(ellipse at 30% 0%,rgba(244,250,255,.045),transparent 68%);transform:rotate(-4deg);filter:blur(.25px)}
+html body.media-time-body #screenWindow .crt-tube-glass:after{content:"";position:absolute;inset:1.4%;border-radius:14%/17%;box-shadow:inset 1px 0 1px rgba(225,241,249,.12),inset -1px -1px 2px rgba(181,209,225,.08)}
+
+/* Scanlines and edge shading are rendered in the same warped WebGL image. */
+html body.media-time-body #screenWindow.crt-webgl-ready .scanlines{display:none!important}
+html body.media-time-body #screenWindow.crt-webgl-ready .vignette{z-index:16;background:radial-gradient(ellipse at 50% 47%,transparent 62%,rgba(0,3,7,.08) 81%,rgba(0,2,5,.30) 100%)!important;box-shadow:inset 0 0 15px 4px rgba(0,0,0,.28)!important}
+
+html body.media-time-body #screenWindow .crt-channel-burst{position:absolute;inset:0;z-index:34;border-radius:inherit;opacity:0;pointer-events:none;background:linear-gradient(to bottom,transparent 35%,rgba(238,249,255,.20) 46%,rgba(255,255,255,.54) 49%,rgba(118,164,188,.18) 52%,transparent 62%),repeating-radial-gradient(ellipse at center,rgba(255,255,255,.16) 0 1px,rgba(0,0,0,.10) 1px 3px);mix-blend-mode:screen}
+html body.media-time-body #screenWindow.is-switching .crt-channel-burst{animation:crtChannelBurst .56s steps(2,end) both}
+@keyframes crtChannelBurst{0%{opacity:.38;transform:translateX(-1.2%);background-position:0 -18%,0 0}24%{opacity:.24;transform:translateX(.7%);background-position:0 21%,7px 3px}52%{opacity:.13;transform:translateX(-.25%);background-position:0 -7%,-5px 6px}78%{opacity:.06;transform:translateX(.1%)}100%{opacity:0;transform:none}}
+@media(prefers-reduced-motion:reduce){html body.media-time-body #screenWindow.is-switching .crt-channel-burst{animation:none}}

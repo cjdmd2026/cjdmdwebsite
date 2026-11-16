@@ -1,0 +1,19 @@
+html body.media-time-body #radioMedia .radio-four-dials .radio-frequency,html body.media-time-body #radioMedia .radio-four-dials .radio-dial-index-frequency{left:37.1%}
+html body.media-time-body #radioMedia .radio-four-dials .radio-band{left:28.9%}
+html body.media-time-body #radioMedia .radio-four-dials .radio-power{cursor:ew-resize;touch-action:none}
+html body.media-time-body #radioMedia .radio-four-dials .is-turning{cursor:grabbing;box-shadow:inset 0 0 0 1px #d2e9ff99,0 0 8px #c9e6ff33}
+html body.media-time-body #radioMedia .radio-four-dials:has(.is-turning) .radio-dial-index{transition:none}
+html body.media-time-body #radioMedia .radio-four-dials .radio-frequency{opacity:1;background:transparent}
+html body.media-time-body #radioMedia .radio-four-dials .radio-frequency::-webkit-slider-runnable-track{background:transparent;border:0}
+/* Older screen-tuner rules must not move the physical knob hit areas. */
+html body.media-time-body #radioMedia .radio-four-dials>input{top:15.7%!important;width:6.4%!important;height:9.7%!important;outline:none;outline-offset:0;background:transparent;opacity:.01}
+html body.media-time-body #radioMedia .radio-four-dials .radio-volume{left:20.5%!important}
+html body.media-time-body #radioMedia .radio-four-dials .radio-frequency{left:37.1%!important;outline:none!important}
+html body.media-time-body #radioMedia .radio-four-dials>input:focus-visible{opacity:1;outline:1px solid #c3e7ff!important}
+html body.media-time-body #radioMedia .radio-four-dials>input{margin:0}
+/* Only the first cap latches inward when powered. */
+html body.media-time-body #radioMedia .radio-four-dials .radio-power{cursor:pointer;isolation:isolate;overflow:visible}
+.radio-power-cap{position:absolute;inset:0;display:block;border-radius:28% 28% 20% 20%;background-image:var(--radio-shell);background-size:1562.5% 1030.93%;background-position:12.6068% 17.3865%;pointer-events:none;transition:transform .16s ease,filter .16s ease,box-shadow .16s ease;transform-origin:50% 80%}
+html body.media-time-body #radioMedia .radio-power:is([aria-pressed="true"],.is-pressing) .radio-power-cap{transform:translateY(2px) scale(.96,.87);filter:brightness(.78);box-shadow:0 -2px 2px #0c172977,inset 0 2px 3px #15202e66}
+html body.media-time-body #radioMedia .radio-four-dials:has(.radio-power[aria-pressed="true"]) .radio-dial-index-power{translate:0 2px;scale:.96 .87}
+@media(prefers-reduced-motion:reduce){.radio-power-cap{transition:none}}

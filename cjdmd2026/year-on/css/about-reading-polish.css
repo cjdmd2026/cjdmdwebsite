@@ -1,0 +1,87 @@
+/* Ink on the paper-coloured image, with a quiet bottom wash instead of shadows. */
+html body.about-body #aboutEntryStory .yai-painting::after{inset:59% 0 0;background:linear-gradient(transparent,rgba(240,231,214,.52) 45%,rgba(240,231,214,.83));z-index:2}
+html body.about-body #aboutEntryStory .yai-painting .yai-caption{text-shadow:none!important;z-index:3}
+html body.about-body #aboutEntryStory .yai-painting .yai-caption p[lang=ko]{color:#19232b!important;font-weight:400!important;text-shadow:none!important}
+html body.about-body #aboutEntryStory .yai-painting .yai-caption p[lang=en]{color:#3c4851!important;font-weight:400!important;text-shadow:none!important}
+html body.about-body #aboutEntryStory .yai-painting .yai-credit{color:#414b51!important;text-shadow:none!important}
+/* Keep the artist copy and the portrait caption aligned as one composition. */
+html body.about-body #artistSequence .abr-artist {
+  grid-template-columns: minmax(0, 480px) minmax(0, min(32vw, 44svh, 440px));
+  justify-content: center;
+  gap: clamp(48px, 7vw, 108px);
+  padding: 88px 8vw 72px;
+}
+#artistSequence .abr-artist-copy > span { display: none; }
+#artistSequence #abrArtistTitle {
+  margin: 0 0 clamp(21px, 2.65vw, 38px);
+  font: 300 clamp(46px, 5.1vw, 74px)/1.1 "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  letter-spacing: -.045em;
+}
+#artistSequence #abrArtistTitle .artist-hanja {
+  font-size: .43em;
+  font-weight: 400;
+}
+#artistSequence #abrArtistTitle small {
+  margin-top: 12px;
+  color: #a4afb8;
+}
+html body.about-body #artistSequence .abr-artist-copy > p {
+  max-width: 35em;
+  margin: 0 0 12px;
+  color: #c6cbce;
+  font-family: "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-size: clamp(12px, .96vw, 14px);
+  font-weight: 300;
+  line-height: 1.75;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+#artistSequence .artist-continue {
+  margin-top: 12px;
+  min-width: 155px;
+  justify-content: space-between;
+  color: #c5cfd6;
+}
+html body.about-body #artistSequence .abr-artist-image figcaption {
+  display: block;
+  margin-top: 8px;
+  color: #a4afb8;
+  font-size: 11px;
+}
+@media (max-width: 760px) {
+  html body.about-body #artistSequence .abr-artist {
+    gap: 18px;
+    padding: 70px 7vw 52px !important;
+  }
+  #artistSequence #abrArtistTitle { margin-bottom: 14px; font-size: 39px; }
+  html body.about-body #artistSequence .abr-artist-image { height: min(23svh, 175px); }
+}
+
+
+@media (max-width: 760px) and (max-height: 620px) {
+  html body.about-body #artistSequence .abr-artist { gap: 12px; }
+  html body.about-body #artistSequence .abr-artist-copy > p {
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  #artistSequence #abrArtistTitle { margin-bottom: 10px; }
+  html body.about-body #artistSequence .abr-artist-image { height: 18svh; }
+}
+
+@media (min-width: 761px) {
+  html body.about-body #artistSequence .abr-artist {
+    grid-template-columns: minmax(0, 33vw) minmax(0, min(23.3vw, 44svh));
+    justify-content: start;
+    gap: 14.2vw;
+    padding-inline: 11.3vw 8vw;
+    padding-block: 72px;
+  }
+  #artistSequence .abr-artist-copy { translate: 0 min(8svh, 62px); }
+  #artistSequence .abr-artist-image { translate: 0 1svh; }
+  html body.about-body #artistSequence .abr-artist-copy > p {
+    max-width: none;
+    margin-bottom: .85em;
+    line-height: 1.8;
+  }
+}

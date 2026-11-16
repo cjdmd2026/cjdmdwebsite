@@ -1,0 +1,77 @@
+/* An archival spread: a single reading column beside an uncropped portrait. */
+html body.about-body #artistSequence .abr-artist{background:#050505!important}
+html body.about-body #artistSequence #abrArtistTitle{font-family:'AppleMyungjo','Batang','Noto Serif KR',serif!important;font-weight:400!important;font-synthesis:none;letter-spacing:-.045em;line-height:1.12;margin:0}
+html body.about-body #artistSequence #abrArtistTitle .artist-hanja{font-family:'Songti TC','AppleMyungjo','Batang',serif!important;font-weight:400!important;font-size:.34em;margin-left:.6em;letter-spacing:.02em;color:#b9b9b5}
+html body.about-body #artistSequence #abrArtistTitle small{font:400 clamp(9px,.7vw,11px)/1.6 Arial,sans-serif!important;letter-spacing:.16em;color:#8fa5b4;margin-top:21px}
+html body.about-body #artistSequence .artist-reading{width:100%;max-width:29em;margin-top:38px;font-size:clamp(11px,.82vw,12.5px)}
+html body.about-body #artistSequence .artist-reading>p{font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR',sans-serif!important;font-size:inherit!important;font-weight:400!important;line-height:1.85!important;letter-spacing:-.012em;color:#b9b9b6;margin:0 0 1.3em!important;word-break:keep-all;overflow-wrap:break-word}
+html body.about-body #artistSequence .artist-reading>p:last-child{margin-bottom:0!important}
+@media(min-width:761px){
+html body.about-body #artistSequence .abr-artist{display:grid!important;grid-template-columns:minmax(0,430px) minmax(0,min(32vw,54svh));column-gap:clamp(60px,10vw,160px);justify-content:space-between;align-items:start;align-content:start;padding:calc(var(--header-h,74px) + 52px) 10vw 88px!important;box-sizing:border-box}
+html body.about-body #artistSequence .abr-artist-copy{position:static;inset:auto;width:100%;max-width:430px;translate:none!important;transform:none!important;margin:0}
+html body.about-body #artistSequence #abrArtistTitle{font-size:clamp(48px,4.6vw,78px)}
+html body.about-body #artistSequence .abr-artist-image{position:static;inset:auto;width:100%;height:min(74svh,740px);max-height:none;translate:none!important;transform:none!important;margin:0;align-self:start}
+html body.about-body #artistSequence .abr-artist-image>img{display:block;width:100%!important;height:100%!important;object-fit:contain;object-position:top left}
+}
+@media(min-width:761px) and (max-height:700px){html body.about-body #artistSequence .abr-artist{padding-top:calc(var(--header-h,74px) + 28px)!important;padding-bottom:65px!important}html body.about-body #artistSequence .artist-reading{margin-top:25px;font-size:11px}html body.about-body #artistSequence #abrArtistTitle{font-size:48px}html body.about-body #artistSequence #abrArtistTitle small{margin-top:14px}}
+@media(max-width:760px){
+html body.about-body #artistSequence .abr-artist{display:grid!important;grid-template-columns:minmax(0,1fr) 35%;column-gap:6vw;align-items:start;align-content:center;padding:88px 7vw 70px!important}
+html body.about-body #artistSequence .abr-artist-copy{display:contents}
+html body.about-body #artistSequence #abrArtistTitle{grid-column:1;grid-row:1;font-size:clamp(32px,7vw,47px)}
+html body.about-body #artistSequence #abrArtistTitle .artist-hanja{font-size:.32em;margin-left:.25em}
+html body.about-body #artistSequence #abrArtistTitle small{font-size:7px!important;letter-spacing:.08em;margin-top:12px;max-width:48vw}
+html body.about-body #artistSequence .abr-artist-image{grid-column:2;grid-row:1;position:static;width:100%;height:auto;aspect-ratio:1279/1924;align-self:start;translate:none!important;margin:0}
+html body.about-body #artistSequence .abr-artist-image>img{width:100%!important;height:100%!important;object-fit:contain;object-position:top}
+html body.about-body #artistSequence .artist-reading{grid-column:1/-1;grid-row:2;margin-top:25px;max-width:35em;font-size:11px}
+}
+@media(max-width:760px) and (max-height:740px){html body.about-body #artistSequence .artist-reading{font-size:11px;margin-top:18px}html body.about-body #artistSequence .artist-reading>p{line-height:1.65!important;margin-bottom:1em!important}html body.about-body #artistSequence .abr-artist{padding-top:80px!important}}
+
+/* Lower the complete spread without changing its shared alignment. */
+@media(min-width:761px){html body.about-body #artistSequence .abr-artist{padding-top:calc(var(--header-h,74px) + 100px)!important}}
+@media(min-width:761px) and (max-height:700px){html body.about-body #artistSequence .abr-artist{padding-top:calc(var(--header-h,74px) + 60px)!important}}
+@media(max-width:760px){html body.about-body #artistSequence .abr-artist{transform:translateY(20px)}}
+
+/* Balance the reading area vertically against the portrait. */
+@media(min-width:761px){
+ html body.about-body #artistSequence .abr-artist-copy{align-self:center}
+ html body.about-body #artistSequence #abrArtistTitle{font-size:clamp(52px,5vw,85px)}
+ html body.about-body #artistSequence #abrArtistTitle .artist-hanja{font-size:.38em}
+}
+@media(min-width:761px) and (max-height:700px){html body.about-body #artistSequence #abrArtistTitle{font-size:52px}}
+@media(max-width:760px){html body.about-body #artistSequence #abrArtistTitle{font-size:clamp(35px,7.6vw,51px)}html body.about-body #artistSequence #abrArtistTitle .artist-hanja{font-size:.36em}}
+
+/* Continuous editorial paragraphs; retain the lower, portrait-aligned composition. */
+@media(min-width:761px){
+html body.about-body #artistSequence .abr-artist{grid-template-columns:minmax(0,490px) minmax(0,min(34vw,54svh));column-gap:clamp(50px,8vw,140px)}
+html body.about-body #artistSequence .abr-artist-copy{max-width:490px}
+html body.about-body #artistSequence .artist-reading{max-width:40em;margin-top:28px}
+html body.about-body #artistSequence .artist-reading>p{line-height:1.85!important;margin-bottom:1.1em!important;word-break:normal;text-wrap:pretty}
+}
+
+@media(min-width:761px){
+html body.about-body #artistSequence .abr-artist{padding-top:calc(var(--header-h,74px) + 64px)!important;grid-template-columns:minmax(0,490px) minmax(0,min(34vw,49svh))}
+html body.about-body #artistSequence .abr-artist-image{height:min(68svh,700px)}
+html body.about-body #artistSequence .abr-artist-copy{align-self:center;padding-bottom:0;position:relative;top:clamp(20px,4svh,44px)}
+}
+@media(min-width:761px) and (max-height:700px){html body.about-body #artistSequence .abr-artist{padding-top:calc(var(--header-h,74px) + 30px)!important}}
+
+/* Match the supplied artist spread: proportions are measured from the reference. */
+@media(min-width:761px){
+ html body.about-body #artistSequence .abr-artist{display:block!important;padding:0!important;background:#050505!important}
+ html body.about-body #artistSequence .abr-artist-copy{position:absolute!important;left:12.4vw;top:42svh;width:40vw;max-width:none;padding:0;margin:0;align-self:auto}
+ html body.about-body #artistSequence #abrArtistTitle{font-size:clamp(56px,6.1vw,112px)!important;line-height:1.12;letter-spacing:-.045em;white-space:nowrap}
+ html body.about-body #artistSequence #abrArtistTitle .artist-hanja{font-size:.38em;margin-left:.28em;color:#b9b9b5}
+ html body.about-body #artistSequence #abrArtistTitle small{display:block;font-size:clamp(9px,.90vw,16px)!important;margin-top:1.6svh;letter-spacing:.16em}
+ html body.about-body #artistSequence .artist-reading{max-width:none;width:100%;font-size:clamp(12px,.98vw,18px);margin-top:4.5svh}
+ html body.about-body #artistSequence .artist-reading>p{line-height:1.85!important;word-break:normal;text-wrap:pretty;margin-bottom:1.35em!important}
+ html body.about-body #artistSequence .abr-artist-image{position:absolute!important;left:61.6vw;top:19.1svh;width:23.1vw;height:67.7svh;max-height:none;margin:0}
+ html body.about-body #artistSequence .abr-artist-image>img{width:100%!important;height:100%!important;object-fit:contain;object-position:top left}
+}
+
+/* Enlarge toward the reading column, keeping the portrait's right edge. */
+@media(min-width:761px){html body.about-body #artistSequence .abr-artist-image{left:59.3vw;width:25.4vw;aspect-ratio:1279/1924}html body.about-body #artistSequence .abr-artist-image>img{object-fit:contain;object-position:bottom right}}
+
+@media(min-width:761px){#artistSequence .artist-spread-group{position:absolute;inset:0;transform-origin:50% 0}}
+@media(max-width:760px){#artistSequence .artist-spread-group{display:contents}}
+
+

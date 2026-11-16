@@ -1,0 +1,26 @@
+/* Fixed element sizes measured from ABOUT. Only the surrounding bar gains height.
+   Width-only breakpoint also covers a 21-inch Mac with browser chrome visible. */
+@media(min-width:1800px){
+ html body{--header-h:88px!important}
+ html body header.global-header.global-header.global-header.global-header{
+  inset:0 0 auto!important;position:fixed!important;width:100%!important;height:88px!important;min-height:88px!important;
+  box-sizing:border-box!important;padding:0 2vw!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:24px!important;
+  border-bottom:.5px solid rgba(169,181,189,.3)!important;transform:none!important;
+ }
+ html body header.global-header.global-header.global-header.global-header .brand.brand-image{
+  font-size:21px!important;width:146px!important;min-width:146px!important;max-width:146px!important;height:46px!important;flex:0 0 146px!important;display:flex!important;align-items:center!important;gap:4px!important;margin:0!important;padding:0!important;transform:none!important;
+ }
+ html body header.global-header.global-header.global-header.global-header .brand.brand-image .brand-mark{width:44px!important;height:30px!important;min-width:44px!important;flex:0 0 44px!important;max-height:none!important;object-fit:contain!important}
+ html body header.global-header.global-header.global-header.global-header .brand.brand-image .brand-word{width:98px!important;height:22px!important;flex:0 0 98px!important;transform:translateY(2px)!important}
+ html body header.global-header.global-header.global-header.global-header .header-right{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:34px!important;height:100%!important;margin:0!important;padding:0!important;position:static!important}
+ html body header.global-header.global-header.global-header.global-header .header-right>nav{position:static!important;inset:auto!important;transform:none!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:34px!important;height:100%!important;width:auto!important;margin:0!important;padding:0!important}
+ html body header.global-header.global-header.global-header.global-header .header-right>nav>a{display:flex!important;align-items:center!important;justify-content:center!important;height:100%!important;margin:0!important;padding:1px 0 0!important;font:400 10.5px/1.4 Arial,sans-serif!important;letter-spacing:.14em!important;white-space:nowrap!important}
+ html body header.global-header.global-header.global-header.global-header .header-tools{width:112px!important;min-width:112px!important;height:100%!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:0!important;margin:0!important;padding:0!important}
+ html body header.global-header.global-header.global-header.global-header .header-icon-button{height:38px!important;min-height:38px!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important;flex-shrink:0!important}
+ html body header.global-header.global-header.global-header.global-header .globe-button{width:38px!important}
+ html body header.global-header.global-header.global-header.global-header .menu-toggle{width:50.5px!important}
+ html body header.global-header.global-header.global-header.global-header .header-icon-button svg{width:19px!important;height:19px!important}
+ html body header.global-header.global-header.global-header.global-header .menu-lines{width:22px!important;height:13px!important;gap:5px!important}
+ html body header.global-header.global-header.global-header.global-header .menu-lines i{width:22px!important;height:1px!important}
+}
+
