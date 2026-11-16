@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1671" height="941" viewBox="0 0 1671 941">
-  <defs>
-    <clipPath id="panel-shape">
-      <polygon points="94,36 1581,36 1635,91 1635,816 1582,856 88,856 36,816 36,91"/>
-    </clipPath>
-  </defs>
-  <image href="archive-record-panel-texture.jpg" width="1671" height="941" clip-path="url(#panel-shape)"/>
-</svg>
