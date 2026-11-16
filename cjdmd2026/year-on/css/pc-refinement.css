@@ -1,0 +1,175 @@
+/* A quieter late-1990s desktop palette inside the existing CRT aperture. */
+html body.media-time-body .pc-screen-ui .pc-desktop{background:radial-gradient(ellipse at 28% 18%,#79878d 0%,#68777e 42%,#53636c 100%)!important}
+html body.media-time-body .pc-screen-ui .pc-desktop::before{content:'YEAR:ON';right:6%;bottom:7%;color:rgba(238,243,244,.2);font:400 14px/1 Arial,sans-serif;letter-spacing:.04em}
+html body.media-time-body .pc-screen-ui .pc-desktop::after{display:none!important}
+html body.media-time-body .pc-boot[data-phase="welcome"]{background:#68777e!important}
+html body.media-time-body .pc-screen-ui .pc-icons{top:7%;left:4%;gap:5px!important}
+html body.media-time-body .pc-screen-ui .pc-icons button{color:#f1f3f2;font-family:Tahoma,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;text-shadow:0 1px 1px #243541;gap:3px;cursor:pointer}
+html body.media-time-body .pc-screen-ui .pc-icons i{background:#dce0de;border:1px outset #f7f8f6;box-shadow:1px 1px 0 #30414c;color:#3d566a}
+.pc-icons i svg{width:15px;height:15px}
+html body.media-time-body .pc-screen-ui .pc-icons [data-pc-open="documents"] i{background:#d4bc80;color:#6c582f}
+html body.media-time-body .pc-screen-ui .pc-icons [data-pc-open="internet"] i{border-radius:2px;background:#dce0de;color:#3d6377}
+html body.media-time-body .pc-screen-ui .pc-taskbar{background:#c6cbcb!important;border-top-color:#eff1ed!important}
+html body.media-time-body .pc-screen-ui .pc-taskbar button{background:#c6cbcb}
+.pc-focus-shade{position:fixed;inset:74px 0 0;z-index:99990;background:rgba(12,20,28,.3);backdrop-filter:blur(2px);animation:pcFocusFade .35s ease both}
+.pc-focus-return{position:fixed;z-index:100001;left:50%;top:calc(52% - min(220px,34dvh) - 40px);transform:translateX(-50%);width:min(600px,80vw);padding:9px 0;text-align:right;border:0;background:none;color:#f4f6f6;font:500 11px/1.4 Arial,sans-serif;letter-spacing:.06em;cursor:pointer}
+.pc-focus-shade[hidden],.pc-focus-return[hidden]{display:none!important}
+html body.media-time-body .pc-screen-ui.pc-expanded{width:min(600px,80vw)!important;height:min(440px,68dvh)!important;top:52%!important;border:5px solid #b7c0c3!important;border-radius:6px!important;box-shadow:0 14px 48px #07111b66,0 0 0 1px #e1e7e8!important;background:#68777e!important;transform-origin:center!important}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-desktop{inset:0 0 30px}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-taskbar{height:30px!important;padding:3px!important}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-taskbar button{height:23px;font-size:9px;padding:2px 7px}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-taskbar time{font-size:9px}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-window[data-app="pccomm"]{left:5%;top:5%;width:90%;height:88%}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-titlebar{height:27px;min-height:27px;font-size:11px;background:#52636e}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-window.active .pc-titlebar{background:#294a66}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-titlebar button{width:23px;height:21px;font-size:14px}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-menubar{height:22px;min-height:22px;padding:4px 8px;font-size:10px}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-window-body{font-size:11px;line-height:1.65}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-statusbar{height:19px;min-height:19px;padding:2px 7px;font-size:8px}
+html body.media-time-body .pc-screen-ui.pc-expanded .pccomm{background:#142b3e;color:#d1dce3}
+html body.media-time-body .pc-screen-ui.pc-expanded .pccomm-head{padding:10px 12px}
+html body.media-time-body .pc-screen-ui.pc-expanded .pccomm-head b{font-size:17px;font-weight:500;letter-spacing:.02em}
+html body.media-time-body .pc-screen-ui.pc-expanded .pccomm-head span{font-size:9px}
+html body.media-time-body .pc-screen-ui.pc-expanded .pccomm-tabs{padding:7px;gap:4px}
+html body.media-time-body .pc-screen-ui.pc-expanded .pccomm-tabs button{font-size:10px;padding:5px 3px;background:#1c374d;border-color:#6a8293}
+html body.media-time-body .pc-screen-ui.pc-expanded .pccomm-tabs button.active{background:#d2dce2;color:#142b3e}
+html body.media-time-body .pc-screen-ui.pc-expanded .pccomm-view{padding:8px 12px}
+html body.media-time-body .pc-screen-ui.pc-expanded .pccomm-view h3{font-size:12px;margin:3px 0 10px;font-weight:400}
+html body.media-time-body .pc-screen-ui.pc-expanded .pccomm-menu-grid{grid-template-columns:repeat(2,1fr);gap:7px}
+html body.media-time-body .pc-screen-ui.pc-expanded .pccomm-menu-grid button{font-size:11px;padding:10px 5px;background:#1c374d;border-color:#6a8293;text-align:left}
+@keyframes pcFocusFade{from{opacity:0}to{opacity:1}}
+@media(max-width:700px){html body.media-time-body .pc-screen-ui.pc-expanded{width:92vw!important;height:min(460px,70dvh)!important}.pc-focus-return{width:92vw;top:calc(52% - min(230px,35dvh) - 36px)}.pc-focus-shade{inset:64px 0 0}}
+@media(prefers-reduced-motion:reduce){.pc-focus-shade{animation:none}}
+/* Reference: flat early-Windows desktop, navy title bars and small pixel icons. Boot stays unchanged. */
+html body.media-time-body .pc-screen-ui .pc-desktop{background:#787d80!important}
+html body.media-time-body .pc-screen-ui .pc-desktop::before{display:none!important}
+html body.media-time-body .pc-screen-ui .pc-icons{top:5%;left:3%}
+html body.media-time-body .pc-screen-ui .pc-icons i{background:transparent!important;border:0!important;box-shadow:none!important;width:23px!important;height:23px!important}
+html body.media-time-body .pc-icons i svg{width:23px;height:23px;image-rendering:pixelated}
+html body.media-time-body .pc-screen-ui .pc-icons button{font-family:Tahoma,'Gulim','굴림',sans-serif!important;text-shadow:1px 1px #333;line-height:1.3}
+html body.media-time-body .pc-screen-ui .pc-window.active .pc-titlebar{background:#000080!important}
+html body.media-time-body .pc-screen-ui .pc-taskbar,html body.media-time-body .pc-screen-ui .pc-taskbar button{background:#c0c0c0!important}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-window[data-app="internet"]{left:4%;top:3%;width:92%;height:94%}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-icons{gap:10px!important;width:15%}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-icons button{width:65px;font-size:9px;min-height:48px!important}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-icons i{width:30px!important;height:30px!important}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-icons svg{width:30px;height:30px}
+html body.media-time-body .pc-screen-ui.pc-expanded .pccomm{background:#000080;color:#eee;font-family:'Courier New','Gulim','굴림',monospace}
+html body.media-time-body .pc-screen-ui.pc-expanded .pccomm-tabs button,html body.media-time-body .pc-screen-ui.pc-expanded .pccomm-menu-grid button{background:#000080;color:#fff;border:1px solid #8080c4}
+.pc-screen-ui.pc-expanded .pc-browser-menu{font-size:9px;padding:3px 5px}
+.pc-screen-ui.pc-expanded .pc-browser-tools{padding:3px;gap:4px}
+.pc-screen-ui.pc-expanded .pc-browser-tools button{font-size:8px;height:31px;min-width:36px}
+.pc-screen-ui.pc-expanded .pc-address{align-items:center;padding:3px 5px}
+.pc-screen-ui.pc-expanded .pc-address label{font-size:9px}
+.pc-screen-ui.pc-expanded .pc-address input{height:21px;font:10px 'Courier New',monospace}
+html body.media-time-body .pc-webpage{background:#fff;color:#111;font-family:'Gulim','굴림',Tahoma,sans-serif}
+.pc-screen-ui.pc-expanded .pc-webpage{font-size:11px;line-height:1.6}
+.pc-screen-ui .web-head{background:#eeedf5;border-bottom:3px double #65628c;align-items:center;padding:9px 12px}
+.pc-screen-ui .web-head small{display:block;color:#696582;font:7px 'Courier New',monospace;letter-spacing:.12em}
+.pc-screen-ui .web-head b{display:block;color:#25215e;font-family:'Times New Roman','Batang',serif;font-weight:bold;font-size:20px;letter-spacing:0;line-height:1.4}
+.pc-screen-ui .web-head span{font-size:8px;color:#555}
+.pc-screen-ui .web-mail{text-align:center;font-size:8px;color:#000080}
+.pc-screen-ui .web-nav{background:#dedee9;padding:5px 9px;justify-content:space-around;gap:5px;border-bottom:1px solid #9494ad}
+.pc-screen-ui .web-nav button,.pc-screen-ui .web-link{font:10px/1.4 'Gulim','굴림',sans-serif;color:#0000a0;cursor:pointer}
+.pc-screen-ui .web-content{padding:10px 12px}
+.pc-screen-ui .web-content h2{font:700 13px/1.5 'Gulim','굴림',sans-serif;color:#25215e;border-bottom:1px dotted #aaa;padding-bottom:4px;margin:0 0 10px}
+.pc-screen-ui .web-content h3{font-size:11px;color:#25215e;margin:10px 0 5px}
+.pc-screen-ui .web-content p{margin:6px 0 10px;font-size:10px}
+.pc-screen-ui .web-home-grid{display:grid;grid-template-columns:114px minmax(0,1fr);gap:14px}
+.pc-screen-ui .web-profile{border:1px solid #acacc4;background:#f1f1f7;padding:8px;text-align:center;font-size:10px}
+.pc-screen-ui .web-profile p{font-size:9px}
+.pc-screen-ui .web-profile small{font-size:8px;color:#555}
+.pc-screen-ui .web-pixel-house{font:40px/1 'Times New Roman',serif;color:#6a6995}
+.pc-screen-ui .web-profile hr{border:0;border-top:1px dotted #aaa}
+.pc-screen-ui .web-counter{margin-top:12px;font:7px/1.8 'Courier New',monospace;color:#666}
+.pc-screen-ui .web-counter strong{display:inline-block;background:#15151b;color:#a2dfb1;font:11px/1.5 'Courier New',monospace;padding:0 4px}
+.pc-screen-ui .web-welcome{border:1px inset #ddd;background:#ffffe9;padding:4px 7px;font-size:10px;color:#52522b}
+.pc-screen-ui .web-updates button{display:block;text-align:left;border:0;background:none;color:#0000a0;text-decoration:underline;font:10px/1.9 'Gulim',sans-serif;cursor:pointer;padding:0}
+.pc-screen-ui .web-content h3 small{color:#be2424;font:bold 8px Arial}
+.pc-screen-ui .web-webring{margin-top:12px;border:1px solid #9999b0;padding:6px 8px;text-align:center;font-size:10px}
+.pc-screen-ui .web-webring p{font-size:9px;margin:3px}
+.pc-screen-ui .web-webring button{border:0;background:none;color:#000080;text-decoration:underline;font:9px 'Gulim',sans-serif;cursor:pointer}
+.pc-screen-ui .web-footer{text-align:center;border-top:1px solid #ccc;padding:8px;color:#777;font:8px/1.7 'Gulim',sans-serif}
+.pc-screen-ui .web-guest-form{padding:8px;border:1px solid #aaa;background:#eeeef4;display:grid;gap:5px;font-size:10px}
+.pc-screen-ui .web-guest-form label{display:flex;align-items:center;gap:7px}
+.pc-screen-ui .web-guest-form input,.pc-screen-ui .web-guest-form textarea{font:11px 'Gulim',sans-serif;border:2px inset #ddd;min-width:0;padding:4px;background:white;color:#111;user-select:text}
+.pc-screen-ui .web-guest-form textarea{flex:1;height:48px;resize:vertical}
+.pc-screen-ui .web-guest-form button{justify-self:end;border:2px outset #eee;background:#c0c0c0;padding:3px 12px;font:10px 'Gulim',sans-serif;cursor:pointer}
+.pc-screen-ui .web-guest-form small{font-size:8px;color:#666}
+.pc-screen-ui .web-guest article{margin-top:8px;border:1px solid #bbb}
+.pc-screen-ui .web-guest article header{display:flex;justify-content:space-between;background:#eaeaf2;padding:4px 7px;font-size:10px}
+.pc-screen-ui .web-guest article p{padding:5px 7px;white-space:pre-wrap;overflow-wrap:anywhere;border:0}
+.pc-screen-ui .web-guest article small{font-size:8px;color:#777}
+.pc-screen-ui .web-notices{border-collapse:collapse;width:100%;font-size:10px}
+.pc-screen-ui .web-notices th,.pc-screen-ui .web-notices td{border:1px solid #aaa;padding:6px;text-align:left}
+.pc-screen-ui .web-notices th{width:60px;background:#eeeef4}
+.pc-screen-ui .web-neighbors{display:grid;gap:7px}
+.pc-screen-ui .web-neighbors button{background:#f2f2f8;border:1px solid #aaa;padding:8px;text-align:left;cursor:pointer;color:#000080;font:11px 'Gulim',sans-serif}
+.pc-screen-ui .web-neighbors span{display:block;font-size:9px;color:#555;margin-top:5px}
+.pc-screen-ui .web-sign{text-align:right;color:#777}
+.pc-screen-ui.pc-expanded .web-paintings img{height:125px;object-fit:contain;background:#e8ddc5}
+.pc-screen-ui.pc-expanded .web-paintings figcaption{font-size:9px}
+html body.media-time-body .pc-screen-ui:not(.pc-expanded) .pc-icons{top:3%;gap:1px!important}
+html body.media-time-body .pc-screen-ui:not(.pc-expanded) .pc-icons button{min-height:25px!important;gap:0;font-size:5.5px}
+html body.media-time-body .pc-screen-ui:not(.pc-expanded) .pc-icons i,html body.media-time-body .pc-screen-ui:not(.pc-expanded) .pc-icons svg{width:18px!important;height:18px!important}
+html body.media-time-body .pc-screen-ui .pc-window[data-app="internet"]>.pc-menubar{display:none}
+html body.media-time-body .pc-screen-ui .web-head{padding:6px 10px;min-height:0}
+html body.media-time-body .pc-screen-ui .web-head b{margin:0;padding:0;background:none;border:0;color:#25215e;font:bold 20px/1.3 'Times New Roman','Batang',serif}
+html body.media-time-body .pc-screen-ui .web-head span{display:block;margin:0;padding:0}
+
+/* Let the desktop settle before opening its window; restrained window proportions. */
+html body.media-time-body .pc-screen-ui.pc-expanded{width:min(600px,80vw)!important;height:min(430px,68dvh)!important;border:2px solid #909596!important;border-radius:3px!important;box-shadow:0 12px 40px #07111b55!important;transition:none!important;will-change:transform}
+.pc-focus-shade{background:rgba(12,20,28,.2);backdrop-filter:blur(1px);animation-duration:.58s}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-window[data-app="internet"],html body.media-time-body .pc-screen-ui.pc-expanded .pc-window[data-app="pccomm"]{left:8%;top:6%;width:86%;height:89%;box-shadow:1px 1px 0 #0008;border:2px outset #eee}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-titlebar{height:22px;min-height:22px;padding:2px 3px 2px 6px;font-size:10px;line-height:1}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-titlebar button{width:18px;height:17px;font-size:12px;line-height:12px}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-menubar{height:18px;min-height:18px;padding:2px 6px;font-size:9px}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-statusbar{height:15px;min-height:15px;font-size:8px;padding:1px 5px}
+
+/* White desktop requested by the user; keep boot, windows and device artwork. */
+html body.media-time-body .pc-screen-ui .pc-desktop{background:#fff!important}
+html body.media-time-body .pc-screen-ui .pc-icons button{color:#252525!important;text-shadow:none!important}
+html body.media-time-body .pc-screen-ui .pc-icons button.selected,html body.media-time-body .pc-screen-ui .pc-icons button:focus{border-color:#5d6670;background:#dce5f2}
+
+/* User supplied desktop wallpaper; shared by normal and expanded PC views. */
+html body.media-time-body .pc-screen-ui .pc-desktop{background:#72a8c9 url('../assets/images/pc-user-wallpaper.webp') center center / cover no-repeat!important}
+
+/* Classic desktop essentials, drawn as pixel SVGs rather than decorative objects. */
+html body.media-time-body .pc-screen-ui .pc-icons i{width:24px!important;height:24px!important;background:none!important;border:0!important;box-shadow:none!important}
+html body.media-time-body .pc-screen-ui .pc-icons i svg{width:24px!important;height:24px!important;image-rendering:pixelated;filter:drop-shadow(1px 1px 0 #0008)}
+html body.media-time-body .pc-screen-ui .pc-icons button{color:#fff!important;text-shadow:1px 1px 0 #000,0 0 2px #000!important;background:none!important;border-color:transparent}
+html body.media-time-body .pc-screen-ui .pc-icons button.selected{border:1px dotted #fff!important}
+html body.media-time-body .pc-screen-ui .pc-icons button.selected span{background:#000080;color:#fff}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-icons i,html body.media-time-body .pc-screen-ui.pc-expanded .pc-icons i svg{width:32px!important;height:32px!important}
+html body.media-time-body .pc-screen-ui .pc-window{background:#c0c0c0;border:2px outset #eee}
+html body.media-time-body .pc-screen-ui .pc-window.active .pc-titlebar{background:#000080!important;color:#fff!important}
+html body.media-time-body .pc-screen-ui .pc-window-controls button{background:#c0c0c0!important;color:#111!important;border:2px outset #eee!important;border-radius:0!important}
+html body.media-time-body .pc-screen-ui .pc-taskbar{background:#c0c0c0!important;border-top:2px outset #eee}
+.pc-boot-splash{display:none;position:absolute;inset:0;background:#92c5e9 url('../assets/images/pc-user-wallpaper.webp') center top / 100% 220% no-repeat;color:#102c3c;font-family:Arial,sans-serif;overflow:hidden}
+.pc-boot[data-phase="logo"] .pc-boot-splash{display:block}
+.pc-boot[data-phase="logo"] .pc-boot-copy{visibility:hidden}
+.pc-boot-splash>small{position:absolute;right:4%;top:4%;font:bold italic clamp(7px,.7vw,12px)/1 Arial;color:#173f53}
+.pc-boot-splash>svg{position:absolute;left:50%;top:12%;transform:translateX(-50%);height:52%;width:62%}
+.pc-boot-brand{position:absolute;left:15%;right:9%;top:62%;text-align:left;line-height:1}
+.pc-boot-brand>span{display:block;color:#e9f5ff;font:400 clamp(8px,1vw,16px)/1 Arial}
+.pc-boot-brand>b{display:block;white-space:nowrap;font:900 clamp(18px,2.8vw,44px)/.95 Arial;letter-spacing:-.065em;color:#122b3a}
+.pc-boot-brand em{font-style:normal;font-weight:300;color:#f5fbff;letter-spacing:-.07em}
+.pc-boot-brand>strong{display:block;text-align:center;font:700 clamp(5px,.55vw,9px)/1.4 Arial;letter-spacing:-.025em}
+.pc-boot-progress{position:absolute;left:0;right:0;bottom:0;height:3%;background:#a8b7c1;overflow:hidden}
+.pc-boot-progress i{display:block;width:22%;height:100%;background:repeating-linear-gradient(90deg,#315a94 0 4px,#7ca6d1 4px 6px);animation:pcBootMarquee 1.3s linear infinite}
+@keyframes pcBootMarquee{from{transform:translateX(-100%)}to{transform:translateX(550%)}}
+@media(prefers-reduced-motion:reduce){.pc-boot-progress i{animation:none;width:100%}}
+
+/* Opening an app lifts its window, not a second copy of the desktop. */
+html body.media-time-body .pc-screen-ui.pc-expanded{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-desktop{inset:0!important;background:transparent!important;overflow:visible!important}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-desktop::before,
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-desktop::after,
+html body.media-time-body .pc-screen-ui.pc-expanded :is(.pc-icons,.pc-taskbar,.pc-start-menu,.pc-boot){display:none!important}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-window{display:none!important}
+html body.media-time-body .pc-screen-ui.pc-expanded .pc-window.active{display:flex!important;left:0!important;top:0!important;width:100%!important;height:100%!important;margin:0!important;box-shadow:6px 14px 36px #07111b55!important}
+
+/* Pastel wallpaper only: keep application and icon colours intact. */
+html body.media-time-body .pc-screen-ui:not(.pc-expanded) .pc-desktop{background:#b7c9dc!important;isolation:isolate}
+html body.media-time-body .pc-screen-ui:not(.pc-expanded) .pc-desktop::before{content:''!important;position:absolute!important;inset:0!important;z-index:-1!important;background:url('../assets/images/pc-user-wallpaper.webp') center / cover no-repeat!important;filter:saturate(.88) contrast(.86) brightness(1.03)!important;opacity:1!important;pointer-events:none}
+html body.media-time-body .pc-screen-ui:not(.pc-expanded) .pc-desktop::before{display:block!important;z-index:0!important}

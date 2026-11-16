@@ -1,0 +1,43 @@
+/* Analogue picture treatment stays inside the TV glass and preserves the source audio. */
+html body.media-time-body #screenWindow #channelVideo{filter:blur(.32px) saturate(.88) contrast(1.10) brightness(1.06) sepia(.05)!important;transform:scale(1.012);transform-origin:center}
+html body.media-time-body #screenWindow .scanlines{z-index:14;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 2px,rgba(0,0,0,.62) 2px,rgba(0,0,0,.62) 3px)!important;opacity:.30!important;mix-blend-mode:multiply}
+html body.media-time-body #channelStage.has-video::after{content:'';position:absolute;inset:0;z-index:8;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23n)' d='M0 0h180v180H0z'/%3E%3C/svg%3E");mix-blend-mode:soft-light;animation:crtPictureGrain .26s steps(3,end) infinite}
+html body.media-time-body #channelStage.has-video::before{content:'';position:absolute;inset:0;z-index:7;pointer-events:none;background:repeating-linear-gradient(90deg,rgba(255,50,30,.035) 0 1px,rgba(30,255,80,.025) 1px 2px,rgba(50,90,255,.04) 2px 3px);mix-blend-mode:screen}
+html body.media-time-body #screenWindow .vignette{z-index:15;pointer-events:none;box-shadow:inset 0 0 26px 9px #0009!important;background:radial-gradient(ellipse at 46% 43%,#fff0 46%,#02050745 100%)}
+html body.media-time-body #screenWindow.phase-bars .scanlines{opacity:.12!important}
+@keyframes crtPictureGrain{0%,100%{background-position:0 0}33%{background-position:37px -19px}66%{background-position:-23px 41px}}
+@media(prefers-reduced-motion:reduce){html body.media-time-body #channelStage.has-video::after{animation:none}}
+
+/* A light cool phosphor cast: skin tones and the source colours remain recognisable. */
+.crt-phosphor-tint{display:none;position:absolute;inset:0;z-index:9;pointer-events:none;background:#497fae;mix-blend-mode:color;opacity:.13}
+#channelStage.has-video .crt-phosphor-tint{display:block}
+.crt-sync-tear{position:absolute;inset:-5% 0;z-index:35;pointer-events:none;opacity:0;background:linear-gradient(to bottom,transparent 25%,#a4cfdf18 26%,#e9f8ff75 27%,#183a5840 29%,transparent 32%,transparent 65%,#b5dbec50 67%,#162b3f50 69%,transparent 72%);mix-blend-mode:screen}
+#screenWindow.phase-acquire .crt-sync-tear{animation:crtSyncAcquire .29s steps(1,end) both}
+#screenWindow.phase-acquire #channelVideo{animation:crtImageLock .29s steps(1,end) both}
+@keyframes crtSyncAcquire{0%{opacity:.6;transform:translateY(-18%)}24%{opacity:.38;transform:translateY(27%) scaleY(.7)}50%{opacity:.22;transform:translateY(-6%)}76%{opacity:.1;transform:translateY(11%)}100%{opacity:0;transform:none}}
+@keyframes crtImageLock{0%{transform:scale(1.025) translateX(-2px) skewX(-.65deg)}30%{transform:scale(1.02) translateX(1px) skewX(.3deg)}60%{transform:scale(1.016) translateX(-.5px)}100%{transform:scale(1.012)}}
+@media(prefers-reduced-motion:reduce){#screenWindow.phase-acquire .crt-sync-tear,#screenWindow.phase-acquire #channelVideo{animation:none}}
+
+/* The glass sits above the picture and remains visible when the tube is off. */
+html body.media-time-body #screenWindow .crt-glass-surface{
+ position:absolute;inset:0;z-index:18;pointer-events:none;
+ border-radius:12% / 15%;
+ background:
+ radial-gradient(ellipse 120% 85% at 28% -17%,rgba(228,244,255,.25) 0%,rgba(210,230,245,.09) 35%,transparent 62%),
+ radial-gradient(ellipse 88% 130% at 105% 58%,transparent 65%,rgba(160,197,221,.08) 82%,rgba(6,12,20,.35) 100%);
+ box-shadow:inset 0 0 2px 1px rgba(224,239,247,.32),inset 0 0 7px 3px rgba(3,8,14,.72),inset 0 0 25px 7px rgba(2,7,13,.24);
+}
+html body.media-time-body #screenWindow .crt-glass-surface::before{
+ content:'';position:absolute;left:5%;right:5%;top:3%;height:32%;
+ border-top:1px solid rgba(236,247,255,.24);border-radius:50%;
+ background:radial-gradient(ellipse at 35% 0%,rgba(239,248,255,.075),transparent 70%);
+ transform:rotate(-7deg);
+}
+html body.media-time-body #screenWindow .crt-glass-surface::after{
+ content:'';position:absolute;inset:2% 1.5%;border-radius:13% / 17%;
+ box-shadow:inset 1px 0 1px rgba(209,230,243,.18),inset -1px -1px 2px rgba(190,217,234,.11);
+}
+html body.media-time-body #screenWindow .vignette{
+ background:radial-gradient(ellipse at 48% 46%,transparent 43%,rgba(0,5,12,.10) 68%,rgba(0,4,10,.52) 100%)!important;
+ box-shadow:inset 0 0 19px 5px rgba(0,0,0,.45)!important;
+}

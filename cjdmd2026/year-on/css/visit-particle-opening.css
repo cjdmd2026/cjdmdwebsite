@@ -1,0 +1,107 @@
+/* The opening is a single black stage, from moving particles to the final identity. */
+html body.visit-v7 #visitOpening#visitOpening,
+html body.visit-v7 #visitOpening#visitOpening .visit-opening-sticky{background:#000!important}
+html body.visit-v7 #visitOpening#visitOpening .visit-opening-bg{display:none!important}
+html body.visit-v7 #visitOpening#visitOpening .visit-opening-sticky{overflow:clip!important}
+html body.visit-v7 #visitOpening#visitOpening .visit-opening-sticky::before{display:none!important}
+.visit-particle-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.visit-particle-lockup{position:absolute;z-index:2;left:calc(50% - var(--opening-move,0)*22vw);top:48%;width:clamp(180px,19.5vw,323px);transform:translate(-50%,-50%) scale(calc(1 - var(--opening-move,0)*.28));transform-origin:center;pointer-events:none;will-change:left,transform}
+html body.visit-v7 #visitOpening#visitOpening .visit-particle-symbol{display:block;width:100%;height:auto;max-width:none;filter:none!important;opacity:var(--particle-solid,0)!important;transform:none!important}
+html body.visit-v7 #visitOpening#visitOpening .visit-particle-wordmark{position:absolute;left:1%;top:calc(100% + 26px);width:98%;height:auto;max-width:none;opacity:var(--particle-wordmark,0)!important;transform:translateY(calc((1 - var(--particle-wordmark,0))*12px));filter:none!important}
+html body.visit-v7 #visitOpening#visitOpening .visit-scroll-cue{color:#aab5c0!important;opacity:calc(var(--particle-solid,0)*(1 - var(--opening-move,0)))!important}
+@media(max-width:800px){
+ .visit-particle-lockup{left:50%;top:calc(44% - var(--opening-move,0)*17svh);width:min(44vw,220px);transform:translate(-50%,-50%) scale(calc(1 - var(--opening-move,0)*.32))}
+ html body.visit-v7 #visitOpening#visitOpening .visit-particle-wordmark{top:calc(100% + 18px)}
+}
+@media(prefers-reduced-motion:reduce){.visit-particle-lockup{will-change:auto}.visit-particle-canvas{display:none}.visit-particle-symbol{opacity:1!important}}
+/* Keep the original explanatory typography, spacing and positions in cool-white-surfaces.css. */
+html body.visit-v7 #visitOpening#visitOpening .visit-particle-symbol{opacity:0!important}
+.visit-particle-symbol-finish{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:var(--particle-solid,0);background:linear-gradient(155deg,#eef4f8 8%,#d9e6ee 38%,#a9c0d2 62%,#d8e7f1 85%,#f0f5f8);mask:url('../assets/images/yearon-symbol-white-final.webp') center/contain no-repeat;-webkit-mask:url('../assets/images/yearon-symbol-white-final.webp') center/contain no-repeat}
+
+/* Keep the exhibition link still; hover only changes its light. */
+html body.visit-v7 #visitOpening#visitOpening a.visit-opening-cta{scale:1!important;transition:color .22s ease,border-color .22s ease,text-shadow .22s ease,opacity .22s ease!important}
+html body.visit-v7 #visitOpening#visitOpening a.visit-opening-cta:is(:hover,:focus-visible){transform:none!important;scale:1!important;color:#fff!important;border-color:#e5f3ffbb!important;text-shadow:0 0 12px #c9e7ff70!important;filter:brightness(1.18)!important}
+html body.visit-v7 #visitOpening#visitOpening a.visit-opening-cta:is(:hover,:focus-visible)::after{transform:none!important;scale:1!important}
+
+html body.visit-v7 #visitOpening#visitOpening a.visit-opening-cta:is(:hover,:focus-visible) b{transform:none!important;scale:1!important;color:#fff!important}
+
+/* Resolve the moving dots into the clean, opaque brand silhouette. */
+html body.visit-v7 #visitOpening#visitOpening .visit-particle-symbol-finish{background:#fff!important;filter:none!important}
+
+html body.visit-v7 #visitOpening#visitOpening .visit-scroll-cue{opacity:calc(.8*(1 - var(--opening-move,0)))!important}
+
+/* The assembled symbol hands off to a quiet sky-blue editorial scene. */
+html body.visit-v7 #visitOpening#visitOpening .visit-opening-sticky::before{content:""!important;display:none!important;position:absolute;inset:0;z-index:0;pointer-events:none}
+html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy{width:min(40vw,660px)}
+html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy h1{font-size:clamp(19px,1.3vw,25px);color:#fff!important}
+html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy p{font-size:clamp(15px,1.05vw,20px);line-height:1.85;color:#dce3e9!important}
+html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy p span{display:inline}
+html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy p span:nth-child(3){display:block;margin-top:1.1em}
+html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy>i{background:#dce3e945;width:100%}
+html body.visit-v7 #visitOpening#visitOpening a.visit-opening-cta,
+html body.visit-v7 #visitOpening#visitOpening a.visit-opening-cta:is(:hover,:focus-visible){transform:translateY(calc((1 - var(--opening-cta)) * 18px))!important;scale:1!important;font-size:clamp(11px,.75vw,14px);color:#c2d7e5!important;border-color:#c2d7e560!important}
+html body.visit-v7 #visitOpening#visitOpening a.visit-opening-cta:is(:hover,:focus-visible){color:#fff!important;filter:brightness(1.3)!important;text-shadow:0 0 10px #ffffff80!important;border-color:#294f72!important}
+@media(max-width:800px){html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy{width:auto}html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy p{font-size:14px;line-height:1.7}}
+
+/* One hierarchy: white title, smaller light-weight silver body, restrained invitation. */
+html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy h1{font-size:clamp(20px,1.5vw,28px);font-weight:600;line-height:1.35;margin-bottom:26px;color:#f4f5f6!important}
+html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy p{font-size:clamp(12px,.88vw,15px);font-weight:300;line-height:1.85;max-width:none;margin:0 0 18px;color:#aeb7c0!important;letter-spacing:-.01em}
+html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy .visit-project-invitation{margin-top:24px;font-weight:300;color:#bdc5cd!important}
+@media(max-width:800px){html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy h1{font-size:20px;margin-bottom:20px}html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy p{font-size:12px;line-height:1.8}}
+
+/* The experience link changes color only, with identical metrics in every state. */
+html body.visit-v7 #visitOpening#visitOpening a.visit-opening-cta,
+html body.visit-v7 #visitOpening#visitOpening a.visit-opening-cta:is(:hover,:focus-visible){font:400 clamp(11px,.85vw,14px)/1.5 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif!important;letter-spacing:.12em!important;scale:1!important;transform:translateY(calc((1 - var(--opening-cta)) * 18px))!important;filter:none!important;text-shadow:none!important;transition:color .2s ease,border-color .2s ease,opacity .2s ease!important}
+html body.visit-v7 #visitOpening#visitOpening a.visit-opening-cta{color:#aeb7c0!important;border-color:#aeb7c060!important}
+html body.visit-v7 #visitOpening#visitOpening a.visit-opening-cta:is(:hover,:focus-visible){color:#fff!important;border-color:#fff!important}
+html body.visit-v7 #visitOpening#visitOpening a.visit-opening-cta b,
+html body.visit-v7 #visitOpening#visitOpening a.visit-opening-cta:is(:hover,:focus-visible) b{color:inherit!important;transform:none!important;scale:1!important}
+
+/* A restrained silver surface, clipped to the original symbol silhouette. */
+html body.visit-v7 #visitOpening#visitOpening .visit-particle-symbol-finish{background:linear-gradient(125deg,#7193ac 0%,#b7cede 20%,#edf6fc 35%,#f9fcff 42%,#a5bfd2 57%,#dcebf6 73%,#91aec4 88%,#d0e3f1 100%)!important;filter:none!important}
+
+/* Give the continuous flow room and time before it resolves into the shared silver identity. */
+html body.visit-v7 #visitOpening.visit-opening-story{height:900svh!important}
+html body.visit-v7 #visitOpening#visitOpening .visit-particle-wordmark{opacity:0!important}
+.visit-particle-wordmark-finish{position:absolute;left:1%;top:calc(100% + 26px);width:98%;aspect-ratio:573/143;opacity:var(--particle-wordmark,0);transform:translateY(calc((1 - var(--particle-wordmark,0))*12px));background:linear-gradient(125deg,#7193ac 0%,#b7cede 20%,#edf6fc 35%,#f9fcff 42%,#a5bfd2 57%,#dcebf6 73%,#91aec4 88%,#d0e3f1 100%);mask:url('../assets/images/yearon-wordmark-20261018-white.webp') center/contain no-repeat;-webkit-mask:url('../assets/images/yearon-wordmark-20261018-white.webp') center/contain no-repeat}
+@media(max-width:800px){html body.visit-v7 #visitOpening.visit-opening-story{height:800svh!important}.visit-particle-wordmark-finish{top:calc(100% + 18px)}}
+@media(prefers-reduced-motion:reduce){html body.visit-v7 #visitOpening.visit-opening-story{height:100svh!important}}
+
+
+/* Flow, silver symbol, wordmark, then the existing introduction. */
+html body.visit-v7 #visitOpening.visit-opening-story{height:900svh!important}
+@media(max-width:800px){html body.visit-v7 #visitOpening.visit-opening-story{height:800svh!important}}
+@media(prefers-reduced-motion:reduce){html body.visit-v7 #visitOpening.visit-opening-story{height:100svh!important}}
+
+html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy>i{display:none!important}
+html body.visit-v7 #visitOpening[data-particle-interaction="true"].visit-opening-story{height:100svh!important}
+html body.visit-v7 #visitOpening[data-particle-interaction="true"] .visit-opening-sticky{touch-action:none;cursor:grab}
+html body.visit-v7 #visitOpening[data-handoff-done="true"] .visit-opening-sticky{cursor:default}
+
+/* A smaller mark, with room around the moving particle surface. */
+html body.visit-v7 #visitOpening#visitOpening .visit-particle-lockup{width:clamp(145px,15vw,245px)}
+@media(max-width:800px){html body.visit-v7 #visitOpening#visitOpening .visit-particle-lockup{width:min(35vw,185px)}}
+
+@media(min-width:801px){html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy{left:51vw;width:min(45vw,760px)}}
+html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy p{font-size:clamp(11.5px,.84vw,14.3px);text-wrap:pretty}
+html body.visit-v7 #visitOpening#visitOpening a.visit-opening-cta,html body.visit-v7 #visitOpening#visitOpening a.visit-opening-cta:is(:hover,:focus-visible){font-size:clamp(10.5px,.81vw,13.3px)!important}
+
+/* Use the site's silver-dot cursor throughout the particle interaction. */
+@media(any-pointer:fine){html body.visit-v7 #visitOpening .visit-opening-sticky:not(.yearon-cursor-target),html body.visit-v7 #visitOpening .visit-opening-sticky :not(.yearon-cursor-target){cursor:default!important}html body.visit-v7 #visitOpening .yearon-cursor-target{cursor:none!important}}
+
+/* Slightly quieter copy and a shared, larger particle/solid logo footprint. */
+html body.visit-v7 #visitOpening#visitOpening .visit-particle-lockup{width:clamp(165px,17.3vw,282px)}
+html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy h1{font-size:clamp(19px,1.42vw,26.5px)}
+html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy p{font-size:clamp(11px,.80vw,13.6px)}
+html body.visit-v7 #visitOpening#visitOpening a.visit-opening-cta,html body.visit-v7 #visitOpening#visitOpening a.visit-opening-cta:is(:hover,:focus-visible){font-size:clamp(10px,.77vw,12.7px)!important}
+@media(max-width:800px){html body.visit-v7 #visitOpening#visitOpening .visit-particle-lockup{width:min(40vw,212px)}html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy h1{font-size:19px}html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy p{font-size:11.5px}}
+
+/* A little more breathing room and a restrained divider beside the introduction. */
+html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy p{line-height:2.05!important}
+@media(min-width:801px){html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy::before{content:'';position:absolute;left:-7vw;top:8px;bottom:8px;width:1px;background:#b7c5cf40;pointer-events:none}}
+@media(max-width:800px){html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy p{line-height:1.95!important}html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy::before{content:'';position:absolute;left:0;right:0;top:-24px;height:1px;background:#b7c5cf40;pointer-events:none}}
+
+html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy p{line-height:1.72!important;margin-bottom:16px!important}
+@media(min-width:801px){html body.visit-v7 #visitOpening#visitOpening .visit-particle-lockup{scale:1.10;transform-origin:center}html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy{width:min(45vw,760px)}}
+@media(max-width:800px){html body.visit-v7 #visitOpening#visitOpening .visit-opening-copy p{line-height:1.7!important}}
+@media(prefers-reduced-motion:reduce){html body.visit-v7 #visitOpening#visitOpening :is(.visit-particle-symbol-finish,.visit-particle-wordmark-finish){opacity:1!important;transform:none!important}html body.visit-v7 #visitOpening#visitOpening .visit-particle-lockup{left:28%!important;top:48%!important;transform:translate(-50%,-50%) scale(.8)!important}@media(max-width:800px){html body.visit-v7 #visitOpening#visitOpening .visit-particle-lockup{left:50%!important;top:24%!important}}}

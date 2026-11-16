@@ -1,0 +1,16 @@
+/* Share the computer's description and annotation typography across media. */
+html body.media-time-body{--media-description-size:clamp(9px,.66vw,10px);--media-help-size:9px;--media-help-detail:8px}
+html body.media-time-body .era-bridge #timeNav button.active .era-current-description{font-family:"Apple SD Gothic Neo","Helvetica Neue",Arial,sans-serif!important;font-size:var(--media-description-size)!important;font-weight:200!important;line-height:1.5!important;letter-spacing:-.015em!important}
+@media(min-width:1800px){html body.media-time-body{--media-description-size:clamp(11px,.66vw,18px)}}
+@media(max-width:850px){html body.media-time-body{--media-description-size:9px;--media-help-size:10px;--media-help-detail:9px}}
+
+/* Every operating annotation follows the existing computer power callout. */
+html body.media-time-body :is(.interaction-cue,.radio-knob-tooltip,#scrollMedia#scrollMedia>.scroll-drag-hint){font-family:Arial,"Apple SD Gothic Neo",sans-serif!important;font-size:var(--media-help-size)!important;font-weight:400!important;line-height:1.45!important;letter-spacing:.015em!important;color:#e4edf5!important;text-align:left!important;text-shadow:none!important;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:0!important}
+html body.media-time-body :is(.interaction-cue,.radio-knob-tooltip,.scroll-drag-hint)>b{display:block!important;font-family:inherit!important;font-size:var(--media-help-size)!important;font-weight:600!important;line-height:1.45!important;letter-spacing:inherit!important;color:#e4edf5!important;margin:0!important}
+html body.media-time-body :is(.interaction-cue,.radio-knob-tooltip,.scroll-drag-hint)>small{display:block!important;margin:4px 0 0!important;font-family:inherit!important;font-size:var(--media-help-detail)!important;font-weight:400!important;line-height:1.55!important;letter-spacing:inherit!important;color:#cedae5!important;white-space:normal;word-break:keep-all}
+html body.media-time-body .radio-knob-tooltip::before{top:6px;background:#e7edf380!important;height:1px!important}
+html body.media-time-body .radio-knob-tooltip::after{top:4px;background:#e7edf3!important;width:4px!important;height:4px!important}
+html body.media-time-body #scrollMedia#scrollMedia>.scroll-drag-hint{left:calc(var(--scroll-visible-width) + 28px)!important;width:180px;max-width:180px;white-space:normal!important}
+html body.media-time-body #scrollMedia#scrollMedia>.scroll-drag-hint::before{content:'';position:absolute;right:calc(100% + 8px);top:6px;width:22px;height:1px;background:#e7edf380}
+html body.media-time-body #scrollMedia#scrollMedia>.scroll-drag-hint::after{content:'';position:absolute;right:calc(100% + 29px);top:4px;width:4px;height:4px;background:#e7edf3;border-radius:50%}
+@media(max-width:850px){html body.media-time-body .radio-knob-tooltip{max-width:min(220px,84vw)}html body.media-time-body #scrollMedia#scrollMedia>.scroll-drag-hint{width:145px;max-width:145px}}

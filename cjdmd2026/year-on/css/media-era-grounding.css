@@ -1,0 +1,415 @@
+/* MEDIA BY ERA canonical placement and grounding.
+   This file is intentionally the single final authority for reflections. */
+html body.media-time-body #prevChannel svg{transform:scaleX(-1)!important;transform-origin:center!important}
+html body.media-time-body .era-bridge .era-now{display:none!important}
+
+html body.media-time-body #radioMedia{
+  left:50%!important;top:52.5%!important;width:clamp(450px,41vw,520px)!important;
+  height:auto!important;max-height:none!important;transform:translate(-50%,-50%)!important;
+  overflow:visible!important;
+}
+html body.media-time-body #radioMedia>img{
+  position:relative!important;z-index:2!important;width:100%!important;height:auto!important;
+  object-fit:contain!important;
+}
+/* Contact shadow stays tight; the mirrored body begins directly below it. */
+html body.media-time-body #radioMedia::before{
+  content:""!important;display:block!important;position:absolute!important;z-index:0!important;
+  left:10%!important;right:10%!important;bottom:-1.2%!important;height:5%!important;
+  border-radius:50%!important;background:rgba(20,31,40,.23)!important;
+  filter:blur(10px)!important;transform:scaleY(.28)!important;pointer-events:none!important;
+}
+html body.media-time-body .tv-time-panel #television{overflow:visible!important}
+html body.media-time-body .tv-time-panel #television>.tv-frame{position:relative!important;z-index:6!important}
+/* Dark-stage identity: supplied wordmark plus a restrained transparent-glass symbol. */
+html body.media-time-body .global-header.global-header .brand.brand-image .brand-word{
+  background-image:url('../assets/images/yearon-wordmark-supplied-white.webp?v=1')!important;
+}
+html body.media-time-body .global-header.global-header .brand.brand-image .brand-mark{
+  content:url('../assets/images/yearon-symbol-white-final.webp?v=2')!important;
+  opacity:1!important;
+  filter:none!important;
+  transform:none!important;
+}
+html body.media-time-body .global-header.global-header .brand.brand-image{
+  position:relative!important;
+}
+html body.media-time-body .global-header.global-header .brand.brand-image::before{
+  display:none!important;
+  content:none!important;
+}
+@media(max-width:850px){
+  html body.media-time-body .global-header.global-header .brand.brand-image::before{
+    width:53px!important;
+    height:36px!important;
+  }
+}
+@media(min-width:801px){
+  html body.media-time-body .tv-time-panel #television{top:55.5%!important}
+}
+
+/* User-supplied photographic channel dial. */
+html body.media-time-body .tv-time-panel #channelDial{
+  z-index:50!important;left:80.55%!important;top:25.75%!important;width:10.40%!important;height:16.20%!important;
+  background:transparent url('../assets/images/tv-dial-plate-transparent.webp') center/contain no-repeat!important;
+  box-shadow:none!important;overflow:visible!important;border-radius:50%!important;clip-path:none!important;
+  isolation:isolate!important;outline:none!important;
+}
+html body.media-time-body .tv-time-panel #channelDial::before,
+html body.media-time-body .tv-time-panel #channelDial::after{display:none!important;content:none!important}
+html body.media-time-body .tv-time-panel #channelDial .original-dial-photo{
+  display:block!important;position:absolute!important;z-index:2!important;
+  left:50%!important;right:auto!important;top:47%!important;bottom:auto!important;width:26%!important;height:60%!important;
+  border-radius:0!important;opacity:1!important;pointer-events:none!important;
+  background-image:url('../assets/images/tv-dial-handle-vertical-user.webp')!important;
+  background-size:contain!important;background-repeat:no-repeat!important;background-position:center!important;
+  transform:translate(-50%,-50%) rotate(calc(var(--dial-rotation,0deg) - 45deg))!important;
+  transform-origin:50% 50%!important;transition:transform .34s cubic-bezier(.22,.75,.2,1)!important;
+}
+html body.media-time-body .tv-time-panel #channelDial.is-dragging .original-dial-photo{transition:none!important}
+
+html body.media-time-body .time-panel[data-era="2002"] .pc-media{overflow:visible!important}
+html body.media-time-body .time-panel[data-era="2002"] .pc-media::before,
+html body.media-time-body .time-panel[data-era="2002"] .pc-media::after{display:none!important;content:none!important}
+
+@media(max-width:800px){
+  html body.media-time-body #radioMedia{top:58%!important;width:clamp(245px,62vw,330px)!important}
+}
+/* Radio cleanup: one physical object only. Remove the mirrored duplicate that
+   was bleeding through the tuner and broadcast copy. */
+html body.media-time-body #radioMedia::after{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+  opacity:0!important;
+  -webkit-mask-image:none!important;
+  mask-image:none!important;
+}
+html body.media-time-body #radioMedia::before{
+  left:16%!important;
+  right:16%!important;
+  bottom:-.4%!important;
+  height:3.2%!important;
+  background:rgba(17,29,40,.20)!important;
+  filter:blur(8px)!important;
+  transform:scaleY(.24)!important;
+}
+/* Keep the CRT in its established position. */
+@media(min-width:801px){
+  html body.media-time-body .tv-time-panel #television{top:55.5%!important}
+}
+@media(max-width:800px){
+  html body.media-time-body .tv-time-panel #television{top:55%!important}
+}
+/* CRT channel controls: lower registration and quiet transparent glass arrows. */
+html body.media-time-body .tv-time-panel .channel-footer{
+  translate:0 -26px!important;
+}
+html body.media-time-body .tv-time-panel .channel-footer :is(#prevChannel,#nextChannel).arrow{
+  color:rgba(75,98,119,.92)!important;
+  border:1px solid rgba(242,249,253,.50)!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(151,181,201,.035))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.62),inset 0 -1px 0 rgba(69,100,122,.12),0 5px 14px rgba(35,55,70,.08)!important;
+  -webkit-backdrop-filter:blur(9px) saturate(1.12)!important;
+  backdrop-filter:blur(9px) saturate(1.12)!important;
+}
+html body.media-time-body .tv-time-panel .channel-footer :is(#prevChannel,#nextChannel).arrow:is(:hover,:focus-visible){
+  color:rgba(49,75,98,.98)!important;
+  border-color:rgba(255,255,255,.72)!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.18),rgba(159,188,207,.06))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.82),inset 0 -1px 0 rgba(69,102,124,.14),0 7px 18px rgba(31,52,69,.11)!important;
+}
+@media(max-width:700px){
+  html body.media-time-body .tv-time-panel .channel-footer{translate:0 -18px!important}
+}
+/* Viewport-safe sizing: every object is constrained by width and usable height. */
+@media (min-width:801px){
+  html body.media-time-body #radioMedia{width:min(41vw,calc(158dvh - 395px),520px)!important}
+  html body.media-time-body .tv-time-panel #television{width:min(44.5vw,calc(132dvh - 303.6px),845px)!important}
+  html body.media-time-body .time-panel[data-era="2002"] .pc-media{width:min(51vw,calc(148dvh - 303.4px),840px)!important;max-height:calc(100dvh - 190px)!important}
+  html body.media-time-body .time-panel[data-era="2026"] .phone-media{width:min(27vw,calc(62dvh - 130.2px),480px)!important;max-height:calc(100dvh - 190px)!important}
+  html body.media-time-body .time-panel>:is(.paper-media,.scroll-media){max-height:calc(100dvh - 215px)!important}
+}
+@media (max-width:800px){
+  html body.media-time-body #radioMedia{width:min(72vw,calc(158dvh - 347.6px),430px)!important}
+  html body.media-time-body .tv-time-panel #television{width:min(82vw,calc(132dvh - 277.2px),540px)!important}
+  html body.media-time-body .time-panel[data-era="2002"] .pc-media{width:min(92vw,calc(148dvh - 281.2px),650px)!important;max-height:calc(100dvh - 175px)!important}
+  html body.media-time-body .time-panel[data-era="2026"] .phone-media{width:min(72vw,calc(62dvh - 117.8px),390px)!important;max-height:calc(100dvh - 175px)!important}
+}
+@media (max-height:680px) and (min-width:801px){
+  html body.media-time-body .era-stamp{top:70px!important}
+  html body.media-time-body :is(#radioMedia,.tv-time-panel #television,.pc-media,.phone-media){top:57%!important}
+}
+
+/* One quiet, contextual instruction per medium. */
+.media-guide{position:absolute;z-index:40;left:50%;bottom:clamp(18px,3.1vh,42px);translate:-50% 0;margin:0;padding:8px 13px;border:1px solid rgba(228,239,248,.22);border-radius:999px;background:linear-gradient(145deg,rgba(230,241,250,.10),rgba(135,159,181,.035));box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 8px 22px rgba(3,9,17,.10);backdrop-filter:blur(9px);color:rgba(224,234,243,.72);font:500 9px/1.2 Arial,sans-serif;letter-spacing:.11em;white-space:nowrap;opacity:0;transform:translateY(5px);transition:opacity .35s ease,transform .35s ease;pointer-events:none}
+.time-panel.active .media-guide{opacity:1;transform:translateY(0);animation:guideIn 2.8s ease both}
+.time-panel.guide-used .media-guide{opacity:0!important;transform:translateY(4px)!important}
+@keyframes guideIn{0%,12%{opacity:0;transform:translateY(6px)}32%,78%{opacity:1;transform:translateY(0)}100%{opacity:.62}}
+@media(max-width:700px){.media-guide{bottom:14px;font-size:8px;letter-spacing:.075em;padding:7px 10px}}
+
+/* Device shells own their aspect ratio. Internal interfaces may never enlarge
+   the shell when the viewport becomes wide, short, or zoomed. */
+html body.media-time-body .time-panel[data-era="2002"] .pc-media{
+  height:auto!important;
+  aspect-ratio:1383/862!important;
+}
+html body.media-time-body .time-panel[data-era="2026"] .phone-media{
+  height:auto!important;
+  aspect-ratio:941/1672!important;
+  overflow:visible!important;
+}
+html body.media-time-body .time-panel[data-era="2026"] .phone-media>img{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:fill!important;
+}
+html body.media-time-body .time-panel[data-era="2026"] .phone-media .social-app{
+  left:9.1%!important;
+  right:9.1%!important;
+  top:3.35%!important;
+  bottom:3.35%!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:none!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+}
+html body.media-time-body .phone-media .social-app>*{min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
+html body.media-time-body .phone-media .social-app>header{overflow:hidden!important;gap:6px!important}
+html body.media-time-body .phone-media .social-app>header>*{min-width:0!important;white-space:nowrap!important}
+html body.media-time-body .phone-media .social-app>header span{overflow:hidden!important;text-overflow:ellipsis!important}
+html body.media-time-body .phone-media .social-app :is(.mini-feed,article,form,input){min-width:0!important;max-width:100%!important}
+/* Restore the approved phone scale after locking the shell ratio. */
+@media(min-width:801px){
+  html body.media-time-body .time-panel[data-era="2026"] .phone-media{
+    width:min(22vw,calc(50dvh - 80px),360px)!important;
+  }
+}
+@media(max-width:800px){
+  html body.media-time-body .time-panel[data-era="2026"] .phone-media{
+    width:min(64vw,calc(48dvh - 54px),300px)!important;
+  }
+}
+
+/* Single reflection implementation for every central medium.
+   Each device owns exactly one vertically mirrored image. */
+html body.media-time-body :is(#radioMedia,#television,.pc-media,.phone-media)::after{
+  content:none!important;
+  display:none!important;
+}
+html body.media-time-body :is(#radioMedia,#television,.pc-media,.phone-media)>img:first-child{
+  -webkit-box-reflect:none!important;
+}
+html body.media-time-body .media-reflection{
+  display:block!important;
+  position:absolute!important;
+  left:0!important;
+  top:calc(100% - 22px)!important;
+  width:100%!important;
+  height:27%!important;
+  overflow:hidden!important;
+  pointer-events:none!important;
+  z-index:1!important;
+  opacity:.20!important;
+  -webkit-mask-image:linear-gradient(to bottom,#000 0%,rgba(0,0,0,.78) 14%,rgba(0,0,0,.47) 38%,rgba(0,0,0,.20) 61%,rgba(0,0,0,.055) 79%,transparent 100%)!important;
+  mask-image:linear-gradient(to bottom,#000 0%,rgba(0,0,0,.78) 14%,rgba(0,0,0,.47) 38%,rgba(0,0,0,.20) 61%,rgba(0,0,0,.055) 79%,transparent 100%)!important;
+}
+html body.media-time-body .media-reflection>img{
+  display:block!important;
+  position:absolute!important;
+  inset:0 auto auto 0!important;
+  width:100%!important;
+  height:370.37%!important;
+  max-width:none!important;
+  max-height:none!important;
+  object-fit:fill!important;
+  transform:scaleY(-1)!important;
+  transform-origin:center center!important;
+  filter:grayscale(.94) brightness(.86) contrast(.88) blur(.38px)!important;
+}
+html body.media-time-body .tv-reflection-wrap{top:calc(100% - 82px)!important;opacity:.20!important}
+html body.media-time-body .tv-reflection-wrap>img{filter:grayscale(1) brightness(.82) contrast(.84) blur(.48px)!important}
+html body.media-time-body .pc-reflection-wrap{top:calc(100% - 20px)!important;opacity:.20!important}
+html body.media-time-body .pc-reflection-wrap>img{filter:grayscale(.92) brightness(.86) contrast(.86) blur(.42px)!important}
+html body.media-time-body .phone-reflection-wrap{
+  top:calc(100% - 20px)!important;
+  height:20%!important;
+  opacity:.09!important;
+}
+html body.media-time-body .phone-reflection-wrap>img{
+  height:500%!important;
+  filter:grayscale(.95) brightness(.84) contrast(.75) blur(.8px)!important;
+}
+@media(max-width:800px){
+  html body.media-time-body .media-reflection{top:calc(100% - 12px)!important}
+  html body.media-time-body .phone-reflection-wrap{top:calc(100% - 11px)!important}
+}
+
+/* Final shell registration: align interactive screens to the visible glass. */
+@media(min-width:801px){
+  html body.media-time-body .time-panel[data-era="2002"] .pc-media{
+    top:58.5%!important;
+  }
+  html body.media-time-body .time-panel[data-era="2026"] .phone-media{
+    width:min(21vw,calc(48dvh - 72px),340px)!important;
+  }
+}
+@media(max-width:800px){
+  html body.media-time-body .time-panel[data-era="2002"] .pc-media{top:57%!important}
+  html body.media-time-body .time-panel[data-era="2026"] .phone-media{
+    width:min(61vw,calc(46dvh - 50px),285px)!important;
+  }
+}
+
+/* Measured screen apertures from the final device artwork. Device sizes stay
+   fixed; only the live screen layers are registered to their bezels. */
+html body.media-time-body .tv-time-panel #television>.screen-window{
+  left:9.25%!important;
+  top:14.75%!important;
+  width:62.15%!important;
+  height:65.65%!important;
+  border-radius:15% / 12.5%!important;
+  overflow:hidden!important;
+}
+html body.media-time-body .time-panel[data-era="2026"] .phone-media .social-app{
+  left:11.9%!important;
+  right:11.9%!important;
+  top:3.65%!important;
+  bottom:3.65%!important;
+  border-radius:11.8% / 6.2%!important;
+  overflow:hidden!important;
+}
+@media(min-width:801px){
+  html body.media-time-body .time-panel[data-era="2026"] .phone-media{
+    width:min(20vw,calc(46dvh - 68px),320px)!important;
+  }
+}
+@media(max-width:800px){
+  html body.media-time-body .time-panel[data-era="2026"] .phone-media{
+    width:min(58vw,calc(44dvh - 48px),270px)!important;
+  }
+}
+
+/* Optical PC centering: the monitor sits 9.1% left of the full
+   monitor/keyboard/mouse canvas. Centre the monitor, not the full PNG. */
+html body.media-time-body .time-panel[data-era="2002"] .pc-media{
+  left:50%!important;
+  margin-left:0!important;
+  transform:translate(-40.9%,-50%)!important;
+}
+@media(min-width:801px){
+  html body.media-time-body .time-panel[data-era="2002"] .pc-media{
+    width:min(49vw,calc(142dvh - 292px),800px)!important;
+  }
+}
+@media(max-width:800px){
+  html body.media-time-body .time-panel[data-era="2002"] .pc-media{
+    width:min(88vw,calc(142dvh - 270px),620px)!important;
+  }
+}
+
+/* Readable glass instruction pill over the pale reflective floor. */
+html body.media-time-body .media-guide{
+  color:rgba(55,72,87,.86)!important;
+  border-color:rgba(105,128,148,.28)!important;
+  background:linear-gradient(145deg,rgba(246,250,253,.56),rgba(188,207,221,.24))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.86),inset 0 -1px 0 rgba(88,113,134,.10),0 7px 20px rgba(44,67,86,.10)!important;
+  -webkit-backdrop-filter:blur(12px) saturate(1.08)!important;
+  backdrop-filter:blur(12px) saturate(1.08)!important;
+  font-weight:500!important;
+  text-shadow:0 1px 0 rgba(255,255,255,.72)!important;
+}
+html body.media-time-body .time-panel.active .media-guide{opacity:.92!important}
+html body.media-time-body .time-panel.guide-used .media-guide{opacity:0!important}
+
+/* Exhibition-style interaction annotations. Typography and a hairline only;
+   these cues never affect device geometry or receive pointer events. */
+html body.media-time-body .interaction-cue{
+  --cue-line:34px;
+  position:absolute!important;
+  z-index:80!important;
+  width:max-content!important;
+  max-width:142px!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  background:none!important;
+  color:rgba(242,248,252,.96)!important;
+  font-family:inherit!important;
+  font-size:9px!important;
+  font-weight:550!important;
+  line-height:1.45!important;
+  letter-spacing:.015em!important;
+  text-align:left!important;
+  text-transform:uppercase!important;
+  pointer-events:none!important;
+  opacity:0!important;
+  transform:translateY(3px)!important;
+  transition:opacity .42s ease,transform .42s ease!important;
+  text-shadow:none!important;
+}
+html body.media-time-body .interaction-cue::before{
+  content:""!important;
+  position:absolute!important;
+  right:calc(100% + 8px)!important;
+  top:4px!important;
+  width:var(--cue-line)!important;
+  height:1px!important;
+  background:linear-gradient(90deg,rgba(232,242,248,.46),rgba(245,250,253,.94))!important;
+}
+html body.media-time-body .interaction-cue::after{
+  content:""!important;
+  position:absolute!important;
+  right:calc(100% + var(--cue-line) + 6px)!important;
+  top:2px!important;
+  width:4px!important;
+  height:4px!important;
+  border-radius:50%!important;
+  background:rgba(245,250,253,.96)!important;
+  box-shadow:none!important;
+}
+html body.media-time-body .interaction-cue b,
+html body.media-time-body .interaction-cue small{
+  display:block!important;
+  margin:0!important;
+  padding:0!important;
+  color:inherit!important;
+  font:inherit!important;
+  text-shadow:none!important;
+}
+html body.media-time-body .interaction-cue small{
+  margin-top:4px!important;
+  color:rgba(226,236,243,.82)!important;
+  font-size:8px!important;
+  font-weight:400!important;
+  letter-spacing:inherit!important;
+  text-transform:none!important;
+}
+html body.media-time-body .interaction-cue.is-visible{
+  opacity:1!important;
+  transform:translateY(0)!important;
+}
+html body.media-time-body .interaction-cue.is-hidden{
+  opacity:0!important;
+  transform:translateY(2px)!important;
+}
+html body.media-time-body .scroll-media>.interaction-cue{left:79%!important;top:49%!important}
+html body.media-time-body .paper-media>.interaction-cue{left:80%!important;top:47%!important}
+html body.media-time-body #radioMedia>.interaction-cue{left:74%!important;top:84%!important;--cue-line:42px}
+html body.media-time-body .tv-time-panel #television>.interaction-cue{left:102%!important;top:28%!important;--cue-line:36px}
+html body.media-time-body .time-panel[data-era="2002"] .pc-media>.interaction-cue{left:76%!important;top:61%!important;--cue-line:30px}
+html body.media-time-body .time-panel[data-era="2026"] .phone-media>.interaction-cue{left:100%!important;top:42%!important;--cue-line:25px}
+html body.media-time-body .era-bridge #timeNav button.active{top:clamp(28px,4.5vh,52px)!important}
+@media(max-width:800px){
+  html body.media-time-body .interaction-cue{font-size:6px!important;max-width:112px!important;--cue-line:22px}
+  html body.media-time-body .interaction-cue small{font-size:5.5px!important}
+  html body.media-time-body .tv-time-panel #television>.interaction-cue{left:96%!important;top:24%!important;--cue-line:34px}
+  html body.media-time-body .time-panel[data-era="2002"] .pc-media>.interaction-cue{left:94%!important;top:66%!important;--cue-line:34px}
+  html body.media-time-body .time-panel[data-era="2026"] .phone-media>.interaction-cue{left:105%!important}
+}
+
+/* Cover the original dial seat with the separate rotating dial. */
+html body.media-time-body .tv-time-panel #channelDial{top:25.05%!important}

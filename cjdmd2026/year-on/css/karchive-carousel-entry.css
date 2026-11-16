@@ -1,0 +1,30 @@
+.ka-carousel-entry{position:fixed;inset:var(--ka-entry-top,74px) 0 0;z-index:110;background:#000;color:#c5d1da;overflow:hidden;touch-action:none;cursor:grab;opacity:1;transition:opacity .65s ease,transform .65s ease}
+.ka-carousel-entry.is-dragging{cursor:grabbing}.ka-carousel-entry.is-entering{opacity:0;transform:scale(1.08);pointer-events:none}
+.ka-carousel-scene{position:absolute;inset:0;display:grid;perspective:560px;overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 17% 83%,transparent)}
+.ka-carousel-ring{place-self:center;display:grid;transform-style:preserve-3d;will-change:transform}
+.ka-carousel-ring img{--w:clamp(115px,16vw,230px);grid-area:1/1;width:var(--w);aspect-ratio:7/10;object-fit:cover;border-radius:3px;backface-visibility:hidden;transform:rotateY(calc(var(--i)*360deg/var(--n))) translateZ(calc(-1*(.5*var(--w) + 6px)/tan(180deg/var(--n))));user-select:none}
+.ka-carousel-entry p{position:absolute;bottom:42px;left:50%;transform:translateX(-50%);margin:0;font:400 11px/1.5 Arial,sans-serif;letter-spacing:.15em;white-space:nowrap}.ka-carousel-entry p span{display:inline-block;margin-left:12px}
+.ka-carousel-entry button{position:absolute;bottom:36px;right:32px;background:none;border:0;border-bottom:1px solid #aabcc555;color:inherit;padding:7px 0;font:400 11px/1.5 Arial,sans-serif;cursor:pointer}
+@media(max-width:700px){.ka-carousel-entry p{bottom:80px}.ka-carousel-entry button{right:24px;bottom:25px}}
+@media(prefers-reduced-motion:reduce){.ka-carousel-entry{transition:none}}
+
+/* Keep the cylinder inside the stage, with quiet, continuous lateral fading. */
+.ka-carousel-entry{z-index:999;transition:opacity 1.1s ease,transform 1.1s cubic-bezier(.22,.61,.36,1)}
+.ka-carousel-entry.is-entering{transform:scale(1.035)}
+.ka-carousel-scene{inset:5% 0 12%;perspective:1100px;mask-image:linear-gradient(90deg,transparent 0%,#000 23% 77%,transparent 100%)}
+.ka-carousel-ring{transform-origin:center;scale:.78}
+.ka-carousel-ring img{--w:clamp(110px,12vw,185px);border-radius:5px}
+.ka-carousel-entry p{display:flex;flex-direction:column;align-items:center;gap:10px;bottom:32px;font-size:10px;letter-spacing:.15em}
+.ka-carousel-entry p span{margin:0}.ka-entry-mouse{width:20px;height:32px;stroke:#bccbd5;stroke-width:1.2}.ka-entry-mouse path{animation:ka-entry-wheel 1.8s ease-in-out infinite}
+.ka-carousel-entry button{display:none}
+@keyframes ka-entry-wheel{0%,100%{transform:translateY(0);opacity:.4}55%{transform:translateY(5px);opacity:1}}
+@media(max-width:700px){.ka-carousel-scene{perspective:800px}.ka-carousel-ring{scale:.7}.ka-carousel-entry p{bottom:28px}}
+@media(prefers-reduced-motion:reduce){.ka-entry-mouse path{animation:none}.ka-carousel-entry{transition:opacity .2s}}
+
+/* Match the reference cylinder geometry: 35em perspective, 17.5em cards. */
+.ka-carousel-scene{font-size:clamp(11px,1.05vw,16px);inset:0 0 9%;perspective:35em;mask-image:linear-gradient(90deg,transparent,#000 20% 80%,transparent)}
+.ka-carousel-ring{scale:1}
+.ka-carousel-ring img{--w:17.5em;border-radius:1.5em;transform:rotateY(calc(var(--i)*360deg/var(--n))) translateZ(calc(-1*(.5*var(--w) + .5em)/tan(180deg/var(--n))))}
+.ka-carousel-entry p{bottom:calc(16px + env(safe-area-inset-bottom,0px));gap:5px;font:500 9px/1.35 Arial,sans-serif;letter-spacing:.13em}
+.ka-carousel-entry .ka-entry-mouse{width:16px;height:26px}
+@media(max-width:700px){.ka-carousel-scene{font-size:10px;perspective:35em}.ka-carousel-ring{scale:1}}

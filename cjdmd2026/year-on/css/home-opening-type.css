@@ -1,0 +1,12 @@
+/* Opening copy only: keep the existing scroll sequence and spacing. */
+html body.home-film-body #entry .entry-subtitle strong{color:#fff!important;min-height:1.45em;display:block!important}
+html body.home-film-body #entry .entry-subtitle strong.is-typing::after{content:"";display:inline-block;width:2px;height:.92em;margin-left:.16em;vertical-align:-.06em;background:#b9d5e1;box-shadow:0 0 8px #b9d5e155;animation:opening-caret .8s steps(1,end) infinite}
+@keyframes opening-caret{50%{opacity:0}}
+@media(prefers-reduced-motion:reduce){html body.home-film-body #entry .entry-subtitle strong.is-typing::after{animation:none}}
+
+/* Let the invitation settle in gradually after the opening statement. */
+html body.home-film-body .film-destination{transition:none;}
+html body.home-film-body .film-destination small{opacity:var(--destination-label,0);transform:translateY(calc((1 - var(--destination-label,0))*8px))}
+html body.home-film-body .film-destination .film-enter{opacity:var(--destination-button,0);transform:translateY(calc((1 - var(--destination-button,0))*14px)) scale(calc(.98 + var(--destination-button,0)*.02));will-change:opacity,transform}
+html body.home-film-body .film-destination p{opacity:var(--destination-caption,0);transform:translateY(calc((1 - var(--destination-caption,0))*8px))}
+@media(prefers-reduced-motion:reduce){html body.home-film-body .film-destination,html body.home-film-body .film-destination :is(small,.film-enter,p){transform:none!important}}

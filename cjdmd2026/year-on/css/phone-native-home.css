@@ -1,0 +1,36 @@
+/* Opaque hardware, a fitted display, and a native home screen. */
+html body.media-time-body .phone-media>img{opacity:0!important;filter:none!important}
+.phone-hardware{position:absolute;z-index:3;inset:1.8% 9.4% 2.4%;border-radius:14% / 7%;background:linear-gradient(100deg,#7d8490,#e1e2e5 1%,#4d535f 2.2%,#14161b 3.3%,#08090b 96%,#969ca5 98%,#d4d8dc 99%,#727b87);border:1px solid #aeb4be;box-shadow:inset 0 0 0 1px #edf0f480,1px 2px 3px #111a2950,0 16px 20px -11px #0b152a75}
+.phone-hardware:after{content:'';position:absolute;inset:1px;border:1px solid #ffffff29;border-radius:inherit;pointer-events:none}
+.phone-side-button{position:absolute;width:2px;left:-3px;background:linear-gradient(90deg,#777e89,#d4d8df);border-radius:2px}.phone-side-button.one{top:17%;height:5%}.phone-side-button.two{top:25%;height:8%}.phone-side-button.three{left:auto;right:-3px;top:26%;height:12%}
+html body.media-time-body .phone-media .social-app.culture-sns{left:11.25%!important;right:11.25%!important;top:3%!important;bottom:3.65%!important;border-radius:13% / 6.7%!important;box-shadow:0 0 0 2px #050609!important}
+.phone-native-home{position:absolute;inset:0;z-index:125;background:#9298a7 url('../assets/images/phone-wallpaper-silver.svg') center/100% 100%;color:#fff}
+.phone-is-home .culture-status{z-index:140!important;background:transparent!important;color:#fff!important}.phone-is-home:before{z-index:145!important}
+.phone-is-home .culture-status time{left:10%;top:5.6cqw;font-size:4cqw}.phone-is-home .culture-status-icons{right:7%;top:5.3cqw}
+.phone-yearon-app{position:absolute;top:20cqw;left:7.5%;width:17cqw;text-align:center!important}
+.phone-yearon-app>span{display:grid;place-items:center;width:16.8cqw;height:16.8cqw;border-radius:4cqw;background:linear-gradient(145deg,#303944,#0c1016);border:1px solid #ffffff50;box-shadow:0 1cqw 2cqw #28334730}
+.phone-yearon-app img{width:12cqw;height:8cqw;object-fit:contain;filter:brightness(0) invert(1)}
+.phone-yearon-app b{display:block;margin-top:1.6cqw;font:400 3cqw/1.4 Arial,sans-serif;color:#fff;letter-spacing:.02em;text-shadow:0 1px 2px #27334866}
+.phone-native-dock{position:absolute;bottom:3cqw;left:3%;right:3%;height:26cqw;display:flex;align-items:center;justify-content:space-evenly;border:1px solid #ffffff45;background:#dce2f126;border-radius:10cqw;backdrop-filter:blur(15px);box-shadow:inset 0 1px 2px #fff2}
+.phone-native-dock>span{display:grid;place-items:center;width:16.5cqw;height:16.5cqw;border-radius:4cqw;background:linear-gradient(#57f174,#09bb39);box-shadow:inset 0 0 0 1px #ffffff35}.phone-native-dock svg{width:12cqw;height:12cqw;stroke:none}.phone-native-dock .dock-talk{background:#ffe500}
+.phone-home-search{position:absolute;bottom:34cqw;left:38%;width:24%;height:8cqw;display:flex;gap:1cqw;align-items:center;justify-content:center;border-radius:6cqw!important;background:#e4e9f024!important;border:1px solid #ffffff35!important;color:white!important;font:400 3cqw Arial!important}.phone-home-search svg{width:3.7cqw;height:3.7cqw;stroke-width:1.4}
+.phone-home-button{position:absolute;bottom:0;left:28%;width:44%;height:5cqw;z-index:160;cursor:pointer}.phone-home-button:after{content:'';position:absolute;bottom:1.2cqw;left:10%;width:80%;height:.9cqw;border-radius:9px;background:#13151a}
+.phone-native-home[hidden]{display:none!important}
+.phone-is-home .culture-brand,.phone-is-home .culture-feed,.phone-is-home .culture-modes{visibility:hidden}
+html body.media-time-body .phone-media .phone-lock{background:#9298a7 url('../assets/images/phone-wallpaper-silver.svg') center/100% 100%}.phone-lock:before{display:none}
+html body.media-time-body .phone-media .phone-reflection-wrap{display:block!important;opacity:.18!important}
+
+html body.media-time-body .phone-media .social-app.culture-sns:before{display:none!important}
+.phone-native-island{position:absolute;z-index:150;left:34%;top:3.2cqw;width:32%;height:7.2cqw;background:#000;border-radius:8cqw;box-shadow:inset 0 0 0 1px #111;pointer-events:none}
+.phone-lock:after{display:none!important}
+.phone-is-home .culture-battery rect:first-child{fill:#ffffff55}.phone-is-home .culture-battery rect:nth-child(2){fill:#fff}.phone-is-home .culture-battery text{fill:#667080}
+
+/* Preserve native status glyph and dock proportions at every device scale. */
+html body .phone-media .culture-sns .culture-status{height:13.5cqw;min-height:13.5cqw;position:relative;line-height:1}
+html body .phone-media .culture-status time{top:5.1cqw!important;left:8%!important;width:auto!important;height:auto!important;font:600 4cqw/1 Arial,sans-serif!important;letter-spacing:-.12cqw!important;font-variant-numeric:tabular-nums}
+html body .phone-media .culture-status-icons{top:4.8cqw!important;right:6%!important;height:4.2cqw!important;gap:1.2cqw!important;display:flex!important;align-items:center!important}
+html body .phone-media .culture-status-icons svg{display:block!important;flex:none!important;width:4.4cqw!important;height:3.6cqw!important;overflow:visible;fill:none;stroke:currentColor}
+html body .phone-media .culture-status-icons svg.culture-battery{width:7.8cqw!important;height:4.16cqw!important}
+html body .phone-media .phone-native-dock>span{flex:0 0 16.5cqw!important;width:16.5cqw!important;height:16.5cqw!important;aspect-ratio:1!important;padding:0!important;display:grid!important;place-items:center!important}
+html body .phone-media .phone-native-dock>span>svg{display:block!important;flex:none!important;width:12cqw!important;height:12cqw!important;aspect-ratio:1!important;transform:none!important;overflow:visible}
+html body .phone-media .phone-native-dock .dock-talk svg{width:13cqw!important;height:13cqw!important}

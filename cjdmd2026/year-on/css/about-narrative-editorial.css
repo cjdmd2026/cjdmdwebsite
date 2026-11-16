@@ -1,0 +1,131 @@
+/* Narrative additions share the exhibition's restrained typography and materials. */
+html body.about-body .about-editorial>.about-fixed-scene{background:#050607;padding:calc(var(--header-h,74px) + 35px) 9vw 80px;color:#edf2f5}
+.about-editorial>.about-fixed-scene>div{width:min(760px,82vw);margin:auto}
+html body.about-body .about-editorial h2{font:400 clamp(22px,2.1vw,36px)/1.6 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;letter-spacing:-.035em;text-wrap:balance;margin:0 auto 30px;max-width:27em}
+html body.about-body .about-editorial .editorial-body{font:400 clamp(13px,.95vw,17px)/1.95 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif!important;color:#b7c3cc;max-width:40em;margin:0 auto;word-break:keep-all;text-wrap:pretty}
+html body.about-body .about-editorial .editorial-detail{font:400 clamp(12px,.84vw,15px)/1.9 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif!important;color:#aab9c5;max-width:39em;margin:26px auto 0;word-break:keep-all}
+html body.about-body .weness-definition>.about-fixed-scene{background:radial-gradient(ellipse at center,#263442,#101820 55%,#070a0e);}
+.weness-definition h2{letter-spacing:.04em!important;color:#e2edf5}
+html body.about-body .weness-definition .editorial-body{font-size:clamp(17px,1.5vw,25px)!important;line-height:1.7!important;color:#eef4f8;max-width:30em}
+.archive-invitation{font:400 clamp(13px,1vw,18px)/1.7 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;color:#b3c5d2;margin:0 24px 30px;text-align:center;word-break:keep-all}
+html body.about-body #aboutDestination .about-destination-content{display:flex;flex-direction:column;justify-content:center;align-items:center}
+/* Carry the result circle into the definition without changing the process illustration. */
+.weness-definition>.about-fixed-scene:before{content:'';position:absolute;left:50%;top:50%;width:min(52vw,560px);aspect-ratio:1;border:1px solid #c4dceb14;border-radius:50%;transform:translate(-50%,-50%) scale(var(--definition-expand,1));pointer-events:none}
+html body.about-body #wnRelationMap .wn-map-stage{background:linear-gradient(180deg,#0e151c,#2b3947 65%,#607181)!important}
+html body.about-body #wnRelationMap .wn-map-svg text{fill:#c8d7e2}
+html body.about-body #wnRelationMap .wn-map-solid{fill:#607b90}
+html body.about-body #wnRelationMap .wn-map-outline{fill:#bcd1e50c;stroke:#c2d8e67a}
+html body.about-body #wnRelationMap .wn-map-branch,html body.about-body #wnRelationMap .wn-map-trace{stroke:#bdd4e36b}
+html body.about-body #wnRelationMap .wn-map-white{fill:#f2f6fa}
+@media(max-width:760px){html body.about-body .about-editorial h2{font-size:21px;margin-bottom:22px}html body.about-body .about-editorial .editorial-body{font-size:13px!important;line-height:1.8!important}.about-editorial>.about-fixed-scene>div{width:84vw}html body.about-body .weness-definition .editorial-body{font-size:18px!important}}
+
+.wn-definition-expansion{position:fixed;z-index:21;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;background:radial-gradient(circle at 30% 25%,#dceaf21c,#829bae1c 55%,#9db8cf24);border:1px solid #d5e8f233;display:none}
+.wn-element-label{font-size:12px!important;letter-spacing:.12em!important}.wn-element-caption{font-size:16px!important}
+
+/* Keep the definition in the same visual scene as the process result. */
+html body.about-body .weness-definition>.about-fixed-scene{background:var(--weness-studio,var(--yearon-entry-gradient))!important}
+html body.about-body .weness-definition>.about-fixed-scene:before{display:none!important}
+html body.about-body .weness-definition>.about-fixed-scene>div{width:min(650px,82vw)}
+html body.about-body .weness-definition h2{display:flex;align-items:center;justify-content:center;width:clamp(150px,16vw,200px);height:clamp(150px,16vw,200px);border-radius:50%;border:1px solid #d1dfed66;background:radial-gradient(circle at 30% 23%,#e5eaf24d 0%,#9aa4b633 38%,#4b556938 68%,#bdc8d857 100%);box-shadow:inset 0 0 20px #c7d9eb0a;font-size:clamp(15px,1.2vw,19px);letter-spacing:.03em!important;margin:0 auto 36px;color:#f3f6fa}
+html body.about-body .weness-definition .editorial-body{font-size:clamp(14px,1.05vw,18px)!important;font-weight:400;line-height:1.8!important;max-width:35em;color:#f4f7fa}
+html body.about-body .weness-definition .editorial-detail{font-size:clamp(12px,.85vw,14px)!important;line-height:1.85!important;max-width:40em;margin-top:18px;color:#edf2f6}
+html body.about-body .about-editorial h2{font-size:clamp(19px,1.5vw,27px)}
+.wn-definition-expansion{display:none!important}
+@media(max-width:760px){html body.about-body .weness-definition h2{font-size:15px;width:145px;height:145px;margin-bottom:25px}html body.about-body .weness-definition .editorial-body{font-size:14px!important}html body.about-body .weness-definition .editorial-detail{font-size:12px!important}}
+
+html body.about-body .weness-definition h2{font-size:clamp(15px,1.2vw,19px)!important;flex-direction:column;gap:10px}html body.about-body .weness-definition h2:after{content:'우리성';font-size:.7em;font-weight:400;letter-spacing:.04em;color:#e0e9f1}
+
+/* One retained SVG circle carries WE into the definition, without a scene cut. */
+html body.about-body #aboutRelations{height:560svh}
+html body.about-body .about-editorial>.about-fixed-scene{background:#000!important}
+html body.about-body .about-editorial:not(.about-uri) h2{font:400 var(--about-ko)/1.6 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif!important;letter-spacing:0;margin-bottom:24px}
+html body.about-body #wnRelationMap .wn-map-stage{background:var(--weness-studio,var(--yearon-entry-gradient))!important}
+.wn-svg{transform-origin:50% 50%;will-change:transform}
+.wn-definition-name,.wn-definition-korean{fill:#fff;opacity:0;font:400 23px Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif}
+.wn-definition-korean{font-size:13px;letter-spacing:.05em}
+.wn-definition-copy{position:absolute;left:50%;top:58%;width:min(650px,80vw);text-align:center;opacity:0;transform:translateX(-50%);pointer-events:none}
+html body.about-body .wn-definition-copy .editorial-body{font:400 clamp(13px,.95vw,17px)/1.8 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif!important;color:#fff;margin:0 auto 22px;max-width:37em;word-break:keep-all}
+html body.about-body .wn-definition-copy .editorial-detail{font:400 clamp(12px,.8vw,14px)/1.9 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif!important;color:#edf2f6;margin:0 auto;max-width:40em;word-break:keep-all}
+@media(max-width:760px){.wn-definition-copy{top:56%;width:84vw}.wn-definition-copy .editorial-detail{line-height:1.75!important}.wn-definition-name{font-size:21px}}
+
+/* Keep the initial WE frame intact; only its words and reading copy change. */
+html body.about-body #aboutRelations{height:1050svh}
+.wn-definition-copy{top:auto;bottom:12%;width:min(820px,86vw)}
+html body.about-body .wn-definition-copy .editorial-body{max-width:none;margin-bottom:20px}
+html body.about-body .wn-definition-copy .editorial-detail{max-width:52em}
+html body.about-body #ypInfographic .wn-element-name{font:400 23px Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;fill:white}
+html body.about-body #ypInfographic .wn-element-caption{font:400 13px Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif!important;fill:white}
+
+html body.about-body .about-editorial:not(.about-uri)>.about-fixed-scene>div{width:92vw;max-width:1300px}
+html body.about-body .about-editorial:not(.about-uri) h2{max-width:none;text-wrap:initial}
+@media(min-width:1000px){html body.about-body .about-editorial:not(.about-uri) h2{white-space:nowrap}}
+/* A quiet editorial spread for URI{width:min(960px,82vw);display:grid;grid-template-columns:.65fr 1.35fr;gap:clamp(55px,7vw,120px);align-items:center;text-align:left}
+@media(max-width:760px){.wn-definition-copy{bottom:12%;width:88vw}html body.about-body .wn-definition-copy .editorial-detail{font-size:11px!important;line-height:1.65!important}.wn-definition-copy .editorial-body{margin-bottom:12px!important}}
+
+/* Restore the established Korean line / English line reading frame. */
+html body.about-body{background-color:#000!important}
+html body.about-body .about-pair,html body.about-body .about-pair>.about-fixed-scene,html body.about-body #aboutDestination,html body.about-body #aboutDestination>.about-destination-content{background:#000!important}
+html body.about-body .about-editorial:not(.about-uri) h2{margin-bottom:0!important}
+html body.about-body .about-editorial .editorial-translation{font:400 var(--about-en)/1.6 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif!important;color:#a6abb0;margin:20px auto 0;max-width:none;text-wrap:initial}
+html[lang=en] .editorial-translation,html[lang=en] .archive-invitation-en{display:none}
+html body.about-body .about-editorial:not(.about-uri) .editorial-body{margin-top:40px;font-size:clamp(12px,.85vw,14px)!important;color:#9da7ae}
+html body.about-body #aboutDestination .archive-invitation{font:400 clamp(11px,.8vw,14px)/1.7 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif!important;margin:24px 24px 0;color:#a6abb0;max-width:85vw}
+html body.about-body #aboutDestination .archive-invitation-en{font:400 clamp(10px,.67vw,12px)/1.6 Arial,sans-serif;margin:8px 24px 0;color:#87939d;text-align:center;max-width:85vw}
+html body.about-body:has(.about-pair>.is-current) .global-header,html body.about-body:has(#aboutDestination>.is-current) .global-header{background:#000!important}
+@media(min-width:1000px){.editorial-translation{white-space:nowrap}}
+
+/* The entire circle sequence uses its studio palette, including cached/fallback loads. */
+html body.about-body #ypInfographic>.wn-stage{background:var(--weness-studio,linear-gradient(180deg,#0b0f14 0%,#27313d 27%,#596777 57%,#9ba8b7 82%,#d0d7df 100%))!important;color:#edf2f6}
+html body.about-body #ypInfographic .wn-stage :is(.wn-element-name,.wn-element-caption,.wn-definition-name,.wn-definition-korean,.wn-result-name){fill:#fff!important}
+html body.about-body #ypInfographic .wn-stage .wn-process-label{color:#e0e7ee!important}
+
+/* Balance the canvas vertically and optically center the slightly larger labels. */
+html body.about-body #ypInfographic>.wn-stage{padding-top:82px;padding-bottom:82px}
+html body.about-body #ypInfographic .wn-svg :is(.wn-result-name,.wn-definition-name,.wn-definition-korean,.wn-element-name){dominant-baseline:central;text-anchor:middle}
+html body.about-body #ypInfographic .wn-svg .wn-result-name{font-size:28px}
+html body.about-body #ypInfographic .wn-svg .wn-definition-name{font-size:25px}
+html body.about-body #ypInfographic .wn-svg .wn-definition-korean{font-size:16px}
+html body.about-body #ypInfographic .wn-svg .wn-element-name{font-size:25px}
+/* Original continuous axis, alternating branches and overlapping circles. */
+#ypInfographic .wn-continuous-spine{fill:none;stroke:#d9e4ed;stroke-opacity:.14;stroke-width:1}
+#ypInfographic .wn-continuous-trace,#ypInfographic .wn-continuous-branch{fill:none;stroke:#d6e2ec;stroke-opacity:.65;stroke-width:1}
+#ypInfographic .wn-continuous-glass{fill:url(#wnButtonGlass);stroke:url(#wnButtonRim);stroke-width:1.4}
+#ypInfographic .wn-continuous-outline{fill:#e3eff90a;stroke:#d3e1ee99;stroke-width:1}
+html body.about-body #ypInfographic .wn-svg .wn-continuous-label{font:400 17px Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;fill:#edf2f6}
+html body.about-body #ypInfographic .wn-svg .wn-continuous-us{font:400 22px Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;fill:#fff}
+html body.about-body #ypInfographic .wn-svg .wn-continuous-reading{font:400 13px Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;fill:#edf2f6}
+
+.about-editorial .editorial-kicker{display:block;margin:0 auto 28px;font:400 10px/1.5 Arial,sans-serif;letter-spacing:.16em;color:#91a5b5}
+
+/* Reading emphasis follows scrolling; no pointer interaction is required. */
+html body.about-body .wn-definition-copy{bottom:17.5%;top:auto}
+html body.about-body .wn-definition-copy .wn-key{font-style:normal;font-weight:400;color:#fff}
+html body.about-body .wn-definition-copy .editorial-detail .wn-key{color:#fff}
+@media(max-width:760px){html body.about-body .wn-definition-copy{bottom:17%;top:auto}}
+@media(prefers-reduced-motion:reduce){html body.about-body .wn-definition-copy .wn-key{color:#fff}}
+
+html body.about-body #ypInfographic .wn-svg .wn-continuous-korean{font:400 16px Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;fill:#fff;dominant-baseline:central;text-anchor:middle}
+
+/* Stronger reading contrast on the pale studio floor; underline is scroll-driven. */
+html body.about-body .wn-definition-copy .wn-key{font-weight:600}
+html body.about-body .wn-definition-copy .wn-key-underlined{position:relative;display:inline-block;white-space:nowrap}
+.wn-key-underlined::after{content:'';position:absolute;left:0;right:0;bottom:-.15em;height:1.5px;background:currentColor;transform:scaleX(var(--key-emphasis,0));transform-origin:left center;opacity:var(--key-emphasis,0)}
+@media(prefers-reduced-motion:reduce){.wn-key-underlined::after{transform:none;opacity:1}}
+
+/* Revised story: URI belongs to the WE stage; the map explains three elements only. */
+html body.about-body #aboutRelations{height:850svh}
+.wn-uri-copy{position:absolute;left:50%;bottom:15%;width:min(790px,86vw);transform:translateX(-50%);text-align:center;opacity:0;pointer-events:none;color:#fff}
+.wn-uri-examples{display:flex;justify-content:center;gap:2em;font:400 clamp(17px,1.6vw,25px)/1.5 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif}
+.wn-uri-copy p{font:400 clamp(14px,1.1vw,18px)/1.8 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;max-width:43em;margin:22px auto 0;word-break:keep-all}
+@media(max-width:760px){.wn-uri-copy{bottom:14%}.wn-uri-examples{gap:1em;font-size:17px}.wn-uri-copy p{font-size:13px;margin-top:16px}}
+
+
+html body.about-body #abrArchive .abr-archive-sticky{background:#08090b}
+/* Album conclusion uses the same centered reading layout as narrative scenes. */
+html body.about-body #abrArchive .abr-album-closing{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:100px 6vw 70px;box-sizing:border-box;opacity:0;pointer-events:none;z-index:200;text-align:center}
+html body.about-body #abrArchive .abr-album-closing p{width:min(100%,1100px);max-width:none;margin:0;color:#eee;font:400 var(--about-ko)/1.6 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;letter-spacing:-.02em;word-break:keep-all;text-wrap:balance}
+
+html body.about-body #abrArchive .abr-album-closing .album-subtitle-pair{width:min(1100px,88vw)}
+html body.about-body #abrArchive .abr-album-closing p{width:100%}
+html body.about-body #abrArchive .abr-album-closing .album-subtitle-en{font:400 var(--about-en)/1.6 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;color:#a6abb0;margin:20px auto 0;letter-spacing:0}
+html[lang=en] #abrArchive .album-subtitle-en{display:none}

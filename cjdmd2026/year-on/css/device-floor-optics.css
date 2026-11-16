@@ -1,0 +1,33 @@
+/* Screen optics only. TV and PC floor mirrors use their original grounding rules. */
+html body.media-time-body #screenWindow{cursor:default!important}
+html body.media-time-body #screenWindow .crt-glass-surface,html body.media-time-body #screenWindow .crt-tube-glass{display:none!important}
+.device-optical-glass{position:absolute;inset:0;z-index:45;overflow:hidden;border-radius:inherit;pointer-events:none!important;mix-blend-mode:screen;background:none;box-shadow:inset 0 1px 1px #dceefa38,inset -2px -2px 5px #0009}
+html body.media-time-body .device-optical-glass>.device-glass-photo{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:fill!important;display:block!important;opacity:.9;transform:none!important;filter:none!important;pointer-events:none!important}
+html body.media-time-body #screenWindow[data-power=off] .device-glass-photo{opacity:.38}
+html body.media-time-body #screenWindow[data-power=on] .device-glass-photo{opacity:.38}
+html body.media-time-body .pc-screen-ui:not(.pc-expanded)>.device-optical-glass{z-index:900;border-radius:3.3% / 4.6%;box-shadow:inset 0 1px 1px #e3f3ff38,inset 1px 0 2px #c4dce72b,inset -2px -2px 3px #0009}
+html body.media-time-body .pc-screen-ui:not(.pc-expanded)>.device-optical-glass>.device-glass-photo{inset:-8% -6%!important;width:112%!important;height:116%!important;opacity:.62}
+/* Keep the off-state surface visible on the monitor itself during initial load. */
+body.media-time-body {
+  --unlit-tube-glass:
+    radial-gradient(ellipse 68% 10% at 38% 0%, #dae4ee20, transparent 92%),
+    radial-gradient(ellipse 36% 27% at 6% 6%, #c0cad535, transparent 96%),
+    radial-gradient(ellipse 60% 25% at 51% 117%, #a4aeba19, transparent 86%),
+    linear-gradient(154deg, #25282c, #14171a 56%, #171a1e);
+}
+html body.media-time-body #timeDeck .pc-screen-ui:not(.is-on):has(.pc-boot:is([data-phase="off"],[data-phase="power"],[data-phase="bios"])),
+html body.media-time-body #timeDeck .pc-screen-ui:not(.is-on) .pc-boot:is([data-phase="off"],[data-phase="power"],[data-phase="bios"]),
+html body.media-time-body #screenWindow .crt-power-layer {
+  background: var(--unlit-tube-glass) !important;
+}
+html body.media-time-body .pc-screen-ui:not(.is-on):has(.pc-boot:is([data-phase="off"],[data-phase="power"],[data-phase="bios"]))>.device-optical-glass{
+  box-shadow:inset 0 1px 2px #e8e4db38,inset 1px 0 2px #e8e4db21,inset -2px -2px 4px #000b;
+}
+html body.media-time-body .pc-screen-ui:not(.is-on):has(.pc-boot:is([data-phase="off"],[data-phase="power"],[data-phase="bios"]))>.device-optical-glass>.device-glass-photo{
+  opacity:0;
+}
+html body.media-time-body .pc-screen-ui.is-on>.device-optical-glass>.device-glass-photo{opacity:.28}
+html body.media-time-body .pc-screen-ui::before,html body.media-time-body .pc-screen-ui::after{display:none!important;content:none!important}
+.pc-screen-ui.pc-expanded>.device-optical-glass{display:none!important}
+
+

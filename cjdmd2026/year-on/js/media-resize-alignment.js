@@ -1,0 +1,1 @@
+(()=>{let timer;addEventListener('resize',()=>{document.body.classList.add('is-resizing');clearTimeout(timer);timer=setTimeout(()=>document.body.classList.remove('is-resizing'),200);},{passive:true});})();

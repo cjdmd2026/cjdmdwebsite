@@ -1,0 +1,78 @@
+/* Coordinates measured against the 1383 × 862 PC source image. */
+html body.media-time-body .time-panel[data-era="2002"] .pc-screen-ui:not(.pc-expanded){left:21.25%!important;right:auto!important;top:12.53%!important;width:39.48%!important;height:44.55%!important;bottom:auto!important;border-radius:3% / 4%!important;clip-path:inset(0 round 3%)!important}
+html body.media-time-body .pc-media #pcPower{left:64.64%!important;top:66.59%!important;width:2.55%!important;height:auto!important;aspect-ratio:1!important;transform:translate(-50%,-50%)!important;background:transparent!important;border:0!important}
+html body.media-time-body .pc-screen-ui:not(.is-on) .pc-desktop{inset:0!important}
+html body.media-time-body .pc-screen-ui:not(.is-on) .pc-taskbar{pointer-events:none!important}
+@media(max-width:800px){html body.media-time-body .time-panel[data-era="2002"] .pc-media{width:min(80vw,calc(142dvh - 270px),620px)!important}}
+@media(max-width:800px){html body.media-time-body .time-panel[data-era="2026"] .phone-media{width:min(58vw,34dvh,320px)!important}}
+html body.media-time-body.is-resizing .time-track,html body.media-time-body.is-resizing .time-panel{transition:none!important}
+
+/* Move radio UI only; leave the device and its reflection untouched. */
+html body.media-time-body .radio-console{top:calc(72% + 24px)!important}
+html body.media-time-body .radio-console .radio-instruction{display:none!important}
+html body.media-time-body #radioMedia>.interaction-cue{left:102%!important;top:65%!important;--cue-line:24px;white-space:normal!important;width:145px!important}
+@media(max-width:700px){
+ html body.media-time-body .radio-console{top:calc(64% + 20px)!important}
+ html body.media-time-body #radioMedia>.interaction-cue{left:50%!important;top:-38px!important;transform:translateX(-50%)!important;text-align:center;width:190px!important}
+ html body.media-time-body #radioMedia>.interaction-cue::before,html body.media-time-body #radioMedia>.interaction-cue::after{display:none!important}
+}
+
+html body.media-time-body .pc-desktop{background:#58636d!important}
+html body.media-time-body .pc-desktop:after{display:none!important}
+html body.media-time-body .pc-boot[data-phase="welcome"]{background:#58636d!important}
+html body.media-time-body .time-panel[data-era="2002"] .pc-screen-ui:not(.pc-expanded){left:20.25%!important;top:11.37%!important;width:41.43%!important;height:47%!important;border:0!important;padding:0!important;box-sizing:border-box!important;border-radius:3% / 4%!important;transform:none!important}
+
+/* Lift the radio and its attached reflection together. */
+html body.media-time-body .radio-media{margin-top:-4px!important}
+/* Preserve the current glass objects in adjacent-era previews. */
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'] .era-thumb{filter:none!important;opacity:.82!important}
+
+/* Fine adjustment of whole devices, including attached controls and reflections. */
+html body.media-time-body .time-panel[data-era="2002"] .pc-media{margin-top:12px!important}
+html body.media-time-body .time-panel[data-era="2026"] .phone-media{margin-top:8px!important;scale:1.025;transform-origin:center center}
+/* Replace the clipped decorative CONTINUE with an explicit next-page link. */
+html body.media-time-body .era-bridge.at-present .era-now{display:block!important;position:fixed!important;left:auto!important;right:5vw!important;top:58%!important;width:auto!important;max-width:150px!important;padding:0!important;transform:translateY(-50%)!important;pointer-events:auto!important;overflow:visible!important}
+html body.media-time-body .era-bridge .era-now:after{display:none!important}
+html body.media-time-body .era-bridge .era-now a{display:flex;align-items:center;justify-content:center;gap:12px;border:1px solid #c2cbd380;border-radius:30px;padding:12px 20px;color:#e1e5e9;text-decoration:none;font:400 11px/1.2 Arial,sans-serif;letter-spacing:.1em;white-space:nowrap}
+html body.media-time-body .era-bridge .era-now a:hover{background:#ffffff15}
+@media(max-width:760px){html body.media-time-body .era-bridge.at-present .era-now{right:6vw!important;top:auto!important;bottom:30px!important;transform:none!important}.era-now a{padding:10px 15px!important}}
+
+/* Plain continuation label, without a button enclosure or icon. */
+html body.media-time-body .era-bridge .era-now a{display:block!important;border:0!important;border-radius:0!important;padding:8px 0!important;background:none!important;box-shadow:none!important;font:400 14px/1.4 Arial,sans-serif!important;letter-spacing:.12em!important;color:#e1e5e9!important}
+html body.media-time-body .era-bridge .era-now a:hover{background:none!important;color:#fff!important}
+
+html body.media-time-body .interaction-cue::before,html body.media-time-body .interaction-cue::after{display:none!important}
+.interaction-cue .cue-guide{position:absolute!important;left:0;top:0;width:1px;height:1px;overflow:visible;pointer-events:none}
+.interaction-cue .cue-guide path{fill:none!important;stroke:#e7edf380!important;stroke-width:1!important}
+.interaction-cue .cue-guide circle{fill:#e7edf3!important;stroke:none!important}
+html body.media-time-body #radioMedia>.interaction-cue{top:15%!important}
+.tv-power-hint:before{width:var(--power-guide-length,35px)}
+@media(max-width:760px){.interaction-cue .cue-guide{display:none!important}}
+
+/* Keep continuation outside the transformed timeline footer. */
+html body.media-time-body>.era-now{display:none!important}
+html body.media-time-body:has(.era-bridge.at-present)>.era-now{display:block!important;position:fixed!important;z-index:110!important;left:auto!important;right:clamp(28px,5vw,100px)!important;top:var(--continue-axis,50%)!important;bottom:auto!important;width:max-content!important;max-width:calc(100vw - 56px)!important;padding:0!important;transform:translateY(-50%)!important;overflow:visible!important;pointer-events:auto!important}
+html body.media-time-body>.era-now a{display:block!important;padding:8px 0!important;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;color:#e1e5e9!important;font:400 14px/1.4 Arial,sans-serif!important;letter-spacing:.12em!important;text-decoration:none!important;white-space:nowrap!important}
+html body.media-time-body>.era-now::before{display:none!important}
+@media(max-width:800px){
+ html body.media-time-body:has(.era-bridge.at-present)>.era-now{right:5vw!important;width:42vw!important;text-align:center}
+ html body.media-time-body:has(.era-bridge.at-present)>.era-now::after{display:none!important}
+}
+/* Guide lines use their own coordinates, with no inherited icon transforms. */
+html body.media-time-body .interaction-cue svg.cue-guide{position:absolute!important;left:0!important;top:0!important;width:1px!important;height:1px!important;max-width:none!important;overflow:visible!important;transform:none!important;opacity:1!important}
+html body.media-time-body .interaction-cue svg.cue-guide path,html body.media-time-body .interaction-cue svg.cue-guide circle{transform:none!important;stroke-dasharray:none!important;stroke-dashoffset:0!important;opacity:1!important;vector-effect:non-scaling-stroke}
+
+@media(min-width:801px){
+ html body.media-time-body:has(.era-bridge.at-present)>.era-now::after{
+  content:"";
+  display:block!important;
+  position:absolute;
+  left:calc(100% + 14px);
+  top:50%;
+  width:calc(clamp(28px,5vw,100px) - 14px);
+  height:1px;
+  transform:translateY(-50%);
+  background:linear-gradient(90deg,#dce8f28c,#b7c2cb30);
+  pointer-events:none;
+ }
+}

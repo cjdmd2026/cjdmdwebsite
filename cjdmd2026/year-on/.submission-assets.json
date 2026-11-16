@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "files": [
+    {
+      "path": "assets/videos/crt/kpop-broadcast-v2.mp4",
+      "size": 46814360,
+      "sha256": "026bc16bb162ab9c72618e0939d9a42cadc20bb07dea259208d6b870fd4dc0b5",
+      "gitSha": "926a515a159f137f45ee3c9e6002bc50fc9f8924",
+      "key": "published-assets/year-on/026bc16bb162ab9c72618e0939d9a42cadc20bb07dea259208d6b870fd4dc0b5"
+    },
+    {
+      "path": "assets/videos/crt/yearon-game-sequence-part3-20261112.mp4",
+      "size": 44775400,
+      "sha256": "cc8662a125a4c4db99778e07519f20d8dac2857261cbea7b38c8bdfd50960261",
+      "gitSha": "ddb1073361c821040a3e004f840ed1facda82cab",
+      "key": "published-assets/year-on/cc8662a125a4c4db99778e07519f20d8dac2857261cbea7b38c8bdfd50960261"
+    }
+  ]
+}

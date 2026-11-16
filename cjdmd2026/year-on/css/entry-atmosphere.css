@@ -1,0 +1,13 @@
+/* User-supplied background trial. Scoped to the introduction only. */
+html body #entry .entry-sticky {
+  background: linear-gradient(rgba(255,255,255,.48),rgba(255,255,255,.48)), url('../assets/images/entry-atmosphere.webp') center center / cover no-repeat !important;
+}
+html body #entry .entry-grid { opacity: .16 !important; }
+html[data-theme='dark'] body #entry .entry-sticky {
+  background: linear-gradient(rgba(11,11,11,.78),rgba(11,11,11,.78)), url('../assets/images/entry-atmosphere.webp') center center / cover no-repeat !important;
+}
+
+/* Home now opens directly on the shared-moments film. */
+html body.home-film-body #entry .entry-sticky,
+html[data-theme='dark'] body.home-film-body #entry .entry-sticky{background:transparent!important}
+html body.home-film-body #entry .entry-grid{display:none!important}

@@ -1,0 +1,136 @@
+.pc-notepad{height:100%;display:flex;flex-direction:column;background:#fff;color:#111}.pc-note-tools{display:flex;align-items:center;gap:5px;padding:5px;background:#ece9d8;border-bottom:1px solid #aca899;font:11px/1.4 Arial,sans-serif}.pc-note-tools button{font:inherit;color:#111;padding:3px 7px;border:1px solid #aca899;background:#f6f5ef;border-radius:2px;cursor:pointer}.pc-note-tools [role=status]{margin-left:auto;color:#555;font-size:10px}.pc-note-input{display:block;flex:1;min-height:100px;width:100%;resize:none;border:0!important;outline:none;background:#fff!important;color:#171717!important;padding:12px!important;font:14px/1.8 'Apple SD Gothic Neo','Malgun Gothic',sans-serif!important;letter-spacing:0!important;box-sizing:border-box}.pc-notepad>footer{display:flex;justify-content:space-between;padding:3px 8px;background:#ece9d8;border-top:1px solid #aca899;font:10px/1.5 Arial,sans-serif}.pc-window[data-app=notepad] .pc-window-body{padding:0;overflow:hidden}.pc-window[data-app=notepad]{width:78%;height:74%}
+
+.pc-explorer-grid button.pc-file{border:1px solid transparent;background:transparent;color:#111;text-align:left;cursor:pointer;font-family:inherit}.pc-explorer-grid button.pc-file:hover,.pc-explorer-grid button.pc-file:focus-visible{background:#dceaff;border-color:#7da2ce}.pc-file>span{display:block}.pc-file>span small{display:block}.pc-document{max-width:560px;padding:20px 24px;color:#20252c;background:white;font:14px/1.9 'Apple SD Gothic Neo','Malgun Gothic',sans-serif}.pc-document h2{font-size:19px;font-weight:500;margin:0 0 18px}.pc-document p{margin:12px 0}.pc-document small{color:#74818c}.pc-album{height:100%;display:flex;flex-direction:column;background:#eef1f4;color:#222;overflow:auto}.pc-album>img{display:block;flex:1;min-height:0;max-height:72%;width:100%;object-fit:contain;padding:12px;box-sizing:border-box}.pc-album>div{text-align:center;padding:8px 12px;font:12px/1.6 Arial,sans-serif}.pc-album b{font-size:15px}.pc-album p{margin:3px 0 8px}.pc-album button{margin:0 10px;padding:3px 9px;cursor:pointer}.pc-window[data-app=album] .pc-window-body{padding:0;overflow:hidden}.pc-window[data-app=album],.pc-window[data-app=readme]{height:78%;width:80%}
+
+/* Keep application windows and their scroll areas inside the CRT. */
+html body.media-time-body .pc-screen-ui .pc-window[data-app] {
+  box-sizing: border-box;
+  left: 2%;
+  top: 2%;
+  width: 96%;
+  height: 96%;
+  min-width: 0;
+  min-height: 0;
+}
+html body.media-time-body .pc-screen-ui .pc-window[data-app="internet"]:not(:popover-open) {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+.pc-screen-ui .pc-window[data-app="internet"] .pc-window-body {
+  display: flex;
+  flex-direction: column;
+}
+.pc-screen-ui .pc-window[data-app="internet"] .p05-shell {
+  flex: 1;
+  min-height: 0;
+}
+.p05-portal-feature {
+  display: grid;
+  gap: .45em;
+  padding: .65em;
+  margin-bottom: .75em;
+  background: #f1f6ea;
+  border: 1px solid #c7d8bb;
+}
+.p05-portal-feature a, .p05-portal-feature button { text-align: left; }
+.p05-post .p05-record-image { display: block; width: 100%; max-width: 34em; height: auto; }
+.p05-post video { display: block; width: 100%; max-width: 34em; }
+.pc-screen-ui .pc-window-body,
+.pc-screen-ui .p05-chat-log {
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+.pc-screen-ui .pc-window[data-app] .pc-window-body:has(.p05-shell) {
+  padding: 0;
+  overflow: hidden;
+}
+.pc-screen-ui .pc-window :is(.pc-menubar,.pc-statusbar) {
+  display: none;
+}
+.pc-screen-ui .pc-note-tools { flex-wrap:wrap; gap:3px; }
+.pc-screen-ui .pc-note-input { min-height:24px; padding:4px!important; font-size:12px!important; }
+.pc-screen-ui .pc-album > img { flex:0 0 auto; max-height:70px; padding:4px; }
+.pc-screen-ui .pc-album > div { padding:4px; }
+.pc-screen-ui .pc-titlebar { touch-action:none; }
+
+.pc-picture-keyboard { position:absolute; inset:0; z-index:55; pointer-events:none; }
+.pc-picture-keyboard[hidden] { display:none; }
+.pc-picture-keyboard button {
+  position:absolute;
+  height:2.2%;
+  padding:0;
+  border:1px solid transparent;
+  border-radius:2px;
+  background:transparent;
+  color:transparent;
+  font:600 clamp(6px,.75vw,11px)/1 Arial,sans-serif;
+  cursor:pointer;
+  pointer-events:auto;
+}
+.pc-picture-keyboard button:is(:hover,:focus-visible) {
+  color:#fff;
+  background:#1c3b58d9;
+  border-color:#afdafa;
+}
+.pc-picture-keyboard button:active { background:#487c9d; }
+@media (hover:none) {
+  .pc-picture-keyboard button { color:#fff; text-shadow:0 1px 2px #000; }
+}
+
+html body.media-time-body .pc-screen-ui .pc-desktop { overflow:clip; }
+html body.media-time-body .pc-screen-ui .pc-icons {
+  width:auto;
+  grid-template-columns:repeat(2, 36px)!important;
+}
+html body.media-time-body .pc-screen-ui .pc-icons button {
+  width:36px;
+  min-height:24px!important;
+}
+html body.media-time-body .pc-screen-ui .pc-start-menu {
+  max-height:100%;
+  overflow-y:auto;
+}
+
+/* Scale the original desktop layout uniformly to the app window. */
+.pc-screen-ui .pc-window-body:has(.p05-shell) { container-type: inline-size; }
+.pc-screen-ui .p05-shell { zoom: clamp(0.1, calc(100cqw / 640px), 1); }
+.pc-screen-ui .p05-page { overflow-wrap: anywhere; }
+
+html body.media-time-body .pc-screen-ui .pc-window[data-app]:popover-open {
+  position:fixed;
+  inset:0!important;
+  margin:auto;
+  width:min(960px,92vw)!important;
+  height:min(640px,82dvh)!important;
+  border:1px solid #9fb3c7;
+  border-radius:6px;
+  box-shadow:0 0 0 5px #93aabd42,0 24px 60px #02091180;
+  overflow:hidden;
+}
+.pc-window:popover-open::backdrop { background:#080f1ac7; }
+html body.media-time-body .pc-screen-ui .pc-window:popover-open .pc-titlebar {
+  height:28px;
+  min-height:28px;
+  padding:3px 5px 3px 10px;
+  font-size:12px;
+}
+html body.media-time-body .pc-screen-ui .pc-window:popover-open .pc-window-controls button {
+  width:23px;
+  height:20px;
+  font-size:13px;
+  line-height:1;
+}
+.pc-screen-ui .pc-window:popover-open .p05-shell { zoom:1; }
+.pc-screen-ui .pc-window:popover-open .p05-address input { height:20px; }
+.pc-screen-ui .pc-window:popover-open .p05-page { padding:clamp(8px,2vw,22px); }
+
+.p05-shell .p05-fan-banner {
+  background: linear-gradient(100deg, #c4d7ed, #edf3fa);
+  border-color: #9eb4ce;
+}
+html body.media-time-body .pc-screen-ui .p05-shell .p05-fan-banner > b {
+  color: #234f7f !important;
+}
+.p05-shell .p05-fan-banner span { color: #47698a; }

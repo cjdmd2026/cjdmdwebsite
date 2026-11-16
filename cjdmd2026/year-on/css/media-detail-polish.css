@@ -1,0 +1,6 @@
+
+html body.media-time-body .phone-media .culture-expand{display:none!important}
+/* A cooler, restrained material grade keeps the supplied paper and wood recognisable. */
+html body.media-time-body #scrollMedia>.open>img,html body.media-time-body #scrollMedia.fully-open>.open>img,html body.media-time-body #scrollMedia .scroll-scene-lens>img{filter:saturate(.8) brightness(.99) contrast(.99)!important}
+html body.media-time-body #scrollMedia>.scroll-left-roller,html body.media-time-body #scrollMedia>.scroll-right-roller{filter:saturate(.55) brightness(1.04) contrast(.96) drop-shadow(1px 4px 5px #18232e33)!important}
+html body.media-time-body .era-bridge #timeNav button.active .era-odometer-digit,html body.media-time-body .era-bridge #timeNav button.active .era-odometer-reel,html body.media-time-body .era-bridge #timeNav button.active .era-odometer-reel>i{font-weight:300!important;font-style:normal!important}

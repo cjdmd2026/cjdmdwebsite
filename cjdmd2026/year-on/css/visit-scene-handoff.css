@@ -1,0 +1,6 @@
+/* Hold the introduction over the next scene during the short crossfade. */
+html body.visit-v7 #visitOpening.is-scene-handoff .visit-opening-sticky{position:fixed!important;inset:0!important;width:100%!important;height:100svh!important;z-index:90!important;pointer-events:none!important;will-change:opacity,transform}
+html body.visit-v7 #visitOpening.is-scene-handoff .visit-opening-sticky::after{opacity:0!important}
+html body.visit-v7 #visitOpening.is-scene-handoff .visit-opening-cta{pointer-events:none!important}
+html body.visit-v7 #visitExhibition .vf-section-head h2:focus{outline:none}
+@media(prefers-reduced-motion:reduce){html body.visit-v7 #visitOpening.is-scene-handoff .visit-opening-sticky{will-change:auto}}

@@ -1,0 +1,62 @@
+/* One geometry for the supplied sheet and two rollers. No legacy cord or rods. */
+html body.media-time-body #scrollMedia#scrollMedia{
+ --scroll-full-width:100%;--scroll-visible-width:11.7%;
+ --scroll-material:saturate(.7) brightness(1.01) contrast(.98);
+ width:min(63vw,125svh,1512px)!important;top:62%!important;aspect-ratio:1988/960!important;
+}
+html body.media-time-body #scrollMedia#scrollMedia>.open::before,
+html body.media-time-body #scrollMedia#scrollMedia>.open::after{content:none!important;display:none!important;background:none!important}
+html body.media-time-body #scrollMedia#scrollMedia>.open,
+html body.media-time-body #scrollMedia#scrollMedia.opened>.open{
+ width:calc(var(--scroll-visible-width) - var(--scroll-full-width)*.0433)!important;
+}
+html body.media-time-body #scrollMedia#scrollMedia>.open>img,
+html body.media-time-body #scrollMedia#scrollMedia:is(.opened,.fully-open)>.open>img{
+ clip-path:inset(0 5.4%)!important;filter:var(--scroll-material)!important;
+}
+html body.media-time-body #scrollMedia#scrollMedia.is-fully-closed>.open{display:none!important;visibility:hidden!important;opacity:0!important}
+html body.media-time-body #scrollMedia#scrollMedia>.scroll-left-roller,
+html body.media-time-body #scrollMedia#scrollMedia>.scroll-right-roller{
+ top:0!important;height:100%!important;width:5.23%!important;
+ background:url('../assets/images/scroll-user/roller-silver-aligned.webp') center/100% 100% no-repeat!important;
+ border:0!important;padding:0!important;box-shadow:none!important;filter:var(--scroll-material)!important;
+}
+html body.media-time-body #scrollMedia#scrollMedia>.scroll-left-roller{left:1.37%!important;transform:scaleX(-1)!important}
+html body.media-time-body #scrollMedia#scrollMedia>.scroll-right-roller{left:calc(var(--scroll-visible-width) - var(--scroll-full-width)*.0523)!important;cursor:grab}
+html body.media-time-body #scrollMedia#scrollMedia.dragging>.scroll-right-roller{cursor:grabbing}
+html body.media-time-body #scrollMedia#scrollMedia>.scroll-right-roller:focus-visible{outline:none!important;filter:brightness(1.08)!important}
+html body.media-time-body #scrollMedia#scrollMedia>.scroll-right-roller:focus-visible::before{box-shadow:inset 0 0 0 1px #bed8ea90}
+html body.media-time-body #scrollMedia#scrollMedia>:is(.scroll-left-roller,.scroll-right-roller)::before{
+ content:'';position:absolute;left:0;top:19.2%;width:72%;height:62.1%;pointer-events:none;
+ background:linear-gradient(90deg,#1a2a3814,transparent 17%,#ffffff24 43%,transparent 70%,#17293812);
+}
+html body.media-time-body #scrollMedia#scrollMedia>.scroll-closed-seam{display:none!important}
+html body.media-time-body #scrollMedia#scrollMedia>.interaction-cue{display:none!important}
+html body.media-time-body .time-panel[data-era="1780"] .scroll-scene-shelf{display:none!important}
+.scroll-floor-reflection{position:absolute;inset:0;pointer-events:none!important;transform-origin:0 0}
+html body.media-time-body #scrollMedia#scrollMedia>.scroll-floor-reflection{
+ transform:translateY(143.7%) scaleY(-.65);opacity:.16;filter:blur(.7px);
+ mask-image:linear-gradient(to bottom,transparent 54%,#0000 58%,#0002 68%,#0007 79%,#000 87%,transparent 91%);
+ -webkit-mask-image:linear-gradient(to bottom,transparent 54%,#0000 58%,#0002 68%,#0007 79%,#000 87%,transparent 91%);
+}
+.scroll-floor-reflection i{position:absolute;top:0;width:5.23%;height:100%;background:url('../assets/images/scroll-user/roller-silver-aligned.webp') center/100% 100% no-repeat;filter:var(--scroll-material)}
+.scroll-floor-reflection .reflection-left{left:1.37%;transform:scaleX(-1)}
+.scroll-floor-reflection .reflection-right{left:calc(var(--scroll-visible-width) - var(--scroll-full-width)*.0523)}
+.scroll-floor-reflection .reflection-paper{position:absolute;inset:0 auto 0 0;height:100%;width:calc(var(--scroll-visible-width) - var(--scroll-full-width)*.0433);overflow:hidden}
+html body.media-time-body #scrollMedia#scrollMedia .reflection-paper img{position:absolute;left:0;top:0;width:var(--scroll-full-width)!important;max-width:none!important;height:100%!important;object-fit:fill!important;clip-path:inset(0 5.4%)!important;filter:var(--scroll-material)!important}
+.is-fully-closed>.scroll-floor-reflection .reflection-paper{display:none}
+html body.media-time-body #scrollMedia#scrollMedia::after{content:'';position:absolute;pointer-events:none;left:2.6%;top:86.9%;width:calc(var(--scroll-visible-width) - var(--scroll-full-width)*.04);height:1.2%;border-radius:50%;background:radial-gradient(ellipse,#18243121,transparent 72%);filter:blur(2px)}
+html body.media-time-body #scrollMedia#scrollMedia>.scroll-drag-hint{position:absolute;left:calc(var(--scroll-visible-width) + 12px);top:50%;translate:0 -50%;color:#d5dee6;font:400 10px/1.5 Arial,"Apple SD Gothic Neo",sans-serif;white-space:nowrap;pointer-events:none;letter-spacing:.01em}
+html body.media-time-body #scrollMedia#scrollMedia>.scroll-drag-hint[hidden]{display:none!important}
+html body.media-time-body .era-bridge #timeNav button[data-index="0"]>.era-thumb{filter:grayscale(1) brightness(1.13) contrast(.88) drop-shadow(0 2px 3px #14202d24)!important}
+@media(max-height:650px) and (min-width:701px){html body.media-time-body #scrollMedia#scrollMedia{width:min(61vw,120svh)!important}}
+@media(max-width:700px){html body.media-time-body #scrollMedia#scrollMedia>.scroll-drag-hint{max-width:120px;white-space:normal;font-size:10px}.scroll-floor-reflection{opacity:.12}}
+/* Focus must not secretly scroll the fixed stage and expose the backdrop. */
+html body.media-time-body #timeDeck,
+html body.media-time-body #timeTrack>.time-panel{overflow:clip!important}
+html body.media-time-body:has(.time-panel[data-era="1780"].active) .era-bridge #timeNav button[data-neighbour="true"]{pointer-events:none}
+html body.media-time-body:has(.time-panel[data-era="1780"].active) .era-bridge #timeNav button[data-neighbour="true"]>:is(.era-thumb,b,span:not(.era-current-heading)){pointer-events:auto}
+
+/* Paper continues beneath the roller, including at fractional drag positions. */
+html body.media-time-body #scrollMedia#scrollMedia>.scroll-right-roller::after{content:''!important;position:absolute;left:-10%;top:18.75%;width:24%;height:63%;background:linear-gradient(90deg,#eee8df,#f4efe7);pointer-events:none;z-index:-1}
+html body.media-time-body #scrollMedia#scrollMedia>.scroll-left-roller::after{content:''!important;position:absolute;left:-10%;top:18.75%;width:24%;height:63%;background:linear-gradient(90deg,#eee8df,#f4efe7);pointer-events:none;z-index:-1}

@@ -1,0 +1,42 @@
+/* Shared navigation. Keep the logo, links and controls in separate columns. */
+html body .global-header{position:fixed!important;inset:0 0 auto!important;z-index:10000!important;display:grid!important;grid-template-columns:minmax(150px,1fr) auto minmax(200px,1fr)!important;align-items:center!important;gap:24px!important;width:100%!important;height:74px!important;padding:0 2vw!important;box-sizing:border-box!important;transform:none!important;visibility:visible!important;opacity:1!important;background:#fff!important;color:#111!important}
+html body .global-header .brand{justify-self:start!important;margin:0!important;padding:0!important;white-space:nowrap;font-size:26px!important;line-height:1!important}
+html body .global-header nav{display:flex!important;align-items:center!important;justify-content:center!important;gap:clamp(18px,2.4vw,38px)!important;margin:0!important;max-width:none!important;min-width:0!important;height:100%!important}
+html body .global-header nav a{font-size:11px!important;line-height:1.4!important;letter-spacing:0!important;white-space:nowrap!important}
+html body .global-header nav a[href='index.html']{display:none!important}
+html body .global-header .header-end{display:flex!important;justify-self:end!important;align-items:center!important;gap:12px!important;margin:0!important;white-space:nowrap}
+html[data-theme='dark'] body .global-header{background:#111!important;color:#fff!important}
+@media(max-width:1000px){html body .global-header{grid-template-columns:auto 1fr auto!important;gap:18px!important}html body .global-header nav{gap:16px!important}html body .global-header #guideOpen{display:none!important}}
+@media(max-width:850px){html body .global-header{height:64px!important;padding:0 14px!important;gap:12px!important}html body .global-header .brand{font-size:22px!important}html body .global-header nav{justify-content:flex-start!important;overflow-x:auto!important;scrollbar-width:none;gap:14px!important}html body .global-header nav a{font-size:9px!important}html body .global-header .header-end{gap:5px!important}}
+/* Brand and editorial labels use the same Latin type in both languages. */
+html[lang] body :is(.brand,.brand *, .visit-wordmark,.visit-wordmark *, .global-header nav a,.v7-meta,.v7-meta span,.v7-years span,.v7-question small,.v7-media li b,.v7-media li strong,.v7-media li em,.era-stamp,.era-stamp *,#timeNav b,#timeNav span){font-family:Arial,sans-serif!important}
+html[lang] body .visit-wordmark span{font-size:inherit!important;font-weight:inherit!important;letter-spacing:inherit!important;line-height:inherit!important}
+html[lang] body .v7-intro p{font-size:14px!important;line-height:1.7!important;letter-spacing:0!important;min-height:8.5em}
+/* Identical viewport alignment, independent of the page controls. */
+html body .global-header .brand{margin-left:8px!important}
+@media(min-width:1001px){html body .global-header nav{position:absolute!important;left:50%!important;top:0!important;transform:translateX(-50%)!important;width:max-content!important}html body .global-header .header-end{grid-column:3!important}}
+/* Raised channel transport keys: the surrounding surface follows the theme. */
+html body.media-time-body .channel-footer .arrow{position:relative;isolation:isolate;flex:0 0 48px;width:48px!important;height:48px!important;padding:10px!important;border:2px solid #50545a!important;border-radius:50%!important;color:#181a1d!important;background:conic-gradient(from 15deg,#fafafa,#afb4bb 65deg,#fdfdfd 135deg,#a9afb6 215deg,#f8f8f8 280deg,#fafafa)!important;box-shadow:inset 0 0 0 2px #e7eaed,inset 0 0 0 3px #92979e,0 2px 3px #0003!important;transition:transform .15s,box-shadow .15s}
+html body.media-time-body .channel-footer .arrow:before{content:'';position:absolute;inset:-9px;z-index:-1;border-radius:50%;background:transparent;box-shadow:-5px -5px 10px #fff,5px 6px 12px #202b3a26;pointer-events:none}
+html body.media-time-body .channel-footer .arrow svg{display:block;width:100%;height:100%;fill:currentColor;filter:drop-shadow(0 1px 0 #fff8)}
+html body.media-time-body .channel-footer .arrow:active{transform:translateY(2px);box-shadow:inset 0 2px 5px #0005,0 1px 2px #0002!important}
+html body.media-time-body .channel-footer .arrow:focus-visible{outline:2px solid #7ba1cf;outline-offset:12px}
+html[data-theme='dark'] body.media-time-body .channel-footer .arrow:before{box-shadow:-4px -4px 10px #ffffff0c,5px 6px 12px #0009}
+html body.media-time-body .channel-nav button{font-family:Arial,sans-serif!important;letter-spacing:.04em}
+@media(max-width:700px){html body.media-time-body .channel-footer .arrow{flex-basis:36px;width:36px!important;height:36px!important;padding:7px!important}}
+/* Channel presets stay within the TV, including the raised key surrounds. */
+html body.media-time-body .channel-footer #prevChannel,html body.media-time-body .channel-footer #nextChannel{background:url('../assets/images/channel-key-transparent.webp') center/100% 100% no-repeat!important;background-blend-mode:normal;filter:none;border:0!important;box-shadow:none!important;padding:0!important}
+html body.media-time-body .channel-footer #prevChannel{scale:-1 1}
+html body.media-time-body .channel-footer .arrow svg{visibility:hidden}
+html body.media-time-body .channel-footer{translate:0 -24px}
+html body.media-time-body .channel-footer .arrow,html body.media-time-body .channel-footer .arrow:active{color:#fff!important;box-shadow:none!important}
+html body.media-time-body .channel-footer .arrow:before{display:none!important}
+html body.media-time-body .channel-footer .arrow svg{filter:none!important}
+html body.media-time-body .channel-footer{width:min(62vw,89vh,960px)!important;max-width:calc(100% - 36px)!important;height:auto!important;min-height:66px;display:grid!important;grid-template-columns:48px minmax(0,1fr) 48px!important;gap:26px!important;align-items:center!important;padding:9px!important;box-sizing:border-box}
+html body.media-time-body .channel-nav{min-width:0;gap:12px!important}
+html body.media-time-body .channel-nav button{position:relative;display:flex!important;flex-direction:column;align-items:flex-start!important;justify-content:center;gap:7px!important;padding:10px 0!important;border:0!important;border-bottom:1px solid var(--exhibit-line)!important;min-width:0;line-height:1.2!important}
+html body.media-time-body .channel-nav button b{font:500 13px 'Courier New',monospace!important;letter-spacing:.08em!important}
+html body.media-time-body .channel-nav button span{display:block!important;font:10px Arial,sans-serif!important;letter-spacing:.04em!important;white-space:nowrap}
+html body.media-time-body .channel-nav button:after{content:'';position:absolute;top:13px;right:2px;width:4px;height:4px;border-radius:50%;background:#929ba4;opacity:.4}
+html body.media-time-body .channel-nav button.active:after{background:#a2c9f5;opacity:1;box-shadow:0 0 6px #79a9e0}
+@media(max-width:700px){html body.media-time-body .channel-footer{width:70vw!important;grid-template-columns:36px minmax(0,1fr) 36px!important;gap:14px!important;padding:9px 0!important}.channel-nav{gap:5px!important}html body.media-time-body .channel-nav button b{font-size:10px!important}html body.media-time-body .channel-nav button span{font-size:7px!important}.channel-nav button:after{display:none}}

@@ -1,0 +1,84 @@
+[
+  {
+    "title": "밤의 음악다방",
+    "english": "Night Music Café",
+    "src": "assets/audio/radio-production/night-cafe-donggun-songs.mp3",
+    "summary": "동건의 밤 인사와 함께 듣는 우리의 지난날, 우리의 울림.",
+    "summary_en": "A night-time introduction, followed by Our Past and Our Echo.",
+    "cues": [
+      {
+        "start": 0,
+        "end": 91.848,
+        "label": "밤의 음악다방 · 오늘의 이야기",
+        "en": "Night Music Café · Tonight’s story"
+      },
+      {
+        "start": 91.848,
+        "end": 454.898,
+        "label": "♪ 우리의 지난날",
+        "en": "♪ Our Past"
+      },
+      {
+        "start": 454.898,
+        "end": 759.648,
+        "label": "♪ 우리의 울림",
+        "en": "♪ Our Echo"
+      }
+    ]
+  },
+  {
+    "title": "가요 산책",
+    "english": "A Walk Through Pop",
+    "src": "assets/audio/radio-production/yearon-radio-ch02.mp3",
+    "summary": "〈우리의 지난날〉과 〈우리의 울림〉을 이어 듣는 시간.",
+    "summary_en": "Listen to Our Past and Our Echo back to back.",
+    "cues": [
+      {
+        "start": 0,
+        "end": 363.05,
+        "label": "♪ 우리의 지난날",
+        "en": "♪ Our Past"
+      },
+      {
+        "start": 363.05,
+        "end": 667.8,
+        "label": "♪ 우리의 울림",
+        "en": "♪ Our Echo"
+      }
+    ]
+  },
+  {
+    "title": "이어온소식",
+    "english": "YEAR:ON News",
+    "src": "assets/audio/radio-production/yearon-news-user-20261116.mp3",
+    "summary": "우리 주변의 생활과 이웃들의 이야기를 전합니다.",
+    "summary_en": "Everyday stories from our neighbourhoods and the people around us.",
+    "cues": [
+      {
+        "start": 0,
+        "end": 4.4,
+        "label": "청취자 여러분, 안녕하십니까. 이어온소식입니다.",
+        "en": "Hello, listeners. This is YEAR:ON News."
+      },
+      {
+        "start": 4.4,
+        "end": 9.0,
+        "label": "오늘도 우리 주변에서 전해진 여러 가지 생활 소식을 전해 드리겠습니다.",
+        "en": "Here are today’s everyday stories from the people around us."
+      }
+    ]
+  },
+  {
+    "title": "오후의 다이얼",
+    "english": "Afternoon Dial",
+    "src": "assets/audio/radio-production/afternoon-dial-music-midway-20261116.mp3",
+    "summary": "다이얼 너머로 흘러나오는 노래. 잠시 머물러 함께 들어보세요.",
+    "summary_en": "A song already playing beyond the dial. Stay a moment and listen.",
+    "cues": [],
+    "broadcastVariants": [
+      "assets/audio/radio-production/afternoon-dial-music-midway-20261116.mp3",
+      "assets/audio/radio-production/afternoon-dial-music-start2-20261116.mp3",
+      "assets/audio/radio-production/afternoon-dial-music-start3-20261116.mp3"
+    ]
+  }
+]

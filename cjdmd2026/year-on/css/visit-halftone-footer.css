@@ -1,0 +1,23 @@
+/* A narrow closing landscape, inspired by flowing halftone print. */
+html body.visit-v7 .v7-footer.visit-halftone-footer{position:relative;isolation:isolate;display:block!important;height:clamp(240px,23vw,350px);min-height:0;padding:0!important;margin:70px 0 0!important;border:0!important;background:#030609!important;color:#ecf6ff!important;overflow:hidden}
+.visit-halftone-canvas{position:absolute;inset:0;z-index:0;width:100%;height:100%;display:block;pointer-events:none;background:#030609}
+.visit-halftone-footer .visit-footer-content{position:relative;z-index:1;height:100%;display:flex;justify-content:space-between;align-items:center;gap:32px;padding:0 5vw 12px;box-sizing:border-box}
+html body.visit-v7 .visit-halftone-footer .visit-footer-brand{display:flex;align-items:center;gap:10px;width:auto;margin:0;padding:0;border:0;text-decoration:none;font:300 clamp(20px,2vw,30px)/1 Arial,sans-serif;letter-spacing:-.07em;color:#f0f8ff!important;mix-blend-mode:difference}
+.visit-halftone-footer .visit-footer-brand img{display:block;width:42px;height:26px;object-fit:contain;filter:brightness(0) invert(1)}
+.visit-halftone-footer .visit-footer-brand strong{font-weight:600;letter-spacing:-.055em}
+.visit-halftone-footer .visit-footer-message{text-align:right;color:#fff;mix-blend-mode:difference}
+.visit-halftone-footer .visit-footer-message p{margin:0 0 13px!important;font:400 clamp(12px,1.12vw,17px)/1.4 Arial,sans-serif!important;letter-spacing:.045em!important;color:#f0f8ff!important}
+html body.visit-v7 .visit-halftone-footer .visit-footer-start{display:inline-flex;gap:18px;align-items:center;margin:0;padding:0 0 4px;border:0;border-bottom:1px solid #dceaf65c;font:400 9px/1.4 Arial,sans-serif;letter-spacing:.12em;color:#e8f4ff!important;text-decoration:none}
+.visit-halftone-footer .visit-footer-start span{font-size:15px;transition:transform .2s}
+.visit-halftone-footer .visit-footer-start:hover span{transform:translate(2px,-2px)}
+.visit-halftone-footer .visit-footer-meta{position:absolute;left:5vw;right:5vw;bottom:20px;z-index:1;display:flex;align-items:center;justify-content:space-between;font:400 8px/1.5 Arial,sans-serif;letter-spacing:.13em;color:#9fb6ca;mix-blend-mode:difference}
+html body.visit-v7 .visit-halftone-footer .visit-footer-top{font:inherit;letter-spacing:inherit;color:#dcebf8!important;text-decoration:none}
+.visit-halftone-footer a:focus-visible{outline:1px solid #d6eaff;outline-offset:6px}
+@media(max-width:600px){html body.visit-v7 .v7-footer.visit-halftone-footer{height:270px;margin-top:40px!important}.visit-halftone-footer .visit-footer-content{align-items:flex-start;justify-content:center;flex-direction:column;gap:30px;padding:32px 7vw 50px}.visit-halftone-footer .visit-footer-message{text-align:left}.visit-halftone-footer .visit-footer-meta{left:7vw;right:7vw;bottom:17px}.visit-halftone-footer .visit-footer-message p{font-size:12px!important}}
+/* Let lettering invert over bright dots instead of disappearing into them. */
+.visit-halftone-footer .visit-footer-content{mix-blend-mode:difference}
+html body.visit-v7 .visit-halftone-footer .visit-footer-brand,.visit-halftone-footer .visit-footer-message{mix-blend-mode:normal}
+/* Keep the small labels stable while the bright field passes behind them. */
+.visit-halftone-footer .visit-footer-content{mix-blend-mode:normal;background:linear-gradient(90deg,#0000004d,transparent 28%,transparent 65%,#0000004d)}
+html body.visit-v7 .visit-halftone-footer .visit-footer-brand,.visit-halftone-footer .visit-footer-message{text-shadow:0 1px 2px #000,0 0 9px #000c}
+.visit-halftone-footer .visit-footer-brand img{filter:brightness(0) invert(1) drop-shadow(0 1px 2px #000)}

@@ -1,0 +1,94 @@
+/* One fixed painting plane; only its right wooden roller follows the hand. */
+html body.media-time-body #scrollMedia{position:absolute!important;left:50%!important;top:53%!important;transform:translate(-50%,-50%)!important;width:min(70vw,138.9svh)!important;max-width:none!important;height:auto!important;aspect-ratio:2170/725;margin:0!important;filter:none!important;overflow:visible!important;touch-action:none}
+html body.media-time-body #scrollMedia>.closed{display:none!important}
+html body.media-time-body #scrollMedia>.open,html body.media-time-body #scrollMedia.opened>.open{position:absolute!important;left:0!important;top:0!important;width:calc(var(--scroll-visible-width) - var(--scroll-full-width)*.047)!important;min-width:0!important;max-width:none!important;height:100%!important;overflow:clip!important;opacity:1!important;visibility:visible!important;transform:none!important;pointer-events:none}
+html body.media-time-body #scrollMedia>.open::before,html body.media-time-body #scrollMedia>.open::after{display:none!important;content:none!important}
+html body.media-time-body #scrollMedia>.open>img,html body.media-time-body #scrollMedia.fully-open>.open>img{content:normal!important;position:absolute!important;left:0!important;top:0!important;width:var(--scroll-full-width)!important;height:100%!important;max-width:none!important;object-fit:fill!important;clip-path:inset(0 4.8% 0 4.8%)!important;opacity:1!important;filter:drop-shadow(0 10px 10px #19252d22)!important;transform:none!important}
+html body.media-time-body #scrollMedia>.scroll-left-roller,html body.media-time-body #scrollMedia>.scroll-right-roller{display:block;position:absolute;top:12.3%;height:76.7%;width:2.9%;z-index:35;border:0;padding:0;border-radius:0;background:url('../assets/images/scroll-user/roller.webp') center/100% 100% no-repeat;box-shadow:none;filter:drop-shadow(1px 3px 3px #1a202735);touch-action:none}
+html body.media-time-body #scrollMedia>.scroll-left-roller{left:2%;pointer-events:none}
+html body.media-time-body #scrollMedia>.scroll-right-roller{left:calc(var(--scroll-visible-width) - var(--scroll-full-width)*.047);cursor:grab}
+html body.media-time-body #scrollMedia.dragging>.scroll-right-roller{cursor:grabbing}
+html body.media-time-body #scrollMedia>.scroll-right-roller:focus-visible{outline:2px solid #b8d6e7;outline-offset:5px;border-radius:6px}
+html body.media-time-body #scrollMedia>.interaction-cue,html body.media-time-body:has(#scrollMedia:not(.opened)) #scrollMedia>.interaction-cue{left:calc(var(--scroll-visible-width) + 24px)!important;top:50%!important;max-width:185px!important}
+html body.media-time-body #scrollMedia .scroll-scene-lens{position:absolute;inset:0 auto 0 0;width:var(--scroll-full-width);height:100%;z-index:3;clip-path:inset(20.8% 8.2% 21.3% 8%);opacity:0;pointer-events:none;transition:opacity .5s ease}
+html body.media-time-body #scrollMedia.is-scene-hover .scroll-scene-lens{opacity:1}
+html body.media-time-body #scrollMedia .scroll-scene-lens>img{display:block;position:absolute;inset:0;width:100%!important;height:100%!important;max-width:none!important;object-fit:fill!important;filter:none!important;transform:translate(var(--scene-pan-x,0px),var(--scene-pan-y,0px)) scale(1.5)!important;transition:transform 1.15s cubic-bezier(.2,.65,.25,1);transform-origin:center}
+html body.media-time-body #scrollMedia .scroll-art-point{z-index:25}
+html body.media-time-body .scroll-scene-reading{transition:opacity .3s;min-height:38px}
+@media(max-width:700px){html body.media-time-body #scrollMedia{width:78vw!important;top:51%!important}html body.media-time-body #scrollMedia>.interaction-cue{max-width:145px!important;font-size:10px}}
+@media(prefers-reduced-motion:reduce){html body.media-time-body #scrollMedia .scroll-scene-lens{display:none!important}}
+/* Cancel the older hover offset: the paper frame must stay attached to its rollers. */
+html body.media-time-body #scrollMedia>.open>img,html body.media-time-body #scrollMedia.fully-open>.open>img,html body.media-time-body #scrollMedia .scroll-scene-lens,html body.media-time-body #scrollMedia .scroll-scene-lens>img{translate:none!important;margin:0!important}
+/* Keep the next-era preview clear of the fully opened painting. */
+/* Era previews keep their original position while the painting opens. */
+
+.scroll-village-preview {
+  position:absolute;
+  bottom:calc(100% + 8px);
+  left:clamp(var(--preview-half),var(--scene-anchor,50%),100% - var(--preview-half));
+  z-index:40;
+  --preview-half:min(140px,39vw);
+  translate:-50% 0;
+  display:grid;
+  grid-template-columns:auto 1fr;
+  align-items:center;
+  gap:12px;
+  width:calc(2 * var(--preview-half));
+  box-sizing:border-box;
+  margin:0;
+  padding:8px 12px;
+  color:#26323d;
+  background:#e9eff6f2;
+  border:1px solid #f7faff;
+  border-radius:4px;
+  pointer-events:none;
+}
+.scroll-village-preview[hidden] { display:none; }
+.scroll-village-preview img {
+  display:block; width:60px; height:66px; object-fit:contain; filter:none;
+}
+.scroll-village-preview figcaption { font:400 11px/1.45 sans-serif; }
+.scroll-village-preview figcaption span { display:block; margin-top:3px; }
+.scroll-village-dialog {
+  box-sizing:border-box;
+  width:min(94vw,1060px);
+  max-height:92svh;
+  padding:clamp(18px,3vw,38px);
+  border:1px solid #667481;
+  border-radius:6px;
+  background:#131920;
+  color:#f2f5f8;
+  font-family:inherit;
+}
+.scroll-village-dialog::backdrop { background:#080c12cf; }
+.scroll-village-dialog header { display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; }
+.village-detail { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:clamp(20px,4vw,58px); align-items:center; }
+.village-detail figure { margin:0; text-align:center; }
+.scroll-village-frame { display:inline-block; position:relative; max-width:100%; vertical-align:top; }
+.scroll-village-frame img { display:block; width:auto; height:auto; max-width:100%; max-height:65svh; }
+.village-points { position:absolute; inset:0; pointer-events:none; }
+.scroll-village-dialog button { color:inherit; background:transparent; border:1px solid #a9bbc055; font:inherit; font-size:11px; padding:7px 10px; }
+.scroll-village-dialog button:is(:hover,:focus-visible,[aria-pressed="true"]) { background:#afc9df36; }
+.village-points button { position:absolute; translate:-50% -50%; pointer-events:auto; width:29px; height:29px; padding:0; border-radius:50%; background:#141d28db; border-color:#edf4fa; }
+.village-points button:is(:hover,:focus-visible,[aria-pressed="true"]) { background:#dbe8f4; color:#101923; }
+.village-detail small,.village-count { color:#aebfce; font-size:10px; letter-spacing:.12em; }
+.village-detail h2 { margin:6px 0; font-size:clamp(24px,4vw,46px); line-height:1.1; font-weight:400; }
+.village-detail h2 span { font-size:.55em; }
+.village-detail h2 small { display:block; margin-top:7px; }
+.village-credit,.village-detail figcaption { color:#aebfce; font-size:11px; margin-top:9px; }
+.village-detail figcaption a { color:inherit; }
+.village-intro,.village-reading,.village-culture { margin-block:14px; }
+.village-detail p { margin:4px 0; font-size:13px; line-height:1.55; word-break:keep-all; }
+.village-detail p[lang="en"] { color:#bac8d5; }
+.village-tabs { display:flex; flex-wrap:wrap; gap:5px; }
+.village-reading { min-height:92px; border-block:1px solid #b4c8da38; padding-block:9px; }
+.village-reading strong { font-size:13px; }
+.village-next { display:block; margin-inline-start:auto; }
+@media(max-width:660px) {
+  .village-detail { grid-template-columns:1fr; gap:16px; }
+  .scroll-village-frame img { max-height:43svh; }
+}
+
+/* Anchor the reading card to its painting point, inside the unrolled sheet. */
+html body.media-time-body #scrollMedia .scroll-village-preview{bottom:calc(100% - var(--scene-anchor-y,57%) + 16px);top:auto;box-shadow:0 5px 18px #1523341a}
+html body.media-time-body #scrollMedia .scroll-village-preview::after{content:'';position:absolute;top:100%;left:50%;width:7px;height:7px;background:#e9eff6;transform:translate(-50%,-50%) rotate(45deg);border-right:1px solid #f7faff;border-bottom:1px solid #f7faff}

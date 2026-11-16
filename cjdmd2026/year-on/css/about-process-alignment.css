@@ -1,0 +1,31 @@
+/* One header-aware coordinate system for the continuous WE-NESS scene. */
+html body.about-body #ypInfographic > .wn-stage{position:fixed;inset:0;height:100svh;padding:0!important;display:block!important;--process-header:var(--header-h,74px)}
+html body.about-body #ypInfographic .wn-process-label{position:absolute;left:50%;right:auto;top:calc(var(--process-header) + 32px);width:90%;margin:0;transform:translateX(-50%);text-align:center}
+html body.about-body #ypInfographic .wn-svg{position:absolute;left:50%;top:calc(var(--process-header) + (100svh - var(--process-header)) * .43);width:min(820px,90vw);height:min(48svh,520px);margin:0;translate:-50% -50%;transform:none;overflow:visible}
+html body.about-body #ypInfographic .wn-process-copy{position:absolute;left:50%;right:auto;top:calc(var(--process-header) + (100svh - var(--process-header)) * .79);bottom:auto;width:min(1000px,88vw);transform:translateX(-50%);text-align:center;margin:0}
+html body.about-body #ypInfographic .wn-process-copy .wn-process-ko{font:400 clamp(14px,.95vw,17px)/1.6 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif!important;color:#fff!important;margin:0 0 16px!important;text-shadow:none!important;word-break:keep-all}
+html body.about-body #ypInfographic .wn-process-copy .wn-process-en{font:400 clamp(11px,.8vw,14px)/1.6 Arial,sans-serif!important;color:#f0f3f6!important;margin:0!important;text-shadow:none!important}
+html body.about-body #ypInfographic :is(.wn-uri-copy,.wn-definition-copy){left:50%;top:calc(var(--process-header) + (100svh - var(--process-header)) * .72);bottom:auto;width:min(820px,86vw);text-align:center}
+@media(max-width:760px){html body.about-body #ypInfographic .wn-process-label{top:calc(var(--process-header) + 24px)}html body.about-body #ypInfographic .wn-svg{width:94vw;height:42svh}html body.about-body #ypInfographic :is(.wn-uri-copy,.wn-definition-copy){top:calc(var(--process-header) + (100svh - var(--process-header)) * .66)}}
+
+/* Keep the examples and explanation close to the persistent circle. */
+html body.about-body #aboutRelations{height:840svh}
+html body.about-body #ypInfographic .wn-uri-copy{top:calc(var(--process-header) + (100svh - var(--process-header)) * .64);width:min(680px,82vw)}
+html body.about-body #ypInfographic .wn-uri-examples{font-size:clamp(16px,1.25vw,21px);gap:2em;font-weight:400}
+html body.about-body #ypInfographic .wn-uri-copy p{max-width:36em;font-size:clamp(12px,.95vw,16px);line-height:1.85;margin:22px auto 0;text-wrap:balance;color:#fff}
+html body.about-body #ypInfographic .wn-continuous-record{fill:#bcd1e510;stroke:#c2d8e67a;stroke-width:1}
+
+/* Give typing time to read, and show the branching diagram in a taller clear viewport. */
+html body.about-body #aboutRelations{height:1500svh}
+html body.about-body #ypInfographic.is-map-reading .wn-svg{top:calc(var(--process-header) + (100svh - var(--process-header)) * .51);width:min(1000px,94vw);height:72svh;overflow:hidden;mask-image:none!important;-webkit-mask-image:none!important}
+#ypInfographic .wn-type-caret{font-weight:300;animation:wn-caret-blink 1s steps(1,end) infinite}
+@keyframes wn-caret-blink{0%,48%{opacity:1}49%,100%{opacity:0}}
+@media(prefers-reduced-motion:reduce){#ypInfographic .wn-type-caret{animation:none}}
+
+/* A continuous reading path, with evenly spaced branches and unboxed closing text. */
+html body.about-body #ypInfographic .wn-continuous-spine{stroke:#d5e2ec;stroke-opacity:.42;stroke-width:1}
+html body.about-body #ypInfographic .wn-continuous-trace,html body.about-body #ypInfographic .wn-continuous-branch{stroke:#d5e2ec;stroke-opacity:.6;stroke-width:1}
+html body.about-body #ypInfographic .wn-svg .wn-branch-label{font:400 15px Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;fill:#e9f0f5;letter-spacing:-.01em}
+html body.about-body #ypInfographic .wn-svg .wn-editorial-heading{font:400 16px Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;fill:#f1f5f8;letter-spacing:-.02em}
+html body.about-body #ypInfographic .wn-svg .wn-editorial-detail{font:400 13px Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;fill:#d4dfe8;letter-spacing:-.01em}
+html body.about-body #ypInfographic .wn-editorial-node{fill:#c8d9e6;stroke:none}

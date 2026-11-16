@@ -1,0 +1,86 @@
+/* MEDIA BY ERA — restrained previews and tactile CRT transport controls. */
+
+html body.media-time-body .era-bridge #timeNav button .era-thumb{
+  opacity:.105!important;
+  filter:grayscale(1) contrast(.72) brightness(1.22)!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:hover .era-thumb,
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:focus-visible .era-thumb{
+  opacity:.28!important;
+  filter:grayscale(1) contrast(.82) brightness(1.12)!important;
+  box-shadow:none!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:hover b,
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:focus-visible b{
+  color:#69717a!important;
+  background:linear-gradient(180deg,#f3f5f6 0%,#aab1b8 28%,#616971 51%,#cfd4d8 73%,#747c84 100%)!important;
+  -webkit-background-clip:text!important;
+  background-clip:text!important;
+  -webkit-text-fill-color:transparent!important;
+  text-shadow:0 1px 0 rgba(255,255,255,.48),0 2px 3px rgba(41,49,57,.14)!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:hover span,
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:focus-visible span{
+  color:#66717c!important;
+  text-shadow:none!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:hover::after,
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:focus-visible::after{
+  background:linear-gradient(90deg,#89929b,#d8dde1,#747d86)!important;
+  box-shadow:none!important;
+}
+
+html body.media-time-body .channel-footer .arrow{
+  position:relative!important;
+  flex:0 0 38px!important;
+  width:38px!important;
+  height:38px!important;
+  padding:10px!important;
+  border:1px solid rgba(114,129,145,.55)!important;
+  border-radius:50%!important;
+  color:#536170!important;
+  background:rgba(255,255,255,.72)!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+html body.media-time-body .channel-footer #prevChannel,
+html body.media-time-body .channel-footer #nextChannel{
+  border:1px solid rgba(114,129,145,.55)!important;
+  background:rgba(255,255,255,.72)!important;
+  background-image:none!important;
+  padding:10px!important;
+}
+html body.media-time-body .channel-footer .arrow::after{
+  content:none!important;
+  display:none!important;
+}
+html body.media-time-body .channel-footer .arrow svg{
+  display:block!important;
+  visibility:visible!important;
+  width:100%!important;
+  height:100%!important;
+  fill:currentColor!important;
+  filter:none!important;
+}
+html body.media-time-body .channel-footer #prevChannel:hover,
+html body.media-time-body .channel-footer #nextChannel:hover,
+html body.media-time-body .channel-footer #prevChannel:focus-visible,
+html body.media-time-body .channel-footer #nextChannel:focus-visible{
+  border-color:#344B83!important;
+  background:#fff!important;
+}
+html body.media-time-body .channel-footer .arrow:hover,
+html body.media-time-body .channel-footer .arrow:focus-visible{
+  border-color:#344B83!important;
+  color:#344B83!important;
+  background:#fff!important;
+  box-shadow:0 0 0 3px rgba(52,75,131,.06)!important;
+}
+html body.media-time-body .channel-footer .arrow:active{transform:translateY(1px) scale(.98)!important}
+
+@media(max-width:700px){
+  html body.media-time-body .channel-footer .arrow{flex-basis:34px!important;width:34px!important;height:34px!important;padding:9px!important}
+}

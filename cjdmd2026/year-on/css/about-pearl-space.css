@@ -1,0 +1,82 @@
+/* Pearl white, ice blue-grey, and two broad satin-silver reflections. */
+html body.about-body #ypInfographic>.wn-stage{background:#0b0d10!important;isolation:isolate}
+#ypInfographic .wn-pearl-space{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none;opacity:var(--wn-room-light,0);background:linear-gradient(145deg,#f5f7fa 0%,#e7ecf2 43%,#dce5ef 72%,#f5f7fa 100%)}
+#ypInfographic .wn-pearl-space::before,#ypInfographic .wn-pearl-space::after{content:'';position:absolute;width:110%;height:95%;border-radius:50%;filter:blur(65px);will-change:transform}
+#ypInfographic .wn-pearl-space::before{left:-40%;top:-45%;background:radial-gradient(ellipse,#c5ced8a6,transparent 65%);animation:wn-silver-drift-a 23s ease-in-out infinite alternate}
+#ypInfographic .wn-pearl-space::after{right:-45%;bottom:-30%;background:radial-gradient(ellipse,#ffffffeb,transparent 65%);animation:wn-silver-drift-b 21s ease-in-out infinite alternate}
+@keyframes wn-silver-drift-a{to{transform:translate(18%,22%) scale(1.08)}}
+@keyframes wn-silver-drift-b{to{transform:translate(-18%,-15%) scale(1.1)}}
+html body.about-body #ypInfographic .wn-stage :is(.wn-process-label,.wn-process-ko,.wn-process-en,.wn-definition-copy,.wn-definition-copy p,.wn-definition-copy span,.wn-definition-copy em.wn-key,.wn-definition-copy .editorial-detail .wn-key){color:var(--wn-ink)!important;text-shadow:none!important}
+html body.about-body #ypInfographic .wn-stage :is(.wn-process-en,.wn-definition-copy .editorial-detail){color:var(--wn-muted)!important}
+html body.about-body #ypInfographic .wn-svg text,
+html body.about-body #ypInfographic .wn-stage :is(.wn-element-name,.wn-element-caption,.wn-definition-name,.wn-definition-korean,.wn-result-name),
+html body.about-body #ypInfographic .wn-svg :is(.wn-continuous-label,.wn-continuous-us,.wn-continuous-reading,.wn-continuous-korean,.wn-editorial-heading){fill:var(--wn-ink)!important}
+html body.about-body #ypInfographic .wn-svg .wn-editorial-detail{fill:var(--wn-muted)!important}
+html body.about-body #ypInfographic :is(.wn-result,.wn-person-glass,.wn-continuous-glass),html body.about-body #ypInfographic .wn-svg .wn-culture-glass{fill:url(#wnIndividualBody)!important;stroke:var(--wn-rim)!important;stroke-width:1!important}
+html body.about-body #ypInfographic .wn-continuous-outline{fill:#aebed00d!important;stroke:var(--wn-rim)!important}
+html body.about-body #ypInfographic :is(.wn-connections path,.wn-continuous-spine,.wn-continuous-trace,.wn-continuous-branch){stroke:var(--wn-line)!important}
+html body.about-body:has(#ypInfographic .wn-stage.is-current) .about-reading-scroll{color:#788b9c!important}
+html body.about-body:has(#ypInfographic .wn-stage.is-current) .about-reading-scroll svg{color:#788b9c!important}
+/* Remove the earlier standalone white flash between dark chapters. */
+.about-light-passage{display:none!important}
+@media(prefers-reduced-motion:reduce){#ypInfographic .wn-pearl-space::before,#ypInfographic .wn-pearl-space::after{animation:none;will-change:auto}}
+
+html body.about-body:has(#ypInfographic .wn-stage.is-current) #aboutSound{color:#63778a!important;border-color:#8293a5!important}
+
+#ypInfographic .wn-pearl-space>img{position:absolute;left:50%;top:50%;width:100svh;height:100vw;max-width:none;object-fit:fill;transform:translate(-50%,-50%) rotate(90deg);opacity:.9}
+html body.about-body #ypInfographic :is(.wn-result,.wn-person-glass,.wn-continuous-glass),html body.about-body #ypInfographic .wn-svg .wn-culture-glass{stroke:#d6e1eb80!important;stroke-width:.65!important;vector-effect:non-scaling-stroke;filter:none!important}
+html body.about-body:has(#ypInfographic .wn-stage.is-current) header.global-header.global-header.global-header.global-header.global-header{background:transparent!important;backdrop-filter:none!important;box-shadow:none!important;--header-ink:var(--wn-header-ink,#394757);color:var(--wn-header-ink,#394757)!important;border-bottom-color:#7c8fa326!important}
+html body.about-body:has(#ypInfographic .wn-stage.is-current) header.global-header.global-header.global-header :is(nav>a,.header-icon-button,.brand-word){color:var(--wn-header-ink,#394757)!important}
+html body.about-body:has(#ypInfographic .wn-stage.is-current) header.global-header.global-header.global-header :is(.brand-mark,.brand-word){filter:brightness(var(--wn-logo-brightness,0)) opacity(.85)!important}
+html body.about-body:has(#ypInfographic .wn-stage.is-current) header.global-header.global-header.global-header nav>a.active{color:#6587a5!important}
+
+/* The full individuals-to-infographic chapter uses the supplied dark-to-silver room. */
+#ypInfographic .wn-pearl-space{background:linear-gradient(180deg,#0b1015 0%,#27323e 27%,#596878 56%,#93a2b1 81%,#cbd4dd 100%)!important}
+#ypInfographic .wn-pearl-space>img{display:none!important}
+#ypInfographic .wn-pearl-space::before{background:radial-gradient(ellipse,#aebecb12,transparent 65%)!important}
+#ypInfographic .wn-pearl-space::after{background:radial-gradient(ellipse,#f3f8ff1a,transparent 65%)!important}
+
+/* Restrained outline system: no luminous rim or thick glass fill. */
+html body.about-body #ypInfographic .wn-continuous-outline{fill:#e6edf505!important;stroke:#d6e1eb80!important;stroke-width:.65!important;vector-effect:non-scaling-stroke;filter:none!important}
+html body.about-body #ypInfographic :is(.wn-connections path,.wn-continuous-spine,.wn-continuous-trace,.wn-continuous-branch){stroke-width:.55!important;vector-effect:non-scaling-stroke;stroke:#cbd7e280!important}
+html body.about-body #ypInfographic .wn-continuous-spine{stroke-opacity:.2!important}
+html body.about-body #ypInfographic .wn-svg :is(.wn-continuous-label,.wn-continuous-us,.wn-editorial-heading,.wn-editorial-detail){font-weight:300!important;dominant-baseline:central}
+
+html body.about-body #ypInfographic .wn-svg .wn-side-note{text-anchor:start!important;font-size:15px!important;letter-spacing:0}
+
+/* Identical title typography on both sides of the definition-to-map handoff. */
+html body.about-body #ypInfographic .wn-svg :is(.wn-definition-name,#wnRelationMap .wn-element-name){font:400 25px/1 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif!important;letter-spacing:0!important;font-kerning:normal;text-anchor:middle!important;dominant-baseline:central!important}
+html body.about-body #ypInfographic .wn-svg :is(.wn-definition-korean,#wnRelationMap .wn-continuous-korean){font:400 16px/1 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif!important;letter-spacing:0!important;font-kerning:normal;text-anchor:middle!important;dominant-baseline:central!important}
+
+/* A legible silver thread with a short ice-blue scroll-progress glint. */
+html body.about-body #ypInfographic :is(.wn-continuous-spine,.wn-continuous-trace,.wn-continuous-branch){stroke-width:.85!important;stroke:#c9d8e4a6!important}
+html body.about-body #ypInfographic .wn-continuous-spine{stroke-opacity:.45!important}
+html body.about-body #ypInfographic .wn-continuous-trace{stroke-opacity:.9!important}
+html body.about-body #ypInfographic .wn-continuous-trace{stroke:#c2d4e0!important;stroke-width:.95!important;stroke-opacity:.85!important;filter:none!important;stroke-linecap:round}
+html body.about-body #ypInfographic .wn-junction{fill:#d4e0e8;stroke:none;filter:none;pointer-events:none}
+
+/* Lower explanatory copy sits just darker than the blue-grey scroll cue. */
+html body.about-body #ypInfographic .wn-stage :is(.wn-process-ko,.wn-process-en,.wn-uri-copy p,.wn-definition-copy,.wn-definition-copy p,.wn-definition-copy span,.wn-definition-copy em.wn-key,.wn-definition-copy .editorial-detail,.wn-definition-copy .editorial-detail .wn-key){color:#f1f4f7!important;text-shadow:none!important}
+
+/* Progress remains drawn above the reading position; junction rings only mark its passage. */
+html body.about-body #ypInfographic :is(.wn-connections path,.wn-continuous-spine,.wn-continuous-branch){stroke-width:1.15!important;stroke:#c6d3dfb3!important}
+html body.about-body #ypInfographic .wn-continuous-trace{stroke:#8faec7!important;stroke-width:1.65!important;stroke-opacity:1!important;filter:drop-shadow(0 0 1px #8faec733)!important}
+html body.about-body #ypInfographic .wn-junction{fill:#8faec71a;stroke:#9ab6cd;stroke-width:1.15;vector-effect:non-scaling-stroke;filter:none}
+
+html body.about-body #ypInfographic .wn-continuous-spine{stroke-width:1.4!important}
+html body.about-body #ypInfographic .wn-continuous-trace{stroke:#edf3f8!important;stroke-width:1.85!important;filter:none!important}
+html body.about-body #aboutRelations{height:1800svh!important}
+
+/* Match the supplied reference at each tenth of the viewport height. */
+#ypInfographic .wn-pearl-space{background:linear-gradient(180deg,#0b0f14 0%,#141c24 16%,#212833 32%,#2d3743 46%,#3c4957 59%,#4e5a6b 70%,#616f80 79%,#7b8998 86%,#95a3b3 92%,#b3bdc9 97%,#d0d7df 100%)!important}
+#ypInfographic .wn-pearl-space::before,#ypInfographic .wn-pearl-space::after{opacity:.12}
+
+/* Shared subtitle baseline, independent of the text block's height. */
+html body.about-body #ypInfographic .wn-definition-copy{top:calc(var(--process-header) + (100svh - var(--process-header)) * .79)!important;bottom:auto!important}
+html body.about-body #ypInfographic .wn-definition-copy .editorial-body{line-height:1.6!important;margin:0 auto 16px!important}
+html body.about-body #ypInfographic .wn-definition-copy .editorial-detail{line-height:1.6!important;margin:0 auto!important}
+/* Opaque node interiors hide the axis, without a black gap around the rim. */
+html body.about-body #ypMediaAnchor .media-story-node{z-index:2;background:radial-gradient(circle at 35% 28%,#46535e,#202e39 58%,#111b24)!important;box-shadow:inset 0 1px 2px #e0f1ff35!important}
+html body.about-body #ypMediaAnchor .media-story-row.is-current .media-story-node{background:radial-gradient(circle at 35% 28%,#fff,#e7f0f6 45%,#b5c7d5)!important;box-shadow:0 0 5px #dbeaf333,inset 0 1px 1px #fff!important}
+
+html body.about-body #ypInfographic .wn-svg .wn-continuous-us{font:300 17px Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif!important;letter-spacing:0!important;dominant-baseline:central!important}

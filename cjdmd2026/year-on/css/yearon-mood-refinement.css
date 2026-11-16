@@ -1,0 +1,284 @@
+:root{
+  --yo-white:#f8f9f9;
+  --yo-paper:#f3f5f6;
+  --yo-silver:#9297a1;
+  --yo-silver-light:#dfe3e6;
+  --yo-slate:#536878;
+  --yo-ink:#0a0b0d;
+  --yo-obsidian:#080a0d;
+  --yo-line:rgba(83,104,120,.28);
+  --yo-blue:#8fa9bc;
+  --yo-red:#71343d;
+}
+
+html:not([data-theme='dark']) body{
+  background:var(--yo-white)!important;
+  color:var(--yo-ink)!important;
+}
+
+html:not([data-theme='dark']) :is(.about-main,.ka-main,.v7-main,.home-main){
+  background:var(--yo-white)!important;
+  color:var(--yo-ink)!important;
+}
+
+html:not([data-theme='dark']) :is(.about-concept,.about-name,.weness-editorial,.weness-culture,.mini-era-section,.culture-archive,.archive-index,.v7-hero,.v7-about,.v7-plan){
+  background-color:var(--yo-white)!important;
+  border-color:var(--yo-line)!important;
+}
+
+/* Cool photographic grading. Original colour returns gently on interaction. */
+html:not([data-theme='dark']) :is(.about-main,.culture-archive,.v7-main,.home-main,.media-time-body) img{
+  filter:saturate(.68) contrast(.96) brightness(1.035) sepia(.025) hue-rotate(166deg);
+  transition:filter .35s ease,opacity .35s ease;
+}
+html:not([data-theme='dark']) :is(a,button,figure):hover img{
+  filter:saturate(.9) contrast(.99) brightness(1.015) sepia(0) hue-rotate(0deg);
+}
+
+/* Pale metal and blue-white surfaces. */
+.about-body :is(.concept-summary,.name-definition,.weness-body,.culture-reading),
+.karchive-body :is(.archive-heading,.archive-count),
+.visit-v7 :is(.v7-meta,.v7-copy),
+.media-time-body :is(.era-stamp,.control-help){
+  border-color:var(--yo-line)!important;
+}
+
+.about-body :is(.section-label,.concept-summary span,.media-path-head,.timeline-compare-label),
+.karchive-body :is(.section-label,.archive-count,.map-hint),
+.visit-v7 :is(.v7-meta,.v7-section-head),
+.media-time-body :is(.era-stamp,.control-help){
+  color:#657481!important;
+}
+
+/* Obsidian chrome replaces purple or neutral black fields. */
+.ka-film{
+  background:linear-gradient(180deg,#080a0d 0%,#18232c 37%,#536878 72%,#e5e8e9 100%)!important;
+}
+.ka-film-card:nth-child(even),
+.v7-media,
+.v7-footer{
+  background-color:var(--yo-obsidian)!important;
+  color:#f5f7f8!important;
+}
+.v7-media{
+  background-image:radial-gradient(ellipse at 72% 16%,rgba(83,104,120,.28),transparent 46%)!important;
+}
+
+/* Home image receives a restrained icy-blue wash instead of pink/purple. */
+html:not([data-theme='dark']) body.home-film-body #entry .entry-sticky::before{
+  content:''!important;
+  display:block!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:1!important;
+  pointer-events:none!important;
+  background:linear-gradient(135deg,rgba(239,244,247,.18),rgba(128,157,178,.18))!important;
+  mix-blend-mode:color!important;
+}
+
+html:not([data-theme='dark']) body.media-time-body .time-deck{
+  background:radial-gradient(ellipse at 52% 66%,rgba(143,169,188,.2),transparent 56%),var(--yo-paper)!important;
+}
+
+/* Silver rules, indicators and active states. */
+:is(.about-body,.karchive-body,.visit-v7,.media-time-body) :is(hr,.culture-lines line,.media-path-canvas::before){
+  border-color:var(--yo-line)!important;
+}
+.culture-map .culture-lines line{stroke:#718795!important;opacity:.34!important}
+.global-header nav a.active{color:#6f8b9e!important}
+.global-header nav a::after{background:#6f8b9e!important}
+:is(.culture-filters,.mini-era-controls,.time-nav) button.active{color:var(--yo-red)!important}
+
+/* Transparent texture and restrained glass. */
+html body .global-header.global-header,
+html[data-theme] body .global-header.global-header{
+  background:rgba(245,248,249,.035)!important;
+  background-image:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.012))!important;
+  border-bottom-color:color-mix(in srgb,var(--header-ink) 18%,transparent)!important;
+  backdrop-filter:blur(9px) saturate(1.06)!important;
+  -webkit-backdrop-filter:blur(9px) saturate(1.06)!important;
+}
+
+html[data-theme='dark'] body,
+html[data-theme='dark'] :is(.about-main,.ka-main,.v7-main,.home-main){
+  background:var(--yo-obsidian)!important;
+  color:#f4f6f7!important;
+}
+html[data-theme='dark'] :is(.about-concept,.about-name,.weness-editorial,.weness-culture,.mini-era-section,.culture-archive,.archive-index,.v7-hero,.v7-about,.v7-plan){
+  background:#0d1115!important;
+  border-color:rgba(146,151,161,.32)!important;
+}
+html[data-theme='dark'] img{filter:saturate(.58) contrast(1.02) brightness(.86) hue-rotate(166deg)}
+
+@media(max-width:700px){
+  html body .global-header.global-header{backdrop-filter:blur(7px) saturate(1.04)!important;-webkit-backdrop-filter:blur(7px) saturate(1.04)!important}
+}
+
+/* Final header separator: a single pale silver hairline. */
+html body .global-header.global-header,
+html[data-theme] body .global-header.global-header,
+html body .global-header.global-header[data-tone]{
+  border-bottom:.5px solid rgba(190,197,202,.34)!important;
+  box-shadow:none!important;
+}
+html body .global-header.global-header[data-tone="light"]{border-bottom-color:rgba(225,229,232,.2)!important}
+
+/* Preserve image hues; cool them through restraint rather than hue rotation. */
+html:not([data-theme='dark']) :is(.about-main,.culture-archive,.v7-main,.home-main,.media-time-body) img{
+  filter:grayscale(.1) saturate(.72) contrast(.97) brightness(1.025)!important;
+}
+html:not([data-theme='dark']) :is(a,button,figure):hover img{
+  filter:grayscale(0) saturate(.92) contrast(.99) brightness(1.01)!important;
+}
+html[data-theme='dark'] img{
+  filter:grayscale(.16) saturate(.62) contrast(1.01) brightness(.88)!important;
+}
+
+/* Retire legacy neon UI accents without removing muted colour in artwork. */
+.global-header .brand span{color:inherit!important}
+:is(.story-progress,.story-progress i,.ka-film-progress i,.network-progress b){
+  background:#748b9b!important;
+  box-shadow:none!important;
+}
+:is(.floor-route,.plan-route-line){stroke:var(--yo-red)!important}
+:is(.culture-filters,.mini-era-controls,.time-nav) button.active,
+:is(.culture-filters,.mini-era-controls,.time-nav) button[aria-pressed='true']{
+  color:var(--yo-red)!important;
+  border-color:color-mix(in srgb,var(--yo-red) 58%,transparent)!important;
+  box-shadow:none!important;
+}
+:is(button,a):focus-visible{outline-color:#8199aa!important;box-shadow:none!important}
+
+/* Quiet metallic surfaces instead of generic flat grey. */
+html:not([data-theme='dark']) .about-name,
+html:not([data-theme='dark']) .weness-culture,
+html:not([data-theme='dark']) .mini-era-section,
+html:not([data-theme='dark']) .archive-index{
+  background-image:linear-gradient(135deg,rgba(223,227,230,.2),transparent 34%,rgba(143,169,188,.07))!important;
+}
+
+/* Clear glass header: the page remains visible through the bar. */
+html body .global-header.global-header,
+html[data-theme] body .global-header.global-header,
+html body .global-header.global-header[data-tone]{
+  background-color:transparent!important;
+  background-image:linear-gradient(180deg,rgba(255,255,255,.045) 0%,rgba(255,255,255,.012) 48%,rgba(255,255,255,0) 100%)!important;
+  -webkit-backdrop-filter:blur(12px) saturate(1.08)!important;
+  backdrop-filter:blur(12px) saturate(1.08)!important;
+  border-bottom:.5px solid rgba(205,211,216,.3)!important;
+  box-shadow:inset 0 .5px 0 rgba(255,255,255,.16)!important;
+}
+html body .global-header.global-header[data-tone="light"]{
+  background-color:rgba(4,8,12,.008)!important;
+  background-image:linear-gradient(180deg,rgba(255,255,255,.038),rgba(255,255,255,0))!important;
+  border-bottom-color:rgba(224,229,233,.2)!important;
+}
+html body .global-header :is(.theme-toggle,.language){
+  background:rgba(255,255,255,.018)!important;
+  -webkit-backdrop-filter:blur(8px) saturate(1.05)!important;
+  backdrop-filter:blur(8px) saturate(1.05)!important;
+  box-shadow:inset 0 .5px 0 rgba(255,255,255,.12)!important;
+}
+
+/* Visible clear glass: cool the transmitted colour without turning it into a white bar. */
+html body .global-header.global-header,
+html[data-theme] body .global-header.global-header,
+html body .global-header.global-header[data-tone]{
+  background-color:rgba(224,232,237,.11)!important;
+  background-image:linear-gradient(180deg,rgba(255,255,255,.16) 0%,rgba(241,246,248,.055) 54%,rgba(205,216,223,.025) 100%)!important;
+  -webkit-backdrop-filter:blur(15px) saturate(.72) contrast(1.02)!important;
+  backdrop-filter:blur(15px) saturate(.72) contrast(1.02)!important;
+  border-bottom:.5px solid rgba(211,218,223,.62)!important;
+  box-shadow:inset 0 .5px 0 rgba(255,255,255,.58),0 2px 10px rgba(53,67,76,.035)!important;
+}
+html body .global-header.global-header[data-tone="light"]{
+  background-color:rgba(15,22,28,.075)!important;
+  background-image:linear-gradient(180deg,rgba(255,255,255,.105),rgba(255,255,255,.018))!important;
+  border-bottom-color:rgba(230,235,238,.3)!important;
+}
+
+/* Entry title colour only. Layout and motion remain owned by the original entry styles. */
+html:not([data-theme='dark']) body.home-film-body #entry .entry-logo-ko :is(.ko-left,.ko-right),
+html:not([data-theme='dark']) body.home-film-body #entry .entry-logo-en :is(.entry-year,.entry-n),
+html:not([data-theme='dark']) body.home-film-body #entry .split-o :is(.o-full,b){
+  color:#0a0a0a!important;
+  background:none!important;
+  -webkit-background-clip:border-box!important;
+  background-clip:border-box!important;
+  -webkit-text-fill-color:#0a0a0a!important;
+  -webkit-text-stroke:0!important;
+  animation:none!important;
+  text-shadow:none!important;
+}
+
+/* Keep the original chapter placement; only quiet its typography. */
+html body.home-film-body #entry .entry-chapters p{
+  color:rgba(38,48,54,.48)!important;
+  font-size:clamp(7px,.55vw,9px)!important;
+  font-weight:500!important;
+  letter-spacing:.18em!important;
+}
+
+/* Centre only the changing entry wordmark. */
+html body.home-film-body #entry .entry-logo{top:50%!important}
+html body.home-film-body #entry .entry-subtitle{top:50%!important}
+@media(max-width:760px){
+  html body.home-film-body #entry .entry-logo{top:48%!important}
+  html body.home-film-body #entry .entry-subtitle{top:48%!important}
+}
+
+/* Slightly reduce the CRT set while preserving its centre and hit areas. */
+html body.media-time-body .tv-time-panel .television{
+  width:min(63vw,91vh,970px)!important;
+  height:auto!important;
+}
+@media(max-width:800px){
+  html body.media-time-body .tv-time-panel .television{width:67vw!important}
+}
+
+/* Neutral light canvas without the global dotted film. */
+html:not([data-theme='dark']) body{background-color:#fff!important}
+html:not([data-theme='dark']) body::after{display:none!important}
+html:not([data-theme='dark']) body.media-time-body .time-deck{background:#fff!important}
+
+/* Lower only the K-Archive intro graphic cluster beneath the glass header. */
+html body.karchive-body .ka-film :is(.ka-film-card,.ka-film-center){top:49%!important}
+@media(max-width:650px){
+  html body.karchive-body .ka-film :is(.ka-film-card,.ka-film-center){top:46%!important}
+}
+
+/* Centre devices on the horizontal era axis, independent of the header. */
+html body.media-time-body .tv-time-panel .broadcast{position:static!important}
+html body.media-time-body .tv-time-panel .television{
+  position:absolute!important;
+  left:50%!important;
+  top:50%!important;
+  transform:translate(-50%,-50%)!important;
+}
+html body.media-time-body .phone-media{
+  left:50%!important;
+  right:auto!important;
+  top:50%!important;
+  bottom:auto!important;
+  transform:translate(-50%,-50%)!important;
+}
+
+/* Align the later media to the year-navigation axis.  The paper keeps its
+   horizontal fold/drag geometry; only the artwork is optically lowered. */
+html body.media-time-body .time-panel > .pc-media,
+html body.media-time-body .time-panel > .phone-media{
+  left:50%!important;
+  right:auto!important;
+  top:54%!important;
+  bottom:auto!important;
+  transform:translate(-50%,-50%)!important;
+}
+
+html body.media-time-body .time-panel > .paper-media > .paper-cover,
+html body.media-time-body .time-panel > .paper-media > .paper-spread{
+  top:54%!important;
+}
+
+html body.media-time-body .time-panel[data-era="1920"] > .paper-media .paper-book{
+  top:54%!important;
+}

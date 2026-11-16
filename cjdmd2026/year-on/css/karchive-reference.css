@@ -1,0 +1,72 @@
+/* Flat / Tilt / Ring / Gallery — one quiet exhibition canvas. */
+html body.karchive-body{background:#ffffff!important;color:#161a1c!important}
+
+html body.karchive-body :is(.ka,.ka-scroll,.ka-stage){background:#ffffff!important;color:#161a1c!important}
+html body.karchive-body .global-header.global-header{background:#ffffff!important;box-shadow:none!important;border-bottom:1px solid #e5e6e4!important;--header-ink:#27313a}
+html body.karchive-body .global-header.global-header .brand-mark{filter:brightness(0)!important}
+html body.karchive-body .global-header.global-header :is(nav a,.header-icon-button){color:#27313a!important}
+html body.karchive-body .global-header.global-header nav a.active{color:#829fb4!important}
+html body.karchive-body #archiveControls.ka-controls{position:absolute!important;inset:110px 38px auto!important;display:flex!important;align-items:center;justify-content:space-between;border:0!important;padding:0!important;pointer-events:none;color:#171b1d!important}
+html body.karchive-body #archiveControls .ka-selected-title{display:block;font:400 11px/1.4 Arial,sans-serif!important;letter-spacing:.015em;color:#202426!important}
+html body.karchive-body #archiveControls .ka-layout-modes{gap:14px;pointer-events:auto}
+html body.karchive-body #archiveControls .ka-layout-modes button{min-width:68px;padding:5px 16px!important;border:1px solid #a5aaa9!important;border-radius:30px!important;background:transparent!important;color:#282d2f!important;font:400 11px/1 Arial,sans-serif!important;letter-spacing:0!important;opacity:1!important;transition:background .25s,color .25s}
+html body.karchive-body #archiveControls .ka-layout-modes button[aria-pressed=true]{background:#15191a!important;color:#fff!important;border-color:#15191a!important}
+html body.karchive-body #archiveControls .ka-category-filters{position:fixed;bottom:29px;left:50%;transform:translateX(-50%);gap:15px;pointer-events:auto}
+html body.karchive-body #archiveControls .ka-category-filters button{font:400 9px/1.4 Arial,sans-serif!important;letter-spacing:.04em!important;color:#939b9e!important;border:0!important;padding:4px 0!important}
+html body.karchive-body #archiveControls .ka-category-filters button[aria-pressed=true]{color:#202426!important}
+html body.karchive-body #archiveStage .ka-object{border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;transition:left 1s cubic-bezier(.22,.68,.22,1),top 1s cubic-bezier(.22,.68,.22,1),width .9s,height .9s,transform 1s cubic-bezier(.22,.68,.22,1),opacity .5s!important;overflow:visible!important}
+html body.karchive-body #archiveStage .ka-object img{border-radius:0!important;filter:none!important;object-fit:cover;box-shadow:none!important;transition:transform .35s}
+html body.karchive-body #archiveStage .ka-object:hover{z-index:500!important}
+html body.karchive-body #archiveStage .ka-object:hover img{transform:scale(1.12)}
+html body.karchive-body #archiveStage .ka-object:focus-visible{outline:1px solid #677c8c;outline-offset:6px}
+html body.karchive-body #archiveStage :is(.ka-opening-copy,.ka-sphere-cue,.ka-network-lines,.ka-card-caption){display:none!important}
+html body.karchive-body #archiveImageIndex{left:auto!important;right:38px!important;bottom:29px!important;transform:none!important;color:#293235!important;opacity:1!important;font:400 11px/1.4 Arial,sans-serif!important;letter-spacing:0!important}
+.ka-reference-instruction{position:absolute;z-index:420;left:38px;bottom:29px;font:400 10px/1.4 Arial,sans-serif;color:#293235;letter-spacing:.015em}
+@media(max-width:760px){
+ html body.karchive-body #archiveControls.ka-controls{inset:94px 20px auto!important;align-items:flex-start}
+ html body.karchive-body #archiveControls .ka-layout-modes{gap:5px}
+ html body.karchive-body #archiveControls .ka-layout-modes button{min-width:0;padding:5px 9px!important;font-size:10px!important}
+ html body.karchive-body #archiveControls .ka-selected-title{font-size:9px!important;max-width:65px}
+ html body.karchive-body #archiveControls .ka-category-filters{bottom:58px;gap:12px;width:max-content}
+ .ka-reference-instruction{left:20px;bottom:24px;font-size:9px}
+ html body.karchive-body #archiveImageIndex{right:20px!important;bottom:24px!important;font-size:9px!important}
+}
+@media(prefers-reduced-motion:reduce){html body.karchive-body #archiveStage .ka-object{transition:none!important}}
+
+/* Category connections retain the archive's dark / red visual language. */
+html body.karchive-body :is(.ka,.ka-scroll,.ka-stage),html body.karchive-body .global-header.global-header{transition:background-color .6s ease,color .6s ease!important}
+html body.karchive-body.ka-filter-active,
+html body.karchive-body.ka-filter-active :is(.ka,.ka-scroll,.ka-stage),
+html body.karchive-body.ka-filter-active .global-header.global-header{background:#08090a!important;color:#eef1f3!important}
+html body.karchive-body.ka-filter-active .global-header.global-header{border-color:#24272b!important}
+html body.karchive-body.ka-filter-active .global-header.global-header .brand-mark{filter:brightness(0) invert(1)!important}
+html body.karchive-body.ka-filter-active .global-header.global-header :is(nav a,.header-icon-button){color:#eef1f3!important}
+html body.karchive-body.ka-filter-active .global-header.global-header nav a.active{color:#91b5cf!important}
+html body.karchive-body.ka-filter-active #archiveControls .ka-selected-title,
+html body.karchive-body.ka-filter-active :is(.ka-reference-instruction,#archiveImageIndex){color:#e6e9eb!important}
+html body.karchive-body.ka-filter-active #archiveControls .ka-layout-modes button{border-color:#5b6166!important;color:#cfd4d7!important}
+html body.karchive-body.ka-filter-active #archiveControls .ka-layout-modes button[aria-pressed=true]{background:#eef1f3!important;color:#101315!important;border-color:#eef1f3!important}
+html body.karchive-body.ka-filter-active #archiveControls .ka-category-filters button{color:#7a8187!important}
+html body.karchive-body.ka-filter-active #archiveControls .ka-category-filters button[aria-pressed=true]{color:#fa3853!important}
+html body.karchive-body.ka-filter-active #archiveStage #archiveNetwork{display:block!important;z-index:90;opacity:1}
+html body.karchive-body.ka-filter-active #archiveNetwork line{stroke:#97afc1;stroke-width:1;opacity:.85;animation:kaConnectionAppear .65s .45s both}
+@keyframes kaConnectionAppear{from{opacity:0}to{opacity:.85}}
+@media(prefers-reduced-motion:reduce){html body.karchive-body.ka-filter-active #archiveNetwork line{animation:none}}
+
+/* YEAR:ON controls: spaced type and a restrained blue-grey selection rule. */
+html body.karchive-body #archiveControls .ka-layout-modes{gap:26px}
+html body.karchive-body #archiveControls .ka-layout-modes button{position:relative;min-width:0;padding:7px 0 11px!important;border:0!important;border-radius:0!important;background:transparent!important;color:#8b969e!important;font:400 10px/1.4 Arial,sans-serif!important;letter-spacing:.12em!important;text-transform:uppercase}
+html body.karchive-body #archiveControls .ka-layout-modes button::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .3s ease}
+html body.karchive-body #archiveControls .ka-layout-modes button[aria-pressed=true]{background:transparent!important;color:#526c7e!important;border:0!important}
+html body.karchive-body #archiveControls .ka-layout-modes button[aria-pressed=true]::after{transform:scaleX(1)}
+html body.karchive-body #archiveControls .ka-layout-modes button:hover{color:#526c7e!important}
+html body.karchive-body #archiveControls .ka-layout-modes button:focus-visible{outline:1px solid #91a9ba;outline-offset:5px}
+html body.karchive-body.ka-filter-active #archiveControls .ka-layout-modes button{background:transparent!important;color:#849099!important;border:0!important}
+html body.karchive-body.ka-filter-active #archiveControls .ka-layout-modes button[aria-pressed=true]{background:transparent!important;color:#afc5d4!important}
+@media(max-width:760px){html body.karchive-body #archiveControls .ka-layout-modes{gap:15px}html body.karchive-body #archiveControls .ka-layout-modes button{padding:5px 0 9px!important;font-size:9px!important;letter-spacing:.07em!important}}
+
+/* Intro remains its own original dark scene before the white archive. */
+html body.karchive-body.ka-film-open header.global-header.global-header{background:#000!important;border-bottom:1px solid #d9e8f228!important}
+html body.karchive-body.ka-film-open .global-header.global-header .brand-mark{filter:brightness(0) invert(1)!important}
+html body.karchive-body.ka-film-open .global-header.global-header :is(nav a,.header-icon-button){color:#eef2f6!important}
+html body.karchive-body.ka-film-open .global-header.global-header nav a.active{color:#91b5cf!important}

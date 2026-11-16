@@ -1,0 +1,22 @@
+/* Keep only the approved shared surface and opening gradient. */
+html body.visit-v7{--visit-surface:#000;background:var(--visit-surface)!important}
+html body.visit-v7 #visitExhibition,html body.visit-v7 .v7-footer{background:var(--visit-surface)!important}
+html body.visit-v7 header.global-header.global-header{background:#000!important;background-image:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-bottom:.5px solid #afc1cf40!important;box-shadow:none!important}
+/* Gradual cool neutral light: more space between the dark and pale ends. */
+html body.visit-v7 #visitOpening,html body.visit-v7 #visitOpening .visit-opening-sticky{
+ background:var(--yearon-entry-gradient)!important;
+}
+
+/* Fade the pinned opening to the exhibition's black before it leaves the header. */
+html body.visit-v7 #visitOpening .visit-opening-sticky::after {
+  content:''!important;
+  position:absolute;
+  inset:0;
+  z-index:5;
+  pointer-events:none;
+  background:#000!important;
+  opacity:var(--opening-exit,0);
+}
+@media(prefers-reduced-motion:reduce) {
+  html body.visit-v7 #visitOpening .visit-opening-sticky { position:relative!important; }
+}

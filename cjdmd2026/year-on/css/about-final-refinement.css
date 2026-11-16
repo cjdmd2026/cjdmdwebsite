@@ -1,0 +1,83 @@
+/* Retain the dark first paint and soften the entrance without a white flash. */
+html:has(body.about-body),html body.about-body{background:#08090b!important}
+html body.about-body .yai-stage{background:#08090b!important;animation:about-arrival .8s ease-out both}
+@keyframes about-arrival{from{opacity:0}to{opacity:1}}
+html body.about-body #artistSequence .artist-reading{max-width:36em!important;margin-top:3svh!important}
+html body.about-body #artistSequence .artist-reading>p{line-height:1.7!important;word-break:keep-all!important;text-wrap:pretty!important;margin-bottom:1em!important}
+html body.about-body #ypInfographic .wn-definition-copy :is(p,strong,b,span){font-weight:400!important}
+html body.about-body #ypInfographic .wn-definition-copy :is(.editorial-body,.editorial-detail){font-weight:400!important}
+html body.about-body #ypInfographic .wn-svg,html body.about-body #ypInfographic.is-map-reading .wn-svg{top:calc(var(--process-header) + (100svh - var(--process-header)) * .45)!important;width:min(900px,90vw)!important;height:55svh!important;overflow:hidden!important;transition:none!important}
+html body.about-body #ypInfographic :is(.wn-result,.wn-continuous-glass){fill:url(#wnIndividualBody)!important;stroke:url(#wnIndividualRim)!important;stroke-width:1!important;filter:none!important}
+html body.about-body #ypInfographic .wn-person-glass{stroke-width:.8!important;filter:none!important}
+html body.about-body #ypInfographic .wn-person-word{display:block!important;font-size:12px!important;font-weight:400!important}
+html body.about-body #ypInfographic .wn-editorial-node{display:none!important}
+@media(max-width:760px){html body.about-body #ypInfographic .wn-svg,html body.about-body #ypInfographic.is-map-reading .wn-svg{width:94vw!important;height:43svh!important}html body.about-body #artistSequence .artist-reading{max-width:none!important}}
+@media(prefers-reduced-motion:reduce){html body.about-body .yai-stage{animation:none}}
+
+@media(min-width:761px){html body.about-body #artistSequence .abr-artist-copy{width:43vw!important;left:9vw!important}html body.about-body #artistSequence .artist-reading{font-size:clamp(12px,.94vw,17px)!important}}
+
+@media(min-width:761px){html body.about-body #artistSequence .abr-artist-copy{position:absolute!important;top:32svh!important;bottom:auto!important;left:10vw!important;width:41vw!important;transform:none!important;translate:none!important}html body.about-body #artistSequence .abr-artist-image{position:absolute!important;left:59vw!important;top:18svh!important;width:25vw!important;height:67svh!important;transform:none!important;translate:none!important}html body.about-body #artistSequence .abr-artist-image>img{object-position:center!important}}
+
+html body.about-body #ypInfographic .wn-definition-copy em.wn-key{font-family:inherit!important;font-weight:400!important;font-style:normal!important;border:0!important;text-decoration:none!important}html body.about-body #ypInfographic .wn-definition-copy em.wn-key::after{display:none!important}
+
+@media(min-width:761px){html body.about-body #artistSequence .abr-artist-copy{top:var(--artist-copy-top,32svh)!important}}
+
+html body.about-body{--weness-studio:radial-gradient(ellipse at 50% 46%,#20252b60 0%,#0b0d1000 62%),linear-gradient(180deg,#08090b 0%,#101216 100%)!important}
+
+html body.about-body #ypMediaAnchor :is(#mediaStory3,#mediaStory4,#mediaStory5) .media-story-image{display:flex!important;align-items:flex-end!important;filter:none!important}html body.about-body #ypMediaAnchor :is(#mediaStory3,#mediaStory4,#mediaStory5) .media-story-image>img{position:static!important;content:normal!important;width:auto!important;height:clamp(76px,12svh,120px)!important;max-width:170px!important;object-fit:contain!important;object-position:left bottom!important;filter:none!important;opacity:1!important;visibility:visible!important;clip-path:none!important}html body.about-body #ypMediaAnchor #mediaStory5 .media-story-image>img{height:clamp(80px,13svh,126px)!important}
+
+html body.about-body #aboutEntryStory .yai-white{background:#08090b!important;pointer-events:none!important}
+
+/* Quiet reading typography and generous spacing between timeline eras. */
+html body.about-body #ypInfographic .wn-definition-copy{width:min(78vw,1080px)!important;max-width:none!important}
+html body.about-body #ypInfographic .wn-definition-copy :is(p,strong,b,span,em){font-weight:300!important;font-family:'Helvetica Neue','Apple SD Gothic Neo','Noto Sans KR',Arial,sans-serif!important}
+html body.about-body #ypInfographic .wn-definition-copy .editorial-body{font-size:clamp(14px,1.02vw,17px)!important;line-height:1.65!important;max-width:none!important;margin-bottom:18px!important}
+html body.about-body #ypInfographic .wn-definition-copy .editorial-detail{font-size:clamp(12px,.86vw,14px)!important;line-height:1.8!important;max-width:none!important;color:#c5ccd2!important;text-wrap:balance!important}
+html body.about-body #ypInfographic .wn-process-copy :is(.wn-process-ko,.wn-process-en){font-weight:300!important}
+html body.about-body #ypMediaAnchor .media-story-row{flex-basis:clamp(500px,56vw,880px)!important}
+html body.about-body #ypMediaAnchor .media-story-description{font-weight:300!important}
+html body.about-body #ypMediaAnchor .timeline-object{position:relative;display:block;flex:none;height:clamp(76px,12svh,120px);width:auto;aspect-ratio:1360/851;isolation:isolate}
+html body.about-body #ypMediaAnchor .timeline-object-pc{aspect-ratio:1383/862}
+html body.about-body #ypMediaAnchor .timeline-object-phone{aspect-ratio:941/1672;height:clamp(80px,13svh,126px)}
+html body.about-body #ypMediaAnchor .timeline-object>img{position:relative!important;inset:auto!important;z-index:1;display:block!important;content:normal!important;width:100%!important;height:100%!important;max-width:none!important;object-fit:contain!important;filter:none!important;transform:none!important}
+html body.about-body #ypMediaAnchor .timeline-object>i{position:absolute;z-index:0;display:block;background:linear-gradient(130deg,#b7cedd2b,#50657514 55%,#dceaf224);box-shadow:inset 0 0 5px #bacddd28;pointer-events:none}
+html body.about-body #ypMediaAnchor .timeline-object-tv>i{left:10%;top:14.6%;width:60.8%;height:65.2%;border-radius:17% 17% 14% 14%}
+html body.about-body #ypMediaAnchor .timeline-object-pc>i{left:20.25%;top:11.37%;width:41.43%;height:47%;border-radius:3%/4%}
+html body.about-body #ypMediaAnchor .timeline-object-phone>i{inset:3.4% 12%;border-radius:12%/6%}
+@media(max-width:760px){
+ html body.about-body #ypInfographic .wn-definition-copy{width:88vw!important}
+ html body.about-body #ypInfographic .wn-definition-copy .editorial-body{font-size:14px!important}
+ html body.about-body #ypInfographic .wn-definition-copy .editorial-detail{font-size:12px!important;line-height:1.75!important}
+ html body.about-body #ypMediaAnchor .media-story-row{flex-basis:110vw!important}
+}
+
+html body.about-body #ypInfographic .wn-definition-copy :is(.editorial-body,.editorial-detail){font-weight:300!important}
+
+/* The relation diagram uses the whole reading area, with soft screen edges. */
+html body.about-body #ypInfographic.is-map-reading .wn-svg{top:calc(var(--process-header) + (100svh - var(--process-header) - 90px)*.5)!important;height:calc(100svh - var(--process-header) - 90px)!important;overflow:visible!important;mask-image:linear-gradient(to bottom,transparent 0%,#000 10%,#000 89%,transparent 100%)!important;-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 10%,#000 89%,transparent 100%)!important}
+html body.about-body:has(#ypInfographic .wn-stage.is-current) .about-reading-scroll svg{display:block!important;width:13px!important;height:22px!important;color:#a4adb5!important;opacity:.85!important}
+html body.about-body:has(#ypInfographic .wn-stage.is-current) .about-reading-scroll{color:#a4adb5!important;gap:10px!important}
+@media(max-width:760px){html body.about-body #ypInfographic.is-map-reading .wn-svg{width:94vw!important}}
+
+html body.about-body #ypMediaAnchor .timeline-object-phone>img{filter:grayscale(1) brightness(1.14)!important}
+
+/* Give the closing statement time before the invitation gently arrives. */
+html body.about-body #aboutClosing{height:140svh!important}
+html body.about-body #aboutDestination{height:180svh!important;min-height:180svh!important}
+html body.about-body #aboutDestination>.about-destination-content{transition:opacity .65s ease-out!important}
+html body.about-body #aboutDestination a.film-enter{opacity:var(--destination-reveal,0);translate:0 calc((1 - var(--destination-reveal,0))*14px);transition:opacity .65s ease-out,translate .8s cubic-bezier(.22,.61,.36,1),background .25s,border-color .25s!important}
+html body.about-body #aboutDestination .archive-invitation{opacity:clamp(0,calc((var(--destination-reveal,0) - .18)/.82),1);translate:0 calc((1 - var(--destination-reveal,0))*9px);transition:opacity .75s ease-out,translate .85s ease-out}
+@media(prefers-reduced-motion:reduce){html body.about-body #aboutDestination :is(a.film-enter,.archive-invitation){translate:none!important;transition:none!important}}
+
+/* One camera and identical circle geometry before and after the map handoff. */
+html body.about-body #ypInfographic .wn-svg,
+html body.about-body #ypInfographic.is-map-reading .wn-svg{top:calc(var(--process-header) + (100svh - var(--process-header)) * .45)!important;width:min(900px,90vw)!important;height:calc(100svh - var(--process-header) - 90px)!important;overflow:visible!important;mask-image:linear-gradient(to bottom,transparent,#000 10%,#000 89%,transparent)!important;-webkit-mask-image:linear-gradient(to bottom,transparent,#000 10%,#000 89%,transparent)!important}
+html body.about-body #ypInfographic .wn-svg .wn-culture-glass{fill:#080b0e!important;stroke:#a7b3bf80!important}
+html body.about-body #ypInfographic .wn-svg :is(.wn-editorial-heading,.wn-editorial-detail){font:300 16px Arial,'Apple SD Gothic Neo',sans-serif;fill:#e0e6ec;text-anchor:middle;dominant-baseline:central}
+html body.about-body #ypInfographic .wn-svg .wn-editorial-detail{font-size:13px;fill:#aeb8c2}
+@media(max-width:760px){html body.about-body #ypInfographic .wn-svg,html body.about-body #ypInfographic.is-map-reading .wn-svg{width:94vw!important}}
+
+html body.about-body #ypInfographic .wn-svg,html body.about-body #ypInfographic.is-map-reading .wn-svg{overflow:hidden!important;mask-image:linear-gradient(to bottom,transparent 0%,transparent 10%,#000 22%,#000 85%,transparent 100%)!important;-webkit-mask-image:linear-gradient(to bottom,transparent 0%,transparent 10%,#000 22%,#000 85%,transparent 100%)!important}
+
+/* A subtle cool glass reflection inside the timeline phone's existing bezel. */
+html body.about-body #ypMediaAnchor .timeline-object-phone::after{content:'';position:absolute;inset:5.5% 15%;z-index:2;border-radius:13%/6%;pointer-events:none;background:linear-gradient(133deg,#dce8f31c 0%,#b8cddd0c 23%,transparent 44%,#bccbd50a 73%,#ebf3f91a 100%);box-shadow:inset 0 0 1px #d5e5f53b;clip-path:polygon(0 0,29% 0,29% 3%,71% 3%,71% 0,100% 0,100% 100%,0 100%)}
