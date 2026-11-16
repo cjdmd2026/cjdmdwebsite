@@ -10,9 +10,16 @@
 .process-video-toggle span{margin-left:10px;color:#00bcc2}
 .process-video-progress{position:absolute;z-index:3;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.12)}
 .process-video-progress i{display:block;width:0;height:100%;background:#00bcc2;box-shadow:0 0 14px #00bcc2}
-.feature-item{cursor:pointer;transition:border-color .25s ease,opacity .25s ease!important}
-.feature-item.is-process-active{border-color:#00bcc2!important}
-.feature-item.is-process-active .feature-number,.feature-item.is-process-active h3{color:#5ee8e5!important}
+/* The process video belongs to the DECODE "소각 과정" panel. */
+.detail-image.is-video{background:#020708;border-color:rgba(0,188,194,.35)}
+.detail-image .detail-process-video{display:none;width:100%;height:100%;object-fit:cover;background:#020708}
+.detail-image.is-video .detail-process-video{display:block}
+.detail-image.is-video .detail-image-element,
+.detail-image.is-video .detail-image-overlay,
+.detail-image.is-video .detail-image-caption{display:none!important}
+.detail-image:not(.is-video) .process-video-ui,
+.detail-image:not(.is-video) .process-video-progress{display:none!important}
+.detail-image.is-video::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,transparent 45%,rgba(0,4,5,.88) 100%),linear-gradient(90deg,rgba(0,7,8,.18),transparent 40%)}
 
 .search-section{background:linear-gradient(145deg,#071012,#050809)!important;border-color:rgba(0,188,194,.42)!important;border-radius:22px!important;box-shadow:0 26px 80px rgba(0,0,0,.32)!important}
 .search-heading{align-items:start!important}
