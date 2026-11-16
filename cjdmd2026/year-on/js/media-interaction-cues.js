@@ -2,7 +2,7 @@
   const items=[
     {era:'1780',host:'.scroll-media',target:'.scroll-media',en:['PULL THE RIGHT ROLLER','Drag right to reveal the painting'],ko:['오른쪽 봉을 당겨보세요','오른쪽으로 끌어 그림을 펼쳐보세요']},
     {era:'1920',host:'.paper-media',target:'.paper-media',en:['DRAG LEFT TO UNFOLD','Drag right to return'],ko:['왼쪽으로 밀어 펼쳐보세요','오른쪽으로 밀면 이전 지면으로 돌아갑니다']},
-    {era:'1955',host:'#radioMedia',target:'.radio-four-dials button, .radio-four-dials input, .radio-antenna, #radioTuner, .radio-presets button',en:['PRESS THE FIRST DIAL','Click for power; drag for volume. Tune with the fourth dial.'],ko:['첫 번째 다이얼을 눌러보세요','클릭: 전원 ON / OFF · 드래그: 음량\n네 번째 다이얼: 주파수 찾기']},
+    {era:'1955',host:'#radioMedia',target:'.radio-four-dials button, .radio-four-dials input, .radio-antenna, #radioTuner, .radio-presets button',en:['PRESS THE FIRST DIAL','Click for power; drag for volume. Tune with the fourth dial.'],ko:['전원 버튼을 눌러보세요','상단 첫 번째 다이얼을 눌러 전원을 켜보세요']},
     {era:'1988',host:'#television',target:'#channelDial, #prevChannel, #nextChannel, #channelNav button',en:['TURN THE DIAL','Change the channel'],ko:['채널을 돌려보세요','위쪽 원형 다이얼을 드래그해\n채널을 바꿔보세요']},
     {era:'2002',host:'.pc-media',target:'#pcPower, .pc-icons button',en:['PRESS POWER','Then open a desktop app'],ko:['전원 버튼을 눌러보세요','부팅 후 바탕화면 앱을 열어보세요']},
     {era:'2026',host:'.phone-media',target:'.social-app',en:['OPEN YEAR:ON','Tap the app to explore the feed'],ko:['YEAR:ON 앱을 열어보세요','앱을 눌러 일상 속 기록을 살펴보세요']}
@@ -19,7 +19,6 @@
     });
   };
   items.forEach(item=>{
-    if(item.era==='1955')return;
     const panel=document.querySelector(`.time-panel[data-era="${item.era}"]`);
     const host=panel?.querySelector(item.host);
     if(!panel||!host)return;

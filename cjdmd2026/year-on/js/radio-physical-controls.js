@@ -3,7 +3,7 @@
  radio.querySelectorAll('.radio-tuning-knob,.radio-stop-knob').forEach(b=>b.remove());
  const controls=document.createElement('div');controls.className='radio-four-dials';
  controls.innerHTML='<button class="radio-power" type="button" aria-label="라디오 전원" aria-pressed="false"><span>클릭: 전원 ON / OFF</span></button><input class="radio-volume" type="range" min="0" max="100" value="80" aria-label="라디오 볼륨"><input class="radio-frequency" type="range" min="0" max="2" value="0" step="0.01" aria-label="라디오 주파수"><button class="radio-band" type="button" aria-label="AM/FM 선택" aria-pressed="false"><span>FM</span></button>';
- radio.append(controls);const guide=document.createElement("div");guide.className="radio-control-guide";guide.innerHTML="<span>전원 · 누르기 / 음량 · 드래그</span><span>음량 미세 조절</span><span>AM / FM</span><span>주파수 · 드래그</span>";radio.append(guide);const power=controls.querySelector('.radio-power'),volume=controls.querySelector('.radio-volume'),frequency=controls.querySelector('.radio-frequency'),band=controls.querySelector('.radio-band');
+ radio.append(controls);const power=controls.querySelector('.radio-power'),volume=controls.querySelector('.radio-volume'),frequency=controls.querySelector('.radio-frequency'),band=controls.querySelector('.radio-band');
  const volumeBadge=document.createElement('output');volumeBadge.className='radio-volume-badge';volumeBadge.setAttribute('aria-hidden','true');controls.append(volumeBadge);
  function updateVolumeBadge(){volumeBadge.textContent=Math.round(Number(volume.value))+'%';volumeBadge.style.left=(volume.offsetLeft+volume.offsetWidth/2)+'px';volumeBadge.style.top=(volume.offsetTop-volume.offsetHeight*.1)+'px';}
  let volumeHeld=false;

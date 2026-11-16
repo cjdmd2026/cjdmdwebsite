@@ -186,7 +186,7 @@ if(current!==chosen){current=chosen;localize(chosen,n,nearest)}
 record.style.display=view==='fan'?'block':'none';record.style.opacity=view==='fan'?'1':'0';record.style.transform='translate(-50%,'+(8*(1-arrival))+'px)';record.style.visibility=entry>.05?'visible':'hidden';
 index.classList.add('is-visible');index.setAttribute('aria-live','off');
 const rulerBounds=indicator.getBoundingClientRect(),filterBounds=controls.querySelector('.ka-category-filters').getBoundingClientRect(),stageBounds=stage.getBoundingClientRect();
-const curveCenter=(rulerBounds.bottom+filterBounds.top)/2-stageBounds.top;
+const curveCenter=(rulerBounds.bottom+filterBounds.top)/2-stageBounds.top-h*.03;
 const glassCards=[];const points=[];nodes.forEach((node,i)=>{const order=list.indexOf(i),hidden=order<0;node.setAttribute('aria-hidden',String(hidden));if(hidden){node.style.opacity='0';node.style.pointerEvents='none';node.tabIndex=-1;return}
 const d=order-position,a=order*Math.PI*2/n-position*Math.PI*2/n-Math.PI/2,depth=Math.cos(a);let width=Math.min(mobile?58:76,w*.065),height=width*1.3,x,y,rotation=0,tilt=0,z=0,scale=1,alpha=.85;
 if(view==='curve'){
