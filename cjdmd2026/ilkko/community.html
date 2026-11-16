@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>읽:꼬 - 커뮤니티</title>
   <link rel="icon" type="image/webp" sizes="64x64" href="images/favicon.webp">
-  <link rel="stylesheet" href="community.css?v=wide-review-layout">
+  <link rel="stylesheet" href="community.css?v=review-title-size-1">
   <link rel="stylesheet" href="footer-common.css">
-  <link rel="stylesheet" href="title-maplestory.css">
-  <link rel="stylesheet" href="desktop-layout.css?v=book-and-typography">
+  <link rel="stylesheet" href="title-maplestory.css?v=bold-reviews-1">
+  <link rel="stylesheet" href="desktop-layout.css?v=header-logo-2">
 </head>
 <body>
 
@@ -35,8 +35,9 @@
       <!-- 글로벌 네비게이션 메뉴 -->
       <nav class="header-nav" id="headerNav">
         <ul class="header-menu-list">
+          <li class="header-menu-item header-link-service"><a href="index.html">서비스 소개</a></li>
           <li class="header-menu-item"><a href="curriculum.html">커리큘럼</a></li>
-          <li class="header-menu-item"><a href="character.html">캐릭터</a></li>
+          <li class="header-menu-item header-link-character"><a href="character.html">캐릭터</a></li>
           <li class="header-menu-item"><a href="book.html">동화책</a></li>
           <li class="header-menu-item active"><a href="community.html">커뮤니티</a></li>
           <li class="header-menu-item"><a href="tip.html">도움말</a></li>
@@ -253,7 +254,7 @@
     <!-- ==========================================
          SECTION 6: 전체 리뷰 목록 & 필터/페이지네이션 (JS 동적 렌더링)
          ========================================== -->
-    <section class="review-list-section">
+    <section class="review-list-section" id="reviews">
       <div class="review-list-inner">
 
         <!-- 탭 카테고리 필터 -->
