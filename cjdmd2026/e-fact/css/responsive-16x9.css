@@ -14,6 +14,102 @@ header nav a {
   white-space: nowrap;
 }
 
+/*
+ * Chapter 01 desktop grid
+ * Every major block follows the same 6vw line as the global header.
+ */
+@media (min-width: 901px) {
+  .editorial-hero .hero-heading,
+  .chapter-index,
+  .intro,
+  .feature .section-heading,
+  .feature-wrap,
+  .decode-content,
+  .decode-card-heading,
+  .decode-card-section {
+    box-sizing: border-box;
+    width: 88% !important;
+    max-width: none !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .editorial-hero .hero-heading {
+    grid-template-columns: minmax(0, 1.25fr) minmax(320px, .75fr);
+    gap: clamp(56px, 8vw, 150px);
+  }
+
+  .intro {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .intro-lead {
+    max-width: 1050px;
+  }
+
+  /* Three equal, readable columns: number → title → description. */
+  .intro-facts {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0 !important;
+    width: 100%;
+  }
+
+  .intro-fact,
+  .intro-fact:last-child {
+    min-height: 250px;
+    margin: 0 !important;
+    padding: 34px clamp(26px, 3vw, 54px) 38px !important;
+    display: flex !important;
+    flex-direction: column;
+    align-items: flex-start !important;
+    justify-content: flex-start;
+    gap: 0 !important;
+    border: 0 !important;
+    text-align: left;
+  }
+
+  .intro-fact + .intro-fact {
+    border-left: 1px solid #1d383a !important;
+  }
+
+  .intro-fact-number {
+    margin: 0 0 34px !important;
+  }
+
+  .intro-fact-content {
+    width: 100%;
+    display: block !important;
+  }
+
+  .intro-fact h3 {
+    margin: 0 0 20px;
+    font-size: clamp(18px, 1.35vw, 24px);
+  }
+
+  .intro-fact p {
+    max-width: 34ch;
+    margin: 0;
+    font-size: clamp(14px, .98vw, 17px);
+    line-height: 1.85;
+  }
+
+  .intro-note {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    margin-top: 42px;
+    padding: 24px clamp(28px, 3vw, 54px);
+    text-align: center;
+  }
+
+  .feature {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
 /* 16:9 desktop/exhibition screens */
 @media (min-width: 1600px) and (min-height: 900px) and (max-height: 1200px) {
   header {
@@ -26,11 +122,9 @@ header nav a {
     height: 100svh;
   }
 
-  .editorial-hero .hero-heading,
-  .intro.wrap,
   .pledge-stage {
-    width: 84%;
-    max-width: 1600px;
+    width: 88%;
+    max-width: none;
   }
 
   /* The solidarity title previously left the final syllable on its own line. */
