@@ -202,112 +202,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const heroIsMobile = () => window.matchMedia('(max-width: 768px)').matches;
   const heroPlayback = document.getElementById('heroPlayback');
+  const heroDesktopVideo = document.getElementById('heroDesktopVideo');
+  const heroCanvas = document.getElementById('heroScrollCanvas');
+  const heroContext = heroCanvas?.getContext('2d', { alpha: false });
   const heroMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const heroSheets = Array(4).fill(null);
+  const heroFrameCount = 60;
   let heroMode;
   let heroPlaybackAllowed = !heroMotion.matches;
-  const heroCanvas = document.getElementById('heroFrameCanvas');
-  const heroContext = heroCanvas?.getContext('2d', { alpha: false });
-  const HERO_LAST_FRAME = 605;
-  const HERO_SHEET_COLUMNS = 4;
-  const HERO_FRAMES_PER_SHEET = 12;
-  const HERO_LAST_SHEET = Math.floor(HERO_LAST_FRAME / HERO_FRAMES_PER_SHEET);
-  const heroSheets = new Map();
-  const heroLoadingSheets = new Set();
-  const heroFailedSheets = new Set();
-  let heroTargetFrame = 0;
-  let heroDisplayedFrame = 0;
-  let heroFramePosition = 0;
+  let heroMediaStarted = false;
+  let heroVideoReady = false;
+  let heroRenderSource = null;
+  let heroTarget = 0;
+  let heroProgress = 0;
   let heroAnimation = 0;
-  let heroTickTime = 0;
+  let heroPreviousTick = null;
+  let heroLastFrame = -1;
+  let heroWasPinned = false;
+  let heroExit = null;
 
   function heroScrollDistance() {
-    return heroSection.offsetHeight - heroVideo.parentElement.offsetHeight;
-  }
-
-  function scheduleHeroFrame() {
-    if (!heroAnimation && heroMode === 'scroll') {
-      heroAnimation = requestAnimationFrame(renderHeroFrame);
-    }
-  }
-
-  function loadHeroSheet(index) {
-    if (
-      heroLoadingSheets.size >= 3 || heroSheets.has(index) ||
-      heroLoadingSheets.has(index) || heroFailedSheets.has(index)
-    ) return;
-
-    heroLoadingSheets.add(index);
-    const sheet = new Image();
-    sheet.src = `images/hero-hd-sheets/${String(index).padStart(2, '0')}.jpg`;
-    sheet.decode().then(() => {
-      heroSheets.set(index, sheet);
-      if (heroSheets.size > 4) {
-        const current = heroFramePosition / HERO_FRAMES_PER_SHEET;
-        const farthest = [...heroSheets.keys()].filter(key => key !== 0).reduce((a, b) =>
-          Math.abs(a - current) > Math.abs(b - current) ? a : b
-        );
-        heroSheets.delete(farthest);
-      }
-    }, () => {
-      heroFailedSheets.add(index);
-    }).finally(() => {
-      heroLoadingSheets.delete(index);
-      scheduleHeroFrame();
-    });
-  }
-
-  function drawHeroFrame(index) {
-    const sheet = heroSheets.get(Math.floor(index / HERO_FRAMES_PER_SHEET));
-    const frameInSheet = index % HERO_FRAMES_PER_SHEET;
-    const { width, height } = heroCanvas;
-    const x = frameInSheet % HERO_SHEET_COLUMNS * width;
-    const y = Math.floor(frameInSheet / HERO_SHEET_COLUMNS) * height;
-    heroContext.drawImage(sheet, x, y, width, height, 0, 0, width, height);
-    heroCanvas.hidden = index === 0;
-    heroCanvas.dataset.frame = index;
-    heroDisplayedFrame = index;
-  }
-
-  function renderHeroFrame(now) {
-    heroAnimation = 0;
-    if (!heroContext || heroMode !== 'scroll') {
-      heroTickTime = 0;
-      return;
-    }
-
-    const elapsed = heroTickTime ? Math.min(now - heroTickTime, 300) : 16;
-    heroTickTime = now;
-    const remaining = heroTargetFrame - heroFramePosition;
-    if (Math.abs(remaining) < .5 || heroMotion.matches) {
-      heroFramePosition = heroTargetFrame;
-    } else {
-      heroFramePosition += remaining * (1 - Math.exp(-elapsed / 135));
-    }
-
-    const wanted = Math.round(heroFramePosition);
-    const direction = Math.sign(wanted - heroDisplayedFrame);
-    let best = heroDisplayedFrame;
-    for (const index of heroSheets.keys()) {
-      const start = index * HERO_FRAMES_PER_SHEET;
-      const end = Math.min(start + HERO_FRAMES_PER_SHEET - 1, HERO_LAST_FRAME);
-      const candidate = clamp(wanted, start, end);
-      if ((candidate - best) * direction > 0 && (wanted - candidate) * direction >= 0) {
-        best = candidate;
-      }
-    }
-    if (best !== heroDisplayedFrame) drawHeroFrame(best);
-
-    const ahead = heroTargetFrame - wanted;
-    const sheet = Math.floor(wanted / HERO_FRAMES_PER_SHEET);
-    const next = Math.floor((wanted + ahead * .32) / HERO_FRAMES_PER_SHEET);
-    const nearby = ahead < 0 ? sheet - 1 : sheet + 1;
-    const wantedSheets = [...new Set([sheet, next, nearby, sheet + 1, sheet - 1])]
-      .filter(index => index >= 0 && index <= HERO_LAST_SHEET)
-      .slice(0, 3);
-    wantedSheets.forEach(loadHeroSheet);
-
-    if (heroFramePosition !== heroTargetFrame) scheduleHeroFrame();
-    else heroTickTime = 0;
+    return heroSection.clientHeight - heroVideo.parentElement.clientHeight;
   }
 
   function updateHeroButton() {
@@ -320,14 +235,139 @@ document.addEventListener('DOMContentLoaded', () => {
     heroVideo.play().catch(updateHeroButton);
   }
 
+  function startDesktopHero() {
+    if (heroMediaStarted) return;
+    heroMediaStarted = true;
+    heroSheets.forEach((_, index) => {
+      const sheet = new Image();
+      sheet.fetchPriority = index === 0 ? 'high' : 'low';
+      sheet.src = `images/hero-scroll-sharp-${index}.webp`;
+      sheet.decode().then(() => {
+        heroSheets[index] = sheet;
+        queueHeroPaint();
+      }).catch(() => {});
+    });
+
+    // Fetch the complete asset once. Seeking the local Blob avoids server range requests.
+    if (heroDesktopVideo) {
+      fetch('images/web-scroll-desktop.mp4', { credentials: 'same-origin' })
+        .then(response => {
+          if (!response.ok) throw new Error('Desktop video unavailable');
+          return response.blob();
+        })
+        .then(video => {
+          if (video.size && !video.type.startsWith('text/')) {
+            heroDesktopVideo.preload = 'auto';
+            heroDesktopVideo.src = URL.createObjectURL(video);
+          }
+        })
+        .catch(() => {});
+    }
+  }
+
+  function queueHeroPaint() {
+    if (!heroAnimation && heroMode === 'scroll') {
+      heroAnimation = requestAnimationFrame(paintDesktopHero);
+    }
+  }
+
+  function paintHeroPreview() {
+    if (!heroContext || !heroSheets.some(Boolean)) return false;
+    const wanted = Math.round(heroProgress * (heroFrameCount - 1));
+    let frame = wanted;
+    for (let distance = 0; distance < heroSheets.length; distance++) {
+      const after = wanted + distance;
+      const before = wanted - distance;
+      if (after < heroFrameCount && heroSheets[after % heroSheets.length]) {
+        frame = after;
+        break;
+      }
+      if (before >= 0 && heroSheets[before % heroSheets.length]) {
+        frame = before;
+        break;
+      }
+    }
+    if (frame !== heroLastFrame) {
+      const tile = Math.floor(frame / heroSheets.length);
+      const { width, height } = heroCanvas;
+      heroContext.drawImage(heroSheets[frame % heroSheets.length], (tile % 3) * width, Math.floor(tile / 3) * height,
+        width, height, 0, 0, width, height);
+      heroLastFrame = frame;
+    }
+    return true;
+  }
+
+  function paintDesktopHero(now) {
+    heroAnimation = 0;
+    if (heroMode !== 'scroll') {
+      heroPreviousTick = null;
+      return;
+    }
+
+    const elapsed = heroPreviousTick === null ? 17 : Math.min(now - heroPreviousTick, 50);
+    const remaining = heroTarget - heroProgress;
+    if (heroMotion.matches || Math.abs(remaining) < .006) heroProgress = heroTarget;
+    else heroProgress += remaining * (1 - Math.exp(-elapsed / 108));
+
+    const duration = heroDesktopVideo?.duration;
+    const targetTime = Number.isFinite(duration) ? heroProgress * Math.max(0, duration - .015) : 0;
+    const showFrame = heroProgress > .002;
+    if (!showFrame && heroTarget === 0) heroRenderSource = null;
+    // Keep the same renderer until the visitor returns to the opening poster.
+    if (showFrame && !heroRenderSource) {
+      if (heroVideoReady) heroRenderSource = 'video';
+      else if (heroSheets.some(Boolean)) heroRenderSource = 'frames';
+    }
+    const showVideo = showFrame && heroRenderSource === 'video' && heroVideoReady;
+    heroCanvas?.classList.toggle('is-visible', showFrame && heroRenderSource === 'frames' && paintHeroPreview());
+    heroDesktopVideo?.classList.toggle('is-visible', showVideo);
+
+    if (heroVideoReady && heroRenderSource !== 'frames' && !heroDesktopVideo.seeking &&
+        Math.abs(heroDesktopVideo.currentTime - targetTime) > .024) {
+      heroDesktopVideo.currentTime = targetTime;
+    }
+
+    if (heroProgress !== heroTarget) {
+      heroPreviousTick = now;
+      queueHeroPaint();
+    } else {
+      heroPreviousTick = null;
+    }
+  }
+
+  function clearHeroExit() {
+    if (heroExit) clearTimeout(heroExit.timer);
+    heroExit = null;
+  }
+
+  function holdDesktopHero(pin, destination) {
+    heroTarget = 1;
+    if (!heroExit) {
+      heroExit = {
+        destination,
+        timer: setTimeout(() => {
+          const { destination } = heroExit;
+          clearHeroExit();
+          heroWasPinned = false;
+          window.scrollTo({ top: destination, behavior: 'instant' });
+        }, 650),
+      };
+    } else {
+      heroExit.destination = Math.max(heroExit.destination, destination);
+    }
+    window.scrollTo({ top: pin, behavior: 'instant' });
+    queueHeroPaint();
+  }
+
+  function shouldHoldDesktopHero() {
+    return !heroMotion.matches && !location.hash && (heroExit ||
+      (heroProgress < .98 && (heroSheets.some(Boolean) || heroVideoReady)));
+  }
+
   function syncHero() {
     const rect = heroSection.getBoundingClientRect();
-    let mode = 'offscreen';
-    if (rect.bottom > 0) {
-      if (heroIsMobile()) mode = 'play';
-      else if (heroScrollDistance() > 0) mode = 'scroll';
-      else mode = 'still';
-    }
+    const mobile = heroIsMobile();
+    const mode = rect.bottom > 0 ? (mobile ? 'play' : 'scroll') : 'offscreen';
 
     if (mode !== heroMode) {
       heroMode = mode;
@@ -335,19 +375,61 @@ document.addEventListener('DOMContentLoaded', () => {
       if (mode === 'play') heroVideo.preload = 'auto';
       if (mode === 'play' && heroPlaybackAllowed) playHero();
       else heroVideo.pause();
+      if (mode === 'scroll') startDesktopHero();
       updateHeroButton();
     }
+    if (mobile) {
+      clearHeroExit();
+      heroWasPinned = false;
+      return;
+    }
+
+    const distance = heroScrollDistance();
+    if (distance <= 0) return;
+    const offset = -rect.top;
+    if (heroExit && offset < distance - 24) clearHeroExit();
+    if (offset > distance && (heroWasPinned || heroExit) && shouldHoldDesktopHero()) {
+      heroMode = 'scroll';
+      const pin = window.scrollY + distance - offset;
+      holdDesktopHero(pin, Math.min(window.scrollY, pin + window.innerHeight * .75));
+      return;
+    }
+
+    heroWasPinned = mode === 'scroll' && offset >= 0 && offset <= distance + 1;
     if (mode === 'scroll') {
-      const progress = clamp(-rect.top / heroScrollDistance());
-      heroTargetFrame = Math.round(progress * HERO_LAST_FRAME);
-      scheduleHeroFrame();
+      heroTarget = clamp(offset / Math.max(1, distance - 24));
+      queueHeroPaint();
     }
   }
 
   if (heroVideo && heroSection) {
-    // Control autoplay in one place so desktop scroll and normal playback never compete.
     heroVideo.muted = true;
     heroVideo.addEventListener('loadedmetadata', syncHero);
+    heroDesktopVideo?.addEventListener('loadeddata', () => {
+      heroVideoReady = true;
+      queueHeroPaint();
+    });
+    heroDesktopVideo?.addEventListener('seeked', queueHeroPaint);
+    heroDesktopVideo?.addEventListener('error', () => {
+      heroVideoReady = false;
+      if (heroRenderSource === 'video') heroRenderSource = null;
+      queueHeroPaint();
+    });
+    window.addEventListener('wheel', event => {
+      if (heroIsMobile() || event.ctrlKey || !event.cancelable) return;
+      if (event.deltaY < 0) clearHeroExit();
+      if (event.deltaY <= 0 || !shouldHoldDesktopHero()) return;
+      const offset = -heroSection.getBoundingClientRect().top;
+      const distance = heroScrollDistance();
+      if (distance <= 0 || offset < -2 || offset > distance + 1) return;
+      const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? window.innerHeight : 1;
+      const overshoot = offset + event.deltaY * unit - distance;
+      if (overshoot <= 0) return;
+
+      event.preventDefault();
+      const pin = window.scrollY + distance - offset;
+      holdDesktopHero(pin, pin + Math.min(Math.max(overshoot, 24), window.innerHeight * .75));
+    }, { passive: false });
     for (const event of ['play', 'pause', 'error']) {
       heroVideo.addEventListener(event, updateHeroButton);
     }
@@ -359,6 +441,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     heroMotion.addEventListener('change', () => {
       heroPlaybackAllowed = !heroMotion.matches;
+      clearHeroExit();
       heroMode = undefined;
       syncHero();
     });
@@ -367,7 +450,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     syncHero();
   }
-
 
   /* =========================================================
      DYSLEXIA

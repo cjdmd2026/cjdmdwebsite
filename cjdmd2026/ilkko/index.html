@@ -8,9 +8,9 @@
   <link rel="icon" type="image/webp" sizes="64x64" href="images/favicon.webp">
   <link rel="stylesheet" href="index.css">
   <link rel="stylesheet" href="footer-common.css">
-  <link rel="stylesheet" href="title-maplestory.css">
-  <link rel="stylesheet" href="desktop-layout.css?v=original-size-hero">
-  <link rel="preload" as="image" href="images/hero-hd-sheets/00.jpg" media="(min-width: 769px)">
+  <link rel="stylesheet" href="title-maplestory.css?v=bold-reviews-1">
+  <link rel="stylesheet" href="desktop-layout.css?v=header-logo-2">
+  <link rel="preload" as="image" href="images/hero-scroll-sharp-0.webp" media="(min-width: 769px)">
 </head>
 
 <body>
@@ -58,6 +58,7 @@
       >
 
         <ul class="header-menu-list">
+<li class="header-menu-item header-link-service active"><a href="index.html" aria-current="page">서비스 소개</a></li>
 
           <li class="header-menu-item">
             <a href="curriculum.html">
@@ -65,7 +66,7 @@
             </a>
           </li>
 
-          <li class="header-menu-item">
+          <li class="header-menu-item header-link-character">
             <a href="character.html">
               캐릭터
             </a>
@@ -109,14 +110,20 @@
 
     <div class="hero-sticky-wrapper">
 
-      <img
-        id="heroScrollFrame"
-        class="hero-scroll-frame"
-        src="images/web-scroll-poster-hd.webp"
-        alt=""
-      >
+      <img class="hero-desktop-poster" src="images/web-scroll-poster-hd.webp" alt="">
+      <canvas id="heroScrollCanvas" class="hero-desktop-canvas" width="1152" height="800" aria-hidden="true"></canvas>
 
-      <canvas id="heroFrameCanvas" class="hero-frame-canvas" width="1554" height="1080" data-frame="0" aria-hidden="true" hidden></canvas>
+      <video
+        id="heroDesktopVideo"
+        class="hero-desktop-video"
+        muted
+        playsinline
+        preload="none"
+        poster="images/web-scroll-poster-hd.webp"
+        width="1554"
+        height="1080"
+        aria-hidden="true"
+      ></video>
 
       <video
         id="heroVideo"
@@ -1148,7 +1155,7 @@
         <div class="review-more-wrap">
 
           <a
-            href="#"
+            href="community.html#reviews"
             class="review-more-button"
           >
 
@@ -1455,7 +1462,7 @@
 </footer>
 
 
-  <script src="index.js?v=original-size-hero"></script>
+  <script src="index.js?v=steady-hero-1"></script>
 
 </body>
 

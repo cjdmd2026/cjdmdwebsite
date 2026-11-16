@@ -2150,7 +2150,7 @@ button {
   width: 100%;
   height: 100%;
   max-width: none;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
 }
 
@@ -2162,21 +2162,21 @@ button {
     margin-bottom: 36px;
     font-size: clamp(22px, 4.4vw, 30px);
   }
-  .ilkko-package-grid { gap: 14px; }
-  .ilkko-package-card-front { padding: 26px 20px 24px; }
+  .ilkko-package-grid { width: 92%; max-width: 560px; gap: 14px; }
+  .ilkko-package-card-front { padding: 22px 16px 20px; }
   .ilkko-package-card-title { margin-top: 12px; }
-  .ilkko-package-card-thumbnail { margin-top: 15px; }
-  .ilkko-package-card-description { font-size: 12px; line-height: 1.6; margin-top: 39px; }
+  .ilkko-package-card-thumbnail { height: 33%; margin-top: 15px; }
+  .ilkko-package-card-description { font-size: 12px; line-height: 1.6; margin-top: 18px; }
 }
 
 @media (max-width: 540px) {
   .ilkko-package-section { padding: 64px 18px 82px; }
   .ilkko-package-heading { font-size: 23px; margin-bottom: 30px; }
-  .ilkko-package-grid { max-width: 380px; grid-template-columns: 1fr; gap: 18px; }
-  .ilkko-package-card-front { padding: 30px 27px 34px; }
+  .ilkko-package-grid { max-width: 308px; grid-template-columns: 1fr; gap: 18px; }
+  .ilkko-package-card-front { padding: 24px 20px; }
   .ilkko-package-card-title { font-size: 22px; margin-top: 14px; }
-  .ilkko-package-card-thumbnail { margin-top: 22px; }
-  .ilkko-package-card-description { width: 95%; max-width: 300px; margin-top: 38px; font-size: 14px; line-height: 1.7; text-align: center; }
+  .ilkko-package-card-thumbnail { height: 39%; margin-top: 16px; }
+  .ilkko-package-card-description { width: 95%; max-width: 300px; margin-top: 22px; font-size: 14px; line-height: 1.7; text-align: center; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2481,8 +2481,8 @@ button {
 }
 </style>
   <link rel="stylesheet" href="footer-common.css">
-  <link rel="stylesheet" href="title-maplestory.css">
-  <link rel="stylesheet" href="desktop-layout.css?v=book-and-typography">
+  <link rel="stylesheet" href="title-maplestory.css?v=bold-reviews-1">
+  <link rel="stylesheet" href="desktop-layout.css?v=header-logo-2">
 </head>
 
 <body>
@@ -2517,10 +2517,11 @@ button {
 
       <nav class="header-nav" id="headerNav">
         <ul class="header-menu-list">
+          <li class="header-menu-item header-link-service"><a href="index.html">서비스 소개</a></li>
           <li class="header-menu-item">
             <a href="curriculum.html">커리큘럼</a>
           </li>
-          <li class="header-menu-item">
+          <li class="header-menu-item header-link-character">
             <a href="character.html">캐릭터</a>
           </li>
           <li class="header-menu-item active">
@@ -2672,7 +2673,7 @@ button {
             </div>
 
             <div class="package-visual">
-              <img src="images/package-pass.webp"
+              <img src="images/package-pass.webp?v=device-preview-1"
                    alt="읽:꼬 이용권"
                    loading="lazy">
             </div>
@@ -2852,7 +2853,7 @@ button {
                 <span class="ilkko-package-card-description">잉꼬와 카멜레온이 함께<br>숲속을 걸으며 자연을 발견하고,<br>알록달록 이야기를 완성해요.</span>
               </span>
               <span class="ilkko-package-card-back" aria-hidden="true">
-                <img class="ilkko-package-card-cover" src="images/book-1.webp" alt="" loading="lazy">
+                <img class="ilkko-package-card-cover" src="images/book-preview-1.webp" alt="" loading="lazy">
               </span>
             </span>
           </button>
@@ -2865,7 +2866,7 @@ button {
                 <span class="ilkko-package-card-description">장난감 망치를 든 바오가<br>두더지 친구와 신나는 놀이를 시작하고,<br>망치 소리를 따라 친구를 찾아요.</span>
               </span>
               <span class="ilkko-package-card-back" aria-hidden="true">
-                <img class="ilkko-package-card-cover" src="images/book-2.webp" alt="" loading="lazy">
+                <img class="ilkko-package-card-cover" src="images/book-preview-2.webp" alt="" loading="lazy">
               </span>
             </span>
           </button>
@@ -2878,7 +2879,7 @@ button {
                 <span class="ilkko-package-card-description">두더지 두두는 빵이 되고 싶어요.<br>따끈한 빵 속으로 쏙 들어간 뒤,<br>재미있는 상상을 하나씩 펼쳐요.</span>
               </span>
               <span class="ilkko-package-card-back" aria-hidden="true">
-                <img class="ilkko-package-card-cover" src="images/book-03.webp" alt="" loading="lazy">
+                <img class="ilkko-package-card-cover" src="images/book-preview-3.webp" alt="" loading="lazy">
               </span>
             </span>
           </button>
@@ -2891,7 +2892,7 @@ button {
                 <span class="ilkko-package-card-description">잉꼬와 동물 친구들이 함께<br>푸른 하늘로 날아오르는 꿈을 꿔요.<br>서로 힘을 모아 특별한 여행을 떠나요.</span>
               </span>
               <span class="ilkko-package-card-back" aria-hidden="true">
-                <img class="ilkko-package-card-cover" src="images/book-4.webp" alt="" loading="lazy">
+                <img class="ilkko-package-card-cover" src="images/book-preview-4.webp" alt="" loading="lazy">
               </span>
             </span>
           </button>
