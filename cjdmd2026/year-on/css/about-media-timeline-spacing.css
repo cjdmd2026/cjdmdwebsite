@@ -1,0 +1,5 @@
+/* Separate the statement from the timeline and leave air between eras. */
+html body.about-body #ypMediaAnchor .media-story-heading h2{margin:0;font:400 clamp(20px,2.1vw,32px)/1.25 Arial,sans-serif;letter-spacing:.08em;color:#edf1f5}
+html body.about-body #ypMediaAnchor .media-story-row{flex:0 0 clamp(430px,48vw,760px)}
+html body.about-body #ypMediaAnchor .media-story-copy{right:clamp(65px,7vw,120px);max-width:25rem}
+@media(max-width:760px){html body.about-body #ypMediaAnchor .media-story-row{flex-basis:clamp(310px,94vw,470px)}html body.about-body #ypMediaAnchor .media-story-copy{right:38px}html body.about-body #ypMediaAnchor .media-story-heading h2{font-size:20px}}

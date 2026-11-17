@@ -1,0 +1,225 @@
+/* A frosted receiver panel: programme / tuning / listening controls. */
+html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console{
+ display:block!important;position:absolute!important;left:50%!important;top:auto!important;bottom:26px!important;transform:translateX(-50%)!important;
+ width:min(1440px,calc(100% - 32px))!important;max-height:none!important;padding:0!important;box-sizing:border-box;
+ color:#edf3f8!important;border:1px solid #eff7ff94!important;border-radius:22px!important;
+ background:linear-gradient(115deg,#40556fb8,#203449c9 40%,#5e748ba8)!important;
+ box-shadow:inset 0 1px 1px #fff9,inset 0 -1px 1px #e3f1ff77,inset 0 0 24px #d2e5f02b,0 10px 40px #182b4433;
+ backdrop-filter:blur(22px) saturate(.8);-webkit-backdrop-filter:blur(22px) saturate(.8);z-index:25!important;
+}
+.radio-glass-console .rg-layout{display:grid;grid-template-columns:minmax(270px,1.05fr) minmax(420px,1.8fr) minmax(150px,.65fr);align-items:center;gap:24px;padding:24px 30px;box-sizing:border-box;min-height:170px;text-align:left}
+.radio-glass-console .rg-layout *{box-sizing:border-box}
+.radio-glass-console .rg-programme{display:flex;align-items:center;gap:18px;min-width:0;border-right:1px solid #cbd9e52b;padding-right:22px;align-self:stretch}
+.radio-glass-console .rg-photo{display:block;position:relative;flex:0 0 82px;height:94px;overflow:hidden;border:1px solid #e4f0f155;border-radius:5px;box-shadow:0 3px 12px #08131c59;background:#293746;color:inherit;text-decoration:none}
+.radio-glass-console .rg-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:42% 50%;filter:grayscale(1) contrast(.92)}
+.radio-glass-console .rg-photo>span{position:absolute;bottom:0;left:0;right:0;padding:4px 2px;background:#14202cbc;color:#edf2f7;font:7px/1.2 Arial,sans-serif;letter-spacing:.04em;text-align:center}
+.radio-glass-console .rg-info{flex:1;min-width:0}
+.radio-glass-console .rg-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.radio-glass-console .rg-frequency{font:400 13px/1.4 Arial,sans-serif;color:#f0f5f9;white-space:nowrap}
+.radio-glass-console .rg-live{font:500 9px/1.3 Arial,sans-serif;color:#c6cdd4;padding:4px 7px;border:1px solid #d6e5ef66;border-radius:20px;white-space:nowrap}
+.radio-glass-console[data-playing="true"] .rg-live{color:#ff8985;text-shadow:0 0 8px #ff494980}
+.radio-glass-console .rg-title{font:400 clamp(18px,1.65vw,27px)/1.3 'AppleMyungjo','Batang',serif;color:#f5f8fb;letter-spacing:-.04em;margin:0 0 8px;padding:0;border:0;word-break:keep-all}
+.radio-glass-console .rg-description{font:400 11px/1.5 'Apple SD Gothic Neo',Arial,sans-serif;color:#d0dbe6;margin:0;word-break:keep-all;max-width:30em}
+.radio-glass-console .rg-tuning{min-width:0}
+.radio-glass-console .rg-dial-row{display:flex;align-items:center;gap:14px;margin-bottom:19px}
+.radio-glass-console button{cursor:pointer;touch-action:manipulation}
+.radio-glass-console .rg-step{display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;padding:0;border-radius:50%;border:1px solid #eef7ff40;background:linear-gradient(#d3e3ee20,#becfe51a);box-shadow:inset 0 1px 2px #f4fcff33;color:#eef5fb;font:300 30px/.9 Arial,sans-serif}
+.radio-glass-console .rg-dial{position:relative;flex:1;height:46px;min-width:0}
+.radio-glass-console .rg-scale{display:flex;justify-content:space-between;position:absolute;left:0;right:0;top:0;color:#d6e0e9;font:400 10px/1.2 Arial,sans-serif;font-variant-numeric:tabular-nums}
+.radio-glass-console .rg-ticks{position:absolute;left:0;right:0;bottom:8px;height:15px;background:repeating-linear-gradient(90deg,#bcced43b 0 1px,transparent 1px 6px);border-bottom:2px solid #c8d9e555;box-shadow:0 1px 2px #0003}
+.radio-glass-console .rg-needle{position:absolute;left:var(--rg-needle,5.5%);top:0;bottom:5px;width:2px;transform:translateX(-50%);background:#ffb0a6;box-shadow:0 0 4px 1px #ff605f,0 0 12px 3px #ff363665;pointer-events:none;transition:left .2s ease}
+.radio-glass-console .rg-needle:after{content:'';position:absolute;bottom:-3px;left:50%;width:6px;height:6px;background:#ffe1d3;transform:translateX(-50%) rotate(45deg);box-shadow:0 0 7px 3px #ff554f8c}
+.radio-glass-console .rg-tuner{position:absolute;top:0;bottom:0;margin:0;height:100%;opacity:0;cursor:ew-resize;touch-action:pan-y;z-index:2}
+.radio-glass-console .rg-dial:focus-within{outline:1px solid #f4f8fb;outline-offset:6px;border-radius:2px}
+.radio-glass-console .rg-channels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.radio-glass-console .rg-channels [data-rg-channel]{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:0;min-height:49px;padding:6px 3px;border:1px solid #b6cbe326;border-radius:7px;background:linear-gradient(135deg,#b0c7df22,#afc6de0c);color:#d3e0eb;font:400 10px/1.4 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;text-align:center;word-break:keep-all;box-shadow:inset 0 1px 1px #f4f9ff15}
+.radio-glass-console .rg-channels [data-rg-channel][aria-current="true"]{color:#fff;border-color:#e0f0ffd9;background:linear-gradient(125deg,#d4e8ff30,#a6c6e62b);box-shadow:inset 0 0 10px #d9edff3b,0 0 8px #cee7ff66}
+.radio-glass-console .rg-playback{align-self:stretch;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:17px;border-left:1px solid #cfdfeb40;padding-left:24px;min-width:0}
+.radio-glass-console .rg-play{display:grid;place-items:center;flex:none;width:58px;height:58px;border:1px solid #f3f8ffce;border-radius:50%;color:#f2f7fc;background:linear-gradient(130deg,#d8e9f21a,#a1b9d40d);box-shadow:inset 0 1px 4px #eaf5ff2b;padding:13px}
+.radio-glass-console .rg-play svg{width:100%;height:100%;fill:currentColor}
+.radio-glass-console .rg-pause-icon{display:none}
+.radio-glass-console[data-powered="true"] .rg-pause-icon{display:block}
+.radio-glass-console[data-powered="true"] .rg-play-icon{display:none}
+.radio-glass-console .rg-volume{display:flex;align-items:center;gap:12px;width:100%}
+.radio-glass-console .rg-volume svg{width:19px;height:19px;flex:none;fill:none;stroke:#e4eff7;stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
+.radio-glass-console .rg-volume input{appearance:none;-webkit-appearance:none;width:100%;min-width:0;height:3px;border:0;border-radius:2px;outline:0;cursor:pointer;background:linear-gradient(to right,#eff7ff var(--rg-volume,80%),#c1d3e34d var(--rg-volume,80%));box-shadow:0 0 5px #d2e7f52b}
+.radio-glass-console .rg-volume input::-webkit-slider-thumb{appearance:none;width:11px;height:11px;border-radius:50%;background:#fff;box-shadow:0 0 7px #e5f5ff9c}
+.radio-glass-console .rg-volume input::-moz-range-thumb{width:11px;height:11px;border:0;border-radius:50%;background:#fff}
+.radio-glass-console .rg-layout button:hover{background-color:#d3e6f32b}
+.radio-glass-console .rg-layout :is(button,a,input):focus-visible{outline:2px solid #edf7ff;outline-offset:4px}
+@media(max-width:1150px){
+.radio-glass-console .rg-layout{grid-template-columns:minmax(230px,.95fr) minmax(340px,1.65fr) 110px;gap:16px;padding:20px;min-height:160px}
+.radio-glass-console .rg-photo{flex-basis:62px;height:84px}.radio-glass-console .rg-programme{gap:12px;padding-right:14px}.radio-glass-console .rg-meta{gap:5px;margin-bottom:8px}.radio-glass-console .rg-frequency{font-size:11px}.radio-glass-console .rg-live{font-size:8px}.radio-glass-console .rg-playback{padding-left:16px}.radio-glass-console .rg-channels{gap:6px}.radio-glass-console .rg-channels [data-rg-channel]{font-size:9px}.radio-glass-console .rg-dial-row{gap:10px}.radio-glass-console .rg-scale{font-size:9px}
+}
+@media(max-width:850px){
+html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console{width:calc(100% - 24px)!important;bottom:18px!important;border-radius:16px!important}
+.radio-glass-console .rg-layout{grid-template-columns:minmax(0,1fr) 100px;gap:15px;padding:16px}
+.radio-glass-console .rg-programme{grid-column:1;grid-row:1;border:0;padding:0}.radio-glass-console .rg-photo{flex-basis:52px;height:60px}.radio-glass-console .rg-meta{justify-content:flex-start;gap:14px}.radio-glass-console .rg-title{font-size:20px;margin-bottom:3px}.radio-glass-console .rg-description{font-size:10px}.radio-glass-console .rg-playback{grid-column:2;grid-row:1;padding-left:14px;gap:10px}.radio-glass-console .rg-play{width:42px;height:42px;padding:8px}.radio-glass-console .rg-tuning{grid-column:1/-1;grid-row:2}.radio-glass-console .rg-dial-row{margin-bottom:12px}.radio-glass-console .rg-dial{height:38px}.radio-glass-console .rg-channels [data-rg-channel]{min-height:43px;font-size:10px}.radio-glass-console .rg-step{width:28px;height:28px;flex-basis:28px}
+html body.media-time-body .time-panel[data-era="1955"] .radio-media{top:36%!important;width:min(72vw,44svh)!important}
+}
+@media(max-width:500px){.radio-glass-console .rg-layout{padding:13px;gap:12px}.radio-glass-console .rg-channels{gap:4px}.radio-glass-console .rg-channels [data-rg-channel]{font-size:9px}.radio-glass-console .rg-description{max-height:3em;overflow:hidden}.radio-glass-console .rg-photo{flex-basis:46px}.radio-glass-console .rg-title{font-size:18px}.radio-glass-console .rg-dial-row{gap:7px}.radio-glass-console .rg-scale{font-size:8px}}
+@media(min-width:851px) and (max-height:760px){html body.media-time-body .time-panel[data-era="1955"] .radio-media{top:40%!important;width:min(58vw,52svh)!important}}
+@media(prefers-reduced-motion:reduce){.radio-glass-console .rg-needle{transition:none}}
+
+/* Smaller, clearer glass; the programme description is the live broadcast caption. */
+html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console{
+ width:min(1140px,calc(100% - 88px))!important;border-radius:17px!important;
+ background:linear-gradient(115deg,rgba(120,145,168,.17),rgba(39,62,86,.28) 45%,rgba(161,185,205,.12))!important;
+ border-color:#eaf5ffa6!important;box-shadow:inset 0 1px 1px #fff9,inset 0 -1px 1px #e3f1ff66,inset 0 0 18px #d2e5f01a,0 6px 24px #182b441a;
+ backdrop-filter:blur(14px) saturate(.85);-webkit-backdrop-filter:blur(14px) saturate(.85)
+}
+.radio-glass-console .rg-layout{grid-template-columns:minmax(245px,1.1fr) minmax(300px,1.8fr) 125px;min-height:138px;padding:18px 24px;gap:20px}
+.radio-glass-console .rg-programme{gap:13px;padding-right:16px}
+.radio-glass-console .rg-photo{flex-basis:65px;height:79px}
+.radio-glass-console .rg-meta{margin-bottom:7px;gap:6px}
+.radio-glass-console .rg-title{font-size:21px;margin-bottom:6px;color:#273e51;text-shadow:0 1px 1px #ffffff55}
+.radio-glass-console .rg-frequency{color:#324e65;font-size:12px;text-shadow:0 1px 1px #ffffff66}
+.radio-glass-console .rg-description{min-height:3em;max-height:none;color:#334c61;font-size:11px;line-height:1.5;text-shadow:0 1px 1px #ffffff55;overflow:visible}
+.radio-glass-console .rg-live{color:#50687b;border-color:#637d8e70;background:#eff8ff12;font-size:8px}
+.radio-glass-console[data-playing="true"] .rg-live{color:#c62326;border-color:#e46b6b9c;background:#ffefeb36;font-weight:700;text-shadow:0 0 4px #ffb3aa,0 0 9px #ff554f9c,0 0 17px #ff38385c;box-shadow:inset 0 0 6px #ff7b6326,0 0 9px #ff554f33}
+.radio-glass-console .rg-dial-row{margin-bottom:13px;gap:0}
+.radio-glass-console .rg-scale{color:#456078}
+.radio-glass-console .rg-ticks{background:repeating-linear-gradient(90deg,#627e9859 0 1px,transparent 1px 6px);border-color:#6c879e80}
+.radio-glass-console .rg-channels{gap:7px}
+.radio-glass-console .rg-channels [data-rg-channel]{min-height:43px;font-size:9px;color:#3c566e;background:linear-gradient(#e6f4ff17,#9bb9d41a);border-color:#e6f3ff6e}
+.radio-glass-console .rg-channels [data-rg-channel][aria-current="true"]{color:#244257;background:linear-gradient(#f0faff5c,#c6dff045);border-color:#fff;box-shadow:inset 0 0 8px #fff6,0 0 7px #fff8}
+.radio-glass-console .rg-playback{padding-left:18px;gap:13px;border-color:#68849c40}
+.radio-glass-console .rg-play{width:48px;height:48px;padding:11px;color:#38546c;border-color:#54748a94;background:#e3f3ff14}
+.radio-glass-console .rg-volume svg{stroke:#405f78}
+.radio-glass-console .rg-volume input{background:linear-gradient(to right,#5f7f97 var(--rg-volume,80%),#758da640 var(--rg-volume,80%))}
+@media(max-width:1150px) and (min-width:851px){.radio-glass-console .rg-layout{grid-template-columns:minmax(215px,1.1fr) minmax(285px,1.8fr) 95px;padding:16px 18px;gap:16px;min-height:130px}.radio-glass-console .rg-photo{flex-basis:54px;height:73px}.radio-glass-console .rg-title{font-size:18px}.radio-glass-console .rg-frequency{font-size:10px}.radio-glass-console .rg-description{font-size:10px}.radio-glass-console .rg-playback{padding-left:14px}}
+@media(max-width:850px){
+html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console{width:min(680px,calc(100% - 40px))!important}
+.radio-glass-console .rg-layout{grid-template-columns:minmax(0,1fr) 90px;min-height:0;padding:14px 18px;gap:10px}
+.radio-glass-console .rg-photo{flex-basis:48px;height:58px}.radio-glass-console .rg-description{min-height:1.5em;font-size:10px}.radio-glass-console .rg-programme{border:0;padding:0}.radio-glass-console .rg-title{font-size:18px}.radio-glass-console .rg-channels [data-rg-channel]{min-height:38px}.radio-glass-console .rg-play{width:38px;height:38px;padding:7px}.radio-glass-console .rg-dial-row{margin-bottom:9px}
+}
+@media(max-width:500px){.radio-glass-console .rg-layout{padding:12px;gap:10px}.radio-glass-console .rg-description{max-height:none;overflow:visible}.radio-glass-console .rg-channels{gap:4px}.radio-glass-console .rg-channels [data-rg-channel]{font-size:8px}.radio-glass-console .rg-photo{flex-basis:42px}}
+
+/* Compact receiver footprint, with room reserved for the broadcast captions. */
+@media(min-width:851px){
+ html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console{width:min(980px,calc(100% - 136px))!important;bottom:28px!important}
+ .radio-glass-console .rg-layout{grid-template-columns:minmax(205px,1.1fr) minmax(270px,1.8fr) 82px;min-height:116px;padding:12px 18px;gap:14px}
+ .radio-glass-console .rg-photo{flex-basis:46px;height:62px}
+ .radio-glass-console .rg-programme{gap:10px;padding-right:10px}
+ .radio-glass-console .rg-title{font-size:17px;margin-bottom:4px}
+ .radio-glass-console .rg-meta{margin-bottom:5px}
+ .radio-glass-console .rg-frequency{font-size:10px}
+ .radio-glass-console .rg-description{font-size:10px;min-height:3em}
+ .radio-glass-console .rg-live{font-size:7px;padding:3px 5px}
+ .radio-glass-console .rg-dial{height:36px}
+ .radio-glass-console .rg-dial-row{margin-bottom:9px}
+ .radio-glass-console .rg-channels [data-rg-channel]{min-height:36px;font-size:8px;gap:2px}
+ .radio-glass-console .rg-playback{padding-left:12px;gap:10px}
+ .radio-glass-console .rg-play{width:38px;height:38px;padding:8px}
+ .radio-glass-console .rg-volume{gap:7px}
+ .radio-glass-console .rg-volume svg{width:15px;height:15px}
+}
+
+/* Clear layered glass, restrained reflections and a fine red tuning hairline. */
+html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console{
+ background:linear-gradient(125deg,rgba(255,255,255,.19),rgba(229,243,255,.055) 38%,rgba(101,135,165,.095) 68%,rgba(255,255,255,.13))!important;
+ border:1px solid rgba(255,255,255,.67)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.8),inset 0 -1px 0 rgba(92,119,145,.14),inset 1px 0 0 rgba(255,255,255,.3),0 8px 22px rgba(29,58,88,.10),0 1px 3px rgba(35,63,89,.08)!important;
+ backdrop-filter:blur(9px) saturate(1.08);-webkit-backdrop-filter:blur(9px) saturate(1.08)
+}
+.radio-glass-console .rg-channels [data-rg-channel]{
+ background:linear-gradient(130deg,rgba(255,255,255,.17),rgba(255,255,255,.025) 58%,rgba(127,158,184,.07));
+ border:1px solid rgba(246,252,255,.52);box-shadow:inset 0 1px 0 #ffffff6b,0 2px 5px #324f6710;border-radius:7px
+}
+.radio-glass-console .rg-channels [data-rg-channel][aria-current="true"]{
+ background:linear-gradient(135deg,#ffffff63,#edf7ff21 55%,#d8efff42);border-color:#ffffffe6;
+ box-shadow:inset 0 1px 1px #fffffff0,inset 0 -1px 2px #7d9bb338,0 3px 9px #365e7b20;color:#263f53
+}
+.radio-glass-console .rg-needle{width:1px;top:5px;bottom:8px;background:#b96460;box-shadow:0 0 2px rgba(170,57,52,.25)}
+.radio-glass-console .rg-needle:after{display:none}
+.radio-glass-console[data-playing="true"] .rg-needle{background:#c15b54;box-shadow:0 0 3px #cf6a6040}
+.radio-glass-console .rg-ticks{height:11px;box-shadow:none;border-bottom-width:1px;background:repeating-linear-gradient(90deg,#70899d55 0 1px,transparent 1px 6px)}
+.radio-glass-console .rg-play{background:linear-gradient(135deg,#ffffff38,#e4f4ff0d 65%,#a2c8df1f);border-color:#ffffff94;box-shadow:inset 0 1px 1px #ffffffb3,inset 0 -1px 1px #466b8a2b,0 2px 7px #34597512}
+.radio-glass-console .rg-lyrics{position:relative;margin-top:3px}
+.radio-glass-console .rg-lyrics[hidden]{display:none!important}
+.radio-glass-console .rg-lyrics summary{list-style:none;display:inline-block;cursor:pointer;color:#3e5a70;font:10px/1.5 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;border-bottom:1px solid #6d899b77}
+.radio-glass-console .rg-lyrics summary::-webkit-details-marker{display:none}
+.radio-glass-console .rg-lyrics summary:after{content:' ↗'}
+.radio-glass-console .rg-lyrics[open] summary:after{content:' ×'}
+.radio-glass-console .rg-lyrics-sheet{position:absolute;bottom:calc(100% + 12px);left:0;z-index:3;width:min(350px,70vw);max-height:38svh;overflow:auto;overscroll-behavior:contain;padding:20px 24px;border:1px solid #ffffffb3;border-radius:12px;background:#e0eaf1e8;backdrop-filter:blur(18px);box-shadow:0 6px 25px #17334c26;color:#2f4658;text-shadow:none}
+.radio-glass-console .rg-lyrics-sheet h3{margin:0 0 14px;font:500 16px/1.5 'AppleMyungjo',serif;color:#293f52}
+.radio-glass-console .rg-lyrics-sheet p{white-space:pre-line;margin:0;font:12px/1.9 'Apple SD Gothic Neo',Arial,sans-serif}
+
+/* The receiver's frame never changes with the selected programme or caption. */
+html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console{bottom:68px!important}
+.radio-glass-console .rg-layout{height:122px;min-height:122px;max-height:122px}
+.radio-glass-console .rg-info{display:grid;grid-template-rows:22px 26px 32px;align-content:center;height:80px;min-width:0}
+.radio-glass-console .rg-meta{margin:0;flex-wrap:nowrap;align-items:start}
+.radio-glass-console .rg-title{height:26px;line-height:24px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.radio-glass-console .rg-description{height:32px;min-height:32px;max-height:32px;margin:0;display:flex;align-items:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px;line-height:1.5}
+.radio-glass-console .rg-lyrics{display:none!important}
+@media(max-width:850px){html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console{bottom:48px!important}.radio-glass-console .rg-layout{height:206px;min-height:206px;max-height:206px}.radio-glass-console .rg-info{grid-template-rows:20px 24px 30px;height:74px}.radio-glass-console .rg-description{height:30px;min-height:30px;max-height:30px}}
+
+/* Preset markings on one glass surface, without five nested glass cards. */
+.radio-glass-console .rg-channels{gap:0;border-top:1px solid #66819826;padding-top:7px}
+.radio-glass-console .rg-channels [data-rg-channel],
+.radio-glass-console .rg-channels [data-rg-channel][aria-current="true"]{
+ position:relative;border:0;border-radius:0;background:transparent;box-shadow:none;
+ min-height:36px;padding:3px 6px 9px;color:#597084;gap:3px;transition:color .18s ease
+}
+.radio-glass-console .rg-channels [data-rg-channel]+button{border-left:1px solid #6c879b24}
+.radio-glass-console .rg-channels [data-rg-channel]>span:first-child{font-size:8px;letter-spacing:.11em;color:#74899a}
+.radio-glass-console .rg-channels [data-rg-channel] .rg-channel-title{font-size:10px;line-height:1.4;font-weight:400}
+.radio-glass-console .rg-channels [data-rg-channel][aria-current="true"]{color:#243e53}
+.radio-glass-console .rg-channels [data-rg-channel][aria-current="true"]>span:first-child{color:#3e586d}
+.radio-glass-console .rg-channels [data-rg-channel][aria-current="true"] .rg-channel-title{font-weight:600}
+.radio-glass-console .rg-channels [data-rg-channel]:after{content:'';position:absolute;bottom:1px;left:calc(50% - 9px);width:18px;height:1px;background:#45677f;opacity:0}
+.radio-glass-console .rg-channels [data-rg-channel][aria-current="true"]:after{opacity:1}
+.radio-glass-console .rg-layout .rg-channels [data-rg-channel]:hover{background:transparent;color:#243e53}
+.radio-glass-console .rg-channels [data-rg-channel]:hover:after{opacity:.4}
+.radio-glass-console .rg-channels [data-rg-channel]:focus-visible{outline:1px solid #567c96;outline-offset:-1px;border-radius:3px}
+@media(max-width:500px){.radio-glass-console .rg-channels [data-rg-channel]{padding-inline:2px}.radio-glass-console .rg-channels [data-rg-channel] .rg-channel-title{font-size:8px}.radio-glass-console .rg-channels [data-rg-channel]>span:first-child{font-size:7px}}
+
+/* A compact receiver panel; the studio photograph is independent of device power. */
+html body.media-time-body .radio-glass-console .rg-photo img{position:static!important;display:block!important;width:100%!important;height:100%!important;min-height:0!important;max-width:none!important;max-height:none!important;object-fit:cover!important;object-position:42% 50%!important;opacity:1!important;visibility:visible!important;transform:none!important;clip-path:none!important;mask-image:none!important;filter:grayscale(1) contrast(.95)!important}
+html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console{
+ background:linear-gradient(130deg,#f4faff24,#d5eafa08 45%,#8eacc016 75%,#f5fbff1f)!important;
+ border-color:#eef7ff70!important;border-radius:15px!important;
+ box-shadow:inset 0 1px 0 #ffffff9c,inset 0 -1px 0 #54728c1f,0 6px 20px #284d6c12!important;
+ backdrop-filter:blur(12px) saturate(1.15);-webkit-backdrop-filter:blur(12px) saturate(1.15)
+}
+.radio-glass-console .rg-photo{box-shadow:0 2px 6px #182c3d26;border:1px solid #d5e3ec66;border-radius:4px}
+.radio-glass-console .rg-photo>span{font-size:6px;padding:3px 1px;letter-spacing:0}
+.radio-glass-console .rg-play{width:30px;height:30px;padding:7px;border-color:#f8fdff80;box-shadow:inset 0 1px 1px #ffffff8c,0 1px 3px #38577512}
+.radio-glass-console .rg-volume input::-webkit-slider-thumb{width:8px;height:8px;box-shadow:0 0 3px #d4e9f666}
+.radio-glass-console .rg-volume input::-moz-range-thumb{width:8px;height:8px}
+@media(min-width:851px){
+ html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console{width:min(840px,calc(100% - 170px))!important}
+ .radio-glass-console .rg-layout{grid-template-columns:minmax(185px,1fr) minmax(265px,1.8fr) 108px;gap:12px;padding:12px 16px;height:106px;min-height:106px;max-height:106px}
+ .radio-glass-console .rg-programme{padding-right:10px;gap:10px;align-self:center}
+ .radio-glass-console .rg-photo{flex:0 0 38px;height:51px}
+ .radio-glass-console .rg-info{grid-template-rows:18px 23px 25px;height:66px}
+ .radio-glass-console .rg-title{font-size:15px;height:23px;line-height:22px}
+ .radio-glass-console .rg-description{height:25px;min-height:25px;max-height:25px;font-size:9px}
+ .radio-glass-console .rg-frequency{font-size:9px}
+ .radio-glass-console .rg-live{font-size:6px;padding:2px 4px}
+ .radio-glass-console .rg-dial{height:29px}
+ .radio-glass-console .rg-scale{font-size:8px}
+ .radio-glass-console .rg-dial-row{margin-bottom:6px}
+ .radio-glass-console .rg-channels{padding-top:4px}
+ .radio-glass-console .rg-channels [data-rg-channel],.radio-glass-console .rg-channels [data-rg-channel][aria-current="true"]{min-height:30px;padding:2px 3px 6px;gap:2px}
+ .radio-glass-console .rg-channels [data-rg-channel] .rg-channel-title{font-size:9px}
+ .radio-glass-console .rg-channels [data-rg-channel]>span:first-child{font-size:7px;letter-spacing:.07em}
+ .radio-glass-console .rg-playback{flex-direction:row;gap:10px;padding-left:12px;align-items:center;justify-content:center}
+ .radio-glass-console .rg-play{flex:0 0 30px}
+ .radio-glass-console .rg-volume{width:54px;gap:5px}
+ .radio-glass-console .rg-volume svg{width:12px;height:12px}
+}
+@media(max-width:850px){html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console{width:min(590px,calc(100% - 36px))!important}.radio-glass-console .rg-layout{height:180px;min-height:180px;max-height:180px;padding:12px 14px}.radio-glass-console .rg-photo{flex-basis:40px;height:52px}.radio-glass-console .rg-title{font-size:16px}}
+
+/* Raise the receiver slightly and show the archival photograph without a label. */
+html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console{bottom:92px!important}
+@media(max-width:850px){html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console{bottom:66px!important}}
+
+/* A little more space beneath the receiver; archival images change with each programme. */
+@media(min-width:851px) and (min-height:601px){html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console{translate:0 12px!important}}
+@media(max-width:850px) and (min-height:601px){html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console{bottom:96px!important}}
+.radio-glass-console .rg-photo img{filter:grayscale(1) contrast(.95)!important;object-fit:cover!important}
+
+.radio-glass-console .rg-channels [data-rg-channel]{position:relative;cursor:inherit;box-sizing:border-box}
+.radio-glass-console .rg-tuner{touch-action:none}

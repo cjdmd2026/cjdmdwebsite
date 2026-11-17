@@ -1,0 +1,348 @@
+/* MEDIA BY ERA final: navigation typography and CRT entrance only. */
+
+/* Keep the original neutral typography; the experimental holographic fill is removed. */
+html body.media-time-body :is(.era-stamp b,.era-stamp span,.era-bridge #timeNav b,.era-bridge #timeNav span){
+  color:inherit!important;
+  -webkit-text-fill-color:currentColor!important;
+  background:none!important;
+  -webkit-background-clip:border-box!important;
+  background-clip:border-box!important;
+  text-shadow:none!important;
+  filter:none!important;
+}
+
+/* Reference layout: the selected era is a quiet title above the existing object.
+   No television or media-object geometry is changed here. */
+html body.media-time-body .era-bridge #timeNav button.active{
+  top:clamp(34px,5.5vh,68px)!important;
+  bottom:auto!important;
+  left:50%!important;
+  right:auto!important;
+  width:min(680px,70vw)!important;
+  transform:translateX(-50%)!important;
+  text-align:center!important;
+  color:#20252a!important;
+}
+html body.media-time-body .era-bridge #timeNav button.active b{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:13px!important;
+  margin:0!important;
+  color:rgba(239,244,248,.76)!important;
+  font:300 10px/1 "Helvetica Neue",Helvetica,Arial,sans-serif!important;
+  letter-spacing:.18em!important;
+}
+html body.media-time-body .era-bridge #timeNav button.active b::before,
+html body.media-time-body .era-bridge #timeNav button.active b::after{
+  content:'';
+  display:block;
+  width:30px;
+  height:.5px;
+  background:rgba(235,241,245,.5);
+}
+html body.media-time-body .era-bridge #timeNav button.active span{
+  display:block!important;
+  margin:13px 0 0!important;
+  color:#f7f9fa!important;
+  font:300 clamp(25px,2.65vw,40px)/1 "Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif!important;
+  letter-spacing:.075em!important;
+  white-space:nowrap!important;
+}
+html[data-theme='dark'] body.media-time-body .era-bridge #timeNav button.active b{color:rgba(239,244,248,.76)!important}
+html[data-theme='dark'] body.media-time-body .era-bridge #timeNav button.active b::before,
+html[data-theme='dark'] body.media-time-body .era-bridge #timeNav button.active b::after{background:rgba(235,241,245,.5)}
+html[data-theme='dark'] body.media-time-body .era-bridge #timeNav button.active span{color:#f7f9fa!important}
+
+/* A consistent exhibition field for all six objects.  Each wrapper is sized
+   independently so transparent image padding does not shift the visual centre. */
+html body.media-time-body .time-panel > .scroll-media{
+  inset:auto!important;left:50%!important;top:55%!important;
+  width:min(76vw,1120px)!important;height:min(57vh,650px)!important;
+  transform:translate(-50%,-50%)!important;
+}
+html body.media-time-body .time-panel > .paper-media{
+  left:50%!important;right:auto!important;top:55%!important;bottom:auto!important;
+  width:min(70vw,1040px)!important;height:min(58vh,660px)!important;
+  transform:translate(-50%,-50%)!important;
+}
+html body.media-time-body .time-panel > .radio-media{
+  left:50%!important;right:auto!important;top:55%!important;bottom:auto!important;
+  width:min(61vw,64vh,900px)!important;
+  transform:translate(-50%,-50%)!important;
+}
+html body.media-time-body .time-panel > .pc-media{
+  left:50%!important;right:auto!important;top:55%!important;bottom:auto!important;
+  height:min(61vh,680px)!important;max-height:calc(100% - 220px)!important;
+  transform:translate(-50%,-50%)!important;
+}
+html body.media-time-body .time-panel > .phone-media{
+  left:50%!important;right:auto!important;top:55%!important;bottom:auto!important;
+  height:min(61vh,680px)!important;max-height:calc(100% - 220px)!important;
+  transform:translate(-50%,-50%)!important;
+}
+
+/* Natural contact shadows only—no drawn floor ellipse or decorative graphic. */
+html body.media-time-body .scroll-media :is(.closed,.open),
+html body.media-time-body .paper-media :is(.paper-cover,.paper-spread),
+html body.media-time-body .radio-media > img,
+html body.media-time-body .pc-media > img,
+html body.media-time-body .phone-media > img{
+  filter:drop-shadow(0 19px 18px rgba(24,31,39,.21))!important;
+}
+html body.media-time-body .tv-time-panel .television{
+  filter:drop-shadow(0 21px 19px rgba(24,31,39,.24))!important;
+}
+
+/* Restore the original one-shot CRT ignition. */
+html body.media-time-body::before{
+  content:''!important;display:block!important;position:fixed!important;inset:0!important;
+  z-index:20000!important;pointer-events:none!important;background:#050607!important;
+  animation:crtCurtain 1.45s cubic-bezier(.22,.72,.2,1) both!important;
+}
+html body.media-time-body::after{
+  content:''!important;display:block!important;position:fixed!important;left:8%!important;right:8%!important;
+  top:50%!important;height:1.5px!important;z-index:20001!important;pointer-events:none!important;
+  background:#f5f8fa!important;box-shadow:0 0 10px rgba(235,245,255,.95),0 0 30px rgba(145,185,220,.7)!important;
+  border-radius:50%!important;transform-origin:center!important;
+  animation:crtIgnition 1.45s cubic-bezier(.22,.72,.2,1) both!important;
+}
+@media(max-width:700px){
+  html body.media-time-body .era-bridge #timeNav button.active{top:28px!important;width:76vw!important}
+  html body.media-time-body .era-bridge #timeNav button.active span{font-size:clamp(21px,7vw,34px)!important;margin-top:9px!important}
+  html body.media-time-body .era-bridge #timeNav button.active b{font-size:8px!important}
+  html body.media-time-body .time-panel > .scroll-media{width:88vw!important;height:55vh!important;top:56%!important}
+  html body.media-time-body .time-panel > .paper-media{width:90vw!important;height:55vh!important;top:56%!important}
+  html body.media-time-body .time-panel > .radio-media{width:min(88vw,54vh)!important;top:56%!important}
+  html body.media-time-body .time-panel > .pc-media{height:min(55vh,102vw)!important;top:56%!important}
+  html body.media-time-body .time-panel > .phone-media{height:min(57vh,132vw)!important;top:56%!important}
+}
+
+/* Media timeline atmosphere: a cool light field rising into a dark header sky. */
+html body.media-time-body,
+html:not([data-theme='dark']) body.media-time-body{
+  background:radial-gradient(ellipse 90% 180% at 66% -55%,#303743 0%,#171b22 45%,#08090c 78%)!important;
+}
+html body.media-time-body .time-deck,
+html:not([data-theme='dark']) body.media-time-body .time-deck{
+  background:linear-gradient(180deg,#08090c 0%,#171b22 5%,#303743 10%,#626d7c 15%,#9ca8b9 20%,#cfd6df 25%,#edf1f5 29%,#f8fafc 32%,#fff 35%,#fff 100%)!important;
+  background-image:linear-gradient(180deg,#08090c 0%,#171b22 5%,#303743 10%,#626d7c 15%,#9ca8b9 20%,#cfd6df 25%,#edf1f5 29%,#f8fafc 32%,#fff 35%,#fff 100%)!important;
+}
+html body.media-time-body .time-panel,
+html body.media-time-body .broadcast-page,
+html body.media-time-body .broadcast{
+  background:transparent!important;
+  background-image:none!important;
+}
+
+/* The same fixed glass header floats over the darker top of this page. */
+html body.media-time-body .global-header.global-header{
+  --header-ink:#f3f6f8!important;
+  color:var(--header-ink)!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  border-bottom-color:transparent!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:blur(7px) saturate(.88)!important;
+  backdrop-filter:blur(7px) saturate(.88)!important;
+}
+html body.media-time-body .global-header.global-header::after{
+  content:''!important;
+  position:absolute!important;
+  left:0!important;
+  right:0!important;
+  bottom:0!important;
+  height:.5px!important;
+  display:block!important;
+  pointer-events:none!important;
+  background:linear-gradient(90deg,rgba(206,222,233,.14),rgba(241,248,252,.42) 48%,rgba(181,204,220,.16))!important;
+  box-shadow:0 1px 7px rgba(176,211,235,.08)!important;
+}
+html body.media-time-body .global-header.global-header .brand{
+  font-size:18px!important;
+  font-weight:200!important;
+  letter-spacing:.28em!important;
+  color:rgba(242,246,249,.9)!important;
+  text-shadow:0 0 9px rgba(197,222,239,.1)!important;
+}
+html body.media-time-body .global-header.global-header .brand span{
+  font-weight:200!important;
+  color:inherit!important;
+}
+html body.media-time-body .global-header.global-header nav a.active{
+  color:#f7fbff!important;
+  text-shadow:0 0 7px rgba(220,239,255,.4),0 0 16px rgba(172,211,241,.19)!important;
+}
+html body.media-time-body .global-header.global-header .header-right > nav{
+  gap:clamp(32px,3vw,58px)!important;
+}
+@media(prefers-reduced-motion:reduce){
+  html body.media-time-body::before{animation:crtCurtain 1.05s ease-out both!important}
+  html body.media-time-body::after{animation:crtIgnition 1.05s ease-out both!important}
+}
+
+/* Individual optical placement: the painted scroll stays where it is. */
+html body.media-time-body .time-panel > .paper-media{top:58%!important}
+html body.media-time-body .time-panel > .radio-media{top:46%!important}
+html body.media-time-body .radio-media .radio-top-controls{
+  display:none!important;
+}
+html body.media-time-body .tv-time-panel .television{top:54%!important}
+html body.media-time-body .time-panel > .pc-media{
+  top:58%!important;
+  height:min(65vh,730px)!important;
+}
+html body.media-time-body .time-panel > .phone-media{top:58%!important}
+
+/* Quiet silver-glass transport controls for the CRT channels. */
+html body.media-time-body .channel-footer .arrow{
+  flex:0 0 40px!important;
+  width:40px!important;
+  height:40px!important;
+  padding:10px!important;
+  border:1px solid rgba(108,123,138,.58)!important;
+  border-radius:50%!important;
+  color:#526171!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.72),rgba(218,225,231,.34))!important;
+  box-shadow:inset 0 0 0 .5px rgba(255,255,255,.9),0 2px 6px rgba(44,57,70,.1)!important;
+  -webkit-backdrop-filter:blur(5px)!important;
+  backdrop-filter:blur(5px)!important;
+}
+html body.media-time-body .channel-footer .arrow::before{
+  content:none!important;
+  display:none!important;
+}
+html body.media-time-body .channel-footer .arrow svg{
+  width:100%!important;
+  height:100%!important;
+  fill:currentColor!important;
+  filter:none!important;
+}
+html body.media-time-body .channel-footer .arrow:hover{
+  color:#344B83!important;
+  border-color:#344B83!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.86),rgba(213,221,230,.5))!important;
+  box-shadow:0 0 8px rgba(52,75,131,.16),inset 0 0 0 .5px rgba(255,255,255,.92)!important;
+}
+
+/* The current timeline ends beside the phone rather than inside the decade label. */
+html body.media-time-body .phone-media::after{
+  content:'NOW';
+  position:absolute;
+  left:calc(100% + clamp(20px,3vw,52px));
+  top:50%;
+  transform:translateY(-50%);
+  color:#7a838b;
+  font:300 clamp(11px,1vw,15px)/1 "Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif;
+  letter-spacing:.24em;
+  pointer-events:none;
+}
+
+/* Adjacent-media previews use the existing isolated objects—no hand artwork. */
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']::before{
+  content:none!important;
+  display:none!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']::after{
+  content:''!important;
+  display:block!important;
+  position:absolute!important;
+  top:calc(clamp(52px,4vw,64px) + 31px)!important;
+  width:calc(7.5vw - 14px)!important;
+  height:1px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:rgba(126,139,151,.58)!important;
+  box-shadow:none!important;
+  transition:background-color .28s ease,box-shadow .28s ease!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-side='past']::after{
+  right:calc(100% + 14px)!important;
+  left:auto!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-side='future']::after{
+  left:calc(100% + 14px)!important;
+  right:auto!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'] b,
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'] span{
+  position:relative!important;
+  top:-6px!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'] b{
+  color:#697481!important;
+  font-size:clamp(32px,2.55vw,42px)!important;
+  line-height:.96!important;
+  letter-spacing:-.06em!important;
+  white-space:nowrap!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'] span{
+  color:#7d8791!important;
+  margin-top:9px!important;
+  font-size:clamp(7px,.45vw,8px)!important;
+  letter-spacing:.15em!important;
+}
+html body.media-time-body .era-bridge #timeNav button .era-thumb{
+  position:static;
+  width:clamp(68px,5.5vw,88px);
+  height:clamp(52px,4vw,64px);
+  display:block;
+  margin:0 auto 9px;
+  background-position:center;
+  background-repeat:no-repeat;
+  background-size:contain;
+  opacity:.2;
+  filter:grayscale(1) sepia(.08) hue-rotate(165deg) saturate(.66) contrast(.7) brightness(1.16);
+  pointer-events:none;
+  transition:opacity .3s ease,filter .3s ease;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:hover .era-thumb{
+  opacity:.3;
+  filter:grayscale(1) sepia(.08) hue-rotate(165deg) saturate(.72) contrast(.76) brightness(1.13);
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:hover b{
+  color:#344B83!important;
+  text-shadow:0 0 5px rgba(52,75,131,.34),0 0 13px rgba(52,75,131,.18)!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:hover span{
+  color:#344B83!important;
+  text-shadow:0 0 5px rgba(52,75,131,.2)!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:hover::after{
+  background:#344B83!important;
+  box-shadow:0 0 7px rgba(52,75,131,.28)!important;
+}
+html body.media-time-body .era-bridge #timeNav button.active .era-thumb{display:none!important}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']{
+  display:block!important;
+  opacity:1!important;
+  width:clamp(124px,9vw,142px)!important;
+  box-sizing:border-box!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'][data-side='past']{
+  left:7.5vw!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'][data-side='future']{
+  right:7.5vw!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-index='0'] .era-thumb{background-image:url('../assets/images/scroll-rolled.webp')}
+html body.media-time-body .era-bridge #timeNav button[data-index='1'] .era-thumb{background-image:url('../assets/images/newspaper-cover.webp')}
+html body.media-time-body .era-bridge #timeNav button[data-index='2'] .era-thumb{background-image:url('../assets/images/radio-user-glass-hq.webp')}
+html body.media-time-body .era-bridge #timeNav button[data-index='3'] .era-thumb{background-image:url('../assets/images/tv-frame-user-final-v2.webp')}
+html body.media-time-body .era-bridge #timeNav button[data-index='4'] .era-thumb{background-image:url('../assets/images/pc-user-glass-frame-hq.webp')}
+html body.media-time-body .era-bridge #timeNav button[data-index='5'] .era-thumb{background-image:url('../assets/images/era-phone-transparent.webp')}
+
+@media(max-width:700px){
+  html body.media-time-body .time-panel > .paper-media{top:59%!important}
+  html body.media-time-body .time-panel > .radio-media{top:47%!important}
+  html body.media-time-body .tv-time-panel .television{top:55%!important}
+  html body.media-time-body .time-panel > .pc-media{top:59%!important;height:min(59vh,110vw)!important}
+  html body.media-time-body .time-panel > .phone-media{top:59%!important}
+  html body.media-time-body .phone-media::after{left:calc(100% + 12px);font-size:9px}
+  html body.media-time-body .era-bridge #timeNav button .era-thumb{width:72px;height:52px;margin-bottom:8px}
+  html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'] b{font-size:34px!important}
+  html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'] span{font-size:8px!important;margin-top:10px!important}
+  html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']::after{top:76px!important;width:calc(5vw - 20px)!important}
+  html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'][data-side='past']{left:5vw!important}
+  html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'][data-side='future']{right:5vw!important}
+}

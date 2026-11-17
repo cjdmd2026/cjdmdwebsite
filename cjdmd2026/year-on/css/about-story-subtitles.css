@@ -1,0 +1,15 @@
+/* One Korean sentence and its English subtitle per narrative scene. */
+html body.about-body .story-subtitle>.about-fixed-scene{padding:100px 6vw 80px;display:grid;place-content:center;background:#08090b}
+html body.about-body .story-subtitle>.about-fixed-scene>div{width:min(1280px,88vw);margin:auto}
+html body.about-body .story-subtitle p[lang=ko]{font-size:clamp(16px,1.52vw,25px)!important;line-height:1.6!important;white-space:nowrap;letter-spacing:-.035em}
+html body.about-body .story-subtitle p[lang=en]{font-size:clamp(10px,.96vw,15px)!important;line-height:1.6!important;white-space:nowrap;margin-top:20px;color:#99a4ad!important;letter-spacing:-.015em}
+html body.about-body .story-subtitle{height:125svh}
+@media(max-width:760px){html body.about-body .story-subtitle p[lang=ko]{white-space:normal;font-size:18px!important;text-wrap:balance;word-break:keep-all}html body.about-body .story-subtitle p[lang=en]{white-space:normal;font-size:12px!important;text-wrap:balance}html body.about-body .story-subtitle>.about-fixed-scene>div{width:88vw}}
+
+/* Match every text-only scene to the opening question. */
+html body.about-body .about-pair>.about-fixed-scene,
+html body.about-body #aboutEntryStory .yai-scene:not(.yai-painting){display:flex!important;flex-direction:column;align-items:center;justify-content:center;padding:0 5vw!important;text-align:center;box-sizing:border-box}
+html body.about-body .about-pair>.about-fixed-scene>div{width:90vw;max-width:none;margin:0!important}
+html body.about-body .about-pair p[lang=ko],html body.about-body #aboutEntryStory .yai-scene:not(.yai-painting)>:is(h1,h2,p[lang=ko]){font:400 var(--about-ko)/1.6 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif!important;letter-spacing:-.02em!important;margin:0!important;text-align:center;white-space:nowrap}
+html body.about-body .about-pair p[lang=en],html body.about-body #aboutEntryStory .yai-scene:not(.yai-painting)>p[lang=en]{font:400 var(--about-en)/1.6 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif!important;letter-spacing:0!important;margin:17px 0 0!important;text-align:center;white-space:nowrap;color:#a3abb1!important}
+@media(max-width:760px){html body.about-body .about-pair p[lang=ko],html body.about-body .about-pair p[lang=en],html body.about-body #aboutEntryStory .yai-scene:not(.yai-painting)>:is(h1,h2,p){white-space:normal!important;word-break:keep-all;text-wrap:balance}}

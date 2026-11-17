@@ -1,0 +1,15 @@
+/* Original channel labels inside a receiver-style glass frame. */
+html body.media-time-body .channel-footer{display:block!important;width:min(900px,76vw)!important;padding:11px 20px!important;box-sizing:border-box;border:1px solid #eff7ff4a!important;border-radius:10px!important;background:linear-gradient(115deg,#e9f4fc10,#c8dcea08 45%,#e6f3fc18)!important;box-shadow:inset 0 1px 0 #ffffff35,0 5px 18px #182b4409!important;backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
+html body.media-time-body #channelNav{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;width:100%!important;text-align:center;border:0!important;gap:0!important}
+/* Preserve the former channel typography: monospaced numbers, quiet sans labels. */
+#channelNav .tv-station{position:relative;min-width:0;display:grid;gap:6px;align-content:center;padding:4px 0 6px;color:rgba(95,113,128,.48);border:0;border-bottom:1px solid rgba(112,132,148,.18);text-align:left}
+html body.media-time-body #channelNav{gap:12px!important}
+#channelNav .tv-station b{font:400 11px 'Courier New',monospace;letter-spacing:.08em}
+#channelNav .tv-station span{display:block;font:400 8px Arial,sans-serif;letter-spacing:.04em;white-space:nowrap}
+#channelNav .tv-station.active{color:#667f94;border-bottom-color:#7299ba}
+#channelNav .tv-station.active:after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:#7299ba}
+@media(max-width:850px){html body.media-time-body .channel-footer{width:calc(100vw - 32px)!important;padding:7px 10px!important;border-radius:11px!important}html body.media-time-body #channelNav{gap:9px!important}#channelNav .tv-station{padding:4px 0 5px;gap:6px}#channelNav .tv-station b{font-size:9px}#channelNav .tv-station span{font-size:7.5px;letter-spacing:0}}
+@media(max-height:600px) and (orientation:landscape){html body.media-time-body .channel-footer{width:58vw!important;padding:6px 14px!important}#channelNav .tv-station{gap:3px;padding:3px 0 5px}}
+
+/* Size the frame from the rendered television, across every viewport. */
+html body.media-time-body .tv-time-panel .channel-footer{width:calc(var(--tv-frame-width,60vw)*.87)!important;max-width:calc(100vw - 40px)!important}

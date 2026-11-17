@@ -1,0 +1,43 @@
+html body.media-time-body .media-entry-purpose{position:fixed;inset:0;z-index:9998;display:grid;place-items:center;background:#050505;color:#eee;text-align:center;box-sizing:border-box;padding:95px 7vw 65px}
+.media-entry-purpose-copy{width:min(740px,100%);opacity:0}
+.media-entry-purpose.is-reading .media-entry-purpose-copy{opacity:1}
+.media-entry-purpose h1,.media-entry-purpose h2,.media-entry-purpose p{margin:0;padding:0;font-family:'Helvetica Neue','Apple SD Gothic Neo',Arial,sans-serif;word-break:keep-all;overflow-wrap:normal}
+.media-entry-purpose h1{font-size:clamp(22px,2.1vw,32px);font-weight:400;line-height:1.45;letter-spacing:-.045em;color:#f0f0ee}
+.media-entry-purpose [lang=ko]>p{font-size:clamp(13px,1.02vw,16px);font-weight:300;line-height:1.95;letter-spacing:-.018em;margin-top:23px;color:#b7bbbd}
+.media-entry-purpose .purpose-english{margin-top:32px}
+.media-entry-purpose h2{font-size:clamp(11px,.9vw,14px);font-weight:400;line-height:1.5;letter-spacing:.005em;color:#9da3a7}
+.media-entry-purpose .purpose-english p{font-size:clamp(9px,.74vw,11px);font-weight:300;line-height:1.8;margin-top:9px;color:#777f85;letter-spacing:0}
+html body.media-time-body .media-entry-purpose-skip{position:absolute;bottom:34px;right:4vw;border:0;border-bottom:1px solid #ffffff40;border-radius:0;background:none;color:#999fa3;padding:8px 0;font:400 10px/1.5 'Apple SD Gothic Neo',Arial,sans-serif;cursor:pointer;letter-spacing:.03em}
+.media-entry-purpose-skip span{margin-left:12px}.media-entry-purpose-skip:hover{color:#fff}.media-entry-purpose-skip:focus-visible{outline:1px solid #ddd;outline-offset:6px}
+html body.media-time-body .media-reading-purpose{display:none}
+html body.media-time-body .media-reading-current{margin-top:0;padding-top:0;border:0}
+@media(max-width:760px){.purpose-desktop-break{display:none}.media-entry-purpose [lang=ko]>p{font-size:13px;line-height:1.85}.media-entry-purpose .purpose-english{margin-top:25px}.media-entry-purpose .purpose-english p{font-size:9px}.media-entry-purpose h1{font-size:22px}html body.media-time-body .media-reading-context{display:block;width:min(300px,calc(100% - 36px))}}
+@media(prefers-reduced-motion:reduce){.media-entry-purpose-copy{translate:none!important}}
+
+/* Each complete sentence occupies one line on desktop; no editorial mid-sentence breaks. */
+.media-entry-purpose-copy{width:min(1120px,100%)}
+.media-entry-purpose p>span{display:block}
+@media(min-width:761px){.media-entry-purpose [lang=ko]>p{font-size:clamp(11px,1.02vw,16px)}.media-entry-purpose p>span{white-space:nowrap}}
+
+/* Match Korean and English sizes at each corresponding text level. */
+html body.media-time-body .media-entry-purpose h1{font-size:clamp(11px,.9vw,14px)!important}
+html body.media-time-body .media-entry-purpose [lang=ko]>p{font-size:clamp(9px,.74vw,11px)!important}
+
+/* Slightly larger reading size; equal sizes across both languages. */
+html body.media-time-body .media-entry-purpose :is(h1,h2){font-size:clamp(14px,1.15vw,18px)!important}
+html body.media-time-body .media-entry-purpose [lang=ko]>p,html body.media-time-body .media-entry-purpose .purpose-english p{font-size:clamp(11px,.92vw,14px)!important}
+
+/* Clear title/body hierarchy with a compact two-line reading rhythm. */
+html body.media-time-body .media-entry-purpose :is(h1,h2){font-size:clamp(14px,1.15vw,18px)!important;line-height:1.4!important;font-weight:400!important}
+html body.media-time-body .media-entry-purpose [lang=ko]>p,html body.media-time-body .media-entry-purpose .purpose-english p{font-size:clamp(10px,.76vw,12px)!important;line-height:1.5!important;font-weight:300!important;letter-spacing:-.015em!important}
+html body.media-time-body .media-entry-purpose [lang=ko]>p{margin-top:16px!important}
+html body.media-time-body .media-entry-purpose .purpose-english{margin-top:27px!important}
+html body.media-time-body .media-entry-purpose .purpose-english p{margin-top:12px!important}
+
+.media-entry-purpose [hidden]{display:none!important}html body.media-time-body .media-entry-purpose .purpose-english{margin-top:0!important}
+
+html body.media-time-body .media-entry-purpose :is(h1,h2){font-size:clamp(15px,1.24vw,19.5px)!important}html body.media-time-body .media-entry-purpose [lang=ko]>p,html body.media-time-body .media-entry-purpose .purpose-english p{font-size:clamp(11px,.82vw,13px)!important}
+
+/* Modest increase to the entry title and supporting copy. */
+html body.media-time-body .media-entry-purpose :is(h1,h2){font-size:clamp(17px,1.43vw,22.5px)!important}
+html body.media-time-body .media-entry-purpose [lang=ko]>p,html body.media-time-body .media-entry-purpose .purpose-english p{font-size:clamp(12px,.90vw,14.3px)!important}

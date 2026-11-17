@@ -1,0 +1,59 @@
+/* Restore the established text guidance. Blue light follows the original controls. */
+html body.media-time-body #radioMedia .radio-power:is(:hover,:focus-visible),
+html body.media-time-body #pcPower:is(:hover,:focus-visible),
+html body.media-time-body .phone-yearon-app:is(:hover,:focus-visible),
+html body.media-time-body #scrollMedia .scroll-right-roller:is(:hover,:focus-visible),
+html body.media-time-body #scrollMedia .scroll-silk-tie:is(:hover,:focus-visible){filter:drop-shadow(0 0 3px #60baff99)!important}
+
+html body.media-time-body .time-panel[data-era="1920"] #paperMedia>.interaction-cue{display:block!important;z-index:100!important;max-width:150px!important}
+@media(max-width:800px){html body.media-time-body .time-panel[data-era="1920"] #paperMedia>.interaction-cue{left:50%!important;top:calc(100% - 60px)!important;transform:translateX(-50%)!important}html body.media-time-body #paperMedia>.interaction-cue::before,html body.media-time-body #paperMedia>.interaction-cue::after,html body.media-time-body #paperMedia>.interaction-cue svg{display:none!important}}
+
+html body #radioMedia .radio-four-dials .radio-frequency{left:20.5%!important}
+html body #radioMedia .radio-four-dials .radio-volume{left:28.9%!important}
+html body #radioMedia .radio-power>span,html body #radioMedia .radio-control-guide{display:none!important}
+.radio-knob-tooltip{position:fixed;z-index:200;max-width:220px;color:#d4e1eb;background:#111a24e8;border:1px solid #bbdfff25;border-radius:4px;padding:7px 10px;font:400 11px/1.6 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;pointer-events:none}
+.radio-knob-tooltip[hidden]{display:none!important}
+
+/* Continuous CRT sizing: narrowing the viewport must never enlarge the device. */
+html body.media-time-body .tv-time-panel #television#television{width:min(54.34vw,80.56svh,967px)!important;max-width:calc(100vw - 40px)!important;top:55%!important}
+@media(max-width:800px){html body.media-time-body .tv-time-panel #television#television{width:min(74vw,calc((100svh - 270px)*.95),480px)!important;top:53%!important}}
+@media(max-height:600px) and (orientation:landscape){html body.media-time-body .tv-time-panel #television#television{width:min(40vw,62svh,560px)!important;top:54%!important}}
+
+/* Use the established unboxed callout, anchored beside the radio. */
+.radio-knob-tooltip{background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:0!important;max-width:155px;color:#e1eaf1;font:400 10px/1.6 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;letter-spacing:.01em}
+.radio-knob-tooltip::before{content:'';position:absolute;right:calc(100% + 8px);top:5px;width:var(--radio-hint-line,40px);height:1px;background:#d7e4ed80}
+.radio-knob-tooltip::after{content:'';position:absolute;right:calc(100% + var(--radio-hint-line,40px) + 6px);top:3px;width:4px;height:4px;background:#d7e4ed;border-radius:50%}
+
+/* Narrow receiver layout: keep the console above the era navigation. */
+@media(max-width:850px){
+html body.media-time-body .time-panel[data-era="1955"] #radioMedia{top:46%!important;width:min(84vw,46svh)!important}
+html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console{top:auto!important;bottom:104px!important;width:calc(100% - 32px)!important}
+html body.media-time-body .radio-glass-console .rg-layout{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:54px auto;gap:7px;padding:10px 12px!important;height:auto!important;min-height:0!important;max-height:none!important}
+html body.media-time-body .radio-glass-console .rg-programme{grid-column:1!important;grid-row:1!important;gap:10px;border:0;padding:0;align-self:center}
+html body.media-time-body .radio-glass-console .rg-photo{flex:0 0 36px;height:48px}
+html body.media-time-body .radio-glass-console .rg-info{height:48px;grid-template-rows:17px 22px;align-content:center}
+html body.media-time-body .radio-glass-console .rg-meta{gap:8px;justify-content:flex-start}
+html body.media-time-body .radio-glass-console .rg-frequency{font-size:10px}
+html body.media-time-body .radio-glass-console .rg-title{font-size:15px;height:22px;line-height:22px}
+html body.media-time-body .radio-glass-console .rg-description{display:none!important}
+html body.media-time-body .radio-glass-console .rg-tuning{grid-column:1!important;grid-row:2!important;min-width:0}
+html body.media-time-body .radio-glass-console .rg-dial{height:27px}
+html body.media-time-body .radio-glass-console .rg-dial-row{margin-bottom:5px}
+html body.media-time-body .radio-glass-console .rg-channels{padding-top:4px;gap:0}
+html body.media-time-body .radio-glass-console .rg-channels button{min-height:30px;padding:2px 1px 5px}
+html body.media-time-body .radio-glass-console .rg-channels button .rg-channel-title{font-size:8px}
+html body.media-time-body .radio-glass-console .rg-playback{display:none!important}
+html body.media-time-body .radio-knob-tooltip{max-width:86vw;white-space:normal;text-align:center;font-size:9px;transform:translateX(-50%)}
+html body.media-time-body .radio-knob-tooltip:before,html body.media-time-body .radio-knob-tooltip:after{display:none!important}
+}
+
+@media(min-width:851px){html body.media-time-body .tv-time-panel #television#television{top:56%!important}}
+@media(min-width:851px) and (max-height:800px){html body.media-time-body .tv-time-panel #television#television{top:55%!important}}
+
+@media(min-width:851px) and (min-height:601px) and (max-height:900px){html body.media-time-body .tv-time-panel .channel-footer{margin-bottom:8px!important}}
+
+html body.media-time-body .channel-footer.channel-footer{padding:15px 21px!important;min-height:76px!important;box-sizing:border-box!important}
+@media(max-width:850px){html body.media-time-body .channel-footer.channel-footer{padding:10px 12px!important;min-height:60px!important}}
+
+html body.media-time-body .channel-footer.channel-footer{padding:12px 16px!important;min-height:78px!important;border-radius:12px!important}html body.media-time-body #channelNav{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:0!important;width:100%!important}html body.media-time-body #channelNav .tv-station{display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;text-align:center!important;padding:7px 8px!important;border:0!important;border-right:1px solid #819bb42b!important;min-width:0!important}html body.media-time-body #channelNav .tv-station:last-child{border-right:0!important}html body.media-time-body #channelNav .tv-station::after{display:none!important}@media(max-width:850px){html body.media-time-body .channel-footer.channel-footer{min-height:60px!important;padding:7px 6px!important}html body.media-time-body #channelNav .tv-station{padding:5px 3px!important}}
+html body.media-time-body #channelDial>span{display:none!important}

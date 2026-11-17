@@ -1,0 +1,8 @@
+@font-face{font-family:YearonYear;src:url('../assets/fonts/YearonYear-Thin.ttf') format('truetype');font-style:normal;font-weight:100;font-display:swap}
+html body.media-time-body .era-bridge #timeNav button.active span.era-odometer,
+html body.media-time-body .era-bridge #timeNav button.active span.era-odometer *,
+html body.media-time-body .era-bridge #timeNav button:not(.active)>b{font-family:YearonYear,Arial,sans-serif!important;font-weight:100!important;font-synthesis:none}
+
+html body.media-time-body .era-bridge #timeNav button.active span.era-odometer :is(.era-odometer-digit,.era-odometer-reel,.era-odometer-suffix,i){font-family:YearonYear,Arial,sans-serif!important;font-weight:100!important}
+
+html body.media-time-body footer.era-bridge #timeNav button.active span.era-current-heading span.era-odometer,html body.media-time-body footer.era-bridge #timeNav button.active span.era-current-heading span.era-odometer *{font-family:YearonYear,Arial,sans-serif!important;font-weight:100!important}

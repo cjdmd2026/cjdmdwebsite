@@ -1,0 +1,19 @@
+/* Match the home invitation button exactly, scoped to the ABOUT destination. */
+html body.about-body #aboutDestination a.film-enter{display:flex;align-items:center;justify-content:flex-start;gap:36px;width:auto;max-width:86vw;padding:20px 25px 20px 35px;border:1px solid #ffffff80;border-radius:100px;color:#fff;background:#ffffff0c;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);text-decoration:none;font:400 clamp(19px,2.2vw,34px)/1 Arial,sans-serif;letter-spacing:-.025em;transition:background .2s,border-color .2s}
+html body.about-body #aboutDestination a.film-enter i{display:grid;place-items:center;flex:none;width:43px;height:43px;border:1px solid #ffffff60;border-radius:50%;font-style:normal;font-size:24px}
+html body.about-body #aboutDestination a.film-enter:hover{background:#ffffff24;border-color:#fff}
+html body.about-body #aboutDestination a.film-enter:focus-visible{outline:2px solid #fff;outline-offset:7px}
+/* A visible lead-in line gives the first era space before the story starts. */
+html body.about-body #ypMediaAnchor .media-story-track{padding-inline:clamp(100px,15vw,260px)}
+html body.about-body #ypMediaAnchor .media-story-line{left:0;right:0}
+html body.about-body #ypMediaAnchor .media-story-copy{top:calc(var(--timeline-axis) + 28px);right:clamp(70px,9vw,145px);max-width:27rem}
+html body.about-body #ypMediaAnchor .media-story-date{font-size:clamp(24px,2.4vw,36px);font-weight:600;letter-spacing:-.035em;line-height:1.15}
+html body.about-body #ypMediaAnchor .media-story-label{display:flex;align-items:baseline;flex-wrap:wrap;gap:5px 7px;margin:9px 0 15px;color:#e9eef2;font:400 clamp(11px,.95vw,14px)/1.4 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif}
+html body.about-body #ypMediaAnchor .media-story-label strong{font-weight:600}
+html body.about-body #ypMediaAnchor .media-story-label i{font-style:normal;color:#83929e}
+html body.about-body #ypMediaAnchor .media-story-description{margin:0;color:#b9c4ce;font:400 clamp(11px,.85vw,13px)/1.8 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;letter-spacing:-.015em;word-break:keep-all;overflow-wrap:break-word}
+@media(max-width:760px){html body.about-body #ypMediaAnchor .media-story-track{padding-inline:16vw}html body.about-body #ypMediaAnchor .media-story-copy{right:48px;top:calc(var(--timeline-axis) + 25px)}html body.about-body #ypMediaAnchor .media-story-date{font-size:25px}html body.about-body #ypMediaAnchor .media-story-label{font-size:11px;margin-bottom:12px}html body.about-body #ypMediaAnchor .media-story-description{font-size:11px;line-height:1.7}html body.about-body #aboutDestination a.film-enter{gap:25px;padding:16px 18px 16px 25px}html body.about-body #aboutDestination a.film-enter i{width:34px;height:34px;font-size:20px}}
+
+/* Quiet blue-white light at each point on the media axis. */
+html body.about-body #ypMediaAnchor .media-story-node{border-color:#b2c9dc99;background:radial-gradient(circle at 35% 28%,#d2e7f452,#536e8540 58%,#182735);box-shadow:0 0 0 4px #000,0 0 6px #9ec9ea26,inset 0 1px 2px #e0f1ff4d;transition:background .3s,border-color .3s,box-shadow .3s}
+html body.about-body #ypMediaAnchor .media-story-row.is-current .media-story-node{border-color:#e5f4ff;background:radial-gradient(circle at 35% 28%,#fff,#daefff 38%,#a6cce5 100%);box-shadow:0 0 0 4px #000,0 0 6px #c4e5ff80,0 0 13px #a5d5ff38,inset 0 1px 1px #fff}

@@ -1,0 +1,6 @@
+/* A real paper image remains visible even when a browser cannot sample a film. */
+html body.about-body #aboutEntryStory .yai-painting[data-painting="mudong"] .yai-art{background:#d9c39f!important}
+html body.about-body #aboutEntryStory .yai-painting[data-painting="mudong"] .yai-paper-background{display:block!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;opacity:1!important;mix-blend-mode:normal!important;z-index:0!important}
+html body.about-body #aboutEntryStory .yai-painting[data-painting="mudong"] canvas.yai-paper-continuation{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:1!important;opacity:0!important;pointer-events:none!important}
+html body.about-body #aboutEntryStory .yai-painting[data-painting="mudong"] canvas.yai-paper-continuation[data-ready="true"]{opacity:1!important}
+html body.about-body #aboutEntryStory .yai-painting[data-painting="mudong"] video.yai-art-video{background:transparent!important;z-index:2!important}

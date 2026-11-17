@@ -1,0 +1,80 @@
+/*
+  YEAR:ON visual system
+  White / black / silver 76% · pale blue 19% · burgundy 5%
+  This layer refines shared language without changing page structure or interactions.
+*/
+:root{
+  --yo-paper:#f5f6f6;--yo-white:#fbfbfa;--yo-ink:#090b0d;--yo-black:#050608;
+  --yo-silver:#c7ccd0;--yo-line:#aeb8c0;--yo-muted:#697680;
+  --yo-ice:#dbe7ef;--yo-pale:#b7cbd9;--yo-steel:#718b9e;
+  --yo-red:#752f39;--yo-red-soft:#9b5660;
+  --yo-pad:clamp(20px,3.2vw,58px);--yo-rule:rgba(80,98,112,.34);
+}
+html{background:var(--yo-paper);color:var(--yo-ink);scroll-behavior:smooth}
+body{background:linear-gradient(135deg,rgba(219,231,239,.18),transparent 28%),var(--yo-paper);color:var(--yo-ink)}
+body::selection{background:var(--yo-red);color:#fff}
+body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9998;opacity:.055;background-image:radial-gradient(#29404f .45px,transparent .55px);background-size:4px 4px;mix-blend-mode:multiply}
+.global-header{height:clamp(68px,7vw,94px)!important;padding-inline:var(--yo-pad)!important;background:rgba(248,249,249,.93)!important;border-color:var(--yo-rule)!important;backdrop-filter:blur(16px) saturate(.8)}
+.global-header .brand{font-weight:700!important;letter-spacing:-.055em!important;color:var(--yo-ink)!important}
+.global-header nav{gap:clamp(22px,3vw,52px)!important}
+.global-header nav a{position:relative!important;color:#1a2024!important;font-size:clamp(10px,.72vw,12px)!important;letter-spacing:.045em!important}
+.global-header nav a:after{content:"";position:absolute;left:0;right:100%;bottom:-9px;height:1px;background:var(--yo-red);transition:right .35s cubic-bezier(.2,.8,.2,1)}
+.global-header nav a:hover:after,.global-header nav a.active:after{right:0}
+.global-header nav a.active{color:var(--yo-red)!important}
+.global-header button,.language{box-shadow:none!important}
+main>section,.archive-heading,.archive-switch{border-color:var(--yo-rule)!important}
+.section-label,[class*="-meta"],[class*="-eyebrow"],[class*="-index"],[class*="-counter"],[class*="-coordinate"]{letter-spacing:.14em!important;font-variant-numeric:tabular-nums;color:var(--yo-muted)}
+h1,h2,h3{font-weight:400;letter-spacing:-.045em}
+p{letter-spacing:-.012em}
+button,a{transition:color .25s ease,border-color .25s ease,background-color .25s ease,opacity .25s ease,letter-spacing .3s ease}
+button:hover,a:hover{letter-spacing:.065em}
+img{filter:saturate(.76) contrast(1.025) brightness(1.015);transition:filter .45s ease,opacity .45s ease,transform .55s cubic-bezier(.2,.75,.2,1)}
+a:hover img,button:hover img,img:hover{filter:saturate(.94) contrast(1.035)}
+hr,[class*="rule"],[class*="line"]{border-color:var(--yo-rule)}
+
+/* HOME — keep the opening composition and interactions; sharpen the graphic hierarchy. */
+.home-body [class*="hero"],body:not([class]) [class*="hero"]{background-color:var(--yo-white)}
+.home-body [class*="scroll"],body:not([class]) [class*="scroll"]{color:var(--yo-red)!important}
+.home-body section{border-color:var(--yo-rule)!important}
+
+/* ABOUT — preserve the equation opening, make the page read like a catalogue. */
+.about-body,.about-page{background:var(--yo-white)}
+.about-body main>section,.about-page main>section{padding-inline:var(--yo-pad)}
+.about-body .concept-equation,.about-page .concept-equation{color:var(--yo-ink);text-wrap:balance}
+.about-body .concept-equation em,.about-page .concept-equation em{color:var(--yo-steel)!important}
+.about-body [class*="timeline"],.about-page [class*="timeline"]{--timeline-accent:var(--yo-red);border-color:var(--yo-line)!important}
+
+/* MEDIA BY ERA — keep each object and its controls; unify the surrounding exhibition field. */
+.media-body [class*="era"],.media-page [class*="era"]{border-color:var(--yo-rule)!important}
+.media-body [class*="caption"],.media-page [class*="caption"]{color:var(--yo-muted)!important}
+.media-body button[aria-pressed="true"],.media-page button[aria-pressed="true"]{color:var(--yo-red)!important;border-color:var(--yo-red)!important}
+.radio-stage button,.television-stage button{box-shadow:none!important}
+
+/* K-ARCHIVE — cool black exhibition room with restrained burgundy selection cues. */
+.karchive-body .culture-filters button{border-radius:0!important;background:transparent!important;border:0!important;border-bottom:1px solid transparent!important;color:#5f6d77!important}
+.karchive-body .culture-filters button:hover,.karchive-body .culture-filters button.active,.karchive-body .culture-filters button[aria-pressed="true"]{color:var(--yo-red)!important;border-color:var(--yo-red)!important}
+.karchive-body .archive-switch button{border-radius:0!important;border:0!important;border-bottom:1px solid transparent!important}
+.karchive-body .archive-switch button[aria-pressed="true"]{color:var(--yo-red)!important;border-color:var(--yo-red)!important}
+.karchive-body .culture-map::before{background:repeating-conic-gradient(from 0deg at 50% 50%,rgba(169,192,208,.19) 0 .055deg,transparent .055deg 9deg)!important}
+.karchive-body .culture-map[data-focused=true] .culture-map-center h2{color:#edf3f6!important}
+.karchive-body .map-photo.is-selected{border-color:rgba(137,65,76,.88)!important}
+.karchive-body .map-photo.is-selected:after{content:"";position:absolute;left:-1px;top:-1px;width:18px;height:1px;background:var(--yo-red)}
+
+/* VISIT — retain the two-step map, with editorial information and a precise marker. */
+.visit-body,.visit-page{background:var(--yo-white)}
+.visit-map{border-color:var(--yo-rule)!important}
+.cheongju-map-trigger small,.visit-map-coordinate{color:var(--yo-red)!important}
+.cheongju-map-trigger:before{background:var(--yo-white)!important;box-shadow:0 0 0 1px var(--yo-red),0 0 14px rgba(117,47,57,.38),0 0 30px rgba(183,203,217,.8)!important}
+.visit-map-copy h2,.visit-map-place h3{letter-spacing:-.065em!important}
+.visit-map-back{border-radius:0!important;border-color:var(--yo-line)!important;background:rgba(248,249,249,.88)!important}
+
+/* Small screens retain breathing room and remove decorative noise. */
+@media(max-width:760px){
+  :root{--yo-pad:18px}.global-header nav{gap:14px!important}.global-header nav a{font-size:9px!important}
+  body:after{opacity:.035}.karchive-body .culture-map::before{opacity:.24!important}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
+
+/* corrections: stable hover, straight path, complete dark palette */
+button:hover,a:hover{letter-spacing:inherit!important}.media-path-svg{display:none!important}.media-path-canvas{position:relative!important}.media-path-canvas:before{content:"";position:absolute;left:50%;top:10px;bottom:10px;width:1px;background:linear-gradient(180deg,#752f39 0 8%,#718b9e 8% 100%);z-index:0}
+html[data-theme="dark"],html.dark{--yo-paper:#07090b;--yo-white:#0a0c0f;--yo-ink:#edf2f5;--yo-line:#50606c;--yo-muted:#8d9ba5;--yo-steel:#8fa9ba;background:#07090b!important;color:#edf2f5!important}html[data-theme="dark"] body,html.dark body,body.dark{background:#07090b!important;color:#edf2f5!important}html[data-theme="dark"] .global-header,html.dark .global-header,body.dark .global-header{background:rgba(6,8,10,.95)!important;border-color:#3d4850!important}html[data-theme="dark"] .global-header .brand,html.dark .global-header .brand,body.dark .global-header .brand{color:#f1f5f7!important}html[data-theme="dark"] .global-header nav a,html.dark .global-header nav a,body.dark .global-header nav a{color:#9cabb5!important}html[data-theme="dark"] main,html[data-theme="dark"] main>section,html.dark main,html.dark main>section,body.dark main,body.dark main>section{background-color:#07090b!important;color:#edf2f5!important;border-color:#3d4850!important}html[data-theme="dark"] h1,html[data-theme="dark"] h2,html[data-theme="dark"] h3,html[data-theme="dark"] p,html.dark h1,html.dark h2,html.dark h3,html.dark p,body.dark h1,body.dark h2,body.dark h3,body.dark p{color:#edf2f5!important}html[data-theme="dark"] .concept-equation,html.dark .concept-equation,body.dark .concept-equation{color:#f2f5f6!important}html[data-theme="dark"] .concept-equation img,html.dark .concept-equation img,body.dark .concept-equation img{filter:brightness(1.12) contrast(.9) saturate(.72)!important}

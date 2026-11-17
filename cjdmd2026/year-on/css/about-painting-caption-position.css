@@ -1,0 +1,6 @@
+/* Lower both captions together, leaving a clear gap above the scroll cue. */
+html body.about-body #aboutEntryStory .yai-painting:is([data-painting="mudong"],[data-painting="ssireum"]) .yai-caption{bottom:88px!important}
+html body.about-body:has(#aboutEntryStory .yai-painting[aria-hidden="false"]) :is(.yai-start,.about-reading-scroll){color:rgba(20,25,29,.62)!important;text-shadow:none!important}
+html body.about-body:has(#aboutEntryStory .yai-painting[aria-hidden="false"]) :is(.yai-start,.about-reading-scroll) svg{color:inherit;opacity:.8}
+html body.about-body:has(#aboutEntryStory .yai-painting[aria-hidden="false"]) :is(.yai-start,.about-reading-scroll) svg :is(rect,path,line){stroke:currentColor!important}
+@media(max-width:760px){html body.about-body #aboutEntryStory .yai-painting:is([data-painting="mudong"],[data-painting="ssireum"]) .yai-caption{bottom:calc(82px + env(safe-area-inset-bottom,0px))!important}}

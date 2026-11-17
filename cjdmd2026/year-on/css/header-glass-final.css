@@ -1,0 +1,842 @@
+/* YEAR:ON final shared header — header scope only. */
+html body .global-header.global-header{
+  --header-ink:#15191c;
+  position:fixed!important;
+  inset:0 0 auto 0!important;
+  z-index:10000!important;
+  width:100%!important;
+  height:74px!important;
+  padding:0 clamp(20px,2.5vw,48px)!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:24px!important;
+  box-sizing:border-box!important;
+  color:var(--header-ink)!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  border-bottom:.5px solid rgba(169,181,189,.3)!important;
+  box-shadow:inset 0 .5px 0 rgba(255,255,255,.28)!important;
+  -webkit-backdrop-filter:blur(5px) saturate(.92)!important;
+  backdrop-filter:blur(5px) saturate(.92)!important;
+  transform:none!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+html body .global-header.global-header[data-tone="light"]{
+  --header-ink:#f4f6f7;
+  background-color:transparent!important;
+  background-image:none!important;
+  border-bottom-color:rgba(230,235,238,.25)!important;
+  box-shadow:inset 0 .5px 0 rgba(255,255,255,.28)!important;
+}
+html body .global-header.global-header .brand{
+  flex:0 0 auto!important;
+  margin:0!important;
+  padding:0!important;
+  color:inherit!important;
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif!important;
+  font-size:21px!important;
+  font-weight:200!important;
+  line-height:1!important;
+  letter-spacing:.22em!important;
+  text-decoration:none!important;
+  white-space:nowrap!important;
+}
+html body .global-header.global-header .brand span{color:inherit!important;font-weight:200!important}
+.global-header .header-right{
+  margin-left:auto!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:clamp(17px,2vw,34px)!important;
+  min-width:0!important;
+  height:100%!important;
+}
+html body .global-header.global-header nav{
+  position:static!important;
+  inset:auto!important;
+  transform:none!important;
+  width:auto!important;
+  height:100%!important;
+  margin:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:clamp(17px,2vw,34px)!important;
+  overflow:visible!important;
+  border:0!important;
+}
+html body .global-header.global-header nav a{
+  display:flex!important;
+  align-items:center!important;
+  height:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:1px 0 0!important;
+  border:0!important;
+  color:inherit!important;
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif!important;
+  font-size:10.5px!important;
+  font-weight:300!important;
+  line-height:1!important;
+  letter-spacing:.14em!important;
+  text-decoration:none!important;
+  white-space:nowrap!important;
+  text-shadow:none!important;
+}
+.global-header nav a::before{display:none!important}
+.global-header nav a::after{
+  left:0!important;
+  right:100%!important;
+  bottom:18px!important;
+  height:.5px!important;
+  background:currentColor!important;
+  box-shadow:none!important;
+}
+.global-header nav a:hover::after{right:0!important}
+.global-header nav a.active::after{display:none!important}
+.global-header nav a.active{
+  color:#1e3b83!important;
+  font-weight:300!important;
+  opacity:1!important;
+  text-shadow:0 0 7px rgba(50,82,157,.18),0 0 15px rgba(50,82,157,.08)!important;
+}
+.global-header[data-tone="light"] nav a.active{
+  color:#f7fafc!important;
+  text-shadow:0 0 7px rgba(219,237,249,.34),0 0 16px rgba(184,216,237,.17)!important;
+}
+.header-tools{position:relative;display:flex;align-items:center;height:100%;gap:0;color:inherit}
+.header-tools::before,.menu-toggle::before{
+  content:':'!important;display:flex!important;align-items:center!important;justify-content:center!important;
+  width:auto!important;height:auto!important;margin:0 15px 0 0!important;background:none!important;
+  color:currentColor!important;font:300 9px/1 Arial,sans-serif!important;letter-spacing:0!important;opacity:.4
+}
+.header-icon-button{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:38px!important;height:38px!important;margin:0!important;padding:0!important;
+  border:0!important;border-radius:0!important;background:transparent!important;color:inherit!important;
+  box-shadow:none!important;cursor:pointer!important
+}
+.globe-button svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.15}
+html body .global-header .header-icon-button[aria-expanded="true"]{
+  color:#8eafd2!important;
+  filter:drop-shadow(0 0 5px rgba(138,177,220,.58)) drop-shadow(0 0 12px rgba(92,139,199,.28));
+}
+html body .global-header[data-tone="light"] .header-icon-button[aria-expanded="true"]{
+  color:#dceaf7!important;
+  filter:drop-shadow(0 0 5px rgba(221,239,255,.75)) drop-shadow(0 0 13px rgba(177,207,240,.38));
+}
+.language-menu{
+  position:absolute;right:48px;top:58px;display:grid;min-width:82px;padding:6px;
+  background:rgba(232,237,240,.68);border:.5px solid rgba(135,149,158,.36);
+  -webkit-backdrop-filter:blur(12px) saturate(.85);backdrop-filter:blur(12px) saturate(.85);
+  opacity:0;visibility:hidden;transform:translateY(-4px);transition:.18s ease
+}
+.global-header[data-tone="light"] .language-menu{background:rgba(17,24,29,.67);border-color:rgba(231,235,238,.24)}
+.language-menu.open{opacity:1;visibility:visible;transform:none}
+.language-menu button{height:29px;border:0;background:transparent;color:inherit;font:300 10px Arial,sans-serif;letter-spacing:.14em;cursor:pointer}
+.language-menu button.active{background:rgba(128,145,156,.16)!important;color:inherit!important;text-shadow:0 0 7px rgba(173,205,235,.55)}
+.menu-toggle{width:auto!important;gap:0!important}
+.menu-toggle::before{margin-left:10px!important;margin-right:16px!important}
+.menu-lines{display:grid;gap:5px;width:22px}
+.menu-lines i{display:block;width:22px;height:1px;background:currentColor!important;border-radius:0!important;margin:0!important;animation:none!important}
+.header-menu-panel{
+  position:absolute;right:clamp(20px,2.5vw,48px);top:61px;width:210px;padding:11px 14px;
+  display:grid!important;background:rgba(239,243,246,.48);border:1px solid rgba(255,255,255,.48);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.38),0 10px 28px rgba(24,34,44,.08);
+  -webkit-backdrop-filter:blur(10px) saturate(.85);backdrop-filter:blur(10px) saturate(.85);
+  opacity:0;visibility:hidden;transform:translateY(-5px);transition:.18s ease
+}
+.global-header[data-tone="light"] .header-menu-panel,
+body.media-time-body .global-header .header-menu-panel{
+  background:rgba(27,34,42,.54);
+  border-color:rgba(222,233,241,.2);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.13),0 12px 30px rgba(9,15,22,.13);
+  color:#f1f4f6;
+}
+.header-menu-panel.open{opacity:1;visibility:visible;transform:none}
+.header-menu-panel a{padding:9px 2px;color:inherit;font:300 10.5px Arial,sans-serif;letter-spacing:.13em;text-decoration:none;border-bottom:.5px solid color-mix(in srgb,currentColor 15%,transparent);transition:color .2s ease,background-color .2s ease}
+.header-menu-panel a:hover,.header-menu-panel a:focus-visible{color:#c8d9e5;background:rgba(210,226,237,.06)}
+.header-menu-panel a:last-child{border-bottom:0}
+@media(max-width:760px){
+  html body .global-header.global-header{height:64px!important;padding:0 14px!important}
+  html body .global-header.global-header .brand{font-size:18px!important;letter-spacing:.18em!important}
+  html body .global-header.global-header .header-right>nav{display:none!important}
+  .global-header .header-right{gap:0!important}
+  .header-tools::before{display:none!important}
+  .menu-toggle::before{height:auto!important;margin:0 12px!important}
+  .language-menu{right:38px;top:53px}
+  .header-menu-panel{right:14px;top:55px}
+}
+@media(prefers-reduced-motion:reduce){.language-menu,.header-menu-panel{transition:none}}
+/* Preserve the original page-script hooks without adding visible header UI. */
+.global-header .legacy-guide-trigger{display:none!important}
+
+/* The film remains in its original visual position while its image continues
+   behind the fixed glass header. */
+html body.home-film-body .home-film-journey .home-shared-film{
+  top:0!important;
+  height:100svh!important;
+}
+html body.home-film-body .home-shared-film :is(.film-opening,.film-destination){
+  box-sizing:border-box!important;
+  padding-top:74px!important;
+}
+@media(max-width:760px){
+  html body.home-film-body .home-shared-film :is(.film-opening,.film-destination){padding-top:64px!important}
+}
+
+/* Lock every page to the K-ARCHIVE header geometry. Active state never
+   changes an item's width, so navigating cannot shift the header sideways. */
+html body .global-header.global-header{
+  height:74px!important;
+  padding-inline:clamp(20px,2.5vw,48px)!important;
+}
+html body .global-header.global-header .brand{
+  flex:0 0 auto!important;
+  width:auto!important;
+  border:0!important;
+  background:transparent!important;
+  appearance:none!important;
+}
+html body .global-header.global-header .header-right{
+  flex:0 0 auto!important;
+  margin-left:auto!important;
+  gap:clamp(17px,2vw,34px)!important;
+}
+html body .global-header.global-header .header-right>nav{
+  flex:0 0 auto!important;
+  gap:clamp(17px,2vw,34px)!important;
+}
+html body .global-header.global-header .header-tools{
+  flex:0 0 auto!important;
+  width:112px!important;
+  min-width:112px!important;
+  justify-content:flex-end!important;
+}
+html body .global-header.global-header nav a,
+html body .global-header.global-header nav a.active{
+  font-weight:300!important;
+}
+html body.home-film-body .global-header.global-header .brand[aria-current="page"]{
+  color:#c5e2fb!important;
+  text-shadow:0 0 7px rgba(190,224,253,.68),0 0 18px rgba(117,177,224,.36)!important;
+  filter:drop-shadow(0 0 5px rgba(137,194,237,.3));
+}
+html body.home-film-body .global-header.global-header .brand[aria-current="page"]:active,
+html body.home-film-body .global-header.global-header .brand[aria-current="page"]:focus-visible{
+  color:#d8eeff!important;
+  text-shadow:0 0 8px rgba(218,239,255,.9),0 0 22px rgba(113,185,239,.6)!important;
+  outline:none!important;
+}
+@media(max-width:850px){
+  html body .global-header.global-header{height:64px!important;padding-inline:14px!important}
+  html body .global-header.global-header .header-tools{width:auto!important;min-width:0!important}
+}
+
+/* Reduce only the infinity symbol; keep the YEAR:ON wordmark unchanged. */
+html body .global-header.global-header .brand.brand-image,
+html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{
+  width:146px!important;
+  gap:4px!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-mark{
+  width:44px!important;
+  height:30px!important;
+}
+@media(max-width:850px){
+  html body .global-header.global-header .brand.brand-image,
+  html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{
+    width:121px!important;
+    gap:3px!important;
+  }
+  html body .global-header.global-header .brand.brand-image .brand-mark{
+    width:39px!important;
+    height:27px!important;
+  }
+}
+
+/* Slightly smaller shared lockup, optically centred within the header height. */
+html body .global-header.global-header .brand.brand-image,
+html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{
+  width:174px!important;
+  height:50px!important;
+  display:flex!important;
+  align-items:center!important;
+  align-self:center!important;
+  gap:0!important;
+  margin-top:0!important;
+  margin-bottom:0!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-mark{
+  width:72px!important;
+  height:47px!important;
+  object-fit:contain!important;
+  align-self:center!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-word{
+  width:102px!important;
+  height:23px!important;
+  align-self:center!important;
+  transform:none!important;
+}
+@media(max-width:850px){
+  html body .global-header.global-header .brand.brand-image,
+  html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{
+    width:143px!important;
+    height:46px!important;
+  }
+  html body .global-header.global-header .brand.brand-image .brand-mark{width:61px!important;height:43px!important}
+  html body .global-header.global-header .brand.brand-image .brand-word{width:82px!important;height:19px!important}
+}
+
+/* Requested smaller header symbol and wordmark. */
+html body .global-header.global-header .brand.brand-image,
+html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{width:164px!important;height:46px!important}
+html body .global-header.global-header .brand.brand-image .brand-mark{width:66px!important;height:43px!important}
+html body .global-header.global-header .brand.brand-image .brand-word{width:98px!important;height:22px!important}
+@media(max-width:850px){
+  html body .global-header.global-header .brand.brand-image,
+  html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{width:136px!important;height:42px!important}
+  html body .global-header.global-header .brand.brand-image .brand-mark{width:57px!important;height:39px!important}
+  html body .global-header.global-header .brand.brand-image .brand-word{width:79px!important;height:18px!important}
+}
+
+/* Dark-background header: pale luminous steel blue, never deep navy. */
+html body .global-header.global-header[data-tone="light"] nav a{
+  color:rgba(244,247,249,.88)!important;
+  text-shadow:none!important;
+}
+html body .global-header.global-header[data-tone="light"] nav a.active{
+  color:#91b5cf!important;
+  opacity:1!important;
+  text-shadow:0 0 6px rgba(176,216,244,.38),0 0 15px rgba(119,173,211,.18)!important;
+}
+html body.media-time-body .global-header.global-header nav a.active{
+  color:#91b5cf!important;
+  opacity:1!important;
+  text-shadow:0 0 6px rgba(176,216,244,.38),0 0 15px rgba(119,173,211,.18)!important;
+}
+
+/* The document width shrinks when a vertical scrollbar appears. Use the
+   viewport itself so every page keeps the exact K-ARCHIVE coordinates. */
+html body .global-header.global-header{
+  left:0!important;
+  right:auto!important;
+  width:100vw!important;
+  max-width:none!important;
+}
+
+/* YEAR:ON supplied image logo. Keeps the existing home-link position and hit area. */
+html body .global-header.global-header .brand.brand-image{
+  width:82px!important;
+  height:64px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:visible!important;
+}
+html body .global-header.global-header .brand.brand-image img{
+  display:block!important;
+  width:82px!important;
+  height:62px!important;
+  object-fit:contain!important;
+  filter:none!important;
+}
+@media(max-width:850px){
+  html body .global-header.global-header .brand.brand-image{width:68px!important;height:56px!important}
+  html body .global-header.global-header .brand.brand-image img{width:68px!important;height:54px!important}
+}
+
+/* Wide logo lockup: the metallic mark stays visible while the wordmark remains
+   crisp, and a restrained glass plate keeps both readable over light or dark film. */
+html body .global-header.global-header .brand.brand-image{
+  width:174px!important;
+  height:52px!important;
+  padding:5px 13px 5px 8px!important;
+  gap:7px!important;
+  justify-content:flex-start!important;
+  border:.5px solid rgba(255,255,255,.48)!important;
+  border-radius:13px!important;
+  color:#17191b!important;
+  background:linear-gradient(100deg,rgba(250,252,253,.82),rgba(231,236,240,.68))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.75),0 4px 14px rgba(18,26,33,.09)!important;
+  -webkit-backdrop-filter:blur(12px) saturate(.82)!important;
+  backdrop-filter:blur(12px) saturate(.82)!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-mark{
+  flex:0 0 auto!important;
+  width:55px!important;
+  height:38px!important;
+  object-fit:contain!important;
+  filter:drop-shadow(0 1px 2px rgba(18,24,28,.15))!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-word{
+  display:block!important;
+  color:#17191b!important;
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif!important;
+  font-size:30px!important;
+  font-weight:200!important;
+  line-height:1!important;
+  letter-spacing:-.065em!important;
+  white-space:nowrap!important;
+}
+html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{
+  color:#17191b!important;
+  text-shadow:none!important;
+  filter:none!important;
+}
+@media(max-width:850px){
+  html body .global-header.global-header .brand.brand-image{
+    width:143px!important;
+    height:46px!important;
+    padding:4px 10px 4px 7px!important;
+    gap:5px!important;
+  }
+  html body .global-header.global-header .brand.brand-image .brand-mark{width:46px!important;height:34px!important}
+  html body .global-header.global-header .brand.brand-image .brand-word{font-size:25px!important}
+}
+
+/* Integrate the lockup into the header: no badge or plate. The wordmark uses
+   the same adaptive header ink; the metallic mark only changes luminance. */
+html body .global-header.global-header .brand.brand-image,
+html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{
+  width:174px!important;
+  height:58px!important;
+  padding:0!important;
+  gap:8px!important;
+  border:0!important;
+  border-radius:0!important;
+  color:var(--header-ink)!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  text-shadow:none!important;
+  filter:none!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-word{
+  color:inherit!important;
+  text-shadow:none!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-mark{
+  width:58px!important;
+  height:42px!important;
+  filter:brightness(.78) contrast(1.18) drop-shadow(0 1px 1px rgba(10,15,18,.14))!important;
+  transition:filter .25s ease!important;
+}
+html body .global-header.global-header[data-tone="light"] .brand.brand-image .brand-mark,
+html body.home-film-body .global-header.global-header .brand.brand-image .brand-mark{
+  filter:brightness(1.36) contrast(.94) drop-shadow(0 1px 2px rgba(0,0,0,.3))!important;
+}
+@media(max-width:850px){
+  html body .global-header.global-header .brand.brand-image,
+  html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{
+    width:145px!important;
+    height:52px!important;
+    padding:0!important;
+    gap:6px!important;
+  }
+  html body .global-header.global-header .brand.brand-image .brand-mark{width:48px!important;height:36px!important}
+}
+
+/* Final wordmark proportions: year:ON with a larger symbol and unchanged type size. */
+html body .global-header.global-header .brand.brand-image,
+html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{
+  width:188px!important;
+  gap:8px!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-mark{
+  width:70px!important;
+  height:50px!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-word{
+  display:flex!important;
+  align-items:baseline!important;
+  gap:0!important;
+  font-size:30px!important;
+  letter-spacing:-.065em!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-word>span{
+  color:inherit!important;
+  font:inherit!important;
+  font-weight:200!important;
+  letter-spacing:inherit!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-word>b{
+  color:inherit!important;
+  font:inherit!important;
+  font-weight:400!important;
+  letter-spacing:-.075em!important;
+}
+@media(max-width:850px){
+  html body .global-header.global-header .brand.brand-image,
+  html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{
+    width:156px!important;
+    gap:6px!important;
+  }
+  html body .global-header.global-header .brand.brand-image .brand-mark{width:57px!important;height:42px!important}
+}
+
+/* Optical alignment from the supplied construction guide. Uppercase ON is
+   reduced to the lowercase x-height; the colon has its own side bearings. */
+html body .global-header.global-header .brand.brand-image .brand-word{
+  height:34px!important;
+  display:flex!important;
+  align-items:baseline!important;
+  line-height:1!important;
+  letter-spacing:0!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-word .brand-year{
+  display:block!important;
+  color:inherit!important;
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif!important;
+  font-size:30px!important;
+  font-weight:100!important;
+  font-stretch:normal!important;
+  line-height:1!important;
+  letter-spacing:-.075em!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-word .brand-colon{
+  display:block!important;
+  margin-left:.15em!important;
+  margin-right:.19em!important;
+  color:inherit!important;
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif!important;
+  font-size:24px!important;
+  font-style:normal!important;
+  font-weight:200!important;
+  line-height:1!important;
+  letter-spacing:0!important;
+  transform:translateY(-.01em)!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-word .brand-on{
+  display:block!important;
+  color:inherit!important;
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif!important;
+  font-size:23px!important;
+  font-weight:300!important;
+  line-height:1!important;
+  letter-spacing:-.055em!important;
+}
+@media(max-width:850px){
+  html body .global-header.global-header .brand.brand-image .brand-word .brand-year{font-size:25px!important}
+  html body .global-header.global-header .brand.brand-image .brand-word .brand-colon{font-size:20px!important}
+  html body .global-header.global-header .brand.brand-image .brand-word .brand-on{font-size:19px!important}
+}
+
+/* Enlarged optically centred lockup. Use the installed UltraLight face
+   explicitly so `year` cannot fall back to a heavier synthesized weight. */
+html body .global-header.global-header .brand.brand-image,
+html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{
+  width:196px!important;
+  height:68px!important;
+  gap:10px!important;
+  align-items:center!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-mark{
+  width:88px!important;
+  height:62px!important;
+  object-position:center!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-word{
+  height:44px!important;
+  display:flex!important;
+  align-items:center!important;
+  transform:translateY(-1px)!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-word .brand-year{
+  font-family:"Helvetica Neue UltraLight","HelveticaNeue-UltraLight","Helvetica Neue",Helvetica,Arial,sans-serif!important;
+  font-size:38px!important;
+  font-weight:100!important;
+  line-height:1!important;
+  letter-spacing:-.075em!important;
+  -webkit-font-smoothing:antialiased!important;
+  text-rendering:geometricPrecision!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-word .brand-colon{
+  margin-left:.17em!important;
+  margin-right:.21em!important;
+  font-family:"Helvetica Neue Thin","HelveticaNeue-Thin","Helvetica Neue",Helvetica,Arial,sans-serif!important;
+  font-size:30px!important;
+  font-weight:200!important;
+  line-height:1!important;
+  transform:none!important;
+}
+html body .global-header.global-header:not([data-tone="light"]) .brand.brand-image .brand-word{
+  background:#17191c!important;
+}
+html body .global-header.global-header[data-tone="light"] .brand.brand-image .brand-word{
+  background:#fff!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-word .brand-on{
+  font-family:"Helvetica Neue Thin","HelveticaNeue-Thin","Helvetica Neue",Helvetica,Arial,sans-serif!important;
+  font-size:29px!important;
+  font-weight:200!important;
+  line-height:1!important;
+  letter-spacing:-.055em!important;
+}
+@media(max-width:850px){
+  html body .global-header.global-header .brand.brand-image,
+  html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{
+    width:181px!important;
+    height:58px!important;
+    gap:7px!important;
+  }
+  html body .global-header.global-header .brand.brand-image .brand-mark{width:68px!important;height:50px!important}
+  html body .global-header.global-header .brand.brand-image .brand-word{height:36px!important}
+  html body .global-header.global-header .brand.brand-image .brand-word .brand-year{font-size:30px!important}
+  html body .global-header.global-header .brand.brand-image .brand-word .brand-colon{font-size:24px!important}
+  html body .global-header.global-header .brand.brand-image .brand-word .brand-on{font-size:23px!important}
+}
+
+/* On genuinely dark header imagery, keep the supplied symbol shape and shift
+   only its material response toward cold luminous silver. */
+html body .global-header.global-header[data-tone="light"] .brand.brand-image .brand-mark{
+  filter:brightness(1.72) contrast(1.08) saturate(.42)
+    drop-shadow(0 0 2px rgba(244,249,255,.72))
+    drop-shadow(0 0 6px rgba(185,216,249,.34))!important;
+}
+
+/* Final header lockup: slightly smaller, with a clear material response on
+   light and dark backgrounds. The symbol geometry stays untouched. */
+html body .global-header.global-header .brand.brand-image,
+html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{
+  width:210px!important;
+  height:62px!important;
+  gap:0!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-mark{
+  width:76px!important;
+  height:55px!important;
+  filter:brightness(.58) contrast(1.38) saturate(.28)
+    drop-shadow(0 1px 1px rgba(8,13,17,.16))!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-word{
+  height:40px!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-word .brand-year{
+  font-family:"HelveticaNeue-UltraLight","Helvetica Neue UltraLight","Helvetica Neue",Helvetica,Arial,sans-serif!important;
+  font-size:34px!important;
+  font-weight:normal!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-word .brand-colon{
+  margin-left:.18em!important;
+  margin-right:.17em!important;
+  font-family:"HelveticaNeue-Bold","Helvetica Neue",Helvetica,Arial,sans-serif!important;
+  font-size:27px!important;
+  font-weight:700!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-word .brand-on{
+  font-family:"HelveticaNeue-Bold","Helvetica Neue",Helvetica,Arial,sans-serif!important;
+  font-size:26px!important;
+  font-weight:700!important;
+}
+html body .global-header.global-header[data-tone="light"] .brand.brand-image .brand-mark,
+html body.home-film-body .global-header.global-header[data-tone="light"] .brand.brand-image .brand-mark{
+  filter:brightness(1.62) contrast(1.16) saturate(.34)
+    drop-shadow(0 0 2px rgba(248,251,255,.62))
+    drop-shadow(0 0 5px rgba(183,213,244,.28))!important;
+}
+@media(max-width:850px){
+  html body .global-header.global-header .brand.brand-image,
+  html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{
+    width:168px!important;
+    height:54px!important;
+    gap:7px!important;
+  }
+  html body .global-header.global-header .brand.brand-image .brand-mark{width:61px!important;height:45px!important}
+  html body .global-header.global-header .brand.brand-image .brand-word{height:34px!important}
+  html body .global-header.global-header .brand.brand-image .brand-word .brand-year{font-size:28px!important}
+  html body .global-header.global-header .brand.brand-image .brand-word .brand-colon{font-size:22px!important}
+  html body .global-header.global-header .brand.brand-image .brand-word .brand-on{font-size:21px!important}
+}
+
+/* Exact supplied wordmark silhouette. Keep the metallic source artwork and
+   only adapt its luminance to the header background. */
+html body .global-header.global-header .brand.brand-image,
+html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{
+  width:190px!important;
+  height:56px!important;
+  gap:0!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-mark{
+  width:80px!important;
+  height:52px!important;
+  filter:brightness(1.02) contrast(1.08) saturate(.86)
+    drop-shadow(0 0 2px rgba(185,205,226,.24))!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-word{
+  display:block!important;
+  flex:0 0 auto!important;
+  width:110px!important;
+  height:25px!important;
+  background:transparent url("../assets/images/yearon-wordmark-black.webp?v=3") center/contain no-repeat!important;
+  -webkit-mask:none!important;
+  mask:none!important;
+  transform:translateY(2px)!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-word>*{
+  display:none!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-word .brand-year,
+html body .global-header.global-header .brand.brand-image .brand-word .brand-colon,
+html body .global-header.global-header .brand.brand-image .brand-word .brand-on{
+  display:none!important;
+}
+html body .global-header.global-header:not([data-tone="light"]) .brand.brand-image .brand-word{
+  background:transparent url("../assets/images/yearon-wordmark-black.webp?v=3") center/contain no-repeat!important;
+}
+html body .global-header.global-header[data-tone="light"] .brand.brand-image .brand-word{
+  background:transparent url("../assets/images/yearon-wordmark-white.webp?v=3") center/contain no-repeat!important;
+}
+html body.media-time-body .global-header.global-header .brand.brand-image .brand-word{
+  background:transparent url("../assets/images/yearon-wordmark-white.webp?v=3") center/contain no-repeat!important;
+}
+html body .global-header.global-header[data-tone="light"] .brand.brand-image .brand-mark,
+html body.home-film-body .global-header.global-header[data-tone="light"] .brand.brand-image .brand-mark{
+  filter:brightness(1.18) contrast(1.05) saturate(.72)
+    drop-shadow(0 0 2px rgba(239,247,255,.28))!important;
+}
+@media(max-width:850px){
+  html body .global-header.global-header .brand.brand-image,
+  html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{
+    width:154px!important;
+    height:52px!important;
+    gap:0!important;
+  }
+  html body .global-header.global-header .brand.brand-image .brand-mark{width:66px!important;height:47px!important}
+  html body .global-header.global-header .brand.brand-image .brand-word{width:88px!important;height:20px!important}
+}
+
+/* Final lockup geometry: smaller and vertically centred in the 74px header. */
+html body .global-header.global-header .brand.brand-image,
+html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{
+  width:174px!important;height:50px!important;display:flex!important;
+  align-items:center!important;align-self:center!important;gap:0!important;
+  margin-top:0!important;margin-bottom:0!important
+}
+html body .global-header.global-header .brand.brand-image .brand-mark{
+  width:72px!important;height:47px!important;object-fit:contain!important;align-self:center!important
+}
+html body .global-header.global-header .brand.brand-image .brand-word{
+  width:102px!important;height:23px!important;align-self:center!important;transform:none!important
+}
+@media(max-width:850px){
+  html body .global-header.global-header .brand.brand-image,
+  html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{width:143px!important;height:46px!important}
+  html body .global-header.global-header .brand.brand-image .brand-mark{width:61px!important;height:43px!important}
+  html body .global-header.global-header .brand.brand-image .brand-word{width:82px!important;height:19px!important}
+}
+
+/* Smaller final lockup. */
+html body .global-header.global-header .brand.brand-image,
+html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{width:164px!important;height:46px!important}
+html body .global-header.global-header .brand.brand-image .brand-mark{width:66px!important;height:43px!important}
+html body .global-header.global-header .brand.brand-image .brand-word{width:98px!important;height:22px!important}
+@media(max-width:850px){
+  html body .global-header.global-header .brand.brand-image,
+  html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{width:136px!important;height:42px!important}
+  html body .global-header.global-header .brand.brand-image .brand-mark{width:57px!important;height:39px!important}
+  html body .global-header.global-header .brand.brand-image .brand-word{width:79px!important;height:18px!important}
+}
+
+/* User-supplied final header lockup. Geometry stays unchanged; the source
+   switches by header tone so each original raster is shown without filters. */
+html body .global-header.global-header .brand.brand-image .brand-mark{
+  content:url('../assets/images/yearon-symbol-black-final.webp?v=2')!important;
+  filter:none!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-word,
+html body .global-header.global-header:not([data-tone="light"]) .brand.brand-image .brand-word{
+  background:transparent url('../assets/images/yearon-wordmark-20261018-black.webp?v=1') center/contain no-repeat!important;
+}
+html body .global-header.global-header[data-tone="light"] .brand.brand-image .brand-mark,
+html body.home-film-body .global-header.global-header[data-tone="light"] .brand.brand-image .brand-mark,
+html body.media-time-body .global-header.global-header .brand.brand-image .brand-mark{
+  content:url('../assets/images/yearon-symbol-white-final.webp?v=2')!important;
+  filter:none!important;
+}
+html body .global-header.global-header[data-tone="light"] .brand.brand-image .brand-word,
+html body.home-film-body .global-header.global-header[data-tone="light"] .brand.brand-image .brand-word,
+html body.media-time-body .global-header.global-header .brand.brand-image .brand-word{
+  background:transparent url('../assets/images/yearon-wordmark-20261018-white.webp?v=1') center/contain no-repeat!important;
+}
+
+/* Slightly open the supplied symbol/wordmark lockup without moving the header. */
+html body .global-header.global-header .brand.brand-image,
+html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{
+  width:168px!important;
+  gap:4px!important;
+}
+@media(max-width:850px){
+  html body .global-header.global-header .brand.brand-image,
+  html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{
+    width:139px!important;
+    gap:3px!important;
+  }
+}
+
+/* Final symbol scale: keep the wordmark and the opened lockup gap unchanged. */
+html body .global-header.global-header .brand.brand-image,
+html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{
+  width:163px!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-mark{
+  width:57px!important;
+  height:38px!important;
+}
+@media(max-width:850px){
+  html body .global-header.global-header .brand.brand-image,
+  html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{
+    width:135px!important;
+  }
+  html body .global-header.global-header .brand.brand-image .brand-mark{
+    width:49px!important;
+    height:34px!important;
+  }
+}
+
+/* Final header symbol correction: shrink the infinity mark only. */
+html body .global-header.global-header .brand.brand-image,
+html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{
+  width:146px!important;
+  gap:4px!important;
+}
+html body .global-header.global-header .brand.brand-image .brand-mark{
+  width:44px!important;
+  height:30px!important;
+}
+@media(max-width:850px){
+  html body .global-header.global-header .brand.brand-image,
+  html body.home-film-body .global-header.global-header .brand.brand-image[aria-current="page"]{
+    width:121px!important;
+    gap:3px!important;
+  }
+  html body .global-header.global-header .brand.brand-image .brand-mark{
+    width:39px!important;
+    height:27px!important;
+  }
+}
+/* Small baseline adjustment for the newly supplied wordmark only. */
+html body .global-header.global-header .brand.brand-image .brand-word{transform:translateY(2px)!important}
+
+/* Shared scroll hints: a quiet downward wheel gesture. */
+.aes-scroll-mouse path,.visit-scroll-cue svg path{animation:yearonCueWheel 1.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes yearonCueWheel{0%{opacity:0;transform:translateY(0)}25%{opacity:1}65%,100%{opacity:0;transform:translateY(5px)}}
+@media(prefers-reduced-motion:reduce){.aes-scroll-mouse path,.visit-scroll-cue svg path{animation:none;opacity:.8}}
+
+
+/* Shared opening backdrop for VISIT and K-ARCHIVE. */
+body:is(.visit-v7,.karchive-body,.about-body) {
+  --yearon-entry-gradient:linear-gradient(180deg,#000 0%,#000 var(--header-h,74px),#11151b 18%,#2e3540 35%,#535e6c 53%,#7d8998 70%,#aeb8c4 87%,#d4dae1 100%);
+}
+
+/* Keep the backdrop's outer edge over the dark page, away from the white gutter. */
+html:has(>body.about-body){background:#08090b!important}
+html body.about-body .global-header.global-header{width:100%!important;max-width:100%!important;right:0!important}
+
+/* Match the media page to the shared mobile header inset. */
+@media(max-width:850px){html body.media-time-body header.global-header.global-header.global-header.global-header{padding:0 14px!important;padding-inline:14px!important}}

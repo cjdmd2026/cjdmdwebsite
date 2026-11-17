@@ -1,0 +1,129 @@
+/* Images lead; each scene has one short, scroll-synchronised record. */
+html body.karchive-body #archiveStage .ka-object{transition:opacity .15s linear!important;touch-action:none}
+html body.karchive-body #archiveStage .ka-object img{width:100%;height:100%;object-fit:cover;transition:none!important}
+html body.karchive-body #archiveStage .ka-object:hover img{transform:none!important}
+html body.karchive-body #archiveStage .ka-object.is-current{cursor:zoom-in}
+
+html body.karchive-body #archiveStage .ka-object:hover{z-index:190!important}
+html body.karchive-body #archiveStage .ka-object.is-current:hover{z-index:250!important}
+.ka-stage{touch-action:none}
+.ka-scene-record{position:absolute;z-index:300;left:50%;top:69%;width:min(490px,68vw);text-align:center;pointer-events:none;color:#27313a;will-change:opacity,transform}
+.ka-record-meta{display:flex;justify-content:center;gap:19px;align-items:baseline;font:400 9px/1.5 Arial,sans-serif;letter-spacing:.1em}
+.ka-record-actions{color:#8b969e;font-size:8px;letter-spacing:.07em}
+.ka-scene-record h2{font:400 clamp(16px,1.45vw,23px)/1.5 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;letter-spacing:-.025em;margin:13px 0 10px;word-break:keep-all}
+.ka-record-ko{font:400 clamp(11px,.9vw,14px)/1.75 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;color:#65727c;margin:0 auto;max-width:40em;word-break:keep-all}
+.ka-record-en{font:400 clamp(10px,.8vw,12px)/1.6 Arial,sans-serif;color:#8a959d;margin:10px auto 0;max-width:42em}
+.ka-scene-record [hidden]{display:none!important}
+.ka-filter-active .ka-scene-record{color:#edf1f4}.ka-filter-active .ka-record-ko{color:#bec8cf}.ka-filter-active .ka-record-en,.ka-filter-active .ka-record-actions{color:#8d9da9}
+html body.karchive-body #archiveImageIndex{pointer-events:none}
+html body.karchive-body #archiveFocus{width:min(1040px,92vw);max-height:90svh;border:0;background:#fff;color:#27313a;padding:0;box-shadow:none;border-radius:0}
+#archiveFocus::backdrop{background:#080c12c9;backdrop-filter:blur(8px)}
+.ka-detail{position:relative;padding:54px 44px 36px;display:grid;grid-template-columns:1.5fr 1fr;gap:36px;align-items:center}
+.ka-detail .ka-close{position:absolute;top:18px;right:22px;background:none;border:0;font:400 10px/1.5 Arial,sans-serif;color:#596b79;cursor:pointer}
+.ka-detail figure{margin:0}.ka-detail figure>img{display:block;width:100%;max-height:66svh;object-fit:contain}
+.ka-detail figcaption{font:400 9px/1.6 Arial,sans-serif;color:#89949d;margin-top:12px;overflow-wrap:anywhere}
+.ka-detail figcaption a{color:inherit}.ka-detail figcaption span{display:block;margin-top:4px}
+.ka-detail-copy small{font:400 9px/1.8 Arial,sans-serif;letter-spacing:.05em;color:#81909c}
+.ka-detail-copy h2{font:400 23px/1.5 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;letter-spacing:-.03em;margin:17px 0}
+.ka-detail-copy p{font:400 13px/1.9 Arial,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;color:#61717e;word-break:keep-all}
+.ka-detail-copy p[lang=en]{font-size:11px;color:#8b98a1}
+@media(max-width:760px){
+ .ka-scene-record{top:67%;width:82vw}.ka-record-meta{gap:12px;font-size:8px}.ka-record-actions{font-size:7px}.ka-scene-record h2{font-size:17px;margin:11px 0 8px}.ka-record-ko{font-size:12px;line-height:1.7;max-width:28em}.ka-record-en{font-size:10px;max-width:28em;margin-top:8px}
+ .ka-detail{display:block;padding:52px 22px 25px}.ka-detail figure>img{max-height:43svh}.ka-detail-copy{margin-top:24px}.ka-detail-copy h2{font-size:20px}
+}
+@media(max-height:650px) and (min-width:761px){.ka-scene-record{top:68%}.ka-scene-record h2{margin:7px 0;font-size:17px}.ka-record-en{margin-top:5px}.ka-record-ko{font-size:11px}}
+@media(prefers-reduced-motion:reduce){html body.karchive-body #archiveStage .ka-object{transition:none!important}}
+html body.karchive-body #archiveFocus{position:fixed;inset:0!important;margin:auto!important;height:fit-content!important;overflow-y:auto}
+/* Curve is the first view. Reading lives in the photo lightbox. */
+.ka-scene-record{display:none!important}
+.ka-curve-indicator{position:absolute;z-index:450;top:24%;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:3px}
+.ka-curve-indicator button{appearance:none;border:0;background:none;padding:5px 1px;cursor:pointer}
+.ka-curve-indicator i{display:block;width:1px;height:13px;background:#80919d;opacity:.35;transition:height .2s,opacity .2s}
+.ka-curve-indicator button[aria-pressed=true] i{height:23px;opacity:1;background:#dce8ef}
+.ka-curve-indicator button:focus-visible{outline:1px solid #adc6d7;outline-offset:3px}
+.ka-stage:not([data-layout=curve]) .ka-curve-indicator{display:none}
+html body.karchive-body.ka-curve-active,html body.karchive-body.ka-curve-active :is(.ka,.ka-scroll,.ka-stage){background:#080a0d!important;color:#e4eaf0!important}
+html body.karchive-body.ka-curve-active .global-header.global-header{background:#080a0d!important;border-color:#becedc16!important;color:#e4eaf0!important}
+html body.karchive-body.ka-curve-active .global-header.global-header .brand-mark{filter:brightness(0) invert(1)!important}
+html body.karchive-body.ka-curve-active .global-header.global-header :is(nav a,.header-icon-button){color:#dce5ec!important}
+html body.karchive-body.ka-curve-active .global-header.global-header nav a.active{color:#91b5cf!important}
+html body.karchive-body.ka-curve-active #archiveControls .ka-selected-title,html body.karchive-body.ka-curve-active :is(.ka-reference-instruction,#archiveImageIndex){color:#a3b2bf!important}
+html body.karchive-body.ka-curve-active #archiveControls :is(.ka-layout-modes,.ka-category-filters) button{color:#778a99!important}
+html body.karchive-body.ka-curve-active #archiveControls :is(.ka-layout-modes,.ka-category-filters) button[aria-pressed=true]{color:#c3d5e2!important}
+html body.karchive-body.ka-curve-active #archiveNetwork{display:none!important}
+@media(max-width:760px){.ka-curve-indicator{top:27%}html body.karchive-body #archiveControls .ka-layout-modes{gap:10px}html body.karchive-body #archiveControls .ka-layout-modes button{font-size:8px!important}}
+.ka-stage{cursor:grab;user-select:none}.ka-is-dragging .ka-stage,.ka-is-dragging .ka-object{cursor:grabbing!important}
+html body.karchive-body #archiveStage .ka-object{cursor:zoom-in}
+.ka-stage[data-layout=depth] .ka-curve-indicator{display:flex}
+@media(max-width:760px){html body.karchive-body #archiveControls .ka-layout-modes{max-width:73vw;justify-content:flex-end;flex-wrap:wrap;gap:7px 11px}}
+.ka-curve-indicator{gap:2px}.ka-curve-indicator button{padding:6px 3px;min-height:28px}
+html body.karchive-body.ka-curve-active .global-header.global-header .brand{filter:brightness(0) invert(1)!important}
+.ka-stage[data-layout=depth] .ka-curve-indicator{top:auto;bottom:65px}
+
+/* Gallery tools belong beside the gallery, away from site navigation. */
+html body.karchive-body #archiveControls .ka-layout-modes{position:fixed!important;right:38px;bottom:68px;top:auto!important;display:flex;flex-wrap:nowrap;gap:3px!important;padding:4px;border:1px solid #80919d30;border-radius:8px;background:#ffffff08;max-width:none}
+html body.karchive-body #archiveControls .ka-layout-modes button{display:grid;place-items:center;width:34px;height:32px;min-width:0;padding:7px!important;border:0!important;border-radius:4px!important;letter-spacing:0!important;transition:background .2s,color .2s}
+html body.karchive-body #archiveControls .ka-layout-modes button::after{display:none!important}
+html body.karchive-body #archiveControls .ka-layout-modes button[aria-pressed=true]{background:#8299aa25!important;color:#7596ad!important}
+html body.karchive-body.ka-curve-active #archiveControls .ka-layout-modes button[aria-pressed=true]{color:#e0e9f0!important;background:#b5c6d620!important}
+html body.karchive-body #archiveControls .ka-layout-modes button:hover{background:#8299aa18!important}
+.ka-layout-modes svg{display:block;width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round}
+@media(max-width:760px){html body.karchive-body #archiveControls .ka-layout-modes{right:16px;bottom:94px;gap:2px!important}html body.karchive-body #archiveControls .ka-layout-modes button{width:30px;height:30px}}
+
+html body.karchive-body #archiveStage[data-layout=curve] .ka-object{border-radius:3px!important;backface-visibility:hidden;box-shadow:0 10px 30px #0006;transition:filter .2s linear!important}
+
+/* All archive views share the same dark exhibition surface. */
+html body.karchive-body,html body.karchive-body :is(.ka,.ka-scroll,.ka-stage,#cultureArchive){background:#080a0d!important;color:#e4eaf0!important}
+html body.karchive-body .global-header.global-header{background:#080a0d!important;--header-ink:#e4eaf0!important;color:#e4eaf0!important;border-color:#becedc20!important}
+html body.karchive-body .global-header.global-header .brand{filter:brightness(0) invert(1)!important}
+html body.karchive-body .global-header.global-header :is(nav a,.header-icon-button){color:#dce5ec!important}
+html body.karchive-body .global-header.global-header nav a.active{color:#91b5cf!important}
+html body.karchive-body :is(.ka-reference-instruction,#archiveImageIndex){color:#a3b2bf!important}
+html body.karchive-body #archiveControls :is(.ka-layout-modes,.ka-category-filters) button{color:#8194a4!important}
+html body.karchive-body #archiveControls :is(.ka-layout-modes,.ka-category-filters) button[aria-pressed=true]{color:#e0e9f0!important}
+html body.karchive-body #archiveControls .ka-layout-modes{background:#11171de8!important;border-color:#80919d40!important}
+html body.karchive-body #archiveFocus{background:#10151a!important;color:#e4eaf0!important}
+html body.karchive-body #archiveFocus :is(.ka-close,.ka-detail-copy p,.ka-detail-copy small,.ka-detail figcaption){color:#a5b4c0!important}
+html body.karchive-body #archiveFocus .ka-detail-copy h2{color:#edf1f4!important}
+
+/* Keep the whole painting visible; contemporary photographs retain their crop. */
+.ka-object.ka-preserve-art{background:transparent}
+.ka-object.ka-preserve-art img{object-fit:contain!important;background:transparent}
+.ka-category-filters{flex-wrap:wrap;justify-content:center}
+@media(max-width:760px){.ka-category-filters{max-width:94vw;gap:5px 12px!important}.ka-category-filters button{font-size:9px!important}}
+
+/* Portrait crops in the gallery; the detail view still shows the complete artwork. */
+.ka-object img{object-fit:cover!important;object-position:center!important}
+
+#archiveNetwork{display:none!important}
+
+.ka-object img{object-position:var(--archive-crop,50% 50%)!important;filter:none}
+
+/* Reference fan: an open arch folds into a tangible, staggered photo deck. */
+html body.karchive-body #archiveStage[data-layout="fan"] .ka-object{border-radius:7px!important;overflow:hidden;box-shadow:1px 2px 0 #b7c4ce40,3px 5px 15px #0005;transform-style:preserve-3d}
+html body.karchive-body #archiveStage[data-layout="fan"] .ka-object:hover{z-index:var(--fan-z)!important}
+html body.karchive-body #archiveStage[data-layout="fan"] .ka-object img{border-radius:6px}
+.ka-fan-toggle{position:absolute;right:4%;bottom:145px;z-index:600;width:44px;height:44px;border:1px solid #a8bbc642;border-radius:50%;background:#11171de8;color:#dce5ec;cursor:pointer;display:grid;place-items:center}
+.ka-fan-toggle[hidden]{display:none}
+.ka-fan-toggle svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.5;transition:transform .5s}
+.ka-fan-toggle[aria-pressed="true"] svg{transform:rotate(180deg)}
+@media(max-width:760px){.ka-fan-toggle{bottom:165px;right:5%;width:38px;height:38px}}
+
+html body.karchive-body #archiveFocus {
+  width:min(1060px,92vw)!important; max-height:92svh; border:1px solid #a4bac536;
+  border-radius:5px; background:#0a0e12!important; overflow:auto;
+}
+#archiveFocus::backdrop { background:#05080cba; backdrop-filter:blur(7px); }
+#archiveFocus .ka-detail { grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:clamp(25px,5vw,72px); padding:54px clamp(22px,4vw,60px) 34px; }
+#archiveFocus .ka-detail figure>img { max-height:61svh; }
+#archiveFocus .ka-detail .ka-close { padding:8px; top:12px; right:14px; }
+#archiveFocus .ka-detail-copy h2 { font-size:clamp(22px,3.2vw,38px); line-height:1.25; margin:12px 0 18px; }
+#archiveFocus .ka-detail-copy p { font-size:14px; line-height:1.7; }
+#archiveFocus .ka-detail-copy p[lang=en] { font-size:12px; }
+@media(max-width:700px) {
+ #archiveFocus .ka-detail { display:block; }
+ #archiveFocus .ka-detail figure>img { max-height:41svh; }
+}
+#archiveFocus .ka-orbit-step { position:static; margin-top:22px; color:#b9cad6; }
+#archiveFocus .ka-orbit-step button { width:34px; height:34px; }
+#archiveFocus .ka-orbit-step button:is(:hover,:focus-visible) { background:#d5e6f119; }

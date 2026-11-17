@@ -1,0 +1,58 @@
+/* A brief full-frame light transition into the individual/relationship scene. */
+.about-light-passage{position:fixed;inset:0;z-index:98;pointer-events:none;background:#fff;will-change:opacity}
+.about-light-passage[hidden]{display:none}
+@media(prefers-reduced-motion:reduce){.about-light-passage{display:none}}
+
+/* Keep the studio lighting in the viewport as the infographic unfolds. */
+body.about-body {
+  --weness-studio: var(--yearon-entry-gradient);
+}
+
+html body.about-body #aboutRelations,
+html body.about-body #wnRelationMap {
+  background-color: #535e6c;
+}
+
+html body.about-body #ypInfographic .wn-stage,
+html body.about-body #wnRelationMap .wn-map-stage,
+html body.about-body .about-light-passage {
+  background: var(--weness-studio);
+}
+
+html body.about-body #ypInfographic .wn-stage { color: #18232e; }
+html body.about-body #ypInfographic .wn-process-label { color: #e0e7ee; }
+html body.about-body #ypInfographic .wn-process-en { color: #263744; }
+html body.about-body #wnRelationMap .wn-map-svg text:not(.wn-map-white) { fill: #eef2f6; }
+html body.about-body #wnRelationMap .wn-map-svg .wn-map-us { fill: #fff; }
+html body.about-body:has(#ypInfographic .wn-stage.is-current) .about-reading-scroll svg { display: none; }
+
+html body.about-body #ypInfographic :is(.wn-individuals circle,.wn-result) {
+ fill: url(#wnGlass);
+ stroke: url(#wnGlassEdge);
+ stroke-width: 1;
+ vector-effect: non-scaling-stroke;
+}
+html body.about-body #ypInfographic .wn-result {
+ fill: url(#wnButtonGlass);
+ stroke: url(#wnButtonRim);
+ stroke-width: 2;
+}
+html body.about-body #ypInfographic :is(.wn-person-word,.wn-result-name) { fill:#fff; }
+html body.about-body #wnRelationMap .wn-map-svg :is(.wn-map-solid,.wn-map-outline) {
+ fill: url(#wnGlass);
+ fill-opacity: 1;
+ stroke: url(#wnGlassEdge);
+ stroke-width: 1;
+ vector-effect: non-scaling-stroke;
+}
+html body.about-body .wn-handoff-circle {
+ background:linear-gradient(145deg,#f5f8ff6b,#e5eef838 34%,#d7e1ed17 62%,#c5d1e03d);
+ box-shadow:inset 0 1px 1px #ffffff55,inset 0 -1px 1px #edf5ff24;
+}
+html body.about-body #wnRelationMap .wn-map-stage {
+ background:linear-gradient(180deg,rgb(8 9 11 / var(--map-exit,0)),rgb(8 9 11 / var(--map-exit,0))),var(--weness-studio);
+}
+.wn-map-tail { stroke:#c6e5ff; stroke-width:1.1; fill:none; filter:drop-shadow(0 0 5px #c5e1ff); }
+
+/* Longer dark upper field, with the pale floor arriving gradually below. */
+html body.about-body{--weness-studio:linear-gradient(180deg,#0b0f14 0%,#111820 25%,#1c2632 45%,#303e4d 65%,#586879 83%,#8d9dad 100%)!important}

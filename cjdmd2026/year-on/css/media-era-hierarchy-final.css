@@ -1,0 +1,1989 @@
+/* MEDIA BY ERA — final hierarchy around the finished media objects. */
+html body.media-time-body .time-deck,html:not([data-theme='dark']) body.media-time-body .time-deck{background:#fff!important;background-image:linear-gradient(180deg,#090a0d 0%,#14171c 6%,#303640 13%,#596471 19%,#8994a1 25%,#bac2cb 29%,#dfe4e9 32%,#f5f7f9 34%,#fff 36%,#fff 100%)!important}
+html body.media-time-body .global-header.global-header{background:transparent!important;background-image:none!important;border-bottom:0!important;box-shadow:none!important;-webkit-backdrop-filter:blur(1px) saturate(.96)!important;backdrop-filter:blur(1px) saturate(.96)!important}
+html body.media-time-body .global-header.global-header::after{height:.5px!important;background:linear-gradient(90deg,transparent,rgba(205,211,217,.27) 22%,rgba(235,238,240,.38) 50%,rgba(205,211,217,.27) 78%,transparent)!important;box-shadow:none!important}
+html body.media-time-body .global-header.global-header nav a.active{
+  color:#86a9bf!important;
+  opacity:1!important;
+  text-shadow:0 0 5px rgba(134,169,191,.34),0 0 12px rgba(111,151,177,.16)!important;
+}
+html body.media-time-body .era-bridge #timeNav button.active{top:clamp(42px,6.3vh,70px)!important}
+html body.media-time-body .era-bridge #timeNav button.active span{margin-top:12px!important;font-size:clamp(24px,2.35vw,36px)!important}
+html body.media-time-body .era-bridge #timeNav button.active b{
+  color:#e7edf2!important;
+  text-shadow:0 0 4px rgba(202,224,239,.24),0 0 10px rgba(139,179,205,.1)!important;
+}
+html body.media-time-body .era-bridge #timeNav button.active b::before,html body.media-time-body .era-bridge #timeNav button.active b::after{
+  background:linear-gradient(90deg,rgba(222,231,237,.18),rgba(238,244,247,.72),rgba(170,190,204,.22))!important;
+  box-shadow:0 0 5px rgba(179,207,225,.1)!important;
+}
+html body.media-time-body .era-bridge #timeNav button.active span{
+  color:#edf1f4!important;
+  background:none!important;
+  -webkit-background-clip:border-box!important;
+  background-clip:border-box!important;
+  -webkit-text-fill-color:currentColor!important;
+  -webkit-text-stroke:0!important;
+  text-shadow:0 0 5px rgba(218,230,238,.13)!important;
+}
+html body.media-time-body .era-bridge #timeNav button .era-thumb{opacity:.16!important;filter:grayscale(1) contrast(.76) brightness(1.18)!important;box-shadow:none!important}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'] b{color:#626e7b!important}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'] span{color:#74808b!important}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']::after,
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:hover::after,
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:focus-visible::after{
+  background:#344B83!important;
+  box-shadow:none!important;
+}
+html body.media-time-body .phone-media::after{content:none!important;display:none!important}
+html body.media-time-body .era-bridge .era-now{
+  display:none;
+  position:absolute;
+  top:calc(46% + 64px);
+  right:7.5vw;
+  width:clamp(124px,9vw,142px);
+  padding:24px 12px;
+  box-sizing:border-box;
+  transform:translateY(-50%);
+  text-align:left;
+  pointer-events:none;
+}
+html body.media-time-body .era-bridge.at-present .era-now{display:block}
+html body.media-time-body .era-bridge .era-now b{
+  display:block;
+  position:relative;
+  top:2px;
+  color:#626e7b;
+  font:300 clamp(32px,2.55vw,42px)/.96 "Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif;
+  letter-spacing:.1em;
+}
+html body.media-time-body .era-bridge .era-now::after{
+  content:'';
+  position:absolute;
+  top:44px;
+  left:calc(100% + 14px);
+  width:calc(7.5vw - 14px);
+  height:1px;
+  background:#344B83;
+}
+html body.media-time-body .tv-time-panel .television{
+  top:52.5%!important;
+  width:min(60vw,86.5vh,920px)!important;
+}
+/* Layered object shadows: tight contact, body depth, then a soft exhibition halo. */
+html body.media-time-body .scroll-media :is(.closed,.open),
+html body.media-time-body .paper-media :is(.paper-cover,.paper-spread),
+html body.media-time-body .radio-media > img,
+html body.media-time-body .pc-media > img{
+  filter:drop-shadow(0 4px 3px rgba(16,22,28,.24)) drop-shadow(0 15px 11px rgba(27,37,47,.2)) drop-shadow(0 34px 27px rgba(52,66,80,.14)) drop-shadow(0 55px 45px rgba(83,98,113,.07))!important;
+}
+html body.media-time-body .tv-time-panel .television{
+  filter:drop-shadow(0 4px 3px rgba(10,15,20,.3)) drop-shadow(0 14px 10px rgba(19,27,35,.23)) drop-shadow(0 31px 23px rgba(39,51,64,.16)) drop-shadow(0 55px 43px rgba(77,91,106,.08))!important;
+}
+html body.media-time-body .phone-media > img{
+  filter:grayscale(1) brightness(1.1) contrast(1.08) sepia(.055) hue-rotate(166deg) saturate(.72) drop-shadow(0 4px 3px rgba(15,23,31,.24)) drop-shadow(0 15px 11px rgba(28,41,54,.2)) drop-shadow(0 34px 27px rgba(57,76,94,.14)) drop-shadow(0 55px 44px rgba(89,109,127,.07))!important;
+}
+html body.media-time-body .phone-media::before{
+  content:'';
+  position:absolute;
+  z-index:0;
+  inset:1.2% 2.5%;
+  border-radius:15% / 8%;
+  pointer-events:none;
+  box-shadow:inset 1px 0 rgba(237,247,252,.38),inset -1px 0 rgba(119,151,174,.18),0 0 16px rgba(111,153,183,.055);
+}
+html body.media-time-body .channel-footer{width:min(61vw,88vh,900px)!important;max-width:calc(100% - 36px)!important;min-height:58px!important;grid-template-columns:38px minmax(0,1fr) 38px!important;gap:20px!important;padding:5px 7px!important;translate:0 -50px!important}
+html body.media-time-body .channel-nav{gap:12px!important}
+html body.media-time-body .channel-nav button{gap:6px!important;padding:8px 0 10px!important;border-bottom:1px solid rgba(126,138,150,.32)!important;color:#8a939c!important;transition:color .28s ease,border-color .28s ease,filter .28s ease!important}
+html body.media-time-body .channel-nav button b,html body.media-time-body .channel-nav button span{color:inherit!important}
+html body.media-time-body .channel-nav button b{font-weight:400!important}
+html body.media-time-body .channel-nav button::after{content:''!important;position:absolute!important;left:0!important;right:100%!important;top:auto!important;bottom:-1px!important;width:auto!important;height:1px!important;border-radius:0!important;background:#344B83!important;opacity:0!important;box-shadow:none!important;transition:right .38s cubic-bezier(.22,.75,.2,1),opacity .22s ease!important}
+html body.media-time-body .channel-nav button.active{color:#485566!important;border-bottom-color:rgba(52,75,131,.2)!important;filter:brightness(1.05)!important}
+html body.media-time-body .channel-nav button.active::after{right:0!important;opacity:1!important}
+html body.media-time-body .channel-nav button:hover:not(.active){color:#667383!important;border-bottom-color:rgba(102,115,131,.55)!important}
+/* Reuse the site's original CRT ignition when the television screen opens large. */
+html body.media-time-body #expanded{z-index:12000!important}
+html body.media-time-body #expanded .expanded-screen::before{
+  content:'';
+  position:absolute;
+  z-index:15;
+  inset:0;
+  pointer-events:none;
+  opacity:0;
+  background:#050607;
+}
+html body.media-time-body #expanded .expanded-screen::after{
+  content:'';
+  position:absolute;
+  z-index:16;
+  left:8%;right:8%;top:50%;height:1.5px;
+  pointer-events:none;
+  background:#f5f8fa;
+  box-shadow:0 0 10px rgba(235,245,255,.95),0 0 30px rgba(145,185,220,.7);
+  border-radius:50%;transform-origin:center;
+}
+html body.media-time-body #expanded.open .expanded-screen::before{
+  animation:crtCurtain 1.45s cubic-bezier(.22,.72,.2,1) both;
+}
+html body.media-time-body #expanded.open .expanded-screen::after{
+  animation:crtIgnition 1.45s cubic-bezier(.22,.72,.2,1) both;
+}
+@media(prefers-reduced-motion:reduce){
+  html body.media-time-body #expanded.open .expanded-screen::before,html body.media-time-body #expanded.open .expanded-screen::after{animation:none!important;opacity:0!important}
+}
+@media(max-width:1100px){html body.media-time-body .tv-time-panel .television{width:min(87vw,104vh)!important}}
+@media(max-width:700px){html body.media-time-body .time-deck,html:not([data-theme='dark']) body.media-time-body .time-deck{background-image:linear-gradient(180deg,#090a0d 0%,#20242b 7%,#737d89 14%,#d7dce2 21%,#fff 27%,#fff 100%)!important}html body.media-time-body .channel-footer{width:76vw!important;grid-template-columns:34px minmax(0,1fr) 34px!important;gap:10px!important;translate:0 -34px!important}html body.media-time-body .era-bridge .era-now{top:calc(46% + 42px);right:5vw;width:72px;padding:8px 3px}html body.media-time-body .era-bridge .era-now b{font-size:27px}html body.media-time-body .era-bridge .era-now::after{top:20px;width:calc(5vw - 20px)}}
+/* Signal acquisition happens inside the CRT, rather than over the whole page. */
+html body.media-time-body::before,html body.media-time-body::after{content:none!important;animation:none!important;display:none!important}
+html body.media-time-body .screen-window.crt-power-on{isolation:isolate}
+html body.media-time-body .screen-window.crt-power-on::before,html body.media-time-body .screen-window.crt-power-on::after{content:'';position:absolute;inset:0;z-index:30;pointer-events:none}
+html body.media-time-body .screen-window.crt-power-on::before{
+  background:#03070b;
+  animation:yearonSignalCurtain 1.15s steps(7,end) both;
+}
+html body.media-time-body .screen-window.crt-power-on::after{
+  background:
+    repeating-linear-gradient(180deg,rgba(224,241,251,.38) 0 1px,rgba(25,65,94,.48) 1px 3px,rgba(1,9,17,.8) 3px 5px),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.18) 0 1px,transparent 1px 3px),
+    radial-gradient(ellipse at center,#b8d1df 0%,#597a91 35%,#102433 72%,#01070d 100%);
+  background-blend-mode:screen,overlay,normal;
+  box-shadow:inset 0 0 70px 25px #01050a;
+  animation:yearonSignalAcquire 1.15s steps(8,end) both;
+}
+@keyframes yearonSignalCurtain{
+  0%,8%{opacity:1}
+  18%,38%{opacity:.75}
+  46%,70%{opacity:.38}
+  80%,100%{opacity:0;visibility:hidden}
+}
+@keyframes yearonSignalAcquire{
+  0%,6%{opacity:0;transform:scaleY(.002);filter:brightness(3)}
+  14%{opacity:1;transform:scaleY(.013);filter:brightness(3)}
+  25%{opacity:.95;transform:scaleY(.52);filter:brightness(1.9)}
+  36%{opacity:.92;transform:scaleY(1);filter:brightness(1.25)}
+  47%{opacity:.6;transform:translateY(3%);filter:contrast(1.6)}
+  60%{opacity:.82;transform:translateY(-2%);filter:contrast(1.3)}
+  78%{opacity:.3;transform:none;filter:brightness(1.1)}
+  100%{opacity:0;visibility:hidden;transform:none;filter:none}
+}
+html body.media-time-body .screen-window.crt-power-on #staticCanvas{opacity:.65!important;mix-blend-mode:screen!important}
+html body.media-time-body #expanded .expanded-screen::before,html body.media-time-body #expanded .expanded-screen::after{content:none!important;animation:none!important}
+@media(prefers-reduced-motion:reduce){html body.media-time-body .screen-window.crt-power-on::before,html body.media-time-body .screen-window.crt-power-on::after{animation:none!important;opacity:0!important}}
+/* CRT phosphor bloom: black screen → horizontal slit → soft oval → broadcast. */
+html body.media-time-body .screen-window.crt-power-on::before{background:#19181b!important;animation:yearonPhosphorCurtain 1.05s ease-out both!important}
+html body.media-time-body .screen-window.crt-power-on::after{
+  inset:0!important;
+  background:radial-gradient(ellipse 48% 42% at 50% 50%,#b9b8bd 0%,#aaa9ae 52%,#5f5e65 78%,transparent 100%)!important;
+  background-blend-mode:normal!important;
+  box-shadow:none!important;
+  filter:blur(15px)!important;
+  animation:yearonPhosphorBloom 1.05s cubic-bezier(.2,.7,.25,1) both!important;
+}
+html body.media-time-body .screen-window.crt-power-on #staticCanvas{opacity:0!important}
+@keyframes yearonPhosphorCurtain{0%,60%{opacity:1}78%{opacity:.8}100%{opacity:0;visibility:hidden}}
+@keyframes yearonPhosphorBloom{
+  0%,8%{opacity:0;transform:scale(.01,.004)}
+  20%{opacity:.43;transform:scale(.74,.018)}
+  34%{opacity:.62;transform:scale(1,.035)}
+  55%{opacity:.8;transform:scale(1.55,.7)}
+  68%{opacity:.96;transform:scale(1.85,1.45)}
+  82%{opacity:.42;transform:scale(1.9,1.55)}
+  100%{opacity:0;visibility:hidden;transform:scale(1.9,1.55)}
+}
+/* The phosphor bloom is the MEDIA BY ERA page entrance, not a TV channel effect. */
+html body.media-time-body::before{
+  content:''!important;display:block!important;position:fixed!important;inset:0!important;
+  z-index:20000!important;pointer-events:none!important;
+  background:#19181b!important;
+  animation:yearonPhosphorCurtain 1.05s ease-out both!important;
+}
+html body.media-time-body::after{
+  content:''!important;display:block!important;position:fixed!important;inset:0!important;
+  z-index:20001!important;pointer-events:none!important;
+  background:radial-gradient(ellipse 48% 42% at 50% 50%,#b9b8bd 0%,#aaa9ae 52%,#5f5e65 78%,transparent 100%)!important;
+  box-shadow:none!important;
+  filter:blur(15px)!important;
+  animation:yearonPhosphorBloom 1.05s cubic-bezier(.2,.7,.25,1) both!important;
+}
+html body.media-time-body #expanded .expanded-screen::before,html body.media-time-body #expanded .expanded-screen::after{content:none!important;animation:none!important}
+@media(prefers-reduced-motion:reduce){html body.media-time-body::before,html body.media-time-body::after{content:none!important;display:none!important;animation:none!important}}
+/* A dedicated CRT entrance scene, based on the supplied black/slit/bloom frames. */
+html body.media-time-body::before,html body.media-time-body::after{content:none!important;display:none!important;animation:none!important}
+html body.media-time-body .media-entry-crt{
+  position:fixed;inset:0;z-index:30000;display:grid;place-items:center;
+  pointer-events:none;background:#09090a;
+  animation:mediaEntryLeave 1.65s ease-in both;
+}
+html body.media-time-body .media-entry-bezel{
+  width:min(88vw,1250px);aspect-ratio:1.55;max-height:82vh;padding:clamp(5px,.8vw,12px);
+  border-radius:6% / 8%;
+  background:linear-gradient(155deg,#777678 0%,#343335 8%,#949294 16%,#232224 55%,#777578 92%,#d1cdd0 100%);
+  box-shadow:0 0 0 2px #181719,0 0 0 4px #777377,inset 0 0 4px 2px #1a191b;
+}
+html body.media-time-body .media-entry-screen{
+  position:relative;width:100%;height:100%;overflow:hidden;border-radius:5.4% / 7.2%;
+  background:#1a191c;
+  box-shadow:inset 0 0 0 3px #111012,inset 0 0 28px 12px #100f11,inset 0 0 90px 32px #080809;
+}
+html body.media-time-body .media-entry-phosphor{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 42% 38% at 50% 50%,#b9b8bc 0%,#afadb2 56%,#68676b 85%,transparent 100%);
+  filter:blur(12px);
+  animation:mediaEntryPhosphor 1.42s cubic-bezier(.22,.72,.2,1) both;
+}
+@keyframes mediaEntryPhosphor{
+  0%,12%{opacity:0;transform:scale(.01,.004)}
+  23%{opacity:.52;transform:scale(.9,.015)}
+  40%{opacity:.72;transform:scale(1.35,.026)}
+  63%{opacity:.96;transform:scale(2.1,1.16)}
+  82%{opacity:.98;transform:scale(2.25,1.55)}
+  100%{opacity:.7;transform:scale(2.25,1.55)}
+}
+@keyframes mediaEntryLeave{
+  0%,79%{opacity:1;visibility:visible}
+  100%{opacity:0;visibility:hidden}
+}
+@media(max-width:700px){html body.media-time-body .media-entry-bezel{width:92vw;aspect-ratio:1.3;max-height:68vh}}
+@media(prefers-reduced-motion:reduce){html body.media-time-body .media-entry-crt{display:none!important}}
+/* Bilingual copy keeps the same visual hierarchy without clipping at longer widths. */
+html body.media-time-body :is(.era-stamp span,.era-bridge #timeNav span,.pc-hint,.pc-portal h2,.pc-portal p,.social-app article p,.radio-console){word-break:keep-all;overflow-wrap:break-word}
+html body.media-time-body[data-media-lang="ko"] :is(.pc-portal h2,.guide-intro h2){letter-spacing:-.045em!important;line-height:1.18!important}
+html body.media-time-body .pc-portal h2{font-size:clamp(14px,1.75vw,27px)!important}
+html body.media-time-body .pc-portal > p{font-size:clamp(8px,.74vw,12px)!important;line-height:1.48!important;max-width:94%!important}
+html body.media-time-body .pc-portal ol li{line-height:1.35!important}
+html body.media-time-body .radio-console .radio-presets button{white-space:normal!important;min-width:0!important;line-height:1.35!important}
+html body.media-time-body .social-app .sns-feed article p{line-height:1.45!important;white-space:normal!important}
+html body.media-time-body .era-bridge #timeNav button span{white-space:normal!important;line-height:1.25!important}
+@media(max-width:700px){html body.media-time-body .pc-portal h2{font-size:clamp(12px,4vw,19px)!important}html body.media-time-body .pc-portal > p{font-size:clamp(7px,2.1vw,10px)!important}html body.media-time-body .radio-console .radio-presets{gap:4px!important}html body.media-time-body .radio-console .radio-presets button{padding:7px 3px!important;font-size:9px!important}}
+/* Stable viewport geometry: the fixed header must not shift during the entry overlay. */
+html body.media-time-body{overflow-x:clip!important}
+html body.media-time-body .global-header.global-header{
+  position:fixed!important;left:0!important;right:auto!important;top:0!important;
+  width:100vw!important;max-width:none!important;margin:0!important;translate:none!important;transform:none!important;
+}
+html body.media-time-body .media-entry-bezel{inset:0!important;width:auto!important;height:auto!important}
+
+/* MEDIA BY ERA uses the exact shared-header geometry used by K-ARCHIVE. */
+html body.media-time-body .global-header.global-header .header-right>nav{
+  gap:clamp(17px,2vw,34px)!important;
+}
+html body.media-time-body .global-header.global-header{
+  padding-left:clamp(20px,2.5vw,48px)!important;
+  padding-right:clamp(20px,2.5vw,48px)!important;
+}
+html body.media-time-body .global-header.global-header .brand{
+  font-size:21px!important;
+  line-height:1!important;
+  letter-spacing:.22em!important;
+}
+/* Adjacent eras stay readable when hovered against the white stage. */
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'],
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:hover,
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:focus-visible{
+  opacity:1!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'] b{
+  color:rgba(68,82,98,.7)!important;
+  background:none!important;
+  -webkit-text-fill-color:currentColor!important;
+  text-shadow:0 1px 0 rgba(255,255,255,.7)!important;
+  transition:color .25s ease!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'] .era-thumb{
+  opacity:.25!important;
+  filter:grayscale(1) contrast(.88) brightness(1.08)!important;
+  transition:opacity .25s ease,filter .25s ease!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:is(:hover,:focus-visible) b{
+  color:#34465b!important;
+  background:none!important;
+  -webkit-text-fill-color:currentColor!important;
+  text-shadow:none!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:is(:hover,:focus-visible) .era-thumb{
+  opacity:.62!important;
+  filter:grayscale(1) contrast(1.02) brightness(1)!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:is(:hover,:focus-visible) span{
+  color:#4f5e70!important;
+  text-shadow:none!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']::after{
+  opacity:.72!important;
+  animation:none!important;
+  transition:opacity .25s ease!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:is(:hover,:focus-visible)::after{
+  background:#344B83!important;
+  opacity:1!important;
+  box-shadow:none!important;
+}
+
+/* Current full-screen entrance geometry. */
+html body.media-time-body{background:linear-gradient(90deg,#11171d,#29333c 50%,#11171d)!important}
+html body.media-time-body .global-header.global-header{
+  z-index:10000!important;background:transparent!important;
+  -webkit-backdrop-filter:blur(1px) saturate(.96)!important;
+  backdrop-filter:blur(1px) saturate(.96)!important;
+  box-shadow:inset 0 1px 0 rgba(245,249,251,.13)!important;
+}
+html body.media-time-body .media-entry-crt{top:0!important;z-index:9999!important}
+html body.media-time-body .media-entry-bezel{
+  position:absolute!important;inset:0!important;width:auto!important;height:auto!important;
+  max-height:none!important;aspect-ratio:auto!important;z-index:1!important;padding:0!important;
+  border-radius:0!important;background:none!important;box-shadow:none!important;
+  -webkit-mask-image:none;mask-image:none;
+}
+html body.media-time-body .media-entry-screen{background:#05090d!important;border-radius:0!important;box-shadow:none!important}
+html body.media-time-body .media-entry-phosphor{
+  position:absolute!important;inset:74px 0 0!important;
+  background:#05090d url('../assets/images/yearon-crt-entry.webp?v=original-fill-20261115') center / 100% 100% no-repeat!important;
+  background-blend-mode:normal!important;box-shadow:none!important;clip-path:none!important;
+  filter:none!important;will-change:opacity;
+}
+@media(max-width:760px){html body.media-time-body .media-entry-phosphor{inset:64px 0 0!important}}
+@media(prefers-reduced-motion:reduce){html body.media-time-body .media-entry-crt{display:none!important;animation:none!important}}
+
+/* Give the 2000s computer slightly more presence without moving the other media. */
+html body.media-time-body .time-panel > .pc-media{
+  height:min(70vh,760px)!important;
+  max-height:calc(100% - 180px)!important;
+}
+@media(max-width:700px){
+  html body.media-time-body .time-panel > .pc-media{
+    height:min(62vh,112vw)!important;
+    max-height:calc(100% - 150px)!important;
+    max-width:92vw!important;
+  }
+}
+
+/* MEDIA BY ERA opens cleanly. Keep all entry compositing away from the title. */
+html body.media-time-body::before,
+html body.media-time-body::after{
+  content:none!important;
+  display:none!important;
+  animation:none!important;
+}
+
+/* Lower the dark-to-light horizon to match the supplied composition. */
+html body.media-time-body .time-deck,
+html:not([data-theme='dark']) body.media-time-body .time-deck{
+  background:#fff!important;
+  background-image:linear-gradient(180deg,
+    #090a0d 0%,
+    #14171c 7%,
+    #303640 16%,
+    #596471 23%,
+    #8994a1 30%,
+    #bac2cb 35%,
+    #dfe4e9 39%,
+    #f5f7f9 42%,
+    #fff 45%,
+    #fff 100%)!important;
+}
+@media(max-width:700px){
+  html body.media-time-body .time-deck,
+  html:not([data-theme='dark']) body.media-time-body .time-deck{
+    background-image:linear-gradient(180deg,#090a0d 0%,#20242b 9%,#737d89 18%,#d7dce2 27%,#fff 34%,#fff 100%)!important;
+  }
+}
+
+/* Immediate CRT lock-on: no empty black hold. The signal ignites at once,
+   resolves YEAR:ON, holds it cleanly, then dissolves into the interface. */
+html body.media-time-body .media-entry-crt{
+  animation:yearonCrtImmediateExit 6.8s linear both!important;
+}
+html body.media-time-body .media-entry-phosphor{
+  animation:yearonCrtImmediateTitle 6.8s linear both!important;
+}
+html body.media-time-body .media-entry-screen::before{
+  background:
+    url('../assets/images/crt-signal-noise.svg') center / 420px 420px repeat,
+    repeating-linear-gradient(180deg,rgba(232,242,247,.14) 0 1px,transparent 1px 4px),
+    radial-gradient(ellipse at center,rgba(180,199,211,.8),rgba(42,51,59,.96) 72%,#07090c 100%)!important;
+  background-blend-mode:soft-light,screen,normal!important;
+  filter:none!important;
+  animation:yearonCrtImmediateSignal 6.8s cubic-bezier(.3,.02,.16,1) both!important;
+}
+html body.media-time-body .media-entry-screen::after{
+  animation:yearonCrtImmediateBeam 6.8s cubic-bezier(.3,.02,.16,1) both!important;
+}
+@keyframes yearonCrtImmediateSignal{
+  0%{opacity:0;transform:translateZ(0) scaleY(.002)}
+  3%{opacity:.92;transform:translateZ(0) scaleY(.006)}
+  8%{opacity:.74;transform:translateZ(0) scaleY(.035)}
+  15%{opacity:.56;transform:translateZ(0) scaleY(.28)}
+  23%{opacity:.28;transform:translateZ(0) scaleY(1)}
+  31%,100%{opacity:0;transform:translateZ(0) scaleY(1)}
+}
+@keyframes yearonCrtImmediateBeam{
+  0%{opacity:.22;transform:translateZ(0) scale(.05,.002)}
+  3%{opacity:1;transform:translateZ(0) scale(.76,.006)}
+  8%{opacity:.84;transform:translateZ(0) scale(1,.018)}
+  16%{opacity:.4;transform:translateZ(0) scale(1,.38)}
+  24%{opacity:.08;transform:translateZ(0) scale(1,1)}
+  29%,100%{opacity:0;transform:translateZ(0) scale(1,1)}
+}
+@keyframes yearonCrtImmediateTitle{
+  0%,3%{opacity:0}
+  6%{opacity:.18}
+  8%{opacity:.04}
+  11%{opacity:.48}
+  14%{opacity:.25}
+  19%{opacity:.82}
+  24%{opacity:1}
+  70%{opacity:1}
+  84%,100%{opacity:0}
+}
+@keyframes yearonCrtImmediateExit{
+  0%,78%{opacity:1;visibility:visible}
+  97%,100%{opacity:0;visibility:hidden}
+}
+
+/* Power-on sequence: static opens from a CRT beam, resolves into the existing
+   YEAR:ON entry artwork, then lets the era interface show through. */
+html body.media-time-body .media-entry-crt{animation:mediaPowerOnReveal 4.1s linear both!important}
+html body.media-time-body .media-entry-screen{isolation:isolate!important}
+html body.media-time-body .media-entry-phosphor{z-index:2!important;animation:mediaPowerOnTitle 4.1s linear both!important}
+html body.media-time-body .media-entry-screen::before{
+  content:''!important;display:block!important;position:absolute!important;inset:0!important;z-index:3!important;pointer-events:none!important;
+  background:url('../assets/images/crt-signal-noise.svg') 50% 50% / 330px 330px repeat,repeating-linear-gradient(180deg,rgba(245,249,251,.3) 0 1px,rgba(6,8,10,.18) 1px 3px,transparent 3px 5px),#11161a!important;
+  background-blend-mode:screen,normal,normal!important;transform-origin:center!important;animation:mediaPowerOnStatic 4.1s steps(2,end) both!important
+}
+html body.media-time-body .media-entry-screen::after{
+  content:''!important;display:block!important;position:absolute!important;left:5%!important;right:5%!important;top:50%!important;height:2px!important;z-index:4!important;pointer-events:none!important;border-radius:50%!important;
+  background:#f4fbff!important;box-shadow:0 0 8px rgba(246,252,255,.98),0 0 28px rgba(174,213,239,.78)!important;transform-origin:center!important;animation:mediaPowerOnBeam 4.1s cubic-bezier(.2,.72,.18,1) both!important
+}
+@keyframes mediaPowerOnStatic{
+  0%{opacity:0;transform:scaleY(.002);background-position:50% 50%,0 0,0 0}3%{opacity:.8;transform:scaleY(.008);background-position:42% 54%,0 0,0 0}8%{opacity:1;transform:scaleY(.08);background-position:63% 47%,0 2px,0 0}15%{opacity:.82;transform:scaleY(1);background-position:31% 61%,0 -3px,0 0}22%{opacity:.28;transform:scaleY(1);background-position:68% 43%,0 2px,0 0}27%,100%{opacity:0;transform:scaleY(1)}
+}
+@keyframes mediaPowerOnBeam{
+  0%,1%{opacity:0;transform:scaleX(.02) scaleY(.5)}3%{opacity:1;transform:scaleX(.16) scaleY(.75)}7%{opacity:.95;transform:scaleX(.82) scaleY(1)}11%{opacity:.62;transform:scaleX(1) scaleY(10)}15%{opacity:.2;transform:scaleX(1) scaleY(150)}20%,100%{opacity:0;transform:scaleX(1) scaleY(300)}
+}
+@keyframes mediaPowerOnTitle{
+  0%,12%{opacity:0;filter:brightness(.7)}16%{opacity:.22;filter:brightness(1.45)}19%{opacity:.06;filter:brightness(.8)}24%{opacity:.82;filter:brightness(1.12)}29%,68%{opacity:1;filter:brightness(1)}84%{opacity:.9;filter:brightness(1.03)}100%{opacity:0;filter:brightness(1.05)}
+}
+@keyframes mediaPowerOnReveal{
+  0%,72%{opacity:1;visibility:visible}88%{opacity:.62;visibility:visible}100%{opacity:0;visibility:hidden}
+}
+
+/* Procedural analog lock-on. The canvas changes every frame; the earlier
+   repeated texture is disabled so the snow never reads as a tiled graphic. */
+html body.media-time-body .media-entry-crt{animation:analogEntryReveal 3.45s linear both!important}
+html body.media-time-body .media-entry-phosphor{animation:analogEntryTitle 3.45s linear both!important}
+html body.media-time-body .media-entry-screen::before{content:none!important;display:none!important;animation:none!important}
+html body.media-time-body .media-entry-screen::after{
+  left:0!important;right:0!important;height:1px!important;
+  animation:analogEntryBeam .72s cubic-bezier(.18,.7,.22,1) both!important
+}
+html body.media-time-body .media-entry-noise{
+  position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;
+  image-rendering:auto;mix-blend-mode:screen;transform-origin:center;
+  animation:analogEntryNoise 1.22s steps(1,end) both
+}
+@keyframes analogEntryBeam{
+  0%{opacity:0;transform:scaleX(.015) scaleY(.4)}10%{opacity:1;transform:scaleX(.12) scaleY(.7)}42%{opacity:1;transform:scaleX(.92) scaleY(1.4)}70%{opacity:.72;transform:scaleX(1) scaleY(52)}100%{opacity:0;transform:scaleX(1) scaleY(520)}
+}
+@keyframes analogEntryNoise{
+  0%{opacity:0;transform:scaleY(.002)}8%{opacity:.9;transform:scaleY(.018)}24%{opacity:1;transform:scaleY(.34)}42%{opacity:.94;transform:scaleY(1)}72%{opacity:.7;transform:scaleY(1)}100%{opacity:0;transform:scaleY(1)}
+}
+@keyframes analogEntryTitle{
+  0%,18%{opacity:0;filter:brightness(.65) contrast(1.12)}25%{opacity:.24;filter:brightness(1.32) contrast(1.18)}30%{opacity:.05}37%{opacity:.84;filter:brightness(1.12) contrast(1.08)}43%,72%{opacity:1;filter:brightness(1) contrast(1)}100%{opacity:0;filter:brightness(1.04)}
+}
+@keyframes analogEntryReveal{
+  0%,72%{opacity:1;visibility:visible}100%{opacity:0;visibility:hidden}
+}
+
+/* Restore the earlier clean CRT ignition. The existing YEAR:ON artwork itself
+   grows out of the phosphor slit, without an artificial static texture. */
+html body.media-time-body .media-entry-crt{
+  animation:mediaEntryLeave 1.65s ease-in both!important
+}
+html body.media-time-body .media-entry-phosphor{
+  animation:mediaEntryPhosphor 1.42s cubic-bezier(.22,.72,.2,1) both!important
+}
+html body.media-time-body .media-entry-screen::before,
+html body.media-time-body .media-entry-screen::after{
+  content:none!important;display:none!important;animation:none!important
+}
+
+/* Supplied cool-white studio background for the MEDIA BY ERA stage only. */
+html body.media-time-body .time-deck,
+html:not([data-theme='dark']) body.media-time-body .time-deck{
+  background-color:#f4f7fa!important;
+  background-image:url('../assets/images/media-era-metal-studio-bg.webp')!important;
+  background-size:cover!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+}
+
+/* Correct CRT power-on: the beam opens first, then the undistorted title. */
+html body.media-time-body .media-entry-crt{background:#030405!important;animation:yearonPowerOnExit 2.65s linear both!important}
+html body.media-time-body .media-entry-phosphor{transform:none!important;animation:yearonPowerOnTitle 2.65s linear both!important}
+html body.media-time-body .media-entry-screen::before{content:none!important;display:none!important}
+html body.media-time-body .media-entry-screen::after{
+  content:''!important;display:block!important;position:absolute!important;left:7%!important;right:7%!important;top:50%!important;height:2px!important;z-index:5!important;pointer-events:none!important;border-radius:50%!important;
+  background:#f7fbff!important;box-shadow:0 0 8px rgba(255,255,255,.98),0 0 24px rgba(205,221,232,.78),0 0 54px rgba(160,181,196,.38)!important;transform-origin:center!important;
+  animation:yearonPowerOnBeam .92s cubic-bezier(.2,.7,.18,1) both!important
+}
+@keyframes yearonPowerOnBeam{
+  0%,8%{opacity:0;transform:scaleX(.015) scaleY(.45)}18%{opacity:1;transform:scaleX(.12) scaleY(.8)}42%{opacity:1;transform:scaleX(.92) scaleY(1)}60%{opacity:.82;transform:scaleX(1) scaleY(16)}82%{opacity:.26;transform:scaleX(1) scaleY(180)}100%{opacity:0;transform:scaleX(1) scaleY(420)}
+}
+@keyframes yearonPowerOnTitle{
+  0%,22%{opacity:0;filter:brightness(.7)}28%{opacity:.18;filter:brightness(1.3)}31%{opacity:.04;filter:brightness(.8)}37%{opacity:.9;filter:brightness(1.08)}42%,78%{opacity:1;filter:brightness(1)}100%{opacity:0;filter:brightness(1.04)}
+}
+@keyframes yearonPowerOnExit{0%,80%{opacity:1;visibility:visible}100%{opacity:0;visibility:hidden}}
+
+/* MEDIA BY ERA stage: solid white background. */
+html body.media-time-body,
+html:not([data-theme='dark']) body.media-time-body,
+html body.media-time-body .time-deck,
+html:not([data-theme='dark']) body.media-time-body .time-deck{
+  background:#fff!important;
+  background-image:none!important;
+}
+
+/* Readable ink palette for the white MEDIA BY ERA stage. */
+html body.media-time-body .global-header.global-header{
+  --header-ink:#202428!important;
+  color:#202428!important;
+  border-bottom-color:rgba(55,62,68,.16)!important;
+  box-shadow:none!important;
+}
+html body.media-time-body .global-header.global-header .brand.brand-image .brand-word{
+  background-image:url('../assets/images/yearon-wordmark-supplied-black.webp?v=1')!important;
+}
+html body.media-time-body .global-header.global-header .brand.brand-image .brand-mark{
+  filter:brightness(.98) contrast(1.12) saturate(.78)!important;
+}
+html body.media-time-body .global-header.global-header nav a{
+  color:#2b3035!important;
+  opacity:.72!important;
+  text-shadow:none!important;
+}
+html body.media-time-body .global-header.global-header nav a.active{
+  color:#6687a3!important;
+  opacity:1!important;
+  text-shadow:0 0 10px rgba(98,139,174,.18)!important;
+}
+html body.media-time-body .global-header.global-header :is(.header-icon-button,.globe-button,.menu-toggle){
+  color:#343a40!important;
+  opacity:.86!important;
+}
+html body.media-time-body .era-stamp b{
+  color:#65717c!important;
+  opacity:1!important;
+}
+html body.media-time-body .era-stamp span{
+  color:#4c5863!important;
+  opacity:1!important;
+  text-shadow:none!important;
+}
+html body.media-time-body .era-stamp::before,
+html body.media-time-body .era-stamp::after{
+  background:#aab3bb!important;
+  opacity:.72!important;
+}
+
+/* Active era heading needs full contrast; inactive panels keep their own
+   panel-level fade. */
+html body.media-time-body .time-panel.active .era-stamp{
+  opacity:1!important;
+  color:#252b30!important;
+}
+html body.media-time-body .time-panel.active .era-stamp b{
+  color:#59636c!important;
+  -webkit-text-fill-color:#59636c!important;
+  opacity:1!important;
+}
+html body.media-time-body .time-panel.active .era-stamp span{
+  color:#252b30!important;
+  -webkit-text-fill-color:#252b30!important;
+  opacity:1!important;
+  text-shadow:none!important;
+}
+
+/* Cleaner neutral-silver finish for the two metal media objects. */
+html body.media-time-body .tv-time-panel .tv-frame{
+  filter:grayscale(1) brightness(1.16) contrast(.94) saturate(.25)!important;
+}
+html body.media-time-body .radio-media>img{
+  filter:grayscale(.72) brightness(1.08) contrast(.97) saturate(.42)
+    drop-shadow(0 18px 18px rgba(20,25,30,.18))!important;
+}
+
+/* The centred label is the active timeline button, not the hidden era stamp. */
+html body.media-time-body .era-bridge #timeNav button.active,
+html body.media-time-body .era-bridge #timeNav button.active b,
+html body.media-time-body .era-bridge #timeNav button.active span{
+  color:#252b30!important;-webkit-text-fill-color:#252b30!important;
+  opacity:1!important;text-shadow:none!important;
+}
+html body.media-time-body .era-bridge #timeNav button.active::before,
+html body.media-time-body .era-bridge #timeNav button.active::after{
+  background:#8e99a3!important;opacity:.68!important;box-shadow:none!important;
+}
+
+/* Cool, clean aluminum grading. */
+html body.media-time-body .tv-time-panel .tv-frame{
+  filter:grayscale(.88) brightness(1.08) contrast(.96) sepia(.06) hue-rotate(165deg) saturate(.7)!important;
+}
+html body.media-time-body .radio-media>img{
+  filter:grayscale(.74) brightness(1.12) contrast(.95) sepia(.07) hue-rotate(165deg) saturate(.72)
+    drop-shadow(0 18px 18px rgba(34,48,60,.16))!important;
+}
+
+/* Match the K-ARCHIVE introduction background exactly. */
+html body.media-time-body,
+html:not([data-theme='dark']) body.media-time-body,
+html body.media-time-body .time-deck,
+html:not([data-theme='dark']) body.media-time-body .time-deck{
+  background:#08090c!important;
+  background-image:linear-gradient(180deg,#08090c 0%,#303743 44%,#9ca8b9 78%,#f7f9fb 100%)!important;
+  background-size:100% 100%!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+}
+html body.media-time-body .global-header.global-header{
+  --header-ink:#f8fafb!important;color:#f8fafb!important;
+  background:rgba(6,12,20,.07)!important;
+  border-bottom-color:rgba(239,246,250,.18)!important;
+  -webkit-backdrop-filter:blur(9px) saturate(1.12)!important;
+  backdrop-filter:blur(9px) saturate(1.12)!important;
+}
+html body.media-time-body .global-header.global-header .brand.brand-image .brand-word{
+  background-image:url('../assets/images/yearon-wordmark-supplied-white.webp?v=1')!important;
+}
+html body.media-time-body .global-header.global-header nav a,
+html body.media-time-body .global-header.global-header :is(.header-icon-button,.globe-button,.menu-toggle){
+  color:#f4f7f9!important;
+}
+html body.media-time-body .era-bridge #timeNav button.active,
+html body.media-time-body .era-bridge #timeNav button.active b,
+html body.media-time-body .era-bridge #timeNav button.active span{
+  color:#eef3f6!important;-webkit-text-fill-color:#eef3f6!important;
+}
+
+/* Timeline labels on the K-ARCHIVE gradient: neutral pearl-silver, no blue cast. */
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'],
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'] b,
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'] span{
+  color:rgba(229,235,240,.76)!important;
+  -webkit-text-fill-color:rgba(229,235,240,.76)!important;
+  text-shadow:none!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']::after{
+  background:linear-gradient(90deg,rgba(183,194,203,.08),rgba(226,233,238,.62))!important;
+  box-shadow:none!important;
+  opacity:.78!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'] .era-thumb{
+  filter:grayscale(1) brightness(1.38) contrast(.88) saturate(.25)!important;
+  opacity:.66!important;
+}
+html body.media-time-body .era-bridge #timeNav button.active{
+  top:51px!important;
+}
+html body.media-time-body .era-bridge #timeNav button.active b{
+  color:#f2f5f7!important;-webkit-text-fill-color:#f2f5f7!important;
+}
+html body.media-time-body .era-bridge #timeNav button.active span{
+  color:#e1e7eb!important;-webkit-text-fill-color:#e1e7eb!important;
+}
+html body.media-time-body .era-bridge #timeNav button.active::before,
+html body.media-time-body .era-bridge #timeNav button.active::after{
+  background:#9aa6af!important;
+  opacity:.72!important;
+}
+
+/* Clear acrylic CRT treatment from the supplied reference. The screen remains untouched. */
+html body.media-time-body .tv-time-panel .television{
+  filter:drop-shadow(0 20px 17px rgba(25,38,52,.18)) drop-shadow(0 0 18px rgba(214,232,244,.16))!important;
+  isolation:isolate;
+}
+html body.media-time-body .tv-time-panel .tv-frame{
+  opacity:.42!important;
+  filter:grayscale(1) brightness(1.58) contrast(.62) saturate(0) drop-shadow(0 0 6px rgba(231,244,252,.88))!important;
+  mix-blend-mode:screen;
+}
+html body.media-time-body .tv-time-panel .screen-window{
+  box-shadow:0 0 0 1px rgba(224,238,247,.34),0 0 15px rgba(176,207,226,.14)!important;
+}
+
+/* Full reference match: dark studio, luminous horizon, reflective floor, clear CRT. */
+html body.media-time-body .time-deck{
+  background:
+    radial-gradient(ellipse 48% 39% at 50% 48%,rgba(121,145,174,.22) 0%,rgba(53,70,91,.10) 47%,transparent 76%),
+    linear-gradient(180deg,#080c12 0%,#111927 31%,#253347 54%,#65768b 69%,#b9c5d2 73%,#e5ebf1 82%,#f8fafc 100%)!important;
+}
+html body.media-time-body .tv-time-panel{
+  background:
+    radial-gradient(ellipse 54% 37% at 50% 49%,rgba(165,189,216,.18),transparent 72%),
+    linear-gradient(180deg,transparent 0 69%,rgba(239,244,248,.28) 69.2%,rgba(248,250,252,.7) 100%)!important;
+}
+html body.media-time-body .tv-time-panel .broadcast-page,
+html body.media-time-body .tv-time-panel .broadcast{background:transparent!important;position:relative}
+html body.media-time-body .tv-time-panel .broadcast::before{
+  content:""!important;display:block!important;position:absolute!important;z-index:0!important;
+  left:15%!important;right:15%!important;top:69%!important;height:8%!important;
+  border-radius:50%!important;background:rgba(23,35,49,.24)!important;
+  filter:blur(20px)!important;transform:scaleY(.38)!important;pointer-events:none!important;
+}
+html body.media-time-body .tv-time-panel .broadcast::after{
+  content:"";position:absolute;z-index:0;left:24%;right:24%;top:69%;height:24%;pointer-events:none;
+  background:linear-gradient(180deg,rgba(197,214,229,.32),rgba(239,245,249,0));
+  filter:blur(12px);clip-path:polygon(8% 0,92% 0,78% 100%,22% 100%);opacity:.72;
+}
+html body.media-time-body .tv-time-panel .television{
+  z-index:2!important;top:53%!important;width:min(62vw,1050px)!important;
+  filter:drop-shadow(0 15px 9px rgba(19,30,43,.20)) drop-shadow(0 0 12px rgba(225,240,251,.32))!important;
+}
+html body.media-time-body .tv-time-panel .tv-frame{
+  
+  opacity:1!important;mix-blend-mode:normal!important;filter:none!important;
+}
+html body.media-time-body .era-bridge #timeNav button.active b,
+html body.media-time-body .era-bridge #timeNav button.active span{color:#edf3f7!important;-webkit-text-fill-color:#edf3f7!important}
+
+/* Proportion and reflection correction after visual comparison. */
+html body.media-time-body .tv-time-panel .television{
+  width:min(51vw,950px)!important;top:53%!important;
+}
+html body.media-time-body .tv-time-panel .broadcast::after{display:none!important}
+html body.media-time-body .tv-time-panel{
+  background:
+    radial-gradient(ellipse 31% 5% at 50% 72%,rgba(28,43,58,.23),transparent 75%),
+    radial-gradient(ellipse 54% 37% at 50% 49%,rgba(165,189,216,.18),transparent 72%),
+    linear-gradient(180deg,transparent 0 69%,rgba(239,244,248,.18) 69.2%,rgba(248,250,252,.58) 100%)!important;
+}
+
+/* Keep the studio floor continuous across the full viewport. */
+html body.media-time-body .time-deck{
+  background:
+    radial-gradient(ellipse 25% 4.5% at 50% 73%,rgba(25,39,54,.22),transparent 78%),
+    radial-gradient(ellipse 48% 39% at 50% 48%,rgba(121,145,174,.22) 0%,rgba(53,70,91,.10) 47%,transparent 76%),
+    linear-gradient(180deg,#080c12 0%,#111927 31%,#253347 54%,#65768b 69%,#b9c5d2 73%,#e5ebf1 82%,#f8fafc 100%)!important;
+}
+html body.media-time-body .tv-time-panel{background:transparent!important}
+
+/* Supplied studio image is the single background for every MEDIA BY ERA panel. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#111a27!important;
+  background-image:url('../assets/images/media-era-studio-background-neutral.webp?v=2')!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+}
+html body.media-time-body .time-track,
+html body.media-time-body .time-panel,
+html body.media-time-body .time-panel.active,
+html body.media-time-body .broadcast-page,
+html body.media-time-body .broadcast{
+  background-color:transparent!important;
+  background-image:none!important;
+}
+
+/* Unified material system: clear glass devices, brighter pearl paper media. */
+html body.media-time-body .radio-media>img{
+  
+  filter:drop-shadow(0 15px 9px rgba(19,31,44,.22)) drop-shadow(0 0 9px rgba(224,240,250,.24))!important;
+}
+html body.media-time-body .pc-media>img{
+  
+  filter:drop-shadow(0 16px 10px rgba(19,31,44,.22)) drop-shadow(0 0 10px rgba(224,240,250,.25))!important;
+}
+html body.media-time-body .phone-media>img{
+  content:url('../assets/images/phone-clear-glass.webp')!important;
+  filter:drop-shadow(0 16px 9px rgba(18,30,43,.2)) drop-shadow(0 0 8px rgba(225,241,251,.22))!important;
+}
+html body.media-time-body .paper-media>.paper-cover{
+  content:url('../assets/images/newspaper-cool-pearl.webp')!important;
+  filter:drop-shadow(0 14px 11px rgba(26,38,50,.18))!important;
+}
+html body.media-time-body .paper-media .paper-spread img{
+  content:url('../assets/images/newspaper-user-spread-02-20261109.webp')!important;
+  filter:contrast(1.025) brightness(1.03) drop-shadow(0 15px 12px rgba(26,38,50,.17))!important;
+}
+html body.media-time-body .scroll-media>.open>img{
+  content:url('../assets/images/scroll-cool-pearl.webp')!important;
+  filter:brightness(1.04) contrast(.98) drop-shadow(0 14px 10px rgba(26,38,50,.16))!important;
+}
+html body.media-time-body .scroll-media>.open::after{
+  background-image:url('../assets/images/scroll-cool-pearl.webp')!important;
+}
+html body.media-time-body :is(.radio-media,.pc-media,.phone-media)::before{
+  content:"";position:absolute;z-index:0;left:18%;right:18%;bottom:5%;height:5%;border-radius:50%;
+  background:rgba(24,39,54,.2);filter:blur(15px);transform:scaleY(.4);pointer-events:none;
+}
+
+/* User-supplied glass media: preserve every interactive layer behind the cut-out screens. */
+html body.media-time-body .tv-time-panel .tv-frame{
+  
+  filter:drop-shadow(0 14px 9px rgba(19,31,44,.24)) drop-shadow(0 0 8px rgba(227,242,252,.24))!important;
+}
+html body.media-time-body .tv-time-panel .screen-window{
+  left:9.25%!important;top:13.95%!important;width:63.6%!important;height:67.3%!important;
+  border-radius:13% / 11%!important;
+}
+html body.media-time-body .radio-media>img{
+  
+  filter:drop-shadow(0 15px 9px rgba(19,31,44,.24)) drop-shadow(0 0 8px rgba(227,242,252,.23))!important;
+}
+html body.media-time-body .pc-media{
+  height:min(66vh,calc(100% - 52px))!important;width:auto!important;aspect-ratio:906/592!important;
+  top:53%!important;
+}
+html body.media-time-body .pc-media>img{
+  
+  filter:drop-shadow(0 16px 10px rgba(19,31,44,.23)) drop-shadow(0 0 9px rgba(226,241,251,.24))!important;
+}
+html body.media-time-body .pc-screen-ui{
+  left:20.2%!important;right:38.5%!important;top:9.3%!important;height:47.1%!important;
+  border-radius:3% 3% 2% 2%!important;clip-path:inset(0 round 3%)!important;
+}
+html body.media-time-body :is(.television,.radio-media,.pc-media,.phone-media)::before{
+  content:"";position:absolute;z-index:0;left:17%;right:17%;bottom:3%;height:6%;border-radius:50%;
+  background:rgba(20,34,49,.22);filter:blur(15px);transform:scaleY(.35);pointer-events:none;
+}
+@media(max-width:800px){
+  html body.media-time-body .pc-media{height:min(57vh,calc(100% - 70px))!important}
+}
+
+/* Preserve the established PC composition; the supplied shell is only the exterior skin. */
+html body.media-time-body .pc-media{
+  top:58%!important;
+  height:min(51vh,560px)!important;
+  width:auto!important;
+  max-width:58vw!important;
+  aspect-ratio:906/592!important;
+}
+html body.media-time-body .pc-media>img{
+  object-fit:contain!important;
+  image-rendering:auto!important;
+  filter:contrast(1.045) brightness(1.015) drop-shadow(0 13px 8px rgba(19,31,44,.20)) drop-shadow(0 0 7px rgba(226,241,251,.2))!important;
+}
+html body.media-time-body .pc-screen-ui{
+  left:20.25%!important;right:38.55%!important;top:9.35%!important;height:47%!important;
+  font-size:clamp(7px,.55vw,10px)!important;
+}
+html body.media-time-body .pc-hint{bottom:-2.5%!important}
+@media(max-width:800px){
+  html body.media-time-body .pc-media{top:56%!important;height:min(45vh,430px)!important;max-width:88vw!important}
+}
+
+/* Reference UI palette: pearl typography, quiet blue focus, glass controls. */
+html body.media-time-body{--ui-pearl:#e9eef2;--ui-muted:rgba(216,225,232,.68);--ui-faint:rgba(194,206,216,.43);--ui-blue:#88abc7;--ui-line:rgba(205,217,226,.38)}
+html body.media-time-body .global-header.global-header{color:var(--ui-pearl)!important;border-bottom-color:rgba(221,232,239,.18)!important;background:rgba(5,10,17,.13)!important}
+html body.media-time-body .global-header.global-header nav a{color:rgba(239,244,247,.82)!important;text-shadow:0 1px 9px rgba(0,0,0,.18)!important}
+html body.media-time-body .global-header.global-header nav a.active{color:var(--ui-blue)!important;text-shadow:0 0 10px rgba(133,177,210,.28)!important}
+html body.media-time-body .global-header.global-header :is(.header-icon-button,.globe-button,.menu-toggle){color:rgba(238,244,248,.78)!important}
+html body.media-time-body .era-bridge #timeNav button.active{color:var(--ui-pearl)!important}
+html body.media-time-body .era-bridge #timeNav button.active b{color:rgba(225,232,237,.82)!important;-webkit-text-fill-color:rgba(225,232,237,.82)!important;font-weight:500!important;letter-spacing:.18em!important}
+html body.media-time-body .era-bridge #timeNav button.active span{color:#e5ebef!important;-webkit-text-fill-color:#e5ebef!important;font-weight:300!important;letter-spacing:.065em!important}
+html body.media-time-body .era-bridge #timeNav button.active::before,
+html body.media-time-body .era-bridge #timeNav button.active::after{background:rgba(211,222,230,.46)!important;height:1px!important;box-shadow:none!important}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'] b{color:rgba(225,232,237,.82)!important;-webkit-text-fill-color:rgba(225,232,237,.82)!important;font-weight:400!important;text-shadow:0 1px 8px rgba(17,28,40,.14)!important}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'] span{color:rgba(218,226,232,.68)!important;-webkit-text-fill-color:rgba(218,226,232,.68)!important;letter-spacing:.14em!important}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']::after{background:linear-gradient(var(--era-line-direction,90deg),rgba(202,214,223,.08),rgba(225,233,239,.56))!important;opacity:.72!important}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true'] .era-thumb{opacity:.74!important;filter:grayscale(1) brightness(1.5) contrast(.86) saturate(0)!important}
+html body.media-time-body .channel-footer .arrow{
+  color:#607488!important;border:1px solid rgba(122,143,160,.42)!important;
+  background:rgba(247,250,252,.78)!important;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.96),0 3px 9px rgba(35,54,69,.1)!important;
+}
+html body.media-time-body .channel-footer .arrow:hover{color:#344d63!important;border-color:#809caf!important;background:rgba(255,255,255,.94)!important;transform:translateY(-1px)!important}
+html body.media-time-body .channel-nav button{
+  color:rgba(95,113,128,.48)!important;background:transparent!important;border-color:rgba(112,132,148,.18)!important;
+  font-weight:400!important;letter-spacing:.08em!important;
+}
+html body.media-time-body .channel-nav button.active{color:#667f94!important;border-color:#7299ba!important;text-shadow:none!important}
+html body.media-time-body .channel-nav button span{color:inherit!important}
+html body.media-time-body .control-help,.media-time-body .pc-hint,
+html body.media-time-body .scroll-media .media-trigger,
+html body.media-time-body .paper-media>span{color:rgba(74,91,106,.67)!important;letter-spacing:.16em!important}
+html body.media-time-body .radio-osd{border-color:rgba(204,216,225,.32)!important;background:rgba(11,21,31,.62)!important;color:#e7edf1!important;box-shadow:0 10px 25px rgba(26,39,51,.12)!important;backdrop-filter:blur(8px)!important}
+html body.media-time-body .radio-osd button{color:#dce5eb!important;border-color:rgba(218,229,236,.48)!important;background:rgba(255,255,255,.06)!important}
+html body.media-time-body .radio-osd button:hover{color:#243747!important;background:rgba(247,250,252,.9)!important}
+html body.media-time-body .pc-screen-ui button:focus-visible,
+html body.media-time-body .dial-hit:focus-visible,
+html body.media-time-body .channel-footer button:focus-visible{outline:1px solid #a9c7dc!important;outline-offset:3px!important}
+
+/* High-resolution supplied shells, exact screen masks and responsive centring. */
+html body.media-time-body .tv-time-panel .television{
+  left:50%!important;top:54%!important;width:min(55vw,980px)!important;height:auto!important;aspect-ratio:1375/864!important;
+  transform:translate(-50%,-50%)!important;margin:0!important;
+}
+html body.media-time-body .tv-time-panel .tv-frame{object-fit:contain!important}
+html body.media-time-body .tv-time-panel .screen-window{
+  left:8.58%!important;top:11.11%!important;width:65.02%!important;height:70.37%!important;border-radius:7% / 9%!important;
+}
+html body.media-time-body .radio-media{
+  left:50%!important;right:auto!important;top:53%!important;bottom:auto!important;
+  width:min(57vw,940px)!important;height:auto!important;aspect-ratio:1491/833!important;transform:translate(-50%,-50%)!important;
+}
+html body.media-time-body .radio-media>img{content:url('../assets/images/radio-user-glass-hq.webp?v=radio-swap-20261022')!important;width:100%!important;height:100%!important;object-fit:contain!important}
+html body.media-time-body .pc-media{
+  left:50%!important;top:56%!important;width:min(53vw,860px)!important;max-width:none!important;height:auto!important;
+  aspect-ratio:1383/862!important;transform:translate(-50%,-50%)!important;margin:0!important;
+}
+html body.media-time-body .pc-media>img{content:url('../assets/images/pc-user-glass-frame-hq.webp')!important;width:100%!important;height:100%!important;object-fit:contain!important}
+html body.media-time-body .pc-screen-ui{
+  left:19.96%!important;right:38.18%!important;top:11.14%!important;height:47.10%!important;
+  border-radius:2.5%!important;clip-path:inset(0 round 2.5%)!important;
+  box-shadow:inset 0 0 0 1px rgba(39,78,110,.42),inset 0 0 16px rgba(9,27,42,.22)!important;
+}
+html body.media-time-body :is(.tv-time-panel .television,.radio-media,.pc-media,.phone-media){max-height:calc(100% - 150px)!important}
+html body.media-time-body :is(.tv-frame,.radio-media>img,.pc-media>img,.phone-media>img){
+  filter:drop-shadow(0 14px 9px rgba(17,29,42,.22)) drop-shadow(0 0 8px rgba(229,243,252,.22))!important;
+}
+@media(max-width:800px){
+  html body.media-time-body .tv-time-panel .television{top:52%!important;width:min(92vw,620px)!important;max-height:calc(100% - 170px)!important}
+  html body.media-time-body .radio-media{top:52%!important;width:min(91vw,650px)!important;max-height:calc(100% - 170px)!important}
+  html body.media-time-body .pc-media{top:53%!important;width:min(92vw,660px)!important;max-height:calc(100% - 180px)!important}
+  html body.media-time-body .pc-screen-ui{font-size:7px!important}
+  html body.media-time-body .channel-footer{width:min(94vw,680px)!important;gap:8px!important}
+  html body.media-time-body .channel-footer .arrow{width:34px!important;height:34px!important;flex-basis:34px!important;padding:8px!important}
+}
+@media(max-width:520px){
+  html body.media-time-body .tv-time-panel .television{width:96vw!important;top:50%!important}
+  html body.media-time-body .radio-media{width:96vw!important;top:50%!important}
+  html body.media-time-body .pc-media{width:96vw!important;top:51%!important}
+  html body.media-time-body .pc-screen-ui{font-size:6px!important}
+  html body.media-time-body .pc-desktop{gap:6px!important;padding-bottom:20px!important}
+  html body.media-time-body .pc-screen-ui>footer{height:19px!important;font-size:6px!important}
+}
+
+/* Final desktop breathing room: keep the title clear and controls fully visible. */
+@media(min-width:801px){
+  html body.media-time-body .tv-time-panel .television{top:56%!important;width:min(50vw,920px)!important}
+  html body.media-time-body .radio-media{top:55%!important;width:min(53vw,900px)!important}
+  html body.media-time-body .pc-media{top:56%!important;width:min(49vw,820px)!important}
+}
+
+/* Final CRT supplied by the user; size follows the second composition reference. */
+html body.media-time-body .tv-time-panel .tv-frame{content:url('../assets/images/tv-glass-final.webp')!important}
+html body.media-time-body .tv-time-panel .screen-window{
+  left:8.75%!important;top:13.63%!important;width:63.38%!important;height:68.04%!important;border-radius:9% / 12%!important;
+}
+@media(min-width:801px){
+  html body.media-time-body .tv-time-panel .television{top:56.5%!important;width:min(48.8vw,900px)!important}
+  html body.media-time-body .pc-media{top:56.5%!important;width:min(51vw,840px)!important}
+}
+@media(max-width:800px){
+  html body.media-time-body .tv-time-panel .television{width:min(90vw,610px)!important;top:52%!important}
+  html body.media-time-body .pc-media{width:min(91vw,650px)!important;top:53%!important}
+}
+
+/* User correction: smaller CRT with a photographic contact shadow and floor reflection. */
+@media(min-width:801px){
+  html body.media-time-body .tv-time-panel .television{top:55.5%!important;width:min(40vw,760px)!important}
+}
+html body.media-time-body .tv-time-panel .television{
+  filter:drop-shadow(0 10px 6px rgba(15,27,39,.28)) drop-shadow(0 24px 18px rgba(24,38,52,.15))!important;
+}
+@media(max-width:800px){
+  html body.media-time-body .tv-time-panel .television{width:min(78vw,520px)!important;top:51%!important}
+}
+@media(max-width:520px){html body.media-time-body .tv-time-panel .television{width:82vw!important;top:49.5%!important}}
+
+/* Final device registration: content follows the photographed apertures. */
+@media(min-width:801px){
+  html body.media-time-body .tv-time-panel .television{width:min(43vw,800px)!important;top:55.5%!important}
+  html body.media-time-body .radio-media{top:57%!important}
+  html body.media-time-body .pc-media{left:54.6%!important;top:56.5%!important;width:min(51vw,840px)!important}
+}
+html body.media-time-body .tv-time-panel .television{container-type:inline-size!important}
+html body.media-time-body .tv-time-panel .tv-frame{content:url('../assets/images/tv-glass-fixed-dial.webp')!important}
+html body.media-time-body .tv-time-panel .screen-window{left:8.40%!important;top:13.15%!important;width:64.35%!important;height:73.55%!important;border-radius:11.5% / 12%!important}
+html body.media-time-body .tv-time-panel .channel-copy{left:8%!important;bottom:9%!important;max-width:64%!important}
+html body.media-time-body .tv-time-panel .channel-copy p{font-size:1.05cqw!important;letter-spacing:.18em!important}
+html body.media-time-body .tv-time-panel .channel-copy h1{margin:1.35cqw 0 1.5cqw!important;font-size:7.2cqw!important;line-height:.84!important;letter-spacing:-.065em!important}
+html body.media-time-body .tv-time-panel .channel-copy span{display:block!important;font-size:.85cqw!important;line-height:1.35!important;white-space:normal!important}
+html body.media-time-body .tv-time-panel .placeholder p,html body.media-time-body .tv-time-panel .placeholder span{font-size:.72cqw!important;letter-spacing:.24em!important}
+html body.media-time-body .tv-time-panel .placeholder strong{font-size:12cqw!important}
+html body.media-time-body .tv-time-panel .osd{font-size:.82cqw!important}.media-time-body .tv-time-panel .osd span{font-size:.58cqw!important}
+
+/* PC monitor, centred independently of the mouse; UI clipped to its real screen. */
+html body.media-time-body .pc-screen-ui{left:19.96%!important;right:38.11%!important;top:11.60%!important;height:46.52%!important;border-radius:2.6% / 3.6%!important;clip-path:inset(0 round 2.6%)!important;overflow:hidden!important}
+html body.media-time-body .pc-desktop{font-size:clamp(5px,.42vw,8px)!important}
+html body.media-time-body .pc-icons{left:2.5%!important;top:5%!important;width:17%!important;gap:8px!important}
+html body.media-time-body .pc-icons i{width:24px!important;height:22px!important;font-size:13px!important}
+html body.media-time-body .pc-portal{left:21%!important;right:2.5%!important;top:4%!important;bottom:25px!important;padding:7px!important}
+html body.media-time-body .pc-portal h2{font-size:clamp(11px,1.05vw,17px)!important;line-height:.86!important}
+html body.media-time-body .pc-portal>p{font-size:clamp(5px,.4vw,7px)!important;line-height:1.35!important}
+html body.media-time-body .pc-screen-ui>footer{height:23px!important}
+
+/* Lower radio with photographic contact shadow, reflection, and legible controls. */
+html body.media-time-body .radio-media{filter:drop-shadow(0 9px 5px rgba(18,30,42,.26)) drop-shadow(0 24px 17px rgba(28,43,57,.14))!important}
+html body.media-time-body .radio-media::before{left:12%!important;right:12%!important;bottom:-.5%!important;height:8%!important;background:rgba(16,29,41,.30)!important;filter:blur(13px)!important;transform:scaleY(.30)!important}
+html body.media-time-body .radio-media>img{filter:grayscale(.88) brightness(1.12) contrast(.97) saturate(.24) drop-shadow(0 12px 8px rgba(20,34,47,.22))!important;}
+html body.media-time-body .radio-console{color:#60778c!important;border-top-color:rgba(113,137,157,.44)!important;text-shadow:0 1px 0 rgba(255,255,255,.72)!important}
+html body.media-time-body .radio-console>header{color:#6c7f90!important}
+html body.media-time-body .radio-console .radio-scale{color:#6f8395!important}
+html body.media-time-body .radio-console>#radioTuner{background:repeating-linear-gradient(90deg,rgba(103,126,145,.62) 0 1px,transparent 1px 10px)!important;border-bottom-color:rgba(103,126,145,.60)!important}
+html body.media-time-body .radio-console .radio-presets button{color:rgba(91,111,128,.58)!important}
+html body.media-time-body .radio-console .radio-presets button[aria-pressed=true]{color:#263e54!important;border-color:#617f99!important}
+html body.media-time-body .radio-console .radio-stop{color:#526b81!important;border-color:rgba(99,125,146,.38)!important;background:rgba(246,250,252,.16)!important}
+html body.media-time-body .radio-console .radio-built-in :is(b,span){color:#405970!important}
+html body.media-time-body .radio-console #radioSub{color:#728699!important}
+html body.media-time-body .radio-console .radio-instruction{color:#74889a!important}
+@media(max-width:800px){html body.media-time-body .pc-media{left:54.2%!important}html body.media-time-body .tv-time-panel .channel-copy h1{font-size:7.7cqw!important}html body.media-time-body .radio-media{top:54%!important}}
+
+/* Correct the asymmetric PC PNG: its monitor sits 8.9% left of the full
+   monitor/keyboard/mouse canvas centre. Centre the monitor itself. */
+html body.media-time-body .pc-media{
+  left:50%!important;margin-left:clamp(40px,4.65vw,76px)!important;
+  transform:translate(-50%,-50%)!important;
+}
+/* Extend the live desktop beneath the opaque bezel; the transparent aperture
+   in the supplied shell remains the visible clipping mask. */
+html body.media-time-body .pc-screen-ui{
+  left:18.6%!important;right:36.7%!important;top:10.35%!important;height:49.0%!important;
+  border-radius:3.2% / 4.2%!important;
+}
+
+/* Fill the CRT glass naturally while preserving safe margins on every channel. */
+html body.media-time-body .tv-time-panel .channel-copy{left:7.5%!important;bottom:8.5%!important;max-width:68%!important}
+html body.media-time-body .tv-time-panel .channel-copy h1{font-size:8.2cqw!important;line-height:.82!important}
+html body.media-time-body .tv-time-panel .channel-copy span{font-size:.9cqw!important}
+
+/* One studio light treatment across the composited media. Slight translucency
+   and cool edge bloom let each object inherit the background atmosphere. */
+html body.media-time-body .tv-time-panel .tv-frame{
+  opacity:.965!important;
+  filter:grayscale(.82) saturate(.34) brightness(1.035) contrast(.96)
+    drop-shadow(0 10px 6px rgba(14,27,39,.25)) drop-shadow(0 0 9px rgba(220,236,247,.20))!important;
+}
+html body.media-time-body .radio-media>img,
+html body.media-time-body .pc-media>img,
+html body.media-time-body .phone-media>img{
+  opacity:.955!important;
+  filter:grayscale(.84) saturate(.30) brightness(1.045) contrast(.96)
+    drop-shadow(0 11px 7px rgba(17,31,44,.22)) drop-shadow(0 0 8px rgba(218,235,246,.18))!important;
+}
+html body.media-time-body :is(.tv-time-panel .television,.radio-media,.pc-media,.phone-media)::before{
+  background:rgba(20,35,49,.22)!important;filter:blur(14px)!important;transform:scaleY(.32)!important;
+}
+@media(max-width:800px){html body.media-time-body .pc-media{left:50%!important;margin-left:clamp(24px,7vw,48px)!important;transform:translate(-50%,-50%)!important}}
+
+/* PC composition follows the supplied second reference: a smaller centred
+   monitor, with the mouse allowed to extend to the right. */
+@media(min-width:801px){
+  html body.media-time-body .pc-media{width:min(46vw,760px)!important;margin-left:4.10vw!important;top:56.5%!important}
+}
+
+/* 2002 Korean web UI: compact browser chrome and community board, filling the
+   monitor instead of reading like a contemporary landing page. */
+html body.media-time-body .pc-icons{display:none!important}
+html body.media-time-body .pc-portal{
+  left:2.3%!important;right:2.3%!important;top:3%!important;bottom:25px!important;padding:31px 10px 8px!important;
+  border:2px outset #d8dde2!important;background:#eef2f5!important;box-shadow:none!important;overflow:hidden!important;
+}
+html body.media-time-body .pc-portal::before{
+  content:'YEAR:ON 인터넷 2002  —  팬카페 게시판'!important;position:absolute!important;left:0!important;right:0!important;top:0!important;height:20px!important;
+  box-sizing:border-box!important;padding:4px 7px!important;background:linear-gradient(90deg,#0d4d86,#317db4)!important;color:#fff!important;
+  font:700 8px/12px 'Gulim','굴림',sans-serif!important;text-shadow:1px 1px #073357!important;
+}
+html body.media-time-body .pc-portal::after{
+  content:'←  →  새로고침   주소  http://year-on.kr/cafe/우리들의기록'!important;position:absolute!important;left:5px!important;right:5px!important;top:21px!important;height:17px!important;
+  box-sizing:border-box!important;padding:3px 5px!important;border:1px inset #c5ccd1!important;background:#f5f6f6!important;color:#26333d!important;
+  font:6px/10px 'Gulim','굴림',sans-serif!important;
+}
+html body.media-time-body .pc-portal header{margin-top:9px!important;padding:5px 6px!important;border:1px solid #8da6b8!important;background:#d9e6ef!important;font-family:'Gulim','굴림',sans-serif!important}
+html body.media-time-body .pc-portal header b{font-size:9px!important;color:#164f7b!important}
+html body.media-time-body .pc-search{margin:5px 0!important;padding:3px!important;background:#e6ebee!important}
+html body.media-time-body .pc-search strong{font:6px 'Gulim','굴림',sans-serif!important;color:#535f68!important}
+html body.media-time-body .pc-search button{font:700 6px 'Gulim','굴림',sans-serif!important}
+html body.media-time-body .pc-portal h2{margin:5px 0 3px!important;padding:4px 6px!important;background:#174f78!important;color:#fff!important;font:700 10px/1.2 'Gulim','굴림',sans-serif!important;letter-spacing:0!important}
+html body.media-time-body .pc-portal>p{margin:0 4px 5px!important;color:#3e4a53!important;font:6px/1.45 'Gulim','굴림',sans-serif!important}
+html body.media-time-body .pc-portal ol{border:1px solid #9aaab5!important;background:#fff!important}
+html body.media-time-body .pc-portal li{padding:4px 6px!important;border-bottom:1px dotted #aeb8bf!important;font:6px 'Gulim','굴림',sans-serif!important}
+html body.media-time-body .pc-portal li:nth-child(odd){background:#edf3f7!important}
+html body.media-time-body .pc-portal>small{right:6px!important;bottom:3px!important;font:5px 'Gulim','굴림',sans-serif!important}
+html body.media-time-body .pc-media>img{z-index:6!important;pointer-events:none!important}
+html body.media-time-body .pc-screen-ui{z-index:4!important}
+
+/* Remove every warm cast. All photographed devices share one cool silver
+   grade under the blue-grey studio light. */
+html body.media-time-body .tv-time-panel .tv-frame,
+html body.media-time-body .radio-media>img,
+html body.media-time-body .pc-media>img,
+html body.media-time-body .phone-media>img{
+  opacity:.97!important;
+  filter:grayscale(.93) sepia(0) saturate(.18) hue-rotate(178deg) brightness(1.055) contrast(.965)
+    drop-shadow(0 11px 7px rgba(13,29,43,.22)) drop-shadow(0 0 8px rgba(221,239,250,.20))!important;
+}
+
+/* Final physical placement and floor-light detail for radio and CRT. */
+@media(min-width:801px){
+  html body.media-time-body .radio-media{top:59%!important;width:min(49vw,820px)!important}
+}
+html body.media-time-body .radio-media>img{
+  filter:drop-shadow(0 8px 5px rgba(11,24,36,.25)) drop-shadow(0 22px 15px rgba(26,41,54,.15)) drop-shadow(0 0 7px rgba(226,240,249,.15))!important;
+}
+html body.media-time-body .radio-media::after{
+  content:""!important;display:block!important;position:absolute!important;z-index:-1!important;left:11%!important;right:11%!important;bottom:-2.2%!important;height:8%!important;
+  border-radius:50%!important;background:rgba(14,28,40,.31)!important;filter:blur(12px)!important;transform:scaleY(.28)!important;pointer-events:none!important;
+}
+html body.media-time-body .tv-time-panel .tv-frame{
+  filter:drop-shadow(0 8px 5px rgba(10,23,35,.27)) drop-shadow(0 23px 16px rgba(25,40,54,.15)) drop-shadow(0 0 7px rgba(226,241,250,.16))!important;
+}
+@media(max-width:800px){html body.media-time-body .radio-media{top:56%!important;width:min(86vw,580px)!important}}
+
+/* User-supplied final CRT shell. Interactive picture stays behind this PNG
+   and is revealed only through its transparent curved aperture. */
+html body.media-time-body .tv-time-panel .television{aspect-ratio:1447/1087!important}
+html body.media-time-body .tv-time-panel .tv-frame{
+  z-index:6!important;
+  width:100%!important;height:100%!important;object-fit:contain!important;pointer-events:none!important;
+}
+html body.media-time-body .tv-time-panel .screen-window{
+  z-index:2!important;left:10.45%!important;top:20.25%!important;width:60.55%!important;height:55.85%!important;
+  border-radius:14% / 13%!important;clip-path:inset(0 round 14% / 13%)!important;overflow:hidden!important;
+}
+html body.media-time-body .pc-media>img,html body.media-time-body .phone-media>img{z-index:6!important;pointer-events:none!important}
+html body.media-time-body .pc-screen-ui,html body.media-time-body .phone-media .social-app{z-index:4!important}
+
+/* Latest supplied CRT shell and its measured aperture. */
+html body.media-time-body .tv-time-panel .tv-frame{content:url('../assets/images/tv-frame-user-final-v2.webp')!important}
+html body.media-time-body .tv-time-panel .screen-window{
+  left:10.95%!important;top:21.00%!important;width:59.40%!important;height:54.50%!important;
+  border-radius:14% / 13%!important;clip-path:inset(0 round 14% / 13%)!important;
+}
+/* Radio correction requested after visual review. */
+@media(min-width:801px){html body.media-time-body .radio-media{top:62%!important;width:min(44vw,740px)!important}}
+@media(max-width:800px){html body.media-time-body .radio-media{top:58%!important;width:min(78vw,520px)!important}}
+
+/* Radio reference match: genuinely smaller (height was the limiting axis),
+   lower on the stage, and pearl-white controls with a navy active state. */
+@media(min-width:801px){
+  html body.media-time-body .radio-media{top:66%!important;width:min(40vw,670px)!important;max-height:225px!important}
+}
+html body.media-time-body .radio-console{
+  color:rgba(244,248,251,.92)!important;border-top-color:rgba(244,249,252,.72)!important;
+  text-shadow:0 1px 4px rgba(29,48,67,.28)!important;
+}
+html body.media-time-body .radio-console>header{color:rgba(247,250,252,.92)!important;font-weight:600!important;letter-spacing:.15em!important}
+html body.media-time-body .radio-console .radio-scale{color:rgba(245,249,252,.92)!important;font-weight:600!important}
+html body.media-time-body .radio-console>#radioTuner{
+  background:repeating-linear-gradient(90deg,rgba(246,250,252,.72) 0 1px,transparent 1px 10px)!important;
+  border-bottom-color:rgba(246,250,252,.78)!important;
+}
+html body.media-time-body .radio-console>#radioTuner::-webkit-slider-thumb{background:#233f76!important;box-shadow:0 0 5px rgba(255,255,255,.25)!important}
+html body.media-time-body .radio-console .radio-presets button{color:rgba(242,247,250,.58)!important;text-shadow:0 1px 4px rgba(29,48,67,.24)!important}
+html body.media-time-body .radio-console .radio-presets button[aria-pressed=true]{color:#263d69!important;border-color:#274a87!important;text-shadow:0 1px 1px rgba(255,255,255,.45)!important;font-weight:600!important}
+html body.media-time-body .radio-console .radio-stop{color:#f6f9fb!important;border-color:rgba(250,252,253,.84)!important;background:rgba(255,255,255,.025)!important;font-weight:600!important}
+html body.media-time-body .radio-console .radio-built-in b{color:#29416d!important;font-weight:600!important}
+html body.media-time-body .radio-console .radio-built-in span{color:#344c73!important;font-weight:600!important}
+html body.media-time-body .radio-console #radioSub{color:rgba(55,76,108,.74)!important}
+html body.media-time-body .radio-console #radioSignal{color:#2e4878!important;font-weight:600!important}
+html body.media-time-body .radio-console .radio-instruction{color:rgba(55,76,108,.68)!important}
+@media(max-width:800px){html body.media-time-body .radio-media{top:61%!important;width:min(72vw,470px)!important;max-height:210px!important}}
+
+/* The radio needed a real reduction on its limiting height axis. */
+@media(min-width:801px){
+  html body.media-time-body .radio-media{top:72%!important;width:min(35vw,590px)!important;max-height:185px!important}
+}
+@media(max-width:800px){html body.media-time-body .radio-media{top:66%!important;width:min(66vw,430px)!important;max-height:180px!important}}
+html body.media-time-body .paper-media img,
+html body.media-time-body .scroll-media img{
+  filter:grayscale(.30) sepia(0) saturate(.48) hue-rotate(175deg) brightness(1.035) contrast(.98)
+    drop-shadow(0 12px 9px rgba(19,33,46,.16))!important;
+}
+
+/* Absolute neutralisation. The supplied assets are cool silver; do not tint
+   them with sepia, hue rotation, transparency or blend modes. */
+html body.media-time-body .tv-time-panel .tv-frame,
+html body.media-time-body .radio-media>img,
+html body.media-time-body .pc-media>img,
+html body.media-time-body .phone-media>img{
+  opacity:1!important;mix-blend-mode:normal!important;
+  filter:grayscale(1) brightness(1.055) contrast(1.015)
+    drop-shadow(0 11px 7px rgba(12,25,38,.24)) drop-shadow(0 0 7px rgba(225,241,251,.18))!important;
+}
+html body.media-time-body .pc-media,
+html body.media-time-body .radio-media,
+html body.media-time-body .tv-time-panel .television{filter:none!important}
+
+/* Hard clip to the measured transparent monitor aperture (276–855 ×
+   100–500 on the 1383×862 shell). */
+html body.media-time-body .pc-screen-ui{
+  left:19.96%!important;right:38.11%!important;top:21.50%!important;height:36.80%!important;
+  border-radius:2.5% / 3.5%!important;clip-path:inset(0 round 2.5%)!important;overflow:hidden!important;
+}
+html body.media-time-body .pc-portal{top:2%!important;padding-top:29px!important}
+
+/* Let the neutral studio background pass through the glass media slightly.
+   Keep the source colour untouched so no warm tint is introduced. */
+html body.media-time-body .tv-time-panel .tv-frame,
+html body.media-time-body .radio-media>img,
+html body.media-time-body .pc-media>img,
+html body.media-time-body .phone-media>img{
+  opacity:.94!important;mix-blend-mode:normal!important;
+  filter:drop-shadow(0 11px 7px rgba(12,25,38,.23)) drop-shadow(0 0 7px rgba(225,241,251,.17))!important;
+}
+html body.media-time-body .pc-hint{display:none!important}
+@media(min-width:801px){html body.media-time-body .radio-media{top:75%!important;width:min(30vw,500px)!important;max-height:160px!important}}
+@media(max-width:800px){html body.media-time-body .radio-media{top:70%!important;width:min(58vw,380px)!important;max-height:155px!important}}
+/* Slight CRT size increase requested; preserve its center and aperture geometry. */
+@media(min-width:801px){html body.media-time-body .tv-time-panel .television{width:min(45vw,840px)!important}}
+@media(min-width:801px){
+  html body.media-time-body .radio-media{
+    top:79%!important;
+    width:26vw!important;
+    max-width:430px!important;
+    height:auto!important;
+    max-height:140px!important;
+  }
+}
+@media(max-width:800px){
+  html body.media-time-body .radio-media{
+    top:74%!important;
+    width:52vw!important;
+    max-width:340px!important;
+    height:auto!important;
+    max-height:140px!important;
+  }
+}
+/* Radio correction: restore one size step and let the added height grow downward. */
+@media(min-width:801px){
+  html body.media-time-body .radio-media{
+    top:77.5%!important;
+    width:30vw!important;
+    max-width:500px!important;
+    max-height:175px!important;
+    transform:translate(-50%,-38%)!important;
+  }
+}
+@media(max-width:800px){
+  html body.media-time-body .radio-media{
+    top:72%!important;
+    width:59vw!important;
+    max-width:390px!important;
+    max-height:165px!important;
+    transform:translate(-50%,-38%)!important;
+  }
+}
+/* Reference-matched 1960s composition and neutral graphite studio. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#111820!important;
+  background-image:url('../assets/images/media-era-studio-background-neutral.webp?v=1')!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+}
+@media(min-width:801px){
+  html body.media-time-body .tv-time-panel .television{
+    top:52.5%!important;
+    width:min(50vw,950px)!important;
+  }
+}
+/* Neutral reference background: keep the working raster and grade it with overlays. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#111820!important;
+  background-image:
+    linear-gradient(180deg,rgba(13,17,22,.34) 0%,rgba(20,24,29,.16) 43%,rgba(232,234,234,.05) 100%),
+    linear-gradient(90deg,rgba(28,24,20,.035),rgba(255,255,255,0),rgba(28,24,20,.035)),
+    url('../assets/images/media-era-studio-background-neutral.webp?v=2')!important;
+  background-position:center center,center center,center center!important;
+  background-size:cover,cover,cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal,color,luminosity!important;
+}
+/* Radio reference match: larger stage presence, glass highlights, grounded shadow and short reflection. */
+@media(min-width:801px){
+  html body.media-time-body .radio-media{
+    top:52.5%!important;
+    width:min(40vw,760px)!important;
+    max-width:none!important;
+    max-height:none!important;
+    height:auto!important;
+    transform:translate(-50%,-50%)!important;
+  }
+}
+@media(max-width:800px){
+  html body.media-time-body .radio-media{
+    top:50%!important;
+    width:min(82vw,600px)!important;
+    max-width:none!important;
+    max-height:none!important;
+    transform:translate(-50%,-50%)!important;
+  }
+}
+html body.media-time-body .radio-media{
+  filter:drop-shadow(0 9px 7px rgba(14,24,33,.30)) drop-shadow(0 24px 22px rgba(26,39,50,.13))!important;
+}
+html body.media-time-body .radio-media>img{
+  opacity:.97!important;
+  filter:brightness(1.035) contrast(1.025) saturate(.76)
+    drop-shadow(0 0 5px rgba(239,247,252,.46))
+    drop-shadow(0 10px 7px rgba(13,25,36,.20))!important;
+}
+html body.media-time-body .radio-media::before{
+  content:""!important;display:block!important;position:absolute!important;z-index:-1!important;
+  left:13%!important;right:13%!important;bottom:-.5%!important;height:5.5%!important;border-radius:50%!important;
+  background:rgba(12,24,34,.34)!important;filter:blur(11px)!important;transform:scaleY(.28)!important;pointer-events:none!important;
+}
+html body.media-time-body .radio-media::after{
+  content:""!important;display:block!important;position:absolute!important;z-index:9!important;inset:0!important;pointer-events:none!important;
+  background:
+    radial-gradient(circle at 7.5% 37%,rgba(255,255,255,.82) 0 1px,rgba(229,242,250,.34) 2px,transparent 8px),
+    radial-gradient(circle at 92% 38%,rgba(255,255,255,.76) 0 1px,rgba(229,242,250,.28) 2px,transparent 8px),
+    radial-gradient(circle at 27% 28%,rgba(255,255,255,.54) 0 1px,transparent 6px),
+    radial-gradient(circle at 72% 29%,rgba(255,255,255,.48) 0 1px,transparent 6px)!important;
+  opacity:.68!important;
+}
+/* User reference: low-saturation charcoal wall with a cool silver floor. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#171b1f!important;
+  background-image:
+    linear-gradient(180deg,rgba(8,11,14,.30) 0%,rgba(15,18,21,.16) 43%,rgba(224,226,226,.04) 100%),
+    linear-gradient(180deg,rgba(54,55,55,.88) 0%,rgba(78,79,79,.76) 56%,rgba(188,190,190,.40) 100%),
+    url('../assets/images/media-era-studio-background-neutral.webp?v=2')!important;
+  background-position:center center,center center,center center!important;
+  background-size:cover,cover,cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal,color,normal!important;
+}
+/* Charcoal-violet studio requested: restrained violet in the wall, neutral silver floor. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#191721!important;
+  background-image:
+    linear-gradient(180deg,rgba(9,9,13,.29) 0%,rgba(20,17,25,.13) 45%,rgba(232,232,232,.035) 100%),
+    linear-gradient(180deg,rgba(68,56,76,.72) 0%,rgba(77,69,83,.56) 48%,rgba(171,171,174,.26) 100%),
+    url('../assets/images/media-era-studio-background-neutral.webp?v=2')!important;
+  background-position:center center,center center,center center!important;
+  background-size:cover,cover,cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal,color,normal!important;
+}
+@media(min-width:801px){
+  html body.media-time-body .tv-time-panel .television{width:min(47vw,890px)!important;top:53.2%!important}
+  html body.media-time-body .radio-media{width:min(36vw,680px)!important;top:53%!important}
+}
+/* 2002 PC power and CRT boot sequence. */
+html body.media-time-body .pc-media .pc-power-button{
+  position:absolute!important;z-index:10!important;left:68.2%!important;top:63.2%!important;
+  width:4.1%!important;aspect-ratio:1!important;border:0!important;border-radius:50%!important;
+  padding:0!important;background:transparent!important;cursor:pointer!important;color:transparent!important;
+  box-shadow:0 0 0 1px rgba(228,240,247,.08)!important;
+}
+html body.media-time-body .pc-media .pc-power-button::after{
+  content:"";position:absolute;inset:27%;border-radius:50%;background:rgba(224,239,248,.08);
+  box-shadow:0 0 6px rgba(215,236,249,.16);transition:.2s;
+}
+html body.media-time-body .pc-media.pc-on .pc-power-button::after{background:#cfe9f8;box-shadow:0 0 7px #b8e0f8,0 0 14px rgba(156,210,241,.55)}
+html body.media-time-body .pc-media.pc-off .pc-screen-ui{background:#050709!important;box-shadow:inset 0 0 24px #000!important}
+html body.media-time-body .pc-media.pc-off .pc-screen-ui>*{opacity:0!important;pointer-events:none!important}
+html body.media-time-body .pc-media .pc-boot-screen{
+  position:absolute;z-index:5;inset:0;display:none;overflow:hidden;background:#020304;color:#c9dbe6;
+  font:700 7px/1.45 'Gulim','굴림',monospace;letter-spacing:.02em;padding:8% 7%;box-sizing:border-box;
+  text-shadow:0 0 4px rgba(185,225,247,.48);
+}
+html body.media-time-body .pc-media.pc-booting .pc-boot-screen{display:block;animation:pcBootGlow 2.7s steps(1,end) forwards}
+html body.media-time-body .pc-media.pc-booting .pc-screen-ui>*{opacity:0!important;pointer-events:none!important}
+html body.media-time-body .pc-media .pc-boot-screen::before{content:"YEAR:ON BIOS 2002\\A메모리 검사 중... 65536 KB 확인\\A하드 디스크를 찾았습니다.\\A윈도우를 시작합니다...";white-space:pre-line}
+html body.media-time-body .pc-media .pc-boot-screen::after{
+  content:"";position:absolute;left:5%;right:5%;top:50%;height:1px;background:#e7f5fc;
+  box-shadow:0 0 12px #d5effc;opacity:0;animation:pcCrtLine 2.7s ease forwards;
+}
+@keyframes pcCrtLine{0%,56%{opacity:0;transform:scaleX(.05)}62%{opacity:1;transform:scaleX(1)}70%{opacity:.7;transform:scaleX(1) scaleY(28)}86%,100%{opacity:0;transform:scaleX(1) scaleY(180)}}
+@keyframes pcBootGlow{0%{filter:brightness(.5)}58%{filter:brightness(.75)}68%{filter:brightness(2)}82%{filter:brightness(.85)}100%{filter:brightness(1)}}
+html body.media-time-body .pc-media.pc-on .pc-screen-ui{animation:pcScreenOn .45s ease-out both}
+@keyframes pcScreenOn{0%{filter:brightness(3);transform:scaleY(.02)}45%{filter:brightness(1.5);transform:scaleY(1)}100%{filter:brightness(1);transform:scaleY(1)}}
+/* Integration pass: remove misplaced PC shadow and calm every transparent device. */
+html body.media-time-body .pc-media::before,
+html body.media-time-body .pc-media::after{display:none!important;content:none!important}
+html body.media-time-body .tv-frame,
+html body.media-time-body .radio-media>img,
+html body.media-time-body .pc-media>img,
+html body.media-time-body .phone-media>img{
+  opacity:.89!important;
+  mix-blend-mode:normal!important;
+  filter:brightness(.985) contrast(.975) saturate(.72) drop-shadow(0 9px 8px rgba(13,23,32,.18))!important;
+}
+html body.media-time-body .radio-media{
+  filter:none!important;
+}
+html body.media-time-body .radio-media>img{
+  opacity:.88!important;
+  filter:brightness(.99) contrast(.97) saturate(.68) drop-shadow(0 9px 8px rgba(13,23,32,.17))!important;
+}
+html body.media-time-body .radio-media::after{display:none!important;content:none!important}
+html body.media-time-body .radio-media::before{
+  left:19%!important;right:19%!important;bottom:.2%!important;height:3.2%!important;
+  background:rgba(15,24,31,.23)!important;filter:blur(9px)!important;transform:scaleY(.22)!important;
+}
+/* User-provided final background candidate — preserve its original colour. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#080817!important;
+  background-image:url('../assets/images/media-era-background-violet-floor.webp?v=1')!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal!important;
+}
+html body.media-time-body .radio-media::before{bottom:4.5%!important}
+/* Restore the preceding charcoal-violet background. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#191721!important;
+  background-image:
+    linear-gradient(180deg,rgba(9,9,13,.29) 0%,rgba(20,17,25,.13) 45%,rgba(232,232,232,.035) 100%),
+    linear-gradient(180deg,rgba(68,56,76,.72) 0%,rgba(77,69,83,.56) 48%,rgba(171,171,174,.26) 100%),
+    url('../assets/images/media-era-studio-background-neutral.webp?v=2')!important;
+  background-position:center center,center center,center center!important;
+  background-size:cover,cover,cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal,color,normal!important;
+}
+@media(min-width:801px){html body.media-time-body .tv-time-panel .television{width:min(45.5vw,860px)!important;top:53.4%!important}}
+html body.media-time-body .tv-frame,
+html body.media-time-body .radio-media>img,
+html body.media-time-body .pc-media>img,
+html body.media-time-body .phone-media>img{
+  opacity:.84!important;
+  filter:brightness(.99) contrast(.98) saturate(.72) drop-shadow(0 8px 6px rgba(9,16,23,.20))!important;
+}
+html body.media-time-body .radio-media::before{
+  left:18%!important;right:18%!important;bottom:4.7%!important;height:2.8%!important;
+  background:rgba(7,13,18,.29)!important;filter:blur(8px)!important;transform:scaleY(.25)!important;
+  box-shadow:0 12px 17px 6px rgba(27,34,41,.10)!important;
+}
+html body.media-time-body .pc-media>img,
+html body.media-time-body .phone-media>img{filter:brightness(.985) contrast(.975) saturate(.70) drop-shadow(0 8px 7px rgba(10,18,25,.18))!important}
+/* Radio-only size and vertical placement correction. */
+@media(min-width:801px){
+  html body.media-time-body .radio-media{
+    width:min(33vw,620px)!important;
+    top:57.5%!important;
+  }
+}
+@media(max-width:800px){
+  html body.media-time-body .radio-media{
+    width:min(76vw,540px)!important;
+    top:55%!important;
+  }
+}
+/* Further radio reduction and downward placement. */
+@media(min-width:801px){
+  html body.media-time-body .radio-media{
+    width:min(30vw,560px)!important;
+    top:60.5%!important;
+  }
+}
+@media(max-width:800px){
+  html body.media-time-body .radio-media{
+    width:min(69vw,490px)!important;
+    top:58.5%!important;
+  }
+}
+/* Explicit radio reduction: noticeably smaller and lower. */
+@media(min-width:801px){
+  html body.media-time-body .radio-media{
+    width:min(26vw,480px)!important;
+    top:65%!important;
+  }
+}
+@media(max-width:800px){
+  html body.media-time-body .radio-media{
+    width:min(60vw,430px)!important;
+    top:62%!important;
+  }
+}
+/* Reference tone: graphite/ink wall, desaturated steel horizon, silver floor. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#1b1d20!important;
+  background-image:
+    linear-gradient(180deg,#181a1d 0%,#202328 35%,#4d535c 60%,#9da3aa 75%,#d8d9dc 100%),
+    url('../assets/images/media-era-studio-background-neutral.webp?v=2')!important;
+  background-position:center center,center center!important;
+  background-size:cover,cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:color,normal!important;
+}
+/* Correct the over-dark blend: translucent ink-grey grade over the photographed floor. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#22252a!important;
+  background-image:
+    linear-gradient(180deg,rgba(18,20,23,.70) 0%,rgba(36,39,44,.54) 43%,rgba(92,98,106,.28) 65%,rgba(231,232,233,.03) 100%),
+    url('../assets/images/media-era-studio-background-neutral.webp?v=2')!important;
+  background-position:center center,center center!important;
+  background-size:cover,cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal,normal!important;
+}
+@media(min-width:801px){html body.media-time-body .radio-media{width:min(23vw,430px)!important;top:68.5%!important}}
+@media(max-width:800px){html body.media-time-body .radio-media{width:min(54vw,380px)!important;top:65%!important}}
+html body.media-time-body .pc-media .pc-power-button{
+  z-index:14!important;left:66.2%!important;top:60.2%!important;width:7%!important;
+  color:rgba(222,236,244,.82)!important;font:600 clamp(9px,1vw,15px)/1 Arial,sans-serif!important;
+  display:grid!important;place-items:center!important;text-shadow:0 0 4px rgba(202,230,246,.5)!important;
+}
+html body.media-time-body .pc-media .pc-power-button::after{inset:13%!important;background:rgba(213,233,244,.10)!important}
+html body.media-time-body .pc-media.pc-off .pc-screen-ui{cursor:pointer!important}
+html body.media-time-body .pc-media.pc-off .pc-screen-ui::after{
+  content:'화면 또는 전원 버튼을 눌러 시작';position:absolute;left:50%;bottom:8%;transform:translateX(-50%);
+  width:max-content;color:rgba(188,207,219,.58);font:6px 'Gulim','굴림',sans-serif;letter-spacing:.04em;
+}
+/* Colour only: preserve all original lighting, horizon and floor depth. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#22252a!important;
+  background-image:
+    linear-gradient(180deg,rgba(25,24,29,.24) 0%,rgba(51,49,56,.18) 48%,rgba(116,117,121,.07) 72%,rgba(255,255,255,0) 100%),
+    url('../assets/images/media-era-studio-background-neutral.webp?v=2')!important;
+  background-position:center center,center center!important;
+  background-size:cover,cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal,normal!important;
+}
+/* Exact original background geometry with blue saturation removed in the raster itself. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#1d2024!important;
+  background-image:url('../assets/images/media-era-studio-background-ink.webp?v=1')!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal!important;
+}
+/* Restore the exact background used in the referenced earlier composition. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#111a27!important;
+  background-image:url('../assets/images/media-era-studio-background-neutral.webp?v=2')!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal!important;
+}
+/* Pearl-white hover for adjacent era cards; restrained glow, no blue cast. */
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:is(:hover,:focus-visible) b{
+  color:#f8fafb!important;-webkit-text-fill-color:#f8fafb!important;
+  text-shadow:0 0 7px rgba(245,250,253,.34)!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:is(:hover,:focus-visible) span{
+  color:rgba(247,250,252,.86)!important;-webkit-text-fill-color:rgba(247,250,252,.86)!important;
+  text-shadow:0 0 5px rgba(244,249,252,.20)!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:is(:hover,:focus-visible) .era-thumb{
+  opacity:.9!important;
+  filter:grayscale(1) brightness(1.72) contrast(.9) saturate(0) drop-shadow(0 0 5px rgba(245,250,253,.22))!important;
+}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour='true']:is(:hover,:focus-visible)::after{
+  background:linear-gradient(var(--era-line-direction,90deg),rgba(255,255,255,.22),rgba(250,252,253,.9))!important;
+  opacity:.9!important;box-shadow:0 0 5px rgba(245,250,253,.18)!important;
+}
+/* User supplied background, applied without colour overlays. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#141c28!important;
+  background-image:url('../assets/images/media-era-background-final.webp?v=2')!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal!important;
+}
+/* Latest user-supplied background. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#16202c!important;
+  background-image:url('../assets/images/media-era-background-user-exact-v2.webp?v=2026100102')!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal!important;
+}
+/* Most recent user-supplied background. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#17212d!important;
+  background-image:url('../assets/images/media-era-background-user-exact-v3.webp?v=2026100103')!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal!important;
+}
+/* Final radio scale/position adjustment. */
+@media(min-width:801px){
+  html body.media-time-body .radio-media{
+    width:min(20.5vw,385px)!important;
+    top:71.5%!important;
+  }
+}
+@media(max-width:800px){
+  html body.media-time-body .radio-media{
+    width:min(48vw,340px)!important;
+    top:68%!important;
+  }
+}
+/* Latest supplied background v4. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#17212d!important;
+  background-image:url('../assets/images/media-era-studio-background-karchive-graded-v2.webp?v=2026100104')!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal!important;
+}
+
+
+/* Latest supplied background v5. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#111a25!important;
+  background-image:url('../assets/images/media-era-background-user-exact-v5.webp?v=2026100105')!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal!important;
+}
+
+
+/* Restore the clean original studio background. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#17212d!important;
+  background-image:url('../assets/images/media-era-studio-background-karchive-graded-v2.webp?v=2026100106')!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal!important;
+}
+
+/* Fine placement adjustment: lower radio slightly and reduce TV minimally. */
+@media (min-width:801px){
+  html body.media-time-body .radio-media{
+    top:73%!important;
+  }
+  html body.media-time-body .tv-time-panel .television{
+    width:min(44.5vw,845px)!important;
+  }
+}
+@media (max-width:800px){
+  html body.media-time-body .radio-media{
+    top:69.5%!important;
+  }
+  html body.media-time-body .tv-time-panel .television{
+    width:min(76vw,505px)!important;
+  }
+}
+
+/* Lower radio one final small step. */
+@media (min-width:801px){
+  html body.media-time-body .radio-media{top:74.2%!important}
+}
+@media (max-width:800px){
+  html body.media-time-body .radio-media{top:70.7%!important}
+}
+
+/* Lower radio another measured step. */
+@media (min-width:801px){
+  html body.media-time-body .radio-media{top:75.5%!important}
+}
+@media (max-width:800px){
+  html body.media-time-body .radio-media{top:72%!important}
+}
+
+
+/* Restore the earlier neutral studio background seen in the reference capture. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#17212d!important;
+  background-image:url('../assets/images/media-era-studio-background-neutral.webp?v=2026100107')!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal!important;
+}
+
+/* Recreate the earlier reference grade: deep ink wall, restrained cool midtone, clean silver floor. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#111820!important;
+  background-image:
+    linear-gradient(180deg,rgba(13,17,22,.34) 0%,rgba(20,24,29,.16) 43%,rgba(232,234,234,.05) 100%),
+    linear-gradient(90deg,rgba(28,24,20,.035),rgba(255,255,255,0),rgba(28,24,20,.035)),
+    url('../assets/images/media-era-studio-background-neutral.webp?v=2026100108')!important;
+  background-position:center center,center center,center center!important;
+  background-size:cover,cover,cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal,color,luminosity!important;
+}
+
+/* Top-wall grade only: soften navy into a restrained ink-black tone. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#12161c!important;
+  background-image:
+    linear-gradient(180deg,rgba(7,8,10,.56) 0%,rgba(10,11,14,.40) 23%,rgba(13,15,18,.17) 43%,rgba(13,15,18,0) 58%),
+    linear-gradient(180deg,rgba(13,17,22,.26) 0%,rgba(20,24,29,.11) 43%,rgba(232,234,234,.04) 100%),
+    linear-gradient(90deg,rgba(24,22,20,.03),rgba(255,255,255,0),rgba(24,22,20,.03)),
+    url('../assets/images/media-era-studio-background-neutral.webp?v=2026100109')!important;
+  background-position:center center,center center,center center,center center!important;
+  background-size:cover,cover,cover,cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal,normal,color,luminosity!important;
+}
+
+/* Match K-Archive upper wall: charcoal-black with a muted graphite-blue falloff. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#0c1016!important;
+  background-image:
+    linear-gradient(180deg,
+      rgba(8,11,15,.90) 0%,
+      rgba(12,15,20,.86) 20%,
+      rgba(24,28,35,.78) 40%,
+      rgba(48,54,65,.62) 55%,
+      rgba(75,83,96,.18) 67%,
+      rgba(75,83,96,0) 74%),
+    url('../assets/images/media-era-studio-background-neutral.webp?v=2026100110')!important;
+  background-position:center center,center center!important;
+  background-size:cover,cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal,luminosity!important;
+}
+
+/* Exact upper-only K-Archive tone; the original lower floor remains untouched. */
+html body.media-time-body,
+html body.media-time-body .time-deck{
+  background-color:#0b0e13!important;
+  background-image:
+    linear-gradient(180deg,
+      #090c11 0%,
+      #0d1117 18%,
+      #171c24 36%,
+      rgba(42,48,58,.98) 52%,
+      rgba(63,71,83,.72) 60%,
+      rgba(83,92,105,.22) 67%,
+      rgba(83,92,105,0) 72%),
+    url('../assets/images/media-era-studio-background-neutral.webp?v=2026100111')!important;
+  background-position:center center,center center!important;
+  background-size:cover,cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal,normal!important;
+}
+
+/* High-specificity upper-only grade; overrides the light-theme navy rule. */
+html:not([data-theme='dark']) body.media-time-body .time-deck,
+html[data-theme='dark'] body.media-time-body .time-deck,
+html body.media-time-body .time-deck{
+  background-color:#0a0d12!important;
+  background-image:
+    linear-gradient(180deg,
+      #090c11 0%,
+      #0d1117 18%,
+      #171c24 36%,
+      rgba(42,48,58,.98) 52%,
+      rgba(63,71,83,.72) 60%,
+      rgba(83,92,105,.22) 67%,
+      rgba(83,92,105,0) 72%),
+    url('../assets/images/media-era-studio-background-neutral.webp?v=2026100112')!important;
+  background-position:center center,center center!important;
+  background-size:cover,cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal,normal!important;
+}
+
+/* Use the exact K-ARCHIVE film colours on the upper wall only. */
+html body.media-time-body,
+html:not([data-theme='dark']) body.media-time-body,
+html[data-theme='dark'] body.media-time-body,
+html body.media-time-body .time-deck,
+html:not([data-theme='dark']) body.media-time-body .time-deck,
+html[data-theme='dark'] body.media-time-body .time-deck{
+  background-color:#08090c!important;
+  background-image:
+    linear-gradient(180deg,
+      #08090c 0%,
+      #171b22 24%,
+      #303743 44%,
+      rgba(80,89,103,.88) 56%,
+      rgba(122,133,149,.36) 66%,
+      rgba(156,168,185,0) 73%),
+    url('../assets/images/media-era-studio-background-neutral.webp?v=2026100113')!important;
+  background-position:center center,center center!important;
+  background-size:cover,cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal,normal!important;
+}
+
+/* Black header edge flowing into the K-ARCHIVE charcoal wall; floor unchanged. */
+html body.media-time-body .global-header.global-header{
+  background:rgba(5,6,8,.96)!important;
+  border-bottom-color:rgba(255,255,255,.11)!important;
+  backdrop-filter:blur(10px)!important;
+  -webkit-backdrop-filter:blur(10px)!important;
+}
+html body.media-time-body,
+html:not([data-theme='dark']) body.media-time-body,
+html[data-theme='dark'] body.media-time-body,
+html body.media-time-body .time-deck,
+html:not([data-theme='dark']) body.media-time-body .time-deck,
+html[data-theme='dark'] body.media-time-body .time-deck{
+  background-color:#050608!important;
+  background-image:
+    linear-gradient(180deg,
+      #050608 0%,
+      #08090c 13%,
+      #151920 29%,
+      #303743 47%,
+      rgba(80,89,103,.84) 58%,
+      rgba(122,133,149,.32) 67%,
+      rgba(156,168,185,0) 73%),
+    url('../assets/images/media-era-studio-background-neutral.webp?v=2026100114')!important;
+  background-position:center center,center center!important;
+  background-size:cover,cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal,normal!important;
+}
+
+/* Continuous black-to-charcoal header gradient. */
+html body.media-time-body .global-header.global-header{
+  background:linear-gradient(180deg,rgba(3,4,5,.99) 0%,rgba(6,7,9,.98) 48%,rgba(12,15,20,.95) 100%)!important;
+  border-bottom-color:rgba(255,255,255,.10)!important;
+}
+html body.media-time-body,
+html:not([data-theme='dark']) body.media-time-body,
+html[data-theme='dark'] body.media-time-body,
+html body.media-time-body .time-deck,
+html:not([data-theme='dark']) body.media-time-body .time-deck,
+html[data-theme='dark'] body.media-time-body .time-deck{
+  background-image:
+    linear-gradient(180deg,
+      #090b0e 0%,
+      #0d1015 11%,
+      #171b22 27%,
+      #303743 47%,
+      rgba(80,89,103,.84) 58%,
+      rgba(122,133,149,.32) 67%,
+      rgba(156,168,185,0) 73%),
+    url('../assets/images/media-era-studio-background-neutral.webp?v=2026100115')!important;
+}
+/* Smaller radio, positioned lower. */
+@media (min-width:801px){
+  html body.media-time-body .radio-media{
+    width:min(19vw,355px)!important;
+    top:77.5%!important;
+  }
+}
+@media (max-width:800px){
+  html body.media-time-body .radio-media{
+    width:min(44vw,315px)!important;
+    top:74%!important;
+  }
+}
+
+/* Remove every blue cast from the upper wall: neutral black and graphite only. */
+html body.media-time-body .global-header.global-header{
+  background:linear-gradient(180deg,#030303 0%,#070708 52%,#0e0e10 100%)!important;
+  border-bottom-color:rgba(255,255,255,.09)!important;
+}
+html body.media-time-body,
+html:not([data-theme='dark']) body.media-time-body,
+html[data-theme='dark'] body.media-time-body,
+html body.media-time-body .time-deck,
+html:not([data-theme='dark']) body.media-time-body .time-deck,
+html[data-theme='dark'] body.media-time-body .time-deck{
+  background-color:#070708!important;
+  background-image:
+    linear-gradient(180deg,
+      #070708 0%,
+      #0d0d0f 16%,
+      #18191c 32%,
+      #303238 49%,
+      #555960 61%,
+      rgba(113,117,124,.94) 69%,
+      rgba(145,149,155,.55) 75%,
+      rgba(165,168,173,0) 82%),
+    url('../assets/images/media-era-studio-background-neutral.webp?v=2026100116')!important;
+  background-position:center center,center center!important;
+  background-size:cover,cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal,luminosity!important;
+}
+
+/* Raster-graded background: K-ARCHIVE pixels above, untouched original floor below. */
+html body.media-time-body,
+html:not([data-theme='dark']) body.media-time-body,
+html[data-theme='dark'] body.media-time-body,
+html body.media-time-body .time-deck,
+html:not([data-theme='dark']) body.media-time-body .time-deck,
+html[data-theme='dark'] body.media-time-body .time-deck{
+  background-color:#08090c!important;
+  background-image:url('../assets/images/media-era-studio-background-karchive-graded.webp?v=2026100117')!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal!important;
+}
+
+/* Corrected raster orientation: graded upper wall, untouched original lower floor. */
+html body.media-time-body,
+html:not([data-theme='dark']) body.media-time-body,
+html[data-theme='dark'] body.media-time-body,
+html body.media-time-body .time-deck,
+html:not([data-theme='dark']) body.media-time-body .time-deck,
+html[data-theme='dark'] body.media-time-body .time-deck{
+  background-color:#08090c!important;
+  background-image:url('../assets/images/media-era-studio-background-karchive-graded-v2.webp?v=2026100118')!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  background-blend-mode:normal!important;
+}
+
+/* Seamless fade below the header into the graded studio wall. */
+html body.media-time-body .global-header.global-header{
+  border-bottom-color:transparent!important;
+  overflow:visible!important;
+}
+html body.media-time-body .global-header.global-header::after{
+  content:""!important;
+  position:absolute!important;
+  z-index:-1!important;
+  left:0!important;
+  right:0!important;
+  top:100%!important;
+  height:52px!important;
+  pointer-events:none!important;
+  background:linear-gradient(180deg,rgba(8,9,11,.72) 0%,rgba(10,11,14,.36) 42%,rgba(12,14,17,.12) 72%,rgba(12,14,17,0) 100%)!important;
+}
+
+/* Restore the thin header rule; match only the header's lower colour to the wall. */
+html body.media-time-body .global-header.global-header{
+  background:linear-gradient(180deg,#030303 0%,#050506 50%,#08090c 100%)!important;
+  border-bottom:1px solid rgba(239,246,250,.16)!important;
+  overflow:visible!important;
+}
+html body.media-time-body .global-header.global-header::after{
+  display:none!important;
+  content:none!important;
+}
+
+/* Exact pre-v161 header rule and truly continuous wall colour behind it. */
+html body.media-time-body .global-header.global-header{
+  background:rgba(0,0,0,.06)!important;
+  border-bottom-width:1px!important;
+  border-bottom-style:solid!important;
+  border-bottom-color:rgba(255,255,255,.09)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  box-shadow:none!important;
+}
+html body.media-time-body .global-header.global-header::after{
+  display:none!important;
+  content:none!important;
+}
+
+html body.media-time-body .era-bridge #timeNav button[data-side='past']{--era-line-direction:270deg}

@@ -1,0 +1,6 @@
+/* Tapered typographic parentheses: substantial middle and lighter terminals. */
+html body.home-film-body #entry#entry .split-o em{display:none!important}
+html body.home-film-body #entry#entry .entry-logo-en .split-o :is(.o-top,.o-bottom)::after{background-image:url('../assets/home-parenthesis-glyph.svg')!important;background-size:contain!important;filter:none!important}
+html body.home-film-body #entry#entry .entry-logo-en .split-o .o-bottom::after{transform:scaleX(-1)!important}
+
+html body.home-film-body #entry#entry{height:360svh!important;min-height:360svh!important}

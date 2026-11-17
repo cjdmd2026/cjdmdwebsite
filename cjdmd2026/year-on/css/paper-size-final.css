@@ -1,0 +1,28 @@
+/* Fit a real 708:960 page beneath the era heading, centered while closed. */
+html body.media-time-body .time-panel[data-era="1920"]>#paperMedia .paper-book{
+ width:min(70vw,81svh,1140px)!important;height:auto!important;max-height:none!important;
+ filter:none!important;aspect-ratio:1416/1040!important;left:50%!important;top:52.5%!important;
+ transform:translate(calc(-50% - var(--paper-cover-offset,0%)),-50%)!important;
+}
+html body.media-time-body #paperMedia .paper-page-nav{
+ left:0!important;right:0!important;
+ width:100%!important;
+ transform:translateX(var(--paper-cover-offset,0%))!important;
+}
+@media(max-width:700px){html body.media-time-body .time-panel[data-era="1920"]>#paperMedia .paper-book{width:min(156vw,73svh)!important;top:53.5%!important}}
+
+
+#paperMedia .paper-fixed,
+#paperMedia .paper-left-rest,
+#paperMedia .paper-flex-front,
+#paperMedia .paper-flex-back{
+ filter:grayscale(1) brightness(1.015) contrast(1.025);
+}
+#paperMedia .paper-final-flat::after{display:none}
+
+/* Neutral paper stock without washing out the printed ink. */
+#paperMedia .paper-fixed,#paperMedia .paper-left-rest,#paperMedia .paper-flex-front,#paperMedia .paper-flex-back{background-color:#f7f7f6!important}
+#paperMedia .paper-fixed::before,#paperMedia .paper-left-rest::before,#paperMedia .paper-flex-front::before,#paperMedia .paper-flex-back::before{opacity:.06!important}
+/* Keep the newspaper navigation preview aligned with the supplied cover. */
+#timeNav button[data-index="1"] .era-thumb{background-image:url("../assets/images/newspaper-front-user-20261109-final.webp")!important;background-size:contain!important;background-position:center!important;background-repeat:no-repeat!important;filter:grayscale(1)!important}
+#timeNav button[data-index="1"] .era-thumb img{content:url("../assets/images/newspaper-front-user-20261109-final.webp")!important;object-fit:contain!important;filter:grayscale(1)!important}

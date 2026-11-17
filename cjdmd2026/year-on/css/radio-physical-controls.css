@@ -1,0 +1,112 @@
+/* Click targets registered to the controls visible in the radio artwork. */
+html body.media-time-body #radioMedia .radio-top-controls{
+  display:flex!important;
+  left:36.1%!important;
+  top:81.8%!important;
+  width:27.7%!important;
+  height:9.2%!important;
+  gap:1.4%!important;
+  z-index:14!important;
+}
+html body.media-time-body #radioMedia .radio-top-controls button{
+  border:0!important;
+  border-radius:2px!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  transform:none!important;
+  cursor:pointer!important;
+}
+html body.media-time-body #radioMedia .radio-top-controls button::before,
+html body.media-time-body #radioMedia .radio-top-controls button::after{display:none!important}
+html body.media-time-body #radioMedia .radio-top-controls button:is(:hover,:focus-visible){
+  outline:1px solid rgba(225,248,255,.9)!important;
+  outline-offset:-2px!important;
+  background:rgba(199,235,247,.12)!important;
+}
+html body.media-time-body #radioMedia .radio-top-controls button:is(:active,.selected,.playing){
+  transform:translateY(2px)!important;
+  background:rgba(167,218,236,.16)!important;
+  box-shadow:inset 0 2px 4px rgba(21,38,51,.48)!important;
+}
+html body.media-time-body #radioMedia :is(.radio-tuning-knob,.radio-stop-knob){
+  position:absolute!important;
+  z-index:15!important;
+  top:17.1%!important;
+  width:7.2%!important;
+  aspect-ratio:1!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:transparent!important;
+  cursor:grab!important;
+  touch-action:none!important;
+}
+html body.media-time-body #radioMedia .radio-tuning-knob{left:11.1%!important}
+html body.media-time-body #radioMedia .radio-stop-knob{left:36.5%!important;cursor:pointer!important}
+html body.media-time-body #radioMedia :is(.radio-tuning-knob,.radio-stop-knob) span{
+  position:absolute;
+  left:50%;
+  bottom:112%;
+  translate:-50% 0;
+  width:max-content;
+  padding:3px 5px;
+  border:1px solid rgba(230,244,250,.55);
+  background:rgba(18,30,42,.78);
+  color:#f3fbff;
+  font:600 5px/1 Arial,sans-serif;
+  letter-spacing:.08em;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .16s ease;
+}
+html body.media-time-body #radioMedia :is(.radio-tuning-knob,.radio-stop-knob):is(:hover,:focus-visible) span{opacity:1}
+html body.media-time-body #radioMedia :is(.radio-tuning-knob,.radio-stop-knob):focus-visible{
+  outline:1px solid rgba(225,248,255,.95)!important;
+  outline-offset:2px!important;
+}
+html body.media-time-body #radioMedia .radio-tuning-knob::after{
+  content:"";
+  position:absolute;
+  inset:9%;
+  border-radius:50%;
+  border-top:1px solid rgba(221,247,255,.85);
+  transform:rotate(var(--radio-knob-angle,-42deg));
+  transition:transform .18s ease;
+}
+html body.media-time-body #radioMedia .radio-stop-knob:active{transform:scale(.94)!important}
+
+@media(max-width:700px){
+  html body.media-time-body #radioMedia :is(.radio-tuning-knob,.radio-stop-knob){width:8.2%!important}
+}
+/* Preserve the previous radio footprint when replacing the source artwork. */
+html body.media-time-body #radioMedia{aspect-ratio:520 / 297.2890625!important;height:auto!important}
+html body.media-time-body #radioMedia>img:first-child{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:contain!important}
+html body.media-time-body #radioMedia>.radio-antenna{position:absolute;z-index:13;left:59%;top:22.1%;width:29%;height:auto;aspect-ratio:500/42;transform:rotate(var(--antenna-angle,-14deg));transform-origin:2.6% 57%;cursor:grab;touch-action:none;user-select:none;filter:drop-shadow(0 1px 1px #17233155)}
+.radio-antenna svg{display:block;width:100%;height:100%;overflow:visible;pointer-events:none}
+.radio-antenna.is-dragging{cursor:grabbing}
+.radio-antenna:focus-visible{outline:1px solid #c6e3ee;outline-offset:5px;border-radius:20px}
+html body.media-time-body #radioMedia .radio-top-controls{display:none!important}
+.radio-four-dials{position:absolute;inset:0;z-index:15;pointer-events:none}
+.radio-four-dials>button,.radio-four-dials>input{position:absolute;top:15.7%;width:6.4%;height:9.7%;border:0;background:transparent;padding:0;pointer-events:auto;cursor:pointer;touch-action:none;border-radius:40%;color:white}
+.radio-four-dials .radio-power{left:11.8%}.radio-four-dials .radio-volume{left:20.5%}.radio-four-dials .radio-frequency{left:28.9%}.radio-four-dials .radio-band{left:37.1%}
+.radio-four-dials input{-webkit-appearance:none;appearance:none;opacity:.01;cursor:ew-resize}
+.radio-four-dials input::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:25px;background:transparent}
+.radio-four-dials>input:focus-visible{opacity:1;outline:1px solid #c3e7ff}
+.radio-four-dials>button:focus-visible{outline:1px solid #c3e7ff;outline-offset:2px}
+.radio-four-dials button>span{position:absolute;left:50%;bottom:110%;transform:translateX(-50%);font:500 8px/1 Arial;white-space:nowrap;opacity:0;pointer-events:none;color:#fff;background:#172331dd;padding:4px 6px;border-radius:3px}
+.radio-four-dials button:is(:hover,:focus-visible)>span{opacity:1}
+html body.media-time-body #radioMedia>.radio-mechanics{position:absolute;inset:0;width:100%;height:100%;z-index:4;pointer-events:none}
+html body.media-time-body #radioMedia .radio-antenna svg g>*{fill:url(#antennaChrome)!important;stroke:#7c8d9e!important;stroke-width:1!important}
+html body.media-time-body #radioMedia .radio-antenna svg>path{fill:none!important;stroke:#fff!important;stroke-width:1.5!important}
+
+/* Highlight the metal outline along the actual antenna as it rotates. */
+html body.media-time-body #radioMedia > .radio-antenna:is(:hover, :focus-visible, .is-dragging) svg {
+  filter: drop-shadow(0 0 1px #e5faff) drop-shadow(0 0 4px #8fd8ffaa);
+}
+html body.media-time-body #radioMedia .radio-antenna:is(:hover, :focus-visible, .is-dragging) svg g > * {
+  stroke: #c4efff !important;
+}
+
+/* Match the existing AM/FM hover badge on the volume dial. */
+html body.media-time-body #radioMedia .radio-four-dials .radio-volume-badge{position:absolute;transform:translate(-50%,-100%);font:500 8px/1 Arial;white-space:nowrap;opacity:0;pointer-events:none;color:#fff;background:#172331dd;padding:4px 6px;border-radius:3px;z-index:20}
+html body.media-time-body #radioMedia .radio-four-dials .radio-volume-badge.is-visible{opacity:1}

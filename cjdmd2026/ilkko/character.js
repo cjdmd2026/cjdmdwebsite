@@ -1,17 +1,14 @@
 
-/* 클릭 스티커 팝 사운드: 실제 사용자 클릭 시 짧은 원본 뿅! 음향 */
-/* 스티커 클릭: 부드러운 우드/버블 계열 팝 효과 (외부 파일 불필요) */
-let stickerSound = null;
+/* Preload the sticker sound so the first click can play it immediately. */
+const stickerSound = new Audio('images/sticker_ui2.wav');
+stickerSound.preload = 'auto';
+stickerSound.volume = 0.65;
+
 function playStickerPop() {
-  try {
-    if (!stickerSound) stickerSound = new Audio('images/sticker_ui2.ogg');
-    stickerSound.pause();
-    stickerSound.currentTime = 0;
-    stickerSound.volume = 0.65;
-    const playPromise = stickerSound.play();
-    if (playPromise && playPromise.catch) playPromise.catch(() => {});
-  } catch (e) { /* 오디오 재생 제한이 있어도 스티커는 표시됩니다 */ }
+  stickerSound.currentTime = 0;
+  stickerSound.play().catch(() => {});
 }
+
 // ==========================================
 // 01. DOM 요소 선택 & 상태 변수
 // ==========================================

@@ -1,0 +1,59 @@
+/* Match the scroll cue in the ABOUT opening and artist transition. */
+:is(.film-scroll-cue, .about-reading-scroll, .visit-scroll-cue,
+    .wn-process-cue, .wn-map-cue, .ka-reference-instruction),
+.media-spatial .ms-scroll,
+.ka-classic-title small {
+  font-size: 9px;
+}
+
+:is(.about-reading-scroll, .visit-scroll-cue, .about-body #aboutEntryStory .yai-start, .ka-sphere-cue) svg {
+  width: 16px;
+  height: 26px;
+}
+
+.film-scroll-cue > i {
+  box-sizing: border-box;
+  width: 12px;
+  height: 22px;
+}
+
+.about-reading-cue-visible .media-spatial .ms-nav {
+  bottom: max(5%, calc(65px + env(safe-area-inset-bottom, 0px)));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .about-reading-scroll svg path {
+    animation: yearonCueWheel 1.8s ease-in-out infinite;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(.about-reading-scroll, .yai-start, .ka-sphere-cue) svg path {
+    animation: none;
+  }
+}
+
+html body.about-body #aboutEntryStory .yai-start span { font-size: 9px !important; }
+
+/* Keep the ABOUT cue anchored to the artwork reading position. */
+html body.about-body #aboutEntryStory .yai-start {
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+  gap: 5px !important;
+  padding: 0;
+  font: 500 9px/1.35 Arial, sans-serif;
+  letter-spacing: .13em;
+}
+html body.about-body #aboutEntryStory .yai-start span {
+  display: block !important;
+}
+html body.about-body #aboutEntryStory .yai-start svg,
+html body.about-body .about-reading-scroll svg {
+  width: 16px;
+  height: 26px;
+}
+
+/* Keep the timeline cue identical to the mouse cue used elsewhere in ABOUT. */
+html body.about-body #ypMediaAnchor .media-story-cue{left:50%!important;bottom:calc(16px + env(safe-area-inset-bottom,0px))!important;translate:-50% 0;display:flex!important;flex-direction:column;align-items:center;gap:5px;color:#bbc4cd;font:500 9px/1.35 Arial,sans-serif;letter-spacing:.13em;white-space:nowrap}
+html body.about-body #ypMediaAnchor .media-story-cue svg{display:block!important;width:16px;height:26px}
+html body.about-body #ypMediaAnchor .media-story-cue span{display:block!important}
+@media(prefers-reduced-motion:no-preference){html body.about-body #ypMediaAnchor .media-story-cue svg path{animation:yearonCueWheel 1.8s ease-in-out infinite}}
+html body.about-body #ypMediaAnchor .media-story-cue{transform:none!important}

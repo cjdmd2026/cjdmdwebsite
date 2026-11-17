@@ -1,0 +1,141 @@
+/* One viewport composition for desktop displays, independent of physical inches. */
+@media(min-width:1100px){
+ html body{--header-h:clamp(72px,8.5svh,112px)!important;--display-room:calc(100svh - var(--header-h))}
+ html body header.global-header.global-header.global-header.global-header.global-header.global-header{height:var(--header-h)!important;min-height:var(--header-h)!important;padding:0 2.5vw!important;display:flex!important;justify-content:space-between!important;align-items:center!important}
+ html body .global-header.global-header.global-header.global-header.global-header.global-header .brand.brand-image{width:clamp(150px,19svh,238px)!important;min-width:0!important;max-width:none!important;flex:0 0 auto!important;height:60%!important;gap:5px!important;margin:0!important}
+ html body .global-header.global-header.global-header.global-header.global-header.global-header .brand-mark{width:30%!important;min-width:0!important;flex:0 0 30%!important;height:auto!important;max-height:100%!important}
+ html body .global-header.global-header.global-header.global-header.global-header.global-header .brand-word{width:67%!important;height:52%!important;flex:0 0 67%!important;transform:none!important}
+ html body .global-header.global-header.global-header.global-header.global-header.global-header .header-right{height:100%!important;gap:clamp(24px,3.8svh,50px)!important}
+ html body .global-header.global-header.global-header.global-header.global-header.global-header nav{position:static!important;transform:none!important;height:100%!important;gap:clamp(26px,3.8svh,50px)!important;width:auto!important}
+ html body .global-header.global-header.global-header.global-header.global-header.global-header nav a{font-size:clamp(10.5px,1.32svh,17px)!important;height:100%!important;letter-spacing:.12em!important}
+ html body .global-header.global-header.global-header.global-header.global-header.global-header .header-tools{width:auto!important;min-width:0!important;gap:10px!important}
+ html body .global-header.global-header.global-header.global-header.global-header.global-header .header-icon-button{width:clamp(34px,4.6svh,58px)!important;height:clamp(34px,4.6svh,58px)!important}
+ html body .global-header.global-header.global-header.global-header.global-header.global-header .header-icon-button svg{width:clamp(20px,2.5svh,30px)!important;height:clamp(20px,2.5svh,30px)!important}
+ html body .global-header.global-header.global-header.global-header.global-header.global-header .menu-lines{width:clamp(24px,3svh,36px)!important;height:auto!important;gap:6px!important}
+ html body .global-header.global-header.global-header.global-header.global-header.global-header .menu-lines i{width:100%!important}
+ html body.media-time-body .time-panel :is(#radioMedia,#television,.pc-media,.phone-media){left:50%!important;right:auto!important;top:calc(var(--header-h) + var(--display-room)*.55)!important;transform:translate(-50%,-50%)!important;scale:1!important;margin:0!important;min-height:0!important;max-height:none!important}
+ html body.media-time-body .time-panel #radioMedia{width:min(48vw,calc(var(--display-room)*.70))!important;height:auto!important}
+ html body.media-time-body .tv-time-panel #television#television{width:min(58vw,calc(var(--display-room)*.86))!important;height:auto!important}
+ html body.media-time-body .time-panel[data-era="2002"] .pc-media{width:min(58vw,calc(var(--display-room)*.92))!important;height:auto!important;aspect-ratio:1383/862!important}
+ html body.media-time-body .time-panel[data-era="2026"] .phone-media{width:min(25vw,calc(var(--display-room)*.32))!important;height:auto!important;aspect-ratio:941/1672!important}
+ html body.media-time-body #scrollMedia#scrollMedia#scrollMedia#scrollMedia{width:min(63vw,143svh,1450px)!important;top:55%!important;left:50%!important}
+ html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console{top:calc(var(--header-h) + var(--display-room)*.75 + 22px)!important;bottom:auto!important;width:min(76vw,calc(var(--display-room)*1.08))!important}
+ html body.media-time-body .era-bridge #timeNav button.active{top:var(--era-heading-top,120px)!important;height:var(--era-heading-height,120px)!important;scale:1!important;transform:translateX(-50%)!important}
+ html body.media-time-body .era-bridge #timeNav button.active .era-current-medium{font-size:clamp(11px,1.35svh,18px)!important}
+ html body.media-time-body .era-bridge #timeNav button.active span.era-odometer{top:25%!important;font-size:clamp(46px,6.4svh,90px)!important}
+ html body.media-time-body .era-bridge #timeNav button.active .era-current-description{top:auto!important;bottom:0!important;font-size:clamp(11.5px,1.35svh,18px)!important}
+ html body.about-body .story-subtitle :is(p[lang=ko],h2){font-size:clamp(16px,1.9svh,26px)!important}
+ html body.about-body .story-subtitle p[lang=en]{font-size:clamp(13px,1.5svh,21px)!important}
+}
+/* Reflect the actual silhouette at contact; avoid the synthetic phone slab. */
+html body.media-time-body .time-panel .media-reflection{height:24%!important;opacity:.23!important;overflow:hidden!important;mask-image:linear-gradient(#000 0%,#000b 18%,#0004 53%,transparent 100%)!important;-webkit-mask-image:linear-gradient(#000 0%,#000b 18%,#0004 53%,transparent 100%)!important}
+html body.media-time-body .time-panel .media-reflection>img{display:block!important;width:100%!important;height:416.667%!important;object-fit:fill!important;transform:scaleY(-1)!important;filter:grayscale(.65) contrast(.9) brightness(.94) blur(.65px)!important}
+html body.media-time-body .time-panel .pc-reflection-wrap{top:97.7%!important;left:0!important;width:100%!important}
+html body.media-time-body .time-panel .phone-media .phone-reflection-wrap{inset:97.6% 0 auto!important;width:100%!important;height:24%!important;opacity:.20!important;overflow:hidden!important;mask-image:linear-gradient(#000,#0008 24%,transparent 96%)!important;-webkit-mask-image:linear-gradient(#000,#0008 24%,transparent 96%)!important}
+html body.media-time-body .time-panel .phone-reflection-wrap::before,html body.media-time-body .time-panel .phone-reflection-wrap::after{display:none!important}
+@media(min-width:1100px){
+ html body header.global-header.global-header.global-header.global-header.global-header.global-header{--header-h:clamp(72px,8.5svh,112px)!important}
+ html body.media-time-body .tv-time-panel #television#television{top:calc(var(--header-h) + var(--display-room)*.55)!important}
+}
+/* Readable type follows its role, with restrained upper bounds. */
+@media(min-width:1100px){
+ html body.media-time-body .time-panel .interaction-cue{font-size:clamp(11px,1.25svh,17px)!important;line-height:1.65!important;width:clamp(135px,16svh,220px)!important;max-width:none!important}
+ html body.media-time-body .time-panel .interaction-cue :is(p,small,span){font-size:clamp(10px,1.12svh,15px)!important;line-height:1.65!important}
+ html body.media-time-body .time-panel .interaction-cue :is(b,strong){font-size:clamp(11px,1.3svh,18px)!important}
+ html body.media-time-body .radio-glass-console .rg-title{font-size:clamp(15px,1.8svh,24px)!important;height:auto!important;line-height:1.5!important}
+ html body.media-time-body .radio-glass-console :is(.rg-frequency,.rg-channel-title){font-size:clamp(10px,1.15svh,15px)!important}
+ html body.media-time-body .channel-nav button b{font-size:clamp(11px,1.3svh,17px)!important}
+ html body.media-time-body .channel-nav button span{font-size:clamp(9px,1.05svh,14px)!important}
+ html body.about-body #artistSequence .artist-reading{font-size:clamp(13px,1.55svh,21px)!important;line-height:1.85!important}
+ html body.about-body :is(.yai-caption,.album-closing-line) p[lang=ko]{font-size:clamp(16px,1.85svh,25px)!important}
+ html body.about-body :is(.yai-caption,.album-closing-line) p[lang=en]{font-size:clamp(13px,1.5svh,20px)!important}
+ html body.about-body #ypInfographic .wn-process-copy .wn-process-ko,html body.about-body #ypInfographic .wn-definition-copy .editorial-body{font-size:clamp(15px,1.8svh,24px)!important}
+ html body.about-body #ypInfographic .wn-process-copy .wn-process-en,html body.about-body #ypInfographic .wn-definition-copy .editorial-detail{font-size:clamp(12px,1.45svh,19px)!important}
+ html body.about-body #ypMediaAnchor .media-story-description{font-size:clamp(13px,1.55svh,20px)!important;line-height:1.8!important}
+ html body.about-body #ypMediaAnchor .media-story-label{font-size:clamp(15px,1.8svh,24px)!important}
+}
+@media(max-width:850px){html body.media-time-body .time-panel[data-era="2026"] .phone-media.phone-media{width:min(48vw,calc((100svh - 310px)*.53),260px)!important;height:auto!important;min-height:0!important;aspect-ratio:941/1672!important}}
+/* Keep VISIT's optical center: scroll normally without reserving a side gutter. */
+
+html body.media-time-body .time-panel[data-era="2026"] .phone-media .phone-reflection-wrap.media-reflection{opacity:.18!important;overflow:hidden!important;mask-image:linear-gradient(#000 0%,#0008 24%,transparent 96%)!important;-webkit-mask-image:linear-gradient(#000 0%,#0008 24%,transparent 96%)!important}
+
+/* The page remains visible through the scroll track. */
+html,html body{scrollbar-color:#a6b1bc80 transparent!important;scrollbar-width:thin!important;scrollbar-gutter:auto!important}
+html::-webkit-scrollbar,body::-webkit-scrollbar{width:6px;height:6px;background:transparent}
+html::-webkit-scrollbar-track,body::-webkit-scrollbar-track{background:transparent}
+html::-webkit-scrollbar-thumb,body::-webkit-scrollbar-thumb{background:#a6b1bc80;border-radius:6px}
+html body.about-body .about-fixed-scene[aria-hidden="true"]{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+html body.about-body .yai-stage{animation:none!important}
+html body.about-body #aboutEntryStory{height:950svh!important}
+html body.about-body .about-pair{height:170svh!important}
+html body.about-body #aboutRelations{height:1600svh!important}
+html body #archiveFocus.ka-focus .ka-photo-figure>img{max-width:min(72vw,1000px)!important;max-height:60dvh!important}
+@media(max-width:760px){html body #archiveFocus.ka-focus .ka-photo-figure>img{max-width:86vw!important;max-height:56dvh!important}}
+
+/* Center the monitor, excluding the mouse at the right of its source image. */
+html body.media-time-body .time-panel[data-era="2002"] .pc-media.pc-media{left:50%!important;transform:translate(-40.965%,-50%)!important}
+@media(min-width:1100px){
+ html body.media-time-body .time-panel #radioMedia#radioMedia{top:calc(var(--header-h) + var(--display-room)*.51)!important}
+ html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console{top:calc(var(--header-h) + var(--display-room)*.71 + 22px)!important}
+}
+@media(min-width:1100px){
+ html body.media-time-body .time-panel[data-era="2002"] .pc-media.pc-media{translate:9.035% 0!important;transform:translate(-50%,-50%)!important}
+ html body.media-time-body #scrollMedia#scrollMedia#scrollMedia#scrollMedia{top:57%!important}
+ html body.media-time-body .time-panel .interaction-cue{font-size:clamp(9px,1svh,12px)!important;width:clamp(135px,16svh,205px)!important}
+ html body.media-time-body .time-panel .interaction-cue :is(p,small,span){font-size:clamp(9px,.95svh,11.5px)!important;line-height:1.6!important}
+ html body.media-time-body .time-panel .interaction-cue :is(b,strong){font-size:clamp(10px,1.1svh,13px)!important;font-weight:500!important}
+}
+@media(min-width:851px){html body.media-time-body .time-panel #radioMedia>.interaction-cue{display:block!important}}
+html body.media-time-body .tv-time-panel .channel-footer.channel-footer{min-height:0!important;height:auto!important;display:block!important;padding:10px 14px!important}
+html body.media-time-body .tv-time-panel #channelNav.channel-nav{translate:0 0!important;align-items:center!important;min-height:52px!important;height:auto!important}
+html body.media-time-body .tv-time-panel #channelNav .tv-station{align-self:stretch!important;min-height:52px!important;justify-content:center!important;align-items:center!important;gap:6px!important;padding:7px 8px!important}
+@media(max-width:850px){html body.media-time-body .tv-time-panel .channel-footer.channel-footer{padding:7px 6px!important}html body.media-time-body .tv-time-panel #channelNav.channel-nav,html body.media-time-body .tv-time-panel #channelNav .tv-station{min-height:42px!important}}
+
+@media(min-width:1100px){
+ html body .global-header.global-header.global-header.global-header.global-header.global-header .brand-word{transform:translateX(-4px)!important}
+ html body.media-time-body .time-panel #radioMedia#radioMedia{width:min(46vw,calc(var(--display-room)*.66))!important}
+ html body.media-time-body .time-panel[data-era="1920"]>#paperMedia .paper-book{top:54%!important}
+ html body.media-time-body .tv-time-panel .channel-footer.channel-footer{translate:0 -44px!important}
+}
+html body .global-header.global-header.global-header.global-header.global-header.global-header .menu-lines{display:flex!important;flex-direction:column!important;justify-content:space-between!important;flex:0 0 auto!important;width:clamp(23px,2.7svh,32px)!important;height:15px!important;gap:0!important}
+html body .global-header.global-header.global-header.global-header.global-header.global-header .menu-lines i{display:block!important;flex:0 0 1px!important;width:100%!important;min-width:100%!important;height:1px!important;margin:0!important;transform:none!important;background:currentColor!important}
+/* The reflection shares the current phone's hardware and home-screen geometry. */
+html body.media-time-body .time-panel[data-era="2026"] .phone-media .phone-reflection-wrap.media-reflection{height:22%!important;opacity:.19!important;filter:blur(.7px)!important;mask-image:linear-gradient(#000b 0%,#0006 24%,#0001 68%,transparent 100%)!important;-webkit-mask-image:linear-gradient(#000b 0%,#0006 24%,#0001 68%,transparent 100%)!important}
+.phone-floor-silhouette{position:absolute;left:0;top:-10.91%;width:100%;height:454.545%;transform:scaleY(-1);transform-origin:center;pointer-events:none}
+.phone-floor-hardware{position:absolute;inset:1.8% 9.4% 2.4%;border-radius:14%/7%;background:linear-gradient(100deg,#7d8490,#e1e2e5 1%,#4d535f 2.2%,#14161b 3.3%,#08090b 96%,#969ca5 98%,#d4d8dc 99%,#727b87);border:1px solid #aeb4be}
+.phone-floor-screen{position:absolute;inset:3% 11.25% 3.65%;border-radius:13%/6.7%;overflow:hidden;container-type:inline-size;background:#9298a7 url('../assets/images/phone-wallpaper-silver.svg') center/100% 100%}
+@media(min-width:851px){html body.media-time-body .time-panel[data-era="1920"]>#paperMedia#paperMedia .paper-book{top:56.5%!important}}
+@media(min-width:1100px){html body.media-time-body .time-panel[data-era="2026"] .phone-media.phone-media{width:min(26.25vw,calc(var(--display-room)*.336))!important;top:calc(var(--header-h) + var(--display-room)*.5643)!important}}
+html body.media-time-body .time-panel[data-era="2026"] .phone-media.phone-media .phone-reflection-wrap.media-reflection{inset:97.6% 0 auto!important;left:0!important;right:0!important;width:100%!important}
+
+@media(min-width:1100px){html body.media-time-body .time-panel[data-era="2026"] .phone-media:not(#phone-layout-center){top:calc(var(--header-h) + var(--display-room)*.5643)!important}}
+/* Restore the sampled paper continuation instead of exposing the grey grain. */
+html body.about-body #aboutEntryStory .yai-painting[data-painting="mudong"] .yai-art{background:#d9c39f!important}
+html body.about-body #aboutEntryStory .yai-painting[data-painting="mudong"] .yai-paper-background{opacity:.13!important;mix-blend-mode:soft-light!important;filter:grayscale(1)!important;z-index:1!important}
+html body.about-body #aboutEntryStory .yai-painting[data-painting="mudong"] canvas.yai-paper-continuation{display:block!important;z-index:0!important}
+html body.about-body #aboutEntryStory .yai-painting[data-painting="mudong"] .yai-art-video{z-index:2!important;mask-image:linear-gradient(to right,transparent,#000 6%,#000 94%,transparent),linear-gradient(to bottom,transparent,#000 4%,#000 96%,transparent)!important;-webkit-mask-image:linear-gradient(to right,transparent,#000 6%,#000 94%,transparent),linear-gradient(to bottom,transparent,#000 4%,#000 96%,transparent)!important;mask-composite:intersect!important;-webkit-mask-composite:source-in!important}
+/* Restore the approved compact header; the bar has a little more breathing room. */
+@media(min-width:1100px){
+ html body{--header-h:clamp(78px,7.7svh,92px)!important}
+ html body header.global-header.global-header.global-header.global-header.global-header.global-header.global-header{--header-h:clamp(78px,7.7svh,92px)!important;height:var(--header-h)!important;min-height:var(--header-h)!important;padding:0 2.4vw!important;gap:24px!important}
+ html body .global-header.global-header.global-header.global-header.global-header.global-header.global-header .brand.brand-image{width:clamp(146px,14.5svh,170px)!important;height:46px!important;min-width:0!important;flex:0 0 auto!important;gap:4px!important;align-items:center!important}
+ html body .global-header.global-header.global-header.global-header.global-header.global-header.global-header .brand-mark{width:30%!important;flex:0 0 30%!important;height:30px!important;object-fit:contain!important}
+ html body .global-header.global-header.global-header.global-header.global-header.global-header.global-header .brand-word{width:67%!important;height:23px!important;flex:0 0 67%!important;transform:translateX(1px)!important}
+ html body .global-header.global-header.global-header.global-header.global-header.global-header.global-header .header-right{height:100%!important;display:flex!important;align-items:center!important;gap:34px!important}
+ html body .global-header.global-header.global-header.global-header.global-header.global-header.global-header .header-right>nav{height:100%!important;display:flex!important;align-items:center!important;gap:34px!important;top:auto!important;padding:0!important}
+ html body .global-header.global-header.global-header.global-header.global-header.global-header.global-header .header-right>nav>a{height:100%!important;display:flex!important;align-items:center!important;padding:0!important;font-size:clamp(10.5px,1.1svh,13px)!important;line-height:1.4!important;letter-spacing:.12em!important}
+ html body .global-header.global-header.global-header.global-header.global-header.global-header.global-header .header-tools{height:100%!important;width:112px!important;min-width:112px!important;gap:0!important;align-items:center!important}
+ html body .global-header.global-header.global-header.global-header.global-header.global-header.global-header .header-icon-button{width:38px!important;height:38px!important;min-height:38px!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important}
+ html body .global-header.global-header.global-header.global-header.global-header.global-header.global-header .menu-toggle{width:50px!important}
+ html body .global-header.global-header.global-header.global-header.global-header.global-header.global-header .header-icon-button svg{width:20px!important;height:20px!important}
+ html body .global-header.global-header.global-header.global-header.global-header.global-header.global-header .menu-lines{width:23px!important;height:14px!important;display:flex!important;flex-direction:column!important;justify-content:space-between!important;gap:0!important}
+}
+html body header.global-header.global-header.global-header.global-header.global-header.global-header.global-header{position:fixed!important;left:0!important;right:auto!important;top:0!important;width:100vw!important;max-width:none!important;box-sizing:border-box!important;transform:none!important}
+
+.phone-live-surface{position:absolute;inset:0;overflow:visible;isolation:isolate;-webkit-box-reflect:below var(--phone-reflection-overlap,-24px) linear-gradient(to top,#0003 0%,#0001 10%,transparent 23%)}
+@media(min-width:1100px){html body.media-time-body .tv-time-panel #television#television{width:min(60vw,calc(var(--display-room)*.895))!important}}
+
+html body header.global-header.global-header.global-header.global-header.global-header.global-header.global-header,html body .global-header .brand,html body .global-header .header-right,html body .global-header nav{animation:none!important;transition:none!important}
+html body.about-body #aboutEntryStory .yai-entry-heading strong{font-size:22px!important}
+html body.about-body #aboutEntryStory .yai-entry-heading em{font-size:14px!important}
+@media(min-width:1100px){html body.media-time-body .era-bridge #timeNav button.active .era-current-description{font-size:clamp(11px,1.25svh,17px)!important;bottom:5px!important}}

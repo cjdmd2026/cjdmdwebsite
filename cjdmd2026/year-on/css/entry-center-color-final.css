@@ -1,0 +1,5 @@
+/* Home entry: colour only. Preserve every existing layout and motion rule. */
+html:not([data-theme='dark']) body.home-film-body #entry :is(.entry-logo-ko,.entry-logo-en),
+html:not([data-theme='dark']) body.home-film-body #entry :is(.entry-logo-ko,.entry-logo-en) :is(.ko-left,.ko-right,.entry-year,.entry-n,.split-o,.o-full,.o-top,.o-bottom){
+  color:#121a28!important;
+}
