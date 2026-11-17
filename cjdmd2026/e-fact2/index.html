@@ -2,11 +2,112 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>E.FACT 2</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#031326">
+  <meta name="description" content="청주 소각장 과밀집 문제에 관심을 모으는 연대의 나무 인터랙션">
+  <title>연대의 나무 · 청주의 숨을 잇다</title>
+  <link rel="preload" as="image" href="images/solidarity-tree.jpg">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%2347dfff' d='M32 4c3 12 12 15 23 17-8 4-13 9-14 18-3-5-6-8-9-10-3 2-6 5-9 10-1-9-6-14-14-18C20 19 29 16 32 4Z'/%3E%3Cpath stroke='%2347dfff' stroke-width='5' stroke-linecap='round' d='M32 27v32'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <h1>E.FACT 2</h1>
-  <p>사이트를 준비 중입니다.</p>
+  <main class="app" aria-live="polite">
+    <header class="topbar">
+      <div class="brand"><svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true"><path fill="#47dfff" d="M32 4c3 12 12 15 23 17-8 4-13 9-14 18-3-5-6-8-9-10-3 2-6 5-9 10-1-9-6-14-14-18C20 19 29 16 32 4Z"/><path stroke="#47dfff" stroke-width="5" stroke-linecap="round" d="M32 27v32"/></svg><span>청주의 숨을 잇는 연대의 나무</span></div>
+      <div class="step-count"><strong id="stepNow">01</strong> / 06</div>
+    </header>
+    <div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
+
+    <section class="screen active" data-step="0">
+      <div class="content">
+        <p class="eyebrow">A tree of solidarity</p>
+        <h1>청주의 숨,<br>우리의 관심으로</h1>
+        <p class="lead">한 지역에 집중된 소각시설의 문제는 그곳 주민만의 일이 아닙니다. <strong>함께 바라보고, 함께 말할 때</strong> 변화는 시작됩니다.</p>
+        <div class="actions"><button class="btn btn-primary" data-next>연대의 이유 보기</button></div>
+      </div>
+    </section>
+
+    <section class="screen" data-step="1">
+      <div class="content">
+        <p class="eyebrow">왜 함께해야 할까요</p>
+        <h2>한곳에 쌓인 부담은<br>모두의 문제가 됩니다</h2>
+        <p class="lead">환경부는 2020년 청주 북이면 반경 2km 안에 소각장 3곳이 밀집해 있고, 당시 하루 처리용량이 전국 소각시설의 6.8%에 해당한다고 밝혔습니다. 숫자 너머 주민의 일상과 건강을 함께 기억해주세요.</p>
+        <div class="facts" aria-label="2020년 환경부 발표 수치">
+          <div class="fact"><b>2km</b><span>조사 지역 반경</span></div>
+          <div class="fact"><b>3곳</b><span>반경 안 소각장</span></div>
+          <div class="fact"><b>6.8%</b><span>당시 전국 대비 처리용량</span></div>
+        </div>
+        <a class="source" href="https://m.me.go.kr/home/web/board/read.do?boardId=1304580&amp;boardMasterId=939" target="_blank" rel="noreferrer">출처 · 환경부, 2020년 발표</a>
+        <div class="actions"><button class="btn btn-secondary" data-prev>이전</button><button class="btn btn-primary" data-next>우리의 연대 보기</button></div>
+      </div>
+    </section>
+
+    <section class="screen" data-step="2">
+      <div class="content">
+        <p class="eyebrow">관심이 연대가 되는 과정</p>
+        <h2>알게 된 마음을<br>혼자 두지 않기 위해</h2>
+        <p class="lead">소각시설의 부담이 특정 지역에 반복해서 집중되지 않도록, 더 많은 사람이 문제를 알고 공정한 해결을 요구해야 합니다. 이 연대서는 주민의 삶과 환경권을 함께 지키겠다는 시민의 약속입니다.</p>
+        <div class="story-grid">
+          <article class="story-card"><em>01 · 기억</em><b>숫자 뒤의 삶을 봅니다</b><p>시설 주변에서 일상을 이어가는 주민의 목소리와 불안을 외면하지 않습니다.</p></article>
+          <article class="story-card"><em>02 · 질문</em><b>집중된 부담을 묻습니다</b><p>왜 한 지역이 더 많은 환경 부담을 감당해야 하는지 함께 질문합니다.</p></article>
+          <article class="story-card"><em>03 · 약속</em><b>지속해서 관심을 보탭니다</b><p>한 번의 서명을 넘어 안전하고 공정한 환경을 요구하는 마음을 이어갑니다.</p></article>
+        </div>
+        <div class="actions"><button class="btn btn-secondary" data-prev>이전</button><button class="btn btn-primary" data-next>연대 증서 작성하기</button></div>
+      </div>
+    </section>
+
+    <section class="screen" data-step="3">
+      <form class="form-card" id="solidarityForm" novalidate>
+        <div class="certificate-head">
+          <p class="certificate-brand">E.FACT</p>
+          <p class="eyebrow">Certificate of solidarity</p>
+          <h2>시민 연대 증서</h2>
+          <p class="certificate-no">NO. <span id="certificateNo">CJS-000000</span></p>
+        </div>
+        <div class="certificate-divider"><i></i><span>❧</span><i></i></div>
+        <p class="form-intro">청주의 환경 문제를 기억하고,<br>더 나은 변화를 위한 시민 연대에<br>함께하였기에 이 증서를 수여합니다.</p>
+        <div class="certificate-recipient">
+          <label for="name">참여자 성명</label>
+          <input id="name" name="name" maxlength="20" autocomplete="name" placeholder="이름을 서명해주세요" required>
+        </div>
+        <div class="certificate-message">
+          <label for="message">연대의 한마디</label>
+          <textarea id="message" name="message" maxlength="100" placeholder="청주의 맑은 숨을 위해 마음을 보태주세요" required></textarea>
+          <div class="counter"><span id="count">0</span> / 100</div>
+        </div>
+        <div class="certificate-meta">
+          <div><span>참여일</span><strong id="certificateDate"></strong></div>
+          <div><span>인증</span><strong>연대의 나무</strong></div>
+        </div>
+        <div class="certificate-foot"><span>기억은 기록이 되고, 기록은 변화를 만듭니다.</span></div>
+        <p class="error" id="error" role="alert"></p>
+        <div class="form-actions"><button type="button" class="btn btn-secondary" data-prev>이전</button><button type="submit" class="btn btn-primary">연대에 동참하기</button></div>
+      </form>
+    </section>
+
+    <section class="screen" data-step="4" id="transmissionScreen">
+      <div class="transmission">
+        <div class="screen-shift"></div><div class="beam"></div>
+        <div id="particles" aria-hidden="true"></div>
+        <div class="light-bloom" aria-hidden="true"></div>
+        <div class="light-core" aria-hidden="true"></div>
+        <article class="letter" aria-label="작성한 연대서">
+          <small>연대의 나무에 보내는 시민 연대 증서</small><b id="letterName"></b><p id="letterMessage"></p>
+        </article>
+        <div class="transmission-copy"><h2>당신의 연대가<br>빛이 되어 오릅니다</h2><p id="sendingText">연대의 마음이 나무로 이어지고 있어요</p></div>
+      </div>
+    </section>
+
+    <section class="screen final" data-step="5">
+      <div class="content">
+        <div class="final-tree" role="img" aria-label="빛으로 밝아진 연대의 나무"></div>
+        <p class="eyebrow">마음이 도착했습니다</p>
+        <h2>한 사람의 관심이<br>우리의 숲이 됩니다</h2>
+        <p class="signature-preview" id="signaturePreview"></p>
+        <div class="actions"><button class="btn btn-primary" id="restart">다른 마음 이어 보내기</button></div>
+      </div>
+    </section>
+  </main>
+  <script src="js/script.js" defer></script>
 </body>
 </html>
