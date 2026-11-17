@@ -57,7 +57,6 @@
     align-items: center;
     gap: 0;
   }
-  .header .header-link-character { display: none; }
   .header .header-menu-item a {
     display: block;
     color: #777;
