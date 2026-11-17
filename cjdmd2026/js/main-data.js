@@ -127,7 +127,7 @@ window.MAIN_PROFESSORS = [
     {
         name: "정수봉",
         major: "AI 고급 프로그래밍",
-        message: "[임시] 교수님 소개 문구가 들어갈 자리입니다.\n문구 전달 후 교체 예정입니다.",
+        message: "열심히 진심으로 노력하면 무엇이든 해볼 수 있습니다.\n사람마다 시기만 다를 뿐이에요. 화이팅!",
         image: "../assets/images/professor/jeongsubong.webp"
     },
     {

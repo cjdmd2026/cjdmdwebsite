@@ -21,6 +21,12 @@ const angle=(a,b)=>2*Math.acos(Math.min(1,Math.abs(a.reduce((sum,x,i)=>sum+x*b[i
         }catch{await route.fulfill({status:404,body:''});}
       });
       await page.goto('http://flow.test/main/');
+      if(mobile){
+        report.mobile=await require('./assert-main-mobile.cjs')(page);
+        assert.deepEqual(errors,[]);
+        await page.close();
+        continue;
+      }
       await page.waitForFunction(()=>window.heroStudio?.ready&&MainIntroLoading.inspect().phase==='done',null,{timeout:90000});
       await page.evaluate(()=>{
         window.gridTop=()=>MainIntro.anchor()-document.querySelector('#scene').clientHeight*.85;

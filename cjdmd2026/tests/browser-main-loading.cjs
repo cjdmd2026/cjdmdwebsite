@@ -44,6 +44,13 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg
         }catch{return route.fulfill({status:404,body:'Not found'});}
       });
       await page.goto('http://loading.test/main/',{waitUntil:'commit'});
+      if(mobile){
+        await require('./assert-main-mobile.cjs')(page);
+        assert.deepEqual(errors,[]);
+        console.log(JSON.stringify({scenario,staticMobile:true,errors}));
+        await page.close();
+        continue;
+      }
       if(scenario!=='script-failure'){
         await page.waitForFunction(()=>window.MainIntroLoading?.inspect().phase==='loading');
         const start=await page.evaluate(()=>({state:MainIntroLoading.inspect(),parts:document.querySelectorAll('.intro-loader-tile').length,heroOpacity:getComputedStyle(document.querySelector('.hero-art')).opacity}));
@@ -63,6 +70,11 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg
         await page.waitForFunction(()=>window.heroStudio?.ready&&!heroStudio.inspect().preparation.ready,null,{timeout:90000});
         await page.setViewportSize({width:1024,height:768});
         await page.setViewportSize({width:390,height:844});
+        await require('./assert-main-mobile.cjs')(page);
+        assert.deepEqual(errors,[]);
+        console.log(JSON.stringify({scenario,staticMobile:true,errors}));
+        await page.close();
+        continue;
       }
       if(scenario==='desktop'){
         await page.waitForFunction(()=>MainIntroLoading.inspect().phase==='revealing',null,{timeout:90000});

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>면의 흐름 — 전환 미리보기</title>
+  <style>
+    @font-face { font-family: Preview; src: url('./assets/main-intro/fonts/Pretendard-Regular.woff') format('woff'); font-weight: 400; font-display: swap; }
+    @font-face { font-family: Preview; src: url('./assets/main-intro/fonts/Pretendard-Bold.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+    * { box-sizing: border-box; }
+    :root { font-family: Preview, sans-serif; color: #20211f; background: #eaeae7; font-synthesis: none; }
+    body { margin: 0; padding: 20px 24px 24px; }
+    button, select, input { font: inherit; }
+    button, select { cursor: pointer; }
+    button { color: inherit; }
+    button:disabled { cursor: wait; opacity: .5; }
+    button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid #536dea; outline-offset: 4px; }
+    .shell { max-width: 1440px; margin: auto; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 13px; gap: 16px; }
+    .study-label { display: flex; align-items: center; gap: 12px; font-size: 12px; }
+    .study-label span { font-size: 10px; letter-spacing: .1em; color: #72736d; }
+    .device { border: 0; background: transparent; padding: 5px 0; font-size: 12px; color: #65665f; }
+    .device[aria-pressed="true"] { color: #354fce; }
+    .stage { container: preview / inline-size; position: relative; isolation: isolate; overflow: hidden; width: 100%; height: clamp(440px, calc(100dvh - 224px), 900px); margin: auto; background: white; border: 1px solid #d7d8d1; }
+    .stage.is-mobile { width: 390px; max-width: 100%; }
+    .scene { position: absolute; inset: 0; overflow: auto; scrollbar-width: thin; background: #fff; }
+    .scene[hidden] { display: none; }
+    .stage.is-playing .scene { overflow: hidden; }
+    .scene-header { height: 82px; display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 0 5%; }
+    .scene-logo { display: block; width: 160px; height: auto; }
+    .scene-nav { display: flex; gap: 30px; }
+    .scene-nav button { padding: 9px 0; border: 0; background: transparent; color: #91938b; font-size: 13px; white-space: nowrap; }
+    .scene-nav button[aria-current="page"] { color: #20211f; font-weight: 700; }
+    .scene-body { padding: 25px 5% 35px; }
+    .page-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 29px; }
+    .eyebrow { font-size: 10px; letter-spacing: .13em; color: #787b72; margin: 0 0 14px; }
+    .page-heading h1 { font-size: clamp(46px, 6.6cqw, 88px); letter-spacing: -.065em; font-weight: 700; line-height: 1.1; margin: 0; }
+    .page-heading p:last-child { margin: 0 0 5px; font-size: 12px; line-height: 1.7; color: #777a71; word-break: keep-all; }
+    .page-heading sup { vertical-align: top; font-size: 16px; margin-left: 12px; letter-spacing: 0; font-weight: 400; }
+    .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+    figure { margin: 0; min-width: 0; }
+    .card-image { display: block; width: 100%; height: clamp(190px, 27cqw, 360px); object-fit: cover; background: #f3f3f1; }
+    .scene[data-page="designer"] .card-image { object-fit: contain; object-position: center bottom; background: #f2f3f1; }
+    .scene[data-page="archive"] .card-image { object-fit: contain; background: #efefed; }
+    figcaption { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding-top: 14px; font-size: 16px; }
+    figcaption small { font-size: 10px; color: #7e8177; }
+    .scene-foot { display: flex; justify-content: space-between; border-top: 1px solid #e2e3dd; padding-top: 17px; margin-top: 30px; color: #888b81; font-size: 10px; }
+    .sweep { position: absolute; inset: 0; z-index: 5; pointer-events: none; clip-path: inset(0 100% 0 0); }
+    .sweep--paper { background: #fff; }
+    .sweep--accent { background: #536dea; }
+    .panel { margin-top: 18px; }
+    .panel-top { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .caption h2 { margin: 0 0 5px; font-size: 16px; letter-spacing: -.02em; }
+    .caption p { margin: 0; font-size: 12px; color: #71746a; }
+    .tools { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .segmented { display: flex; padding: 3px; border: 1px solid #d4d6cc; border-radius: 5px; }
+    .segmented button { border: 0; padding: 8px 12px; background: transparent; border-radius: 3px; font-size: 12px; }
+    .segmented button[aria-pressed="true"] { background: #fff; box-shadow: 0 1px 3px #0000000a; }
+    .speed { border: 1px solid #d4d6cc; border-radius: 5px; padding: 11px 9px; background: transparent; font-size: 12px; }
+    .replay { background: #22241f; color: #fff; border: 1px solid #22241f; border-radius: 5px; padding: 11px 18px; font-size: 12px; min-width: 108px; }
+    .timeline { display: flex; align-items: center; gap: 14px; margin-top: 16px; }
+    .pause { width: 52px; padding: 4px 0; border: 0; background: transparent; font-size: 11px; color: #696d61; }
+    .timeline input { min-width: 0; flex: 1; height: 3px; accent-color: #536dea; cursor: ew-resize; }
+    .timeline output { width: 35px; text-align: right; font-size: 11px; color: #696d61; font-variant-numeric: tabular-nums; }
+    .hint { margin: 11px 0 0; text-align: center; font-size: 11px; color: #84877c; }
+    @container preview (max-width: 600px) {
+      .scene-header { height: 72px; padding-inline: 20px; gap: 15px; }
+      .scene-logo { width: 112px; }
+      .scene-nav { gap: 12px; }
+      .scene-nav button { font-size: 11px; }
+      .scene-body { padding: 22px 20px 30px; }
+      .page-heading { display: block; margin-bottom: 24px; }
+      .page-heading h1 { font-size: 46px; }
+      .page-heading p:last-child { margin: 15px 0 0; }
+      .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 14px; }
+      .card-image { height: 190px; }
+      figcaption { display: block; font-size: 14px; }
+      figcaption small { display: block; margin-top: 5px; }
+      .scene-foot { line-height: 1.6; gap: 15px; }
+    }
+    @media (max-width: 680px) {
+      body { padding: 12px; }
+      .study-label span { display: none; }
+      .device { display: none; }
+      .stage { height: max(440px, calc(100svh - 270px)); }
+      .panel-top { display: block; }
+      .tools { margin-top: 13px; }
+      .segmented button { padding-inline: 10px; }
+      .replay { margin-left: auto; padding-inline: 12px; min-width: auto; }
+      .caption p { font-size: 11px; }
+      .hint { font-size: 10px; }
+    }
+  </style>
+  <script src="./js/project-data.js" defer></script>
+  <script src="./js/designer-data.js" defer></script>
+  <script src="./js/transition-layered-preview.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <div class="topbar">
+      <div class="study-label"><strong>유연한 결합</strong><span>MOTION STUDY / 01</span></div>
+      <button type="button" class="device" id="device" aria-pressed="false">모바일 보기 ↗</button>
+    </div>
+    <div class="stage" id="stage" aria-label="페이지 전환 미리보기">
+      <div class="sweep sweep--paper" id="paper" aria-hidden="true"></div>
+      <div class="sweep sweep--accent" id="accent" aria-hidden="true"></div>
+    </div>
+    <section class="panel" aria-label="전환 비교 및 재생">
+      <div class="panel-top">
+        <div class="caption">
+          <h2 id="effect-title">면의 흐름</h2>
+          <p id="effect-description">얇은 색상 레이어와 본문이 함께 움직이는 좌→우 전환</p>
+        </div>
+        <div class="tools">
+          <div class="segmented" role="group" aria-label="전환 방식 비교">
+            <button type="button" data-mode="layered" aria-pressed="true">추천안</button>
+            <button type="button" data-mode="plain" aria-pressed="false">기존 전환</button>
+          </div>
+          <select class="speed" id="speed" aria-label="재생 속도"><option value="1">보통 속도</option><option value="0.5">느리게</option></select>
+          <button type="button" class="replay" id="replay" disabled>전환 재생 →</button>
+        </div>
+      </div>
+      <div class="timeline">
+        <button type="button" class="pause" id="pause" aria-label="전환 재생 또는 일시정지">재생</button>
+        <input type="range" id="timeline" min="0" max="1000" value="0" aria-label="전환 진행 위치">
+        <output id="progress" for="timeline">0%</output>
+      </div>
+      <p class="hint" id="status" role="status">이미지를 준비하고 있습니다.</p>
+    </section>
+  </main>
+</body>
+</html>

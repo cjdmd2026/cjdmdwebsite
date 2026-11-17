@@ -21,6 +21,12 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg
         }catch{await route.fulfill({status:404,body:'Not found'});}
       });
       await page.goto('http://intro.test/main/',{waitUntil:'domcontentloaded'});
+      if(mobile){
+        report.mobile=await require('./assert-main-mobile.cjs')(page);
+        assert.deepEqual(errors,[]);
+        await page.close();
+        continue;
+      }
       await page.waitForFunction(()=>window.heroStudio && window.MainWordSurface?.getSource('light').image?.complete,null,{timeout:90000});
       await page.waitForFunction(()=>!window.MainIntroLoading||MainIntroLoading.inspect().phase==='done',null,{timeout:90000});
       assert.equal(await page.evaluate(()=>heroStudio.ready),true);
