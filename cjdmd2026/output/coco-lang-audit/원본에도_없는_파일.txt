@@ -1,0 +1,76 @@
+﻿코코랑 원본 대조 결과
+원본: C:/Users/tph06/Downloads/COCOLANG_1115/COCOLANG_1115
+반영 위치: coco-lang/
+
+원본의 200개 파일은 현재 프로젝트에 모두 존재합니다.
+수정: 성향 테스트 링크 7곳 대소문자, 견종 선택 단계 복구, 정보 입력 이후 흐름 연결, 커뮤니티 앱 다운로드 연결, 쇼핑 사이드 배너 파일명.
+
+아래 이미지 18개와 음원 4개는 코드에서 사용하지만 제공된 원본에도 실제 파일이 없습니다.
+원본 파일이 추가로 있어야 정확한 이미지 및 음원을 복구할 수 있습니다.
+파일 경로는 coco-lang/ 기준입니다.
+
+img/concept-bottom-bg.webp
+  사용 위치: brand.html
+
+img/community-sns-7.webp
+  사용 위치: community-news.html
+
+img/community-sns-8.webp
+  사용 위치: community-news.html
+
+img/main-banner.webp
+  사용 위치: index.html
+
+img/shop-product-5.webp
+  사용 위치: shop-event.html, shop-mypage.html, shop-product-detail.html, shop-product.html, shop.html
+
+img/shop-product-1.webp
+  사용 위치: shop-event.html, shop-mypage.html, shop-product-detail.html, shop-product.html, shop.html
+
+img/shop-walk-leash.webp
+  사용 위치: shop-product.html
+
+img/shop-poopbag.webp
+  사용 위치: shop-product.html
+
+img/shop-keyring.webp
+  사용 위치: shop-product.html
+
+img/shop-blanket.webp
+  사용 위치: shop-product.html
+
+img/shop-snack-1.webp
+  사용 위치: shop-product.html
+
+img/shop-snack-2.webp
+  사용 위치: shop-product.html
+
+img/shop-bowl.webp
+  사용 위치: shop-product.html
+
+img/shop-walk-bag.webp
+  사용 위치: shop-product.html
+
+img/shop-ball.webp
+  사용 위치: shop-product.html
+
+img/shop-tote.webp
+  사용 위치: shop-product.html
+
+img/dot-line.webp
+  사용 위치: style.css
+
+TEST/audio/bgm-start.mp3
+  사용 위치: TEST/audio.js
+
+TEST/audio/bgm-question.mp3
+  사용 위치: TEST/audio.js
+
+TEST/audio/bgm-result.mp3
+  사용 위치: TEST/audio.js
+
+TEST/audio/click.mp3
+  사용 위치: TEST/audio.js
+
+TEST/img/dog-frame.webp
+  사용 위치: TEST/dog-info.html, TEST/guest-info.html

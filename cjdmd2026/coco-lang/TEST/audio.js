@@ -28,7 +28,8 @@ document.addEventListener("DOMContentLoaded", function () {
     start: {
       pages: [
         "",
-        "index.html",
+        "test-index.html",
+        "select.html",
         "pet-status.html",
         "dog-info.html",
         "guest-info.html"

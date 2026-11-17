@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COCO:LANG 산책 친구 선택</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="test.css?v=6">
+  <style>
+    html, body { height: auto; min-height: 100%; }
+    body { overflow: auto; }
+    .select-page { min-width: 0; height: auto; min-height: 100vh; }
+    .select-content { height: auto; min-height: 100vh; padding: 60px 24px 40px; gap: 36px; }
+    .select-title { margin-top: 0; word-break: keep-all; }
+    .breed-options { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; width: min(100%, 1300px); }
+    .breed-options .breed-card { flex: 0 1 220px; width: 220px; flex-direction: column; padding: 24px 16px; gap: 18px; border: 3px solid #e1e7c8; background: #fffef5; }
+    .breed-options .breed-card.selected { border-color: #79b94c; }
+    .breed-options .breed-card-image { width: 100%; height: 190px; object-fit: contain; }
+    .breed-name { color: #23835b; font-size: 22px; font-weight: 800; }
+    .breed-select-button { top: 0; margin-top: 0; max-width: 100%; }
+    .select-back { color: #354829; text-underline-offset: 4px; }
+    @media (max-width: 600px) {
+      .select-content { padding: 36px 16px; gap: 24px; }
+      .select-title { font-size: 30px; }
+      .select-description { font-size: 16px; }
+      .breed-options { gap: 16px; }
+      .breed-options .breed-card { flex-basis: calc(50% - 8px); min-width: 0; padding: 16px 10px; }
+      .breed-options .breed-card-image { height: 130px; }
+      .breed-name { font-size: 18px; }
+      .breed-select-button { font-size: 18px; padding: 14px 20px; white-space: nowrap; }
+    }
+  </style>
+</head>
+<body>
+  <main class="select-page">
+    <img src="img/select-bg.webp" class="select-bg" alt="" aria-hidden="true">
+    <div class="select-content">
+      <header class="select-title-wrap">
+        <h1 class="select-title">함께할 산책 친구를 골라주세요</h1>
+        <p class="select-description">우리 강아지와 닮았거나 마음에 드는 캐릭터를 선택해주세요.</p>
+      </header>
+      <div class="breed-options" role="group" aria-label="강아지 캐릭터 선택">
+        <button type="button" class="breed-card" data-breed="welly" data-name="웰시코기" aria-pressed="false">
+          <img src="img/dog-well.webp" class="breed-card-image" alt="">
+          <span class="breed-name">웰시코기</span><span class="breed-check" aria-hidden="true">✓</span>
+        </button>
+        <button type="button" class="breed-card" data-breed="daks" data-name="닥스훈트" aria-pressed="false">
+          <img src="img/dog-daks.webp" class="breed-card-image" alt="">
+          <span class="breed-name">닥스훈트</span><span class="breed-check" aria-hidden="true">✓</span>
+        </button>
+        <button type="button" class="breed-card" data-breed="mari" data-name="말티즈" aria-pressed="false">
+          <img src="img/dog-mari.webp" class="breed-card-image" alt="">
+          <span class="breed-name">말티즈</span><span class="breed-check" aria-hidden="true">✓</span>
+        </button>
+        <button type="button" class="breed-card" data-breed="cori" data-name="보더콜리" aria-pressed="false">
+          <img src="img/dog-cori.webp" class="breed-card-image" alt="">
+          <span class="breed-name">보더콜리</span><span class="breed-check" aria-hidden="true">✓</span>
+        </button>
+        <button type="button" class="breed-card" data-breed="puri" data-name="푸들" aria-pressed="false">
+          <img src="img/dog-puri.webp" class="breed-card-image" alt="">
+          <span class="breed-name">푸들</span><span class="breed-check" aria-hidden="true">✓</span>
+        </button>
+      </div>
+      <button type="button" id="breedSelectButton" class="breed-select-button" disabled><span>선택하고 테스트 시작하기</span></button>
+      <a class="select-back" href="pet-status.html">반려견 정보 다시 입력하기</a>
+    </div>
+  </main>
+  <script>
+    const cards = document.querySelectorAll('.breed-card');
+    const nextButton = document.getElementById('breedSelectButton');
+    let selectedCard = null;
+
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        selectedCard = card;
+        cards.forEach(item => {
+          item.classList.toggle('selected', item === card);
+          item.setAttribute('aria-pressed', String(item === card));
+        });
+        nextButton.disabled = false;
+        nextButton.classList.add('active');
+      });
+    });
+
+    nextButton.addEventListener('click', () => {
+      if (!selectedCard) return;
+      localStorage.setItem('selectedBreed', selectedCard.dataset.breed);
+      localStorage.setItem('selectedBreedName', selectedCard.dataset.name);
+      // A new test must not reuse the previous test's result in the detail view.
+      ['resultCode', 'resultType', 'personalityCode', 'personalityType',
+        'originalResultCode', 'originalResultType', 'detailViewType', 'testScores']
+        .forEach(key => localStorage.removeItem(key));
+      window.location.href = 'question.html';
+    });
+  </script>
+  <script src="audio.js"></script>
+</body>
+</html>

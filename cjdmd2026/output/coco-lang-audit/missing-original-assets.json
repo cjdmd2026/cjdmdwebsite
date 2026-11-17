@@ -1,0 +1,169 @@
+{
+  "missingImages": 18,
+  "missingAudio": 4,
+  "files": [
+    {
+      "file": "img/concept-bottom-bg.webp",
+      "referencedBy": [
+        "brand.html"
+      ],
+      "alsoMissingFromOriginal": true
+    },
+    {
+      "file": "img/community-sns-7.webp",
+      "referencedBy": [
+        "community-news.html"
+      ],
+      "alsoMissingFromOriginal": true
+    },
+    {
+      "file": "img/community-sns-8.webp",
+      "referencedBy": [
+        "community-news.html"
+      ],
+      "alsoMissingFromOriginal": true
+    },
+    {
+      "file": "img/main-banner.webp",
+      "referencedBy": [
+        "index.html"
+      ],
+      "alsoMissingFromOriginal": true
+    },
+    {
+      "file": "img/shop-product-5.webp",
+      "referencedBy": [
+        "shop-event.html",
+        "shop-mypage.html",
+        "shop-product-detail.html",
+        "shop-product.html",
+        "shop.html"
+      ],
+      "alsoMissingFromOriginal": true
+    },
+    {
+      "file": "img/shop-product-1.webp",
+      "referencedBy": [
+        "shop-event.html",
+        "shop-mypage.html",
+        "shop-product-detail.html",
+        "shop-product.html",
+        "shop.html"
+      ],
+      "alsoMissingFromOriginal": true
+    },
+    {
+      "file": "img/shop-walk-leash.webp",
+      "referencedBy": [
+        "shop-product.html"
+      ],
+      "alsoMissingFromOriginal": true
+    },
+    {
+      "file": "img/shop-poopbag.webp",
+      "referencedBy": [
+        "shop-product.html"
+      ],
+      "alsoMissingFromOriginal": true
+    },
+    {
+      "file": "img/shop-keyring.webp",
+      "referencedBy": [
+        "shop-product.html"
+      ],
+      "alsoMissingFromOriginal": true
+    },
+    {
+      "file": "img/shop-blanket.webp",
+      "referencedBy": [
+        "shop-product.html"
+      ],
+      "alsoMissingFromOriginal": true
+    },
+    {
+      "file": "img/shop-snack-1.webp",
+      "referencedBy": [
+        "shop-product.html"
+      ],
+      "alsoMissingFromOriginal": true
+    },
+    {
+      "file": "img/shop-snack-2.webp",
+      "referencedBy": [
+        "shop-product.html"
+      ],
+      "alsoMissingFromOriginal": true
+    },
+    {
+      "file": "img/shop-bowl.webp",
+      "referencedBy": [
+        "shop-product.html"
+      ],
+      "alsoMissingFromOriginal": true
+    },
+    {
+      "file": "img/shop-walk-bag.webp",
+      "referencedBy": [
+        "shop-product.html"
+      ],
+      "alsoMissingFromOriginal": true
+    },
+    {
+      "file": "img/shop-ball.webp",
+      "referencedBy": [
+        "shop-product.html"
+      ],
+      "alsoMissingFromOriginal": true
+    },
+    {
+      "file": "img/shop-tote.webp",
+      "referencedBy": [
+        "shop-product.html"
+      ],
+      "alsoMissingFromOriginal": true
+    },
+    {
+      "file": "img/dot-line.webp",
+      "referencedBy": [
+        "style.css"
+      ],
+      "alsoMissingFromOriginal": true
+    },
+    {
+      "file": "TEST/audio/bgm-start.mp3",
+      "referencedBy": [
+        "TEST/audio.js"
+      ],
+      "alsoMissingFromOriginal": true
+    },
+    {
+      "file": "TEST/audio/bgm-question.mp3",
+      "referencedBy": [
+        "TEST/audio.js"
+      ],
+      "alsoMissingFromOriginal": true
+    },
+    {
+      "file": "TEST/audio/bgm-result.mp3",
+      "referencedBy": [
+        "TEST/audio.js"
+      ],
+      "alsoMissingFromOriginal": true
+    },
+    {
+      "file": "TEST/audio/click.mp3",
+      "referencedBy": [
+        "TEST/audio.js"
+      ],
+      "alsoMissingFromOriginal": true
+    },
+    {
+      "file": "TEST/img/dog-frame.webp",
+      "referencedBy": [
+        "TEST/dog-info.html",
+        "TEST/guest-info.html"
+      ],
+      "alsoMissingFromOriginal": true
+    }
+  ]
+}

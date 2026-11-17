@@ -1,0 +1,29 @@
+{
+  "testLinks": 7,
+  "flows": [
+    {
+      "petStatus": "yes",
+      "breed": "welly",
+      "resultType": "우다다형",
+      "questions": 12,
+      "detailAndAllTypes": "passed"
+    },
+    {
+      "petStatus": "no",
+      "breed": "cori",
+      "resultType": "예민보스형",
+      "questions": 12,
+      "detailAndAllTypes": "passed"
+    }
+  ],
+  "mobileSelection": "passed",
+  "emptySessionRedirects": 4,
+  "missingFromOriginal": [
+    "/coco-lang/TEST/audio/bgm-start.mp3",
+    "/coco-lang/TEST/audio/click.mp3",
+    "/coco-lang/TEST/img/dog-frame.webp",
+    "/coco-lang/TEST/audio/bgm-question.mp3",
+    "/coco-lang/TEST/audio/bgm-result.mp3"
+  ],
+  "externalFontsAndCameraSdk": "not covered"
+}
