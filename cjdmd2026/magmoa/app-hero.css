@@ -1,0 +1,321 @@
+
+.app-landing {
+  
+  --app-hero-background: none;
+  
+  --app-hero-screen: url("assets/app-hero-screen.jpg");
+}
+
+/* 첫 화면 위에 떠 있는 캡슐형 메뉴 */
+
+.app-layout-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 880px;
+  height: 100svh;
+  max-height: 1100px;
+  background-color: #2f4bff;
+  background-image:
+    var(--app-hero-background),
+    linear-gradient(180deg, #2f4bff 0%, #5684ff 53%, #b8deff 100%);
+  background-position:
+    center bottom,
+    center;
+  background-size: cover, cover;
+  background-repeat: no-repeat;
+}
+.app-layout-hero__copy {
+  position: relative;
+  z-index: 3;
+  max-width: 840px;
+  margin: 0 auto;
+  padding: 145px 26px 0;
+  text-align: center;
+  color: #fff;
+}
+.app-layout-hero__copy .eyebrow {
+  margin-bottom: 20px;
+  color: #e8efff;
+  font-size: 12px;
+}
+.app-layout-hero__copy h1 {
+  font-size: clamp(40px, 4.5vw, 66px);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -2.4px;
+  color: #fff;
+  margin: 0;
+  text-wrap: balance;
+}
+.app-layout-hero__copy p {
+  max-width: none;
+  margin: 21px auto 25px;
+  color: #f0f5ff;
+  font-size: 17px;
+  line-height: 1.75;
+}
+.app-layout-hero__copy .button {
+  background: var(--lime);
+  color: #172300;
+  padding: 15px 26px;
+  margin: 0;
+  gap: 25px;
+}
+.app-layout-hero__copy .button:hover {
+  background: #ccff36;
+}
+
+/* 중앙 휴대폰 영역: 배경과 화면 이미지를 각각 교체할 수 있습니다. */
+.app-layout-hero__visual {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  margin: 38px auto 0;
+  padding: 0 20px;
+}
+.app-layout-phone {
+  position: relative;
+  padding: 0;
+  width: clamp(255px, 23vw, 320px);
+  aspect-ratio: 9 / 19.5;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 8px solid #171b26;
+  border-radius: 43px;
+  background: #f4f7ff;
+}
+.app-layout-phone__screen {
+  position: absolute;
+  inset: 0;
+  border-radius: 34px;
+  background-color: #f4f7ff;
+  background-image: var(--app-hero-screen);
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+}
+.app-layout-phone::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 84px;
+  height: 24px;
+  background: #171b26;
+  border-radius: 99px;
+  z-index: 2;
+}
+.app-layout-phone::after {
+  content: "";
+  position: absolute;
+  bottom: 9px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 88px;
+  height: 4px;
+  background: #171b26;
+  border-radius: 99px;
+  z-index: 2;
+}
+.app-page-content {
+  padding-top: 0;
+}
+.app-page-content > .section:first-child {
+  scroll-margin-top: 36px;
+}
+
+@media (max-width: 950px) {
+  .app-layout-hero {
+    min-height: 840px;
+    max-height: 1000px;
+  }
+  .app-layout-hero__copy {
+    padding-top: 143px;
+  }
+  .app-layout-phone {
+    width: 290px;
+  }
+}
+@media (max-width: 650px) {
+  .app-layout-hero {
+    min-height: 830px;
+    height: auto;
+    max-height: none;
+  }
+  .app-layout-hero__copy {
+    padding: 120px 24px 0;
+  }
+  .app-layout-hero__copy .eyebrow {
+    font-size: 11px;
+    margin-bottom: 17px;
+  }
+  .app-layout-hero__copy h1 {
+    font-size: clamp(19px, 5.8vw, 38px);
+    letter-spacing: -1.6px;
+  }
+  .app-layout-hero__copy p {
+    font-size: 15px;
+    max-width: none;
+    margin: 20px auto 23px;
+  }
+  .app-layout-hero__copy .button {
+    font-size: 14px;
+  }
+  .app-layout-hero__visual {
+    margin-top: 35px;
+    margin-bottom: -75px;
+  }
+  .app-layout-phone {
+    width: 256px;
+    border-width: 7px;
+    border-radius: 37px;
+  }
+  .app-layout-phone__screen {
+    border-radius: 29px;
+  }
+  .app-page-content {
+    padding-top: 0;
+  }
+}
+
+/* Keep the shared APP header over the hero and fixed while scrolling. */
+body.app-landing > header {
+  position: fixed;
+  z-index: 100;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+}
+@media (max-width: 780px) {
+  body.app-landing > header {
+    top: 16px;
+  }
+}
+
+.app-layout-hero__visual {
+  --phone-width: clamp(255px, 23vw, 320px);
+}
+.app-layout-phone { width: var(--phone-width); z-index: 25; }
+.app-magnet-lane {
+  position: absolute;
+  top: var(--magnet-top, 0px);
+  width: calc((100% - var(--phone-width)) / 2 - 20px);
+  height: var(--magnet-height, 0px);
+  pointer-events: none;
+}
+.app-magnet-lane--left { right: calc(50% + var(--phone-width) / 2 + 12px); }
+.app-magnet-lane--right { left: calc(50% + var(--phone-width) / 2 + 12px); }
+.app-magnet-lane img {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  display: block;
+  width: min(calc(100% / 3), var(--magnet-size, 220px));
+  aspect-ratio: 1;
+  object-fit: contain;
+  transform: translate(-50%, -50%) rotate(calc(var(--angle) + var(--orbit-angle, 0deg))) scale(var(--scale, 1));
+  filter: blur(var(--depth-blur, 0px)) drop-shadow(0 5px 7px #18276450);
+  user-select: none;
+}
+@media (max-width: 950px) {
+  .app-layout-hero__visual { --phone-width: 290px; }
+}
+@media (max-width: 650px) {
+  .app-layout-hero__visual { --phone-width: min(256px, 56vw); }
+  .app-magnet-lane { width: calc((100% - var(--phone-width)) / 2 - 10px); }
+}
+
+.app-layout-hero__copy { pointer-events: none; }
+.app-layout-hero__copy a { pointer-events: auto; }
+
+@media (max-width: 650px) {
+  .app-magnet-lane img { width: min(50%, var(--magnet-size, 220px)); }
+}
+
+@media (max-width: 650px) {
+  .app-layout-hero__copy p { max-width: none; font-size: clamp(10px, 2.35vw, 15px); }
+}
+
+.app-hero-scroll.is-animated { height: 420vh; height: 420svh; }
+.app-hero-scroll.is-animated .app-layout-hero {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  min-height: 0;
+  max-height: none;
+}
+.app-hero-scroll.is-animated .app-layout-hero__copy {
+  padding-top: clamp(94px, 16svh, 145px);
+}
+
+.app-hero-orbit {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.app-layout-hero__visual .app-layout-phone {
+  width: calc(var(--phone-width) * 1.69);
+  max-width: 97vw;
+  aspect-ratio: 2 / 3;
+  border: 0;
+  border-radius: 0;
+  overflow: hidden;
+  background: url("assets/app-phone-in-hand.svg") center / contain no-repeat;
+}
+.app-layout-hero__visual .app-layout-phone::after {
+  display: block;
+  inset: -9% 0 9%;
+  transform: none;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  clip-path: inset(34% 0 23%);
+  mask-image: linear-gradient(to right, #000 19%, transparent 20.5% 79.5%, #000 81%);
+  background: url("assets/app-phone-in-hand.svg") center / contain no-repeat;
+  z-index: -1;
+}
+.app-layout-hero__visual .app-layout-phone__screen {
+  inset: 2.7% 23.5% 21.1% 22.3%;
+  border-radius: 15% / 7%;
+}
+.app-layout-phone::before {
+  top: 3.7%;
+  width: 16%;
+  height: 3.1%;
+  left: 49.4%;
+  background: #090b10;
+}
+
+.app-layout-phone__screen { overflow: hidden; }
+.app-layout-phone__screen::before,
+.app-layout-phone__screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.app-layout-phone__screen::before {
+  background: url("assets/screen-collection-app.jpg") center top / cover no-repeat;
+  opacity: var(--collection-reveal, 0);
+}
+.app-layout-phone__screen::after {
+  background: radial-gradient(ellipse at 50% 32%, white, #b9f30055 40%, transparent 70%);
+  opacity: var(--collection-flash, 0);
+}
+
+.app-layout-phone__collection-list {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: url("assets/app-hero-collection-list.jpg") center top / cover no-repeat;
+  opacity: var(--collection-list-reveal, 0);
+  pointer-events: none;
+}
