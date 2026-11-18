@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "files": [
+    {
+      "path": "app-promo.mp4",
+      "size": 136459742,
+      "sha256": "835b324431fa91ef49ded9cd09675d7e8eef1553d9c162ea03c629d84aa9f62b",
+      "gitSha": "69135f766124ae7735fa2426b12ce38fbbb0ff7f",
+      "key": "published-assets/magmoa/835b324431fa91ef49ded9cd09675d7e8eef1553d9c162ea03c629d84aa9f62b"
+    }
+  ]
+}
