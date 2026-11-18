@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MAGMOA STORE</title>
+  <!-- 브라우저 탭에 MAGMOA 로고 표시 -->
+  <link id="siteFavicon" rel="icon" type="image/png" sizes="32x32" href="images/logo.svg?v=7" />
+  <link rel="shortcut icon" type="image/png" href="images/logo.svg?v=7" />
+  <link rel="apple-touch-icon" href="images/logo.svg?v=7" />
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Typography: Manrope headings / Pretendard Korean and body text -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Pretendard Variable"', 'Pretendard', '-apple-system', 'BlinkMacSystemFont', '"Apple SD Gothic Neo"', '"Noto Sans KR"', '"Malgun Gothic"', 'sans-serif'],
+            display: ['Manrope', '"Pretendard Variable"', 'Pretendard', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              black: '#0d0d0d',
+              card: '#f4f4f4',
+              accent: '#2F4BFF',
+              lime: '#B9F300',
+              grayLight: '#f8f8f8',
+              border: '#e5e5e5',
+            }
+          },
+          letterSpacing: {
+            tightest: '-0.04em',
+            superwide: '0.2em'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 2px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #111;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Subtle pulse animation */
+    @keyframes pulse-slow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(1.02); }
+    }
+    .animate-pulse-slow {
+      animation: pulse-slow 3s infinite ease-in-out;
+    }
+
+    /* STORY & DESIGN: 세로로 이어지는 제품 상세 / 목업 이미지 */
+    .story-image-preview {
+      position: relative;
+      max-height: 480px;
+      overflow: hidden;
+    }
+    .story-image-preview::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 100px;
+      background: linear-gradient(to bottom, transparent, #fafafa);
+      pointer-events: none;
+    }
+    .story-image-preview.is-expanded {
+      max-height: none;
+      overflow: visible;
+    }
+    .story-image-preview.is-expanded::after {
+      display: none;
+    }
+    .story-details-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      min-height: 52px;
+      margin-top: 16px;
+      padding: 14px 20px;
+      border: 1px solid #d4d4d4;
+      background: #fff;
+      color: #0d0d0d;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .story-details-toggle:hover {
+      border-color: #2F4BFF;
+      color: #2F4BFF;
+    }
+    .story-details-toggle:focus-visible {
+      outline: 2px solid #2F4BFF;
+      outline-offset: 4px;
+    }
+    .story-details-chevron {
+      width: 8px;
+      height: 8px;
+      border-right: 1.5px solid currentColor;
+      border-bottom: 1.5px solid currentColor;
+      transform: translateY(-2px) rotate(45deg);
+    }
+    .story-details-toggle[aria-expanded="true"] .story-details-chevron {
+      transform: translateY(2px) rotate(225deg);
+    }
+    @media (max-width: 767px) {
+      .story-image-preview:not(.is-expanded) {
+        max-height: 320px;
+      }
+    }
+    .story-image-gallery {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+    }
+    .story-image-item {
+      position: relative;
+      width: 100%;
+      margin: 0;
+    }
+    .story-image-item img {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto; /* 긴 상세 컷도 원본 비율 그대로 표시 */
+    }
+    .story-image-item:not(.is-loaded) {
+      aspect-ratio: 4 / 3;
+      background: #f4f4f4;
+      border: 1px dashed #d4d4d4;
+    }
+    .story-image-item:not(.is-loaded) img {
+      position: absolute;
+      inset: 0;
+      height: 100%;
+      opacity: 0;
+    }
+    .story-image-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #737373;
+      font-size: 14px;
+    }
+    .story-image-placeholder span:first-child {
+      font-family: 'Manrope', sans-serif;
+      font-size: clamp(24px, 5vw, 40px);
+      font-weight: 700;
+      color: #a3a3a3;
+    }
+    .story-image-item.is-loaded .story-image-placeholder {
+      display: none;
+    }
+  </style>
+  <link rel="stylesheet" href="../custom-cursor.css" />
+  <script src="../custom-cursor.js" defer></script>
+  <link rel="stylesheet" href="../brand-footer.css" />
+  <link rel="stylesheet" href="product-details.css" />
+  <script src="product-details.js"></script>
+  </head>
+<body class="bg-[#fafafa] text-brand-black antialiased font-sans selection:bg-brand-black selection:text-white">
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-brand-black text-white text-[11px] font-medium tracking-wider uppercase py-2 px-4 overflow-hidden relative border-b border-neutral-800">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <div class="hidden md:flex items-center space-x-3 text-neutral-400">
+        <span><i class="fa-solid fa-truck-fast mr-1"></i> FREE SHIPPING OVER ₩50,000</span>
+        <span>•</span>
+        <span>MAGMOA CHEONGJU SOUVENIR ARCHIVE</span>
+      </div>
+      <div class="w-full md:w-auto text-center font-mono tracking-tight text-neutral-200 text-[11px]">
+        HANDCRAFTED 3D RELIEF OBJECTS
+      </div>
+      <div class="hidden md:flex items-center space-x-4">
+        <span class="cursor-pointer hover:text-neutral-300">KRW ₩</span>
+        <span class="cursor-pointer hover:text-neutral-300">KOREAN</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-[#fafafa]/90 backdrop-blur-md border-b border-brand-border transition-all duration-300" id="mainHeader">
+    <div class="max-w-7xl mx-auto px-4 md:px-8 h-16 md:h-20 flex items-center justify-between">
+      
+       <!-- Brand Logo -->
+      <a href="../index.html" aria-label="마그모아 메인 사이트로" class="flex shrink-0 items-center justify-center hover:opacity-80 transition-opacity">
+        <img src="../assets/header-logo.svg" alt="MAGMOA" width="1774" height="390"
+             class="block h-auto w-28 object-contain max-[359px]:w-20 sm:w-44 md:w-56" decoding="async" fetchpriority="high" />
+      </a>
+
+
+      <!-- Utility Icons & Navigation -->
+      <div class="flex items-center space-x-3 md:space-x-5 text-xs font-bold uppercase tracking-wider">
+        <!-- Search Button -->
+        <button onclick="toggleSearchModal()" class="p-2 hover:text-neutral-500 transition-colors" title="Search">
+          <i class="fa-solid fa-magnifying-glass text-sm md:text-base"></i>
+        </button>
+
+        <!-- 마이라이크 (Wishlist) -->
+        <button onclick="toggleWishlistModal()" class="p-1.5 md:p-2 hover:text-neutral-500 transition-colors relative flex items-center gap-1.5 group" title="MY LIKE">
+          <i class="fa-regular fa-heart text-sm md:text-base group-hover:scale-110 transition-transform"></i>
+          <span class="hidden lg:inline">MY LIKE</span>
+          <span id="wishlistBadge" class="bg-brand-accent text-white text-[10px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+        </button>
+
+        <!-- 백 (Cart Drawer) -->
+        <button onclick="toggleCartDrawer()" class="p-1.5 md:p-2 hover:text-neutral-500 transition-colors relative flex items-center gap-1.5 group" title="BAG">
+          <i class="fa-solid fa-bag-shopping text-sm md:text-base group-hover:scale-110 transition-transform"></i>
+          <span class="hidden lg:inline">BAG</span>
+          <span id="cartBadge" class="bg-brand-black text-white text-[10px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+        </button>
+
+        <!-- 마이페이지 (My Page) -->
+        <button onclick="toggleMyPageModal()" class="p-1.5 md:p-2 hover:text-neutral-500 transition-colors flex items-center gap-1.5" title="MY PAGE">
+          <i class="fa-regular fa-user text-sm md:text-base"></i>
+          <span class="hidden md:inline">MY PAGE</span>
+        </button>
+
+        <!-- 로그인 / 로그아웃 (Auth) -->
+        <button id="authBtn" onclick="toggleLoginModal()" class="bg-brand-black text-white px-3 py-1.5 text-[11px] font-bold tracking-widest hover:bg-neutral-800 transition-colors">
+          LOG IN
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Product Detail Main Container -->
+  <main class="max-w-7xl mx-auto px-4 md:px-8 py-10 md:py-16">
+    
+    <!-- Top Product Selector Bar for Quick Navigation -->
+    <div class="mb-8 p-4 bg-white border border-neutral-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="flex items-center space-x-2">
+        <span class="text-xs font-mono font-bold uppercase text-neutral-400">SELECT MAGNET:</span>
+        <select id="productSelector" onchange="changeProduct(this.value)" class="bg-neutral-50 border border-neutral-300 text-xs font-bold px-3 py-2 focus:outline-none focus:border-brand-black cursor-pointer">
+          <option value="1">1. 청주 문암생태공원 맹꽁이 3D 마그넷</option>
+          <option value="2">2. 청주랜드 동물원 안식처 3D 마그넷</option>
+          <option value="3">3. 청주고인쇄박물관 직지 3D 마그넷</option>
+          <option value="4">4. 청주 청남대 대통령별장 3D 마그넷</option>
+          <option value="5">5. 청주 육거리종합시장 만두 3D 마그넷</option>
+          <option value="6">6. 국립현대미술관 청주 3D 마그넷</option>
+          <option value="7">7. 초정행궁 세종대왕 3D 마그넷</option>
+          <option value="8">8. 청주 성안길 3D 마그넷</option>
+          <option value="9">9. 청주 상당산성 3D 마그넷</option>
+          <option value="10">10. 청주옛역사공원 3D 마그넷</option>
+        </select>
+      </div>
+      <div class="flex items-center space-x-4 text-xs font-mono text-neutral-500">
+        <span><i class="fa-solid fa-check text-emerald-600 mr-1"></i> IN STOCK</span>
+        <span>•</span>
+        <span>FREE RETURN POLICY</span>
+      </div>
+    </div>
+
+    <!-- Main Detail Grid (Gallery Left / Product Info Right) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16 items-start">
+      
+      <!-- Left Column: Interactive Image Gallery (7 cols) -->
+      <div class="lg:col-span-7 space-y-4">
+        <!-- Main Large Image Canvas Container -->
+        <div class="relative aspect-square bg-neutral-100 border border-neutral-200 p-8 flex items-center justify-center overflow-hidden group">
+          <img id="mainGalleryImg" src="images/frog-product.svg" alt="Magnet Main View" class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" onerror="this.src='https://placehold.co/800x800/f4f4f4/111111?text=MAGMOA+3D+MAGNET';" />
+          
+          <!-- Badge tag -->
+          <span id="detailBadge" class="absolute top-4 left-4 bg-brand-black text-white text-[10px] font-extrabold px-3 py-1 uppercase tracking-widest">
+            BEST
+          </span>
+        </div>
+
+        <!-- Thumbnail Selector List -->
+        <div id="productThumbnails" class="grid grid-cols-4 gap-3">
+          <button onclick="setMainGallery('img1')" class="thumb-btn border-2 border-brand-black bg-white p-2 aspect-square flex items-center justify-center focus:outline-none">
+            <img id="thumb1" src="images/frog-product.svg" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/200x200/f4f4f4/111111?text=View+1';" />
+          </button>
+          <button onclick="setMainGallery('img2')" class="thumb-btn border border-neutral-200 hover:border-brand-black bg-white p-2 aspect-square flex items-center justify-center focus:outline-none">
+            <img id="thumb2" src="images/frog-product.svg" class="w-full h-full object-contain opacity-85" onerror="this.src='https://placehold.co/200x200/f4f4f4/111111?text=View+2';" />
+          </button>
+          <div class="border border-neutral-200 bg-neutral-100 p-2 aspect-square flex flex-col items-center justify-center text-center text-[10px] text-neutral-400 font-mono">
+            <i class="fa-solid fa-magnet text-lg mb-1 text-neutral-500"></i>
+            <span>N52 MAGNET</span>
+          </div>
+          <div class="border border-neutral-200 bg-neutral-100 p-2 aspect-square flex flex-col items-center justify-center text-center text-[10px] text-neutral-400 font-mono">
+            <i class="fa-solid fa-hand-sparkles text-lg mb-1 text-neutral-500"></i>
+            <span>HAND CRAFT</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Product Meta, Price, Options, CTA (5 cols) -->
+      <div class="lg:col-span-5 space-y-6">
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span id="detailCategory" class="text-xs font-mono uppercase text-neutral-400 tracking-widest">NATURE & PARK</span>
+            <span class="text-neutral-300">•</span>
+            <span class="text-xs font-mono text-brand-accent font-bold uppercase">CHEONGJU ARCHIVE</span>
+          </div>
+          <h1 id="detailTitle" class="font-display text-2xl sm:text-3xl font-extrabold text-brand-black leading-tight">
+            청주 문암생태공원 맹꽁이 3D 마그넷
+          </h1>
+          
+          <!-- Rating & Reviews -->
+          <div class="flex items-center space-x-2 mt-3">
+            <div class="flex text-amber-400 text-xs">
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+            </div>
+            <span class="text-xs font-bold font-mono">4.9</span>
+            <span class="text-xs text-neutral-400">(리뷰 128개)</span>
+          </div>
+        </div>
+
+        <!-- Price Section -->
+        <div class="p-4 bg-neutral-50 border border-neutral-200 space-y-1">
+          <div class="flex items-baseline justify-between">
+            <span class="text-xs font-mono text-neutral-400 uppercase">SELLING PRICE</span>
+            <span id="detailPrice" class="text-2xl font-extrabold text-brand-black">₩18,000</span>
+          </div>
+          <p class="text-[11px] text-neutral-500">
+            50,000원 이상 구매 시 <span class="font-bold text-brand-black">무료배송</span> (기본 배송비 ₩3,000)
+          </p>
+        </div>
+
+        <!-- Description Paragraph -->
+        <p id="detailDesc" class="text-xs md:text-sm text-neutral-600 leading-relaxed font-light">
+          문암생태공원의 귀여운 맹꽁이와 시원한 폭포, 알록달록 튤립 꽃밭을 입체감 있게 살려낸 3D 오리지널 마그넷입니다.
+        </p>
+
+        <!-- Quantity Selector -->
+        <div>
+          <label class="block text-[11px] font-mono font-bold uppercase text-neutral-500 mb-2">QUANTITY</label>
+          <div class="flex items-center space-x-4">
+            <div class="flex items-center border border-neutral-300 bg-white">
+              <button onclick="changeQuantity(-1)" class="w-10 h-10 font-bold hover:bg-neutral-100 flex items-center justify-center text-sm">-</button>
+              <span id="quantityInput" class="w-12 text-center font-mono font-bold text-xs">1</span>
+              <button onclick="changeQuantity(1)" class="w-10 h-10 font-bold hover:bg-neutral-100 flex items-center justify-center text-sm">+</button>
+            </div>
+            <span class="text-xs font-mono text-neutral-400">TOTAL: <strong id="totalPriceCalc" class="text-brand-black font-extrabold">₩18,000</strong></span>
+          </div>
+        </div>
+
+        <!-- Action CTA Buttons -->
+        <div class="space-y-3 pt-2">
+          <button onclick="addCurrentToCart()" class="w-full bg-brand-black text-white font-bold text-xs uppercase tracking-widest py-4 hover:bg-neutral-800 transition-colors shadow-lg flex items-center justify-center gap-2">
+            <i class="fa-solid fa-bag-shopping"></i> ADD TO BAG (장바구니 담기)
+          </button>
+          <div class="grid grid-cols-2 gap-3">
+            <button onclick="instantBuy()" class="bg-brand-accent text-white font-bold text-xs uppercase tracking-widest py-3.5 hover:bg-red-600 transition-colors flex items-center justify-center gap-1.5">
+              BUY NOW 바로구매
+            </button>
+            <button onclick="toggleCurrentWishlist()" id="wishlistBtn" class="bg-white border border-neutral-300 text-brand-black font-bold text-xs uppercase tracking-widest py-3.5 hover:bg-neutral-100 transition-colors flex items-center justify-center gap-1.5">
+              <i class="fa-regular fa-heart"></i> MY LIKE
+            </button>
+          </div>
+        </div>
+
+        <!-- Guarantee Features -->
+        <div class="grid grid-cols-2 gap-3 pt-4 border-t border-neutral-200 text-xs text-neutral-600 font-mono">
+          <div class="flex items-center space-x-2">
+            <i class="fa-solid fa-shield-halved text-brand-black text-sm"></i>
+            <span>N52 강자성 자석 고정</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <i class="fa-solid fa-box-open text-brand-black text-sm"></i>
+            <span>안전 패키지 무상증정</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Detailed Tabs & Content Section -->
+    <section class="mt-20 border-t border-neutral-200 pt-12">
+      <div class="flex border-b border-neutral-200 space-x-8 mb-10 overflow-x-auto font-mono text-xs font-bold uppercase tracking-wider">
+        <button onclick="switchTab('story')" id="tabBtnStory" class="pb-3 border-b-2 border-brand-black text-brand-black">01. STORY & DESIGN</button>
+        <button onclick="switchTab('specs')" id="tabBtnSpecs" class="pb-3 border-b-2 border-transparent text-neutral-400 hover:text-brand-black">02. SPECIFICATIONS</button>
+        <button onclick="switchTab('reviews')" id="tabBtnReviews" class="pb-3 border-b-2 border-transparent text-neutral-400 hover:text-brand-black">03. REVIEWS (128)</button>
+      </div>
+
+      <!-- Tab Content 1: Story -->
+      <div id="tabStory" class="space-y-8 max-w-4xl">
+        <div class="space-y-4">
+          <span class="text-xs font-mono text-brand-accent uppercase tracking-widest font-bold">LOCAL HERITAGE OBJECT</span>
+          <h2 class="font-display text-2xl md:text-3xl font-extrabold text-brand-black">
+            일상의 작은 공간에 스며드는 청주의 이야기
+          </h2>
+          <p class="text-xs md:text-sm text-neutral-600 leading-relaxed font-light">
+            마그모아(MAGMOA)의 청주 마그넷 컬렉션은 단순한 기념품을 넘어 청주가 품은 명소와 고유 문화를 세련된 3D 양각 기법으로 아카이빙합니다.
+            장소를 떠올리게 하는 풍경과 캐릭터를 입체적인 작은 오브제로 만나보세요.
+          </p>
+        </div>
+
+        <!-- 제품 상세 / 목업 이미지: 아래 PRODUCTS의 storyImages 배열을 수정하세요.
+             배열에 경로를 추가하면 이미지 칸이 늘어나고, 삭제하면 줄어듭니다.
+             JPG/PNG/WebP 모두 가능하며 실제 파일 확장자와 경로를 맞춰주세요. -->
+        <div class="story-details">
+          <div id="storyImagePreview" class="story-image-preview">
+            <div id="storyImageGallery" class="story-image-gallery" role="group" aria-label="제품 상세 이미지">
+              <!-- 선택한 상품의 상세 이미지가 순서대로 표시됩니다. -->
+            </div>
+            <section id="productInfoSummary" class="mx-auto max-w-xl py-8" aria-labelledby="productInfoTitle" hidden>
+              <h3 id="productInfoTitle" class="mb-4 text-lg font-bold text-brand-black">제품 상세 정보</h3>
+              <dl class="border-y-2 border-brand-black text-sm">
+                <div class="grid grid-cols-[6rem_1fr] gap-3 border-b border-neutral-300 px-3 py-4">
+                  <dt class="text-neutral-500">크기</dt>
+                  <dd id="productInfoSize" class="font-semibold text-brand-black"></dd>
+                </div>
+                <div class="grid grid-cols-[6rem_1fr] gap-3 px-3 py-4">
+                  <dt class="text-neutral-500">소재</dt>
+                  <dd class="text-brand-black">고밀도 레진, 아크릴 도료, N52 네오디뮴 자석</dd>
+                </div>
+              </dl>
+              <p class="mt-6 border border-neutral-200 px-4 py-5 text-center text-xs leading-relaxed text-neutral-600">
+                측정 방법에 따라 크기에 약간의 차이가 있을 수 있습니다.<br />
+                화면 설정에 따라 실제 제품과 색상이 다르게 보일 수 있습니다.
+              </p>
+            </section>
+          </div>
+          <button type="button" id="storyDetailsToggle" class="story-details-toggle"
+                  aria-expanded="false" aria-controls="storyImagePreview" onclick="toggleStoryImages()">
+            <span id="storyDetailsToggleLabel">상세정보 더보기</span>
+            <span class="story-details-chevron" aria-hidden="true"></span>
+          </button>
+        </div>
+
+
+      </div>
+
+      <!-- Tab Content 2: Specs -->
+      <div id="tabSpecs" class="hidden space-y-6 max-w-4xl">
+        <h3 class="font-bold text-sm font-mono uppercase tracking-wider text-brand-black border-b border-neutral-200 pb-2">PRODUCT TECHNICAL SPEC</h3>
+        <table class="w-full text-xs text-left border-collapse">
+          <tbody>
+            <tr class="border-b border-neutral-200">
+              <th class="py-3 font-mono text-neutral-400 font-normal w-1/3">PRODUCT NAME</th>
+              <td id="specName" class="py-3 font-bold text-brand-black">청주 문암생태공원 맹꽁이 3D 마그넷</td>
+            </tr>
+            <tr class="border-b border-neutral-200">
+              <th class="py-3 font-mono text-neutral-400 font-normal">MATERIAL</th>
+              <td class="py-3 text-neutral-700">High-Density Resin, Acrylic Paint, N52 Neodymium Magnet</td>
+            </tr>
+            <tr class="border-b border-neutral-200">
+              <th class="py-3 font-mono text-neutral-400 font-normal">DIMENSIONS</th>
+              <td id="specSize" class="py-3 text-neutral-700">약 85mm x 90mm x 25mm (제품별 상이)</td>
+            </tr>
+            <tr class="border-b border-neutral-200">
+              <th class="py-3 font-mono text-neutral-400 font-normal">WEIGHT</th>
+              <td class="py-3 text-neutral-700">상품별 무게는 문의해 주세요.</td>
+            </tr>
+            <tr class="border-b border-neutral-200">
+              <th class="py-3 font-mono text-neutral-400 font-normal">MANUFACTURER</th>
+              <td class="py-3 text-neutral-700">MAGMOA Studio (대한민국)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tab Content 3: Reviews -->
+      <div id="tabReviews" class="hidden space-y-6 max-w-4xl">
+        <div class="flex justify-between items-center border-b border-neutral-200 pb-4">
+          <div>
+            <h3 class="font-extrabold text-lg text-brand-black">CUSTOMER REVIEWS</h3>
+            <p class="text-xs text-neutral-400">마그모아 청주 컬렉션을 구매하신 수집가분들의 후기입니다.</p>
+          </div>
+          <button onclick="showToast('구매한 상품의 주문 내역에서 후기를 작성해 주세요.')" class="bg-brand-black text-white text-xs font-bold px-4 py-2 hover:bg-neutral-800">
+            WRITE A REVIEW
+          </button>
+        </div>
+
+        <!-- Sample Reviews -->
+        <div class="space-y-4">
+          <div class="p-4 bg-white border border-neutral-200 text-xs space-y-2">
+            <div class="flex justify-between items-center font-mono">
+              <span class="text-amber-500"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+              <span class="text-neutral-400">2026.08.18 | Kim*</span>
+            </div>
+            <p class="font-bold text-brand-black">디테일이 상상이상으로 대박입니다!</p>
+            <p class="text-neutral-600 font-light">청주 여행 갔다가 스토어에서 보고 반해서 구매했는데 양각 입체감이 장난 아닙니다. 냉장고 볼 때마다 기분이 좋아져요.</p>
+          </div>
+
+          <div class="p-4 bg-white border border-neutral-200 text-xs space-y-2">
+            <div class="flex justify-between items-center font-mono">
+              <span class="text-amber-500"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+              <span class="text-neutral-400">2026.08.12 | Park*</span>
+            </div>
+            <p class="font-bold text-brand-black">하단에 살랑거리는 펜듈럼 움직임이 너무 귀여워요</p>
+            <p class="text-neutral-600 font-light">자석도 엄청 세서 메모지 여러 장 붙여도 고정 잘 됩니다. 패키지도 고급스러워서 선물용으로 최고입니다.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Related Products Grid -->
+    <section class="mt-20 border-t border-neutral-200 pt-12">
+      <div class="flex justify-between items-end mb-8">
+        <div>
+          <span class="text-xs font-mono text-neutral-400 uppercase tracking-widest">MORE COLLECTION</span>
+          <h2 class="font-display text-2xl font-extrabold text-brand-black mt-1">
+            함께 보면 좋은 청주 마그넷
+          </h2>
+        </div>
+        <a href="index_s.html#shop" class="text-xs font-mono font-bold underline hover:text-neutral-500">VIEW ALL</a>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6" id="relatedProductsGrid">
+        <!-- Related items populated dynamically -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Cart Drawer Component -->
+  <div id="cartDrawer" class="fixed inset-0 z-50 bg-brand-black/60 opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-white p-6 md:p-8 shadow-2xl flex flex-col justify-between transform translate-x-full transition-transform duration-300 ease-out" id="cartContainer">
+      <div>
+        <div class="flex justify-between items-center pb-4 border-b border-neutral-200">
+          <div class="flex items-center gap-2">
+            <span class="font-display font-extrabold text-xl tracking-tight">YOUR CART</span>
+            <span id="cartDrawerItemCount" class="bg-neutral-100 text-neutral-800 text-xs font-bold px-2 py-0.5 rounded-full">0</span>
+          </div>
+          <button onclick="toggleCartDrawer()" class="text-xl p-2 hover:text-neutral-500">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div id="cartItemsList" class="mt-6 space-y-4 max-h-[50vh] overflow-y-auto pr-1">
+          <!-- Dynamically filled -->
+        </div>
+      </div>
+
+      <div class="border-t border-neutral-200 pt-4 space-y-4">
+        <div class="space-y-1.5 text-xs">
+          <div class="flex justify-between text-neutral-500">
+            <span>Subtotal</span>
+            <span id="cartSubtotal" class="font-semibold text-brand-black">₩0</span>
+          </div>
+          <div class="flex justify-between text-base font-bold pt-2 border-t border-neutral-100 text-brand-black">
+            <span>TOTAL</span>
+            <span id="cartTotal">₩0</span>
+          </div>
+        </div>
+
+        <button onclick="simulateCheckout()" class="w-full bg-brand-black text-white font-bold text-xs uppercase tracking-widest py-4 hover:bg-neutral-800 transition-colors flex items-center justify-center gap-2">
+          PROCEED TO CHECKOUT <i class="fa-solid fa-lock text-xs"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Modal -->
+  <div id="searchModal" class="fixed inset-0 z-50 bg-brand-black/70 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300 p-4 pt-20">
+    <div class="max-w-2xl mx-auto bg-white p-6 shadow-2xl relative">
+      <button onclick="toggleSearchModal()" class="absolute top-6 right-6 text-xl p-2 hover:text-neutral-500">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <h3 class="font-display font-extrabold text-lg mb-4">SEARCH MAGMOA PRODUCTS</h3>
+      <div class="relative">
+        <input type="text" id="searchInput" oninput="handleSearch()" placeholder="검색어를 입력하세요 (예: 맹꽁이, 직지, 성안길, 세종대왕)..." 
+               class="w-full border-b-2 border-brand-black py-3 pr-10 text-sm font-semibold focus:outline-none placeholder:text-neutral-400" />
+        <i class="fa-solid fa-magnifying-glass absolute right-2 top-3 text-neutral-400"></i>
+      </div>
+
+      <div id="searchResults" class="mt-6 max-h-80 overflow-y-auto space-y-3">
+        <!-- Results rendered here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div id="loginModal" class="fixed inset-0 z-50 bg-brand-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
+    <div class="bg-white max-w-md w-full p-8 relative shadow-2xl transform scale-95 transition-transform duration-300" id="loginContainer">
+      <button onclick="toggleLoginModal()" class="absolute top-6 right-6 text-xl hover:text-neutral-500 p-1">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="text-center mb-6">
+        <h2 class="font-display font-extrabold text-2xl tracking-widest text-brand-black">MAGMOA</h2>
+        <p class="text-xs text-neutral-400 mt-1 uppercase tracking-wider">MEMBER ACCESS</p>
+      </div>
+
+      <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-[11px] font-mono font-bold uppercase text-neutral-500 mb-1">EMAIL ADDRESS</label>
+          <input type="email" id="loginEmail" required placeholder="user@magmoa.kr" value="member@magmoa.kr" class="w-full border border-neutral-300 px-3 py-2.5 text-xs font-semibold focus:outline-none focus:border-brand-black" />
+        </div>
+        <div>
+          <label class="block text-[11px] font-mono font-bold uppercase text-neutral-500 mb-1">PASSWORD</label>
+          <input type="password" required placeholder="••••••••" value="password123" class="w-full border border-neutral-300 px-3 py-2.5 text-xs font-semibold focus:outline-none focus:border-brand-black" />
+        </div>
+        
+        <div class="flex justify-between items-center text-[11px] text-neutral-500 pt-1">
+          <label class="flex items-center gap-1.5 cursor-pointer">
+            <input type="checkbox" checked class="accent-brand-black" />
+            <span>로그인 상태 유지</span>
+          </label>
+          <a href="#" onclick="showToast('비밀번호 재설정 링크가 발송되었습니다.')" class="hover:underline">비밀번호 찾기</a>
+        </div>
+
+        <button type="submit" class="w-full bg-brand-black text-white font-bold text-xs uppercase tracking-widest py-3.5 hover:bg-neutral-800 transition-colors mt-2">
+          LOG IN
+        </button>
+      </form>
+
+      <div class="mt-6 pt-6 border-t border-neutral-200 text-center space-y-3">
+        <p class="text-xs text-neutral-500">아직 회원이 아니신가요?</p>
+        <button onclick="showToast('회원가입 양식으로 전환합니다.')" class="w-full bg-neutral-100 text-brand-black font-bold text-xs uppercase tracking-widest py-3 border border-neutral-300 hover:bg-neutral-200 transition-colors">
+          CREATE ACCOUNT
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- My Page Modal -->
+  <div id="myPageModal" class="fixed inset-0 z-50 bg-brand-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
+    <div class="bg-white max-w-xl w-full p-8 relative shadow-2xl transform scale-95 transition-transform duration-300 max-h-[85vh] overflow-y-auto" id="myPageContainer">
+      <button onclick="toggleMyPageModal()" class="absolute top-6 right-6 text-xl hover:text-neutral-500 p-1">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="border-b border-neutral-200 pb-6 mb-6">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-full bg-brand-black text-white flex items-center justify-center font-bold text-xl">
+            M
+          </div>
+          <div>
+            <span class="text-[10px] font-mono text-brand-accent uppercase font-bold tracking-widest">VIP MEMBER</span>
+            <h2 class="font-display font-extrabold text-xl text-brand-black" id="myPageUserName">청주 마그넷 컬렉터 님</h2>
+            <p class="text-xs text-neutral-400">member@magmoa.kr</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-3 mb-8 text-center">
+        <div class="bg-neutral-50 border border-neutral-200 p-3">
+          <span class="block text-[10px] font-mono text-neutral-400 uppercase">보유 쿠폰</span>
+          <span class="text-lg font-extrabold text-brand-black">3장</span>
+        </div>
+        <div class="bg-neutral-50 border border-neutral-200 p-3">
+          <span class="block text-[10px] font-mono text-neutral-400 uppercase">적립 포인트</span>
+          <span class="text-lg font-extrabold text-brand-black">₩2,500</span>
+        </div>
+        <div class="bg-neutral-50 border border-neutral-200 p-3">
+          <span class="block text-[10px] font-mono text-neutral-400 uppercase">주문 내역</span>
+          <span class="text-lg font-extrabold text-brand-black">2건</span>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <h3 class="font-bold text-xs font-mono uppercase tracking-wider text-neutral-700 border-b border-neutral-200 pb-2">최근 주문 아카이브</h3>
+        
+        <div class="p-4 bg-neutral-50 border border-neutral-200 text-xs space-y-2">
+          <div class="flex justify-between font-mono text-neutral-400 text-[10px]">
+            <span>ORDER #20260824-001</span>
+            <span class="text-emerald-600 font-bold">배송 완료</span>
+          </div>
+          <p class="font-bold text-brand-black">청주 문암생태공원 맹꽁이 3D 마그넷 외 1건</p>
+          <p class="text-neutral-500 text-[11px]">결제 금액: ₩36,000 (무료배송)</p>
+        </div>
+
+        <div class="p-4 bg-neutral-50 border border-neutral-200 text-xs space-y-2">
+          <div class="flex justify-between font-mono text-neutral-400 text-[10px]">
+            <span>ORDER #20260715-089</span>
+            <span class="text-emerald-600 font-bold">배송 완료</span>
+          </div>
+          <p class="font-bold text-brand-black">국립현대미술관 청주 3D 마그넷</p>
+          <p class="text-neutral-500 text-[11px]">결제 금액: ₩18,000</p>
+        </div>
+      </div>
+
+      <div class="mt-8 pt-6 border-t border-neutral-200 flex justify-between items-center">
+        <button onclick="handleLogout()" class="text-xs text-neutral-400 hover:text-brand-accent underline">
+          로그아웃 (Log Out)
+        </button>
+        <button onclick="showToast('회원 정보는 계정 메뉴에서 확인해 주세요.')" class="bg-brand-black text-white text-xs font-bold px-4 py-2 hover:bg-neutral-800">
+          정보 수정
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wishlist Modal -->
+  <div id="wishlistModal" class="fixed inset-0 z-50 bg-brand-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
+    <div class="bg-white max-w-2xl w-full p-6 md:p-8 relative shadow-2xl transform scale-95 transition-transform duration-300 max-h-[85vh] overflow-y-auto" id="wishlistContainer">
+      <button onclick="toggleWishlistModal()" class="absolute top-6 right-6 text-xl hover:text-neutral-500 p-1">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="flex items-center gap-2 pb-4 border-b border-neutral-200 mb-6">
+        <i class="fa-solid fa-heart text-brand-accent text-lg"></i>
+        <h2 class="font-display font-extrabold text-xl tracking-tight">MY LIKE</h2>
+        <span id="wishlistModalCount" class="bg-neutral-100 text-neutral-800 text-xs font-bold px-2 py-0.5 rounded-full">0</span>
+      </div>
+
+      <div id="wishlistItemsList" class="space-y-4 max-h-[55vh] overflow-y-auto pr-1">
+        <!-- Dynamically rendered via JS -->
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-neutral-200 flex justify-between items-center text-xs">
+        <span class="text-neutral-400">마음에 드는 청주 마그넷을 모아보세요.</span>
+        <button onclick="toggleWishlistModal()" class="bg-brand-black text-white font-bold px-6 py-2.5 hover:bg-neutral-800">
+          쇼핑 계속하기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 bg-brand-black text-white px-5 py-3 text-xs font-semibold shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3">
+    <i class="fa-solid fa-circle-check text-brand-accent"></i>
+    <span id="toastMsg">Action completed</span>
+  </div>
+
+  <!-- Footer -->
+    <footer class="footer brand-footer store-style-footer" aria-label="마그모아 사이트 정보">
+      <div class="brand-footer-main">
+        <div class="brand-footer-intro">
+          <a class="logo" href="../index.html" aria-label="마그모아 홈">MAGMOA<span>.</span></a>
+          <p class="brand-footer-description">지역의 장소와 문화를 수집하는 여행.<br />디지털 마그넷부터 실물 굿즈까지,<br />여행의 순간을 일상으로 연결합니다.</p>
+        </div>
+        <nav class="brand-footer-links" aria-label="둘러보기">
+          <h2>EXPLORE</h2>
+          <a href="../about.html">Brand Story</a>
+          <a href="../app.html">MAGMOA App</a>
+          <a href="../store/index_s.html#shop">3D Magnet Archive</a>
+          <a href="../store/index_s.html#lookbook">Visual Lookbook</a>
+        </nav>
+        <div class="brand-footer-links">
+          <h2>CUSTOMER CARE</h2>
+          <p>운영시간: 평일 10:00 – 18:00</p>
+          <a href="mailto:cs@magmoa.kr">이메일: cs@magmoa.kr</a>
+          <a href="../faq.html">Frequently Asked Questions</a>
+          <a href="../contact.html">Contact Support</a>
+        </div>
+        <div class="brand-footer-links">
+          <h2>NEWS & COLLECTION</h2>
+          <p>새로운 여행 스팟과 마그넷 컬렉션,<br />마그모아의 소식을 만나보세요.</p>
+          <a class="footer-news-button" href="../notices.html">LATEST NEWS <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+      <div class="brand-footer-bottom">
+        <small>© 2026 MAGMOA. All rights reserved. Designed with precision.</small>
+        <a href="../contact.html">문의하기 ↗</a>
+      </div>
+    </footer>
+
+  <script>
+    /* 1. PRODUCT ARCHIVE DATABASE */
+    const PRODUCTS = [
+      {
+        id: 1,
+        title: "청주 문암생태공원 맹꽁이 3D 마그넷",
+        dimensions: "9 × 8 × 1.5 cm",
+        category: "Nature & Park",
+        price: 18000,
+        badge: "BEST",
+        img1: "images/frog-product.svg",
+        img2: "images/frog-product.svg",
+        // 상세 컷: 실제 이미지 경로를 위에서 아래로 표시할 순서대로 입력하세요.
+        colors: ["#2e7d32", "#1b5e20"],
+        colorNames: ["Original Green", "Forest Relief"],
+        desc: "문암생태공원의 귀여운 맹꽁이와 시원한 폭포, 알록달록 튤립 꽃밭을 입체감 있게 살려낸 3D 오리지널 마그넷."
+      },
+      {
+        id: 2,
+        title: "청주랜드 동물원 안식처 3D 마그넷",
+        category: "Nature & Zoo",
+        price: 18000,
+        badge: "HOT",
+        img1: "images/zoo-product.svg",
+        img2: "images/zoo-product.svg",
+        // 상세 컷: 실제 이미지 경로를 위에서 아래로 표시할 순서대로 입력하세요.
+        colors: ["#d84315", "#f57c00"],
+        colorNames: ["Safari Lion", "Warm Orange"],
+        desc: "청주랜드 동물원의 아기자기한 동물 가족(사자, 곰, 말, 홍학)과 하단 꼬리 펜듈럼 구조가 돋보이는 3D 마그넷."
+      },
+      {
+        id: 3,
+        title: "청주고인쇄박물관 직지 3D 마그넷",
+        category: "Culture & Museum",
+        price: 18000,
+        badge: "HISTORIC",
+        img1: "images/jikji-product.svg",
+        img2: "images/jikji-product.svg",
+        // 상세 컷: 실제 이미지 경로를 위에서 아래로 표시할 순서대로 입력하세요.
+        colors: ["#5d4037", "#8d6e63"],
+        colorNames: ["Antique Wood", "Traditional Brown"],
+        desc: "청주고인쇄박물관의 건물과 푸른 산, 펼쳐진 고서를 입체적으로 담아낸 3D 마그넷."
+      },
+      {
+        id: 4,
+        title: "청주 청남대 대통령별장 3D 마그넷",
+        category: "Heritage & Villa",
+        price: 18000,
+        badge: "NEW",
+        img1: "images/villa-product.svg",
+        img2: "images/villa-product.svg",
+        // 상세 컷: 실제 이미지 경로를 위에서 아래로 표시할 순서대로 입력하세요.
+        colors: ["#00695c", "#2e7d32"],
+        colorNames: ["Villa Green", "Autumn Maple"],
+        desc: "청남대의 청록색 기와 건물과 계단, 정원과 새 마스코트를 담은 3D 마그넷."
+      },
+      {
+        id: 5,
+        title: "청주 육거리종합시장 만두 3D 마그넷",
+        category: "Traditional Market",
+        price: 18000,
+        badge: "POPULAR",
+        img1: "images/market-product.svg",
+        img2: "images/market-product.svg",
+        // 상세 컷: 실제 이미지 경로를 위에서 아래로 표시할 순서대로 입력하세요.
+        colors: ["#1565c0", "#d32f2f"],
+        colorNames: ["Market Blue", "Festival Red"],
+        desc: "청주 육거리 전통시장의 기와문과 상인 캐릭터, 하단에 살랑거리는 수제 왕만두 캐릭터의 귀여운 3D 컬래버레이션."
+      },
+      {
+        id: 6,
+        title: "국립현대미술관 청주 3D 마그넷",
+        category: "Modern Art",
+        price: 18000,
+        badge: "ART",
+        img1: "images/mmca-product.svg",
+        img2: "images/mmca-product.svg",
+        // 상세 컷: 실제 이미지 경로를 위에서 아래로 표시할 순서대로 입력하세요.
+        colors: ["#fbc02d", "#f57f17"],
+        colorNames: ["Gold Frame", "Art Yellow"],
+        desc: "국립현대미술관 청주의 건물과 빛나는 구슬 아트, 그림을 그리는 꼬마 화가들을 담은 3D 마그넷."
+      },
+      {
+        id: 7,
+        title: "초정행궁 세종대왕 3D 마그넷",
+        category: "Heritage & King",
+        price: 18000,
+        badge: "SPECIAL",
+        img1: "images/sejong-product.svg",
+        img2: "images/sejong-product.svg",
+        // 상세 컷: 실제 이미지 경로를 위에서 아래로 표시할 순서대로 입력하세요.
+        colors: ["#c62828", "#1565c0"],
+        colorNames: ["Royal Red", "Hangeul Blue"],
+        desc: "초정약수 행궁을 포근하게 품어 안은 세종대왕의 인자한 미소와 알록달록 한글 입체 자음 블록 마그넷."
+      },
+      {
+        id: 8,
+        title: "청주 성안길 3D 마그넷",
+        category: "Culture & Street",
+        price: 18000,
+        badge: "NEW",
+        img1: "images/seongangil-product.svg",
+        img2: "images/seongangil-product.svg",
+        // 상세 컷: 실제 이미지 경로를 위에서 아래로 표시할 순서대로 입력하세요.
+        colors: ["#2563eb", "#ec4899"],
+        colorNames: ["Rodeo Blue", "Neon Pink"],
+        desc: "청주의 대표 명소이자 활기찬 문화의 거리 성안길의 트렌디한 감성과 디테일을 아기자기한 3D 입체감으로 담아낸 마그넷."
+      },
+      {
+        id: 9,
+        title: "청주 상당산성 3D 마그넷",
+        category: "Heritage & Fortress",
+        price: 18000,
+        badge: "NEW",
+        tag: "Heritage & Fortress",
+        img1: "images/fortress-product.svg",
+        img2: "images/fortress-product.svg",
+        colors: ["#334155"],
+        colorNames: ["Original"],
+        desc: "상당산성의 성문과 돌담, 두 수문장의 모습을 담은 3D 마그넷."
+      },
+      {
+        id: 10,
+        title: "청주옛역사공원 3D 마그넷",
+        category: "History & Railway",
+        price: 18000,
+        badge: "NEW",
+        tag: "History & Railway",
+        img1: "images/station-product.svg",
+        img2: "images/station-product.svg",
+        colors: ["#334155"],
+        colorNames: ["Original"],
+        desc: "옛 청주역 건물과 시계가 있는 증기기관차, 벤치의 두 인물을 담은 3D 마그넷."
+      }
+    ];
+
+    /* 2. STATE VARIABLES */
+    let currentProductId = 1;
+    let currentQty = 1;
+    let cart = [];
+    let wishlist = [];
+    let isLoggedIn = true; // State for simulation
+
+    /* MODAL TOGGLES & HANDLERS */
+    function toggleSearchModal() {
+      const searchModal = document.getElementById('searchModal');
+      if (!searchModal) return;
+      const isOpen = !searchModal.classList.contains('pointer-events-none');
+      if (!isOpen) {
+        searchModal.classList.remove('opacity-0', 'pointer-events-none');
+        const input = document.getElementById('searchInput');
+        if (input) input.focus();
+      } else {
+        searchModal.classList.add('opacity-0', 'pointer-events-none');
+      }
+    }
+
+    function handleSearch() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const resultsContainer = document.getElementById('searchResults');
+      if (!resultsContainer) return;
+      
+      if (!query) {
+        resultsContainer.innerHTML = '';
+        return;
+      }
+
+      const matches = PRODUCTS.filter(p => p.title.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query));
+
+      if (matches.length === 0) {
+        resultsContainer.innerHTML = `<p class="text-xs text-neutral-400 py-4">검색어 "${query}"에 해당하는 상품이 없습니다.</p>`;
+      } else {
+        resultsContainer.innerHTML = matches.map(p => `
+          <div onclick="changeProduct(${p.id}); toggleSearchModal();" class="flex items-center justify-between p-3 bg-neutral-50 border border-neutral-200 hover:bg-neutral-100 cursor-pointer">
+            <div class="flex items-center space-x-3">
+              <img src="${p.img1}" class="w-10 h-10 object-contain p-0.5" onerror="this.src='https://placehold.co/100x100/f4f4f4/111111?text=MAGMOA';" />
+              <div>
+                <p class="text-xs font-bold text-brand-black">${p.title}</p>
+                <p class="text-[10px] text-neutral-400">${p.category}</p>
+              </div>
+            </div>
+            <span class="text-xs font-bold">₩${p.price.toLocaleString()}</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    function toggleLoginModal() {
+      const modal = document.getElementById('loginModal');
+      const container = document.getElementById('loginContainer');
+      if (!modal || !container) return;
+
+      const isOpen = !modal.classList.contains('pointer-events-none');
+      if (!isOpen) {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        container.classList.remove('scale-95');
+      } else {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        container.classList.add('scale-95');
+      }
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      isLoggedIn = true;
+      const authBtn = document.getElementById('authBtn');
+      if (authBtn) authBtn.innerText = 'MY PAGE';
+      showToast('로그인되었습니다. 마그모아 회원 혜택을 이용해보세요.');
+      toggleLoginModal();
+    }
+
+    function toggleMyPageModal() {
+      if (!isLoggedIn) {
+        showToast('로그인이 필요한 서비스입니다.');
+        toggleLoginModal();
+        return;
+      }
+      const modal = document.getElementById('myPageModal');
+      const container = document.getElementById('myPageContainer');
+      if (!modal || !container) return;
+
+      const isOpen = !modal.classList.contains('pointer-events-none');
+      if (!isOpen) {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        container.classList.remove('scale-95');
+      } else {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        container.classList.add('scale-95');
+      }
+    }
+
+    function handleLogout() {
+      isLoggedIn = false;
+      const authBtn = document.getElementById('authBtn');
+      if (authBtn) authBtn.innerText = 'LOG IN';
+      toggleMyPageModal();
+      showToast('성공적으로 로그아웃되었습니다.');
+    }
+
+    function toggleWishlistModal() {
+      renderWishlistUI();
+      const modal = document.getElementById('wishlistModal');
+      const container = document.getElementById('wishlistContainer');
+      if (!modal || !container) return;
+
+      const isOpen = !modal.classList.contains('pointer-events-none');
+      if (!isOpen) {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        container.classList.remove('scale-95');
+      } else {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        container.classList.add('scale-95');
+      }
+    }
+
+    function renderWishlistUI() {
+      const container = document.getElementById('wishlistItemsList');
+      const countEl = document.getElementById('wishlistModalCount');
+      if (!container) return;
+
+      if (countEl) countEl.innerText = wishlist.length;
+
+      if (wishlist.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 text-neutral-400">
+            <i class="fa-regular fa-heart text-4xl mb-3 opacity-30"></i>
+            <p class="text-xs font-semibold uppercase">MY LIKE에 담긴 상품이 없습니다.</p>
+            <p class="text-[11px] text-neutral-400 mt-1">상세페이지나 메인 카탈로그에서 하트를 눌러 추가해보세요.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const likedProducts = PRODUCTS.filter(p => wishlist.includes(p.id));
+
+      container.innerHTML = likedProducts.map(p => `
+        <div class="flex items-center justify-between gap-4 p-3 bg-neutral-50 border border-neutral-200">
+          <div class="flex items-center gap-3">
+            <img src="${p.img1}" alt="${p.title}" class="w-14 h-14 object-contain bg-white border border-neutral-200 p-1" />
+            <div>
+              <p class="text-[10px] font-mono text-neutral-400 uppercase">${p.category}</p>
+              <h4 class="text-xs font-bold text-brand-black">${p.title}</h4>
+              <p class="text-xs font-extrabold mt-0.5">₩${p.price.toLocaleString()}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="changeProduct(${p.id}); toggleWishlistModal();" class="bg-brand-black text-white text-[11px] font-bold px-3 py-2 hover:bg-neutral-800 transition-colors">
+              VIEW DETAIL
+            </button>
+            <button onclick="wishlist = wishlist.filter(id => id !== ${p.id}); updateWishlistBtnUI(); renderWishlistUI();" class="text-neutral-400 hover:text-brand-accent p-2" title="삭제">
+              <i class="fa-solid fa-trash-can text-xs"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    /* 3. INITIALIZATION & DYNAMIC PRODUCT DISPLAY */
+    function initProductDetail() {
+      // Read URL Parameter e.g., detail_s.html?id=2
+      const urlParams = new URLSearchParams(window.location.search);
+      const idParam = parseInt(urlParams.get('id'));
+      if (PRODUCTS.some(product => product.id === idParam)) {
+        currentProductId = idParam;
+      }
+
+      renderProductData(currentProductId);
+      renderRelatedProducts();
+    }
+
+    function renderProductData(id) {
+      const product = PRODUCTS.find(p => p.id === id) || PRODUCTS[0];
+      currentProductId = product.id;
+      currentQty = 1;
+
+      // Update Selector Dropdown
+      const selector = document.getElementById('productSelector');
+      if (selector) selector.value = product.id;
+
+      // Update Texts
+      document.getElementById('detailCategory').innerText = product.category;
+      document.getElementById('detailTitle').innerText = product.title;
+      document.getElementById('detailPrice').innerText = `₩${product.price.toLocaleString()}`;
+      document.getElementById('detailDesc').innerText = product.desc;
+      document.getElementById('detailBadge').innerText = product.badge || 'ORIGINAL';
+      document.getElementById('specName').innerText = product.title;
+      document.getElementById('specSize').textContent = product.dimensions || '상품별 크기는 문의해 주세요.';
+      document.getElementById('productInfoSize').textContent = product.dimensions || '상품별 크기는 문의해 주세요.';
+      renderStoryImages(product);
+
+      // Update Gallery Images
+      const fallbackImg = `https://placehold.co/800x800/f4f4f4/111111?text=${encodeURIComponent(product.title)}`;
+      const mainImg = document.getElementById('mainGalleryImg');
+      mainImg.src = product.img1;
+      mainImg.alt = product.title;
+      const thumbnails = document.getElementById('productThumbnails');
+      {
+        thumbnails.replaceChildren(...[product.img1, ...(product.galleryImages || []), productDetailImage(product)].map((src, index) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'thumb-btn border border-neutral-200 hover:border-brand-black bg-white p-2 aspect-square flex items-center justify-center aria-pressed:border-brand-black';
+          button.setAttribute('aria-pressed', String(index === 0));
+
+          const image = document.createElement('img');
+          image.id = `thumb${index + 1}`;
+          image.src = src;
+          image.alt = `${product.title} 사진 ${index + 1}`;
+          image.className = 'w-full h-full object-contain';
+          button.append(image);
+          button.addEventListener('click', () => {
+            mainImg.src = src;
+            mainImg.alt = image.alt;
+            thumbnails.querySelector('[aria-pressed="true"]')?.setAttribute('aria-pressed', 'false');
+            button.setAttribute('aria-pressed', 'true');
+          });
+          return button;
+        }));
+      }
+
+      mainImg.onerror = () => mainImg.src = fallbackImg;
+
+      updatePriceCalc();
+      updateWishlistBtnUI();
+      renderRelatedProducts();
+    }
+
+    /* STORY & DESIGN 상세 컷: 상품을 바꾸면 해당 상품의 이미지로 교체 */
+    function renderStoryImages(product) {
+      const gallery = document.getElementById('storyImageGallery');
+      if (!gallery) return;
+      gallery.setAttribute('aria-label', `${product.title} 상품 상세`);
+      renderProductStory(gallery, product);
+      setStoryImagesExpanded(false);
+    }
+
+    function setStoryImagesExpanded(expanded) {
+      const preview = document.getElementById('storyImagePreview');
+      const button = document.getElementById('storyDetailsToggle');
+      const label = document.getElementById('storyDetailsToggleLabel');
+      if (!preview || !button || !label) return;
+      preview.classList.toggle('is-expanded', expanded);
+      const summary = document.getElementById('productInfoSummary');
+      summary.hidden = !expanded || !document.getElementById('productInfoSize').textContent;
+      button.setAttribute('aria-expanded', String(expanded));
+      label.textContent = expanded ? '상세정보 접기' : '상세정보 더보기';
+    }
+
+    function toggleStoryImages() {
+      const button = document.getElementById('storyDetailsToggle');
+      const wasExpanded = button.getAttribute('aria-expanded') === 'true';
+      setStoryImagesExpanded(!wasExpanded);
+
+      // 맨 아래에서 접어도 버튼이 보이는 위치로 돌아옵니다.
+      if (wasExpanded) {
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        button.scrollIntoView({ behavior: reduceMotion ? 'instant' : 'smooth', block: 'center' });
+      }
+    }
+
+    function changeProduct(idStr) {
+      const id = parseInt(idStr);
+      renderProductData(id);
+      try {
+        window.history.replaceState(null, '', `?id=${id}`);
+      } catch (e) {
+        // Safe fallback for sandboxed/blob iframe preview environments
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function setMainGallery(type) {
+      const product = PRODUCTS.find(p => p.id === currentProductId);
+      const mainImg = document.getElementById('mainGalleryImg');
+      if (type === 'img1') mainImg.src = product.img1;
+      if (type === 'img2') mainImg.src = product.img2;
+    }
+
+    function changeQuantity(delta) {
+      currentQty += delta;
+      if (currentQty < 1) currentQty = 1;
+      document.getElementById('quantityInput').innerText = currentQty;
+      updatePriceCalc();
+    }
+
+    function updatePriceCalc() {
+      const product = PRODUCTS.find(p => p.id === currentProductId);
+      const total = product.price * currentQty;
+      document.getElementById('totalPriceCalc').innerText = `₩${total.toLocaleString()}`;
+    }
+
+    /* 4. CART & WISHLIST HANDLERS */
+    function addCurrentToCart() {
+      const product = PRODUCTS.find(p => p.id === currentProductId);
+      const defaultColorIdx = 0;
+      const existing = cart.find(i => i.id === product.id && i.colorIdx === defaultColorIdx);
+
+      if (existing) {
+        existing.qty += currentQty;
+      } else {
+        cart.push({
+          id: product.id,
+          title: product.title,
+          price: product.price,
+          img: product.img1,
+          colorName: product.colorNames[defaultColorIdx],
+          colorIdx: defaultColorIdx,
+          qty: currentQty
+        });
+      }
+
+      updateCartUI();
+      showToast(`'${product.title}' 장바구니에 ${currentQty}개 담았습니다.`);
+      toggleCartDrawer(true);
+    }
+
+    function instantBuy() {
+      addCurrentToCart();
+      simulateCheckout();
+    }
+
+    function toggleCurrentWishlist() {
+      if (wishlist.includes(currentProductId)) {
+        wishlist = wishlist.filter(id => id !== currentProductId);
+        showToast('위시리스트에서 삭제되었습니다.');
+      } else {
+        wishlist.push(currentProductId);
+        showToast('위시리스트에 추가되었습니다.');
+      }
+      updateWishlistBtnUI();
+    }
+
+    function updateWishlistBtnUI() {
+      const btn = document.getElementById('wishlistBtn');
+      const badge = document.getElementById('wishlistBadge');
+      if (badge) badge.innerText = wishlist.length;
+
+      if (wishlist.includes(currentProductId)) {
+        btn.innerHTML = `<i class="fa-solid fa-heart text-brand-accent"></i> LIKED`;
+        btn.classList.add('border-brand-accent');
+      } else {
+        btn.innerHTML = `<i class="fa-regular fa-heart"></i> MY LIKE`;
+        btn.classList.remove('border-brand-accent');
+      }
+    }
+
+    function updateCartUI() {
+      const badge = document.getElementById('cartBadge');
+      const itemCount = document.getElementById('cartDrawerItemCount');
+      const itemsList = document.getElementById('cartItemsList');
+
+      const totalQty = cart.reduce((s, i) => s + i.qty, 0);
+      const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+
+      if (badge) badge.innerText = totalQty;
+      if (itemCount) itemCount.innerText = totalQty;
+
+      if (itemsList) {
+        if (cart.length === 0) {
+          itemsList.innerHTML = `<p class="text-xs text-neutral-400 py-8 text-center">장바구니가 비어있습니다.</p>`;
+        } else {
+          itemsList.innerHTML = cart.map(item => `
+            <div class="flex gap-4 border-b border-neutral-100 pb-3 text-xs">
+              <img src="${item.img}" class="w-14 h-14 object-contain bg-neutral-100 border p-1" />
+              <div class="flex-1 flex flex-col justify-between">
+                <div>
+                  <p class="font-bold text-brand-black">${item.title}</p>
+                  <p class="text-[10px] text-neutral-400">수량: ${item.qty}개</p>
+                </div>
+                <p class="font-extrabold">₩${(item.price * item.qty).toLocaleString()}</p>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+
+      document.getElementById('cartSubtotal').innerText = `₩${subtotal.toLocaleString()}`;
+      document.getElementById('cartTotal').innerText = `₩${subtotal.toLocaleString()}`;
+    }
+
+    function toggleCartDrawer(openForce = null) {
+      const drawer = document.getElementById('cartDrawer');
+      const container = document.getElementById('cartContainer');
+      const isOpen = !drawer.classList.contains('pointer-events-none');
+
+      if (openForce === true || (!isOpen && openForce === null)) {
+        drawer.classList.remove('opacity-0', 'pointer-events-none');
+        container.classList.remove('translate-x-full');
+      } else {
+        drawer.classList.add('opacity-0', 'pointer-events-none');
+        container.classList.add('translate-x-full');
+      }
+    }
+
+    /* 5. RELATED PRODUCTS GRID */
+    function renderRelatedProducts() {
+      const container = document.getElementById('relatedProductsGrid');
+      if (!container) return;
+
+      const others = PRODUCTS.filter(p => p.id !== currentProductId).slice(0, 4);
+
+      container.innerHTML = others.map(p => {
+        const fallbackImg = `https://placehold.co/400x400/f4f4f4/111111?text=${encodeURIComponent(p.title)}`;
+        return `
+          <div onclick="changeProduct(${p.id})" class="group bg-white border border-neutral-200 p-3 cursor-pointer hover:border-brand-black transition-all duration-300 flex flex-col justify-between">
+            <div>
+              <div class="aspect-square bg-neutral-100 overflow-hidden mb-3 p-3 flex items-center justify-center border border-neutral-100">
+                <img src="${p.img1}" alt="${p.title}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" onerror="this.onerror=null; this.src='${fallbackImg}';" />
+              </div>
+              <p class="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">${p.category}</p>
+              <h4 class="text-xs font-bold text-brand-black group-hover:text-neutral-600 transition-colors line-clamp-2 mt-0.5">${p.title}</h4>
+            </div>
+            <div class="pt-2 border-t border-neutral-100 mt-2 flex justify-between items-center">
+              <span class="text-xs font-extrabold text-brand-black">₩${p.price.toLocaleString()}</span>
+              <span class="text-[10px] font-mono text-neutral-400 group-hover:text-brand-black transition-colors">VIEW <i class="fa-solid fa-arrow-right text-[9px]"></i></span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* 6. TAB SWITCHER */
+    function switchTab(tabName) {
+      ['story', 'specs', 'reviews'].forEach(t => {
+        const btn = document.getElementById(`tabBtn${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        const content = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        if (t === tabName) {
+          btn.className = "pb-3 border-b-2 border-brand-black text-brand-black";
+          content.classList.remove('hidden');
+        } else {
+          btn.className = "pb-3 border-b-2 border-transparent text-neutral-400 hover:text-brand-black";
+          content.classList.add('hidden');
+        }
+      });
+    }
+
+    /* 7. UTILITIES */
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
+    }
+
+    function simulateCheckout() {
+      if (cart.length === 0) {
+        showToast('장바구니가 비어있습니다.');
+        return;
+      }
+      showToast('주문 결제 페이지로 이동 중...');
+      setTimeout(() => {
+        alert('선택한 주문 정보를 확인했습니다. 결제 내역은 생성되지 않았습니다.');
+        cart = [];
+        updateCartUI();
+        toggleCartDrawer(false);
+      }, 1000);
+    }
+
+    window.addEventListener('DOMContentLoaded', initProductDetail);
+  </script>
+</body>
+</html>

@@ -1,0 +1,244 @@
+.lookbook-cover {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 21 / 9;
+  padding: 8px 2.4%;
+  overflow: hidden;
+  background: #242424;
+}
+.lookbook-cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.lookbook-cover span {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: #fff;
+  color: #181818;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 700;
+}
+.lookbook-cover:hover span { background: #dbff00; }
+.lookbook-fridge {
+  position: fixed;
+  inset: 0;
+  margin: 0;
+  width: 100vw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  overflow: hidden;
+  border: 0;
+  background: #171612;
+  color: #fff;
+}
+body:has(.lookbook-fridge[open]) { overflow: hidden; }
+.fridge-toolbar {
+  position: absolute;
+  z-index: 3;
+  inset: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px clamp(16px, 4vw, 56px);
+  background: linear-gradient(#0009, transparent);
+}
+.fridge-toolbar h2 { font-size: 14px; font-weight: 700; }
+.fridge-toolbar button, .fridge-detail button { min-height: 44px; font-weight: 700; }
+.fridge-viewport {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.fridge-viewport::before {
+  content: "";
+  position: absolute;
+  inset: -30px;
+  background: #171612 url("images/lookbook-fridge.jpg") center / cover;
+  filter: blur(22px) brightness(.65);
+}
+.fridge-scene {
+  --zoom: 3.1;
+  position: absolute;
+  width: max(100vw, 150dvh);
+  aspect-ratio: 3 / 2;
+  transition: transform 850ms cubic-bezier(.2,.72,.22,1);
+}
+.fridge-scene.is-zoomed {
+  transform: translate(
+    calc((50% - var(--zoom-x)) * var(--zoom)),
+    calc((50% - var(--zoom-y)) * var(--zoom) - 12dvh)
+  ) scale(var(--zoom));
+}
+.fridge-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: filter 700ms ease;
+}
+.is-zoomed .fridge-photo { filter: brightness(.66) blur(1px); }
+.fridge-magnet {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 12%;
+  min-width: 44px;
+  min-height: 44px;
+  transform: translate(-50%, -50%) rotate(var(--angle));
+  filter: drop-shadow(3px 5px 3px #15181e73);
+  transition: filter 300ms ease, opacity 550ms ease;
+}
+.fridge-magnet img { display: block; width: 100%; height: auto; }
+.fridge-magnet:hover:not(:disabled) { filter: drop-shadow(3px 5px 6px #15181eb3) brightness(1.12); }
+.is-zoomed .fridge-magnet:not(.is-selected) { opacity: .35; }
+.fridge-instruction, .fridge-detail {
+  position: absolute;
+  z-index: 2;
+  inset: auto 0 0;
+  text-align: center;
+  background: linear-gradient(transparent, #100e0deb 65%, #100e0d);
+}
+.fridge-instruction { padding: 56px 20px 24px; font-size: 13px; pointer-events: none; }
+.fridge-detail {
+  padding: 42px 20px max(12px, env(safe-area-inset-bottom));
+  max-height: 52dvh;
+  overflow: auto;
+  animation: fridge-detail-enter 650ms 180ms both;
+}
+.fridge-detail[hidden], .fridge-instruction[hidden] { display: none; }
+.fridge-detail h3 { font-size: clamp(18px, 3vw, 36px); font-weight: 800; line-height: 1.3; }
+.fridge-product-description { max-width: 42em; margin: 8px auto; line-height: 1.55; font-size: 14px; }
+.fridge-product-price { font-size: 14px; font-weight: 800; }
+.fridge-product-link, .fridge-detail button {
+  display: inline-flex;
+  align-items: center;
+  margin: 4px 8px 0;
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.fridge-product-link { color: #dbff00; }
+.lookbook-cover:focus-visible, .lookbook-fridge :focus-visible { outline: 2px solid #dbff00; outline-offset: 3px; }
+.fridge-detail:focus { outline: none; }
+@keyframes fridge-detail-enter {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (max-aspect-ratio: 1/1) {
+  .fridge-scene {
+    --zoom: 3.65;
+    width: 148vw;
+  }
+}
+@media (max-width: 680px) {
+  .lookbook-cover { aspect-ratio: 16 / 9; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fridge-scene, .fridge-photo, .fridge-magnet { transition: none; }
+  .fridge-detail { animation: none; }
+}
+
+/* The custom cursor sits outside the modal's top layer. */
+html.has-custom-cursor .lookbook-fridge,
+html.has-custom-cursor .lookbook-fridge * {
+  cursor: auto !important;
+}
+html.has-custom-cursor .lookbook-fridge :is(button:enabled, a[href]),
+html.has-custom-cursor .lookbook-fridge :is(button:enabled, a[href]) * {
+  cursor: pointer !important;
+}
+
+/* Show the entire kitchen, including the objects beside the fridge. */
+#lookbook > div {max-width:1600px;}
+.lookbook-cover {aspect-ratio: 2 / 1;}
+.fridge-scene {width:min(100vw,150dvh);}
+.kitchen-light {position:absolute;inset:35% 0 25% 83.5%;background:radial-gradient(ellipse at 65% 5%,#ffcd7248,transparent 75%);pointer-events:none;transition:background .5s,opacity .5s;}
+.fridge-scene.is-lamp-off .kitchen-light {background:linear-gradient(#29221999,#29221970);mix-blend-mode:multiply;}
+.fridge-scene.is-night .fridge-photo {filter:brightness(.46) saturate(.75);}
+.fridge-scene.is-night.is-zoomed .fridge-photo {filter:brightness(.4) blur(1px);}
+.fridge-scene.is-night .kitchen-light {box-shadow:inset 0 25px 35px -15px #ffcf7380;}
+.fridge-scene.is-night.is-lamp-off .kitchen-light {box-shadow:none;}
+.kitchen-object {position:absolute;z-index:1;display:flex;align-items:center;gap:8px;min-width:44px;min-height:44px;border:0;background:none;color:white;transform:translate(-50%,-50%);}
+.object-dot {display:grid;place-items:center;width:32px;height:32px;border:1px solid #ffffffb0;border-radius:50%;background:#262b2999;box-shadow:0 0 0 5px #ffffff18;backdrop-filter:blur(6px);font-size:19px;transition:transform .25s,background .25s;}
+.object-label {position:absolute;left:40px;white-space:nowrap;padding:6px 10px;background:#202722e8;border-radius:6px;font-size:11px;opacity:0;transform:translateX(-5px);transition:opacity .2s,transform .2s;pointer-events:none;}
+.kitchen-object:hover .object-label,.kitchen-object:focus-visible .object-label {opacity:1;transform:translateX(0);}
+.kitchen-object:hover .object-dot {transform:scale(1.12);background:#354c2b;}
+.kitchen-window {left:7%;top:15%;}
+.kitchen-lamp {left:90%;top:39%;}
+.kitchen-plant {left:8%;top:42%;}
+.kitchen-lemon {left:13%;top:68%;}
+.kitchen-plant .object-label,.kitchen-lamp .object-label {left:auto;right:52px;}
+.plant-sparkles {position:absolute;inset:-35px -10px auto;font-size:28px;letter-spacing:18px;color:#dfff90;pointer-events:none;opacity:0;transition:opacity .3s;}
+.plant-sparkles i {position:absolute;left:10px;top:-25px;font-style:normal;}
+.is-plant-alive .plant-sparkles {opacity:1;animation:kitchen-sparkle 2s ease-in-out infinite alternate;}
+.lemon-bubbles {position:absolute;inset:0;pointer-events:none;}
+.lemon-bubbles i {position:absolute;width:18px;height:18px;border-radius:50%;background:#f9dd51;box-shadow:inset -3px -3px #e8b92e;opacity:0;}
+.lemon-bubbles i:nth-child(2) {left:-20px;--lemon-x:-24px;animation-delay:.08s!important;}
+.lemon-bubbles i:nth-child(3) {left:25px;--lemon-x:30px;animation-delay:.15s!important;}
+.is-lemon-pop .lemon-bubbles i {animation:lemon-pop .8s ease-out both;}
+.is-zoomed .kitchen-object,.is-zoomed .kitchen-light {opacity:0;pointer-events:none;}
+.kitchen-feedback {position:absolute;z-index:4;left:50%;bottom:80px;transform:translate(-50%,8px);background:#fffffff2;color:#263327;padding:12px 20px;border-radius:999px;font-size:13px;max-width:90%;text-align:center;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;}
+.kitchen-feedback.is-visible {opacity:1;transform:translate(-50%,0);}
+@keyframes kitchen-sparkle {to {transform:translateY(-8px) rotate(5deg);filter:brightness(1.3);}}
+@keyframes lemon-pop {0%{opacity:0;transform:translateY(0) scale(.4);}20%{opacity:1;}100%{opacity:0;transform:translate(var(--lemon-x,0px),-90px) rotate(40deg) scale(.8);}}
+@media(max-aspect-ratio:1/1) {.fridge-scene {width:100vw;} .fridge-scene:not(.is-zoomed) {transform:none;} .kitchen-object .object-dot {width:28px;height:28px;font-size:16px;} .kitchen-lamp {left:88%;} .fridge-instruction {font-size:12px;padding-inline:24px;} }
+@media(prefers-reduced-motion:reduce) {.kitchen-object *,.kitchen-light,.kitchen-feedback {transition:none!important;animation:none!important;} .is-lemon-pop .lemon-bubbles i {opacity:1;transform:translateY(-25px);} }
+
+/* Move the photographed objects, rather than decorating them with particles. */
+.kitchen-motion-canvas {position:absolute;inset:0;width:100%;height:100%;pointer-events:none;transition:filter 700ms ease;}
+.has-object-motion .fridge-photo {visibility:hidden;}
+.is-night .kitchen-motion-canvas {filter:brightness(.46) saturate(.75);}
+.is-zoomed .kitchen-motion-canvas {filter:brightness(.66) blur(1px);}
+.is-night.is-zoomed .kitchen-motion-canvas {filter:brightness(.4) blur(1px);}
+.kitchen-light {z-index:1;}
+.kitchen-object,.fridge-magnet {z-index:2;}
+.kitchen-tools {left:91%;top:54%;}
+.kitchen-tools .object-label {left:auto;right:52px;}
+.plant-sparkles,.lemon-bubbles {display:none!important;}
+.kitchen-object .object-dot {width:22px;height:22px;font-size:13px;background:#fff3;box-shadow:0 0 0 5px #ffffff12;}
+.kitchen-object:hover .object-dot,.kitchen-object:focus-visible .object-dot {background:#263327b0;}
+.kitchen-photo-piece {position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+.kitchen-piece-plant {clip-path:polygon(0 23%,12% 23%,13% 51%,0 51%);transform-origin:5% 51%;}
+.kitchen-piece-lemon {clip-path:ellipse(5.4% 2.9% at 10.6% 65.9%);}
+.kitchen-piece-tools {clip-path:polygon(85% 46%,94% 46%,94% 61%,87% 61%);transform-origin:90% 60%;}
+.piece-plant-active .kitchen-piece-plant {animation:photo-leaves 1.8s ease-in-out infinite alternate;}
+.piece-lemon-active .kitchen-piece-lemon {animation:photo-fruit .35s ease-in-out 3;}
+.piece-tools-active .kitchen-piece-tools {animation:photo-tools .18s ease-in-out 6 alternate;}
+.is-night .kitchen-photo-piece {filter:brightness(.46) saturate(.75);}
+@keyframes photo-leaves {from{transform:skewX(-.5deg);}to{transform:skewX(.7deg);}}
+@keyframes photo-fruit {50%{transform:translateY(-4px) rotate(.15deg);}}
+@keyframes photo-tools {to{transform:rotate(.7deg);}}
+@media(prefers-reduced-motion:reduce) {.kitchen-photo-piece {animation:none!important;}}
+
+/* Hinged, separate refrigerator doors reveal a stocked interior. */
+.fridge-scene {perspective:1800px;}
+.fridge-interior {position:absolute;left:17%;top:0;width:66%;height:100%;overflow:hidden;background:#e8eef0;border:8px solid #a9afb1;box-shadow:inset 0 0 30px #0008;}
+.fridge-interior img {width:100%;height:100%;object-fit:fill;filter:brightness(.45);transition:filter 900ms ease;}
+.fridge-door {position:absolute;top:0;width:33%;height:100%;background-image:url('images/lookbook-fridge.jpg');background-size:303.03% 100%;backface-visibility:hidden;transition:transform 1.2s cubic-bezier(.22,.68,.2,1),filter .8s;transform:rotateY(0deg);z-index:2;box-shadow:0 0 2px #282a2d;}
+.fridge-door-left {left:17%;background-position:25.373% 0;transform-origin:left center;}
+.fridge-door-right {left:50%;background-position:74.627% 0;transform-origin:right center;}
+.fridge-door .fridge-magnet {width:36.36%;}
+.fridge-handle {position:absolute;top:8%;height:85%;width:11%;min-width:30px;background:transparent;border:0;border-radius:12px;}
+.fridge-door-left .fridge-handle {right:0;}
+.fridge-door-right .fridge-handle {left:0;}
+.fridge-handle:hover {background:#ffffff1a;box-shadow:0 0 20px #ffffff30;}
+.are-doors-open .fridge-door-left {transform:rotateY(-106deg);filter:brightness(.8);}
+.are-doors-open .fridge-door-right {transform:rotateY(106deg);filter:brightness(.8);}
+.are-doors-open .fridge-interior img {filter:brightness(1);}
+.fridge-door-control {position:absolute;z-index:5;left:50%;bottom:72px;transform:translateX(-50%);border:1px solid #fff8;background:#fffffff2;color:#263327;min-height:48px;padding:12px 24px;border-radius:999px;font-size:14px;font-weight:700;box-shadow:0 4px 24px #0002;}
+.fridge-door-control[hidden] {display:none;}
+.is-zoomed .fridge-door {filter:brightness(.8);}
+.is-zoomed .fridge-handle {pointer-events:none;}
+@media(max-aspect-ratio:1/1) {.fridge-scene {width:100vw;} .fridge-door-control {bottom:110px;} }
+@media(prefers-reduced-motion:reduce) {.fridge-door,.fridge-interior img {transition:none;}}
