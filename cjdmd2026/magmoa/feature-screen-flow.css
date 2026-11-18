@@ -1,0 +1,11 @@
+/* The handset stays still; only the screen cards travel through it. */
+.editorial-features .feature-editorial-visual { transform: none !important; }
+.editorial-features .phone-stage { --screen-height: min(650px, calc(100svh - 190px)); --screen-width: calc(var(--screen-height) * 720 / 1560); height: calc(var(--screen-height) + 32px); overflow: visible; }
+.editorial-features .phone-stage .phone-slide { left: 42%; top: 16px; width: var(--screen-width); height: var(--screen-height); margin: 0; border: 0; border-radius: 30px; box-shadow: none; pointer-events: none; transform: translateX(-50%); transition: none; will-change: transform, opacity, filter; }
+.editorial-features .phone-stage .phone-slide::before,
+.editorial-features .phone-stage .phone-slide::after { display: none; }
+.feature-fixed-frame { position: absolute; left: 42%; top: 9px; width: calc(var(--screen-width) + 14px); height: calc(var(--screen-height) + 14px); transform: translateX(-50%); border: 7px solid #171b24; border-radius: 37px; z-index: 10; pointer-events: none; box-shadow: 0 18px 35px #10248c44; }
+.feature-fixed-frame::before { content: ''; position: absolute; left: 50%; top: -1px; transform: translateX(-50%); width: 44%; height: 23px; background: #171b24; border-radius: 0 0 15px 15px; }
+.feature-fixed-frame::after { content: ''; position: absolute; left: 50%; bottom: 6px; transform: translateX(-50%); width: 32%; height: 4px; border-radius: 8px; background: #171b24; }
+@media(max-width:700px) { .editorial-features .phone-stage { --screen-height: 480px; height: 512px; overflow: hidden; } .editorial-features .phone-stage .phone-slide, .feature-fixed-frame { left: 38%; } }
+@media(prefers-reduced-motion:reduce) { .editorial-features .phone-stage .phone-slide { will-change: auto; } }
