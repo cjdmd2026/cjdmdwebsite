@@ -1014,8 +1014,8 @@ ul, li { list-style: none; }
 /* Preserve character page title/background design */
 @font-face {
   font-family: 'MaplestoryScreenshot';
-  src: url('fonts/Maplestory OTF Bold.otf') format('opentype'),
-       url('fonts/Maplestory Bold.otf') format('opentype'),
+  src: url('fonts/Maplestory-Bold.otf') format('opentype'),
+       url('fonts/Maplestory-Bold.otf') format('opentype'),
        url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/MaplestoryOTFBold.woff') format('woff');
   font-style: normal;
   font-weight: 700 900;

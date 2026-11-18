@@ -4,6 +4,196 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Shared loading screen: starts before page styles and scripts. -->
+  <style>
+    @font-face {
+      font-family: "IlkkoLoading";
+      src: url("fonts/Maplestory-Light.otf") format("opentype");
+      font-weight: 400;
+      font-display: swap;
+    }
+    html.ilkko-loading-open { overflow: hidden !important; }
+    #ilkko-loading-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 2147483647;
+      display: grid;
+      place-items: center;
+      background: #fffbed;
+      color: #111;
+      font-family: "IlkkoLoading", sans-serif;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity .24s ease;
+    }
+    #ilkko-loading-screen::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(#ffffff80, #ffffff80), url("images/loading-flowers.webp") center / cover;
+    }
+    #ilkko-loading-screen.is-visible { visibility: visible; opacity: 1; }
+    #ilkko-loading-screen.is-leaving { opacity: 0; pointer-events: none; }
+    #ilkko-loading-screen .ilkko-loading-content {
+      position: relative;
+      width: min(650px, calc(100vw - 48px));
+      text-align: center;
+    }
+    #ilkko-loading-screen .ilkko-loading-bird {
+      display: block;
+      width: clamp(155px, 19vw, 280px);
+      height: auto;
+      margin: 0 auto -32px;
+      position: relative;
+      z-index: 1;
+    }
+    #ilkko-loading-screen .ilkko-loading-track {
+      height: clamp(32px, 3.25vw, 62px);
+      overflow: hidden;
+      border-radius: 999px;
+      background: #fff;
+    }
+    #ilkko-loading-screen .ilkko-loading-fill {
+      display: block;
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: #ff8000;
+      transition: width .8s cubic-bezier(.22, .7, .25, 1);
+    }
+    #ilkko-loading-screen .ilkko-loading-message {
+      margin: clamp(24px, 2.5vw, 48px) 0 0;
+      font-size: clamp(18px, 2vw, 30px);
+      line-height: 1.5;
+      word-break: keep-all;
+    }
+    #ilkko-loading-screen .ilkko-loading-actions { margin-top: 18px; }
+    #ilkko-loading-screen button {
+      border: 1px solid #e4b755;
+      border-radius: 20px;
+      padding: 9px 16px;
+      background: #fff;
+      color: #5e421b;
+      font: inherit;
+      cursor: pointer;
+    }
+    #ilkko-loading-screen .ilkko-loading-actions[hidden] { display: none; }
+    @media (max-width: 768px) {
+      #ilkko-loading-screen .ilkko-loading-bird { margin-bottom: -20px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #ilkko-loading-screen { transition: none; }
+      #ilkko-loading-screen .ilkko-loading-fill { transition: none; }
+    }
+  </style>
+  <script>
+    (() => {
+      const root = document.documentElement;
+      const overlay = document.createElement('div');
+      overlay.id = 'ilkko-loading-screen';
+      overlay.setAttribute('role', 'status');
+      overlay.setAttribute('aria-live', 'polite');
+      overlay.setAttribute('aria-hidden', 'true');
+      overlay.innerHTML = '<div class="ilkko-loading-content">' +
+        '<img class="ilkko-loading-bird" src="images/loading-ilkko.gif" alt="" width="431" height="405" fetchpriority="high">' +
+        '<div class="ilkko-loading-track" aria-hidden="true"><span class="ilkko-loading-fill"></span></div>' +
+        '<p class="ilkko-loading-message">잎글 마을로 떠날 준비 중···</p>' +
+        '<div class="ilkko-loading-actions" hidden><button type="button">화면 먼저 보기</button></div></div>';
+      root.appendChild(overlay);
+      let finished = false;
+      let visible = false;
+      let shownAt = 0;
+      let progress = 0;
+      let progressTimer;
+      let completionTimer;
+
+      function paintProgress() {
+        if (!visible || finished) return;
+        overlay.querySelector('.ilkko-loading-fill').style.width = progress + '%';
+      }
+
+      const showTimer = setTimeout(() => {
+        if (finished) return;
+        visible = true;
+        shownAt = performance.now();
+        progressTimer = setTimeout(paintProgress, 250);
+        overlay.classList.add('is-visible');
+        overlay.setAttribute('aria-hidden', 'false');
+        root.classList.add('ilkko-loading-open');
+      }, 400);
+
+      const slowTimer = setTimeout(() => {
+        if (finished) return;
+        overlay.querySelector('.ilkko-loading-message').textContent =
+          navigator.onLine ? '조금만 기다려 주세요. 화면을 불러오고 있어요.' : '인터넷 연결을 확인해 주세요.';
+        overlay.querySelector('.ilkko-loading-actions').hidden = false;
+      }, 10000);
+
+      function dismiss() {
+        finished = true;
+        clearTimeout(showTimer);
+        clearTimeout(slowTimer);
+        clearTimeout(progressTimer);
+        clearTimeout(completionTimer);
+        root.classList.remove('ilkko-loading-open');
+        overlay.remove();
+      }
+
+      function finish() {
+        if (finished) return;
+        finished = true;
+        clearTimeout(showTimer);
+        clearTimeout(slowTimer);
+        clearTimeout(progressTimer);
+        if (!visible) {
+          dismiss();
+          return;
+        }
+
+        // Leave the white starting bar visible before filling it completely.
+        const delay = Math.max(0, 250 - (performance.now() - shownAt));
+        completionTimer = setTimeout(() => {
+          overlay.querySelector('.ilkko-loading-fill').style.width = '100%';
+          completionTimer = setTimeout(() => {
+            overlay.classList.add('is-leaving');
+            overlay.setAttribute('aria-hidden', 'true');
+            completionTimer = setTimeout(dismiss, 260);
+          }, 950);
+        }, delay);
+      }
+
+      overlay.querySelector('button').addEventListener('click', dismiss);
+      window.addEventListener('pageshow', event => { if (event.persisted) dismiss(); });
+      window.addEventListener('pagehide', dismiss, { once: true });
+      document.addEventListener('DOMContentLoaded', () => {
+        const aboveFoldImages = Array.from(document.images).filter(image => {
+          if (overlay.contains(image) || image.loading === 'lazy') return false;
+          const bounds = image.getBoundingClientRect();
+          return bounds.width > 0 && bounds.height > 0 &&
+            bounds.bottom > 0 && bounds.top < window.innerHeight;
+        });
+        const imageReady = image => {
+          if (image.complete) return Promise.resolve();
+          return new Promise(resolve => {
+            image.addEventListener('load', resolve, { once: true });
+            image.addEventListener('error', resolve, { once: true });
+          });
+        };
+        const fontReady = document.fonts
+          ? document.fonts.load('18px IlkkoLoading').catch(() => {})
+          : Promise.resolve();
+        const resources = [...aboveFoldImages.map(imageReady), fontReady];
+        let completed = 0;
+        const tracked = resources.map(resource => resource.then(() => {
+          completed += 1;
+          progress = Math.round(90 * completed / resources.length);
+          if (performance.now() - shownAt >= 250) paintProgress();
+        }));
+        Promise.all(tracked).then(finish);
+      }, { once: true });
+    })();
+  </script>
+
   <title>읽:꼬 - 메인</title>
   <link rel="icon" type="image/webp" sizes="64x64" href="images/favicon.webp">
   <link rel="stylesheet" href="index.css">
