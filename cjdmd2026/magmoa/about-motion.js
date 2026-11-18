@@ -75,7 +75,7 @@
     }
     stickers.forEach(name => {
       const image = new Image();
-      image.src = `assets/about-stickers/${name}.svg`;
+      image.src = `about-stickers/${name}.svg`;
     });
   }
 
@@ -94,7 +94,7 @@
     const sticker = new Image();
     sticker.alt = '';
     sticker.draggable = false;
-    sticker.src = `assets/about-stickers/${stickers[nextSticker]}.svg`;
+    sticker.src = `about-stickers/${stickers[nextSticker]}.svg`;
     nextSticker = (nextSticker + 1) % stickers.length;
     sticker.style.left = `${x}px`;
     sticker.style.top = `${y}px`;

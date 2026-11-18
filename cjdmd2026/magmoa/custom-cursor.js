@@ -5,7 +5,7 @@
   if (!finePointer.matches || !scriptUrl) return;
   // Keep the native pointer available until the sticker has loaded successfully.
   const image = new Image();
-  image.src = new URL('assets/cursor-paper-plane.svg', scriptUrl).href;
+  image.src = new URL('cursor-paper-plane.svg', scriptUrl).href;
   image.onload = () => {
     const cursor = document.createElement('div');
     cursor.className = 'magmoa-cursor';

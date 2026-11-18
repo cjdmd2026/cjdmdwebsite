@@ -3,7 +3,7 @@
   
   --app-hero-background: none;
   
-  --app-hero-screen: url("assets/app-hero-screen.jpg");
+  --app-hero-screen: url("app-hero-screen.jpg");
 }
 
 /* 첫 화면 위에 떠 있는 캡슐형 메뉴 */
@@ -268,7 +268,7 @@ body.app-landing > header {
   border: 0;
   border-radius: 0;
   overflow: hidden;
-  background: url("assets/app-phone-in-hand.svg") center / contain no-repeat;
+  background: url("app-phone-in-hand.svg") center / contain no-repeat;
 }
 .app-layout-hero__visual .app-layout-phone::after {
   display: block;
@@ -279,7 +279,7 @@ body.app-landing > header {
   border-radius: 0;
   clip-path: inset(34% 0 23%);
   mask-image: linear-gradient(to right, #000 19%, transparent 20.5% 79.5%, #000 81%);
-  background: url("assets/app-phone-in-hand.svg") center / contain no-repeat;
+  background: url("app-phone-in-hand.svg") center / contain no-repeat;
   z-index: -1;
 }
 .app-layout-hero__visual .app-layout-phone__screen {
@@ -303,7 +303,7 @@ body.app-landing > header {
   pointer-events: none;
 }
 .app-layout-phone__screen::before {
-  background: url("assets/screen-collection-app.jpg") center top / cover no-repeat;
+  background: url("screen-collection-app.jpg") center top / cover no-repeat;
   opacity: var(--collection-reveal, 0);
 }
 .app-layout-phone__screen::after {
@@ -315,7 +315,7 @@ body.app-landing > header {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: url("assets/app-hero-collection-list.jpg") center top / cover no-repeat;
+  background: url("app-hero-collection-list.jpg") center top / cover no-repeat;
   opacity: var(--collection-list-reveal, 0);
   pointer-events: none;
 }

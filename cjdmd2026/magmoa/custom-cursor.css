@@ -3,7 +3,7 @@
   .magmoa-cursor {
     position: fixed; z-index: 2147483647; top: -100px; left: -100px;
     width: 44px; height: 40.63px;
-    background: url('assets/cursor-paper-plane.svg') center / contain no-repeat;
+    background: url('cursor-paper-plane.svg') center / contain no-repeat;
     pointer-events: none; opacity: 0;
     /* Anchor the pointed nose to the actual click location. */
     transform: translate(-3px, -3px);
