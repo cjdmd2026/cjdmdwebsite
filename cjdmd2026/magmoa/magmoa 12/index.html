@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <script>document.documentElement.classList.add("intro-pending");</script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#2f4bff" />
+    <meta
+      name="description"
+      content="여행지에서 발견한 디지털 마그넷을 수집하고 나만의 지도로 기억하세요. 마그모아와 함께 여행의 순간을 모아요."
+    />
+    <title>여행의 순간을 모아 | MAGMOA</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      href="assets/PretendardVariable.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script src="site.js" defer></script>
+    <link rel="stylesheet" href="custom-cursor.css" />
+    <script src="custom-cursor.js" defer></script>
+    <script src="site-loader.js" defer></script>
+      <link rel="stylesheet" href="site-polish.css" />
+    <link rel="stylesheet" href="hero-pan.css" />
+    <script src="hero-pan.js" defer></script>
+    <link rel="stylesheet" href="brand-footer.css" />
+  </head>
+  <body class="home-page">
+    <a class="skip" href="#main">본문으로 바로가기</a>
+    <div class="site-loader" role="dialog" aria-label="마그모아 인트로" aria-modal="true" hidden>
+      <video muted playsinline preload="auto" aria-hidden="true" data-src="assets/loading-intro.mp4"></video>
+      <div class="intro-status"><span>MAGMOA</span><span class="intro-progress-label" aria-live="off">여행의 조각을 모으는 중</span></div>
+      <div class="intro-progress" aria-hidden="true"><i></i></div>
+      <button type="button">인트로 건너뛰기 ↗</button>
+    </div>
+    <header>
+      <a class="logo" href="index.html" aria-label="마그모아 홈"
+        ><img src="assets/header-logo.svg" alt="" width="1774" height="390" /></a
+      ><button
+        class="menu-toggle"
+        aria-label="메뉴 열기"
+        aria-expanded="false"
+        aria-controls="navigation"
+      >
+        ☰
+      </button>
+      <nav id="navigation" aria-label="주 메뉴">
+        <a href="about.html">ABOUT</a><a href="app.html">APP</a>
+        <details class="support">
+          <summary class="">SUPPORT</summary>
+          <div class="support-list">
+            <a href="faq.html">자주 묻는 질문</a
+            ><a href="notices.html">공지사항</a
+            ><a href="contact.html">문의하기</a>
+          </div>
+        </details>
+        <a class="nav-contact" href="store/index_s.html">STORE ↗</a>
+      </nav>
+    </header>
+    <main class="home" id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <img
+          class="hero-art"
+          src="assets/hero-panorama.jpg"
+          alt="" aria-hidden="true"
+          fetchpriority="high"
+        />
+        <img class="hero-person" src="assets/hero-person.svg" alt="마그모아 앱을 든 분홍 재킷의 여행자" fetchpriority="high" />
+        <div class="hero-card">
+          <span class="eyebrow">COLLECT MOMENTS, KEEP MEMORIES</span>
+          <h1 id="hero-title">여행의 순간을 모아,<br /><em>마그모아.</em></h1>
+          <p>
+            여행지에서 발견한 디지털 마그넷을 수집하고 나만의 지도로 기억하세요.
+          </p>
+          <a class="button" href="app.html"
+            >앱 알아보기<span class="arrow" aria-hidden="true">↗</span></a
+          >
+        </div>
+        <span class="hero-note">A LITTLE DISCOVERY. A LASTING MEMORY.</span>
+      </section>
+    </main>
+    <footer class="footer brand-footer store-style-footer" aria-label="마그모아 사이트 정보">
+      <div class="brand-footer-main">
+        <div class="brand-footer-intro">
+          <a class="logo" href="index.html" aria-label="마그모아 홈">MAGMOA<span>.</span></a>
+          <p class="brand-footer-description">지역의 장소와 문화를 수집하는 여행.<br />디지털 마그넷부터 실물 굿즈까지,<br />여행의 순간을 일상으로 연결합니다.</p>
+        </div>
+        <nav class="brand-footer-links" aria-label="둘러보기">
+          <h2>EXPLORE</h2>
+          <a href="about.html">Brand Story</a>
+          <a href="app.html">MAGMOA App</a>
+          <a href="store/index_s.html#shop">3D Magnet Archive</a>
+          <a href="store/index_s.html#lookbook">Visual Lookbook</a>
+        </nav>
+        <div class="brand-footer-links">
+          <h2>CUSTOMER CARE</h2>
+          <p>운영시간: 평일 10:00 – 18:00</p>
+          <a href="mailto:cs@magmoa.kr">이메일: cs@magmoa.kr</a>
+          <a href="faq.html">Frequently Asked Questions</a>
+          <a href="contact.html">Contact Support</a>
+        </div>
+        <div class="brand-footer-links">
+          <h2>NEWS & COLLECTION</h2>
+          <p>새로운 여행 스팟과 마그넷 컬렉션,<br />마그모아의 소식을 만나보세요.</p>
+          <a class="footer-news-button" href="notices.html">LATEST NEWS <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+      <div class="brand-footer-bottom">
+        <small>© 2026 MAGMOA. All rights reserved. Designed with precision.</small>
+        <a href="contact.html">문의하기 ↗</a>
+      </div>
+    </footer>
+  </body>
+</html>

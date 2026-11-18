@@ -1,0 +1,35 @@
+.about-beliefs { position:relative; height:340svh; background:#fff; --belief-width:min(1240px,84vw); }
+.beliefs-stage { position:sticky; top:0; height:100svh; overflow:hidden; }
+.beliefs-intro { position:absolute; top:var(--intro-top,140px); left:calc((100% - var(--belief-width))/2); width:var(--belief-width); z-index:2; opacity:var(--intro-opacity,1); transform:translateY(var(--intro-y,0px)); }
+.about-page .beliefs-intro h2 { font-size:clamp(28px,3vw,48px); line-height:1.28; margin:18px 0 20px; }
+.about-page .beliefs-intro p { font-size:clamp(14px,1.1vw,18px); line-height:1.75; color:#737780; margin:0; }
+.beliefs-gallery { position:absolute; top:var(--gallery-top,46%); left:calc((100% - var(--belief-width))/2); width:var(--belief-width); display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:22px; }
+.belief-column { min-width:0; transform:translateY(var(--column-y,0px)); opacity:var(--column-opacity,1); }
+.belief-photo { height:var(--photo-height,34svh); border-radius:26px; overflow:hidden; }
+.belief-photo img,.beliefs-expand img { width:100%;height:100%;display:block;object-fit:cover; }
+.beliefs-expand { position:absolute; z-index:3; overflow:hidden; pointer-events:none; border-radius:var(--expand-radius,26px); left:var(--expand-left,0px); top:var(--expand-top,0px); width:var(--expand-width,0px); height:var(--expand-height,0px); opacity:var(--expand-opacity,0); }
+.beliefs-expand::after { content:''; position:absolute;inset:0;background:linear-gradient(0deg,#071b37,transparent 65%),linear-gradient(90deg,#061328b8,#06132830);opacity:var(--shade-opacity,0); }
+.beliefs-outro { position:absolute; z-index:4; left:calc((100% - var(--belief-width))/2); width:var(--belief-width); top:var(--outro-top,65%); transform:translateY(var(--outro-y,24px)); opacity:var(--outro-opacity,0); color:#171b26;pointer-events:none; }
+.about-page .beliefs-outro h2 { font-size:clamp(26px,2.8vw,42px);line-height:1.25;margin:0 0 18px;color:#171b26; }
+.about-page .beliefs-outro p { font-size:clamp(15px,1.2vw,20px);line-height:1.8;color:#737780;max-width:42em;margin:0; }
+@media(max-width:800px), (prefers-reduced-motion:reduce) {
+ .about-beliefs { height:auto; }
+ .beliefs-stage { position:relative;height:auto;overflow:visible;padding:80px 24px; }
+ .beliefs-intro { position:relative;top:auto;left:auto;width:auto;opacity:1;transform:none; }
+ .beliefs-gallery { position:relative;top:auto;left:auto;width:100%;margin:40px 0;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 16px; }
+ .belief-column { transform:none;opacity:1; }
+ .belief-photo { height:240px; }
+ .beliefs-expand { display:none; }
+ .beliefs-outro { position:relative;left:auto;width:auto;top:auto;transform:none;opacity:1;color:#171b26; }
+ .about-page .beliefs-outro h2 { color:#171b26;font-size:28px; }
+ .about-page .beliefs-outro p { color:#737780; }
+}
+@media(max-width:420px) { .belief-photo { height:210px; } }
+
+.about-page .about-end { background:#071b37; color:#fff; }
+.about-page .about-end h2 { color:#fff; }
+.about-page .about-end .eyebrow { color:#b9f300; }
+
+.beliefs-closing { position:absolute; z-index:4;left:calc((100% - var(--belief-width))/2);width:var(--belief-width);top:50%;transform:translateY(-50%);opacity:var(--closing-opacity,0);pointer-events:none; }
+.about-page .beliefs-closing h2 { color:#fff;font-size:clamp(34px,4.2vw,68px);line-height:1.25; }
+@media(max-width:800px), (prefers-reduced-motion:reduce) { .beliefs-closing { display:none; } }

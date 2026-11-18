@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+
+<html lang="ko" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MAGMOA STORE</title>
+  <!-- 브라우저 탭에 표시될 파비콘 -->
+  <link id="siteFavicon" rel="icon" type="image/png" href="images/logo.svg?v=3" />
+
+
+  <!-- Tailwind CSS CDN -->
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Typography: Slackey hero display / Manrope headings / Pretendard Korean and body text -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Slackey&display=swap" rel="stylesheet">
+  <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+
+  <!-- FontAwesome Icons -->
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Pretendard Variable"', 'Pretendard', '-apple-system', 'BlinkMacSystemFont', '"Apple SD Gothic Neo"', '"Noto Sans KR"', '"Malgun Gothic"', 'sans-serif'],
+            display: ['Manrope', '"Pretendard Variable"', 'Pretendard', 'sans-serif'],
+            slackey: ['Slackey', 'cursive'],
+          },
+          colors: {
+            brand: {
+              black: '#0d0d0d',
+              card: '#f4f4f4',
+              accent: '#2F4BFF',
+              lime: '#B9F300',
+              grayLight: '#f8f8f8',
+              border: '#e5e5e5',
+            }
+          },
+          letterSpacing: {
+            tightest: '-0.04em',
+            superwide: '0.2em'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 2px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #111;
+    }
+
+    /* Infinite Marquee Motion */
+    @keyframes marquee {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+    .animate-marquee {
+      display: flex;
+      width: 200%;
+      animation: marquee 22s linear infinite;
+    }
+    .animate-marquee:hover {
+      animation-play-state: paused;
+    }
+
+    /* Subtle pulse hotspot animation */
+    @keyframes ping-slow {
+      0% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.6); opacity: 0; }
+      100% { transform: scale(1); opacity: 0; }
+    }
+    .pulse-ring::before {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      animation: ping-slow 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+
+    /* Scroll reveal CSS fallback */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Restrained brand accents; the original monochrome layout stays intact. */
+    :root {
+      --magmoa-blue: #2F4BFF;
+      --magmoa-lime: #B9F300;
+      --paper-grain: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%2280%22%20viewBox%3D%220%200%20120%2080%22%3E%3Cfilter%20id%3D%22paper%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%220.68%22%20numOctaves%3D%223%22%20stitchTiles%3D%22stitch%22%20seed%3D%2212%22%2F%3E%3CfeColorMatrix%20type%3D%22saturate%22%20values%3D%220%22%2F%3E%3CfeComponentTransfer%3E%3CfeFuncA%20type%3D%22linear%22%20slope%3D%220.23%22%2F%3E%3C%2FfeComponentTransfer%3E%3C%2Ffilter%3E%3Crect%20width%3D%22120%22%20height%3D%2280%22%20filter%3D%22url%28%23paper%29%22%2F%3E%3C%2Fsvg%3E");
+    }
+    .category-btn.active {
+      background-color: var(--magmoa-blue);
+      color: #fff;
+    }
+    #mainHeader button:not(#authBtn):hover {
+      color: var(--magmoa-blue);
+    }
+    #mainHeader #authBtn:hover,
+    #productGrid button.bg-brand-black:hover {
+      background-color: var(--magmoa-blue);
+      color: #fff;
+    }
+    #heroCarousel .hero-dot.bg-white {
+      background-color: var(--magmoa-lime);
+    }
+    #lookbook .pulse-ring::before {
+      border-color: var(--magmoa-lime);
+    }
+    #lookbook .pulse-ring:hover {
+      background-color: var(--magmoa-lime);
+      color: #0d0d0d;
+    }
+    #freeShippingBar { background-color: var(--magmoa-blue); }
+
+    /* Keep the hero image readable without adding a left-to-right overlay. */
+    #heroCarousel .hero-slide > .absolute.inset-0::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: linear-gradient(
+        to top,
+        rgba(47, 75, 255, 0.34) 0%,
+        rgba(47, 75, 255, 0.16) 28%,
+        rgba(47, 75, 255, 0) 72%
+      );
+    }
+
+    /* A soft shadow helps the white hero copy stay legible over the photos. */
+    #heroCarousel .hero-content h1,
+    #heroCarousel .hero-content p,
+    #heroCarousel .hero-content .inline-block {
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.42);
+    }
+
+    /* A small torn-paper highlight behind the existing catalog label. */
+    .paper-caption {
+      position: relative;
+      isolation: isolate;
+      color: #202318;
+    }
+    .paper-caption::before {
+      content: '';
+      position: absolute;
+      inset: -4px -9px -3px;
+      z-index: -1;
+      pointer-events: none;
+      background-color: var(--magmoa-lime);
+      background-image: var(--paper-grain);
+      background-blend-mode: multiply;
+      transform: rotate(-1.8deg);
+      clip-path: polygon(1% 5%, 8% 1%, 17% 4%, 28% 0%, 39% 4%, 52% 1%, 66% 3%, 79% 0%, 91% 4%, 99% 1%, 98% 19%, 100% 37%, 98% 57%, 100% 75%, 98% 97%, 89% 100%, 77% 96%, 65% 100%, 52% 96%, 39% 100%, 26% 97%, 15% 100%, 1% 96%, 2% 77%, 0% 60%, 2% 38%, 0% 21%);
+    }
+
+    /* The speech-bubble graphic replaces the old gray number square. */
+    .feature-number-badge {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      background-color: transparent;
+    }
+    .feature-number-badge .feature-number-image {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 0;
+      transform: scale(1.55);
+      transform-origin: center;
+      pointer-events: none;
+    }
+    .feature-number-badge > span {
+      position: relative;
+      z-index: 1;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+    }
+
+    /* One neutral paper-tape detail in the lookbook photo's corner. */
+    .paper-photo-corner::after {
+      content: '';
+      position: absolute;
+      top: 14px;
+      right: 34px;
+      width: 94px;
+      height: 23px;
+      z-index: 2;
+      pointer-events: none;
+      background-color: #f1f1e9;
+      background-image: var(--paper-grain);
+      background-blend-mode: multiply;
+      opacity: .84;
+      transform: rotate(7deg);
+      clip-path: polygon(1% 4%, 12% 1%, 25% 4%, 40% 0%, 55% 3%, 70% 1%, 85% 4%, 99% 0%, 97% 22%, 100% 40%, 98% 62%, 100% 79%, 97% 99%, 83% 96%, 67% 100%, 51% 96%, 37% 99%, 21% 97%, 2% 100%, 3% 77%, 0% 55%, 2% 31%);
+    }
+
+    /* Product media uses loose, hand-cut paper silhouettes instead of rigid grid rectangles. */
+    .product-card-media {
+      --paper-tilt: 0deg;
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      border: 0 !important;
+      background-color: #fafbfc !important;
+      background-image: linear-gradient(rgba(250, 251, 252, 0.92), rgba(250, 251, 252, 0.92)), var(--paper-grain);
+      background-blend-mode: multiply;
+      box-shadow: none !important;
+      transform: rotate(var(--paper-tilt));
+      filter: drop-shadow(0 12px 10px rgba(13, 13, 13, 0.10));
+      clip-path: polygon(1% 3%, 17% 1%, 34% 3%, 51% 0%, 68% 2%, 84% 1%, 99% 4%, 98% 20%, 100% 38%, 98% 55%, 100% 74%, 98% 97%, 84% 99%, 68% 97%, 51% 100%, 34% 98%, 17% 100%, 1% 97%, 2% 80%, 0% 63%, 2% 45%, 0% 27%);
+      transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), filter 0.55s ease;
+    }
+    .product-card-media::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background-image: var(--paper-grain);
+      background-blend-mode: multiply;
+      opacity: 0.02;
+      mix-blend-mode: multiply;
+    }
+    .product-card-media::after {
+      content: '';
+      position: absolute;
+      inset: 7px;
+      z-index: 2;
+      pointer-events: none;
+      border: 1px solid rgba(255, 255, 255, 0.62);
+      opacity: 0.62;
+    }
+    .product-card-media:hover {
+      transform: rotate(var(--paper-tilt)) translateY(-6px);
+      filter: drop-shadow(0 16px 15px rgba(13, 13, 13, 0.16));
+    }
+    .product-card-media > img {
+      position: relative;
+      z-index: 0;
+    }
+    .product-card-media.paper-cut-1 {
+      --paper-tilt: -0.65deg;
+      clip-path: polygon(1% 4%, 14% 1%, 28% 3%, 45% 1%, 61% 3%, 78% 0%, 99% 4%, 97% 20%, 100% 39%, 98% 57%, 100% 76%, 97% 98%, 82% 96%, 66% 100%, 49% 97%, 33% 100%, 16% 97%, 1% 99%, 3% 80%, 0% 62%, 2% 43%, 0% 24%);
+    }
+    .product-card-media.paper-cut-2 {
+      --paper-tilt: 0.55deg;
+      clip-path: polygon(2% 1%, 19% 3%, 36% 0%, 53% 2%, 71% 1%, 98% 3%, 100% 22%, 97% 40%, 99% 59%, 97% 79%, 100% 98%, 84% 96%, 68% 99%, 51% 97%, 35% 100%, 18% 97%, 1% 99%, 2% 81%, 0% 64%, 2% 46%, 1% 28%);
+    }
+    .product-card-media.paper-cut-3 {
+      --paper-tilt: -0.35deg;
+      clip-path: polygon(0% 3%, 16% 0%, 31% 2%, 48% 1%, 65% 3%, 82% 1%, 100% 5%, 98% 23%, 100% 42%, 97% 60%, 99% 78%, 97% 100%, 80% 97%, 64% 99%, 47% 96%, 30% 100%, 14% 97%, 1% 99%, 2% 82%, 0% 65%, 2% 47%, 1% 25%);
+    }
+    .product-card-media.paper-cut-4 {
+      --paper-tilt: 0.75deg;
+      clip-path: polygon(2% 2%, 18% 4%, 35% 1%, 52% 3%, 69% 0%, 86% 2%, 99% 1%, 97% 19%, 100% 37%, 98% 56%, 100% 75%, 98% 98%, 83% 97%, 67% 100%, 50% 97%, 34% 99%, 17% 96%, 0% 98%, 3% 79%, 1% 61%, 2% 42%, 0% 23%);
+    }
+    .product-card-media:focus-visible {
+      outline: 2px solid var(--magmoa-blue);
+      outline-offset: 6px;
+    }
+    @media (max-width: 640px) {
+      .paper-caption::before { inset: -3px -7px; }
+      .paper-photo-corner::after {
+        top: 10px;
+        right: 20px;
+        width: 64px;
+        height: 18px;
+      }
+      .product-card-media {
+        filter: drop-shadow(0 8px 8px rgba(13, 13, 13, 0.09));
+      }
+      .product-card-media:hover {
+        filter: drop-shadow(0 11px 11px rgba(13, 13, 13, 0.13));
+      }
+    }
+  </style>
+
+  <link rel="stylesheet" href="../custom-cursor.css" />
+  <script src="../custom-cursor.js" defer></script>
+
+  <style>
+    /* Travel collage behind the interactive lookbook, without changing hero art. */
+    #lookbook {
+      background-color: #2f4bff;
+      background-image: url('images/lookbook-pattern.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    #lookbook > div > .text-center > span,
+    #lookbook > div > .text-center > p {
+      color: #fff;
+      text-shadow: none;
+    }
+    #lookbook img[src="images/lookbook-title.svg"] {
+      filter: none;
+    }
+  </style>
+  <link rel="stylesheet" href="store-motion.css" />
+  <link rel="stylesheet" href="magnet-marquee.css" />
+  <script src="magnet-marquee.js" defer></script>
+  <script src="store-motion.js" defer></script>
+  <link rel="stylesheet" href="lookbook-fridge.css" />
+  <script src="lookbook-fridge.js" defer></script>
+  <link rel="stylesheet" href="../brand-footer.css" />
+  </head>
+<body class="bg-[#fafafa] text-brand-black antialiased font-sans selection:bg-brand-black selection:text-white">
+
+  <!-- 페이지 전환용 오버레이 -->
+
+  <div id="pageEnterOverlay" class="fixed inset-0 z-[9999] bg-white transition-opacity duration-700 ease-out pointer-events-none"></div>
+
+  <!-- Top Announcement Bar -->
+
+  <div class="bg-brand-black text-white text-[11px] font-medium tracking-wider uppercase py-2 px-4 overflow-hidden relative border-b border-neutral-800">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <div class="hidden md:flex items-center space-x-3 text-neutral-400">
+        <span><i class="fa-solid fa-truck-fast mr-1"></i> FREE SHIPPING OVER ₩50,000</span>
+        <span>•</span>
+        <span>MAGMOA CHEONGJU SOUVENIR COLLECTION</span>
+      </div>
+      <div class="w-full md:w-auto text-center font-sans tabular-nums tracking-tight text-neutral-200 text-[11px]">
+        NEW COLLECTION: <span class="underline underline-offset-4 cursor-pointer hover:text-white transition-colors" onclick="scrollToShop()">CHEONGJU 3D MAGNETS</span>
+      </div>
+      <div class="hidden md:flex items-center space-x-4">
+        <span class="cursor-pointer hover:text-neutral-300">KRW ₩</span>
+        <span class="cursor-pointer hover:text-neutral-300">KOREAN</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+
+  <header class="sticky top-0 z-40 bg-[#fafafa]/90 backdrop-blur-md border-b border-brand-border transition-all duration-300" id="mainHeader">
+    <div class="max-w-7xl mx-auto px-4 md:px-8 h-16 md:h-20 flex items-center justify-between">
+
+   <!-- Brand Logo -->
+  <a href="../index.html" aria-label="마그모아 메인 사이트로" class="flex shrink-0 items-center justify-center hover:opacity-80 transition-opacity">
+    <img src="../assets/header-logo.svg" alt="MAGMOA" width="1774" height="390"
+         class="block h-auto w-28 object-contain max-[359px]:w-20 sm:w-44 md:w-56" decoding="async" fetchpriority="high" />
+  </a>
+
+  <!-- Utility Navigation -->
+  <div class="flex items-center space-x-3 md:space-x-5 text-xs font-bold uppercase tracking-wider">
+    <button onclick="toggleSearchModal()" class="p-2 hover:text-neutral-500 transition-colors" title="Search">
+      <i class="fa-solid fa-magnifying-glass text-sm md:text-base"></i>
+    </button>
+
+    <button onclick="toggleWishlistModal()" class="p-1.5 md:p-2 hover:text-neutral-500 transition-colors relative flex items-center gap-1.5 group" title="MY LIKE">
+      <i class="fa-regular fa-heart text-sm md:text-base group-hover:scale-110 transition-transform"></i>
+      <span class="hidden lg:inline">MY LIKE</span>
+      <span id="wishlistBadge" class="bg-brand-accent text-white text-[10px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+    </button>
+
+    <button onclick="toggleCartDrawer()" class="p-1.5 md:p-2 hover:text-neutral-500 transition-colors relative flex items-center gap-1.5 group" title="BAG">
+      <i class="fa-solid fa-bag-shopping text-sm md:text-base group-hover:scale-110 transition-transform"></i>
+      <span class="hidden lg:inline">BAG</span>
+      <span id="cartBadge" class="bg-brand-black text-white text-[10px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center transition-transform scale-100">0</span>
+    </button>
+
+    <button onclick="toggleMyPageModal()" class="p-1.5 md:p-2 hover:text-neutral-500 transition-colors flex items-center gap-1.5" title="MY PAGE">
+      <i class="fa-regular fa-user text-sm md:text-base"></i>
+      <span class="hidden md:inline">MY PAGE</span>
+    </button>
+
+    <button id="authBtn" onclick="toggleLoginModal()" class="bg-brand-black text-white px-3 py-1.5 text-[11px] font-bold tracking-widest hover:bg-neutral-800 transition-colors rounded-none">
+      LOG IN
+    </button>
+  </div>
+
+</div>
+
+  </header>
+
+  <!-- Mobile Menu Drawer -->
+
+  <div id="mobileMenu" class="fixed inset-0 z-50 bg-brand-black/60 opacity-0 pointer-events-none transition-opacity duration-300 md:hidden">
+    <div class="fixed top-0 left-0 bottom-0 w-4/5 max-w-xs bg-white p-6 shadow-2xl flex flex-col justify-between transform -translate-x-full transition-transform duration-300 ease-out" id="mobileMenuContainer">
+      <div>
+        <div class="flex justify-between items-center mb-8 border-b border-neutral-200 pb-4">
+          <span class="font-display font-extrabold text-xl tracking-widest">MAGMOA</span>
+          <button id="closeMobileMenu" class="text-xl p-2"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <nav class="flex flex-col space-y-4 font-semibold text-sm tracking-wider uppercase">
+          <button onclick="closeMobileNav(); toggleWishlistModal();" class="text-left py-2 flex justify-between items-center border-b border-neutral-100">
+            <span><i class="fa-regular fa-heart mr-2"></i> MY LIKE</span>
+            <span id="mobileWishlistCount" class="bg-neutral-100 px-2 py-0.5 rounded-full text-[10px]">0</span>
+          </button>
+          <button onclick="closeMobileNav(); toggleCartDrawer();" class="text-left py-2 border-b border-neutral-100"><i class="fa-solid fa-bag-shopping mr-2"></i> BAG</button>
+          <button onclick="closeMobileNav(); toggleMyPageModal();" class="text-left py-2 border-b border-neutral-100"><i class="fa-regular fa-user mr-2"></i> MY PAGE</button>
+          <button onclick="closeMobileNav(); toggleLoginModal();" class="text-left py-2 text-brand-accent"><i class="fa-solid fa-right-to-bracket mr-2"></i> LOG IN</button>
+        </nav>
+      </div>
+      <div class="text-xs text-neutral-500 space-y-2 pt-6 border-t border-neutral-200">
+        <p>© 2026 MAGMOA. Minimalist Objects.</p>
+        <p>Support: cs@magmoa.kr</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Carousel Section -->
+
+  <section class="relative min-h-[85vh] bg-neutral-900 text-white flex items-end overflow-hidden group/hero" id="heroCarousel">
+
+<!-- Hero Slide 1 -->
+<div class="hero-slide absolute inset-0 z-0 opacity-100 transition-opacity duration-1000 ease-in-out flex items-end">
+  <div class="absolute inset-0 overflow-hidden">
+    <!-- Background Image -->
+    <img id="hero1Image"
+         src="images/heronew1.jpg" 
+         alt="Magmoa Hero Cover 1" 
+         class="w-full h-full object-cover object-center brightness-75 scale-105 hover:scale-100 transition-transform duration-1000 ease-out"
+         onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1588854337221-4cf9fa96059c?q=80&w=2000&auto=format&fit=crop';" />
+    
+  </div>
+
+  <!-- Slide 1 Text Content -->
+  <div class="relative z-10 max-w-7xl mx-auto w-full px-6 md:px-8 pb-16 md:pb-24">
+    <div id="hero1Content" class="hero-content max-w-2xl space-y-4 opacity-0 translate-y-8 transition-all duration-1000 ease-out">
+      <div class="inline-block bg-white/10 backdrop-blur-md border border-white/20 text-white text-[11px] font-semibold px-3 py-1 rounded-full uppercase tracking-widest">
+        SOUVENIR COLLECTION 01
+      </div>
+      <h1 class="font-slackey text-4xl sm:text-6xl md:text-7xl font-normal tracking-tight leading-[1.05]">
+        COLLECT YOUR JOURNEY
+      </h1>
+      <p class="text-neutral-300 text-sm md:text-base font-light max-w-lg leading-relaxed">
+        여행지를 마그넷으로 수집하고, 당신의 여정을 오래 간직하세요.
+      </p>
+      <div class="pt-4 flex flex-wrap items-center gap-4">
+        <a href="#shop" class="bg-white text-brand-black font-bold text-xs uppercase tracking-widest px-8 py-4 rounded-none hover:bg-neutral-200 transition-colors shadow-lg flex items-center gap-2 group">
+          EXPLORE COLLECTION <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+        </a>
+        <a href="#lookbook" class="bg-transparent border border-white/40 text-white font-semibold text-xs uppercase tracking-widest px-7 py-4 hover:border-white hover:bg-white/10 transition-all backdrop-blur-sm">
+          VIEW LOOKBOOK
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hero Slide 2 -->
+<div class="hero-slide absolute inset-0 z-0 opacity-0 pointer-events-none transition-opacity duration-1000 ease-in-out flex items-end">
+  <div class="absolute inset-0 overflow-hidden">
+    <img src="images/hero2.jpg" 
+         alt="Magmoa Hero Cover 2" 
+         class="w-full h-full object-cover object-center brightness-75 scale-105 hover:scale-100 transition-transform duration-1000 ease-out"
+         onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=2000&auto=format&fit=crop';" />
+  
+  </div>
+  <div class="relative z-10 max-w-7xl mx-auto w-full px-6 md:px-8 pb-16 md:pb-24">
+    <div class="hero-content max-w-2xl space-y-4 opacity-0 translate-y-8 transition-all duration-1000 ease-out">
+      <div class="inline-block bg-white/10 backdrop-blur-md border border-white/20 text-white text-[11px] font-semibold px-3 py-1 rounded-full uppercase tracking-widest">
+        LOCAL MEMORY ARCHIVE 02
+      </div>
+      <h1 class="font-slackey text-4xl sm:text-6xl md:text-7xl font-normal tracking-tight leading-[1.05]">
+        LOCAL STORIES,<br/><span class="text-neutral-300">MADE TO KEEP</span>
+      </h1>
+      <p class="text-neutral-300 text-sm md:text-base font-light max-w-lg leading-relaxed">
+        청주의 장소와 이야기를 담은 마그넷으로 여행의 기억을 기록합니다.
+      </p>
+      <div class="pt-4 flex flex-wrap items-center gap-4">
+        <a href="#shop" class="bg-white text-brand-black font-bold text-xs uppercase tracking-widest px-8 py-4 rounded-none hover:bg-neutral-200 transition-colors shadow-lg flex items-center gap-2 group">
+          VIEW MAGNETS <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hero Slide 3 -->
+<div class="hero-slide absolute inset-0 z-0 opacity-0 pointer-events-none transition-opacity duration-1000 ease-in-out flex items-end">
+  <div class="absolute inset-0 overflow-hidden">
+    <img src="images/hero11.jpg" 
+         alt="Magmoa Hero Cover 3" 
+         class="w-full h-full object-cover object-center brightness-75 scale-105 hover:scale-100 transition-transform duration-1000 ease-out"
+         onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1507473885765-e6ed057f782c?q=80&w=2000&auto=format&fit=crop';" />
+    
+  </div>
+  <div class="relative z-10 max-w-7xl mx-auto w-full px-6 md:px-8 pb-16 md:pb-24">
+    <div class="hero-content max-w-2xl space-y-4 opacity-0 translate-y-8 transition-all duration-1000 ease-out">
+      <div class="inline-block bg-white/10 backdrop-blur-md border border-white/20 text-white text-[11px] font-semibold px-3 py-1 rounded-full uppercase tracking-widest">
+        MAGNET OBJECT SERIES 03
+      </div>
+      <h1 class="font-slackey text-4xl sm:text-6xl md:text-7xl font-normal tracking-tight leading-[1.05]">
+        VISIT. COLLECT.<br/><span class="text-neutral-300">REMEMBER.</span>
+      </h1>
+      <p class="text-neutral-300 text-sm md:text-base font-light max-w-lg leading-relaxed">
+        여행에서 만난 순간을 디지털 기록과 실물 마그넷으로 이어보세요.
+      </p>
+      <div class="pt-4 flex flex-wrap items-center gap-4">
+        <a href="#about" class="bg-white text-brand-black font-bold text-xs uppercase tracking-widest px-8 py-4 rounded-none hover:bg-neutral-200 transition-colors shadow-lg flex items-center gap-2 group">
+          DISCOVER MAGNETS <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Carousel Controls -->
+<button onclick="changeHeroSlide(-1)" class="absolute left-4 md:left-8 top-[28%] md:top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/40 border border-white/20 backdrop-blur-md text-white hidden md:flex items-center justify-center hover:bg-white hover:text-brand-black transition-all shadow-lg focus:outline-none opacity-80 hover:opacity-100">
+  <i class="fa-solid fa-chevron-left text-sm"></i>
+</button>
+<button onclick="changeHeroSlide(1)" class="absolute right-4 md:right-8 top-[28%] md:top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/40 border border-white/20 backdrop-blur-md text-white hidden md:flex items-center justify-center hover:bg-white hover:text-brand-black transition-all shadow-lg focus:outline-none opacity-80 hover:opacity-100">
+  <i class="fa-solid fa-chevron-right text-sm"></i>
+</button>
+
+<!-- Slide Indicators -->
+<div class="absolute bottom-6 left-6 md:left-8 z-20 flex items-center space-x-3">
+  <button onclick="setHeroSlide(0)" class="hero-dot w-8 h-1 bg-white transition-all rounded-full" title="Slide 1"></button>
+  <button onclick="setHeroSlide(1)" class="hero-dot w-8 h-1 bg-white/40 hover:bg-white/70 transition-all rounded-full" title="Slide 2"></button>
+  <button onclick="setHeroSlide(2)" class="hero-dot w-8 h-1 bg-white/40 hover:bg-white/70 transition-all rounded-full" title="Slide 3"></button>
+  <span id="heroSlideNum" class="text-xs font-sans tabular-nums tracking-widest text-neutral-300 ml-2">01 / 03</span>
+</div>
+
+<!-- Scroll Indicator -->
+<div class="absolute bottom-6 right-8 z-20 hidden md:flex items-center space-x-3 text-neutral-400 text-xs font-sans tabular-nums tracking-widest uppercase">
+  <span>SCROLL DOWN</span>
+  <div class="w-8 h-[1px] bg-neutral-500 animate-pulse"></div>
+</div>
+
+  </section>
+
+  <!-- Ticker Banner -->
+
+  <div class="bg-neutral-100 border-y border-neutral-200 py-3.5 overflow-hidden font-sans tabular-nums text-xs tracking-widest uppercase text-neutral-800">
+    <div class="animate-marquee whitespace-nowrap">
+      <span class="mx-8"><i class="fa-solid fa-magnet text-brand-black mr-2"></i> MAGMOA 3D RELIEF MAGNET ARCHIVE</span>
+      <span class="mx-8">•</span>
+      <span class="mx-8">CHEONGJU LOCAL SOUVENIR SYSTEM</span>
+      <span class="mx-8">•</span>
+      <span class="mx-8">HANDCRAFTED DETAILED RELIEF</span>
+      <span class="mx-8">•</span>
+      <span class="mx-8">MAGMOA 3D RELIEF MAGNET ARCHIVE</span>
+      <span class="mx-8">•</span>
+      <span class="mx-8">CHEONGJU LOCAL SOUVENIR SYSTEM</span>
+      <span class="mx-8">•</span>
+    </div>
+  </div>
+
+  <!-- Main Catalog Section -->
+
+  <section id="shop" class="max-w-7xl mx-auto px-4 md:px-8 py-16 md:py-24">
+
+<!-- Section Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-10 pb-6 border-b border-neutral-200 gap-6 reveal">
+  <div>
+    <span class="paper-caption text-xs font-sans tabular-nums text-neutral-400 uppercase tracking-widest">STORE CATALOG</span>
+    <h2 class="font-display text-3xl md:text-5xl font-extrabold tracking-tight mt-1">
+      ESSENTIAL OBJECTS
+    </h2>
+  </div>
+
+  <!-- Layout Mode & Sort Selector -->
+  <div class="flex flex-wrap items-center justify-between md:justify-end gap-4">
+    <div class="hidden sm:flex items-center space-x-1 border border-neutral-200 p-1 bg-white rounded-none">
+      <button onclick="setGridColumns(2)" id="gridBtn2" class="p-2 text-xs font-sans tabular-nums border hover:bg-neutral-100 transition-colors" title="2 Columns">2 COL</button>
+      <button onclick="setGridColumns(3)" id="gridBtn3" class="p-2 text-xs font-sans tabular-nums border bg-brand-black text-white transition-colors" title="3 Columns">3 COL</button>
+      <button onclick="setGridColumns(4)" id="gridBtn4" class="p-2 text-xs font-sans tabular-nums border hover:bg-neutral-100 transition-colors hidden lg:block" title="4 Columns">4 COL</button>
+    </div>
+
+    <select id="sortSelect" onchange="sortProducts()" class="bg-white border border-neutral-200 text-xs font-semibold px-4 py-2.5 rounded-none focus:outline-none focus:border-brand-black cursor-pointer">
+      <option value="featured">SORT BY: FEATURED</option>
+      <option value="price-low">PRICE: LOW TO HIGH</option>
+      <option value="price-high">PRICE: HIGH TO LOW</option>
+      <option value="newest">NEWEST ARRIVALS</option>
+    </select>
+  </div>
+</div>
+
+<!-- Category Filter Tabs Bar -->
+<div class="flex items-center space-x-2 overflow-x-auto pb-4 mb-10 border-b border-neutral-100 no-scrollbar" id="categoryTabs">
+  <button onclick="filterCategory('all', this)" class="category-btn active px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-brand-black text-white whitespace-nowrap transition-all">ALL OBJECTS</button>
+  <button onclick="filterCategory('nature', this)" class="category-btn px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-neutral-100 text-neutral-600 hover:bg-neutral-200 whitespace-nowrap transition-all">NATURE & PARK</button>
+  <button onclick="filterCategory('culture', this)" class="category-btn px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-neutral-100 text-neutral-600 hover:bg-neutral-200 whitespace-nowrap transition-all">CULTURE & MUSEUM</button>
+  <button onclick="filterCategory('heritage', this)" class="category-btn px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-neutral-100 text-neutral-600 hover:bg-neutral-200 whitespace-nowrap transition-all">HERITAGE & HISTORY</button>
+</div>
+
+<!-- Dynamic Product Grid -->
+<div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12 transition-all duration-300">
+  <!-- Products generated dynamically via JavaScript -->
+</div>
+
+  </section>
+
+  <!-- Lookbook Section -->
+
+  <section id="lookbook" class="bg-brand-accent text-white py-24 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 md:px-8">
+
+  <div class="mb-12 text-center max-w-2xl mx-auto reveal">
+    <span class="text-xs font-sans tabular-nums text-neutral-400 uppercase tracking-widest">EDITORIAL LOOKBOOK</span>
+    
+    <div class="mt-2 w-full flex items-center justify-center" role="img" aria-label="CHEONGJU MAGNET SHOWCASE">
+      <img
+        src="images/lookbook-title.svg"
+        alt="CHEONGJU MAGNET SHOWCASE"
+        width="2048"
+        height="424"
+        class="block w-full max-w-2xl h-auto object-contain"
+        decoding="async"
+      />
+    </div>
+    <p class="text-neutral-400 text-sm mt-3 font-light">
+      주방 속 오브제를 눌러보고, 마음에 드는 마그넷의 이야기도 만나보세요.
+    </p>
+  </div>
+
+  <button type="button" id="open-fridge" class="lookbook-cover paper-photo-corner reveal" aria-haspopup="dialog">
+    <img src="images/show2.jpg" alt="" loading="lazy" />
+    <span>인터랙티브 룩북 열기 ↗</span>
+  </button>
+
+  <dialog class="lookbook-fridge" aria-labelledby="fridge-title">
+    <div class="fridge-toolbar">
+      <h2 id="fridge-title">청주 마그넷 룩북</h2>
+      <button type="button" data-close-fridge autofocus>닫기 ✕</button>
+    </div>
+    <div class="fridge-viewport">
+      <div class="fridge-scene">
+        <img class="fridge-photo" src="images/lookbook-fridge.jpg" alt="스테인리스 냉장고" loading="lazy" />
+        <div class="fridge-interior" aria-hidden="true"><img src="images/lookbook-fridge-interior.jpg" alt="" loading="lazy" /></div>
+        <div class="fridge-door fridge-door-left">
+          <button type="button" class="fridge-magnet" data-product="2" data-scene-x="32%" style="--x:45.45%; --y:35%; --angle:-7deg"></button>
+          <button type="button" class="fridge-handle" data-door-toggle aria-label="냉장고 문 열기" aria-expanded="false"></button>
+        </div>
+        <div class="fridge-door fridge-door-right">
+          <button type="button" class="fridge-magnet" data-product="1" data-scene-x="62%" style="--x:36.36%; --y:61%; --angle:5deg"></button>
+          <button type="button" class="fridge-magnet" data-product="6" data-scene-x="70%" style="--x:60.6%; --y:31%; --angle:3deg"></button>
+          <button type="button" class="fridge-handle" data-door-toggle aria-label="냉장고 문 열기" aria-expanded="false"></button>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="fridge-door-control" data-door-toggle aria-expanded="false">냉장고 열어보기 ↗</button>
+    <p class="fridge-instruction">손잡이를 눌러 냉장고를 열어보세요. 마그넷을 누르면 상품 이야기가 열려요.</p>
+    <p class="kitchen-feedback" role="status" aria-live="polite"></p>
+    <section class="fridge-detail" aria-labelledby="fridge-product-title" tabindex="-1" hidden>
+      <h3 id="fridge-product-title"></h3>
+      <p class="fridge-product-description"></p>
+      <p class="fridge-product-price"></p>
+      <a class="fridge-product-link">상품 상세 보기 ↗</a>
+      <button type="button" data-back-fridge>← 전체 보기</button>
+    </section>
+  </dialog>
+
+</div>
+
+  </section>
+
+  <!-- Brand Philosophy Section -->
+
+  <section id="about" class="bg-white py-24 border-b border-neutral-200">
+    <div class="max-w-7xl mx-auto px-4 md:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
+
+    <div class="space-y-4 reveal">
+      <div class="feature-number-badge w-12 h-12 flex items-center justify-center font-bold text-lg mb-4 mx-auto md:mx-0">
+        
+        <img src="images/feature-bubble.svg" alt="" aria-hidden="true" class="feature-number-image" onerror="this.style.display='none';" />
+        <span>01</span>
+      </div>
+      <h3 class="font-display font-extrabold text-xl">LOCAL STORIES</h3>
+      <p class="text-neutral-500 text-xs leading-relaxed">
+        지역 고유의 장소와 이야기를 담아 마그넷을 디자인합니다.
+      </p>
+    </div>
+
+    <div class="space-y-4 reveal">
+      <div class="feature-number-badge w-12 h-12 flex items-center justify-center font-bold text-lg mb-4 mx-auto md:mx-0">
+        <!-- 카드별 이미지가 필요하면 이 src만 원하는 이미지 경로로 바꾸면 됩니다. -->
+        <img src="images/feature-bubble.svg" alt="" aria-hidden="true" class="feature-number-image" onerror="this.style.display='none';" />
+        <span>02</span>
+      </div>
+      <h3 class="font-display font-extrabold text-xl">COLLECT YOUR JOURNEY</h3>
+      <p class="text-neutral-500 text-xs leading-relaxed">
+        방문한 장소의 마그넷을 모아 나만의 여행 컬렉션을 완성합니다.
+      </p>
+    </div>
+
+    <div class="space-y-4 reveal">
+      <div class="feature-number-badge w-12 h-12 flex items-center justify-center font-bold text-lg mb-4 mx-auto md:mx-0">
+        <img src="images/feature-bubble.svg" alt="" aria-hidden="true" class="feature-number-image" onerror="this.style.display='none';" />
+        <span>03</span>
+      </div>
+      <h3 class="font-display font-extrabold text-xl">KEEP THE MEMORY</h3>
+      <p class="text-neutral-500 text-xs leading-relaxed">
+        앱에서 기록한 여행의 순간을 실물 마그넷으로 간직합니다.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+  </section>
+
+  <!-- Quick View Modal -->
+
+  <div id="quickViewModal" class="fixed inset-0 z-50 bg-brand-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
+    <div class="bg-white max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-10 relative shadow-2xl transform scale-95 transition-transform duration-300" id="quickViewContainer">
+
+  <button onclick="closeQuickView()" class="absolute top-6 right-6 text-2xl hover:text-neutral-500 p-2 focus:outline-none">
+    <i class="fa-solid fa-xmark"></i>
+  </button>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center" id="quickViewContent">
+    <!-- Content inserted dynamically -->
+  </div>
+
+</div>
+
+  </div>
+
+  <!-- Cart Drawer -->
+
+  <div id="cartDrawer" class="fixed inset-0 z-50 bg-brand-black/60 opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-white p-6 md:p-8 shadow-2xl flex flex-col justify-between transform translate-x-full transition-transform duration-300 ease-out" id="cartContainer">
+
+  <div>
+    <div class="flex justify-between items-center pb-4 border-b border-neutral-200">
+      <div class="flex items-center gap-2">
+        <span class="font-display font-extrabold text-xl tracking-tight">YOUR CART</span>
+        <span id="cartDrawerItemCount" class="bg-neutral-100 text-neutral-800 text-xs font-bold px-2 py-0.5 rounded-full">0</span>
+      </div>
+      <button onclick="toggleCartDrawer()" class="text-xl p-2 hover:text-neutral-500">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="mt-4 p-3 bg-neutral-50 border border-neutral-200 text-xs">
+      <div class="flex justify-between mb-1.5 font-medium" id="freeShippingText">
+        <span>Free Shipping Progress</span>
+        <span id="freeShippingRemain">₩50,000 remaining</span>
+      </div>
+      <div class="w-full bg-neutral-200 h-1.5 rounded-full overflow-hidden">
+        <div id="freeShippingBar" class="bg-brand-black h-full w-0 transition-all duration-500"></div>
+      </div>
+    </div>
+
+    <div id="cartItemsList" class="mt-6 space-y-4 max-h-[50vh] overflow-y-auto pr-1">
+      <!-- Dynamically filled -->
+    </div>
+  </div>
+
+  <div class="border-t border-neutral-200 pt-4 space-y-4">
+    <div class="space-y-1.5 text-xs">
+      <div class="flex justify-between text-neutral-500">
+        <span>Subtotal</span>
+        <span id="cartSubtotal" class="font-semibold text-brand-black">₩0</span>
+      </div>
+      <div class="flex justify-between text-neutral-500">
+        <span>Estimated Shipping</span>
+        <span id="cartShipping" class="font-semibold text-brand-black">₩0</span>
+      </div>
+      <div class="flex justify-between text-base font-bold pt-2 border-t border-neutral-100 text-brand-black">
+        <span>TOTAL</span>
+        <span id="cartTotal">₩0</span>
+      </div>
+    </div>
+
+    <button onclick="simulateCheckout()" class="w-full bg-brand-black text-white font-bold text-xs uppercase tracking-widest py-4 hover:bg-neutral-800 transition-colors flex items-center justify-center gap-2">
+      PROCEED TO CHECKOUT <i class="fa-solid fa-lock text-xs"></i>
+    </button>
+
+    <p class="text-[10px] text-center text-neutral-400">
+      Tax included. Shipping calculated at checkout.
+    </p>
+  </div>
+
+</div>
+
+  </div>
+
+  <!-- Search Modal -->
+
+  <div id="searchModal" class="fixed inset-0 z-50 bg-brand-black/70 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300 p-4 pt-20">
+    <div class="max-w-2xl mx-auto bg-white p-6 shadow-2xl relative">
+      <button onclick="toggleSearchModal()" class="absolute top-6 right-6 text-xl p-2 hover:text-neutral-500">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+  <h3 class="font-display font-extrabold text-lg mb-4">SEARCH MAGMOA PRODUCTS</h3>
+  <div class="relative">
+    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="검색어를 입력하세요 (예: 맹꽁이, 직지, 성안길, 세종대왕)..." 
+           class="w-full border-b-2 border-brand-black py-3 pr-10 text-sm font-semibold focus:outline-none placeholder:text-neutral-400" />
+    <i class="fa-solid fa-magnifying-glass absolute right-2 top-3 text-neutral-400"></i>
+  </div>
+
+  <div id="searchResults" class="mt-6 max-h-80 overflow-y-auto space-y-3">
+    <!-- Results rendered here -->
+  </div>
+</div>
+
+  </div>
+
+  <!-- Login Modal -->
+
+  <div id="loginModal" class="fixed inset-0 z-50 bg-brand-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
+    <div class="bg-white max-w-md w-full p-8 relative shadow-2xl transform scale-95 transition-transform duration-300" id="loginContainer">
+      <button onclick="toggleLoginModal()" class="absolute top-6 right-6 text-xl hover:text-neutral-500 p-1">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+  <div class="text-center mb-6">
+    <h2 class="font-display font-extrabold text-2xl tracking-widest text-brand-black">MAGMOA</h2>
+    <p class="text-xs text-neutral-400 mt-1 uppercase tracking-wider">MEMBER ACCESS</p>
+  </div>
+
+  <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
+    <div>
+      <label class="block text-[11px] font-sans tabular-nums font-bold uppercase text-neutral-500 mb-1">EMAIL ADDRESS</label>
+      <input type="email" id="loginEmail" required placeholder="user@magmoa.kr" class="w-full border border-neutral-300 px-3 py-2.5 text-xs font-semibold focus:outline-none focus:border-brand-black" />
+    </div>
+    <div>
+      <label class="block text-[11px] font-sans tabular-nums font-bold uppercase text-neutral-500 mb-1">PASSWORD</label>
+      <input type="password" required placeholder="••••••••" class="w-full border border-neutral-300 px-3 py-2.5 text-xs font-semibold focus:outline-none focus:border-brand-black" />
+    </div>
+    
+    <div class="flex justify-between items-center text-[11px] text-neutral-500 pt-1">
+      <label class="flex items-center gap-1.5 cursor-pointer">
+        <input type="checkbox" checked class="accent-brand-black" />
+        <span>로그인 상태 유지</span>
+      </label>
+      <a href="#" onclick="showToast('비밀번호 재설정 링크가 발송되었습니다.')" class="hover:underline">비밀번호 찾기</a>
+    </div>
+
+    <button type="submit" class="w-full bg-brand-black text-white font-bold text-xs uppercase tracking-widest py-3.5 hover:bg-neutral-800 transition-colors mt-2">
+      LOG IN
+    </button>
+  </form>
+
+  <div class="mt-6 pt-6 border-t border-neutral-200 text-center space-y-3">
+    <p class="text-xs text-neutral-500">아직 회원이 아니신가요?</p>
+    <button onclick="showToast('회원가입 양식으로 전환합니다.')" class="w-full bg-neutral-100 text-brand-black font-bold text-xs uppercase tracking-widest py-3 border border-neutral-300 hover:bg-neutral-200 transition-colors">
+      CREATE ACCOUNT
+    </button>
+  </div>
+</div>
+
+  </div>
+
+  <!-- My Page Modal -->
+
+  <div id="myPageModal" class="fixed inset-0 z-50 bg-brand-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
+    <div class="bg-white max-w-xl w-full p-8 relative shadow-2xl transform scale-95 transition-transform duration-300 max-h-[85vh] overflow-y-auto" id="myPageContainer">
+      <button onclick="toggleMyPageModal()" class="absolute top-6 right-6 text-xl hover:text-neutral-500 p-1">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+  <div class="border-b border-neutral-200 pb-6 mb-6">
+    <div class="flex items-center gap-4">
+      <div class="w-14 h-14 rounded-full bg-brand-black text-white flex items-center justify-center font-bold text-xl">
+        M
+      </div>
+      <div>
+        <span class="text-[10px] font-sans tabular-nums text-brand-accent uppercase font-bold tracking-widest">VIP MEMBER</span>
+        <h2 class="font-display font-extrabold text-xl text-brand-black" id="myPageUserName">청주 마그넷 컬렉터 님</h2>
+        <p class="text-xs text-neutral-400">member@magmoa.kr</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-3 gap-3 mb-8 text-center">
+    <div class="bg-neutral-50 border border-neutral-200 p-3">
+      <span class="block text-[10px] font-sans tabular-nums text-neutral-400 uppercase">보유 쿠폰</span>
+      <span class="text-lg font-extrabold text-brand-black">3장</span>
+    </div>
+    <div class="bg-neutral-50 border border-neutral-200 p-3">
+      <span class="block text-[10px] font-sans tabular-nums text-neutral-400 uppercase">적립 포인트</span>
+      <span class="text-lg font-extrabold text-brand-black">₩2,500</span>
+    </div>
+    <div class="bg-neutral-50 border border-neutral-200 p-3">
+      <span class="block text-[10px] font-sans tabular-nums text-neutral-400 uppercase">주문 내역</span>
+      <span class="text-lg font-extrabold text-brand-black">2건</span>
+    </div>
+  </div>
+
+  <div class="space-y-4">
+    <h3 class="font-bold text-xs font-sans tabular-nums uppercase tracking-wider text-neutral-700 border-b border-neutral-200 pb-2">최근 주문 아카이브</h3>
+    
+    <div class="p-4 bg-neutral-50 border border-neutral-200 text-xs space-y-2">
+      <div class="flex justify-between font-sans tabular-nums text-neutral-400 text-[10px]">
+        <span>ORDER #20260824-001</span>
+        <span class="text-emerald-600 font-bold">배송 완료</span>
+      </div>
+      <p class="font-bold text-brand-black">청주 문암생태공원 맹꽁이 3D 마그넷 외 1건</p>
+      <p class="text-neutral-500 text-[11px]">결제 금액: ₩36,000 (무료배송)</p>
+    </div>
+
+    <div class="p-4 bg-neutral-50 border border-neutral-200 text-xs space-y-2">
+      <div class="flex justify-between font-sans tabular-nums text-neutral-400 text-[10px]">
+        <span>ORDER #20260715-089</span>
+        <span class="text-emerald-600 font-bold">배송 완료</span>
+      </div>
+      <p class="font-bold text-brand-black">국립현대미술관 청주 3D 마그넷</p>
+      <p class="text-neutral-500 text-[11px]">결제 금액: ₩18,000</p>
+    </div>
+  </div>
+
+  <div class="mt-8 pt-6 border-t border-neutral-200 flex justify-between items-center">
+    <button onclick="handleLogout()" class="text-xs text-neutral-400 hover:text-brand-accent underline">
+      로그아웃 (Log Out)
+    </button>
+    <button onclick="showToast('회원 정보는 계정 메뉴에서 확인해 주세요.')" class="bg-brand-black text-white text-xs font-bold px-4 py-2 hover:bg-neutral-800">
+      정보 수정
+    </button>
+  </div>
+</div>
+
+  </div>
+
+  <!-- Wishlist Modal -->
+
+  <div id="wishlistModal" class="fixed inset-0 z-50 bg-brand-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
+    <div class="bg-white max-w-2xl w-full p-6 md:p-8 relative shadow-2xl transform scale-95 transition-transform duration-300 max-h-[85vh] overflow-y-auto" id="wishlistContainer">
+      <button onclick="toggleWishlistModal()" class="absolute top-6 right-6 text-xl hover:text-neutral-500 p-1">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+  <div class="flex items-center gap-2 pb-4 border-b border-neutral-200 mb-6">
+    <i class="fa-solid fa-heart text-brand-accent text-lg"></i>
+    <h2 class="font-display font-extrabold text-xl tracking-tight">MY LIKE</h2>
+    <span id="wishlistModalCount" class="bg-neutral-100 text-neutral-800 text-xs font-bold px-2 py-0.5 rounded-full">0</span>
+  </div>
+
+  <div id="wishlistItemsList" class="space-y-4 max-h-[55vh] overflow-y-auto pr-1">
+    <!-- Dynamically rendered via JS -->
+  </div>
+
+  <div class="mt-6 pt-4 border-t border-neutral-200 flex justify-between items-center text-xs">
+    <span class="text-neutral-400">마음에 드는 청주 마그넷을 모아보세요.</span>
+    <button onclick="toggleWishlistModal()" class="bg-brand-black text-white font-bold px-6 py-2.5 hover:bg-neutral-800">
+      쇼핑 계속하기
+    </button>
+  </div>
+</div>
+
+  </div>
+
+  <!-- Toast Notification -->
+
+  <div id="toast" class="fixed bottom-6 right-6 z-50 bg-brand-black text-white px-5 py-3 text-xs font-semibold shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3">
+    <i class="fa-solid fa-circle-check text-brand-accent"></i>
+    <span id="toastMsg">Action completed</span>
+  </div>
+
+  <section class="magnet-showcase" aria-labelledby="magnet-showcase-title">
+    <div class="magnet-showcase__heading">
+      <div><span class="magnet-showcase__eyebrow">A LITTLE PLACE, A LASTING MEMORY</span>
+      <h2 id="magnet-showcase-title">어떤 여행을 모아볼까요?</h2></div>
+      <p>마음에 드는 마그넷 위에 마우스를 올려보세요.<br>작은 마그넷 속, 청주의 이야기를 만나보세요.</p>
+    </div>
+    <div class="magnet-showcase__window"><div class="magnet-showcase__track"></div></div>
+    <div class="magnet-showcase__controls"><button type="button" class="magnet-showcase__pause" aria-pressed="false">슬라이드 일시정지</button></div>
+  </section>
+
+  <!-- Footer -->
+
+    <footer class="footer brand-footer store-style-footer" aria-label="마그모아 사이트 정보">
+      <div class="brand-footer-main">
+        <div class="brand-footer-intro">
+          <a class="logo" href="../index.html" aria-label="마그모아 홈">MAGMOA<span>.</span></a>
+          <p class="brand-footer-description">지역의 장소와 문화를 수집하는 여행.<br />디지털 마그넷부터 실물 굿즈까지,<br />여행의 순간을 일상으로 연결합니다.</p>
+        </div>
+        <nav class="brand-footer-links" aria-label="둘러보기">
+          <h2>EXPLORE</h2>
+          <a href="../about.html">Brand Story</a>
+          <a href="../app.html">MAGMOA App</a>
+          <a href="../store/index_s.html#shop">3D Magnet Archive</a>
+          <a href="../store/index_s.html#lookbook">Visual Lookbook</a>
+        </nav>
+        <div class="brand-footer-links">
+          <h2>CUSTOMER CARE</h2>
+          <p>운영시간: 평일 10:00 – 18:00</p>
+          <a href="mailto:cs@magmoa.kr">이메일: cs@magmoa.kr</a>
+          <a href="../faq.html">Frequently Asked Questions</a>
+          <a href="../contact.html">Contact Support</a>
+        </div>
+        <div class="brand-footer-links">
+          <h2>NEWS & COLLECTION</h2>
+          <p>새로운 여행 스팟과 마그넷 컬렉션,<br />마그모아의 소식을 만나보세요.</p>
+          <a class="footer-news-button" href="../notices.html">LATEST NEWS <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+      <div class="brand-footer-bottom">
+        <small>© 2026 MAGMOA. All rights reserved. Designed with precision.</small>
+        <a href="../contact.html">문의하기 ↗</a>
+      </div>
+    </footer>
+
+  <script>
+    const PRODUCTS = [
+      {
+        id: 1,
+        title: "청주 문암생태공원 맹꽁이 3D 마그넷",
+        category: "nature",
+        price: 18000,
+        badge: "BEST",
+        tag: "Nature & Park",
+        img1: "images/frog-product.svg",
+        img2: "images/frog-product.svg",
+        colors: ["#2e7d32", "#1b5e20"],
+        colorNames: ["Original Green", "Forest Relief"],
+        desc: "문암생태공원의 귀여운 맹꽁이와 시원한 폭포, 알록달록 튤립 꽃밭을 입체감 있게 살려낸 3D 오리지널 마그넷."
+      },
+      {
+        id: 2,
+        title: "청주랜드 동물원 안식처 3D 마그넷",
+        category: "nature",
+        price: 18000,
+        badge: "HOT",
+        tag: "Nature & Zoo",
+        img1: "images/zoo-product.svg",
+        img2: "images/zoo-product.svg",
+        colors: ["#d84315", "#f57c00"],
+        colorNames: ["Safari Lion", "Warm Orange"],
+        desc: "청주랜드 동물원의 아기자기한 동물 가족(사자, 곰, 말, 홍학)과 하단 꼬리 펜듈럼 구조가 돋보이는 3D 마그넷."
+      },
+      {
+        id: 3,
+        title: "청주고인쇄박물관 직지 3D 마그넷",
+        category: "culture",
+        price: 18000,
+        badge: "HISTORIC",
+        tag: "Culture & Museum",
+        img1: "images/jikji-product.svg",
+        img2: "images/jikji-product.svg",
+        colors: ["#5d4037", "#8d6e63"],
+        colorNames: ["Antique Wood", "Traditional Brown"],
+        desc: "청주고인쇄박물관의 건물과 푸른 산, 펼쳐진 고서를 입체적으로 담아낸 3D 마그넷."
+      },
+      {
+        id: 4,
+        title: "청주 청남대 대통령별장 3D 마그넷",
+        category: "heritage",
+        price: 18000,
+        badge: "NEW",
+        tag: "Heritage & Villa",
+        img1: "images/villa-product.svg",
+        img2: "images/villa-product.svg",
+        colors: ["#00695c", "#2e7d32"],
+        colorNames: ["Villa Green", "Autumn Maple"],
+        desc: "청남대의 청록색 기와 건물과 계단, 정원과 새 마스코트를 담은 3D 마그넷."
+      },
+      {
+        id: 5,
+        title: "청주 육거리종합시장 만두 3D 마그넷",
+        category: "culture",
+        price: 18000,
+        badge: "POPULAR",
+        tag: "Traditional Market",
+        img1: "images/market-product.svg",
+        img2: "images/market-product.svg",
+        colors: ["#1565c0", "#d32f2f"],
+        colorNames: ["Market Blue", "Festival Red"],
+        desc: "청주 육거리 전통시장의 기와문과 상인 캐릭터, 하단에 살랑거리는 수제 왕만두 캐릭터의 귀여운 3D 컬래버레이션."
+      },
+      {
+        id: 6,
+        title: "국립현대미술관 청주 3D 마그넷",
+        category: "culture",
+        price: 18000,
+        badge: "ART",
+        tag: "Modern Art",
+        img1: "images/mmca-product.svg",
+        img2: "images/mmca-product.svg",
+        colors: ["#fbc02d", "#f57f17"],
+        colorNames: ["Gold Frame", "Art Yellow"],
+        desc: "국립현대미술관 청주의 건물과 빛나는 구슬 아트, 그림을 그리는 꼬마 화가들을 담은 3D 마그넷."
+      },
+      {
+        id: 7,
+        title: "초정행궁 세종대왕 3D 마그넷",
+        category: "heritage",
+        price: 18000,
+        badge: "SPECIAL",
+        tag: "Heritage & King",
+        img1: "images/sejong-product.svg",
+        img2: "images/sejong-product.svg",
+        colors: ["#c62828", "#1565c0"],
+        colorNames: ["Royal Red", "Hangeul Blue"],
+        desc: "초정약수 행궁을 포근하게 품어 안은 세종대왕의 인자한 미소와 알록달록 한글 입체 자음 블록 마그넷."
+      },
+      {
+        id: 8,
+        title: "청주 성안길 3D 마그넷",
+        category: "culture",
+        price: 18000,
+        badge: "NEW",
+        tag: "Culture & Street",
+        img1: "images/seongangil-product.svg",
+        img2: "images/seongangil-product.svg",
+        colors: ["#2563eb", "#ec4899"],
+        colorNames: ["Rodeo Blue", "Neon Pink"],
+        desc: "청주의 대표 명소이자 활기찬 문화의 거리 성안길의 트렌디한 감성과 디테일을 아기자기한 3D 입체감으로 담아낸 마그넷."
+      },
+      {
+        id: 9,
+        title: "청주 상당산성 3D 마그넷",
+        category: "heritage",
+        price: 18000,
+        badge: "NEW",
+        tag: "Heritage & Fortress",
+        img1: "images/fortress-product.svg",
+        img2: "images/fortress-product.svg",
+        colors: ["#334155"],
+        colorNames: ["Original"],
+        desc: "상당산성의 성문과 돌담, 두 수문장의 모습을 담은 3D 마그넷."
+      },
+      {
+        id: 10,
+        title: "청주옛역사공원 3D 마그넷",
+        category: "culture",
+        price: 18000,
+        badge: "NEW",
+        tag: "History & Railway",
+        img1: "images/station-product.svg",
+        img2: "images/station-product.svg",
+        colors: ["#334155"],
+        colorNames: ["Original"],
+        desc: "옛 청주역 건물과 시계가 있는 증기기관차, 벤치의 두 인물을 담은 3D 마그넷."
+      }
+    ];
+
+    let currentCategory = 'all';
+    let currentGridCols = 4;
+    let cart = [];
+    let wishlist = [];
+
+    function renderProducts() {
+      const grid = document.getElementById('productGrid');
+      let filtered = currentCategory === 'all' 
+        ? [...PRODUCTS] 
+        : PRODUCTS.filter(p => p.category === currentCategory);
+
+      const sortValue = document.getElementById('sortSelect').value;
+      if (sortValue === 'price-low') {
+        filtered.sort((a, b) => a.price - b.price);
+      } else if (sortValue === 'price-high') {
+        filtered.sort((a, b) => b.price - a.price);
+      } else if (sortValue === 'newest') {
+        filtered.sort((a, b) => b.id - a.id);
+      }
+
+      grid.innerHTML = filtered.map(product => {
+        const fallbackImg = `https://placehold.co/600x750/f4f4f4/111111?text=${encodeURIComponent(product.title)}`;
+        return `
+          <div class="group flex flex-col cursor-pointer reveal active" data-id="${product.id}">
+            <a href="detail_s.html?id=${product.id}" class="product-card-media paper-cut paper-cut-${((product.id - 1) % 4) + 1} relative aspect-[4/5] bg-neutral-100 overflow-hidden mb-4 rounded-none border border-neutral-200/60 p-4 flex items-center justify-center block">
+              <img src="${product.img1}" 
+                   alt="${product.title}" 
+                   class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 ease-out"
+                   onerror="this.onerror=null; this.src='${fallbackImg}';" />
+
+              ${product.badge ? `<span class="absolute top-3 left-3 bg-brand-black text-white text-[10px] font-extrabold px-2.5 py-1 tracking-widest uppercase z-10">${product.badge}</span>` : ''}
+
+              <button onclick="event.preventDefault(); event.stopPropagation(); toggleWishlist(${product.id})" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center text-brand-black opacity-0 group-hover:opacity-100 transition-all hover:bg-white hover:scale-110 z-10">
+                <i class="${wishlist.includes(product.id) ? 'fa-solid fa-heart text-brand-accent' : 'fa-regular fa-heart'}"></i>
+              </button>
+
+              <div class="absolute bottom-0 inset-x-0 bg-white/95 backdrop-blur-md p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out border-t border-neutral-200 z-20">
+                <button onclick="event.preventDefault(); event.stopPropagation(); addToCart(${product.id})" class="w-full bg-brand-black text-white text-xs font-bold py-2.5 uppercase tracking-widest hover:bg-neutral-800 transition-colors">
+                  + Quick Add (₩${product.price.toLocaleString()})
+                </button>
+              </div>
+            </a>
+
+            <a href="detail_s.html?id=${product.id}" class="flex justify-between items-start pt-1 block">
+              <div>
+                <p class="text-[11px] font-sans tabular-nums uppercase text-neutral-400 mb-0.5">${product.tag}</p>
+                <h3 class="font-bold text-sm text-brand-black group-hover:text-neutral-500 transition-colors">${product.title}</h3>
+              </div>
+              <span class="font-bold text-sm text-brand-black">₩${product.price.toLocaleString()}</span>
+            </a>
+
+
+          </div>
+        `;
+      }).join('');
+    }
+
+    function setGridColumns(cols) {
+      currentGridCols = cols;
+      const grid = document.getElementById('productGrid');
+      
+      grid.className = "grid gap-x-6 gap-y-12 transition-all duration-300 ";
+      if (cols === 2) {
+        grid.className += "grid-cols-1 sm:grid-cols-2";
+      } else if (cols === 3) {
+        grid.className += "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
+      } else if (cols === 4) {
+        grid.className += "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4";
+      }
+
+      [2, 3, 4].forEach(c => {
+        const btn = document.getElementById(`gridBtn${c}`);
+        if (btn) {
+          if (c === cols) {
+            btn.className = "p-2 text-xs font-sans tabular-nums border bg-brand-black text-white transition-colors";
+          } else {
+            btn.className = "p-2 text-xs font-sans tabular-nums border hover:bg-neutral-100 transition-colors";
+          }
+        }
+      });
+    }
+
+    function filterCategory(cat, btnElement) {
+      currentCategory = cat;
+      const buttons = document.querySelectorAll('.category-btn');
+      buttons.forEach(b => {
+        b.className = "category-btn px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-neutral-100 text-neutral-600 hover:bg-neutral-200 whitespace-nowrap transition-all";
+      });
+      btnElement.className = "category-btn active px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-brand-black text-white whitespace-nowrap transition-all";
+      renderProducts();
+    }
+
+    function sortProducts() {
+      renderProducts();
+    }
+
+    function addToCart(productId, selectedColorIdx = 0) {
+      const product = PRODUCTS.find(p => p.id === productId);
+      if (!product) return;
+
+      const existingItem = cart.find(item => item.id === productId && item.colorIdx === selectedColorIdx);
+      if (existingItem) {
+        existingItem.qty += 1;
+      } else {
+        cart.push({
+          id: product.id,
+          title: product.title,
+          price: product.price,
+          img: product.img1,
+          colorName: product.colorNames[selectedColorIdx] || 'Default',
+          colorIdx: selectedColorIdx,
+          qty: 1
+        });
+      }
+
+      updateCartUI();
+      showToast(`'${product.title}' 장바구니에 담겼습니다.`);
+      toggleCartDrawer(true);
+    }
+
+    function updateCartQty(productId, colorIdx, delta) {
+      const item = cart.find(i => i.id === productId && i.colorIdx === colorIdx);
+      if (item) {
+        item.qty += delta;
+        if (item.qty <= 0) {
+          cart = cart.filter(i => !(i.id === productId && i.colorIdx === colorIdx));
+        }
+      }
+      updateCartUI();
+    }
+
+    function updateCartUI() {
+      const cartBadge = document.getElementById('cartBadge');
+      const cartItemsList = document.getElementById('cartItemsList');
+      const cartDrawerItemCount = document.getElementById('cartDrawerItemCount');
+      
+      const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      
+      if (cartBadge) cartBadge.innerText = totalQty;
+      if (cartDrawerItemCount) cartDrawerItemCount.innerText = totalQty;
+
+      const freeShippingGoal = 50000;
+      const freeShippingBar = document.getElementById('freeShippingBar');
+      const freeShippingRemain = document.getElementById('freeShippingRemain');
+      
+      if (freeShippingBar && freeShippingRemain) {
+        if (subtotal >= freeShippingGoal) {
+          freeShippingBar.style.width = '100%';
+          freeShippingRemain.innerHTML = `<span class="text-emerald-600 font-bold">무료배송 혜택 적용 완료!</span>`;
+        } else {
+          const pct = Math.min(100, (subtotal / freeShippingGoal) * 100);
+          const diff = freeShippingGoal - subtotal;
+          freeShippingBar.style.width = `${pct}%`;
+          freeShippingRemain.innerText = `₩${diff.toLocaleString()} 추가 담을 시 무료배송`;
+        }
+      }
+
+      if (cartItemsList) {
+        if (cart.length === 0) {
+          cartItemsList.innerHTML = `
+            <div class="text-center py-12 text-neutral-400">
+              <i class="fa-solid fa-bag-shopping text-3xl mb-3 opacity-40"></i>
+              <p class="text-xs font-semibold uppercase">장바구니가 비어있습니다.</p>
+            </div>
+          `;
+        } else {
+          cartItemsList.innerHTML = cart.map(item => `
+            <div class="flex gap-4 border-b border-neutral-100 pb-4">
+              <img src="${item.img}" alt="${item.title}" class="w-16 h-20 object-contain bg-neutral-100 border border-neutral-200 p-1" onerror="this.src='https://placehold.co/100x120/f4f4f4/111111?text=MAGMOA';" />
+              <div class="flex-1 flex flex-col justify-between">
+                <div>
+                  <div class="flex justify-between items-start">
+                    <h4 class="text-xs font-bold text-brand-black">${item.title}</h4>
+                    <button onclick="updateCartQty(${item.id}, ${item.colorIdx}, -999)" class="text-neutral-400 hover:text-brand-black text-xs">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  </div>
+                  <p class="text-xs font-bold mt-1">₩${item.price.toLocaleString()}</p>
+                </div>
+                <div class="flex items-center space-x-3 border border-neutral-200 w-max px-2 py-0.5">
+                  <button onclick="updateCartQty(${item.id}, ${item.colorIdx}, -1)" class="text-xs font-bold hover:text-neutral-500">-</button>
+                  <span class="text-xs font-sans tabular-nums font-semibold px-1">${item.qty}</span>
+                  <button onclick="updateCartQty(${item.id}, ${item.colorIdx}, 1)" class="text-xs font-bold hover:text-neutral-500">+</button>
+                </div>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+
+      const shippingCost = subtotal >= freeShippingGoal || subtotal === 0 ? 0 : 3000;
+      const subtotalEl = document.getElementById('cartSubtotal');
+      const shippingEl = document.getElementById('cartShipping');
+      const totalEl = document.getElementById('cartTotal');
+
+      if (subtotalEl) subtotalEl.innerText = `₩${subtotal.toLocaleString()}`;
+      if (shippingEl) shippingEl.innerText = shippingCost === 0 ? 'FREE' : `₩${shippingCost.toLocaleString()}`;
+      if (totalEl) totalEl.innerText = `₩${(subtotal + shippingCost).toLocaleString()}`;
+    }
+
+    function toggleCartDrawer(openForce = null) {
+      const cartDrawer = document.getElementById('cartDrawer');
+      const cartContainer = document.getElementById('cartContainer');
+      if (!cartDrawer || !cartContainer) return;
+      const isOpen = !cartDrawer.classList.contains('pointer-events-none');
+
+      if (openForce === true || (!isOpen && openForce === null)) {
+        cartDrawer.classList.remove('opacity-0', 'pointer-events-none');
+        cartContainer.classList.remove('translate-x-full');
+      } else {
+        cartDrawer.classList.add('opacity-0', 'pointer-events-none');
+        cartContainer.classList.add('translate-x-full');
+      }
+    }
+
+    function toggleWishlist(productId) {
+      if (wishlist.includes(productId)) {
+        wishlist = wishlist.filter(id => id !== productId);
+        showToast('MY LIKE에서 삭제되었습니다.');
+      } else {
+        wishlist.push(productId);
+        showToast('MY LIKE에 추가되었습니다.');
+      }
+      renderProducts();
+      updateWishlistBadge();
+    }
+
+    function updateWishlistBadge() {
+      const badge = document.getElementById('wishlistBadge');
+      const mobileBadge = document.getElementById('mobileWishlistCount');
+      if (badge) badge.innerText = wishlist.length;
+      if (mobileBadge) mobileBadge.innerText = wishlist.length;
+    }
+
+    let isLoggedIn = true;
+
+    function toggleLoginModal() {
+      const modal = document.getElementById('loginModal');
+      const container = document.getElementById('loginContainer');
+      if (!modal || !container) return;
+
+      const isOpen = !modal.classList.contains('pointer-events-none');
+      if (!isOpen) {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        container.classList.remove('scale-95');
+      } else {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        container.classList.add('scale-95');
+      }
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      isLoggedIn = true;
+      const authBtn = document.getElementById('authBtn');
+      if (authBtn) authBtn.innerText = 'MY PAGE';
+      showToast('로그인되었습니다. 마그모아 회원 혜택을 이용해보세요.');
+      toggleLoginModal();
+    }
+
+    function toggleMyPageModal() {
+      if (!isLoggedIn) {
+        showToast('로그인이 필요한 서비스입니다.');
+        toggleLoginModal();
+        return;
+      }
+      const modal = document.getElementById('myPageModal');
+      const container = document.getElementById('myPageContainer');
+      if (!modal || !container) return;
+
+      const isOpen = !modal.classList.contains('pointer-events-none');
+      if (!isOpen) {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        container.classList.remove('scale-95');
+      } else {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        container.classList.add('scale-95');
+      }
+    }
+
+    function handleLogout() {
+      isLoggedIn = false;
+      const authBtn = document.getElementById('authBtn');
+      if (authBtn) authBtn.innerText = 'LOG IN';
+      toggleMyPageModal();
+      showToast('성공적으로 로그아웃되었습니다.');
+    }
+
+    function toggleWishlistModal() {
+      renderWishlistUI();
+      const modal = document.getElementById('wishlistModal');
+      const container = document.getElementById('wishlistContainer');
+      if (!modal || !container) return;
+
+      const isOpen = !modal.classList.contains('pointer-events-none');
+      if (!isOpen) {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        container.classList.remove('scale-95');
+      } else {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        container.classList.add('scale-95');
+      }
+    }
+
+    function renderWishlistUI() {
+      const container = document.getElementById('wishlistItemsList');
+      const countEl = document.getElementById('wishlistModalCount');
+      if (!container) return;
+
+      if (countEl) countEl.innerText = wishlist.length;
+
+      if (wishlist.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 text-neutral-400">
+            <i class="fa-regular fa-heart text-4xl mb-3 opacity-30"></i>
+            <p class="text-xs font-semibold uppercase">MY LIKE에 담긴 상품이 없습니다.</p>
+            <p class="text-[11px] text-neutral-400 mt-1">마그넷 카탈로그에서 하트 아이콘을 눌러 추가해보세요.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const likedProducts = PRODUCTS.filter(p => wishlist.includes(p.id));
+
+      container.innerHTML = likedProducts.map(p => `
+        <div class="flex items-center justify-between gap-4 p-3 bg-neutral-50 border border-neutral-200">
+          <div class="flex items-center gap-3">
+            <img src="${p.img1}" alt="${p.title}" class="w-14 h-14 object-contain bg-white border border-neutral-200 p-1" />
+            <div>
+              <p class="text-[10px] font-sans tabular-nums text-neutral-400 uppercase">${p.tag}</p>
+              <h4 class="text-xs font-bold text-brand-black">${p.title}</h4>
+              <p class="text-xs font-extrabold mt-0.5">₩${p.price.toLocaleString()}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="addToCart(${p.id}); toggleWishlistModal();" class="bg-brand-black text-white text-[11px] font-bold px-3 py-2 hover:bg-neutral-800 transition-colors">
+              + BAG 담기
+            </button>
+            <button onclick="toggleWishlist(${p.id}); renderWishlistUI();" class="text-neutral-400 hover:text-brand-accent p-2" title="삭제">
+              <i class="fa-solid fa-trash-can text-xs"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openQuickView(productId) {
+      const product = PRODUCTS.find(p => p.id === productId);
+      if (!product) return;
+
+      const container = document.getElementById('quickViewContent');
+      if (!container) return;
+
+      const fallbackImg = `https://placehold.co/600x750/f4f4f4/111111?text=${encodeURIComponent(product.title)}`;
+
+      container.innerHTML = `
+        <div>
+          <div class="aspect-square bg-neutral-100 overflow-hidden border border-neutral-200 mb-3 p-4 flex items-center justify-center">
+            <img id="modalMainImg" src="${product.img1}" alt="${product.title}" class="w-full h-full object-contain" onerror="this.src='${fallbackImg}';" />
+          </div>
+        </div>
+
+        <div class="space-y-5">
+          <div>
+            <span class="text-xs font-sans tabular-nums uppercase text-neutral-400 tracking-widest">${product.tag}</span>
+            <h2 class="font-display font-extrabold text-2xl text-brand-black mt-1">${product.title}</h2>
+            <p class="font-extrabold text-xl text-brand-black mt-2">₩${product.price.toLocaleString()}</p>
+          </div>
+
+          <p class="text-xs text-neutral-600 leading-relaxed font-light">
+            ${product.desc}
+          </p>
+
+          <div class="pt-4 space-y-3">
+            <button onclick="addToCart(${product.id}); closeQuickView();" class="w-full bg-brand-black text-white font-bold text-xs uppercase tracking-widest py-4 hover:bg-neutral-800 transition-colors">
+              ADD TO BAG (₩${product.price.toLocaleString()})
+            </button>
+            <button onclick="toggleWishlist(${product.id})" class="w-full bg-neutral-100 text-brand-black font-semibold text-xs uppercase tracking-widest py-3 border border-neutral-200 hover:bg-neutral-200 transition-colors">
+              <i class="fa-regular fa-heart mr-1"></i> ADD TO WISHLIST
+            </button>
+          </div>
+        </div>
+      `;
+
+
+      const modal = document.getElementById('quickViewModal');
+      const modalCont = document.getElementById('quickViewContainer');
+      if (modal && modalCont) {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modalCont.classList.remove('scale-95');
+      }
+    }
+
+    function closeQuickView() {
+      const modal = document.getElementById('quickViewModal');
+      const modalCont = document.getElementById('quickViewContainer');
+      if (modal && modalCont) {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        modalCont.classList.add('scale-95');
+      }
+    }
+
+    function toggleSearchModal() {
+      const searchModal = document.getElementById('searchModal');
+      if (!searchModal) return;
+      const isOpen = !searchModal.classList.contains('pointer-events-none');
+      if (!isOpen) {
+        searchModal.classList.remove('opacity-0', 'pointer-events-none');
+        const input = document.getElementById('searchInput');
+        if (input) input.focus();
+      } else {
+        searchModal.classList.add('opacity-0', 'pointer-events-none');
+      }
+    }
+
+    function handleSearch() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const resultsContainer = document.getElementById('searchResults');
+      if (!resultsContainer) return;
+      
+      if (!query) {
+        resultsContainer.innerHTML = '';
+        return;
+      }
+
+      const matches = PRODUCTS.filter(p => p.title.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query));
+
+      if (matches.length === 0) {
+        resultsContainer.innerHTML = `<p class="text-xs text-neutral-400 py-4">검색어 "${query}"에 해당하는 상품이 없습니다.</p>`;
+      } else {
+        resultsContainer.innerHTML = matches.map(p => `
+          <div onclick="openQuickView(${p.id}); toggleSearchModal();" class="flex items-center justify-between p-3 bg-neutral-50 border border-neutral-200 hover:bg-neutral-100 cursor-pointer">
+            <div class="flex items-center space-x-3">
+              <img src="${p.img1}" class="w-10 h-10 object-contain p-0.5" onerror="this.src='https://placehold.co/100x100/f4f4f4/111111?text=MAGMOA';" />
+              <div>
+                <p class="text-xs font-bold text-brand-black">${p.title}</p>
+                <p class="text-[10px] text-neutral-400">${p.tag}</p>
+              </div>
+            </div>
+            <span class="text-xs font-bold">₩${p.price.toLocaleString()}</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      if (!toast || !toastMsg) return;
+      toastMsg.innerText = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3000);
+    }
+
+    function simulateCheckout() {
+      if (cart.length === 0) {
+        showToast('장바구니가 비어있습니다.');
+        return;
+      }
+      showToast('Redirecting to Secure Payment Portal...');
+      setTimeout(() => {
+        showToast('주문 결제가 정상적으로 처리되었습니다.');
+        cart = [];
+        updateCartUI();
+        toggleCartDrawer();
+      }, 1000);
+    }
+
+    function scrollToShop() {
+      const shopEl = document.getElementById('shop');
+      if (shopEl) shopEl.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function closeMobileNav() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      const mobileMenuContainer = document.getElementById('mobileMenuContainer');
+      if (mobileMenu && mobileMenuContainer) {
+        mobileMenu.classList.add('opacity-0', 'pointer-events-none');
+        mobileMenuContainer.classList.add('-translate-x-full');
+      }
+    }
+
+    let currentHeroIndex = 0;
+    let heroTimer = null;
+
+    function setHeroSlide(index) {
+      const slides = document.querySelectorAll('.hero-slide');
+      const dots = document.querySelectorAll('.hero-dot');
+      const numLabel = document.getElementById('heroSlideNum');
+      if (!slides.length) return;
+
+      currentHeroIndex = (index + slides.length) % slides.length;
+
+      slides.forEach((slide, i) => {
+        const content = slide.querySelector('.hero-content');
+        if (i === currentHeroIndex) {
+          slide.classList.remove('opacity-0', 'pointer-events-none');
+          slide.classList.add('opacity-100');
+
+          if (content) {
+            setTimeout(() => {
+              content.classList.remove('opacity-0', 'translate-y-8');
+              content.classList.add('opacity-100', 'translate-y-0');
+            }, 100);
+          }
+        } else {
+          slide.classList.add('opacity-0', 'pointer-events-none');
+          slide.classList.remove('opacity-100');
+
+          if (content) {
+            content.classList.add('opacity-0', 'translate-y-8');
+            content.classList.remove('opacity-100', 'translate-y-0');
+          }
+        }
+      });
+
+      dots.forEach((dot, i) => {
+        if (i === currentHeroIndex) {
+          dot.className = "hero-dot w-8 h-1 bg-white transition-all rounded-full";
+        } else {
+          dot.className = "hero-dot w-8 h-1 bg-white/40 hover:bg-white/70 transition-all rounded-full";
+        }
+      });
+
+      if (numLabel) {
+        numLabel.innerText = `0${currentHeroIndex + 1} / 0${slides.length}`;
+      }
+
+      resetHeroTimer(5000);
+    }
+
+    function changeHeroSlide(direction) {
+      setHeroSlide(currentHeroIndex + direction);
+    }
+
+    function startHeroTimer(delay = 5000) {
+      heroTimer = setInterval(() => {
+        changeHeroSlide(1);
+      }, delay);
+    }
+
+    function resetHeroTimer(delay = 5000) {
+      if (heroTimer) clearInterval(heroTimer);
+      startHeroTimer(delay);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const enterOverlay = document.getElementById('pageEnterOverlay');
+      if (enterOverlay) {
+        setTimeout(() => {
+          enterOverlay.style.opacity = '0';
+        }, 80);
+      }
+
+      const closeMobileMenu = document.getElementById('closeMobileMenu');
+      if (closeMobileMenu) {
+        closeMobileMenu.addEventListener('click', closeMobileNav);
+      }
+
+      renderProducts();
+      setGridColumns(4);
+      updateCartUI();
+      updateWishlistBadge();
+      
+      setHeroSlide(0);
+    });
+  </script>
+
+</body>
+</html>

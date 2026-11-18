@@ -1,0 +1,21 @@
+/* Motion changes only opacity and compositing; existing dimensions stay intact. */
+.reveal { opacity: 1; transform: none; }
+html.store-motion .store-reveal {
+  opacity: 0;
+  translate: 0 36px;
+  transition: opacity .8s cubic-bezier(.22,1,.36,1), translate .8s cubic-bezier(.22,1,.36,1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+html.store-motion .store-reveal.is-visible { opacity: 1; translate: 0 0; }
+#lookbook .paper-photo-corner {
+  clip-path: inset(var(--lookbook-inset, 0%) 0 round 2px);
+}
+#lookbook .paper-photo-corner > img {
+  scale: var(--lookbook-scale, 1);
+  transform-origin: center;
+}
+@media (prefers-reduced-motion: reduce) {
+  html.store-motion .store-reveal { opacity: 1; translate: none; transition: none; }
+  #lookbook .paper-photo-corner { clip-path: none; }
+  #lookbook .paper-photo-corner > img { scale: 1; }
+}

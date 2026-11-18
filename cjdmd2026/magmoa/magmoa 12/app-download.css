@@ -1,0 +1,20 @@
+.app-hero-actions { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:14px; }
+.app-hero-actions .app-download-secondary { font-size:13px; font-weight:600; padding:14px 4px; color:inherit; text-decoration:none; }
+.app-get { background:#2f4bff; color:#fff; padding:clamp(56px,7vw,104px) clamp(24px,6vw,100px); overflow:hidden; position:relative; }
+.app-get__inner { position:relative; z-index:1; max-width:1200px; margin:auto; display:flex; align-items:center; justify-content:space-between; gap:48px; }
+.app-get__eyebrow { font-size:11px; letter-spacing:.16em; font-weight:700; color:#b9f300; }
+.app-get h2 { font-size:clamp(32px,4vw,58px); line-height:1.2; letter-spacing:-.04em; font-weight:800; margin:18px 0 20px; color:#fff; }
+.app-get p { font-size:15px; line-height:1.8; color:#ffffffc7; max-width:34em; }
+.app-store-badge { display:inline-flex; gap:14px; align-items:center; justify-content:center; border:1px solid #ffffff45; border-radius:14px; background:#111; color:#fff!important; padding:14px 24px; text-decoration:none; transition:transform .25s,background .25s; min-width:204px; width:max-content; white-space:nowrap; }
+.app-store-badge:hover { transform:translateY(-4px); background:#242424; }
+.app-store-badge:focus-visible { outline:3px solid #b9f300;outline-offset:5px; }
+.app-store-badge svg { width:30px; height:35px; fill:currentColor;flex-shrink:0; }
+.app-store-badge span { display:flex;flex-direction:column;text-align:left;gap:1px; }
+.app-store-badge small { font-size:11px;line-height:1.3; }
+.app-store-badge strong { font-size:24px;line-height:1.2;letter-spacing:-.025em; font-weight:600; }
+.app-get__action { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; max-width:460px; }
+.app-store-badge .app-store-badge__play { display:grid; place-items:center; width:30px; height:35px; flex-shrink:0; font-size:28px; line-height:1; }
+.app-get__action .app-get__device { font-size:12px; flex-basis:100%; text-align:center; margin:0; color:#ffffffaa; }
+.app-get::after { content:'↗';position:absolute;right:5%;top:-90px;font-size:480px;line-height:1;color:#ffffff06;pointer-events:none; }
+@media(max-width:780px) { .app-get__inner { display:block; } .app-get__action { justify-content:flex-start; margin-top:30px; } .app-get__action .app-get__device { text-align:left; } }
+@media(prefers-reduced-motion:reduce) { .app-store-badge { transition:none; } }

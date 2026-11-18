@@ -1,0 +1,52 @@
+/* Shared CTA color exchange across the brand and support pages. */
+body .button, body > header .nav-contact {
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+  white-space: nowrap;
+}
+body .button:is(:hover,:focus-visible) {
+  background: #b9f300 !important;
+  color: #171b26 !important;
+}
+body > header .nav-contact:is(:hover,:focus-visible),
+body .app-layout-hero__copy .button:is(:hover,:focus-visible) {
+  background: #2f4bff !important;
+  color: #fff !important;
+}
+body .button:focus-visible, body > header .nav-contact:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+body main :is(h1,h2,h3) { word-break: keep-all; overflow-wrap: normal; text-wrap: wrap; }
+body main :is(p, .feature-tab-copy > span, .consent, .notice-list-heading > span) {
+  word-break: keep-all;
+  overflow-wrap: normal;
+  text-wrap: wrap;
+}
+/* Keep short labels together while allowing long Korean sentences to reflow. */
+body main :is(.about-process-copy p,.review-card p,.step-photo p) { word-break: keep-all; }
+body .consent { align-items: flex-start; }
+body .consent input { flex-shrink: 0; }
+@media(prefers-reduced-motion:reduce) {
+  body .button, body > header .nav-contact { transition: none; }
+}
+
+/* Moderate reading widths: natural wrapping without excessive hard breaks. */
+.about-page .about-hero-copy > p { max-width: 34em; }
+.about-page :is(.about-manifesto,.about-value) .about-pin > p {
+  width: 100%; max-width: 46em; margin-left: auto; margin-right: auto;
+  font-size: clamp(16px,1.25vw,20px); line-height: 1.75;
+}
+.about-page .about-video-sticky > div:first-child > p { max-width: 31em; }
+.about-page :is(.about-process-copy,.about-difference-grid) p { line-height: 1.7; }
+.home .hero-card > p { max-width: 32em; }
+.app-layout-hero__copy > p { max-width: 32em; }
+.page .page-intro > p { max-width: 34em; }
+.page :is(.notice-item,.faq-item) p { max-width: 48em; }
+@media(max-width:700px) {
+  .about-page :is(.about-manifesto,.about-value) .about-pin > p { max-width: 100%; }
+}
+
+/* Join the final app section directly to the footer. */
+body.app-landing .page.app-page-content { padding-bottom: 0; margin-bottom: 0; }
+body.app-landing #main { padding-bottom: 0; margin-bottom: 0; }
+body.app-landing #main + .brand-footer { margin-top: 0; }

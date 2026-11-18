@@ -1,0 +1,15 @@
+body.home-page .hero { overflow: hidden; isolation: isolate; }
+body.home-page .hero-panorama { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+body.home-page .hero-art { z-index: 0; pointer-events: none; transform: none; object-position: center; }
+body.home-page .hero-person { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; pointer-events: none; z-index: 0; }
+@media(max-width:650px) { body.home-page .hero-person { object-position: 65% center; } }
+/* Match the source portrait size inside the original cover composition. */
+body.home-page .hero-person {
+  inset: auto;
+  left: var(--person-left, 0px);
+  top: var(--person-top, 0px);
+  width: var(--person-width, 100%);
+  height: var(--person-height, 100%);
+  max-width: none;
+  object-fit: fill;
+}
