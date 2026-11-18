@@ -1,0 +1,18 @@
+#tabStory { margin-inline:auto; }
+.magnet-story { background:#fff; color:#18223a; overflow:hidden; }
+.magnet-story-intro { text-align:center; padding:64px 32px 24px; background:#f0f5ff; }
+.magnet-story span { font-size:11px; letter-spacing:.16em; font-weight:700; color:#3154eb; }
+.magnet-story h2 { font-size:clamp(25px,4vw,42px); line-height:1.35; font-weight:750; letter-spacing:-.045em; margin:20px 0 14px; }
+.magnet-story p { font-size:15px; line-height:1.9; color:#5c677a; word-break:keep-all; }
+.magnet-story-intro img { width:76%; max-height:530px; object-fit:contain; margin:36px auto 0; display:block; }
+.magnet-story-copy { padding:48px 36px; }
+.magnet-story h3 { font-size:clamp(23px,3vw,34px); line-height:1.45; letter-spacing:-.04em; font-weight:700; margin:18px 0; }
+.magnet-lifestyle { text-align:center; padding-top:20px; }
+.magnet-lifestyle>img { width:100%; display:block; }
+.magnet-story .magnet-image-note { font-size:11px; color:#818896; padding:12px 20px; }
+.magnet-design-points {display:grid;grid-template-columns:1fr 1fr;gap:32px;padding:24px 36px 48px;background:#f8faff;}
+.magnet-design-points .magnet-story-copy {padding:24px 0;}
+.magnet-design-points h3 {font-size:24px;}
+.magnet-ending { padding:70px 24px; text-align:center; background:#123fee; }
+.magnet-ending span,.magnet-ending h3,.magnet-ending p { color:white; }
+@media(max-width:600px) { .magnet-story-intro {padding:42px 20px 20px;} .magnet-story-intro img {width:95%;} .magnet-story-copy {padding:30px 12px;} .magnet-design-points {grid-template-columns:1fr;gap:0;padding:12px 24px 28px;} .magnet-design-points .magnet-story-copy + .magnet-story-copy {border-top:1px solid #dfe6f1;} }

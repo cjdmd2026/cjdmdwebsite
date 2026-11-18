@@ -1,0 +1,21 @@
+@media (hover: hover) and (pointer: fine) {
+  html.has-custom-cursor, html.has-custom-cursor * { cursor: none !important; }
+  .magmoa-cursor {
+    position: fixed; z-index: 2147483647; top: -100px; left: -100px;
+    width: 44px; height: 40.63px;
+    background: url('assets/cursor-paper-plane.svg') center / contain no-repeat;
+    pointer-events: none; opacity: 0;
+    /* Anchor the pointed nose to the actual click location. */
+    transform: translate(-3px, -3px);
+    transition: opacity .12s ease; will-change: left, top;
+  }
+  .magmoa-cursor.is-visible { opacity: 1; }
+  .magmoa-cursor.is-hovering { filter: drop-shadow(0 1px 2px #171b2440); }
+}
+.magmoa-paper-piece {
+  position: fixed; z-index: 2147483646; width: 7px; height: 9px;
+  pointer-events: none; background: #b9f300;
+  clip-path: polygon(0 0, 100% 20%, 32% 100%);
+  filter: drop-shadow(0 1px 1px #171b2450);
+}
+@media(prefers-reduced-motion:reduce) { .magmoa-cursor { transition: none; } }

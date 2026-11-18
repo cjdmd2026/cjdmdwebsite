@@ -1,0 +1,17 @@
+/* Animate wrappers so existing slide transforms and crossfades stay intact. */
+@media(min-width:801px) and (prefers-reduced-motion:no-preference) {
+ .about-photo-stack.has-scroll-image-motion img:first-child {
+   transform: translateY(calc((.5 - var(--image-progress))*140px)) rotate(calc(-16deg + var(--image-progress)*12deg));
+ }
+ .about-photo-stack.has-scroll-image-motion img:nth-child(2) {
+   transform: translateY(calc((var(--image-progress) - .5)*110px)) rotate(calc(18deg - var(--image-progress)*16deg));
+ }
+ .about-way-visual.has-scroll-image-motion {
+   transform: perspective(1100px) translateY(calc((.5 - var(--image-progress))*60px)) rotateY(calc(-8deg + var(--image-progress)*16deg)) rotateZ(calc(-5deg + var(--image-progress)*10deg)) scale(calc(.94 + var(--image-progress)*.06));
+   transform-origin: center;
+ }
+ .feature-editorial-visual.has-scroll-image-motion {
+   transform: translateY(calc((.5 - var(--image-progress))*65px)) rotate(calc(5deg - var(--image-progress)*10deg)) scale(calc(.96 + var(--image-progress)*.04));
+   transform-origin: center;
+ }
+}
