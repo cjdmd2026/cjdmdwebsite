@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#A9DED5">
+  <title>직지 체험 결과 — 새로운 직지</title>
+  <link rel="stylesheet" href="../../css/tokens.css">
+  <link rel="stylesheet" href="../survey.css?v=text-minus-2-1">
+</head>
+<body class="survey-body">
+  <main class="survey-page">
+    <div class="survey-topbar"><a class="survey-brand" href="../../#top">새로운 직지</a><a href="../../#top">웹사이트로 돌아가기</a></div>
+    <article class="survey-card survey-result-card">
+      <header class="survey-result-header">
+        <div class="survey-eyebrow">YOUR JIKJI JOURNEY</div>
+        <h1 class="survey-title">직지 체험 전과 후,<br>얼마나 달라졌을까요?</h1>
+        <h2 class="survey-result-subtitle">직지를 알아가는 우리의 변화</h2>
+        <p class="survey-intro">체험 전과 체험 후에 남겨주신 답변을 비교해 보았어요.<br>찍쥐와 짹째와 함께한 직지 탐험이 어떤 변화를 만들었는지 확인해 보세요!</p>
+      </header>
+      <div class="survey-status" id="result-status" role="status" aria-live="polite">응답을 불러오고 있어요.</div>
+      <section class="survey-access-receipt" id="survey-access-receipt" aria-label="다른 기기에서 결과 확인하기" hidden>
+        <h2>결과를 다시 확인할 때 필요해요</h2>
+        <p>다른 기기에서 결과를 열려면 참여번호와 결과 확인 번호를 함께 사용하세요.</p>
+        <code id="result-participant-code"></code>
+        <code id="result-token"></code>
+        <button class="survey-button" id="copy-result-access" type="button">두 번호 복사</button>
+        <p class="survey-status" id="result-access-copy-status" role="status" aria-live="polite"></p>
+      </section>
+      <section class="survey-metrics" id="survey-metrics" aria-label="개인별 체험 전후 설문 결과" hidden>
+        <article class="survey-metric" data-metric="understanding" data-kind="scale">
+          <div class="survey-metric__head"><h2>직지 이해도</h2><span class="survey-metric__unit">자기평가 · 5점 척도</span></div>
+          <div class="survey-chart" role="img" aria-label="직지 이해도 체험 전후 비교"><div class="survey-chart-row"><span class="survey-chart-row__label">체험 전</span><div class="survey-track survey-track--pre"><span data-bar="pre"></span></div><strong class="survey-chart-row__value" data-score="pre"></strong></div><div class="survey-chart-row"><span class="survey-chart-row__label">체험 후</span><div class="survey-track survey-track--post"><span data-bar="post"></span></div><strong class="survey-chart-row__value" data-score="post"></strong></div></div>
+          <div class="survey-metric__head"><span class="survey-metric__change" data-change></span></div>
+        </article>
+        <article class="survey-metric" data-metric="knowledge" data-kind="binary">
+          <div class="survey-metric__head"><h2>직지 지식</h2><span class="survey-metric__unit">문항 1개 · 정답 여부</span></div>
+          <div class="survey-chart" role="img" aria-label="직지 지식 문항의 체험 전후 정답 여부"><div class="survey-chart-row"><span class="survey-chart-row__label">체험 전</span><div class="survey-track survey-track--pre"><span data-bar="pre"></span></div><strong class="survey-chart-row__value" data-score="pre"></strong></div><div class="survey-chart-row"><span class="survey-chart-row__label">체험 후</span><div class="survey-track survey-track--post"><span data-bar="post"></span></div><strong class="survey-chart-row__value" data-score="post"></strong></div></div>
+          <div class="survey-metric__head"><span class="survey-metric__change" data-change></span></div>
+        </article>
+        <article class="survey-metric" data-metric="awareness" data-kind="scale">
+          <div class="survey-metric__head"><h2>세계기록유산 인지도</h2><span class="survey-metric__unit">자기보고 인지도 · 5점 척도</span></div>
+          <div class="survey-chart" role="img" aria-label="세계기록유산 인지도 체험 전후 비교"><div class="survey-chart-row"><span class="survey-chart-row__label">체험 전</span><div class="survey-track survey-track--pre"><span data-bar="pre"></span></div><strong class="survey-chart-row__value" data-score="pre"></strong></div><div class="survey-chart-row"><span class="survey-chart-row__label">체험 후</span><div class="survey-track survey-track--post"><span data-bar="post"></span></div><strong class="survey-chart-row__value" data-score="post"></strong></div></div>
+          <div class="survey-metric__head"><span class="survey-metric__change" data-change></span></div>
+        </article>
+        <article class="survey-metric" data-metric="interest" data-kind="scale">
+          <div class="survey-metric__head"><h2>직지 학습 관심도</h2><span class="survey-metric__unit">자기평가 · 5점 척도</span></div>
+          <div class="survey-chart" role="img" aria-label="직지 학습 관심도 체험 전후 비교"><div class="survey-chart-row"><span class="survey-chart-row__label">체험 전</span><div class="survey-track survey-track--pre"><span data-bar="pre"></span></div><strong class="survey-chart-row__value" data-score="pre"></strong></div><div class="survey-chart-row"><span class="survey-chart-row__label">체험 후</span><div class="survey-track survey-track--post"><span data-bar="post"></span></div><strong class="survey-chart-row__value" data-score="post"></strong></div></div>
+          <div class="survey-metric__head"><span class="survey-metric__change" data-change></span></div>
+        </article>
+        <p class="survey-result-message" id="result-message"></p>
+      </section>
+      <section class="survey-thanks">
+        <div class="survey-eyebrow">THANK YOU FOR EXPLORING JIKJI</div>
+        <h2 class="survey-title">직지와 함께한 여정,<br>어떠셨나요?</h2>
+        <p>여러분이 남겨주신 소중한 답변은<br>우리의 문화유산을 더 쉽고 재미있게 전하는 데 도움이 됩니다.<br><br>찍쥐와 짹째와 함께해 주셔서 감사합니다!</p>
+        <a class="survey-button" id="return-home" href="../../#top">처음으로 돌아가기</a>
+      </section>
+    </article>
+  </main>
+  <script type="module" src="../result.js"></script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+#story-ribbon a {
+color: inherit;
+  text-decoration: none;
+}
+
+#story-ribbon a:hover {
+opacity: .65;
+}
+
+#story-ribbon a:focus-visible {
+outline: 1px solid #fff;
+  outline-offset: 5px;
+}
+
+#story-ribbon .jikji-ribbon-stage {
+position: absolute;
+  width: var(--stage-width, 100vw);
+  height: 1080px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
+  overflow: hidden;
+  background-color: #000;
+  isolation: isolate;
+}
+
+#story-ribbon .glow {
+position: absolute;
+  left: calc(50% - 542.19px);
+  top: -454.19px;
+  width: 1068.38px;
+  height: 1548.38px;
+  pointer-events: none;
+  background-color: #fff;
+  border-radius: 50%;
+  filter: blur(1px);
+  background: radial-gradient(ellipse, rgb(164 244 223 / .34), rgb(164 244 223 / 0) 70%);
+
+}
+
+#story-ribbon #jikji-ribbon-app {
+position: absolute;
+  inset: 0;
+  z-index: 11;
+  touch-action: none;
+}
+
+#story-ribbon .conveyor {
+display: block;
+  width: 100%;
+  height: 100%;
+}
+
+#story-ribbon .project-links {
+position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+#story-ribbon .project-link {
+position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  pointer-events: auto;
+}
+
+#story-ribbon .project-link:focus-visible {
+clip-path: none;
+  width: auto;
+  height: auto;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  padding: 12px 18px;
+  background: #141414;
+  white-space: nowrap;
+}
+
+#story-ribbon .project-link:focus-visible img {
+display: none;
+}
+
+#story-ribbon #jikji-ribbon-app.is-fallback {
+overflow-y: auto;
+  touch-action: pan-y;
+  padding: 100px 24px 60px;
+}
+
+#story-ribbon .is-fallback .conveyor {
+display: none;
+}
+
+#story-ribbon .is-fallback .project-links {
+position: static;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 24px;
+}
+
+#story-ribbon .is-fallback .project-link {
+position: static;
+  width: auto;
+  height: auto;
+  clip-path: none;
+}
+
+#story-ribbon .is-fallback .project-link:focus-visible {
+transform: none;
+  white-space: normal;
+}
+
+#story-ribbon .is-fallback .project-link img {
+display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+}
+
+#story-ribbon .is-fallback .project-link span {
+display: block;
+  padding-top: 8px;
+  font-size: calc(14px - 2px);
+}
+
+#story-ribbon .jikji-ribbon-status {
+position: fixed;
+  bottom: 16px;
+  left: 16px;
+  z-index: 30;
+  font-size: calc(14px - 2px);
+  color: #fff;
+}
+
+#story-ribbon .bottom-shade {
+position: absolute;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent 40%,
+    rgb(0 0 0 / .04) 55%,
+    rgb(0 0 0 / .12) 68%,
+    rgb(0 0 0 / .26) 80%,
+    rgb(0 0 0 / .46) 91%,
+    rgb(0 0 0 / .65) 100%
+  );
+}
+
+#story-ribbon .jikji-ribbon-noise {
+position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9;
+  pointer-events: none;
+  opacity: .22;
+  mix-blend-mode: soft-light;
+  background-size: 128px 128px;
+}
+
+/* Jikji archive ribbon gallery, isolated from the site's global layout. */
+#story-ribbon { position: relative; min-height: 100svh; height: max(100svh, 680px); overflow: hidden; color: #fff; background: #050807; }
+#story-ribbon .more-ribbon-heading { position: absolute; z-index: 22; top: clamp(24px, 5vh, 58px); left: clamp(20px, 5vw, 72px); max-width: min(560px, 80vw); pointer-events: none; }
+#story-ribbon .more-ribbon-heading .kicker { margin-bottom: 12px; color: #a4f4df; font-size: calc(11px - 2px); letter-spacing: .18em; }
+#story-ribbon .more-ribbon-heading .title { margin: 0; color: #fff; font-size: calc(clamp(27px, 4vw, 48px) - 2px); }
+#story-ribbon .more-ribbon-heading p { margin: 12px 0 0; color: rgb(255 255 255 / .72); font-size: calc(14px - 2px); }
+#story-ribbon .more-ribbon-caption { position: absolute; z-index: 22; right: clamp(20px, 5vw, 72px); bottom: 26px; color: rgb(255 255 255 / .7); font: calc(11px - 2px)/1.4 var(--font-body); letter-spacing: .16em; pointer-events: none; }
+#story-ribbon .jikji-ribbon-stage { width: 100%; height: 100%; min-height: 680px; }
+#story-ribbon #jikji-ribbon-app { touch-action: pan-y; }
+#story-ribbon .jikji-ribbon-status { position: absolute; }
+@media (max-width: 700px) {
+  #story-ribbon .more-ribbon-heading { top: 24px; left: 20px; }
+  #story-ribbon .more-ribbon-heading p { max-width: 280px; font-size: calc(12px - 2px); }
+  #story-ribbon .more-ribbon-caption { right: 20px; bottom: 18px; font-size: calc(9px - 2px); }
+}
