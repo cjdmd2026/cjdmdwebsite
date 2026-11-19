@@ -1,13 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>유연한 결합: 청주대학교 디지털미디어디자인</title>
-    <link rel="stylesheet" href="../css/countdown.css">
+    <link rel="stylesheet" href="./css/countdown.css">
+    <link rel="stylesheet" href="./css/countdown-mobile.css">
 
     <link rel="preconnect" href="https://www.youtube.com">
     <link rel="preconnect" href="https://www.instagram.com">
+
+    <!-- Scripts:S -->
+    <script src="../js/page-columns-transition.js?v=20261118-columns-3"></script>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+        }
+    }
+    </script>
+    <script src="./js/countdown-number.js"></script>
+    <script src="./js/dday-icon-matter.js?v=20261106-cheoma"></script>
+
+    <script src="../js/thread-crosshair-mask.js" defer></script>
+    <script src="./js/countdown-mobile.js" defer></script>
+
+    <!-- Scripts:E -->
+
 </head>
 <body>
     <!-- Header:S -->
@@ -23,90 +42,42 @@
             </nav>
         </div>
     </header>-->
-    <!-- Header:E -->   
+    <!-- Header:E -->
 
     <!-- Main:S -->
     <main class="main">
         <section class="hero-section" id="heroSection">
         <div class="hero-content" id="heroText">
-            <div class="upbox"></div>
-            <div class="downbox"></div>
             <div class="d-day" id="dDayText">
                 <h1 id="dPrefix">D-</h1>
                 <h1 id="countdown">0</h1>
             </div>
-                <div class="exhibition">
-                    <h2></h2>
-                </div>
+            <div class="exhibition">
+                <h2></h2>
+            </div>
             </div>
             <div class="info">
+                <hr>
                 <div class="container">
                     <div class="textbox">
-                        <h3>청주대학교</h3>
-                        <h4>디지털미디어디자인학과</h4>
+                        <h4>청주대학교 디지털미디어디자인</h4>
+                        <h3>제 6회 졸업전시회</h3>
                     </div>
+                    <div class="date">
+                        <h4>날짜</h4>
+                        <h3>2026. 11. 20 - 11. 24</h3>
+                    </div>
+                    <div class="venue">
+                        <h4>장소</h4>
+                        <a href="https://naver.me/59UZsqCG">충청북도 청주시 청원구 덕벌로 30, 동부창고 6동</a>
+                    </div>
+
                     <div class="icons">
-                        <a href="https://www.instagram.com/cjudmd_2026?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="><img class="icon" src="../assets/images/icons/instagram-icon.svg" alt="Instagram"></a>
-                        <a href="https://youtube.com/channel/UC5275bIPKnUuTG0onFeFsLw?si=w5swKmZKVxT6Z-W2"><img class="icon" src="../assets/images/icons/youtube-icon.svg" alt="YouTube"></a>
+                        <a href="https://www.instagram.com/cjudmd_2026?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="><img class="icon" src="../assets/images/icons/instagram-icon.svg" alt="Instagram" class="icon"></a>
+                        <a href="https://youtube.com/channel/UC5275bIPKnUuTG0onFeFsLw?si=w5swKmZKVxT6Z-W2"><img class="icon" src="../assets/images/icons/youtube-icon.svg" alt="YouTube" class="icon"></a>
                     </div>
-                </div>
-                
-            </div>
-        </div>
-        <div class="archive">
-            <!--<div class="video-box">
-                <div class="video">
-                    <iframe 
-                        src="https://www.youtube.com/embed/1EMWWo91-m8?si=chU_SQq9T42zivgY"
-                        frameborder="0"
-                        allow="accelerometer;
-                        autoplay; clipboard-write;
-                        encrypted-media; gyroscope;
-                        picture-in-picture; web-share"
-                        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                </div>
-                <div class="video">
-                    <iframe  
-                        src="https://www.youtube.com/embed/wzALa1WWJyo?si=Uqk9Pf-Gj9xGDuEm"
-                        frameborder="0"
-                        allow="accelerometer;
-                        autoplay; clipboard-write;
-                        encrypted-media; gyroscope;
-                        picture-in-picture; web-share"
-                        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                </div>
-            </div>-->
-                <div class="picture-box">
-                    <div class="picture" style="background-image: url('../assets/images/department/chairperson/Chairperson_Vertica.webp');">
-                    </div>
-                    <div class="picture" style="background-image: url('../assets/images/department/display/Display_Department_Vertical.webp');">
-                    </div>
-                    <div class="picture" style="background-image: url('../assets/images/department/editorial/Editorial_Department_Vertical.webp');">
-                    </div>
-                    <div class="picture" style="background-image: url('../assets/images/department/multi/Multi_department_Vertical.webp');">
-                    </div>
-                    <div class="picture" style="background-image: url('../assets/images/department/planning/Planning_Department_Vertical.webp');">
-                    </div>
-                    <div class="picture" style="background-image: url('../assets/images/department/poster/Poster_Section_Vertical.webp');">
-                    </div>
-                    <div class="picture" style="background-image: url('../assets/images/department/promotion/Promotion_Department_Vertical.webp');">
-                    </div>
-                </div>
-                <div class="exhibition_info">
-                    <div class="title">
-                        <h1>유연한 결합</h1>
-                    </div>
-                    <div class="content">
-                        <p class="time">2026. 11. 20 - 2026. 11. 24</p>
-                        <p>충청북도 청주시 청원구 덕벌로 30, 동부창고 6동</p>
-
-                    </div>
-                    
-
                 </div>
             </div>
-            
-        </div>
         </section>
     </main>
     <!-- Main:E -->
@@ -125,19 +96,5 @@
         </div>
     </footer>-->
     <!-- Footer:E -->
-
-    <!-- Countdown Script -->
-    <script type="importmap">
-    {
-        "imports": {
-            "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
-        }
-    }
-    </script>
-
-    <script type="module" src="../js/countdown.js"></script>
-    <script src="../js/countdown-number.js"></script>
-    <script src="../js/matrix.js"></script>
-
 </body>
 </html>

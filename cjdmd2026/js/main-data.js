@@ -95,7 +95,8 @@ window.MAIN_COMMITTEE = [
 ];
 
 /* 교수진
- * message: 카드 하단 소감 문구 (\n 으로 줄바꿈) — 미수신 문구는 임시로 표시하고 전달받으면 교체
+ * message: 카드 하단 소감 문구 (\n 으로 줄바꿈).
+ * 김양호·장성복·이종선·이한길 문구는 전시 화면용 초안이며, 본인 전달 문구를 받으면 교체합니다.
  * image가 비어 있으면 '사진 준비 중' 카드가 나옵니다.
  * 처음 가운데에 올 교수님은 MAIN_PROFESSOR_START 로 지정합니다.
  */
@@ -103,7 +104,7 @@ window.MAIN_PROFESSORS = [
     {
         name: "김양호",
         major: "Special Thanks To",
-        message: "[임시] 교수님 소개 문구가 들어갈 자리입니다.\n문구 전달 후 교체 예정입니다.",
+        message: "서로 다른 생각을 하나의 전시로 완성한 여러분을 응원합니다.\n지금의 열정이 앞으로의 도전에도 든든한 힘이 되길 바랍니다.",
         image: "../assets/images/professor/kimyangho.webp"
     },
     {
@@ -115,13 +116,13 @@ window.MAIN_PROFESSORS = [
     {
         name: "장성복",
         major: "서비스 경험디자인",
-        message: "[임시] 교수님 소개 문구가 들어갈 자리입니다.\n문구 전달 후 교체 예정입니다.",
+        message: "사람을 이해하려는 작은 질문이 더 나은 경험을 만듭니다.\n여러분의 시선으로 일상에 의미 있는 변화를 만들어 가길 바랍니다.",
         image: "../assets/images/professor/jangseongbok.webp"
     },
     {
         name: "이종선",
         major: "인터페이스 디자인",
-        message: "[임시] 교수님 소개 문구가 들어갈 자리입니다.\n문구 전달 후 교체 예정입니다.",
+        message: "익숙한 화면에도 새로운 가능성은 숨어 있습니다.\n끊임없이 살피고 다듬으며 자신만의 디자인을 이어 가길 바랍니다.",
         image: "../assets/images/professor/leejongseon.webp"
     },
     {
@@ -133,7 +134,7 @@ window.MAIN_PROFESSORS = [
     {
         name: "이한길",
         major: "Special Thanks To",
-        message: "[임시] 교수님 소개 문구가 들어갈 자리입니다.\n문구 전달 후 교체 예정입니다.",
+        message: "이번 전시는 여러분의 다음 이야기가 시작되는 자리입니다.\n함께 쌓아 온 경험을 믿고 더 넓은 세상으로 나아가세요.",
         image: "../assets/images/professor/leehangil.webp"
     }
 ];
@@ -166,3 +167,14 @@ window.MAIN_POSTERS = [
         background: "#000000"
     }
 ];
+
+// Resolve shared data from this script, so the root home and archived layouts
+// use the same assets even when the site is hosted under a subdirectory.
+(() => {
+    const base = document.currentScript.src;
+    for (const item of [...window.MAIN_COMMITTEE, ...window.MAIN_PROFESSORS, ...window.MAIN_POSTERS]) {
+        for (const field of ['image', 'pdf']) {
+            if (item[field]) item[field] = new URL(item[field], base).href;
+        }
+    }
+})();

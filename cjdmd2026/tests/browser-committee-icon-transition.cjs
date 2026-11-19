@@ -16,7 +16,7 @@ async function localPage(browser, viewport) {
         if (url.pathname === '/main-icon-test') return route.fulfill({ contentType: 'text/html', body: '<!doctype html><title>Committee transition test</title>' });
         try {
             let file = path.resolve(root, '.' + decodeURIComponent(url.pathname));
-            if (!file.startsWith(root + path.sep)) throw new Error('Unsafe path');
+            if (file !== root && !file.startsWith(root + path.sep)) throw new Error('Unsafe path');
             if ((await fs.stat(file)).isDirectory()) file = path.join(file, 'index.html');
             return route.fulfill({ path: file });
         } catch { return route.fulfill({ status: 404, body: '' }); }
@@ -27,7 +27,7 @@ async function localPage(browser, viewport) {
 async function checkMain(browser, name, viewport) {
     const { page, errors } = await localPage(browser, viewport);
     try {
-        await page.goto('http://committee.test/main/');
+        await page.goto('http://committee.test/');
         await page.waitForFunction(() => window.heroStudio?.ready && window.MainIntroLoading?.inspect().phase === 'done', null, { timeout: 90000 });
         await page.evaluate(() => {
             const section = document.getElementById('committee');

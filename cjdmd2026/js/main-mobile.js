@@ -3,6 +3,7 @@
     'use strict';
     const main = document.querySelector('main.main');
     if (!main) return;
+    const fallbackPoster = new URL('../assets/images/poster/Vertical_poster_white.webp', document.currentScript.src).href;
     const designers = new Map((window.DESIGNERS || []).map(person => [person.id, person]));
     const fragments = window.MAIN_ICON_FRAGMENTS || {};
     const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({
@@ -36,7 +37,7 @@
             <div class="mobile-assembly-stage" role="img" aria-label="흩어진 아이콘들이 모여 결합 글자를 완성하는 그래픽">
                 <div class="mobile-assembly-paper" aria-hidden="true"></div>
                 <canvas aria-hidden="true"></canvas>
-                <img class="mobile-assembly-poster" src="${escape(posters[0]?.image || '../assets/images/poster/Vertical_poster_white.webp')}" alt="" width="1686" height="2387" decoding="async">
+                <img class="mobile-assembly-poster" src="${escape(posters[0]?.image || fallbackPoster)}" alt="" width="1686" height="2387" decoding="async">
             </div>
             <p class="sr-only" role="status" aria-live="polite">애니메이션 준비 중</p>
         </div>

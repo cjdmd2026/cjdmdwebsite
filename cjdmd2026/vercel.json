@@ -20,6 +20,9 @@
     { "source": "/:team(phishing-ddook|apuchika|curo|stylens|ilkko|dadeullim|omix|year-on|jigjijaembeoli|geuneuljab-i|coco-lang|magmoa|e-fact|e-fact2|byeol-ungwan)/:asset*", "destination": "/api/site-asset?path=:team/:asset*" }
   ],
   "redirects": [
+    { "source": "/main", "destination": "/", "permanent": true },
+    { "source": "/main/", "destination": "/", "permanent": true },
+    { "source": "/main/index.html", "destination": "/", "permanent": true },
     { "source": "/submit", "destination": "/submit/", "permanent": false }
   ],
   "headers": [

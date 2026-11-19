@@ -2,9 +2,11 @@
  * Circle cursor + flowing outline ripple, based on thread-crosshair-mask.js.
  * Load this file in place of the original script. No dependencies.
  * window.threadCursor.settings controls sizes, flutter and border thickness.
+ * data-cursor-only shares the cursor without adding click or touch effects.
  */
 (() => {
   'use strict';
+  const cursorOnly = document.currentScript?.hasAttribute('data-cursor-only') ?? false;
 
   function init() {
     const SETTINGS = {
@@ -19,8 +21,8 @@
       blendMode: 'difference',
       ensurePageBackdrop: true,
       hideNativeCursor: true,
-      clickPulse: true,
-      touchEnabled: true,
+      clickPulse: !cursorOnly,
+      touchEnabled: !cursorOnly,
       theme: 'auto',
       zIndex: 999998,
       maxDpr: 2,
@@ -219,7 +221,8 @@
     }
 
     function readPointer(event) {
-      if (disposed || (event.pointerType === 'touch' && !OPTIONS.touchEnabled)) return;
+      if (disposed) return;
+      if (event.pointerType === 'touch' && !OPTIONS.touchEnabled) { hidePointer(); return; }
       hasInteracted = true;
       pointer.x = event.clientX;
       pointer.y = event.clientY;
@@ -229,7 +232,7 @@
       start();
     }
     function pulse() {
-      if (disposed || document.hidden || reducedMotion || !hasInteracted) return;
+      if (!OPTIONS.clickPulse || disposed || document.hidden || reducedMotion || !hasInteracted) return;
       const radius = lerp(SETTINGS.cursorRadius, SETTINGS.hoverRadius, hoverAmount);
       pulses.push({
         x: pointer.x,
@@ -254,7 +257,7 @@
     const pointerOptions = { ...listenerOptions, passive: true, capture: true };
     window.addEventListener('pointermove', readPointer, pointerOptions);
     window.addEventListener('pointerdown', event => {
-      if (event.pointerType === 'touch' && !OPTIONS.touchEnabled) return;
+      if (event.pointerType === 'touch' && !OPTIONS.touchEnabled) { hidePointer(); return; }
       readPointer(event);
       if (OPTIONS.clickPulse && event.button === 0) pulse();
     }, pointerOptions);
@@ -320,6 +323,7 @@
         return {
           pointer: { ...pointer },
           settings: { ...SETTINGS },
+          cursorOnly,
           reducedMotion,
           dark,
           masking,

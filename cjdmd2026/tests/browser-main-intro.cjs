@@ -14,13 +14,13 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg
         if(url.hostname!=='intro.test'){await route.fulfill({status:200,contentType:'text/javascript',body:''});return;}
         try{
           let file=path.resolve(root,'.'+decodeURIComponent(url.pathname));
-          if(!file.startsWith(root+path.sep))throw new Error('Unsafe test request');
+          if(file!==root&&!file.startsWith(root+path.sep))throw new Error('Unsafe test request');
           if((await fs.stat(file)).isDirectory())file=path.join(file,'index.html');
           const body=await fs.readFile(file);
           await route.fulfill({status:200,contentType:types[path.extname(file)]||'application/octet-stream',body});
         }catch{await route.fulfill({status:404,body:'Not found'});}
       });
-      await page.goto('http://intro.test/main/',{waitUntil:'domcontentloaded'});
+      await page.goto('http://intro.test/',{waitUntil:'domcontentloaded'});
       if(mobile){
         report.mobile=await require('./assert-main-mobile.cjs')(page);
         assert.deepEqual(errors,[]);

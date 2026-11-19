@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, '../public-dist');
 (async () => {
   const [icons, html, script, css] = await Promise.all([
     fs.readFile(path.join(root, 'js/main-intro/icons.json'), 'utf8').then(JSON.parse),
-    fs.readFile(path.join(root, 'main/index.html'), 'utf8'),
+    fs.readFile(path.join(root, 'index.html'), 'utf8'),
     fs.readFile(path.join(root, 'js/main-intro-loading.js'), 'utf8'),
     fs.readFile(path.join(root, 'css/main-intro.css'), 'utf8')
   ]);

@@ -11,6 +11,9 @@ const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, 'http://localhost:4173');
+    if (['/main', '/main/', '/main/index.html'].includes(url.pathname)) {
+      res.writeHead(308, { Location: '/' + url.search }); res.end(); return;
+    }
     const efact = url.pathname === '/api/efact' || /^\/e-fact\/(?:js\/)?api\//.test(url.pathname);
     if (efact || url.pathname === '/api/submission' || url.pathname === '/api/apuchika' || url.pathname.startsWith('/apuchika/api/')) {
       const request = new Request(url, { method: req.method, headers: req.headers, body: ['GET', 'HEAD'].includes(req.method) ? undefined : req, duplex: 'half' });

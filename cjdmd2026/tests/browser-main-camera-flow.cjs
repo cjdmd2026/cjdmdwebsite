@@ -15,12 +15,12 @@ const angle=(a,b)=>2*Math.acos(Math.min(1,Math.abs(a.reduce((sum,x,i)=>sum+x*b[i
         if(url.hostname!=='flow.test')return route.fulfill({contentType:'text/javascript',body:''});
         try{
           let file=path.resolve(root,'.'+decodeURIComponent(url.pathname));
-          if(!file.startsWith(root+path.sep))throw new Error('Unsafe test request');
+          if(file!==root&&!file.startsWith(root+path.sep))throw new Error('Unsafe test request');
           if((await fs.stat(file)).isDirectory())file=path.join(file,'index.html');
           await route.fulfill({path:file});
         }catch{await route.fulfill({status:404,body:''});}
       });
-      await page.goto('http://flow.test/main/');
+      await page.goto('http://flow.test/');
       if(mobile){
         report.mobile=await require('./assert-main-mobile.cjs')(page);
         assert.deepEqual(errors,[]);

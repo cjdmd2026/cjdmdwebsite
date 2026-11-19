@@ -9,7 +9,7 @@ module.exports = async function assertMainMobile(page) {
   const result = await page.evaluate(() => {
     const sections = [...document.querySelectorAll('main section')].map(section => section.getBoundingClientRect());
     return {
-      canvases: document.querySelectorAll('canvas').length,
+      canvases: document.querySelectorAll('main canvas').length,
       loader: document.querySelector('#introLoader') !== null,
       desktopScripts: [...document.scripts].filter(script => /\/(?:lenis[^/]*|main-intro|main-hero\.js|main-section-scroll|main-scroll-input|main\.js|page-wall-transition|stamp-effect-transition)/.test(script.src)).map(script => script.src),
       posters: document.querySelectorAll('.mobile-poster-card a[download]').length,
@@ -51,7 +51,7 @@ module.exports = async function assertMainMobile(page) {
     assert.equal(await page.locator('.mobile-icon-track').evaluate(track => getComputedStyle(track).animationIterationCount), 'infinite');
   }
   assert.equal(await page.locator('.mobile-section-heading > span').count(), 0, 'Section numbers are removed');
-  assert.equal(await page.locator('.mobile-professor-message').count(), 2, 'Only supplied professor messages are shown');
+  assert.equal(await page.locator('.mobile-professor-message').count(), 6, 'Each professor has an individual message');
   const posterButton = page.getByRole('button', {name: '포스터 바꾸기', exact: true});
   await posterButton.press('Home');
   await page.locator('#hero[data-active-slide="0"][data-poster-motion="idle"]').waitFor();

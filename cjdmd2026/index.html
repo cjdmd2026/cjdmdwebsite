@@ -3,98 +3,260 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>유연한 결합: 청주대학교 디지털미디어디자인</title>
-    <link rel="stylesheet" href="./css/countdown.css">
-    <link rel="stylesheet" href="./css/countdown-mobile.css">
-
-    <link rel="preconnect" href="https://www.youtube.com">
-    <link rel="preconnect" href="https://www.instagram.com">
-
-    <!-- Scripts:S -->
     <script src="./js/page-columns-transition.js?v=20261118-columns-3"></script>
-    <script type="importmap">
-    {
-        "imports": {
-            "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+    <title>유연한 결합: 청주대학교 디지털미디어디자인</title>
+    <link rel="stylesheet" href="./css/main.css?v=20261116-professor-continuous">
+    <link rel="stylesheet" href="./css/header-logo.css?v=20261024-1">
+    <link rel="stylesheet" href="./css/main-mobile.css?v=20261118-no-arrows">
+    <script>
+        window.MainMobileView = matchMedia('(max-width: 759px)').matches;
+        document.documentElement.classList.toggle('main-static-mobile', window.MainMobileView);
+        document.documentElement.classList.toggle('mobile-assembly-active', window.MainMobileView && !matchMedia('(prefers-reduced-motion: reduce)').matches);
+        if (!window.MainMobileView && sessionStorage.getItem('stamp-page-transition') === '1') {
+            document.documentElement.classList.add('page-transition-preload');
         }
-    }
+        // 메인은 항상 맨 위(인트로 첫 화면)에서 시작합니다.
+        if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+        if (!window.MainMobileView) document.documentElement.classList.add('intro-loading');
     </script>
-    <script src="./js/countdown-number.js"></script>
-    <script src="./js/dday-icon-matter.js?v=20261106-cheoma"></script>
 
-    <script src="./js/thread-crosshair-mask.js" defer></script>
-    <script src="./js/countdown-mobile.js" defer></script>
-    
+    <link rel="stylesheet" href="./css/main-intro.css?v=20261116-reading-32px">
+    <script>window.MainIntro={complete:false,progress:0,headerProgress:0,inputUntil:0,anchor:()=>{const hero=document.getElementById("hero");return hero?hero.getBoundingClientRect().top+scrollY:0;}};</script>
+    <!-- Scripts:S -->
+    <script src="./js/designer-data.js?v=20261114-geuneuljabi-name" defer></script>
+    <script src="./js/main-data.js?v=20261120-professor-messages" defer></script>
+    <script src="./js/main-icon-fragments.js?v=20261023-35" defer></script>
+    <script src="./js/main-runtime.js?v=20261120-home-root" defer></script>
     <!-- Scripts:E -->
-    
+    <script src="./js/thread-crosshair-mask.js?v=20261120-cursor-only" data-cursor-only defer></script>
 </head>
-<body>
+<body class="main-page intro-before-main">
     <!-- Header:S -->
-    <!--<header class="header">
-        <div class="container"></div>
-            <h1><a href="">유연한 결합</a></h1>
-            <nav class="nav">
+    <header class="header">
+        <div class="container">
+            <!-- 로고 -->
+            <h1 class="logo"><a href="./index.html" page-transition><img src="./assets/images/icons/logo_wv.svg" width="160" height="31" alt="유연한 결합"></a></h1>
+
+            <!-- 네비게이션 -->
+            <nav class="nav" aria-label="주요 메뉴">
                 <ul>
-                    <li><a href="project.html">프로젝트</a></li>
-                    <li><a href="designer.html">디자이너</a></li>
-                    <li><a href="archive.html">아카이브</a></li>
+                    <li><a href="./project/" page-transition>프로젝트</a></li>
+                    <li><a href="./designer/" page-transition>디자이너</a></li>
+                    <li><a href="./archive/" page-transition>아카이브</a></li>
                 </ul>
             </nav>
+
+            <!-- 모바일 메뉴 버튼 -->
+            <button class="menu-button" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="main-mobile-menu">
+                <span></span><span></span><span></span>
+            </button>
         </div>
-    </header>-->
-    <!-- Header:E -->   
+        <nav id="main-mobile-menu" class="mobile-menu" aria-label="모바일 메뉴" hidden>
+            <ul>
+                <li><a href="./project/" page-transition>프로젝트</a></li>
+                <li><a href="./designer/" page-transition>디자이너</a></li>
+                <li><a href="./archive/" page-transition>아카이브</a></li>
+            </ul>
+            <p>청주대학교 디지털미디어디자인학과 · 2026</p>
+        </nav>
+    </header>
+    <!-- Header:E -->
+
+    <div id="introLoader" class="intro-loader" role="progressbar" aria-label="3D 콘텐츠 로딩" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <div class="intro-loader-mark">
+        <div class="intro-loader-stage" aria-hidden="true">
+          <svg class="intro-loader-field" focusable="false"></svg>
+        </div>
+        <span class="intro-loader-percent" data-loading-percent aria-hidden="true">0%</span>
+      </div>
+    </div>
 
     <!-- Main:S -->
     <main class="main">
-        <section class="hero-section" id="heroSection">
-        <div class="hero-content" id="heroText">
-            <div class="d-day" id="dDayText">
-                <h1 id="dPrefix">D-</h1>
-                <h1 id="countdown">0</h1>
-            </div>
-            <div class="exhibition">
-                <h2></h2>
-            </div>
-            </div>
-            <div class="info">
-                <hr>
-                <div class="container">
-                    <div class="textbox">
-                        <h4>청주대학교 디지털미디어디자인</h4>
-                        <h3>제 6회 졸업전시회</h3>
-                    </div>
-                    <div class="date">
-                        <h4>날짜</h4>
-                        <h3>2026. 11. 20 - 11. 24</h3>
-                    </div>
-                    <div class="venue">
-                        <h4>장소</h4>
-                        <a href="https://naver.me/59UZsqCG">충청북도 청주시 청원구 덕벌로 30, 동부창고 6동</a>
+        <div id="mainIntro" aria-label="졸업 전시 인트로">
+    <div class="intro-sequence">
+    <section id="home" class="intro-section exhibition-hero dotted-surface" aria-labelledby="exhibition-title" data-node-id="1:3">
+      <div class="hero-art" aria-hidden="true">
+      </div>
+      <h1 id="exhibition-title" class="section-heading hero-heading" data-node-id="1:4">
+        <span class="heading-lead" data-hover-text>청주대학교</span>
+        <span class="heading-main"><span data-hover-text>디지털미디어디자인학과</span> <span class="exhibition-word" data-hover-text>졸업전시회</span></span>
+      </h1>
+    </section>
+
+    <section id="content01" class="intro-section content-one dotted-surface" aria-labelledby="individuality-title" data-node-id="20:2">
+      <h2 id="individuality-title" class="individuality-title" data-node-id="20:3">
+        <span class="reading-line"><span class="reading-copy" data-read>우리는 고유한 매력을 지닌</span></span>
+        <span class="reading-line"><span class="reading-copy" data-read>다채로운 개성들의 집합입니다.</span></span>
+        <span class="reading-line reading-paragraph-start"><span class="reading-copy" data-read>어울리지 않을 듯 어우러진 조화는,</span></span>
+        <span class="reading-line"><span class="reading-copy" data-read>어떤 환경에서도 유연하게 적응하는</span></span>
+        <span class="reading-line reading-paragraph-start"><span class="reading-copy" data-read>우리의 방법입니다.</span></span>
+      </h2>
+    </section>
+      <div class="year-track">
+        <div class="year-stage"><p class="section-year" data-node-id="1:5">2026</p></div>
+      </div>
+    </div>
+
+    <section id="journey" class="journey" aria-label="콘텐츠 02 — 각자의 개성을 담은 33개의 아이콘" data-node-id="1:20">
+      <div class="hero animation-stage" aria-label="점에서 선과 입체를 거쳐 컬러 2D 아이콘으로 이어지는 형태">
+        <div id="scene" class="scene"></div>
+        <div id="story-captions" class="story-captions">
+          <h2 class="section-heading scene-caption" data-caption="0" aria-hidden="true">
+            <span class="heading-lead">서로 다른 우리들</span>
+            <span class="heading-main">어떻게 표현할까요?</span>
+          </h2>
+          <h2 class="section-heading scene-caption" data-caption="1" data-node-id="1:73" aria-hidden="true">
+            <span class="heading-lead">각자의 개성을</span>
+            <span class="heading-main">아이콘으로 만들어 보았습니다.</span>
+          </h2>
+        </div>
+        <div class="construction-bar" data-node-id="5:83" role="toolbar" aria-label="아이콘 도구" aria-hidden="true" inert>
+          <div class="construction-bar-face" data-node-id="5:2"></div>
+          <div class="construction-bar-tools">
+            <button type="button" class="construction-tool tool-select" data-node-id="5:10" aria-label="선택" aria-pressed="false" tabindex="-1">
+              <img src="./assets/main-intro/figma/bar-select.svg" alt="">
+              <img class="tool-chevron" src="./assets/main-intro/figma/bar-chevron.svg" alt="" data-node-id="5:9">
+            </button>
+            <button type="button" class="construction-tool" data-node-id="5:11" aria-label="프레임" aria-pressed="false" tabindex="-1">
+              <img class="tool-frame-vertical" src="./assets/main-intro/figma/bar-frame-vertical.svg" alt="" data-node-id="5:39">
+              <span class="tool-frame-horizontal" data-node-id="5:40"><span><img src="./assets/main-intro/figma/bar-frame-horizontal.svg" alt=""></span></span>
+              <img class="tool-chevron" src="./assets/main-intro/figma/bar-chevron.svg" alt="" data-node-id="5:14">
+            </button>
+            <button type="button" class="construction-tool" data-node-id="5:15" aria-label="선" aria-pressed="false" tabindex="-1">
+              <img src="./assets/main-intro/figma/bar-line.svg" alt="">
+              <img class="tool-chevron" src="./assets/main-intro/figma/bar-chevron.svg" alt="" data-node-id="5:18">
+            </button>
+            <button type="button" class="construction-tool" data-node-id="5:19" aria-label="펜" aria-pressed="false" tabindex="-1">
+              <span class="tool-pen" data-node-id="5:55"><img src="./assets/main-intro/figma/bar-pen.svg" alt=""></span>
+              <img class="tool-chevron" src="./assets/main-intro/figma/bar-chevron.svg" alt="" data-node-id="5:22">
+            </button>
+            <button type="button" class="construction-tool" data-node-id="5:23" aria-label="텍스트" aria-pressed="false" tabindex="-1">
+              <img src="./assets/main-intro/figma/bar-text.svg" alt="">
+              <img class="tool-chevron" src="./assets/main-intro/figma/bar-chevron.svg" alt="" data-node-id="5:26">
+            </button>
+            <button type="button" class="construction-tool" data-node-id="5:27" aria-label="말풍선" aria-pressed="false" tabindex="-1">
+              <span class="tool-bubble" data-node-id="5:65"></span>
+              <img class="tool-chevron" src="./assets/main-intro/figma/bar-chevron.svg" alt="" data-node-id="5:30">
+            </button>
+            <button type="button" class="construction-tool" data-node-id="5:31" aria-label="도형" aria-pressed="false" tabindex="-1">
+              <span class="tool-shape-square" data-node-id="5:76"></span>
+              <span class="tool-shape-diamond" data-node-id="5:77"><span></span></span>
+              <span class="tool-shape-circle" data-node-id="5:78"><span></span></span>
+              <img class="tool-shape-plus" src="./assets/main-intro/figma/bar-shapes-plus.svg" alt="" data-node-id="5:79">
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+        </div>
+
+        <!-- Camera passes through the icons to the original vertical word; the next step introduces the poster. -->
+        <section class="hero" id="hero" aria-labelledby="heroTitle">
+            <div class="hero-stage" id="heroStage" data-word-flight data-theme="light" data-step="0">
+                <!-- 배경색 (포스터 전환 시 입자 느낌으로 닦이며 바뀜) -->
+                <canvas class="hero-bg" id="heroBg" aria-hidden="true"></canvas>
+
+                <!-- 배경 아이콘: 정착 후에만 보이며 오른쪽으로 천천히 흐름 (main.js) -->
+                <div class="ambient hero-ambient" data-ambient="hero" aria-hidden="true"></div>
+
+                <!-- 아이콘 → 결합 → 포스터 그래픽 -->
+                <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
+
+                <!-- 포스터 전환 입자 (기존 포스터가 입자로 흩어지며 오른쪽으로 날아감) -->
+                <canvas class="hero-fx" id="heroFx" aria-hidden="true"></canvas>
+
+                <div class="hero-layout">
+                    <div class="hero-poster-col">
+                        <!-- 포스터는 캔버스에 그립니다. 이미지·PDF 경로는 js/main-data.js 의 MAIN_POSTERS 에서 관리 -->
+                        <button class="hero-poster" id="heroPoster" type="button" aria-label="포스터 전환 (기본 / 다크)">
+                            <canvas class="hero-poster__canvas" id="heroPosterCanvas" aria-hidden="true"></canvas>
+                        </button>
+                        <div class="hero-indicator" id="heroIndicator" role="tablist" aria-label="포스터 선택">
+                            <button type="button" role="tab" data-index="0" aria-selected="true" aria-label="기본 포스터"></button>
+                            <button type="button" role="tab" data-index="1" aria-selected="false" aria-label="다크 포스터"></button>
+                        </div>
                     </div>
 
-                    <div class="icons">
-                        <a href="https://www.instagram.com/cjudmd_2026?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="><img class="icon" src="./assets/images/icons/instagram-icon.svg" alt="Instagram" class="icon"></a>
-                        <a href="https://youtube.com/channel/UC5275bIPKnUuTG0onFeFsLw?si=w5swKmZKVxT6Z-W2"><img class="icon" src="./assets/images/icons/youtube-icon.svg" alt="YouTube" class="icon"></a>
+                    <div class="hero-text hero-text--poster-intro" id="heroText">
+                        <div class="hero-text-surface">
+                            <h2 class="hero-title" id="heroTitle">유연한 결합</h2>
+                            <p class="hero-subtitle">다채로운 개성이 빚어낸 결합</p>
+                            <p class="hero-description">
+                                우리는 각자만의 고유한 매력을 지닌 다채로운 개성들의 집합이다.<br>
+                                어울리지 않을 듯 어우러진 조화는, 어떤 환경에서도 유연하게<br>
+                                적응하는 우리의 방법이다.
+                            </p>
+                            <a class="pill-button" id="posterDownload" download aria-disabled="true">다운로드</a>
+                        </div>
                     </div>
                 </div>
+
+                <div class="hero-scroll-hint" id="heroHint" aria-hidden="true">
+                    <img src="./assets/images/icons/mouse-icon-animated.svg" alt="">
+                </div>
             </div>
+        </section>
+
+        <!-- ========== 02. 졸업 전시 위원회 (안1: 자동 슬라이드) ========== -->
+        <section class="committee section" id="committee" aria-labelledby="committeeTitle">
+            <div class="ambient section-ambient" data-ambient="committee" aria-hidden="true"></div>
+            <h2 class="section-title" id="committeeTitle">졸업 전시 위원회</h2>
+
+            <div class="committee-tabs" id="committeeTabs" role="tablist" aria-label="위원회 부서"></div>
+
+            <div class="committee-slider" id="committeeSlider" aria-live="polite">
+                <div class="committee-track" id="committeeTrack"></div>
+            </div>
+
+            <ul class="committee-members" id="committeeMembers" aria-label="부서 구성원"></ul>
+        </section>
+
+        <!-- ========== 03. 교수진 소개 ========== -->
+        <section class="professor section" id="professor" aria-labelledby="professorTitle">
+            <h2 class="section-title" id="professorTitle">교수진 소개</h2>
+            <div class="professor-stage" id="professorStage" aria-roledescription="carousel">
+                <ul class="professor-track" id="professorTrack"></ul>
+                <div class="professor-fade" aria-hidden="true"></div>
+                <!-- 카드 앞쪽, 양옆 사이드에 놓이는 아이콘 (위치는 main.js PROFESSOR_ICONS) -->
+                <div class="ambient professor-ambient" data-ambient="professor" aria-hidden="true"></div>
+            </div>
+            <p class="sr-only" id="professorStatus" aria-live="polite"></p>
+        </section>
+
+        <!-- ========== 04. 졸업 전시 유튜브 ========== -->
+        <section class="video section" id="video" aria-labelledby="videoTitle">
+            <h2 class="section-title" id="videoTitle">졸업 전시 유튜브</h2>
+
+            <div class="video-stage" id="videoStage">
+                <ul class="video-track" id="videoTrack"></ul>
+                <button class="arrow-button arrow-button--prev" id="videoPrev" type="button" aria-label="이전 영상">
+                    <img src="./assets/images/icons/arrow-icon%201.svg" alt="">
+                </button>
+                <button class="arrow-button arrow-button--next" id="videoNext" type="button" aria-label="다음 영상">
+                    <img src="./assets/images/icons/arrow-icon%201.svg" alt="">
+                </button>
+            </div>
+
+            <ul class="video-thumbs" id="videoThumbs" aria-label="다른 영상"></ul>
         </section>
     </main>
     <!-- Main:E -->
 
     <!-- Footer:S -->
-    <!--<footer class="footer">
+    <footer class="footer">
         <div class="container">
             <div class="footer-info">
                 <h3>청주대학교 <br> 디지털미디어디자인학과</h3>
                 <p>&copy; 2026 Digital Media Design. All rights reserved.</p>
             </div>
             <div class="footer-icons">
-                <a href="#"><img src="images/dmd-icon.png" alt="Digital Media Design"></a>
-                <a href="#"><img src="images/instagram-icon.png" alt="Instagram"></a>
+                <a href="https://www.instagram.com/cjudmd_2026" target="_blank" rel="noopener"><img class="icon" src="./assets/images/icons/instagram-icon.svg" alt="Instagram"></a>
+                <a href="https://youtube.com/channel/UC5275bIPKnUuTG0onFeFsLw" target="_blank" rel="noopener"><img class="icon" src="./assets/images/icons/youtube-icon.svg" alt="YouTube"></a>
             </div>
         </div>
-    </footer>-->
+    </footer>
     <!-- Footer:E -->
 </body>
 </html>

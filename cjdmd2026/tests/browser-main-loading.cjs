@@ -30,7 +30,7 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg
         }
         try{
           let file=path.resolve(root,'.'+decodeURIComponent(url.pathname));
-          if(!file.startsWith(root+path.sep))throw new Error('Unsafe path');
+          if(file!==root&&!file.startsWith(root+path.sep))throw new Error('Unsafe path');
           if((await fs.stat(file)).isDirectory())file=path.join(file,'index.html');
           let body=await fs.readFile(file);
           if(scenario==='gpu-failure'&&url.pathname==='/js/main-intro.js'){
@@ -43,7 +43,7 @@ const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg
           return route.fulfill({contentType:types[path.extname(file)]||'application/octet-stream',body});
         }catch{return route.fulfill({status:404,body:'Not found'});}
       });
-      await page.goto('http://loading.test/main/',{waitUntil:'commit'});
+      await page.goto('http://loading.test/',{waitUntil:'commit'});
       if(mobile){
         await require('./assert-main-mobile.cjs')(page);
         assert.deepEqual(errors,[]);

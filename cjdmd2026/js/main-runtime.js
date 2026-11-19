@@ -21,7 +21,7 @@
 
     async function start() {
         if (window.MainMobileView) {
-            await load('main-mobile.js?v=20261118-no-arrows');
+            await load('main-mobile.js?v=20261120-home-root');
             await Promise.all([
                 load('main-poster-sprites.js?v=20261104-identity-1'),
                 load('main-hero-sprite-batch.js?v=20261104-solid-travel'),

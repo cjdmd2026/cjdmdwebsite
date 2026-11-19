@@ -23,12 +23,12 @@ const root=path.resolve(__dirname,'..');
       if(url.pathname==='/js/main-intro.js')return route.fulfill({contentType:'text/javascript',body:bundle.outputFiles[0].text});
       try{
         let file=path.resolve(root,'.'+decodeURIComponent(url.pathname));
-        if(!file.startsWith(root+path.sep))throw new Error('Unsafe test path');
+        if(file!==root&&!file.startsWith(root+path.sep))throw new Error('Unsafe test path');
         if((await fs.stat(file)).isDirectory())file=path.join(file,'index.html');
         await route.fulfill({path:file});
       }catch{await route.fulfill({status:404,body:''});}
     });
-    await page.goto('http://defocus.test/main/');
+    await page.goto('http://defocus.test/');
     await page.waitForFunction(()=>window.heroStudio?.ready&&MainIntroLoading.inspect().phase==='done',null,{timeout:90000});
     await page.evaluate(()=>{
       Object.defineProperty(MainWordSurface,'time',{value:MainWordSurface.time});
