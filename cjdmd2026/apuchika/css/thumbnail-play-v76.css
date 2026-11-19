@@ -1,0 +1,7 @@
+/* The overlay covers the full thumbnail; only its icon is sized. */
+html body.apu-animation .episode-card .cover>.cover-play{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;display:flex!important;align-items:center!important;justify-content:center!important;transform:none!important;pointer-events:none}
+html body.apu-animation .episode-card .cover>.cover-play>.supplied-play{display:block!important;width:13%!important;height:auto!important;min-width:32px!important;max-width:72px!important;max-height:32%!important;object-fit:contain!important;opacity:.7!important;margin:0!important;transform:translateX(3%)!important}
+
+@media(min-width:801px){html body.apu-animation .episode-card .episode-heart .favorite-heart-icon{width:clamp(22px,1.6vw,30px)!important;height:clamp(22px,1.6vw,30px)!important}}
+
+html body.apu-animation .episode-card .cover>.cover-play>.episode-lock-icon{display:block!important;width:13%!important;height:auto!important;min-width:32px!important;max-width:72px!important;max-height:32%!important;object-fit:contain!important;opacity:.75!important;margin:0!important;transform:none!important}

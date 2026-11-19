@@ -1,0 +1,13 @@
+/* Continue the group illustration into a full-width blue footer. */
+html body:has(.friends-page) footer.site-footer.apu-footer-v42{background:#31aafe!important;min-height:15.5vw!important;padding:3vw 6.8% 4vw!important}
+html body .friends-page .join-guardians{overflow:hidden!important;padding-bottom:0!important;margin-bottom:0!important}
+html body .friends-page .friends-footer-art{display:block!important;position:relative!important;width:100%!important;height:27.5vw!important;margin:0!important;overflow:hidden!important}
+html body .friends-page .friends-footer-art::before{content:'';position:absolute;inset:25.3125vw 0 0;background:#31aafe}
+html body .friends-page .friends-footer-art picture{display:block!important;position:relative!important;width:72vw!important;margin:0 auto!important}
+html body .friends-page .friends-footer-art img.group-art{position:static!important;display:block!important;width:100%!important;height:auto!important;max-width:none!important;margin:0!important;transform:none!important;clip-path:none!important}
+@media(max-width:800px){
+ html body .friends-page .friends-footer-art{height:36vw!important}
+ html body .friends-page .friends-footer-art picture{width:100%!important}
+ html body .friends-page .friends-footer-art::before{top:30vw}
+ html body:has(.friends-page) footer.site-footer.apu-footer-v42{padding:32px 7% 40px!important;min-height:0!important}
+}

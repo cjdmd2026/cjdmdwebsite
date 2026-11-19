@@ -1,0 +1,79 @@
+/* One restrained PC scale for section headlines across the site. */
+@media(min-width:801px){
+ html body{--section-title-size:clamp(22px,1.65vw,32px);--section-lead-size:clamp(14px,1.05vw,20px)}
+ html body.home-page #oral-care .section-head h2,
+ html body.home-page #solution .solution-title,
+ html body.home-page #process .process-head h1,
+ html body.home-page #kit-movie h2,
+ html body.home-page #learn-more .section-head h2,
+ html body.home-page .badge-invite-v98>h2,
+ html body.home-page #start .cta-content h2,
+ html body.apu-kit-page #components>h2,
+ html body.apu-kit-page #learning>h2,
+ html body.apu-kit-page #tsd .kw-center h2,
+ html body.apu-kit-page .kw-benefits-left>h2,
+ html body.apu-kit-page #rentalGuide .kw-center h2,
+ html body.apu-kit-page .reviews-heading h2,
+ html body.apu-kit-page #faq>h2,
+ html body.apu-animation:not(.episode-page) .story-feature>.story-width>h1,
+ html body.apu-animation #featureTitle,
+ html body.apu-animation .story-section-title,
+ html body .friends-page .guardians h1,
+ html body .friends-page .planet-friends h2,
+ html body .friends-page .friends-stories h2,
+ html body .friends-page .join-guardians h2{
+  font-size:var(--section-title-size)!important;line-height:1.4!important
+ }
+ html body.apu-kit-page #kitIntro #unboxing-title{font-size:var(--section-title-size)!important}
+ html body.apu-kit-page #kitIntro #unboxing-title .unboxing-title-intro,
+ html body.apu-kit-page #components>h2 .kit-title-intro{font-size:clamp(18px,1.4vw,27px)!important}
+ html body.apu-kit-page #faq{box-sizing:border-box!important;width:calc(100% - var(--faq-left) - var(--faq-right))!important;max-width:none!important;margin-left:var(--faq-left)!important;margin-right:var(--faq-right)!important;padding:4vw 0 5vw!important;--faq-left:3vw;--faq-right:3vw}
+ html body.apu-kit-page #faq>p{font:400 clamp(14px,1.05vw,20px)/1.5 ApuNavBody,sans-serif!important;margin:16px 0 32px!important}
+ html body.apu-kit-page #faq summary{font-size:clamp(16px,1.15vw,22px)!important;min-height:0!important;padding:1.8vw 2.5vw!important}
+ html body.apu-kit-page #faq details{margin-bottom:1.2vw!important}
+}
+@media(min-width:1001px){html body.apu-kit-page #faq{
+ --faq-left:max(5.208333333vw,calc((100vw - calc(1720 * var(--exhibit-unit,1px)))/2));
+ --faq-right:max(7.8vw,calc((100vw - calc(1660 * var(--exhibit-unit,1px)))/2))
+}}
+@media(min-width:801px){
+ html body .friends-page #planetFriends .friends-decor-pencil{width:11vw!important;right:0!important;top:3vw!important;bottom:auto!important}
+ html body .friends-page #planetFriends .friends-decor-ruler{width:12vw!important;left:-3vw!important;bottom:4vw!important;top:auto!important}
+}
+/* Keep the complete stories composition within one viewport below the header. */
+@media(min-width:801px){
+ html body .friends-page .friends-stories{box-sizing:border-box!important;height:calc(100svh - var(--desktop-header,var(--header-h,90px)))!important;min-height:0!important;max-height:calc(100svh - var(--desktop-header,var(--header-h,90px)))!important;padding:4svh 0!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:4svh!important;overflow:hidden!important;position:relative!important;top:auto!important}
+ html body .friends-page .friends-stories>h2{flex:none!important;margin:0!important}
+ html body .friends-page .friends-stories .friends-story-viewport{flex:none!important;width:100%!important;height:49svh!important;padding:0!important;margin:0!important;overflow:hidden!important}
+ html body .friends-page .friends-stories .friends-story-track{height:49svh!important;margin:0!important;padding:0!important;align-items:flex-start!important}
+ html body .friends-page .friends-stories .friends-story-group{height:49svh!important;gap:1.8vw!important;padding-right:1.8vw!important;align-items:flex-start!important}
+ html body .friends-page .friends-stories .friends-story-group>a{width:min(17vw,29.7svh)!important;flex:0 0 min(17vw,29.7svh)!important;height:42svh!important;margin-top:0!important;border-radius:12px!important}
+ html body .friends-page .friends-stories .friends-story-group>a:nth-child(2n){margin-top:7svh!important}
+ html body .friends-page .friends-stories .story-cta{flex:none!important;margin:0!important;height:48px!important;min-height:48px!important;max-height:48px!important;width:180px!important;min-width:180px!important;max-width:180px!important;font-size:18px!important}
+}
+@media(min-width:801px){
+ html body.apu-animation:not(.episode-page) .episode-library .episode-grid{column-gap:2.8vw!important;row-gap:8vw!important;align-items:start!important}
+ html body.apu-animation:not(.episode-page) .episode-library .episode-card h3{font:400 clamp(15px,1.05vw,20px)/1.4 ApuNavHeading,sans-serif!important;margin:26px 0 14px!important;min-height:0!important;letter-spacing:0!important}
+ html body.apu-animation:not(.episode-page) .episode-library .episode-card p{font:400 clamp(12px,.84vw,16px)/1.5 ApuNavBody,sans-serif!important;margin:0!important;min-height:0!important;white-space:normal!important;word-break:keep-all!important;overflow-wrap:break-word!important}
+ html body.apu-animation:not(.episode-page) .cover .cover-play{width:clamp(44px,3.5vw,68px)!important;height:clamp(44px,3.5vw,68px)!important;display:flex!important;align-items:center!important;justify-content:center!important}
+ html body.apu-animation:not(.episode-page) .cover-play .supplied-play{width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:contain!important}
+}
+html body.passes-page #ask{pointer-events:auto!important}
+html body.passes-page #ask :is(label,label>span,input,select,option,textarea){font-family:ApuNavBody,sans-serif!important;font-weight:400!important;font-synthesis:none!important}
+html body.passes-page #ask select{cursor:pointer;min-width:0;pointer-events:auto!important}
+html body.passes-page #ask button{font-family:ApuNavHeading,sans-serif!important;font-weight:400!important}
+html body.passes-page #ask button:disabled{cursor:wait;opacity:.7}
+@media(min-width:801px){
+ html body.passes-page .passes-intro h1,html body.passes-page .contact-inner h2{font:400 clamp(22px,1.65vw,32px)/1.4 ApuNavHeading,sans-serif!important}
+ html body.passes-page .contact-inner>p{font:400 clamp(14px,1.05vw,20px)/1.5 ApuNavBody,sans-serif!important;margin:20px 0!important}
+ html body.passes-page #ask{margin-top:32px!important}
+ html body.passes-page #ask :is(label,input,select,textarea){font-size:clamp(14px,.95vw,18px)!important;line-height:1.5!important}
+ html body.passes-page #ask button{font-size:18px!important}
+}
+/* Vivid brand colors with legible labels on the hover surfaces. */
+html body.home-page #learn-more .link-card-kit .card-shortcut{background:#0b99ff!important;color:#fff!important}
+html body.home-page #learn-more .link-card-character .card-shortcut{background:#00bd6c!important;color:#fff!important}
+html body.home-page #learn-more .link-card-animation .card-shortcut{background:#ffd028!important;color:#493700!important}
+html body.home-page #learn-more .link-card-kit:is(:hover,:focus-visible) .card-shortcut{background:#0089ed!important}
+html body.home-page #learn-more .link-card-character:is(:hover,:focus-visible) .card-shortcut{background:#00a95f!important}
+html body.home-page #learn-more .link-card-animation:is(:hover,:focus-visible) .card-shortcut{background:#ffc20a!important;color:#493700!important}

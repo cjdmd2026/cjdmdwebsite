@@ -1,0 +1,6 @@
+@media(min-width:801px){
+html body .friends-page .friends-stories{gap:6svh!important}
+html body .friends-page .friends-stories .friends-story-viewport,html body .friends-page .friends-stories .friends-story-track,html body .friends-page .friends-stories .friends-story-group{height:43svh!important}
+html body .friends-page .friends-stories .friends-story-group>a{width:min(14.6vw,25.5svh)!important;flex-basis:min(14.6vw,25.5svh)!important;height:36svh!important}
+html body .friends-page .friends-stories .friends-story-group>a:nth-child(2n){margin-top:7svh!important}
+}

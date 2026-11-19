@@ -1,0 +1,9 @@
+@media(max-width:800px){
+ html body.home-page main .hero-scroll{height:auto!important;min-height:0!important;padding:16px 0 24px!important;margin:0!important;overflow:visible!important}
+ html body.home-page main .hero-scroll .hero{position:relative!important;inset:auto!important;top:auto!important;width:88%!important;height:auto!important;min-height:0!important;max-height:none!important;aspect-ratio:9/16!important;margin:0 auto!important;padding:0!important;border-radius:10px!important;overflow:hidden!important;transform:none!important}
+ html body.home-page main .hero .hero-video-placeholder{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center top!important}
+ html body.home-page main .hero .hero-content{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:8px!important;padding:16px 10px!important;transform:none!important;text-align:center!important}
+ html body.home-page main .hero .hero-main-title{font-size:clamp(18px,5.2vw,27px)!important;line-height:1.4!important;margin:0!important;white-space:nowrap!important;letter-spacing:-.035em!important}
+ html body.home-page main .hero .hero-subtitle{font-size:clamp(9px,2.5vw,13px)!important;line-height:1.5!important;margin:0!important;white-space:nowrap!important}
+ html body.home-page main .hero .hero-scroll-guide{display:none!important}
+}

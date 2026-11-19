@@ -1,11 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function initLoop(viewport,track,groupClass,speed,reverse=false,pauseOnHover=true){
+  function initLoop(viewport,track,groupClass,speed,reverse=false,pauseOnHover=false){
     let group=track.querySelector('.'+groupClass);
     if(group){[...track.children].filter(c=>c!==group).forEach(c=>c.remove());}
     else{group=document.createElement('div');group.className=groupClass;[...track.children].forEach(c=>group.append(c));track.append(group);}
     let animation=null, hovered=false, focused=false, distance=0;
-    function sync(){if(!animation)return;(hovered||focused||document.hidden)?animation.pause():animation.play();}
+    viewport.addEventListener('touchstart',()=>{hovered=true;sync();},{passive:true});
+    viewport.addEventListener('touchend',()=>{hovered=false;sync();},{passive:true});
+    viewport.addEventListener('touchcancel',()=>{hovered=false;sync();},{passive:true});
+    function sync(){if(!animation)return;document.hidden?animation.pause():animation.play();}
     function build(){
       const phase=animation&&distance ? (Number(animation.currentTime)||0)/(distance/speed*1000)%1 : 0;
       animation?.cancel();
@@ -29,5 +32,6 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const reviews=document.querySelector('.reviews-marquee');
 if(!reviews)return;
 reviews.querySelectorAll('.review-item').forEach(card=>card.tabIndex=0);
-Promise.all([...reviews.querySelectorAll('img')].map(img=>{img.loading='eager';return img.decode().catch(()=>{});})).then(()=>initLoop(reviews,reviews.querySelector('.reviews-track'),'review-group',22));
+reviews.querySelectorAll('img').forEach(img=>{img.loading='eager';img.decode?.().catch(()=>{});});
+initLoop(reviews,reviews.querySelector('.reviews-track'),'review-group',matchMedia('(max-width:800px)').matches?12:18);
 });

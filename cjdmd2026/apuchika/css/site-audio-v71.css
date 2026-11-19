@@ -1,0 +1,19 @@
+body .site-music-toggle,body .shared-quick-actions>button.site-music-toggle,body .shared-quick-actions>button.site-music-toggle:hover{position:fixed;right:3%;bottom:5%;left:auto;z-index:110;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0!important;border-radius:50%!important;background:#0b99ff!important;color:#fff!important;font:400 10px/1.2 ApuNavBody,Pretendard,sans-serif;box-shadow:none;cursor:pointer;width:max(56px,calc(76 * var(--exhibit-unit,1px)));height:max(56px,calc(76 * var(--exhibit-unit,1px)))}
+body .shared-quick-actions>button.site-music-toggle{order:1!important}
+body .site-music-toggle svg{width:30%;height:34%;display:block}
+body .site-music-toggle:focus-visible{outline:2px solid #0068aa;outline-offset:3px}
+@media(max-width:620px){body .site-music-toggle,body .shared-quick-actions>button.site-music-toggle,body .shared-quick-actions>button.site-music-toggle:hover{width:42px;height:42px;font-size:8px;gap:1px}}
+
+body .site-music-toggle>img,body .shared-quick-actions>button.site-music-toggle>img{display:block!important;width:46%!important;height:46%!important;object-fit:contain!important;margin:0!important;padding:0!important}
+
+/* Compact, equal-sized TOP and sound controls across all pages. */
+html body .shared-quick-actions{gap:10px!important}
+html body .shared-quick-actions>button,html body .shared-quick-actions>button:hover,html body .shared-quick-actions>a,html body .shared-quick-actions>a:hover{width:72px!important;height:72px!important;flex-basis:72px!important}
+html body .site-music-toggle{width:72px!important;height:72px!important}
+@media(max-width:800px){html body .shared-quick-actions{gap:8px!important}html body .shared-quick-actions>button,html body .shared-quick-actions>button:hover,html body .shared-quick-actions>a,html body .shared-quick-actions>a:hover,html body .site-music-toggle{width:40px!important;height:40px!important;flex-basis:40px!important}}
+
+/* Keep the TOP control available in mobile layouts. */
+@media(max-width:800px){
+ html body.home-page .shared-quick-actions,html body.kit-page .shared-quick-actions,html body.characters-page .shared-quick-actions,html body.animation-page .shared-quick-actions,html body.episode-page .shared-quick-actions,html body.passes-page .shared-quick-actions,html body .shared-quick-actions{display:flex!important;visibility:visible!important;opacity:1!important;position:fixed!important;inset:auto 14px max(16px,env(safe-area-inset-bottom)) auto!important;z-index:110!important}
+ html body.home-page .shared-quick-actions .floating-top-btn,html body .shared-quick-actions .floating-top-btn{display:block!important;visibility:visible!important;opacity:1!important;width:40px!important;height:40px!important;flex-basis:40px!important}
+}

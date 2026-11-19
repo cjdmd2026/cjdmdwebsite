@@ -1,0 +1,9 @@
+html body .friends-page #planetFriends .friend-face-motion{display:block;position:relative;width:100%;aspect-ratio:1;border-radius:50%;isolation:isolate;transition:transform .28s cubic-bezier(.22,.61,.36,1)}
+html body .friends-page #planetFriends .friend-face-motion .friend-face{display:block;width:100%;height:auto;opacity:1;transition:opacity .28s ease}
+html body .friends-page #planetFriends .friend-face-motion .friend-face-alternate{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:contain;border-radius:50%;opacity:0;transition:opacity .28s ease;pointer-events:none}
+@media(hover:hover){
+ html body .friends-page #planetFriends article:hover .friend-face-motion{transform:translateY(-4px) scale(1.025);transition-delay:0s}
+ html body .friends-page #planetFriends article:hover .friend-face{opacity:0;transition-delay:0s}
+ html body .friends-page #planetFriends article:hover .friend-face-alternate{opacity:1;transition-delay:0s}
+}
+@media(prefers-reduced-motion:reduce){html body .friends-page #planetFriends .friend-face-motion,html body .friends-page #planetFriends .friend-face-motion img{transition:none!important;transform:none!important}}

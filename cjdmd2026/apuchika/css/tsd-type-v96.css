@@ -1,0 +1,8 @@
+html body.apu-kit-page #tsd .tsd-mobile-copy{display:none}
+html body.apu-kit-page #tsd .kw-tsd-steps li p{font-family:ApuNavBody,Pretendard,sans-serif!important;font-weight:400!important;color:#62686c!important}
+@media(max-width:800px){
+ html body.apu-kit-page #tsd .kw-center .tsd-desktop-copy{display:none!important}
+ html body.apu-kit-page #tsd .kw-center .tsd-mobile-copy{display:block!important;font:400 13px/1.7 ApuNavBody,Pretendard,sans-serif!important;color:#62686c!important;letter-spacing:-.2px}
+ html body.apu-kit-page #tsd .kw-center .tsd-mobile-copy em{font-family:inherit!important;font-weight:400!important;color:#0b99ff!important}
+ html body.apu-kit-page #tsd .kw-tsd-steps li p{font-size:13px!important;line-height:1.6!important}
+}

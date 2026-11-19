@@ -1,0 +1,37 @@
+html body .friends-page .character-speech{position:absolute;z-index:8;left:50%;top:0;min-width:180px;width:max-content;max-width:none;padding:15px 28px;border:0;border-radius:999px;background:#fff;color:#0b99ff;box-shadow:none;font:400 clamp(15px,1.3vw,21px)/1.4 ApuNavHeading,'Apple SD Gothic Neo',sans-serif;text-align:center;white-space:nowrap;word-break:normal;opacity:0;visibility:hidden;transform:translate(-50%,-72%) scale(.92);transform-origin:50% 100%;transition:opacity .24s ease,transform .3s cubic-bezier(.2,.8,.2,1),visibility .24s;pointer-events:none}
+html body .friends-page .character-speech::after{content:"";position:absolute;right:15%;bottom:-21px;width:42px;height:27px;background:#fff;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 42 27'%3E%3Cpath d='M0 0H23C21 11 27 20 42 27C19 25 5 16 0 0Z'/%3E%3C/svg%3E") center/contain no-repeat;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 42 27'%3E%3Cpath d='M0 0H23C21 11 27 20 42 27C19 25 5 16 0 0Z'/%3E%3C/svg%3E") center/contain no-repeat}
+html body .friends-page .character-dialogue-target.is-speaking .character-speech{opacity:1;visibility:visible;transform:translate(-50%,-82%) scale(1)}
+html body .friends-page .profile-character .character-speech{left:76%;top:20%;max-width:none}
+html body .friends-page .profile-character-chika .character-speech{left:25%}
+html body .friends-page #planetFriends .friend-face-motion .character-speech{top:7%;min-width:130px;max-width:min(210px,34vw);padding:9px 13px;font-size:13px;border-radius:15px}
+@media(max-width:800px){
+ html body .friends-page .character-speech{min-width:0;width:max-content;max-width:min(74vw,300px);padding:11px 20px;border-radius:999px;font-size:14px}
+ html body .friends-page .profile-character .character-speech{left:72%;top:5%;max-width:58vw}
+ html body .friends-page .profile-character-chika .character-speech{left:28%}
+ html body .friends-page #planetFriends .friend-face-motion .character-speech{max-width:66vw;font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){html body .friends-page .character-speech{transition:none}}
+
+html body .friends-page .profile-character-apu .character-speech{left:81%;top:25%;color:#ffc52b}
+html body .friends-page .profile-character-apu .character-speech::after{right:auto;left:12%;transform:scaleX(-1)}
+html body .friends-page .profile-character-chika .character-speech{left:2%;top:28%}
+html body .friends-page .guardian-profile .sparkle-3{top:27%}
+@media(max-width:800px){
+ html body .friends-page .profile-character .character-speech{max-width:none;font-size:clamp(11px,3.3vw,14px);padding:10px 17px}
+ html body .friends-page .profile-character-apu .character-speech{left:70%;top:6%}
+ html body .friends-page .profile-character-chika .character-speech{left:30%;top:5%}
+}
+
+html body .friends-page .chika-profile .sparkle-3{top:39%}
+
+@media(min-width:801px){
+ html body .friends-page .profile-character .character-speech{box-sizing:border-box;display:flex;align-items:center;justify-content:center;min-width:18.2vw;min-height:4.5vw;padding:1.15vw 2.3vw;font-size:1.55vw;line-height:1.4}
+ html body .friends-page .profile-character .character-speech::after{width:3.25vw;height:2.1vw;bottom:-1.6vw}
+}
+
+@media(min-width:801px){
+ html body .friends-page .profile-character-apu .character-speech{left:87%;top:22%}
+ html body .friends-page .apu-profile .sparkle-3{left:59%;top:39%}
+}
+
+@media(max-width:800px){html body .friends-page .character-dialogue-target .character-speech{display:none!important}}

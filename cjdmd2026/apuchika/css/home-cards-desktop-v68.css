@@ -1,0 +1,21 @@
+@media(min-width:801px){
+ html body.home-page #learn-more .link-card-grid{grid-template-columns:1.22fr 1fr!important;align-items:stretch!important}
+ html body.home-page #learn-more a.link-card{--card-accent:#68c7ff;background:#fff!important;color:#444!important;height:26vw!important;min-height:0!important;aspect-ratio:auto!important;padding:3vw!important;transition:background-color .25s ease,color .25s ease!important}
+ html body.home-page #learn-more a.link-card-character{--card-accent:#00c56d}
+ html body.home-page #learn-more a.link-card-animation{--card-accent:#ffce20}
+ html body.home-page #learn-more a.link-card h3{font:400 clamp(17px,1.45vw,28px)/1.4 ApuNavHeading,sans-serif!important;margin:0 0 1.2vw!important;color:inherit!important}
+ html body.home-page #learn-more a.link-card p{font:400 clamp(13px,1vw,19px)/1.55 ApuNavBody,sans-serif!important;margin:0!important;color:inherit!important}
+ html body.home-page #learn-more a.link-card .card-shortcut{font:400 clamp(12px,.95vw,18px)/1 ApuNavHeading,sans-serif!important;background:var(--card-accent)!important;color:#fff!important;width:8.8vw!important;min-width:8.8vw!important;height:2.8vw!important;min-height:2.8vw!important;margin-top:1.3vw!important;gap:.6em!important}
+ html body.home-page #learn-more a.link-card .card-shortcut>span{font:400 1.15em/1 ApuNavBody,sans-serif!important;color:inherit!important}
+ html body.home-page #learn-more a.link-card:is(:hover,:focus-visible){background:var(--card-accent)!important;color:#fff!important}
+ html body.home-page #learn-more a.link-card:is(:hover,:focus-visible) .card-shortcut{background:#fff!important;color:var(--card-accent)!important}
+ html body.home-page #learn-more a.link-card-animation>img{right:0!important;object-position:right center!important}
+}
+/* Reduce the complete PC card composition while retaining the approved hover. */
+@media(min-width:801px){
+ html body.home-page #learn-more .link-card-grid{width:52%!important;max-width:none!important;gap:1.85vw!important;margin-inline:auto!important}
+ html body.home-page #learn-more a.link-card{height:22vw!important;padding:2.5vw!important;border-radius:clamp(12px,1.2vw,23px)!important}
+ html body.home-page #learn-more a.link-card h3{font-size:clamp(16px,1.3vw,25px)!important;margin-bottom:1vw!important}
+ html body.home-page #learn-more a.link-card p{font-size:clamp(12px,.9vw,17px)!important}
+ html body.home-page #learn-more a.link-card .card-shortcut{width:7.5vw!important;min-width:7.5vw!important;max-width:7.5vw!important;height:2.4vw!important;min-height:2.4vw!important;max-height:2.4vw!important;font-size:clamp(11px,.85vw,16px)!important;margin-top:1.1vw!important}
+}

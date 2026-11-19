@@ -3,10 +3,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const header = document.querySelector('.site-header');
   document.querySelector('.top-button').addEventListener('click', () => window.scrollTo({top: 0, behavior: reduced ? 'instant' : 'smooth'}));
   const steps = [...document.querySelectorAll('.step')], picture = document.querySelector('#processImage');
+  steps.forEach(step=>{if(step.dataset.img){const preload=new Image();preload.src=step.dataset.img;preload.decode?.().catch(()=>{});}});
   steps.forEach((step, index) => {
     step.setAttribute('role','tab'); step.setAttribute('aria-controls','processImage'); step.setAttribute('aria-selected',String(index===0)); step.tabIndex = index===0 ? 0 : -1;
     const activate = () => { steps.forEach(s => {const on = s===step; s.classList.toggle('is-active',on); s.setAttribute('aria-selected',String(on)); s.tabIndex=on ? 0 : -1;}); picture.src=step.dataset.img; picture.alt=step.textContent.replace(/\s+/g,' ').trim(); };
-    step.addEventListener('click',activate); step.addEventListener('mouseenter',activate);
+    step.addEventListener('click',activate); step.addEventListener('pointerenter',activate); step.addEventListener('focus',activate);
+    step.addEventListener('pointerover',()=>{if(!step.classList.contains('is-active'))activate()});
     step.addEventListener('keydown',e => {const d = ['ArrowRight','ArrowDown'].includes(e.key) ? 1 : ['ArrowLeft','ArrowUp'].includes(e.key) ? -1 : 0;if(d){e.preventDefault();const next=steps[(index+d+steps.length)%steps.length];next.click();next.focus();}});
   });
   const logo=document.querySelector('.hero-logo-video');

@@ -1,0 +1,14 @@
+/* Cards move separately, within the space below the hanging sign. */
+.badge-page #intro .intro-card-pair{position:absolute;inset:0;pointer-events:none;z-index:1}
+.badge-page #intro .intro-single-card{position:absolute;width:min(32%,51cqh);height:auto;filter:drop-shadow(0 0 12px #ffffffc0) drop-shadow(0 0 28px #ffffff60);will-change:transform}
+.badge-page #intro .intro-single-card.chika{left:28%;top:30%;animation:badge-chika-drift 5.8s ease-in-out infinite}
+.badge-page #intro .intro-single-card.apu{right:28%;top:40%;animation:badge-apu-drift 7.1s ease-in-out infinite}
+.badge-page #intro .intro-title{z-index:2}
+.badge-page #intro .intro-start{z-index:3}
+@keyframes badge-chika-drift{0%,100%{transform:translateY(0) rotate(-9deg)}50%{transform:translateY(1.5cqh) rotate(-7deg)}}
+@keyframes badge-apu-drift{0%,100%{transform:translateY(1.4cqh) rotate(9deg)}50%{transform:translateY(0) rotate(7deg)}}
+@media(prefers-reduced-motion:reduce){
+ .badge-page #intro .intro-single-card{animation:none;will-change:auto}
+ .badge-page #intro .intro-single-card.chika{transform:rotate(-8deg)}
+ .badge-page #intro .intro-single-card.apu{transform:rotate(8deg)}
+}

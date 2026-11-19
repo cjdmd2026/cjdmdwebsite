@@ -1,0 +1,40 @@
+/* Complete Pretendard coverage prevents individual Hangul falling back. */
+@font-face{font-family:ApuNavBody;src:url('../assets/fonts/Pretendard-Regular-full-v70.woff') format('woff');font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:HomeBody;src:url('../assets/fonts/Pretendard-Regular-full-v70.woff') format('woff');font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:Pretendard;src:url('../assets/fonts/Pretendard-Regular-full-v70.woff') format('woff');font-style:normal;font-weight:400;font-display:swap}
+@media(min-width:801px){
+ html{scroll-snap-type:none!important}
+ .desktop-section-stop,.desktop-pin-stage{scroll-snap-align:none!important;scroll-snap-stop:normal!important}
+ html body{--section-title-size:clamp(22px,1.65vw,32px)}
+ html body.apu-kit-page #learning h2,
+ html body.apu-kit-page #components h2,
+ html body.apu-kit-page #tsd h2,
+ html body.apu-kit-page #rentalBenefits h2,
+ html body.apu-kit-page #rentalGuide h2,
+ html body.apu-kit-page #community h2,
+ html body.apu-kit-page #faq h2,
+ html body.apu-animation:not(.episode-page) .episode-library>h2,
+ html body.episode-page #episodeTitle,
+ html body.passes-page .plans>h1,
+ html body.passes-page .contact-inner h2{
+  font:400 var(--section-title-size)/1.4 ApuNavHeading,sans-serif!important;letter-spacing:0!important
+ }
+ html body.apu-kit-page #components .kw-component h3,
+ html body.apu-kit-page #rentalBenefits .kw-benefits h3,
+ html body.apu-kit-page #rentalGuide .kw-step-copy h3{font:400 clamp(16px,1.15vw,22px)/1.4 ApuNavHeading,sans-serif!important;margin:6px 0 12px!important;letter-spacing:0!important}
+ html body.apu-kit-page #components .kw-component p,
+ html body.apu-kit-page #rentalBenefits .kw-benefits p,
+ html body.apu-kit-page #rentalGuide .kw-step-copy p,
+ html body.apu-kit-page #tsd .kw-tsd-steps li p,
+ html body.apu-kit-page #faq .kw-faq-answer p{font:400 clamp(12px,.84vw,16px)/1.6 ApuNavBody,sans-serif!important;letter-spacing:0!important;word-break:keep-all!important;font-synthesis:none!important}
+ html body.apu-kit-page #components .kw-component .kw-number{font:400 clamp(11px,.72vw,14px)/1.3 ApuNavBody,sans-serif!important;margin:0!important}
+ html body.apu-kit-page #tsd .kw-tsd-steps li h3{font:400 clamp(16px,1.05vw,20px)/1.4 ApuNavHeading,sans-serif!important;margin-bottom:10px!important}
+ html body.apu-kit-page #learning .kw-lead,
+ html body.apu-kit-page #tsd .kw-center>p,
+ html body.apu-kit-page #rentalBenefits .kw-benefits-left .kw-lead,
+ html body.apu-kit-page #rentalGuide .kw-center>p,
+ html body.apu-kit-page #community .reviews-heading>p{font:400 clamp(13px,.95vw,18px)/1.6 ApuNavBody,sans-serif!important;letter-spacing:0!important;font-synthesis:none!important}
+ html body.apu-kit-page #learning .kw-learning-tabs b{font:400 clamp(18px,1.25vw,24px)/1.3 ApuNavHeading,sans-serif!important}
+ html body.apu-kit-page #learning .kw-learning-tabs span span{font:400 clamp(12px,.84vw,16px)/1.5 ApuNavBody,sans-serif!important}
+ html body.apu-kit-page #kitIntro .unboxing-description{bottom:8%!important;font:400 clamp(12px,.84vw,16px)/1.6 ApuNavBody,sans-serif!important;letter-spacing:0!important;font-synthesis:none!important}
+}

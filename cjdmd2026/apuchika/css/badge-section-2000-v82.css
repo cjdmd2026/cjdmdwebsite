@@ -1,0 +1,6 @@
+/* Invitation uses its own 2000 × 1080 design frame. */
+@media(min-width:801px){
+html body.home-page .badge-invite-v98{--badge-frame-unit:calc(100vw / 2000);width:100%!important;max-width:none!important;height:54vw!important;min-height:0!important;box-sizing:border-box!important;padding:calc(40 * var(--badge-frame-unit)) 5vw!important;gap:calc(16 * var(--badge-frame-unit))!important}
+html body.home-page .badge-invite-v98 .invite-cards{width:49.25vw!important;height:24.63vw!important;margin:calc(24 * var(--badge-frame-unit)) auto 0!important}
+html body.home-page .badge-invite-v98>h2,html body.home-page .badge-invite-v98>p{transform:translateY(-20px)}
+}

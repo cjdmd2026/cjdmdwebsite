@@ -1,0 +1,20 @@
+/* Mobile-only spacing, artwork sizing and text colors. */
+@media(max-width:800px){
+ html body.apu-kit-page #community.community-reviews{padding-top:80px!important}
+ html body.apu-kit-page #community .reviews-marquee{margin-top:20px!important}
+
+ html body.home-page .home-blue-zone,
+ html body.home-page #kit-movie,
+ html body.home-page #learn-more{background-color:#0b99ff!important}
+ html body.home-page #kit-movie{box-sizing:border-box!important;height:calc(100svh - var(--header-h,56px))!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important}
+ html body.home-page #kit-movie .kit-movie-stage{box-sizing:border-box!important;position:relative!important;top:auto!important;width:100%!important;height:100%!important;min-height:100%!important;margin:0!important;padding:32px 0!important;border:0!important;overflow:hidden!important;background:linear-gradient(#75c7ff,#36afff 48%,#0b99ff)!important}
+ html body.home-page #learn-more{margin-top:0!important;overflow:hidden!important;padding-bottom:130px!important}
+ html body.home-page #learn-more .link-card-kit>img{box-sizing:border-box!important;width:47%!important;height:80%!important;max-width:none!important;max-height:none!important;right:2%!important;bottom:8%!important;object-fit:contain!important;object-position:center!important}
+ html body.home-page #learn-more .link-card-character>img{width:36%!important;height:68%!important;max-width:none!important;max-height:none!important;right:6%!important;bottom:16%!important;object-fit:contain!important}
+ html body.home-page #learn-more .link-card-animation>img{width:46%!important;height:90%!important;max-width:none!important;max-height:none!important;right:0!important;bottom:5%!important;object-fit:contain!important;object-position:right center!important}
+ html body.home-page #learn-more .blue-wave{left:auto!important;right:0!important;bottom:-1px!important;width:125%!important;height:auto!important;max-width:none!important;max-height:none!important;object-fit:contain!important;object-position:right bottom!important}
+
+ html body.apu-kit-page #tsd .kw-tsd-steps li :is(h3,p),
+ html body.apu-kit-page #tsd .kw-tsd-steps li :is(h3,p) *{color:#444444!important}
+}
+@media(max-width:800px){html body.apu-kit-page #tsd .kw-center :is(h2,p,em){color:#444444!important}}

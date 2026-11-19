@@ -1,0 +1,451 @@
+/* Second supplied reference pass: scoped corrections, shared current-page state. */
+html body header.apu-header nav.gnb>a.is-active{color:#0b99ff!important}
+html body header.apu-header nav.gnb>a.is-active::after{opacity:1!important}
+html body .plan>a{font-family:ApuNavBody,sans-serif!important;font-weight:400!important;font-size:inherit;text-decoration:none}
+html body .plan .duration img{width:24%;height:6.7vw;object-fit:contain;object-position:center bottom;right:5%;bottom:100%}
+html body #ask textarea{resize:none!important}
+html body #ask select{flex:1;min-width:0;width:auto;border:0;font:inherit;outline-offset:4px}
+html body #ask button:disabled{cursor:default}
+html body .kw-notice-badge{font:400 clamp(11px,.8vw,16px)/1 ApuNavHeading,sans-serif!important;padding:.65em .85em!important;display:inline-flex;align-items:center;justify-content:center;min-height:0!important}
+html body.apu-kit-page .kit-unboxing{height:auto!important;min-height:0!important;padding:0!important}
+html body.apu-kit-page .kit-unboxing .unboxing-pin{position:relative!important;top:0!important;height:calc(100svh - var(--desktop-header,var(--header-h,90px)))!important}
+html body.apu-kit-page #learning .kw-learning-tabs i svg{display:block;width:24px;height:24px}
+html body.apu-kit-page #tsd h2{color:#454545!important}
+html body.apu-kit-page #rentalGuide .kw-service-grid li:is(:hover,:focus-visible){box-shadow:none!important;transform:none!important}
+html body.apu-kit-page #rentalGuide .kw-service-media img,html body.apu-kit-page #rentalGuide .kw-service-grid li:hover .kw-service-media img{transform:none!important;transition:none!important}
+html body.apu-kit-page #rentalGuide .kw-service-grid li:hover .kw-step-copy{background:#deeffc;transition:background-color .2s ease}
+html body.apu-kit-page .review-item p,html body.apu-kit-page .reviews-heading>p{font-family:ApuNavBody,sans-serif!important;font-weight:400!important}
+html body.apu-kit-page .review-item p em,html body.apu-kit-page .review-item p mark,html body.apu-kit-page .reviews-heading h2 em{color:#FFCA22!important;background:transparent}
+html body.apu-kit-page #faq .kw-faq-answer{padding-top:36px!important;padding-bottom:36px!important}
+html body .friends-page .join-guardians>p,html body .friends-page .join-guardians h2{font-family:ApuNavHeading,sans-serif!important;font-weight:400!important}
+html body .friends-page .join-guardians>p em{color:#0b99ff;font-style:normal}
+html body .favorites-filter{font-family:ApuNavHeading,sans-serif!important;font-weight:400!important;outline:none!important}
+html body .favorites-filter[aria-pressed=true]{color:white!important;border-color:transparent!important}
+html body .favorites-filter[aria-pressed=true] img{filter:brightness(0) invert(1)!important;opacity:1!important;visibility:visible!important}
+html body .episode-card h3{margin:16px 0 10px!important;min-height:0!important;line-height:1.35!important}
+html body .episode-card p{margin:0!important;line-height:1.5!important;min-height:3em!important;white-space:pre-line}
+html body .episode-grid{row-gap:42px!important}
+#issuedScene::backdrop{background:transparent!important;backdrop-filter:none!important}
+@media(min-width:801px){
+ html body.apu-kit-page #learning .kw-learning-layout{width:100%!important;grid-template-columns:30% minmax(0,1fr)!important;gap:6.5%!important;margin-top:4svh!important}
+ html body.apu-kit-page #learning .kw-learning-panels{height:auto!important;aspect-ratio:2/1!important}
+ html body.apu-kit-page #learning .kw-learning-tabs{height:100%}
+ html body.apu-kit-page #learning .kw-learning-tabs button{flex:1;min-height:0!important}
+ html body.apu-kit-page #tsd .kw-apu{width:min(31vw,51svh)!important;height:min(31vw,51svh)!important}
+ html body.apu-kit-page #tsd .kw-tsd-layout{width:100%!important;grid-template-columns:42% 50%!important;gap:8%!important}
+ html body.apu-kit-page #tsd .kw-tsd-steps li p{font-size:clamp(14px,.85vw,18px)!important;line-height:1.45!important}
+ html body.apu-kit-page #tsd .kw-tsd-steps li h3{font-size:clamp(17px,1.05vw,22px)!important;margin-bottom:8px!important}
+ html body.apu-kit-page #tsd .kw-tsd-pin{padding-bottom:8svh!important}
+ html body.apu-kit-page #rentalBenefits .kw-benefits-pin{height:calc(100svh - var(--desktop-header,90px))!important;top:var(--desktop-header,90px)!important;box-sizing:border-box;padding-top:2svh!important;padding-bottom:8svh!important;align-items:center!important}
+ html body.apu-kit-page #rentalGuide .kw-step-copy{padding:1.6vw 2vw 2vw!important;gap:.55vw!important;min-height:12vw!important}
+ html body.apu-kit-page #rentalGuide .kw-step-copy p{font-size:clamp(14px,.95vw,20px)!important;line-height:1.45!important;margin-top:.3vw!important}
+ html body.apu-kit-page #rentalGuide .kw-step-copy h3{line-height:1.3!important;margin-bottom:.2vw!important}
+ html body .friends-page .friends-stories{padding:4vw 0 6vw!important;min-height:0!important;height:auto!important}
+ html body .friends-page .friends-story-viewport{padding:0!important;overflow:hidden!important}
+ html body .friends-page .friends-story-track{margin:4vw 0!important;padding:0!important;align-items:flex-start!important}
+ html body .friends-page .friends-story-group{align-items:flex-start!important;gap:3vw!important;padding-right:3vw!important}
+ html body .friends-page .friends-story-group>a{width:17vw!important;flex:0 0 17vw!important;height:24vw!important;margin-top:0!important;border-radius:12px!important}
+ html body .friends-page .friends-story-group>a:nth-child(2n){margin-top:4.2vw!important}
+ html body .friends-page .join-guardians{padding-top:4vw!important}
+ html body .friends-page .join-guardians>p{font-size:1.7vw!important;margin-bottom:.7vw!important}
+ html body .friends-page .join-guardians h2{font-size:2.4vw!important}
+ html body .friends-page .friends-footer-art{margin-top:4vw!important}
+ html body .friends-page .friends-footer-art .group-art{width:72vw!important;max-width:none!important;height:auto!important;margin:0 auto!important}
+}
+@media(max-width:800px){html body .plan .duration img{height:76px;width:23%}html body #ask select{font-size:14px}html body .episode-grid{row-gap:28px!important}}
+
+html body .friends-page .join-guardians>p em{font-family:ApuNavHeading,sans-serif!important}
+html body.apu-kit-page .package-camera{z-index:0;isolation:isolate}
+html body.apu-kit-page .unboxing-copy,html body.apu-kit-page .unboxing-description{z-index:4;transform:translateZ(0)}
+
+/* Shared corrections adapted to narrow screens. */
+@media(max-width:800px){
+ html body.apu-kit-page .kit-unboxing .unboxing-pin{height:calc(100svh - 56px)!important;min-height:0!important}
+ html body.apu-kit-page #faq .kw-faq-answer{padding-top:22px!important;padding-bottom:22px!important}
+ html body.apu-kit-page #rentalGuide .kw-step-copy h3{margin:5px 0 7px!important;line-height:1.3!important}
+ html body.apu-kit-page #rentalGuide .kw-step-copy p{line-height:1.45!important}
+ html body.apu-kit-page #learning .kw-learning-tabs i svg{width:18px;height:18px}
+ html body.apu-kit-page #tsd .kw-tsd-steps li p{line-height:1.5!important}
+ html body .episode-card h3{margin:12px 0 7px!important}
+ html body .friends-page .friends-story-group>a:nth-child(2n){margin-top:6vw!important}
+ html body .friends-page .join-guardians .mobile-join-heading em{color:#0b99ff;font-style:normal}
+}
+
+/* Override the heading's reserved second line as well as its margins. */
+html body.apu-animation:not(.episode-page) .episode-library .episode-card h3{min-height:0!important;height:auto!important;margin:14px 0 8px!important;line-height:1.25!important}
+html body.apu-animation:not(.episode-page) .episode-library .episode-card p{min-height:0!important;margin:0!important;line-height:1.35!important}
+@media(max-width:800px){
+ html body.apu-animation:not(.episode-page) .episode-library .episode-card h3{margin:10px 0 6px!important;line-height:1.25!important}
+ html body.apu-animation:not(.episode-page) .episode-library .episode-card p{line-height:1.35!important}
+}
+
+html body.apu-kit-page .kit-unboxing .unboxing-pin{min-height:0!important;max-height:calc(100svh - var(--desktop-header,var(--header-h,90px)))!important}
+@media(max-width:800px){html body.apu-kit-page .kit-unboxing .unboxing-pin{height:calc(100svh - 56px)!important;max-height:calc(100svh - 56px)!important}}
+
+html body.apu-kit-page #tsd .kw-tsd-steps::before{top:var(--first-dot)!important;bottom:var(--last-dot)!important}
+
+/* Exhibition reference corrections. */
+html body.apu-kit-page .kw-notice-badge,html body.apu-kit-page .kw-pill{font-family:ApuNavHeading,sans-serif!important;font-weight:400!important;line-height:1!important;display:inline-flex!important;align-items:center!important;justify-content:center!important}
+html body.apu-kit-page .kw-brandline{display:flex!important;align-items:center!important;justify-content:center!important;gap:1.1em!important;text-align:center!important}
+html body.apu-kit-page .kw-brandline>span:last-child{line-height:1.3!important;margin:0!important;align-self:center}
+html body.apu-kit-page #tsd .kw-tsd-steps li h3{color:#245774!important}
+html body.apu-kit-page #rentalGuide .kw-step-copy>span{font:400 clamp(20px,1.55vw,32px)/1.1 ApuNavHeading,sans-serif!important;letter-spacing:0!important;margin:0 0 6px!important}
+html body .friends-page .friends-story-track{height:28.2vw!important;overflow:visible!important}
+html body .friends-page .friends-story-group>a img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important}
+body.badge-page #intro .intro-cards{animation:exhibit-card-float 4s ease-in-out infinite!important;will-change:transform}
+@keyframes exhibit-card-float{0%,100%{transform:translate(-50%,-50%) translateY(8px) rotate(-1deg)}50%{transform:translate(-50%,-50%) translateY(-8px) rotate(1deg)}}
+@media(min-width:801px){
+ html body.apu-kit-page #faq{width:91.3%!important;max-width:none!important;padding:4vw 0 4.5vw!important}
+ html body.apu-kit-page #faq h2{font:400 2.2vw/1.35 ApuNavHeading,sans-serif!important;margin:0!important}
+ html body.apu-kit-page #faq>p{font:400 1.4vw/1.4 ApuNavHeading,sans-serif!important;margin:1.1vw 0 3.1vw!important}
+ html body.apu-kit-page #faq details{margin:1.6vw 0 0!important;border-radius:1.1vw!important;background:#f8f8f8!important}
+ html body.apu-kit-page #faq details[open]{background:#e5f4ff!important}
+ html body.apu-kit-page #faq details>summary,html body.apu-kit-page #faq details[open]>summary{box-sizing:border-box!important;height:7.1vw!important;min-height:0!important;padding:0 3.5vw!important;font:400 1.35vw/1.3 ApuNavHeading,sans-serif!important}
+ html body.apu-kit-page #faq .kw-faq-answer{box-sizing:border-box;margin:0 3.3vw!important;padding:1.6vw 2vw 2.5vw!important;border-top:1px solid #a5d8fa!important}
+ html body.apu-kit-page #faq .kw-faq-answer p{font:400 1vw/1.5 ApuNavBody,sans-serif!important;margin:0!important;padding:0!important;border:0!important;color:#50575b!important}
+}
+@media(max-width:800px){
+ html body.apu-kit-page #faq details{background:#f8f8f8!important}
+ html body.apu-kit-page #faq details[open]{background:#e5f4ff!important}
+ html body .friends-page .friends-story-track{height:40vw!important}
+ body.badge-page #intro .intro-cards{animation:cardFloat81 4s ease-in-out infinite!important}
+}
+@media(prefers-reduced-motion:reduce){body.badge-page #intro .intro-cards{animation:none!important}}
+
+html body.apu-kit-page #tsd .kw-tsd-steps li:nth-child(3){background:#d5edf9!important}
+html body.episode-page .back-link{display:none!important}
+html body.episode-page .episode-actions{margin-top:44px!important;gap:24px!important;align-items:flex-start!important}
+html body.episode-page .episode-actions>*{display:flex!important;flex-direction:column;align-items:center;gap:12px;width:64px!important;padding:0!important}
+html body.episode-page .episode-actions .episode-action-icon{width:28px!important;height:28px!important;max-width:28px!important;object-fit:contain!important;margin:0!important}
+html body.episode-page .episode-actions small{margin:0!important}
+html body.episode-page .other-track{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;overflow:visible!important;gap:24px!important;scrollbar-width:none}
+html body.episode-page .other-scroll{display:none!important}
+html body.episode-page .episode-list-link{display:flex;width:112px;min-height:40px;margin:40px auto 0;align-items:center;justify-content:center;background:#003552;color:white;border-radius:99px;font:400 16px/1 ApuNavHeading,sans-serif}
+@media(min-width:801px){
+ html body.apu-animation:not(.episode-page) .episode-library>h2{font:400 2.9vw/1.35 ApuNavHeading,sans-serif!important}
+ html body.apu-kit-page #rentalGuide{height:auto!important;min-height:0!important;padding:5vw 0 6vw!important}
+ html body.apu-kit-page #rentalGuide .kw-service-pin{position:relative!important;top:auto!important;height:auto!important;min-height:0!important;padding:0!important;width:86%!important;margin:auto!important}
+ html body.apu-kit-page #rentalGuide .kw-service-grid{position:relative!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:3.3vw!important;width:100%!important;margin:4.5vw 0 0!important;overflow:visible!important}
+ html body.apu-kit-page #rentalGuide .kw-service-grid li{background:none!important;border-radius:0!important;overflow:visible!important;opacity:1!important;transform:none!important;box-shadow:none!important}
+ html body.apu-kit-page #rentalGuide .kw-service-media{aspect-ratio:1.58!important;height:auto!important;border-radius:1vw!important;overflow:hidden!important}
+ html body.apu-kit-page #rentalGuide .kw-step-copy{position:relative!important;background:none!important;border:0!important;border-radius:0!important;margin-top:24px!important;min-height:0!important;padding:3.8vw 0 0 3.3vw!important;display:block!important}
+ html body.apu-kit-page #rentalGuide .kw-step-copy>span{font:400 1.25vw/1.2 ApuNavHeading,sans-serif!important;margin:0!important}
+ html body.apu-kit-page #rentalGuide .kw-step-copy h3{font:400 1.4vw/1.3 ApuNavHeading,sans-serif!important;margin:10px 0 18px!important}
+ html body.apu-kit-page #rentalGuide .kw-step-copy p{font:400 1vw/1.45 ApuNavBody,sans-serif!important;margin:0!important}
+ html body.apu-kit-page #rentalGuide .kw-service-grid::before{display:block!important;content:''!important;position:absolute;left:0;right:0;top:var(--rail-y);height:2px!important;background:#0b99ff!important;transform:none!important}
+ html body.apu-kit-page #rentalGuide .kw-service-grid::after{display:none!important}
+ html body.apu-kit-page #rentalGuide .kw-step-copy::before{display:block!important;content:'';position:absolute;left:3.3vw!important;top:-5px!important;width:10px;height:10px;border:2px solid #0b99ff;border-radius:50%;background:white;box-sizing:border-box;z-index:2}
+}
+@media(max-width:800px){html body.episode-page .episode-actions{margin-top:32px!important}html body.episode-page .episode-actions .episode-action-icon{width:22px!important;height:22px!important}html body.apu-animation:not(.episode-page) .episode-library>h2{font-size:24px!important}html body.episode-page .other-track{gap:12px!important}}
+
+@media(min-width:801px){html body.apu-kit-page #rentalGuide{width:100%!important;max-width:none!important}}
+
+/* Do not let proximity snapping move the page after the box is aligned. */
+@media(min-width:801px){html:has(body.apu-kit-page){scroll-snap-type:y proximity!important}}
+html body.apu-kit-page .kit-unboxing .unboxing-pin{height:var(--unboxing-view-height,calc(100svh - 90px))!important;min-height:0!important;max-height:none!important}
+
+html body.home-page #process .step{box-sizing:border-box!important;display:grid!important;grid-template-columns:26px max-content minmax(0,1fr)!important;align-items:center!important;column-gap:20px!important;padding:24px 8%!important}
+html body.home-page #process .step>b,html body.home-page #process .step>span,html body.home-page #process .step>em{position:static!important;align-self:center!important;margin:0!important;top:auto!important;transform:none!important;line-height:1.35!important}
+html body.home-page #process .step>b{display:flex!important;align-items:center!important;justify-content:center!important;width:24px!important;height:24px!important;padding:0!important;line-height:1!important}
+html body.home-page .link-card-animation>img{right:0!important;object-position:right center!important}
+@media(max-width:800px){html body.home-page #process .step{grid-template-columns:18px max-content minmax(0,1fr)!important;padding:14px 8%!important;column-gap:12px!important}html body.home-page #process .step>b{width:18px!important;height:18px!important}}
+
+html body.apu-kit-page #faq details,html body.apu-kit-page #faq details[open]{background:#e5f4ff!important}
+
+html body.apu-kit-page #components .kw-component-media .kw-tablet-photo{inset:0!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;padding:1.2vw!important;object-fit:contain!important;object-position:center!important;transform:none!important}
+html body.home-page .link-card-grid .link-card-animation>img{right:0!important;width:62%!important;max-width:62%!important;height:59%!important;max-height:80%!important;object-fit:contain!important;object-position:right center!important}
+@media(max-width:800px){html body.home-page .link-card-grid .link-card-animation>img{width:64%!important;max-width:64%!important;height:45%!important}html body.apu-kit-page #components .kw-component-media .kw-tablet-photo{padding:14px!important}}
+
+html body.apu-kit-page #components .kw-component-media .kw-tablet-photo{transform:translateX(.65vw)!important}
+@media(max-width:800px){html body.apu-kit-page #components .kw-component-media .kw-tablet-photo{transform:translateX(4px)!important}}
+
+.component-mobile-copy,.tsd-mobile-copy{display:none}
+@media(max-width:800px){
+ html body.apu-kit-page #components .component-desktop-copy,html body.apu-kit-page #tsd .tsd-desktop-copy{display:none!important}
+ html body.apu-kit-page #components .component-mobile-copy,html body.apu-kit-page #tsd .tsd-mobile-copy{display:inline!important}
+ html body.apu-kit-page #components .kw-component{height:164px!important;min-height:164px!important;grid-template-columns:45% minmax(0,55%)!important}
+ html body.apu-kit-page #components .kw-component>div:last-child{padding:16px 12px!important;display:flex!important;flex-direction:column;justify-content:center;min-width:0}
+ html body.apu-kit-page #components .kw-component-media{height:100%!important;overflow:hidden!important}
+ html body.apu-kit-page #components .kw-component .kw-component-media img{inset:0!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;padding:10px!important;object-fit:contain!important;transform:none!important;box-sizing:border-box}
+ html body.apu-kit-page #components .kw-component:nth-child(2) .kw-component-media .kw-tablet-photo{padding:0!important;transform:none!important}
+ html body.apu-kit-page #components .kw-component:nth-child(3) .kw-component-media img{padding:18px!important;transform:none!important}
+ html body.apu-kit-page #components .kw-component p{font:400 12px/1.5 ApuNavBody,sans-serif!important;margin:0!important;word-break:keep-all}
+ html body.apu-kit-page #components .kw-component h3{font-size:17px!important;line-height:1.3!important;margin:6px 0 10px!important}
+ html body.apu-kit-page #components .kw-number{font-size:12px!important;line-height:1.2!important;margin:0!important}
+ html body.apu-kit-page #tsd .kw-tsd-steps li:nth-child(3){background:#fff5db!important}
+ html body.apu-kit-page #tsd .kw-tsd-steps li:nth-child(3) p{font-size:clamp(10px,2.9vw,13px)!important;white-space:nowrap!important}
+}
+
+/* Mobile rental cards and FAQ use the same spacing language as desktop. */
+@media(max-width:800px){
+ html body.apu-kit-page #rentalBenefits .kw-benefits-window{margin-top:28px!important}
+ html body.apu-kit-page #rentalBenefits .kw-benefits{gap:24px!important}
+ html body.apu-kit-page #rentalBenefits .kw-benefits li,
+ html body.apu-kit-page #rentalBenefits .kw-benefits li.is-active{background:#f8f8f8!important;padding:22px 18px!important;opacity:.4!important;transform:translateY(20px)!important;transition:opacity .55s ease,transform .55s ease!important}
+ html body.apu-kit-page #rentalBenefits .kw-benefits li.benefit-revealed{opacity:1!important;transform:none!important}
+ html body.apu-kit-page #faq{width:88%!important;padding:44px 0 56px!important}
+ html body.apu-kit-page #faq h2{font:400 21px/1.4 ApuNavHeading,sans-serif!important;margin:0!important;word-break:keep-all}
+ html body.apu-kit-page #faq>p{font:400 14px/1.5 ApuNavBody,sans-serif!important;margin:14px 0 28px!important}
+ html body.apu-kit-page #faq details{margin:14px 0 0!important;border-radius:14px!important;overflow:hidden!important}
+ html body.apu-kit-page #faq details>summary,
+ html body.apu-kit-page #faq details[open]>summary{box-sizing:border-box!important;min-height:66px!important;height:auto!important;padding:20px!important;display:flex!important;align-items:center!important;gap:6px!important;font:400 15px/1.4 ApuNavHeading,sans-serif!important;border:0!important}
+ html body.apu-kit-page #faq details>summary i{margin-left:auto!important;flex-shrink:0!important;font-size:24px!important;line-height:1!important}
+ html body.apu-kit-page #faq .kw-faq-answer{box-sizing:border-box!important;margin:0 20px!important;padding:20px 0 24px!important;border:0!important;border-top:1px solid #a5d8fa!important}
+ html body.apu-kit-page #faq .kw-faq-answer p{font:400 13px/1.7 ApuNavBody,sans-serif!important;margin:0!important;padding:0!important;border:0!important;color:#50575b!important;word-break:keep-all}
+}
+@media(max-width:800px) and (prefers-reduced-motion:reduce){html body.apu-kit-page #rentalBenefits .kw-benefits li{opacity:1!important;transform:none!important;transition:none!important}}
+@media(max-width:800px){
+ html body.apu-kit-page #faq details>summary i{display:block!important;width:8px!important;height:8px!important;min-width:8px!important;font-size:0!important;border:0!important;border-right:2px solid #0b99ff!important;border-bottom:2px solid #0b99ff!important;transform:rotate(-45deg)!important;position:static!important}
+ html body.apu-kit-page #faq details[open]>summary i{transform:rotate(45deg)!important}
+ html body.apu-kit-page #faq details>summary i::before,html body.apu-kit-page #faq details>summary i::after{display:none!important}
+}
+@media(max-width:800px){
+ html body.apu-animation:not(.episode-page) .cover,
+ html body.apu-animation:not(.episode-page) .feature-option .cover,
+ html body.apu-animation:not(.episode-page) .episode-grid .cover{border-radius:8px!important}
+ html body.apu-animation:not(.episode-page) .feature-layout{gap:36px!important}
+ html body.apu-animation:not(.episode-page) .feature-layout h2{font:400 19px/1.45 ApuNavHeading,sans-serif!important;margin:24px 0 12px!important}
+ html body.apu-animation:not(.episode-page) .feature-list{gap:24px!important}
+ html body.apu-animation:not(.episode-page) .feature-option{font:400 14px/1.5 ApuNavHeading,sans-serif!important;column-gap:20px!important}
+ html body.apu-animation:not(.episode-page) .episode-library{padding-top:60px!important}
+ html body.apu-animation:not(.episode-page) .episode-library>h2{font:400 24px/1.4 ApuNavHeading,sans-serif!important;margin:0 0 36px!important}
+ html body.apu-animation:not(.episode-page) .episode-toolbar{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:18px!important;align-items:center!important;margin:0 0 36px!important}
+ html body.apu-animation:not(.episode-page) .episode-search{box-sizing:border-box!important;width:100%!important;height:42px!important;margin:0!important;align-items:center!important}
+ html body.apu-animation:not(.episode-page) .episode-search input{min-width:0!important;height:40px!important;box-sizing:border-box!important;padding:0!important;font-size:12px!important}
+ html body.apu-animation:not(.episode-page) .episode-search span{font-size:28px!important;line-height:1!important;flex-shrink:0}
+ html body.apu-animation:not(.episode-page) .favorites-filter{position:static!important;display:flex!important;align-items:center!important;justify-content:center!important;box-sizing:border-box!important;height:42px!important;min-height:42px!important;margin:0!important;padding:0 12px!important;white-space:nowrap!important;font:400 12px/1 ApuNavHeading,sans-serif!important}
+ html body.apu-animation:not(.episode-page) .episode-grid{row-gap:44px!important;margin-top:0!important}
+ html body.apu-animation .episode-card p,html body.apu-animation #episodeDescription,html body.apu-animation #featureDescription{white-space:normal!important;display:block!important;-webkit-line-clamp:unset!important;line-clamp:unset!important;overflow:visible!important;word-break:normal!important}
+ html body.apu-animation .episode-card p br,html body.apu-animation #episodeDescription br{display:none!important}
+}
+@media(max-width:800px){
+ html body.episode-page .episode-actions{display:flex!important;justify-content:flex-end!important;gap:16px!important;margin-top:32px!important;flex-wrap:nowrap!important}
+ html body.episode-page .episode-actions>*{width:58px!important;gap:10px!important;min-height:0!important}
+ html body.episode-page .episode-actions .episode-action-icon{width:20px!important;height:20px!important;max-width:20px!important;object-fit:contain!important}
+ html body.episode-page .episode-actions .episode-availability .episode-action-icon{width:15px!important;max-width:15px!important;height:20px!important}
+ html body.episode-page .episode-actions small{font:400 10px/1.4 ApuNavBody,sans-serif!important;white-space:nowrap!important}
+ html body.episode-page .episode-detail{padding-bottom:40px!important}
+ html body.episode-page .other-stories{padding:36px 0 40px!important}
+ html body.episode-page .other-stories .story-width{width:88%!important}
+ html body.episode-page .other-stories h2{font:400 22px/1.4 ApuNavHeading,sans-serif!important;margin:0 0 24px!important}
+ html body.episode-page .other-track{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:24px!important;padding:0!important;margin:0!important}
+ html body.episode-page .other-track .episode-card{display:grid!important;grid-template-columns:42% minmax(0,1fr)!important;gap:0 16px!important;align-items:center!important;min-width:0!important}
+ html body.episode-page .other-track .cover{width:100%!important;aspect-ratio:16/9!important;height:auto!important;border-radius:8px!important}
+ html body.episode-page .other-track .episode-card h3{font:400 15px/1.45 ApuNavHeading,sans-serif!important;margin:0!important;word-break:keep-all!important}
+ html body.episode-page .other-track .episode-heart{display:none!important}
+ html body.episode-page .other-track .cover-play .supplied-play{width:24px!important;height:24px!important;object-fit:contain!important}
+ html body.episode-page .episode-list-link{width:100px!important;min-height:38px!important;margin:32px auto 0!important;font-size:15px!important}
+ html body .friends-page #planetFriends .friends-decor-ruler{width:16vw!important;bottom:-5vw!important}
+ html body .friends-page #planetFriends .friends-decor-pencil{width:13vw!important;top:0!important}
+}
+@media(max-width:800px){
+ html body.apu-kit-page .kit-unboxing .orb-3{--orb-size:25%;left:35%;top:45%}
+ html body.apu-kit-page #components .kw-component:nth-child(2) .kw-component-media .kw-tablet-photo{padding:16px!important}
+}
+@media(max-width:800px){
+ html body.apu-kit-page #rentalGuide .kw-service-grid li,
+ html body.apu-kit-page #rentalGuide .kw-step-copy{background:#f8f8f8!important}
+}
+
+.oral-mobile-copy{display:none}
+@media(max-width:800px){html body.home-page .oral-desktop-copy{display:none!important}html body.home-page .oral-mobile-copy{display:inline!important}html body.home-page .oral-intro-copy{font-size:clamp(11px,3.2vw,14px)!important;white-space:nowrap!important}}
+@media(max-width:800px){
+ html body.home-page #solution .solution-copy{box-sizing:border-box!important;width:88%!important;max-width:88%!important;margin-inline:auto!important;padding:0!important;left:auto!important;right:auto!important;white-space:normal!important;overflow-wrap:break-word!important}
+ html body.home-page #solution .solution-mobile-copy{white-space:normal!important;font-size:13px!important;line-height:1.7!important;word-break:keep-all!important}
+ html body.home-page #solution .solution-mobile-copy br{display:block!important}
+}
+
+@media(max-width:800px){html body.home-page .oral-intro-copy,html body.home-page #process .process-head p{font:400 13px/1.55 ApuNavBody,sans-serif!important;white-space:normal!important;word-break:keep-all!important}html body.home-page .oral-intro-copy{max-width:88%!important;margin-inline:auto!important}}
+
+@media(max-width:800px){html body.apu-kit-page .kit-unboxing,html body.apu-kit-page .kit-unboxing .unboxing-pin{background:#05aaff!important}html body.apu-kit-page .kit-unboxing .unboxing-pin{height:calc(100dvh - var(--unboxing-header-height,56px))!important;min-height:0!important;max-height:none!important}}
+
+@media(max-width:800px){html body.apu-kit-page .kit-unboxing .unboxing-copy h2,html body.apu-kit-page .kit-unboxing .unboxing-description{color:white!important}html body.apu-kit-page .kit-unboxing .unboxing-copy em{color:#ffdb44!important}}
+/* Keep the existing palette; refine the card surfaces and spacing. */
+html body.home-page #learn-more .link-card-grid{gap:clamp(16px,2.2vw,42px)!important}
+html body.home-page #learn-more .link-card{border-radius:clamp(12px,1.5vw,28px)!important;overflow:hidden!important;box-shadow:none!important}
+html body.home-page #learn-more .link-card-copy{position:relative;z-index:2}
+html body.apu-kit-page #tsd .kw-tsd-steps{isolation:isolate}
+html body.apu-kit-page #tsd .kw-tsd-steps::before{z-index:1!important;pointer-events:none}
+html body.apu-kit-page #tsd .kw-tsd-steps li{isolation:auto!important;z-index:auto!important}
+html body.apu-kit-page #tsd .kw-tsd-steps li::before{z-index:3!important;background:#fff!important;opacity:1!important}
+@media(min-width:801px){
+ html body.apu-kit-page #components{padding-top:7vw!important;padding-bottom:5vw!important}
+ html body.apu-kit-page #learning{padding-top:6vw!important;padding-bottom:6vw!important}
+ html body.apu-kit-page #tsd{padding-top:7vw!important;padding-bottom:7vw!important}
+ html body.apu-kit-page #rentalGuide .kw-step-copy::before{top:-4px!important;transform:translateX(-50%)!important}
+}
+@media(max-width:800px){
+ html body.apu-kit-page #components{padding-top:64px!important;padding-bottom:40px!important}
+ html body.apu-kit-page #learning{padding-top:48px!important;padding-bottom:48px!important}
+ html body.apu-kit-page #tsd{padding-top:56px!important;padding-bottom:56px!important}
+ html body.home-page #learn-more .link-card-grid{gap:16px!important}
+}
+
+html body.apu-kit-page #components .kw-component:nth-child(4) .kw-component-media img{inset:0!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;transform:none!important;padding:16px!important;box-sizing:border-box!important}
+html body.apu-kit-page #tsd .kw-tsd-steps li{translate:none!important;transform:none!important}
+
+html body.apu-kit-page #tsd .kw-tsd-steps::before{mask-image:var(--tsd-rail-mask)!important;-webkit-mask-image:var(--tsd-rail-mask)!important}
+
+/* Keep the teaching prop complete and match inline emphasis to body typography. */
+@media(min-width:801px){
+ html body.apu-kit-page #learning .kw-learning-panels{height:auto!important;aspect-ratio:2/1!important}
+}
+html body.apu-kit-page #learning #kw-panel-1 img{object-fit:cover!important;object-position:right center!important;min-height:0!important}
+html body.apu-kit-page #tsd .kw-center>p em{font-family:inherit!important;font-size:inherit!important;font-weight:inherit!important;line-height:inherit!important;letter-spacing:inherit!important;font-style:normal!important;color:#0b99ff!important}
+
+/* Pause on the rental journey and leave a generous gradient finish. */
+@media(min-width:801px) and (min-height:700px) and (prefers-reduced-motion:no-preference){
+ html body.apu-kit-page #rentalGuide{height:160svh!important;min-height:0!important;padding:0!important;overflow:visible!important}
+ html body.apu-kit-page #rentalGuide .kw-service-pin{position:sticky!important;top:var(--desktop-header,var(--header-h,90px))!important;height:calc(100svh - var(--desktop-header,var(--header-h,90px)))!important;min-height:0!important;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;padding:3svh 0!important}
+}
+html body.apu-kit-page .community-reviews{padding-bottom:clamp(100px,12vw,240px)!important;height:auto!important}
+@media(max-width:800px){html body.apu-kit-page .community-reviews{padding-bottom:100px!important}}
+
+@media(min-width:801px){
+ html body.episode-page .episode-actions{gap:clamp(28px,3vw,60px)!important;align-items:flex-start}
+ html body.episode-page .episode-actions>*{box-sizing:border-box;width:100px!important;min-width:100px!important;padding:0!important;display:flex!important;flex-direction:column;align-items:center;gap:24px!important;background:none;border:0}
+ html body.episode-page .episode-actions .episode-action-icon{display:block!important;width:50px!important;height:50px!important;max-width:none!important;object-fit:contain!important}
+ html body.episode-page .episode-actions .episode-availability .episode-action-icon{width:37px!important;height:50px!important;transform:translateX(3px)}
+ html body.episode-page .episode-actions #episodeShare .episode-action-icon{width:48px!important;height:50px!important}
+ html body.episode-page .episode-actions small{margin:0!important;font:400 18px/1.4 ApuNavBody,sans-serif!important;color:#454545!important;white-space:nowrap}
+}
+
+html body.episode-page .other-stories{padding-bottom:clamp(68px,6.8vw,140px)!important}
+@media(max-width:800px){html body.episode-page .other-stories{padding-bottom:64px!important}}
+
+@media(min-width:801px){
+ html body.episode-page .other-stories{padding:6.5vw 0!important}
+ html body.episode-page .other-stories .story-width{width:80.5%!important;max-width:none!important}
+ html body.episode-page .other-stories h2{font:400 2.2vw/1.4 ApuNavHeading,sans-serif!important;margin:0 0 3vw!important}
+ html body.episode-page .other-track{gap:2vw!important;padding:0!important;margin:0!important}
+ html body.episode-page .other-track .cover{aspect-ratio:16/9!important;border-radius:1.45vw!important}
+ html body.episode-page .other-track .episode-card h3{font:400 1.4vw/1.4 ApuNavHeading,sans-serif!important;margin:1.55vw .5vw 0!important}
+ html body.episode-page .episode-list-link{width:10.9vw!important;min-height:4vw!important;font-size:1.4vw!important;margin:5.1vw auto 0!important}
+}
+
+/* Match the compact learning-section reference. */
+@media(min-width:801px){
+ html body.apu-kit-page #learning{height:auto!important;min-height:0!important;padding-top:10vw!important;padding-bottom:11vw!important}
+ html body.apu-kit-page #learning .learning-mobile-pin{position:static!important;height:auto!important;min-height:0!important;padding:0!important}
+}
+
+/* Hide the TSD connector while preserving the step markers. */
+html body.apu-kit-page #tsd .kw-tsd-steps::before{display:none!important;content:none!important}
+
+/* Keep the kit opening within its own full first viewport. */
+@media(min-width:801px){
+ html body.apu-kit-page .kit-opening{box-sizing:border-box!important;min-height:calc(100svh - var(--desktop-header,var(--header-h,90px)))!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;gap:2vw!important;padding:2.8vw 0!important}
+}
+
+@media(min-width:801px){
+ html body.apu-kit-page .kit-opening .kw-hero.kw-wide,html body.apu-kit-page .kit-opening .kw-brandline.kw-wide{margin:0 auto!important;flex-shrink:0!important}
+}
+
+/* Give the opening a wider canvas and a compact top inset. */
+@media(min-width:801px){
+ html body.apu-kit-page .kit-opening{--kit-notice-height:clamp(46px,3.3vw,68px);--kit-first-height:min(41.07vw,calc(100svh - var(--desktop-header,var(--header-h,90px)) - var(--kit-notice-height) - 76px));justify-content:flex-start!important;padding:28px 0!important;gap:20px!important}
+ html body.apu-kit-page .kit-opening .kw-hero.kw-wide,html body.apu-kit-page .kit-opening .kw-brandline.kw-wide{width:92%!important;max-width:none!important}
+ html body.apu-kit-page .kit-opening .kw-brandline.kw-wide{height:var(--kit-notice-height)!important;min-height:0!important;padding:8px 20px!important}
+}
+
+/* Align the opening to the navigation content edges. */
+@media(min-width:801px){
+ html body.apu-kit-page .kit-opening{--kit-gutter-left:3vw;--kit-gutter-right:3vw;--kit-first-height:min(calc((100vw - var(--kit-gutter-left) - var(--kit-gutter-right))/2.24),calc(100svh - var(--desktop-header,var(--header-h,90px)) - var(--kit-notice-height) - 76px))}
+ html body.apu-kit-page .kit-opening .kw-hero.kw-wide,html body.apu-kit-page .kit-opening .kw-brandline.kw-wide{width:calc(100% - var(--kit-gutter-left) - var(--kit-gutter-right))!important;margin:0 var(--kit-gutter-right) 0 var(--kit-gutter-left)!important}
+}
+@media(min-width:1001px){
+ html body.apu-kit-page .kit-opening{--kit-gutter-left:max(5.208333333vw,calc((100vw - calc(1720 * var(--exhibit-unit,1px)))/2));--kit-gutter-right:max(7.8vw,calc((100vw - calc(1660 * var(--exhibit-unit,1px)))/2))}
+}
+
+/* Reveal the connector only between the currently visible TSD markers. */
+html body.apu-kit-page #tsd .kw-tsd-steps::before{display:block!important;content:''!important;bottom:auto!important;height:var(--tsd-visible-rail-height,0px)!important}
+@media(min-width:801px){
+ html body.apu-kit-page #learning{padding-top:6vw!important;padding-bottom:6vw!important}
+ html body.apu-kit-page #learning .kw-learning-layout{align-items:stretch!important}
+ html body.apu-kit-page #learning .kw-learning-panels{aspect-ratio:1.65!important;min-height:0!important;overflow:hidden!important;border-radius:10px!important}
+ html body.apu-kit-page #learning .kw-learning-panels>div{width:100%!important;height:100%!important;min-height:0!important}
+ html body.apu-kit-page #learning .kw-learning-panels img{display:block!important;width:100%!important;height:100%!important;max-width:none!important;object-fit:cover!important}
+}
+
+@media(max-width:800px){
+ html body.home-page .oral-mobile-copy br{display:block!important}
+ html body.home-page #solution .solution-mobile-copy{font-size:clamp(9px,2.65vw,11px)!important;line-height:1.7!important}
+ html body.home-page #solution .solution-copy-line{display:block!important;white-space:nowrap!important}
+}
+
+.process-mobile-copy{display:none}
+@media(max-width:800px){
+ html body.home-page #process .process-desktop-copy{display:none!important}
+ html body.home-page #process .process-mobile-copy{display:block!important;font-size:clamp(11px,3vw,13px)!important;line-height:1.55!important}
+ html body.home-page #process .process-mobile-copy>span{display:block!important;white-space:nowrap!important}
+}
+
+/* Leave a white buffer after the mobile opening notice. */
+@media(max-width:800px){
+ html body.apu-kit-page .kit-opening{box-sizing:border-box!important;min-height:calc(100svh - 56px)!important;padding-bottom:64px!important;background:#fff!important}
+}
+
+/* Mobile unboxing starts white, then inherits the blue interior state. */
+@media(max-width:800px){
+ html body.apu-kit-page .kit-unboxing,html body.apu-kit-page .kit-unboxing .unboxing-pin{background:#fff!important}
+ html body.apu-kit-page .kit-unboxing .unboxing-copy h2,html body.apu-kit-page .kit-unboxing .unboxing-description{color:#414141!important}
+ html body.apu-kit-page .kit-unboxing .unboxing-copy em{color:#0b99ff!important}
+ html body.apu-kit-page .kit-unboxing.is-inside,html body.apu-kit-page .kit-unboxing.is-inside .unboxing-pin{background:#05aaff!important}
+ html body.apu-kit-page .kit-unboxing.is-inside .unboxing-copy h2,html body.apu-kit-page .kit-unboxing.is-inside .unboxing-description{color:#fff!important}
+ html body.apu-kit-page .kit-unboxing.is-inside .unboxing-copy em{color:#ffdb44!important}
+ html body.apu-kit-page #components .kw-component .kw-number{font:400 10px/1.3 ApuNavBody,sans-serif!important;color:#647078!important}
+ html body.apu-kit-page #components .kw-component h3{font:400 15px/1.3 ApuNavHeading,sans-serif!important;margin:4px 0 8px!important;color:#31383c!important;letter-spacing:0!important}
+ html body.apu-kit-page #components .kw-component p{font:400 11px/1.55 ApuNavBody,sans-serif!important;color:#647078!important;letter-spacing:0!important}
+}
+
+/* Match the two desktop headlines to the existing application CTA. */
+@media(min-width:801px){
+ html body.home-page #process .process-head h1,html body.apu-animation:not(.episode-page) .story-feature>.story-width>h1{font-size:clamp(25px,2.6vw,44px)!important;font-weight:400!important;line-height:1.35!important}
+}
+
+/* Stronger shortcut colors remain distinct on each tinted hover surface. */
+html body.home-page #learn-more .link-card .card-shortcut{color:#fff!important;opacity:1!important;transition:background-color .2s ease!important}
+html body.home-page #learn-more .link-card-kit .card-shortcut{background:#007fc5!important}
+html body.home-page #learn-more .link-card-character .card-shortcut{background:#008c50!important}
+html body.home-page #learn-more .link-card-animation .card-shortcut{background:#b86a00!important}
+html body.home-page #learn-more .link-card-kit:is(:hover,:focus-visible) .card-shortcut{background:#00669f!important}
+html body.home-page #learn-more .link-card-character:is(:hover,:focus-visible) .card-shortcut{background:#006b3d!important}
+html body.home-page #learn-more .link-card-animation:is(:hover,:focus-visible) .card-shortcut{background:#935400!important}
+@media(min-width:801px){
+ html body.home-page .badge-invite-v98{height:calc(100svh - var(--header-h,90px))!important;min-height:0!important;box-sizing:border-box!important;padding:40px 5vw!important;display:grid!important;grid-template-rows:auto auto auto auto!important;align-content:center!important;justify-items:center!important;gap:16px!important;overflow:hidden!important}
+ html body.home-page .badge-invite-v98>h2{font:400 clamp(25px,2.3vw,44px)/1.3 ApuNavHeading,sans-serif!important;margin:0!important}
+ html body.home-page .badge-invite-v98>p{font:400 clamp(16px,1.15vw,22px)/1.5 ApuNavBody,sans-serif!important;margin:0!important;letter-spacing:0!important}
+ html body.home-page .badge-invite-v98 .invite-cards{width:min(54vw,100svh)!important;height:min(27vw,47svh)!important;min-height:0!important;max-width:none!important;margin:8px auto 0!important}
+ html body.home-page .badge-invite-v98 .invite-card.chika{top:3%!important}
+ html body.home-page .badge-invite-v98 .invite-card.apu{top:20%!important}
+ html body.home-page .badge-invite-v98>a{margin:0!important;align-self:center!important}
+}
+
+/* Change stacking order only after the cards have separated. */
+html body.home-page .invite-cards .invite-card{animation:none!important;z-index:1!important;translate:0 0;transition:filter .45s ease!important}
+html body.home-page .invite-cards .invite-card:is(:hover,:focus-visible){translate:0 0;z-index:1!important}
+html body.home-page .invite-cards .invite-card.is-front{z-index:2!important}
+
+/* Center the CTA's label and geometric arrow as one horizontal group. */
+html body.home-page #start a.cta-button{display:inline-flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;gap:.65em!important;text-align:center!important}
+html body.home-page #start a.cta-button .cta-label{display:block!important;position:static!important;line-height:1!important;margin:0!important;padding:0!important;transform:translateY(.1em)!important}
+html body.home-page #start a.cta-button .cta-arrow{display:flex!important;align-items:center!important;justify-content:center!important;position:static!important;flex:0 0 .45em!important;width:.45em!important;height:.7em!important;font:inherit!important;line-height:1!important;margin:0!important;padding:0!important;transform:none!important}
+html body.home-page #start a.cta-button .cta-arrow svg{display:block;width:100%;height:100%;overflow:visible}
+@media(min-width:801px){
+ html body.apu-kit-page .kit-opening .kw-brandline{gap:16px!important}
+ html body.apu-kit-page .kit-opening .kw-brandline>span:not(.kw-notice-badge){font:400 clamp(13px,.85vw,17px)/1.3 ApuNavHeading,sans-serif!important}
+ html body.apu-kit-page .kit-opening .kw-brandline .kw-notice-badge{display:inline-flex!important;align-items:center!important;justify-content:center!important;box-sizing:border-box!important;flex:none!important;font:400 clamp(10px,.65vw,13px)/1 ApuNavBody,sans-serif!important;padding:0 13px!important;height:28px!important;min-height:0!important;border-radius:99px!important;letter-spacing:.04em!important}
+}
+
+@media(min-width:801px){
+ html body.apu-kit-page #kitIntro #unboxing-title{font:400 clamp(23px,2vw,38px)/1.5 ApuNavHeading,sans-serif!important;letter-spacing:0!important}
+ html body.apu-kit-page #kitIntro #unboxing-title .unboxing-title-intro{font-size:clamp(20px,1.7vw,32px)!important;line-height:1.4!important}
+ html body.apu-kit-page #kitIntro #unboxing-title .unboxing-title-main{font:inherit!important}
+ html body.apu-kit-page #kitIntro #unboxing-title em{font:inherit!important}
+}
+@media(min-width:801px){
+ html body.apu-kit-page #components>h2{font:400 clamp(23px,2vw,38px)/1.5 ApuNavHeading,sans-serif!important;letter-spacing:0!important}
+ html body.apu-kit-page #components>h2 .kit-title-intro{font-size:clamp(20px,1.7vw,32px)!important;line-height:1.4!important}
+ html body.apu-kit-page #components>h2 .kit-title-main,
+ html body.apu-kit-page #components>h2 em{font:inherit!important}
+}

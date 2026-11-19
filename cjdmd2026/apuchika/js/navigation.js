@@ -11,3 +11,10 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('[data-common-top]').forEach(button=>button.addEventListener('click',()=>window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})));});
+
+document.addEventListener('DOMContentLoaded',()=>{
+ const clean=p=>p.replace(/\.html$/,'').replace(/\/$/,'').replace(/\/index$/,'')||'/';
+ const current=clean(location.pathname);const section=current.endsWith('/episode')?current.replace(/episode$/,'animation'):current.endsWith('/passes')?current.replace(/passes$/,'kit'):current;
+ document.querySelectorAll('.gnb>a,.mobile-menu nav>a').forEach(a=>{const active=clean(new URL(a.href,location.href).pathname)===section;a.classList.toggle('is-active',active);if(active)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
+ document.querySelectorAll('[data-period]').forEach(a=>a.addEventListener('click',()=>{const field=document.querySelector('[name=period]');if(field)field.value=a.dataset.period}));
+});

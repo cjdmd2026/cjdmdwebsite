@@ -1,0 +1,10 @@
+@media(max-width:800px){
+ html body.apu-animation .story-feature .story-width>h1{margin:0 0 24px!important;padding:0!important;font-size:20px!important;line-height:1.4!important}
+ html body.apu-animation .story-feature .feature-layout{margin-top:0!important;padding-top:0!important;gap:28px!important}
+ html body.apu-animation .story-feature #featureTitle{font-size:17px!important;line-height:1.45!important;margin:20px 0 12px!important}
+ html body.apu-animation .story-feature #featureDescription{font:400 13px/1.65 ApuNavBody,Pretendard,sans-serif!important;margin:0!important;color:#73787b!important}
+ html body.apu-animation .story-feature .feature-option{font-size:14px!important;line-height:1.45!important}
+}
+
+html body.apu-animation .favorites-filter .favorite-heart-icon{filter:none!important}
+html body.apu-animation .favorites-filter[aria-pressed="true"] .favorite-heart-icon{filter:brightness(0) invert(1)!important}

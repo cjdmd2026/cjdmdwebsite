@@ -1,0 +1,7 @@
+@media(max-width:800px){
+ html body .friends-page .join-guardians .friends-footer-art{height:36vw!important;margin:4vw 0 0!important;overflow:hidden!important;background:transparent!important}
+ html body .friends-page .join-guardians .friends-footer-art picture{width:88vw!important;margin:0 auto!important}
+ html body .friends-page .join-guardians .friends-footer-art picture img.group-art{width:100%!important;height:auto!important;max-width:none!important;margin:0!important;clip-path:none!important}
+ html body .friends-page .join-guardians .friends-footer-art::before{top:30.965vw!important;bottom:0!important;background:#30a8ff!important}
+ html body:has(.friends-page) footer.site-footer.apu-footer-v42{background:#30a8ff!important;margin-top:-1px!important;border:0!important}
+}

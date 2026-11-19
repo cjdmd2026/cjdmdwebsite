@@ -1,0 +1,53 @@
+@font-face{font-family:ApuNavHeading;src:url('../assets/fonts/Gosanja-full-v18.woff') format('woff');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:ApuNavBody;src:url('../assets/fonts/Pretendard-Regular-full-v70.woff') format('woff');font-weight:400;font-style:normal;font-display:swap}
+html body{font-family:ApuNavBody,Pretendard,sans-serif!important}
+html body :is(main,footer,dialog) :is(p,li,dd,dt,label,input,select,textarea){font-family:ApuNavBody,Pretendard,sans-serif!important}
+html body :is(main,footer,dialog) :is(h1,h2,h3,h4,h5,h6){font-family:ApuNavHeading,sans-serif!important;font-weight:400!important;font-synthesis:none!important}
+html body :is(h1,h2,h3,h4,h5,h6) :is(span,em,strong){font-family:inherit!important;font-weight:inherit!important}
+
+/* Final section type sizes; hero and character name scales remain separate. */
+@media(min-width:801px){
+ html body.home-page #oral-care .section-head h2,
+ html body.home-page #solution .solution-title,
+ html body.home-page #process .process-head h1,
+ html body.home-page #kit-movie h2,
+ html body.home-page #learn-more .section-head h2,
+ html body.home-page .badge-invite-v98>h2,
+ html body.home-page #start .cta-content h2,
+ html body.apu-kit-page #components>h2,
+ html body.apu-kit-page #learning>h2,
+ html body.apu-kit-page #tsd .kw-center h2,
+ html body.apu-kit-page .kw-benefits-left>h2,
+ html body.apu-kit-page #rentalGuide .kw-center h2,
+ html body.apu-kit-page .reviews-heading h2,
+ html body.apu-kit-page #faq>h2,
+ html body.apu-animation:not(.episode-page) .story-feature>.story-width>h1,
+ html body.apu-animation #featureTitle,
+ html body.apu-animation .story-section-title,
+ html body .friends-page .guardians h1,
+ html body .friends-page .planet-friends h2,
+ html body .friends-page .friends-stories h2,
+ html body .friends-page .join-guardians h2{
+  font-size:clamp(22px,1.65vw,32px)!important;line-height:1.4!important
+ }
+}
+
+/* Shared reading sizes by text role, independent of page-specific scaling. */
+html body{--reading-lead:clamp(13px,.95vw,18px);--reading-body:clamp(12px,.84vw,16px)}
+html body main :is(#learn-more .section-head>p,#process .process-head p,#oral-care .oral-intro-copy,.solution-copy,.section-head>p,.kw-center>p,#learning .kw-lead,#rentalBenefits .kw-benefits-left .kw-lead,#rentalGuide .kw-center>p,#community .reviews-heading>p,#faq>p,.reviews-heading>p,.guardians>p,.friends-stories>p,.join-guardians>p,.badge-invite-v98>p,.cta-content>p,.plans>.lead,.plans>p){font-family:ApuNavBody,Pretendard,sans-serif!important;font-size:var(--reading-lead)!important;font-weight:400!important;line-height:1.6!important;font-synthesis:none!important;letter-spacing:0!important}
+html body main :is(#learn-more .link-card-grid .link-card p,#components .kw-component p,#rentalBenefits .kw-benefits p,#rentalGuide .kw-step-copy p,#tsd .kw-tsd-steps li p,#faq .kw-faq-answer p,#learning .kw-learning-tabs span span,.review-item p,.episode-card p,#featureDescription,#episodeDescription,.profile-description,.plan>p:not(.duration),.plan li){font-family:ApuNavBody,Pretendard,sans-serif!important;font-size:var(--reading-body)!important;font-weight:400!important;line-height:1.6!important;font-synthesis:none!important;letter-spacing:0!important}
+@media(max-width:800px){html body{--reading-lead:13px;--reading-body:13px}}
+
+@media(max-width:800px){
+ html body main :is(.section-head h2,.process-head h1,.solution-title,.kw-center h2,.reviews-heading h2,.story-section-title,.guardians h1,.planet-friends h2,.friends-stories h2,.join-guardians h2,#components>h2,#learning>h2,#faq>h2){font-size:20px!important;line-height:1.4!important}
+}
+@media(min-width:801px){
+ html body.badge-page #intro .intro-single-card.chika{left:19%!important}
+ html body.badge-page #intro .intro-single-card.apu{right:19%!important}
+}
+
+@media(min-width:801px){
+ html body.badge-page #intro .intro-single-card{width:min(31.04%,49.47cqh)!important}
+ html body.badge-page #intro .intro-single-card.chika{left:22.5%!important}
+ html body.badge-page #intro .intro-single-card.apu{right:22.5%!important}
+}

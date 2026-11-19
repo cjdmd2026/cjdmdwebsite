@@ -1,13 +1,15 @@
 const $=id=>document.getElementById(id);
 const video=$('camera'),canvas=$('badgeCanvas'),ctx=canvas.getContext('2d');
 const overlay=$('frameOverlay'),overlayContext=overlay.getContext('2d');
+function photoFilter(){return 'brightness(120%)'}
+video.style.filter=photoFilter();
 const STORAGE_KEY='apuchika-badge-draft-v71';
 const roles={
  leader:{color:'#ffad0d',theme:'orange',title:'수호대장',description:'친구들을 지켜주는 용감한 양치별 수호대장'},
  scholar:{color:'#0ba8f6',theme:'blue',title:'척척박사',description:'뭐든지 알려주는 똑똑한 양치별 척척박사'},
  cheer:{color:'#b4dc00',theme:'green',title:'치어리더',description:'친구들에게 용기를 주는 씩씩한 치어리더'}
 };
-const frames={apu:{theme:'orange',color:'#ffad0d',name:'아푸',asset:'../assets/images/badge/frame-1-v77.webp'},chika:{theme:'blue',color:'#0ba8f6',name:'치카',asset:'../assets/images/badge/frame-2-v77.webp'},friends:{theme:'green',color:'#b4dc00',name:'양치별 친구들',asset:'../assets/images/badge/frame-3-v77.webp'}};
+const frames={apu:{theme:'orange',color:'#ffad0d',name:'아푸',asset:'../assets/images/frame-1-v77.webp'},chika:{theme:'blue',color:'#0ba8f6',name:'치카',asset:'../assets/images/frame-2-v77.webp'},friends:{theme:'green',color:'#b4dc00',name:'양치별 친구들',asset:'../assets/images/frame-3-v77.webp'}};
 let draft={name:'',role:'',frame:'apu'};
 try{sessionStorage.removeItem(STORAGE_KEY)}catch{}
 function saveDraft(){}
@@ -19,7 +21,7 @@ const cardAssets={};
 async function loadImage(src){const image=new Image();image.src=src;await image.decode();return image}
 const assetsReady=Promise.all([
  ...Object.values(frames).map(async frame=>{frame.image=await loadImage(frame.asset)}),
- ...['orange','blue','green'].map(async color=>{const [card,stamp]=await Promise.all([loadImage('../assets/images/badge/card-'+color+'-v83.webp'),loadImage('../assets/images/badge/stamp-'+color+'-v74.webp')]);cardAssets[color]={card,stamp}})
+ ...['orange','blue','green'].map(async color=>{const [card,stamp]=await Promise.all([loadImage('../assets/images/card-'+color+'-v83.webp'),loadImage('../assets/images/stamp-'+color+'-v74.webp')]);cardAssets[color]={card,stamp}})
 ]);
 assetsReady.catch(()=>{});
 $('memberName').value=draft.name;
@@ -44,16 +46,16 @@ function drawCover(c,image,x,y,w,h){
  c.save();c.beginPath();c.rect(x,y,w,h);c.clip();c.drawImage(image,x+(w-dw)/2,y+(h-dh)/2,dw,dh);c.restore();
 }
 function drawFrame(c,frameKey){const image=frames[frameKey].image;if(!image)return;const scale=Math.min(1200/image.naturalWidth,824/image.naturalHeight),w=image.naturalWidth*scale,h=image.naturalHeight*scale;c.drawImage(image,(1200-w)/2,824-h,w,h);}
-async function updateFrame(){updateSelections();try{await Promise.all([assetsReady,fontsReady]);overlayContext.clearRect(0,0,1200,824);drawFrame(overlayContext,draft.frame)}catch{$('cameraStatus').textContent='프레임 이미지를 불러오지 못했어요. 페이지를 새로고침해 주세요.'}}
+async function updateFrame(){updateSelections();try{await Promise.all([assetsReady,fontsReady]);overlayContext.clearRect(0,0,1200,824);drawFrame(overlayContext,draft.frame)}catch{$('cameraStatus').textContent='프레임 이미지를 불러오지 못했어요 페이지를 새로고침해 주세요'}}
 function cameraError(error){
- const messages={NotAllowedError:'카메라 권한이 꺼져 있어요. 주소창의 사이트 설정과 Mac 시스템 설정에서 카메라 사용을 허용한 뒤 다시 연결해 주세요.',NotFoundError:'연결된 카메라를 찾지 못했어요. 웹캠 연결을 확인해 주세요.',NotReadableError:'카메라를 사용 중인 다른 앱을 닫은 뒤 다시 연결해 주세요.',SecurityError:'카메라 사용이 제한되어 있어요. 사이트를 새 탭에서 직접 열어 주세요.'};
+ const messages={NotAllowedError:'카메라 권한이 꺼져 있어요 주소창의 사이트 설정과 Mac 시스템 설정에서 카메라 사용을 허용한 뒤 다시 연결해 주세요',NotFoundError:'연결된 카메라를 찾지 못했어요 웹캠 연결을 확인해 주세요',NotReadableError:'카메라를 사용 중인 다른 앱을 닫은 뒤 다시 연결해 주세요',SecurityError:'카메라 사용이 제한되어 있어요 사이트를 새 탭에서 직접 열어 주세요'};
  $('directCamera').hidden=window.top===window.self;
- $('cameraStatus').textContent=messages[error?.name]||'카메라 영상을 시작하지 못했어요. 다른 앱에서 카메라를 닫고 다시 연결해 주세요.';
+ $('cameraStatus').textContent=messages[error?.name]||'카메라 영상을 시작하지 못했어요 다른 앱에서 카메라를 닫고 다시 연결해 주세요';
  $('cameraPlaceholder').hidden=false;$('cameraPlaceholder').querySelector('p').textContent=$('cameraStatus').textContent;$('retryCamera').hidden=false;
 }
 async function startCamera(){
  stopCamera();$('directCamera').hidden=true;showStep('camera');const generation=cameraGeneration;
- $('cameraPlaceholder').hidden=false;$('cameraPlaceholder').querySelector('p').textContent='카메라를 준비하고 있어요';$('retryCamera').hidden=true;$('cameraStatus').textContent='브라우저에서 카메라 사용을 허용해 주세요.';updateFrame();
+ $('cameraPlaceholder').hidden=false;$('cameraPlaceholder').querySelector('p').textContent='카메라를 준비하고 있어요';$('retryCamera').hidden=true;$('cameraStatus').textContent='브라우저에서 카메라 사용을 허용해 주세요';updateFrame();
  try{
   if(!navigator.mediaDevices?.getUserMedia)throw Object.assign(new Error('camera unavailable'),{name:'SecurityError'});
   const incoming=await navigator.mediaDevices.getUserMedia({video:true,audio:false});
@@ -111,12 +113,12 @@ let renderID=0;
 async function showResult(){
  const id=++renderID;const signed=finalized&&signatureDirty&&stampDone;
  $('openSave').hidden=true;$('resultStep').classList.toggle('is-review',!finalized);$('resultStep').style.setProperty('--signature-color',frames[draft.frame].color);$('resultTitle').textContent=finalized?'수호대원증 발급 완료!':'수호대원증 발급 중 · · ·';
- await Promise.all([fontsReady,assetsReady]);if(id!==renderID)return;drawBadge();const blob=await new Promise(r=>canvas.toBlob(r,'image/png'));if(id!==renderID)return;if(!blob)throw new Error('대원증 이미지를 만들지 못했어요. 다시 찍어 주세요.');
+ await Promise.all([fontsReady,assetsReady]);if(id!==renderID)return;drawBadge();const blob=await new Promise(r=>canvas.toBlob(r,'image/png'));if(id!==renderID)return;if(!blob)throw new Error('대원증 이미지를 만들지 못했어요 다시 찍어 주세요');
  outputBlob=blob;if(outputURL)URL.revokeObjectURL(outputURL);outputURL=URL.createObjectURL(blob);const savedStamp=stampDone;stampDone=false;drawBadge();$('resultImage').src=canvas.toDataURL('image/png');stampDone=savedStamp;drawBadge();$('download').href=outputURL;if(!saveDialog.open)resetShare();$('openSave').hidden=!signed;if(step!=='result')showStep('result');else{document.querySelectorAll('[data-step]').forEach(el=>{const active=el.dataset.step==='result';el.classList.toggle('active',active);if(active)el.setAttribute('aria-current','step');else el.removeAttribute('aria-current')})}
 }
 $('start').onclick=()=>showStep('name');
 $('memberName').addEventListener('input',()=>{draft.name=$('memberName').value.trim();$('nameError').hidden=true;saveDraft()});
-$('nameForm').onsubmit=e=>{e.preventDefault();draft.name=$('memberName').value.trim();if(!draft.name||Array.from(draft.name).length>5){$('nameError').textContent='이름은 1~5글자로 적어 주세요.';$('nameError').hidden=false;$('memberName').focus();return}saveDraft();updateSelections();showStep('role')};
+$('nameForm').onsubmit=e=>{e.preventDefault();draft.name=$('memberName').value.trim();if(!draft.name||Array.from(draft.name).length>5){$('nameError').textContent='이름은 1~5글자로 적어 주세요';$('nameError').hidden=false;$('memberName').focus();return}saveDraft();updateSelections();showStep('role')};
 document.querySelectorAll('[data-role]').forEach(b=>b.onclick=async()=>{draft.role=b.dataset.role;saveDraft();updateSelections();startCamera()});
 document.querySelectorAll('[data-frame]').forEach(b=>b.onclick=()=>{if(captureBusy)return;draft.frame=b.dataset.frame;saveDraft();updateFrame()});
 $('finalizeBadge').onclick=async()=>{if(!photo)return;const card=document.querySelector('.finished-card');await card.animate([{opacity:1},{opacity:0}],{duration:160,fill:'forwards'}).finished;finalized=true;await showResult();await card.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'translateY(0)'}],{duration:360,easing:'ease-out',fill:'forwards'}).finished};$('reviewRetake').onclick=startCamera;
@@ -126,8 +128,8 @@ $('shoot').onclick=async()=>{
  const generation=++timerGeneration;setCaptureBusy(true);
  for(let n=3;n>0;n--){if(generation!==timerGeneration)return;$('countdown').hidden=false;$('countdown').textContent=String(n);await new Promise(r=>setTimeout(r,1000))}
  if(generation!==timerGeneration||step!=='camera')return;$('countdown').hidden=true;
- if(!video.videoWidth||video.readyState<2){setCaptureBusy(false);$('cameraStatus').textContent='카메라 화면을 불러온 뒤 다시 찍어 주세요.';return}
- const snap=document.createElement('canvas');snap.width=1200;snap.height=824;const c=snap.getContext('2d');c.translate(snap.width,0);c.scale(-1,1);drawCover(c,video,0,0,1200,824);photo=snap;finalized=false;
+ if(!video.videoWidth||video.readyState<2){setCaptureBusy(false);$('cameraStatus').textContent='카메라 화면을 불러온 뒤 다시 찍어 주세요';return}
+ const snap=document.createElement('canvas');snap.width=1200;snap.height=824;const c=snap.getContext('2d');c.filter=photoFilter();c.translate(snap.width,0);c.scale(-1,1);drawCover(c,video,0,0,1200,824);photo=snap;finalized=false;
  const flash=$('captureFlash').animate([{opacity:0},{opacity:.95,offset:.12},{opacity:0}],{duration:420,easing:'ease-out'});
  await flash.finished.catch(()=>{});
  if(generation!==timerGeneration||step!=='camera')return;
@@ -139,30 +141,55 @@ function setShareBusy(value){shareBusy=value;$('saveDialog').classList.toggle('i
 $('edit').onclick=()=>{if(!shareBusy)showStep('name')};
 async function createShareQR(){
  if(!outputBlob||shareBusy)return;const participant=participantGeneration;setShareBusy(true);$('qrStatus').textContent='다운로드 QR을 만들고 있어요';
- try{const response=await fetch('/apuchika/api/badges',{method:'POST',headers:{'Content-Type':'image/png'},body:outputBlob,signal:AbortSignal.timeout(30000)});const result=await response.json();if(participant!==participantGeneration)return;if(!response.ok)throw new Error(result.error||'QR 생성에 실패했어요.');shareID=result.id;shareDeleteToken=result.deleteToken;$('qrImage').src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(result.qr);$('qrResult').hidden=false;$('makeQR').hidden=true;$('qrStatus').textContent='스마트폰으로 QR코드를 스캔해 이미지를 다운로드 해 보세요.'}
- catch(error){$('qrStatus').textContent=error.name==='TimeoutError'?'연결이 늦어지고 있어요. 다시 시도해 주세요.':error.message||'인터넷 연결을 확인한 뒤 다시 시도해 주세요.'}
+ try{const response=await fetch('/apuchika/api/badges',{method:'POST',headers:{'Content-Type':'image/png'},body:outputBlob,signal:AbortSignal.timeout(30000)});const result=await response.json();if(participant!==participantGeneration)return;if(!response.ok)throw new Error(result.error||'QR 생성에 실패했어요');shareID=result.id;shareDeleteToken=result.deleteToken;$('qrImage').src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(result.qr);$('qrResult').hidden=false;$('makeQR').hidden=true;$('qrStatus').textContent='스마트폰으로 QR코드를 스캔해 이미지를 다운로드 해 보세요'}
+ catch(error){$('qrStatus').textContent=error.name==='TimeoutError'?'연결이 늦어지고 있어요 다시 시도해 주세요':error.message||'인터넷 연결을 확인한 뒤 다시 시도해 주세요'}
  finally{setShareBusy(false)}
 };
 $('makeQR').onclick=createShareQR;
-$('revoke').onclick=async()=>{if(!shareID||!shareDeleteToken||shareBusy)return;setShareBusy(true);try{const r=await fetch('/apuchika/api/badges/'+encodeURIComponent(shareID),{method:'DELETE',headers:{Authorization:'Bearer '+shareDeleteToken}});if(!r.ok)throw new Error();resetShare();$('qrStatus').textContent='다운로드 링크와 업로드한 이미지를 삭제했어요.'}catch{$('qrStatus').textContent='삭제하지 못했어요. 다시 눌러 주세요.'}finally{setShareBusy(false)}};
+$('revoke').onclick=async()=>{if(!shareID||!shareDeleteToken||shareBusy)return;setShareBusy(true);try{const r=await fetch('/apuchika/api/badges/'+encodeURIComponent(shareID),{method:'DELETE',headers:{Authorization:'Bearer '+shareDeleteToken}});if(!r.ok)throw new Error();resetShare();$('qrStatus').textContent='다운로드 링크와 업로드한 이미지를 삭제했어요'}catch{$('qrStatus').textContent='삭제하지 못했어요 다시 눌러 주세요'}finally{setShareBusy(false)}};
 function resetParticipant(){renderID++;participantGeneration++;signing=false;clearTimeout(stampTimer);document.querySelectorAll('.stamp-overlay').forEach(e=>e.remove());stampDone=false;finalized=false;signatureCanvas.style.visibility='';signatureCanvas.parentElement.classList.remove('has-signature');stopCamera();photo=null;signatureContext.clearRect(0,0,820,390);signatureDirty=false;outputBlob=null;if(outputURL)URL.revokeObjectURL(outputURL);outputURL=null;$('resultImage').removeAttribute('src');$('download').removeAttribute('href');draft={name:'',role:'',frame:'apu'};saveDraft();$('memberName').value='';$('nameError').hidden=true;resetShare();updateSelections();showStep('intro')}
 $('restart').onclick=resetParticipant;
 window.addEventListener('pagehide',stopCamera);
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&stream&&step==='camera'){stopCamera();$('cameraPlaceholder').hidden=false;$('cameraPlaceholder').querySelector('p').textContent='카메라를 다시 연결해 주세요';$('cameraStatus').textContent='카메라를 잠시 껐어요. 다시 연결해 주세요.';$('retryCamera').hidden=false}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&stream&&step==='camera'){stopCamera();$('cameraPlaceholder').hidden=false;$('cameraPlaceholder').querySelector('p').textContent='카메라를 다시 연결해 주세요';$('cameraStatus').textContent='카메라를 잠시 껐어요 다시 연결해 주세요';$('retryCamera').hidden=false}});
 updateSelections();
 
+let issuedCloseTimer;
 const saveDialog=$('saveDialog');
 for(const id of ['makeQR','qrResult','qrStatus'])$('saveQRSlot').append($(id));
-let farewellBusy=false;
+
 $('openSave').onclick=()=>{if(!outputURL)return;saveDialog.showModal();if(!shareID)void createShareQR()};
 $('closeSave').onclick=()=>saveDialog.close();
-saveDialog.addEventListener('close',async()=>{
- if(farewellBusy)return;
+saveDialog.addEventListener('close',()=>{
  if(!shareID){$('openSave').focus();return}
- saveDialog.returnValue='';farewellBusy=true;
- const scene=$('badgeFarewell');
- try{await scene.querySelector('img').decode()}catch{}
- scene.hidden=false;scene.classList.add('flight');
- await new Promise(r=>setTimeout(r,matchMedia('(prefers-reduced-motion:reduce)').matches?1500:7300));
- resetParticipant();scene.hidden=true;scene.classList.remove('flight');farewellBusy=false;$('start').focus();
+ saveDialog.returnValue='';$('issuedCard').src=outputURL;$('issuedScene').showModal(); burstIssuedConfetti(); clearTimeout(issuedCloseTimer); issuedCloseTimer=setTimeout(finishIssuedScene,3600);
 });
+
+let issuedExiting=false;
+async function finishIssuedScene(){
+ const scene=$('issuedScene');if(!scene.open||issuedExiting)return;
+ issuedExiting=true;clearTimeout(issuedCloseTimer);
+ resetParticipant();
+ $('start').focus({preventScroll:true});
+ await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+ const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
+ const duration=reduced?120:650;
+ const layer=scene.animate([{opacity:1},{opacity:0}],{duration,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'});
+ const content=[...scene.querySelectorAll('#issuedHeading,#issuedCard,.issued-friends,.issued-confetti')].map(el=>el.animate([{opacity:1,translate:'0 0'},{opacity:0,translate:reduced?'0 0':'0 -14px'}],{duration:duration*.8,easing:'ease-in',fill:'forwards'}));
+ await layer.finished.catch(()=>{});
+ scene.close();layer.cancel();content.forEach(a=>a.cancel());issuedExiting=false;
+
+}
+$('issuedScene').addEventListener('cancel',event=>{event.preventDefault();void finishIssuedScene()});
+
+$('issuedScene').addEventListener('close',()=>{clearTimeout(issuedCloseTimer);$('issuedScene').querySelector('.issued-confetti')?.remove();$('issuedCard').removeAttribute('src');if(step!=='intro')resetParticipant();$('start').focus({preventScroll:true})});
+
+function burstIssuedConfetti(){
+ const scene=document.getElementById('issuedScene');scene.querySelector('.issued-confetti')?.remove();
+ if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+ const canvas=document.createElement('canvas');canvas.className='issued-confetti';canvas.setAttribute('aria-hidden','true');scene.append(canvas);
+ const w=scene.clientWidth,h=scene.clientHeight,dpr=Math.min(devicePixelRatio||1,2);canvas.width=w*dpr;canvas.height=h*dpr;const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
+ const colors=['#ffcf36','#ff368e','#00b96a','#ffffff','#7e35b2','#ff6556'];
+ const pieces=Array.from({length:170},(_,i)=>({x:w*(i%2?.78:.22),y:h*.65,vx:(Math.random()-.5)*w*.7,vy:-h*(.55+Math.random()*.65),r:Math.random()*6.28,spin:(Math.random()-.5)*12,size:5+Math.random()*7,color:colors[i%colors.length]}));
+ let start;function frame(now){if(!start)start=now;const t=(now-start)/1000;ctx.clearRect(0,0,w,h);if(!scene.open){canvas.remove();return}ctx.globalAlpha=1;
+ for(const p of pieces){const x=p.x+p.vx*t,y=p.y+p.vy*t+h*.5*t*t;ctx.save();ctx.translate(x,y);ctx.rotate(p.r+p.spin*t);ctx.fillStyle=p.color;ctx.fillRect(-p.size/2,-p.size/4,p.size,p.size*.5);ctx.restore()}requestAnimationFrame(frame)}requestAnimationFrame(frame);
+}

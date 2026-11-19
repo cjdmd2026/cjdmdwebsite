@@ -1,0 +1,9 @@
+@media(min-width:801px){
+ html{scroll-padding-top:var(--desktop-header,var(--header-h,90px))!important;scroll-snap-type:y proximity!important}
+ html body.apu-kit-page .kit-opening{--kit-gutter-left:9vw;--kit-gutter-right:9vw;--kit-notice-height:clamp(44px,2.7vw,54px);--kit-first-height:min(36.61vw,calc(var(--pc-view-height,990px) - var(--kit-notice-height) - 104px));min-height:var(--pc-view-height,calc(100svh - var(--header-h)))!important;justify-content:center!important;gap:24px!important;padding:40px 0!important}
+ html body.apu-kit-page .kit-opening .kw-hero.kw-wide,html body.apu-kit-page .kit-opening .kw-brandline.kw-wide{width:82%!important;max-width:none!important;margin:0 auto!important}
+ html body.home-page main .hero,html body .friends-page .friends-hero-v98{height:var(--pc-view-height,calc(100svh - var(--header-h)))!important;min-height:0!important;box-sizing:border-box!important}
+}
+@media(min-width:801px) and (min-height:700px) and (prefers-reduced-motion:no-preference){
+ html body .desktop-pin-stage>.guardian-profile,html body.apu-kit-page #tsd .kw-tsd-pin,html body.apu-kit-page #learning .learning-mobile-pin,html body.apu-kit-page #rentalBenefits .kw-benefits-pin,html body.apu-kit-page #rentalGuide .kw-service-pin,html body.apu-kit-page .kit-unboxing .unboxing-pin{top:var(--desktop-header,var(--header-h,90px))!important;height:var(--pc-view-height,calc(100svh - var(--header-h,90px)))!important;min-height:0!important;max-height:none!important;box-sizing:border-box!important}
+}
