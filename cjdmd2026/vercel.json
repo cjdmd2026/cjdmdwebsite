@@ -8,9 +8,12 @@
       "maxDuration": 300,
       "includeFiles": "js/project-data.js"
     },
-    "api/site-asset.js": { "includeFiles": ".generated/site-assets.json" }
+    "api/site-asset.js": { "includeFiles": ".generated/site-assets.json" },
+    "api/efact.js": { "maxDuration": 60 }
   },
   "rewrites": [
+    { "source": "/e-fact/api/:resource", "destination": "/api/efact?resource=:resource" },
+    { "source": "/e-fact/js/api/:resource", "destination": "/api/efact?resource=:resource" },
     { "source": "/apuchika/api/badges", "destination": "/api/apuchika?resource=badges" },
     { "source": "/apuchika/api/badges/:id", "destination": "/api/apuchika?resource=badges&id=:id" },
     { "source": "/apuchika/api/inquiries", "destination": "/api/apuchika?resource=inquiries" },

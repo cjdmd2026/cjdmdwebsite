@@ -7,7 +7,7 @@
   },
   "scripts": {
     "build": "node scripts/build-submit.mjs",
-    "dev": "node scripts/serve-submit.mjs",
+    "dev": "node --env-file-if-exists=.env.local scripts/serve-submit.mjs",
     "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {

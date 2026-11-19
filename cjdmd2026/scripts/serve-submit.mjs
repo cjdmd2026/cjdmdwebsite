@@ -4,15 +4,17 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { handleRequest } from '../api/submission.js';
 import { handleRequest as handleApuchikaRequest } from '../api/apuchika.js';
+import { handleRequest as handleEfactRequest } from '../api/efact.js';
 
 const root = path.resolve(fileURLToPath(new URL('../public-dist/', import.meta.url)));
 const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.png': 'image/png', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.woff2': 'font/woff2', '.json': 'application/json' };
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, 'http://localhost:4173');
-    if (url.pathname === '/api/submission' || url.pathname === '/api/apuchika' || url.pathname.startsWith('/apuchika/api/')) {
+    const efact = url.pathname === '/api/efact' || /^\/e-fact\/(?:js\/)?api\//.test(url.pathname);
+    if (efact || url.pathname === '/api/submission' || url.pathname === '/api/apuchika' || url.pathname.startsWith('/apuchika/api/')) {
       const request = new Request(url, { method: req.method, headers: req.headers, body: ['GET', 'HEAD'].includes(req.method) ? undefined : req, duplex: 'half' });
-      const response = await (url.pathname === '/api/submission' ? handleRequest : handleApuchikaRequest)(request);
+      const response = await (efact ? handleEfactRequest : url.pathname === '/api/submission' ? handleRequest : handleApuchikaRequest)(request);
       res.writeHead(response.status, Object.fromEntries(response.headers));
       res.end(Buffer.from(await response.arrayBuffer()));
       return;
