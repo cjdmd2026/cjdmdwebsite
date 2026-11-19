@@ -2,6 +2,7 @@
 (()=>{
  const radio=document.getElementById('radioMedia'),tuner=document.getElementById('radioTuner'),deck=document.querySelector('.radio-console');
  if(!radio||!tuner||!deck)return;
+ const directAudio=true; // Keep the programme on the native audio output in every browser.
  const panel=radio.closest('.time-panel'),buttons=[...radio.querySelectorAll('[data-radio-station]')];
  let errorMessage="";
  const titles=['밤의 음악다방','가요 산책','이어온소식','오후의 다이얼'];
@@ -18,7 +19,7 @@
  let tuningSource=null,metadataCancel=null,tuningBuffer=null,switchBuffer=null,switchSource=null;
  const tuningData=fetch('assets/audio/radio-production/radio-static-quantumriver.mp3').then(r=>{if(!r.ok)throw Error('tuning');return r.arrayBuffer()}).catch(()=>null);
  const switchData=fetch('assets/audio/radio-production/radio_switch.mp3').then(r=>{if(!r.ok)throw Error('switch');return r.arrayBuffer()}).catch(()=>null);
- const ready=fetch('assets/audio/radio-production/manifest-five.json?v=dial-music-order-20261116').then(r=>{if(!r.ok)throw Error('broadcast manifest');return r.json()}).then(data=>{manifest=data;titles.splice(0,4,...data.map(p=>p.title));english.splice(0,4,...data.map(p=>p.english));players=data.map((p,i)=>{const a=new Audio(p.src);a.id='radioAudio'+i;a.hidden=true;document.body.append(a);a.preload='metadata';a.loop=true;a.volume=.8;a.addEventListener('timeupdate',()=>{if(playing&&selected===i){const cue=p.cues.find(c=>a.currentTime>=c.start&&a.currentTime<c.end);const text=cue?(en()?cue.en:cue.label):(en()?p.summary_en:p.summary);if(text!==lastCue){lastCue=text;radio.dispatchEvent(new Event('yearon-radio-state'))}}});a.addEventListener('error',()=>{if(players[selected]===a&&playing)fail()});return a});return data});
+ const ready=fetch('assets/audio/radio-production/manifest-five.json?v=dial-music-order-20261116').then(r=>{if(!r.ok)throw Error('broadcast manifest');return r.json()}).catch(()=>[{"title": "밤의 음악다방", "english": "Night Music Café", "src": "assets/audio/radio-production/night-cafe-donggun-songs.mp3", "summary": "동건의 밤 인사와 함께 듣는 우리의 지난날, 우리의 울림.", "summary_en": "A night-time introduction, followed by Our Past and Our Echo.", "cues": [{"start": 0, "end": 91.848, "label": "밤의 음악다방 · 오늘의 이야기", "en": "Night Music Café · Tonight’s story"}, {"start": 91.848, "end": 454.898, "label": "♪ 우리의 지난날", "en": "♪ Our Past"}, {"start": 454.898, "end": 759.648, "label": "♪ 우리의 울림", "en": "♪ Our Echo"}]}, {"title": "가요 산책", "english": "A Walk Through Pop", "src": "assets/audio/radio-production/yearon-radio-ch02.mp3", "summary": "〈우리의 지난날〉과 〈우리의 울림〉을 이어 듣는 시간.", "summary_en": "Listen to Our Past and Our Echo back to back.", "cues": [{"start": 0, "end": 363.05, "label": "♪ 우리의 지난날", "en": "♪ Our Past"}, {"start": 363.05, "end": 667.8, "label": "♪ 우리의 울림", "en": "♪ Our Echo"}]}, {"title": "이어온소식", "english": "YEAR:ON News", "src": "assets/audio/radio-production/yearon-news-user-20261116.mp3", "summary": "우리 주변의 생활과 이웃들의 이야기를 전합니다.", "summary_en": "Everyday stories from our neighbourhoods and the people around us.", "cues": [{"start": 0, "end": 4.4, "label": "청취자 여러분, 안녕하십니까. 이어온소식입니다.", "en": "Hello, listeners. This is YEAR:ON News."}, {"start": 4.4, "end": 9.0, "label": "오늘도 우리 주변에서 전해진 여러 가지 생활 소식을 전해 드리겠습니다.", "en": "Here are today’s everyday stories from the people around us."}]}, {"title": "오후의 다이얼", "english": "Afternoon Dial", "src": "assets/audio/radio-production/afternoon-dial-music-midway-20261116.mp3", "summary": "다이얼 너머로 흘러나오는 노래. 잠시 머물러 함께 들어보세요.", "summary_en": "A song already playing beyond the dial. Stay a moment and listen.", "cues": [], "broadcastVariants": ["assets/audio/radio-production/afternoon-dial-music-midway-20261116.mp3", "assets/audio/radio-production/afternoon-dial-music-start2-20261116.mp3", "assets/audio/radio-production/afternoon-dial-music-start3-20261116.mp3"]}]).then(data=>{manifest=data;titles.splice(0,4,...data.map(p=>p.title));english.splice(0,4,...data.map(p=>p.english));players=data.map((p,i)=>{const a=new Audio(p.src);a.id='radioAudio'+i;a.hidden=true;document.body.append(a);a.preload='metadata';a.loop=true;a.volume=directAudio?volume:.8;a.addEventListener('timeupdate',()=>{if(playing&&selected===i){const cue=p.cues.find(c=>a.currentTime>=c.start&&a.currentTime<c.end);const text=cue?(en()?cue.en:cue.label):(en()?p.summary_en:p.summary);if(text!==lastCue){lastCue=text;radio.dispatchEvent(new Event('yearon-radio-state'))}}});a.addEventListener('error',()=>{if(players[selected]===a&&playing)fail()});return a});return data});
  // Keep a failed prefetch handled; the next deliberate play presents an inline error.
  ready.then(()=>paint()).catch(()=>{});
  function en(){return window.YEARON_LANG==='en'}
@@ -33,7 +34,7 @@
  radio.dispatchEvent(new Event('yearon-radio-state'));
  }
  async function audioGraph(){
- if(!ctx){ctx=new (window.AudioContext||window.webkitAudioContext)();bus=ctx.createGain();bus.gain.value=volume;analyser=ctx.createAnalyser();analyser.fftSize=256;levelData=new Uint8Array(analyser.fftSize);const hp=ctx.createBiquadFilter(),lp=ctx.createBiquadFilter(),warm=ctx.createWaveShaper(),compress=ctx.createDynamicsCompressor(),mono=ctx.createGain();hp.type='highpass';hp.frequency.value=180;hp.Q.value=.65;lp.type='lowpass';lp.frequency.value=4200;lp.Q.value=.65;const curve=new Float32Array(2048);for(let i=0;i<curve.length;i++){const x=i*2/(curve.length-1)-1;curve[i]=Math.tanh(x*1.25)/Math.tanh(1.25)}warm.curve=curve;warm.oversample='2x';compress.threshold.value=-19;compress.knee.value=15;compress.ratio.value=2.2;compress.attack.value=.012;compress.release.value=.2;mono.channelCount=1;mono.channelCountMode='explicit';bus.connect(hp).connect(lp).connect(warm).connect(compress).connect(mono).connect(analyser);analyser.connect(ctx.destination);sourceNodes=players.map(a=>{const source=ctx.createMediaElementSource(a);const g=ctx.createGain();g.gain.value=0;source.connect(g).connect(bus);return g})}
+ if(!ctx){ctx=new (window.AudioContext||window.webkitAudioContext)();bus=ctx.createGain();bus.gain.value=volume;analyser=ctx.createAnalyser();analyser.fftSize=256;levelData=new Uint8Array(analyser.fftSize);const hp=ctx.createBiquadFilter(),lp=ctx.createBiquadFilter(),warm=ctx.createWaveShaper(),compress=ctx.createDynamicsCompressor(),mono=ctx.createGain();hp.type='highpass';hp.frequency.value=180;hp.Q.value=.65;lp.type='lowpass';lp.frequency.value=4200;lp.Q.value=.65;const curve=new Float32Array(2048);for(let i=0;i<curve.length;i++){const x=i*2/(curve.length-1)-1;curve[i]=Math.tanh(x*1.25)/Math.tanh(1.25)}warm.curve=curve;warm.oversample='2x';compress.threshold.value=-19;compress.knee.value=15;compress.ratio.value=2.2;compress.attack.value=.012;compress.release.value=.2;mono.channelCount=1;mono.channelCountMode='explicit';bus.connect(hp).connect(lp).connect(warm).connect(compress).connect(mono).connect(analyser);analyser.connect(ctx.destination);sourceNodes=players.map(a=>{const g=ctx.createGain();g.gain.value=0;if(!directAudio){const source=ctx.createMediaElementSource(a);source.connect(g).connect(bus)}return g})}
  const resumed=ctx.resume();if(!tuningBuffer){const bytes=await tuningData;if(bytes)tuningBuffer=await ctx.decodeAudioData(bytes.slice(0)).catch(()=>null)}return resumed;
  }
  async function clickSwitch(){
@@ -67,7 +68,7 @@
  source.onended=()=>{source.disconnect();filter.disconnect();gain.disconnect()};
  staticSource=source;source.start();
  }
- function stop(){stopBed();powered=false;stopStatic();token++;if(switchSource){try{switchSource.stop()}catch(e){}switchSource=null}if(metadataCancel){metadataCancel();metadataCancel=null}if(tuningSource){try{tuningSource.stop()}catch(e){}tuningSource=null}players.forEach(a=>a.pause());sourceNodes.forEach(g=>{g.gain.cancelScheduledValues(ctx.currentTime);g.gain.setValueAtTime(0,ctx.currentTime)});playing=false;loading=false;lastCue='';paint()}
+ function stop(){stopBed();powered=false;stopStatic();token++;if(switchSource){try{switchSource.stop()}catch(e){}switchSource=null}if(metadataCancel){metadataCancel();metadataCancel=null}if(tuningSource){try{tuningSource.stop()}catch(e){}tuningSource=null}players.forEach(a=>a.pause());sourceNodes.forEach(g=>{g.gain.cancelScheduledValues(ctx.currentTime);g.gain.setValueAtTime(0,ctx.currentTime)});playing=false;loading=false;position=0;selected=0;tuner.value='0';lastCue='';paint()}
  function fail(){stop();errorMessage=en()?'Audio could not load. Choose a broadcast to try again.':'방송을 불러오지 못했습니다. 방송 버튼을 눌러 다시 시도해 주세요.';paint()}
  async function play(index){
  if(!panel.classList.contains('active')||document.hidden)return;
@@ -80,7 +81,14 @@
  }else players.forEach(a=>a.pause());
  playing=false;selected=Math.max(0,Math.min(3,index));position=selected/1.5;tuner.value=String(position);loading=true;paint();radio.dispatchEvent(new Event('yearon-radio-station'));
  try{
- await ready;if(request!==token)return;await audioGraph();if(request!==token)return;
+ await ready;if(request!==token)return;
+ if(directAudio){
+   players.forEach(a=>a.pause());const a=players[selected],variants=manifest[selected].broadcastVariants;
+   if(variants?.length){a.src=variants[broadcastTurn++%variants.length];a.load()}
+   a.volume=volume;a.currentTime=0;await a.play();if(request!==token){a.pause();return}
+   playing=true;loading=false;lastCue='';paint();return;
+ }
+ await audioGraph();if(request!==token)return;
  if(fading>=0){await new Promise(resolve=>setTimeout(resolve,130));if(request!==token)return}
  players.forEach(a=>a.pause());sourceNodes.forEach(g=>{g.gain.cancelScheduledValues(ctx.currentTime);g.gain.setValueAtTime(0,ctx.currentTime)});await tuning();if(request!==token)return;
  const a=players[selected],variants=manifest[selected].broadcastVariants;if(variants?.length){a.src=variants[broadcastTurn++%variants.length];a.load();}if(a.readyState<1)await new Promise((resolve,reject)=>{
@@ -100,7 +108,7 @@
  const nearest=nearestStation(value),locked=isLocked(value);
  if(!powered){selected=nearest;tuner.value=String(nearest/1.5);paint();return}
  if(locked&&playing&&selected===nearest){return}
- if(locked&&commit){play(nearest);return}
+ if(commit){position=nearest/1.5;play(nearest);return}
  if(playing||loading){
  const fading=players.findIndex(a=>!a.paused),request=++token;
  if(tuningSource){try{tuningSource.stop()}catch(e){}tuningSource=null}
@@ -123,8 +131,7 @@
  }
  function togglePower(){
  if(powered)stop();
- else if(isLocked(position))play(nearestStation(position));
- else{powered=true;tune(position)}
+ else{position=0;selected=0;tuner.value='0';play(0)}
  clickSwitch();
  }
  tuner.oninput=null;tuner.addEventListener('input',()=>{
@@ -135,5 +142,5 @@
 
  new MutationObserver(()=>{if(!panel.classList.contains('active')&&powered)stop()}).observe(panel,{attributes:true,attributeFilter:['class']});
  document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});addEventListener('pagehide',stop);addEventListener('yearon-language-change',localize);
- window.YEARON_RADIO={stop,play,tune,togglePower,frequencyLabel,setVolume(v){volume=Math.max(0,Math.min(1,v));if(bus)bus.gain.setTargetAtTime(volume,ctx.currentTime,.04)},setBand(v){band=v==="AM"?"AM":"FM";stopStatic();if(powered&&playing)play(selected);else tune(position,true)},getLevel(){if(!playing||!analyser)return 0;analyser.getByteTimeDomainData(levelData);return Math.sqrt(levelData.reduce((s,v)=>s+((v-128)/128)**2,0)/levelData.length)},getState(){return{powered,playing,loading,selected,position,volume,band,errorMessage}}};localize();
+ window.YEARON_RADIO={stop,play,tune,togglePower,frequencyLabel,setVolume(v){volume=Math.max(0,Math.min(1,v));if(directAudio)players.forEach(a=>a.volume=volume);if(bus)bus.gain.setTargetAtTime(volume,ctx.currentTime,.04)},setBand(v){band=v==="AM"?"AM":"FM";stopStatic();if(powered&&playing)play(selected);else tune(position,true)},getLevel(){if(!playing||!analyser)return 0;analyser.getByteTimeDomainData(levelData);return Math.sqrt(levelData.reduce((s,v)=>s+((v-128)/128)**2,0)/levelData.length)},getState(){return{powered,playing,loading,selected,position,volume,band,errorMessage}}};localize();
 })();

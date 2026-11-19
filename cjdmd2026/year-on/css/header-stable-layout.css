@@ -20,3 +20,10 @@ html:has(body.visit-v7){background:#000!important;color-scheme:dark;scrollbar-co
 html:has(body.visit-v7)::-webkit-scrollbar{width:6px;background:#000!important}
 html:has(body.visit-v7)::-webkit-scrollbar-track{background:#000!important}
 html:has(body.visit-v7)::-webkit-scrollbar-thumb{background:#a6b1bc80;border-radius:6px}
+
+html body header.global-header.global-header.global-header.global-header.global-header.global-header.global-header{border-bottom:1px solid #ffffff26!important}
+
+html:has(body.home-body){color-scheme:dark;scrollbar-color:#a6b1bc80 transparent!important}
+html::-webkit-scrollbar-track{background:transparent!important}
+
+@media(min-width:1100px){html body .global-header.global-header.global-header.global-header.global-header.global-header.global-header .header-right>nav>a{font-size:clamp(11.5px,1.18svh,14px)!important}}

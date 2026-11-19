@@ -139,3 +139,87 @@ html body header.global-header.global-header.global-header.global-header.global-
 html body.about-body #aboutEntryStory .yai-entry-heading strong{font-size:22px!important}
 html body.about-body #aboutEntryStory .yai-entry-heading em{font-size:14px!important}
 @media(min-width:1100px){html body.media-time-body .era-bridge #timeNav button.active .era-current-description{font-size:clamp(11px,1.25svh,17px)!important;bottom:5px!important}}
+
+/* Requested final visual adjustments. */
+html body.media-time-body .era-now a{font-size:14px!important;letter-spacing:.13em!important}
+html body.media-time-body #timeNav button:not(.active) :is(b,.era-odometer){font-size:clamp(25px,3.3svh,43px)!important;color:#acb6bf!important}
+html body.media-time-body .radio-glass-console :is(.rg-title,.rg-channel-title,[data-rg-channel]){font-weight:400!important;text-shadow:none!important;filter:none!important;-webkit-text-stroke:0!important}
+html body.media-time-body .tv-time-panel #television#television{-webkit-box-reflect:below -2px linear-gradient(to top,#0005 0%,#0002 9%,transparent 25%)}
+html body.media-time-body #television .tv-reflection-wrap{display:none!important}
+@media(min-width:1100px){
+ html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console{top:calc(var(--header-h) + var(--display-room)*.71 + 40px)!important}
+ html body.media-time-body .tv-time-panel #television#television{width:min(58vw,calc(var(--display-room)*.87))!important}
+ html body.about-body .story-subtitle p[lang=ko]{font-size:clamp(15px,1.7svh,23px)!important}
+ html body.about-body .story-subtitle p[lang=en]{font-size:clamp(11px,1.25svh,16px)!important}
+ html body.about-body .story-subtitle>.about-fixed-scene{padding:var(--header-h) 6vw 0!important;place-content:center!important;text-align:center!important}
+}
+html body.karchive-body :is(.ka-film-caption,.ka-sequence-caption) {width:max-content!important;max-width:96vw!important}
+html body.karchive-body :is(.ka-film-caption,.ka-sequence-caption) :is(p,span){white-space:nowrap!important}
+html body.karchive-body :is(.ka-film-caption,.ka-sequence-caption) br{display:none!important}
+html body.karchive-body header.global-header.global-header.global-header.global-header.global-header.global-header.global-header{background:#000!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html body.about-body .global-header.global-header.global-header.global-header.global-header.global-header.global-header :is(.brand,.brand-word,nav a,.header-icon-button){color:#fff!important}
+html body.about-body .global-header.global-header.global-header.global-header.global-header.global-header.global-header .brand-mark{filter:brightness(0) invert(1)!important}
+html body.about-body .global-header.global-header.global-header.global-header.global-header.global-header.global-header .menu-lines i{background:#fff!important}
+
+html body::selection,html body *::selection{background:#a9d9f0!important;color:#102a39!important}
+html body.media-time-body :is(.scroll-media,.paper-media,#radioMedia,#television,.pc-media,.phone-media,.radio-console,.era-bridge),html body.media-time-body :is(.scroll-media,.paper-media,#radioMedia,#television,.pc-media,.phone-media,.radio-console,.era-bridge) *{user-select:none!important;-webkit-user-select:none!important;-webkit-user-drag:none!important}
+html body.media-time-body :is(input,textarea,[contenteditable=true]){user-select:text!important;-webkit-user-select:text!important}
+html body.media-time-body .time-panel .interaction-cue{display:block!important;max-width:190px!important;transition:opacity .45s ease,visibility .45s!important;pointer-events:none!important}
+html body.media-time-body .time-panel .interaction-cue.is-hidden{opacity:0!important;visibility:hidden!important}
+html body.media-time-body .interaction-cue>b{font-size:12px!important;font-weight:500!important;line-height:1.45!important;text-shadow:none!important}
+html body.media-time-body .interaction-cue>small{font-size:10px!important;line-height:1.55!important;text-shadow:none!important}
+html body.media-time-body #scrollMedia>.scroll-drag-hint{display:none!important}
+html body.media-time-body .radio-knob-tooltip{display:none!important}
+html body.media-time-body .tv-time-panel #channelNav .tv-station :is(b,strong,span){font-weight:400!important;text-shadow:none!important}
+html body.media-time-body .tv-time-panel #channelNav .tv-station{font-size:9px!important}
+html body.about-body #artistSequence{height:300svh!important}
+html body.about-body #ypInfographic .wn-connections path{stroke-dasharray:none!important;stroke-dashoffset:0!important;stroke-linecap:round!important;stroke-opacity:1!important;transition:none!important;animation:none!important}
+html body.about-body #ypInfographic .wn-individuals>g{transition:none!important;animation:none!important}
+html body.about-body #aboutEntryStory :is(.yai-question,.yai-artist-intro,.yai-bridge){text-align:center!important}
+html body.about-body #aboutEntryStory :is(.yai-question,.yai-artist-intro,.yai-bridge)>:is(h1,h2,p[lang=ko]){font-size:clamp(15px,1.7svh,23px)!important;font-weight:400!important;line-height:1.6!important}
+html body.about-body #aboutEntryStory :is(.yai-question,.yai-artist-intro,.yai-bridge)>p[lang=en]{font-size:clamp(11px,1.25svh,16px)!important;line-height:1.6!important}
+html:has(body.home-film-body){background:#08090b!important;color-scheme:dark;scrollbar-color:#a6b1bc80 transparent!important}
+@media(min-width:1100px){
+html body .global-header.global-header.global-header.global-header.global-header.global-header.global-header .header-right>nav>a{font-size:clamp(11.5px,1.18svh,14px)!important}
+html body.media-time-body .tv-time-panel .channel-footer.channel-footer{translate:0 -56px!important}
+}
+@media(max-width:760px){
+html body.media-time-body .interaction-cue>b{font-size:10px!important}
+html body.media-time-body .interaction-cue>small{font-size:9px!important}
+html body.media-time-body .time-panel .interaction-cue{max-width:145px!important}
+html body.karchive-body .ka-film-caption :is(p,span){font-size:clamp(7px,2vw,11px)!important}
+html body.about-body .story-subtitle p[lang=ko]{font-size:15px!important;line-height:1.65!important}
+html body.about-body .story-subtitle p[lang=en]{font-size:11px!important;line-height:1.6!important}
+}
+
+html body.media-time-body .era-now a{font-size:16px!important}
+html body.media-time-body .tv-time-panel #television#television{-webkit-box-reflect:none!important}
+html body.media-time-body #television .tv-live-surface{position:absolute;inset:0;overflow:visible;-webkit-box-reflect:below var(--tv-reflection-overlap,-72px) linear-gradient(to top,rgba(0,0,0,.25) 0%,rgba(0,0,0,.22) 7.5%,rgba(0,0,0,.13) 12%,rgba(0,0,0,.05) 18%,transparent 26%)}
+html body.media-time-body .tv-time-panel #channelNav .tv-station b{font-size:10px!important}
+html body.media-time-body .tv-time-panel #channelNav .tv-station span{font-size:9px!important}
+html body.about-body #artworksPrelude p[lang=ko]{font-size:clamp(16px,1.85svh,25px)!important}
+html body.about-body #abrArchive .album-closing-line p[lang=ko]{font-size:clamp(15px,1.7svh,23px)!important}
+@media(max-width:800px){html body.media-time-body .time-panel .interaction-cue{width:150px!important;max-width:150px!important;text-align:center!important}html body.media-time-body .interaction-cue .cue-guide{display:none!important}html body.media-time-body .tv-time-panel .channel-footer.channel-footer{translate:0 -12px!important}html body.media-time-body #television .tv-power-hint{font-size:10px!important}}
+
+html body.media-time-body #scrollMedia#scrollMedia#scrollMedia>.interaction-cue{display:block!important}
+@media(max-width:800px){
+ html body.media-time-body .time-panel .interaction-cue{transform:none!important}
+ html body.media-time-body .time-panel[data-era="2002"] .pc-media.pc-media{width:82vw!important}
+ html body.media-time-body #scrollMedia#scrollMedia#scrollMedia{left:calc(50% + (45vw - 23px)*(1 - var(--scroll-progress,0)))!important;height:calc(min(28svh,230px)*(1 - var(--scroll-progress,0)) + 30.84vw*var(--scroll-progress,0))!important;aspect-ratio:auto!important}
+}
+
+/* A quiet white pulse identifies the end of every device instruction line. */
+html body.media-time-body .cue-target-light{position:absolute!important;display:block!important;width:5px!important;height:5px!important;border-radius:50%!important;background:#fff!important;pointer-events:none!important;z-index:120!important;transform:translate(-50%,-50%)!important;opacity:0;visibility:hidden;transition:opacity .45s,visibility .45s;box-shadow:0 0 4px 1px #fff,0 0 10px 3px #ffffff55}
+html body.media-time-body .cue-target-light.is-visible{opacity:1;visibility:visible;animation:cue-white-light 2.4s ease-in-out infinite}
+html body.media-time-body .cue-target-light::after{content:'';position:absolute;inset:-3px;border-radius:50%;border:1px solid #ffffffb3;animation:cue-white-ripple 2.4s ease-out infinite}
+html body.media-time-body .interaction-cue .cue-guide circle{fill:#fff!important;filter:drop-shadow(0 0 3px #fff)!important}
+@keyframes cue-white-light{0%,100%{box-shadow:0 0 3px 1px #fff,0 0 7px 2px #ffffff40}50%{box-shadow:0 0 5px 2px #fff,0 0 13px 4px #ffffff70}}
+@keyframes cue-white-ripple{0%{transform:scale(.5);opacity:0}20%{opacity:.6}100%{transform:scale(2.4);opacity:0}}
+@media(prefers-reduced-motion:reduce){html body.media-time-body .cue-target-light.is-visible,html body.media-time-body .cue-target-light::after{animation:none!important}}
+
+/* Animate the actual white endpoint, including systems with reduced motion. */
+html body.media-time-body .interaction-cue svg.cue-guide circle{animation:instruction-endpoint-blink 1.8s ease-in-out infinite!important;fill:#fff!important;filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 8px #ffffffb3)!important}
+@keyframes instruction-endpoint-blink{0%,100%{fill-opacity:.16}50%{fill-opacity:1}}
+html body.media-time-body .cue-target-light.is-visible{animation:instruction-target-blink 1.8s ease-in-out infinite!important}
+@keyframes instruction-target-blink{0%,100%{opacity:.2}50%{opacity:1}}
+html body.media-time-body #television#television.tv-is-off>.interaction-cue{display:block!important}

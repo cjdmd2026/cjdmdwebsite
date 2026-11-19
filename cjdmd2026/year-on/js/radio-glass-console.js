@@ -14,7 +14,7 @@
  function dragTune(e,commit=false){const r=dial.getBoundingClientRect(),am=api()?.getState().band==='AM',min=am?540:88,max=am?1600:108,low=am?621:89.1,high=am?1377:101.1,hz=min+Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*(max-min),value=Math.max(0,Math.min(2,(hz-low)/(high-low)*2));tuner.value=value;api()?.tune(value,commit);last='';paint()}
  tuner.addEventListener('pointerdown',e=>{if(e.button!==0)return;e.preventDefault();pointer=e.pointerId;dragging=true;tuner.setPointerCapture(pointer);dragTune(e)});
  tuner.addEventListener('pointermove',e=>{if(pointer===e.pointerId)dragTune(e)});
- const end=e=>{if(pointer!==e.pointerId)return;pointer=null;dragging=false;dragTune(e,true)};
+ const end=e=>{if(pointer!==e.pointerId)return;pointer=null;dragging=false;dragTune(e,true);radio.dispatchEvent(new Event('yearon-radio-channel-used'))};
  tuner.addEventListener('pointerup',end);tuner.addEventListener('pointercancel',()=>{pointer=null;dragging=false;last='';paint()});
  tuner.addEventListener('input',()=>{dragging=true;api()?.tune(Number(tuner.value),false);paint()});
  tuner.addEventListener('change',()=>{dragging=false;api()?.tune(Number(tuner.value),true);last='';paint()});

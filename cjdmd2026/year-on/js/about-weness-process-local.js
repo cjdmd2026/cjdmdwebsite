@@ -18,7 +18,7 @@
   const gathering=range(progress,.04,.17);nodes.forEach((n,i)=>{const x=(i-2.5)*85+(n.x-(i-2.5)*85)*gathering,y=n.y*gathering;n.px=500+x*(1-collapse);n.py=270+y*(1-collapse);n.group.setAttribute('transform',`translate(${n.px} ${n.py})`);n.group.style.opacity=String(1-range(progress,.68,.74))});
   edges.forEach(({path,a,b,i})=>{
    const ax=nodes[a].px,ay=nodes[a].py,bx=nodes[b].px,by=nodes[b].py;
-   const dx=bx-ax,dy=by-ay,distance=Math.hypot(dx,dy),inset=34;
+   const dx=bx-ax,dy=by-ay,distance=Math.hypot(dx,dy),inset=33;
    // Stop just outside both glass rims; hide the segment as the nodes overlap.
    if(distance<=inset*2){path.setAttribute('d','M0 0');path.style.opacity='0';}
    else{const ux=dx/distance,uy=dy/distance;path.setAttribute('d',`M${ax+ux*inset} ${ay+uy*inset}L${bx-ux*inset} ${by-uy*inset}`);path.style.opacity='1';}

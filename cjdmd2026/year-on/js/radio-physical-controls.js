@@ -79,7 +79,7 @@
  function updateFrequency(commit){
    updateMarkers();
    const position=Number(frequency.value);
-   receiver()?.tune(position,commit);
+   receiver()?.tune(position,commit);if(commit)radio.dispatchEvent(new Event('yearon-radio-channel-used')); 
    frequency.setAttribute('aria-valuetext',receiver()?.frequencyLabel()||'89.1 MHz');
    radio.dispatchEvent(new CustomEvent('yearon-radio-tuning',{detail:{position:Number(frequency.value)}}));
  }
@@ -106,10 +106,10 @@
  const hints=[[power,'눌러 전원을 켜고 끄세요','Press to turn power on or off'],[frequency,'다이얼을 잡고 좌우로 드래그해 채널을 돌려보세요','Drag the dial left or right to tune'],[volume,'좌우로 드래그해 음량을 조절하세요','Drag left or right to adjust volume'],[band,'눌러 AM / FM을 바꿔보세요','Press to switch AM / FM']];
  let firstUse=true,hovering=false;
  function placeHint(control,ko,en){const english=window.YEARON_LANG==='en';const titles=control===power?['전원 버튼을 눌러보세요','Press the power button']:control===frequency?['주파수를 맞춰보세요','Tune the frequency']:control===volume?['음량을 조절해보세요','Adjust the volume']:['AM / FM을 바꿔보세요','Switch AM / FM'];let title=tooltip.querySelector('b'),detail=tooltip.querySelector('small');if(!title){title=document.createElement('b');detail=document.createElement('small');tooltip.replaceChildren(title,detail)}title.textContent=titles[english?1:0];detail.textContent=english?en:ko;const b=control.getBoundingClientRect();const shell=radio.getBoundingClientRect();tooltip.style.left=Math.min(innerWidth-180,shell.right+24)+'px';tooltip.style.top=(b.top+b.height/2-4)+'px';tooltip.style.setProperty('--radio-hint-line',Math.max(16,Math.min(innerWidth-180,shell.right+24)-b.right-9)+'px');if(innerWidth<=850){tooltip.style.left=(shell.left+shell.width/2)+'px';tooltip.style.top=(shell.bottom+8)+'px';}tooltip.hidden=false}
- function initialHint(){const active=radio.closest('.time-panel')?.classList.contains('active');if(firstUse&&active&&!hovering){placeHint(power,'첫 번째 버튼을 눌러 전원을 켜보세요','Press the first button to turn on')}else if(!active)tooltip.hidden=true}
+ function initialHint(){const active=radio.closest('.time-panel')?.classList.contains('active');if(false&&firstUse&&active&&!hovering){placeHint(power,'첫 번째 버튼을 눌러 전원을 켜보세요','Press the first button to turn on')}else if(!active)tooltip.hidden=true}
  hints.forEach(([control,ko,en])=>{const show=()=>{hovering=true;placeHint(control,ko,en)};control.addEventListener('pointerenter',show);control.addEventListener('focus',show);const leave=()=>{hovering=false;tooltip.hidden=true;initialHint()};control.addEventListener('pointerleave',leave);control.addEventListener('blur',leave);control.addEventListener('pointerdown',()=>{firstUse=false;tooltip.hidden=true})});
  new MutationObserver(initialHint).observe(radio.closest('.time-panel'),{attributes:true,attributeFilter:['class']});
- addEventListener('pageshow',()=>{firstUse=true;initialHint()});addEventListener('resize',initialHint);addEventListener('yearon-language-change',initialHint);setTimeout(initialHint,400);
+ addEventListener('pageshow',()=>{firstUse=true;initialHint()});addEventListener('resize',initialHint);addEventListener('yearon-language-change',initialHint);/* Initial instructions are owned by media-interaction-cues. */
 
  paint();
 })();
