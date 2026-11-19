@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "files": [
+    {
+      "path": "assets/models/antique-notebook.glb",
+      "size": 70122724,
+      "sha256": "f5fdbd833cdb4d878606bc17513d89f499cd3fb3eedcb9cbdc4dfe820a4a5c3a",
+      "gitSha": "b9ecffe44c9bed9bf4085ecff34d69aeeebc568c",
+      "key": "published-assets/jigjijaembeoli/f5fdbd833cdb4d878606bc17513d89f499cd3fb3eedcb9cbdc4dfe820a4a5c3a"
+    },
+    {
+      "path": "assets/models/process-step-01-honeycomb.glb",
+      "size": 62118908,
+      "sha256": "0c9e8f5e8e2ec4bd28b6dd6737860eb9bb9b511938e0cd65745eb1de5d35f6e9",
+      "gitSha": "25ecb7ef48e2a920bcb25a9579e8ad6efec1eaf2",
+      "key": "published-assets/jigjijaembeoli/0c9e8f5e8e2ec4bd28b6dd6737860eb9bb9b511938e0cd65745eb1de5d35f6e9"
+    },
+    {
+      "path": "assets/models/process-step-05-jikji-closed.glb",
+      "size": 70122724,
+      "sha256": "f5fdbd833cdb4d878606bc17513d89f499cd3fb3eedcb9cbdc4dfe820a4a5c3a",
+      "gitSha": "b9ecffe44c9bed9bf4085ecff34d69aeeebc568c",
+      "key": "published-assets/jigjijaembeoli/f5fdbd833cdb4d878606bc17513d89f499cd3fb3eedcb9cbdc4dfe820a4a5c3a"
+    },
+    {
+      "path": "assets/videos/mission-find-materials.mp4",
+      "size": 90082360,
+      "sha256": "01e60416e7fb5aadb207dc33ee2c9e00b4d8c4a968c2d8fd647687f5414293d9",
+      "gitSha": "3fffedb2622225f29fe987198ef128935e5c9508",
+      "key": "published-assets/jigjijaembeoli/01e60416e7fb5aadb207dc33ee2c9e00b4d8c4a968c2d8fd647687f5414293d9"
+    },
+    {
+      "path": "assets/videos/mission-missing-type.mp4",
+      "size": 58846288,
+      "sha256": "1ac014668f25441d84f2c91bae918c0952cc3ceb03164c77f1350b633969d15a",
+      "gitSha": "582c7a81b37480b1360c370e24ac2565d2cae1a3",
+      "key": "published-assets/jigjijaembeoli/1ac014668f25441d84f2c91bae918c0952cc3ceb03164c77f1350b633969d15a"
+    }
+  ]
+}

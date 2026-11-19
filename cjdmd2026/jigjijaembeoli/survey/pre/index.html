@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#A9DED5">
+  <title>체험 전 설문 — 새로운 직지</title>
+  <link rel="stylesheet" href="../../css/tokens.css">
+  <link rel="stylesheet" href="../survey.css?v=text-minus-2-1">
+</head>
+<body class="survey-body">
+  <main class="survey-page">
+    <div class="survey-topbar"><a class="survey-brand" href="../../#top">새로운 직지</a><a href="../../#top">웹사이트로 돌아가기</a></div>
+    <article class="survey-card">
+      <div class="survey-eyebrow">BEFORE THE EXPERIENCE</div>
+      <h1 class="survey-title">직지를 만나기 전,<br>여러분의 생각을 들려주세요!</h1>
+      <p class="survey-intro">질문은 한 화면에 하나씩 나와요.<br>답변하고 다음 버튼을 눌러 이어가 주세요.</p>
+      <div class="survey-progress" id="pre-progress" aria-label="설문 1 / 4"></div>
+      <form class="survey-form" id="pre-survey-form">
+
+          <fieldset class="survey-question">
+          <legend><span class="survey-question__number">01</span> · 직지와 금속활자 인쇄에 대해 얼마나 알고 있다고 생각하나요?</legend>
+          <p class="survey-question__hint">1은 전혀 모른다, 5는 매우 잘 알고 있다를 뜻해요.</p>
+          <div class="survey-scale" role="radiogroup" aria-label="직지 이해도">
+            <label class="survey-choice"><input type="radio" name="Q04" value="1" required><span>1</span></label>
+            <label class="survey-choice"><input type="radio" name="Q04" value="2"><span>2</span></label>
+            <label class="survey-choice"><input type="radio" name="Q04" value="3"><span>3</span></label>
+            <label class="survey-choice"><input type="radio" name="Q04" value="4"><span>4</span></label>
+            <label class="survey-choice"><input type="radio" name="Q04" value="5"><span>5</span></label>
+          </div><div class="survey-scale-labels"><span>전혀 몰라요</span><span>잘 알고 있어요</span></div>
+        </fieldset>
+        <fieldset class="survey-question" hidden>
+          <legend><span class="survey-question__number">02</span> · 직지는 현재 남아 있는 세계에서 가장 오래된 금속활자 인쇄본이다.</legend>
+          <p class="survey-question__hint">맞다고 생각하는 답을 골라 주세요.</p>
+          <div class="survey-radio-list">
+            <label class="survey-choice survey-choice--text"><input type="radio" name="Q05" value="yes" required><span>맞아요</span></label>
+            <label class="survey-choice survey-choice--text"><input type="radio" name="Q05" value="no"><span>아니에요</span></label>
+            <label class="survey-choice survey-choice--text"><input type="radio" name="Q05" value="unknown"><span>잘 모르겠어요</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="survey-question" hidden>
+          <legend><span class="survey-question__number">03</span> · 직지가 유네스코 세계기록유산이라는 사실을 얼마나 알고 있나요?</legend>
+          <p class="survey-question__hint">1은 전혀 몰랐다, 5는 잘 알고 있었다를 뜻해요. 지식 시험이 아닌 스스로 느끼는 인지도예요.</p>
+          <div class="survey-scale" role="radiogroup" aria-label="세계기록유산 인지도">
+            <label class="survey-choice"><input type="radio" name="Q06" value="1" required><span>1</span></label>
+            <label class="survey-choice"><input type="radio" name="Q06" value="2"><span>2</span></label>
+            <label class="survey-choice"><input type="radio" name="Q06" value="3"><span>3</span></label>
+            <label class="survey-choice"><input type="radio" name="Q06" value="4"><span>4</span></label>
+            <label class="survey-choice"><input type="radio" name="Q06" value="5"><span>5</span></label>
+          </div><div class="survey-scale-labels"><span>전혀 몰라요</span><span>잘 알고 있어요</span></div>
+        </fieldset>
+        <fieldset class="survey-question" hidden>
+          <legend><span class="survey-question__number">04</span> · 직지와 금속활자에 대해 더 알아보고 싶은가요?</legend>
+          <div class="survey-scale" role="radiogroup" aria-label="직지 학습 관심도">
+            <label class="survey-choice"><input type="radio" name="Q08" value="1" required><span>1</span></label>
+            <label class="survey-choice"><input type="radio" name="Q08" value="2"><span>2</span></label>
+            <label class="survey-choice"><input type="radio" name="Q08" value="3"><span>3</span></label>
+            <label class="survey-choice"><input type="radio" name="Q08" value="4"><span>4</span></label>
+            <label class="survey-choice"><input type="radio" name="Q08" value="5"><span>5</span></label>
+          </div><div class="survey-scale-labels"><span>전혀 그렇지 않아요</span><span>매우 그래요</span></div>
+          <label class="survey-consent"><input id="survey-consent" type="checkbox" required><span>이름과 연락처 없이 익명으로 답변을 저장하고, 직지 체험 전후 비교와 전시 개선에 사용하는 데 동의합니다. 어린이 참여자는 보호자와 함께 확인해 주세요.</span></label>
+        </fieldset>
+        <div class="survey-navigation">
+          <button class="survey-step-button survey-step-button--back" type="button" data-survey-back disabled>이전</button>
+          <button class="survey-submit" type="button" data-survey-next>다음 →</button>
+          <button class="survey-submit" type="submit" data-survey-submit hidden>설문 완료 →</button>
+        </div>
+        <p class="survey-status" id="survey-status" role="status" aria-live="polite"></p>
+      </form>
+      <section class="survey-complete" id="pre-complete" hidden tabindex="-1">
+        <div class="survey-eyebrow">PRE-SURVEY COMPLETED</div>
+        <h2 class="survey-title">직지를 알아갈 준비가 되었어요!</h2>
+        <p class="survey-intro">답변이 이 기기에 임시로 저장됐어요.<br>이제 찍쥐와 짹째를 따라 직지의 세계를 탐험해 보세요!</p>
+        <a class="survey-back-link" href="../../#top">웹사이트로 돌아가기</a>
+      </section>
+      <p class="survey-privacy">응답은 이 컴퓨터의 브라우저에 익명으로 누적 저장되어 모두의 통계에 반영됩니다.</p>
+    </article>
+  </main>
+  <script type="module" src="../pre.js"></script>
+</body>
+</html>

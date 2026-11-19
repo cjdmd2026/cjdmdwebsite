@@ -1,0 +1,57 @@
+/* ============================================================
+   DESIGN TOKENS — 색상 · 폰트 · 간격 · 버튼 · radius 를 여기 한 곳에서
+   관리합니다. 값만 바꾸면 사이트 전체에 반영됩니다.
+   ============================================================ */
+:root {
+  /* ---- COLOR (NEW JIKJI) ---- */
+  --color-primary: #694A47;
+  --color-secondary: #96C1C5;
+  --color-cream: #FFF0DE;
+  --color-text: #332B2A;
+  --color-white: #FFFFFF;
+
+  --color-background: var(--color-white);
+  --color-surface: var(--color-white);
+  --color-heading: var(--color-primary);
+  --color-body: var(--color-text);
+  --color-accent: var(--color-secondary);
+  --color-button: var(--color-primary);
+  --color-button-text: var(--color-white);
+
+  /* Existing component aliases keep section styles in sync with the palette. */
+  --c-black: var(--color-primary);
+  --c-white: var(--color-white);
+  --c-gray: #806E6C;
+  --c-bg: var(--color-background);
+  --c-bg-dark: var(--color-white);
+  --c-text: var(--color-body);
+  --c-text-inv: var(--color-text);
+  --c-muted: #806E6C;
+  --c-line: #E8DCD2;
+  --c-line-dark: #896E6A;
+  --c-chip: var(--color-white);
+  --c-surface: var(--color-surface);
+  --c-surface-alt: var(--color-white);
+  --section-inset: clamp(12px, 2.4vw, 36px);
+
+  /* ---- TYPOGRAPHY ---- */
+  --font-headline: "GSHYEJAROUNTTF", var(--font-display);
+  --font-display: "Poppins", "Pretendard", system-ui, sans-serif;
+  --font-body:    "Inter", "Pretendard", system-ui, sans-serif;
+
+  /* ---- SPACING / LAYOUT ---- */
+  --maxw: 1200px;
+  --gutter: clamp(22px, 4vw, 48px);
+  --section-pad: clamp(88px, 11vw, 160px);
+
+  /* ---- RADIUS ---- */
+  --radius-sm: 12px;
+  --radius:    24px;
+  --radius-lg: 32px;
+  --radius-pill: 100px;
+
+  /* ---- BUTTON ---- */
+  --btn-bg: var(--color-button);
+  --btn-fg: var(--color-button-text);
+  --btn-pad: 16px 32px;
+}
