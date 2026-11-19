@@ -19,9 +19,9 @@ let targetProgress=0,smoothProgress=0,frame=0,stableGeometry=null;
 const clamp=n=>Math.max(0,Math.min(1,n)),smoothstep=n=>n*n*(3-2*n);
 function readProgress(){const r=entry.getBoundingClientRect();targetProgress=clamp(-r.top/Math.max(1,entry.offsetHeight-innerHeight))}
 function paintIntro(raw){
- const p=clamp(raw/.995),opening=smoothstep(clamp((p-.02)/.34));
+ const p=clamp(raw/.995),opening=smoothstep(clamp((p-.02)/.43));
  // The space stays empty while the parentheses open; copy follows their arrival.
- const subtitle=smoothstep(clamp((p-.38)/.10)),handoff=smoothstep(clamp((raw-.975)/.025));
+ const subtitle=smoothstep(clamp((p-.46)/.10)),handoff=smoothstep(clamp((raw-.975)/.025));
  const set=(name,value)=>entry.style.setProperty(name,value);
  set('--handoff',handoff.toFixed(3));set('--morph','1');set('--opening',opening.toFixed(3));
  set('--full-o-opacity',(1-clamp(opening/.08)).toFixed(3));set('--paren-opacity',opening<.025?'0':'1');set('--en-opacity','1');
@@ -37,7 +37,7 @@ function paintIntro(raw){
  entry.dataset.openingCopyReady=String(subtitle>.95 && (!introLine.classList.contains("is-typing") || matchMedia("(prefers-reduced-motion: reduce)").matches));
  entry.classList.toggle('is-open',opening>.04);entry.classList.toggle('is-second-open',opening>.58);
 }
-function animateIntro(){smoothProgress+=(targetProgress-smoothProgress)*.085;if(Math.abs(targetProgress-smoothProgress)<.00015)smoothProgress=targetProgress;paintIntro(smoothProgress);if(smoothProgress!==targetProgress)frame=requestAnimationFrame(animateIntro);else frame=0}
+function animateIntro(){smoothProgress+=(targetProgress-smoothProgress)*.045;if(Math.abs(targetProgress-smoothProgress)<.00015)smoothProgress=targetProgress;paintIntro(smoothProgress);if(smoothProgress!==targetProgress)frame=requestAnimationFrame(animateIntro);else frame=0}
 function requestUpdate(){readProgress();if(!frame)frame=requestAnimationFrame(animateIntro)}
 document.querySelector('#homeButton')?.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
 addEventListener('scroll',requestUpdate,{passive:true});addEventListener('resize',()=>{stableGeometry=null;requestUpdate()});
