@@ -104,7 +104,7 @@ window.MAIN_PROFESSORS = [
     {
         name: "김양호",
         major: "Special Thanks To",
-        message: "서로 다른 생각을 하나의 전시로 완성한 여러분을 응원합니다.\n지금의 열정이 앞으로의 도전에도 든든한 힘이 되길 바랍니다.",
+        message: "함께 고민하며 완성한 이번 졸업전시가\n여러분의 다음 도전에 힘이 되길 바랍니다.",
         image: "../assets/images/professor/kimyangho.webp"
     },
     {
@@ -116,13 +116,13 @@ window.MAIN_PROFESSORS = [
     {
         name: "장성복",
         major: "서비스 경험디자인",
-        message: "사람을 이해하려는 작은 질문이 더 나은 경험을 만듭니다.\n여러분의 시선으로 일상에 의미 있는 변화를 만들어 가길 바랍니다.",
+        message: "사람을 향한 따뜻한 시선과 작은 질문이\n더 나은 일상을 만드는 힘이 되길 바랍니다.",
         image: "../assets/images/professor/jangseongbok.webp"
     },
     {
         name: "이종선",
         major: "인터페이스 디자인",
-        message: "익숙한 화면에도 새로운 가능성은 숨어 있습니다.\n끊임없이 살피고 다듬으며 자신만의 디자인을 이어 가길 바랍니다.",
+        message: "익숙한 화면 속 새로운 가능성을 발견하며\n자신만의 디자인을 꾸준히 이어 가길 바랍니다.",
         image: "../assets/images/professor/leejongseon.webp"
     },
     {
@@ -134,7 +134,7 @@ window.MAIN_PROFESSORS = [
     {
         name: "이한길",
         major: "Special Thanks To",
-        message: "이번 전시는 여러분의 다음 이야기가 시작되는 자리입니다.\n함께 쌓아 온 경험을 믿고 더 넓은 세상으로 나아가세요.",
+        message: "함께 쌓아 온 경험을 든든한 발판 삼아\n더 넓은 세상으로 힘차게 나아가길 바랍니다.",
         image: "../assets/images/professor/leehangil.webp"
     }
 ];
