@@ -12,7 +12,8 @@ import { createShadowRefreshGate } from './shadow-refresh.js?v=20261103-01';
 import { TEMPLE_PART_ORDER, findTempleGroup, templeExplodeProfile } from './temple-parts.js?v=20261103-01';
 import { koreanDate } from './solar-position.js?v=20261103-01';
 import { orientLightToBuilding } from './building-light-direction.js?v=20261114-01';
-import { homeBackgroundProgress, homeManualBackgroundProgress, setupHomeBackgroundVideos } from './home-background.js?v=20261115-04';
+import { homeBackgroundProgress, homeManualBackgroundProgress, setupHomeBackgroundVideos } from './home-background.js?v=20261119-01';
+import { setupHomeIntroV2 } from './home-intro-v2.js?v=20261119-06';
 import { softenGroundShadow } from './ground-shadow.js?v=20261103-01';
 import { SUN_PATH_SIZE, createSunPath, sunMinutesAtProgress, sunProgressAtMinutes, sunPathPoint, sunPathTicks, sunMinutesAtX } from './sun-path.js?v=20261103-01';
 
@@ -135,6 +136,7 @@ async function setupIndexEntrance() {
   if (!entrance) {
     document.body.classList.add('index-scene-reveal', 'index-typography-ready', 'index-typography-reveal');
     document.body.classList.remove('index-entrance-pending', 'index-camera-travel');
+    window.dispatchEvent(new Event('home-entrance-complete'));
     return;
   }
 
@@ -155,6 +157,7 @@ async function setupIndexEntrance() {
     window.removeEventListener('keydown', preventEntranceKeys);
     document.body.classList.remove('index-entrance-pending', 'index-camera-travel');
     entrance.remove();
+    window.dispatchEvent(new Event('home-entrance-complete'));
   };
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -177,8 +180,8 @@ async function setupIndexEntrance() {
       preloadImage('./assets/entrance/door_frame.webp'),
       preloadImage('./assets/entrance/door_left_v2.webp'),
       preloadImage('./assets/entrance/door_right_v2.webp'),
-      preloadImage('./assets/videos/index-day-poster.webp'),
-      preloadImage('./assets/videos/index-evening-poster.webp')
+      ...[...document.querySelectorAll('.home-background-video[poster]')]
+        .map(video => preloadImage(video.getAttribute('poster')))
     ]),
     new Promise((resolve) => window.setTimeout(resolve, 1600))
   ]);
@@ -193,8 +196,12 @@ async function setupIndexEntrance() {
       window.setTimeout(() => {
         entrance.classList.add('is-passing');
         document.body.classList.add('index-camera-travel');
+        window.dispatchEvent(new Event('home-entrance-passing'));
         window.setTimeout(() => {
-          document.body.classList.add('index-scene-reveal', 'index-typography-ready', 'index-typography-reveal');
+          document.body.classList.add('index-scene-reveal', 'index-typography-ready');
+          if (!['sky', 'descending'].includes(document.body.dataset.homeIntro)) {
+            document.body.classList.add('index-typography-reveal');
+          }
         }, 420);
         window.setTimeout(finish, 820);
       }, 1640);
@@ -202,7 +209,10 @@ async function setupIndexEntrance() {
   });
 
   window.setTimeout(() => {
-    document.body.classList.add('index-scene-reveal', 'index-typography-ready', 'index-typography-reveal');
+    document.body.classList.add('index-scene-reveal', 'index-typography-ready');
+    if (!['sky', 'descending'].includes(document.body.dataset.homeIntro)) {
+      document.body.classList.add('index-typography-reveal');
+    }
     finish();
   }, 3050);
 }
@@ -274,6 +284,7 @@ function setupHomeScrollScene() {
     }
     if (sceneIndex !== previousScene) {
       previousScene = sceneIndex;
+      background.setScene?.(sceneIndex === 3 ? 'hanok' : 'sky');
       document.body.classList.toggle('home-scene-context', sceneIndex === 1);
       document.body.classList.toggle('home-scene-guide', sceneIndex === 2);
       document.body.classList.toggle('home-scene-hanok', sceneIndex === 3);
@@ -3771,6 +3782,7 @@ function setupHomeVideoScrub() {
   }
 }
 
+setupHomeIntroV2();
 setupPersistentSiteBgm();
 setupIndexEntrance();
 setupCommonUI();

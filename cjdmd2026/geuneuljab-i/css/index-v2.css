@@ -1,0 +1,186 @@
+/* V2 fills the viewport without scroll-driven zoom or camera travel. */
+body[data-page="home"].home-version-v2 .hero-banner {
+  height: 300svh;
+  min-height: 300svh;
+  background: #17120e;
+}
+
+.home-version-v2 .home-background-videos {
+  background: #17120e;
+}
+
+/* Dim the video beneath the foreground without another blur/filter pass. */
+.home-version-v2 .home-background-videos::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(15,12,9,.24);
+  pointer-events: none;
+}
+
+.home-version-v2 .home-background-motion {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  /* Override all shared entrance/scroll state transforms, including :not(). */
+  transform: none !important;
+  transition: none !important;
+  will-change: auto;
+  background: url('../assets/videos/index-v2-opening.webp?v=20261118-01') center / cover no-repeat;
+}
+
+/* Only the opening sequence moves vertically. Normal scrolling stays still. */
+.home-version-v2 .index-entrance.is-passing .index-entrance__gate {
+  transform: translate(-50%,-62%) scale(4.2);
+  transition-duration: .82s;
+  transition-timing-function: cubic-bezier(.42,0,.18,1);
+}
+.home-v2-intro-sky {
+  position: absolute;
+  /* Overscan keeps the moving sky behind the entire dissolving roof frame. */
+  inset: 0 0 -24svh;
+  background: url('../assets/videos/index-sky-day-poster.webp?v=20261116-01') center / cover no-repeat;
+  transform: translate3d(0,0,0);
+  transition: transform 1.35s cubic-bezier(.42,0,.18,1);
+}
+.home-v2-intro-sky-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.home-version-v2[data-home-intro]:not([data-home-intro="complete"]) .home-background-motion {
+  /* Feather the incoming top edge, then slide the feather out of view. */
+  -webkit-mask-image: linear-gradient(to bottom,transparent,#000 18svh);
+  mask-image: linear-gradient(to bottom,transparent,#000 18svh);
+  -webkit-mask-size: 100% calc(100% + 18svh);
+  mask-size: 100% calc(100% + 18svh);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+.home-version-v2[data-home-intro="sky"] .home-background-motion {
+  opacity: 0;
+  transform: translate3d(0,28svh,0) !important;
+  -webkit-mask-position: 0 0;
+  mask-position: 0 0;
+}
+.home-version-v2[data-home-intro="descending"] .home-background-motion {
+  opacity: 1;
+  transform: translate3d(0,0,0) !important;
+  -webkit-mask-position: 0 -18svh;
+  mask-position: 0 -18svh;
+  transition: transform 1.35s cubic-bezier(.42,0,.18,1),opacity 1.1s ease .12s,mask-position 1.35s cubic-bezier(.42,0,.18,1) !important;
+}
+.home-version-v2[data-home-intro="descending"] .home-v2-intro-sky {
+  transform: translate3d(0,-24svh,0);
+}
+.home-version-v2[data-home-intro="descending"] .home-background-videos {
+  animation: home-v2-descent-blur 1.35s linear both;
+}
+@keyframes home-v2-descent-blur {
+  0%,100% { filter: blur(0); }
+  35% { filter: blur(5px); }
+  65% { filter: blur(3px); }
+}
+.home-version-v2[data-home-intro]:not([data-home-intro="complete"]) { overflow: hidden; }
+body[data-page="home"].home-version-v2[data-home-intro]:not([data-home-intro="complete"]) .home-scene-copy,
+body[data-page="home"].home-version-v2[data-home-intro]:not([data-home-intro="complete"]) .hero-scroll-cue {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+.home-version-v2[data-home-intro]:not([data-home-intro-frame-ready="true"]) .home-background-video {
+  visibility: hidden;
+}
+
+.home-version-v2 .home-background-video {
+  object-fit: cover;
+  object-position: center;
+}
+.home-version-b .home-background-video:not([data-home-direct-ready="true"]) {
+  visibility: hidden;
+}
+
+body[data-page="home"].home-version-v2 .site-header::before {
+  content: none;
+}
+
+.home-version-v2 .site-header .site-logo,
+.home-version-v2 .site-header .hamburger-button img {
+  filter: brightness(0) invert(1);
+}
+
+.home-version-v2 .site-header .lang-button,
+.home-version-v2 .site-header .lang-button.active {
+  color: #fff;
+}
+
+.home-version-v2 .home-guide-option,
+.home-version-v2 .home-guide-option h3,
+.home-version-v2 .home-guide-option p {
+  color: #fff;
+}
+
+/* The guide cards are V2's final navigation, sharing the existing design. */
+.home-version-v2 .home-guide-option {
+  padding: clamp(24px,calc(26 * var(--u)),36px);
+  grid-template-rows: calc(58 * var(--u)) auto 1fr auto;
+  align-content: stretch;
+  row-gap: clamp(16px,calc(16 * var(--u)),22px);
+  text-decoration: none;
+  pointer-events: none;
+  cursor: pointer;
+}
+.home-version-v2.home-scene-guide .home-guide-option {
+  pointer-events: auto;
+}
+body[data-page="home"].home-version-v2.home-scene-guide .home-guide-option:is(:hover,:focus-visible) {
+  transform: translateY(-6px);
+  border-color: rgba(245,128,56,.9);
+  background: rgba(255,253,248,.50);
+  transition-delay: 0s;
+}
+.home-version-v2 .home-guide-option__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: 0;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,.4);
+  color: #fff;
+  font-size: var(--fs-body);
+  font-weight: 500;
+  line-height: 1.3;
+}
+.home-version-v2 .home-guide-option__action > span {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: rgba(255,255,255,.6);
+}
+.home-version-v2 .home-guide-option__action svg {
+  width: 22px;
+  height: 22px;
+  color: var(--accent);
+  flex-shrink: 0;
+  transition: transform .2s ease;
+}
+.home-version-v2 .home-guide-option:is(:hover,:focus-visible) .home-guide-option__action svg {
+  transform: translateX(4px);
+}
+.home-version-v2 .home-guide-option:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 5px;
+}
+body[data-page="home"].home-version-v2.home-scene-guide .hero-scroll-cue {
+  opacity: 0;
+  visibility: hidden;
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-version-v2 .home-guide-option,
+  .home-version-v2 .home-guide-option__action svg { transition: none; }
+  .home-v2-intro-sky { transition: none; }
+  .home-version-v2[data-home-intro="descending"] .home-background-videos { animation: none; }
+}

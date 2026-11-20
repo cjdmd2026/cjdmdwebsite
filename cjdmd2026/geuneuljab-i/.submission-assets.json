@@ -2,6 +2,13 @@
   "version": 1,
   "files": [
     {
+      "path": "assets/videos/index-v2.mp4",
+      "size": 40564746,
+      "sha256": "f184410eb8c16da1b9d1c580a6ab55e39a9fdc0e4d823306d28b53f2b8a4e9a6",
+      "gitSha": "0516fd9f579e8053095be352daa563fbf6d056d4",
+      "key": "published-assets/geuneuljab-i/f184410eb8c16da1b9d1c580a6ab55e39a9fdc0e4d823306d28b53f2b8a4e9a6"
+    },
+    {
       "path": "models/bugangli6.glb",
       "size": 97011256,
       "sha256": "990d8daab2775ce0ac6ca663afcd20fc3eeceaed4100f0695d62c26068dbac96",
