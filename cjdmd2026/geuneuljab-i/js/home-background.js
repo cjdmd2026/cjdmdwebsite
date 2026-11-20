@@ -19,17 +19,23 @@ export function homeManualBackgroundProgress(progress, anchor) {
 }
 
 export function setupHomeBackgroundVideos(stage, doc = document, win = window) {
-  if (!stage) return { setProgress() {}, dispose() {} };
-  const videos = [...stage.querySelectorAll('video')];
+  if (!stage) return { setProgress() {}, setScene() {}, dispose() {} };
+  // The opening sky has its own lifetime; this controller owns scene clips.
+  const videos = [...stage.querySelectorAll('.home-background-video')];
+  const grouped = videos.some(video => video.dataset?.homeScene);
+  const eveningVideos = grouped
+    ? videos.filter(video => video.dataset.homeTime === 'evening')
+    : videos.slice(1, 2);
   const requested = new Set();
   const parked = new Set();
   let disposed = false;
   let suspended = false;
   let progress = 0;
+  let scene = 'sky';
   for (const video of videos) {
     video.muted = true;
     video.defaultMuted = true;
-    video.autoplay = true;
+    video.autoplay = !video.dataset?.homeDeferPlayback;
     video.loop = true;
     video.playsInline = true;
   }
@@ -38,7 +44,11 @@ export function setupHomeBackgroundVideos(stage, doc = document, win = window) {
     for (const [index, video] of videos.entries()) {
       // At either endpoint only one video contributes pixels. During the
       // crossfade both play, retaining automatic, seamless reverse scrolling.
-      const needed = visible && (index === 0 ? progress < 1 : progress > 0);
+      // A single background loops through every scroll section, including
+      // the final one. Only paired day/evening layers need endpoint parking.
+      const inScene = !grouped || video.dataset.homeScene === scene;
+      const evening = grouped ? video.dataset.homeTime === 'evening' : index > 0;
+      const needed = visible && inScene && !video.dataset?.homeDeferPlayback && (videos.length === 1 || (evening ? progress > 0 : progress < 1));
       if (!needed) {
         requested.delete(video);
         // pause() also cancels pending native autoplay before metadata loads.
@@ -63,6 +73,7 @@ export function setupHomeBackgroundVideos(stage, doc = document, win = window) {
   win.addEventListener('pagehide', hide);
   win.addEventListener('pointerdown', retry, { once: true, passive: true });
   win.addEventListener('keydown', retry, { once: true });
+  win.addEventListener('home-intro-complete', retry);
   reconcile();
   return {
     setProgress(value) {
@@ -72,7 +83,14 @@ export function setupHomeBackgroundVideos(stage, doc = document, win = window) {
       progress = next;
       // Keep this write local: an inherited variable on body invalidated the
       // whole page's styles on every scroll frame.
-      if (videos[1]) videos[1].style.opacity = String(progress);
+      for (const video of eveningVideos) video.style.opacity = String(progress);
+      reconcile();
+    },
+    setScene(value) {
+      if (disposed || !grouped || scene === value) return;
+      scene = value;
+      // The outgoing scene holds its last frame during the CSS crossfade.
+      // Only the incoming day/evening pair needs to keep decoding video.
       reconcile();
     },
     dispose() {
@@ -83,6 +101,7 @@ export function setupHomeBackgroundVideos(stage, doc = document, win = window) {
       win.removeEventListener('pagehide', hide);
       win.removeEventListener('pointerdown', retry);
       win.removeEventListener('keydown', retry);
+      win.removeEventListener('home-intro-complete', retry);
       reconcile();
     }
   };
