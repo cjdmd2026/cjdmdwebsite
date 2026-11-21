@@ -7,7 +7,7 @@
  function advanceUri(now){
   const rect=relations.getBoundingClientRect(),travel=Math.max(1,relations.offsetHeight-innerHeight),p=-rect.top/travel;
   if(!uriRunning&&!uriDone&&p>=.32&&p<.60){uriRunning=true;uriStart=now;uriBase=scrollY+rect.top;uriTravel=travel;}
-  if(uriRunning&&!document.hidden){const t=Math.min(1,(now-uriStart)/12000);scrollTo({top:uriBase+uriTravel*(.32+.26*t),behavior:'instant'});request();if(t===1){uriRunning=false;uriDone=true}}
+  if(uriRunning&&!document.hidden){const t=Math.min(1,(now-uriStart)/5400);scrollTo({top:uriBase+uriTravel*(.32+.26*t),behavior:'instant'});request();if(t===1){uriRunning=false;uriDone=true}}
   if(p<.1)uriDone=false;
   requestAnimationFrame(advanceUri);
  }
@@ -59,11 +59,12 @@
   if(entering||entered)return;entering=true;
   gate.muted=true;gate.playbackRate=1.5;
   let playback=true;
-  try{await gate.play()}catch(_){playback=false}
+  gate.play().catch(()=>{playback=false});
   const started=performance.now();let handoffStart=null;
   function tick(now){
    const duration=Number.isFinite(gate.duration)&&gate.duration>0?gate.duration:6.04;
-   const t=playback?clamp(gate.currentTime/duration):clamp((now-started)/(duration*400));
+   const elapsed=now-started;
+   const t=playback?Math.max(clamp(gate.currentTime/duration),clamp((elapsed-1200)/5000)):clamp(elapsed/2800);
    if(playback&&handoffStart===null)gate.playbackRate=1.5+1.4*ease(t)+4.3*ease(clamp((t-.30)/.40));
    let p=.10*t;
    if(t>=.995||gate.ended){
@@ -77,5 +78,5 @@
   requestAnimationFrame(tick);
  }
  addEventListener('wheel',e=>{if(entering){e.preventDefault();return}if(!entered&&scrollY<innerHeight*.3&&e.deltaY>0){e.preventDefault();enter()}},{passive:false});
- root.querySelector('.yai-start').addEventListener('click',enter);gate.addEventListener('loadedmetadata',request);gate.addEventListener('seeked',request);addEventListener('scroll',request,{passive:true});addEventListener('resize',request);addEventListener('pageshow',()=>{if(!location.hash)scrollTo(0,0);request()});render();
+ root.querySelector('.yai-start').addEventListener('click',enter);gate.addEventListener('loadedmetadata',request);gate.addEventListener('seeked',request);addEventListener('scroll',request,{passive:true});addEventListener('resize',request);addEventListener('pageshow',()=>{if(!location.hash){scrollTo(0,0);entered=false;setTimeout(enter,500)}request()});render();
 })();
