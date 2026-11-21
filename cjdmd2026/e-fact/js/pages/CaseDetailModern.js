@@ -249,6 +249,9 @@ fill("#response-grid",data.responses.map(x=>`<article class="response-card"><i c
 fill("#strength-list",data.strengths.map(x=>`<li>${x}</li>`).join(""));fill("#limitation-list",data.limitations.map(x=>`<li>${x}</li>`).join(""));
 fill("#application-list",data.applications.map((x,i)=>`<article class="application-item"><b>0${i+1}</b><div><strong>${x.title}</strong><p>${x.text}</p></div></article>`).join(""));fill("#application-note",data.applicationNote);
 fill("#source-list",data.sources.map(x=>`<li><a href="${x[1]}" target="_blank" rel="noopener noreferrer">${x[0]} <i class="fa-solid fa-arrow-up-right-from-square"></i></a></li>`).join(""));
+const footerSources=[...data.sources];
+if(casePhotos[key])footerSources.push([`${casePhotos[key].kind} · ${casePhotos[key].credit}`,casePhotos[key].source]);
+fill("#ef-case-footer-sources",footerSources.map(x=>`<a href="${x[1]}" target="_blank" rel="noopener noreferrer">${x[0]} ↗</a>`).join(""));
 const previous=q("#previous-case");previous.href=data.previous?`CaseDetailModern.html?case=${data.previous.key}`:"CaseMap.html";previous.querySelector("strong").textContent=data.previous?data.previous.label:"사례 지도로";
 const next=q("#next-case");next.href=data.next.key?`CaseDetailModern.html?case=${data.next.key}`:"CaseMap.html";next.querySelector("strong").textContent=data.next.label;
 

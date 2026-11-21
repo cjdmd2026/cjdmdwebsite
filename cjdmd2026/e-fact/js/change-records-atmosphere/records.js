@@ -858,9 +858,9 @@ function updateChipVaultDepth(){
         const distance = Math.max(-1.8,Math.min(1.8,(box.left + box.width / 2 - viewportCenter) / divisor));
         const absolute = Math.min(1.5,Math.abs(distance));
         item.style.setProperty('--vault-x',`${distance * 36}px`);
-        item.style.setProperty('--vault-y',`${distance * -112}px`);
-        item.style.setProperty('--vault-tilt',`${distance * -16}deg`);
-        item.style.setProperty('--vault-roll',`${distance * -3.5}deg`);
+        item.style.setProperty('--vault-y',`${distance * -48}px`);
+        item.style.setProperty('--vault-tilt',`${distance * -12}deg`);
+        item.style.setProperty('--vault-roll',`${distance * -2}deg`);
         item.style.setProperty('--vault-z',`${115 - absolute * 235}px`);
         item.style.setProperty('--vault-scale',`${1.05 - Math.min(1,absolute) * .13}`);
         item.style.setProperty('--vault-opacity',`${1 - Math.min(1,absolute) * .3}`);
@@ -871,14 +871,6 @@ function updateChipVaultDepth(){
 
 window.addEventListener('resize',() => window.requestAnimationFrame(updateChipVaultDepth));
 
-const archiveSoundFiles = {
-    hover: '../images/change-records-atmosphere/assets/audio/ui/chip-hover.wav',
-    eject: '../images/change-records-atmosphere/assets/audio/ui/chip-eject.wav',
-    open: '../images/change-records-atmosphere/assets/audio/ui/panel-open.wav',
-    close: '../images/change-records-atmosphere/assets/audio/ui/chip-return.wav'
-};
-
-const archiveSounds = new Map();
 let activeRecordChip = null;
 let recordChipDialog = null;
 let recordChipTransitionTimers = [];
@@ -894,17 +886,8 @@ function queueRecordChipTransition(callback,delay){
 }
 
 function playArchiveSound(name){
-    const src = archiveSoundFiles[name];
-    if(!src) return;
-    let audio = archiveSounds.get(name);
-    if(!audio){
-        audio = new Audio(src);
-        audio.preload = 'auto';
-        archiveSounds.set(name,audio);
-    }
-    audio.currentTime = 0;
-    audio.volume = name === 'hover' ? .13 : .24;
-    audio.play().catch(() => {});
+    if(name === 'open' || name === 'eject') window.EFactAudio?.playWhoosh();
+    else window.EFactAudio?.playClick();
 }
 
 function ensureRecordChipDialog(){
@@ -1180,6 +1163,172 @@ galleryItems.forEach(item => {
 });
 
 
+// 사건별 자료 원문: 중앙 포커스, 타임라인 진행, 모바일 스와이프를 동기화합니다.
+(() => {
+    const archive = document.querySelector(".visual-archive");
+    const gallery = archive?.querySelector(".gallery");
+    const items = Array.from(galleryItems);
+    const previous = archive?.querySelector(".gallery-step-prev");
+    const next = archive?.querySelector(".gallery-step-next");
+    const current = archive?.querySelector("#gallery-current");
+    const total = archive?.querySelector("#gallery-total");
+    const progress = archive?.querySelector(".gallery-progress");
+    const activeDate = archive?.querySelector("#archive-active-date");
+    const timelineNodes = Array.from(archive?.querySelectorAll(".archive-timeline-node") || []);
+
+    if(!archive || !gallery || !items.length) return;
+
+    let activeIndex = Math.min(2,items.length - 1);
+    let scrollFrame = 0;
+    let layoutFrame = 0;
+    const desktopEventLayout = [
+        {x:30,size:104},
+        {x:66,size:94},
+        {x:15,size:158},
+        {x:34,size:100},
+        {x:84,size:170},
+        {x:60,size:96},
+        {x:25,size:178},
+        {x:38,size:92},
+        {x:72,size:108},
+        {x:86,size:92}
+    ];
+    const progressButtons = items.map((item,index) => {
+        item.dataset.archiveIndex = String(index + 1).padStart(2,"0");
+        const eventLayout = desktopEventLayout[index] || {x:index % 2 ? 70 : 30,size:88};
+        const eventPosition = eventLayout.x;
+        const verticalPosition = 7 + (index / Math.max(1,items.length - 1)) * 86;
+        item.style.setProperty("--event-x",`${eventPosition}%`);
+        item.style.setProperty("--event-y",`${verticalPosition}%`);
+        item.style.setProperty("--event-size",`${eventLayout.size}px`);
+        item.style.setProperty("--event-icon-size",`${Math.round(eventLayout.size * .24)}px`);
+        item.style.setProperty("--event-label-size",`${Math.max(9,Math.min(14,Math.round(eventLayout.size * .095)))}px`);
+        item.style.setProperty("--archive-order",String(index));
+        item.classList.toggle("is-left",eventPosition < 50);
+        item.classList.toggle("is-right",eventPosition >= 50);
+        const dialCode = document.createElement("span");
+        dialCode.className = "event-dial-code";
+        dialCode.setAttribute("aria-hidden","true");
+        dialCode.textContent = `REC ${String(index + 1).padStart(2,"0")}`;
+        item.appendChild(dialCode);
+        item.setAttribute("aria-label",`${item.dataset.timelineDate || ""} ${item.dataset.title || "사건 기록"} 열기`.trim());
+        const button = document.createElement("button");
+        button.type = "button";
+        button.setAttribute("aria-label",`${index + 1}번째 사건 자료로 이동`);
+        progress?.appendChild(button);
+        return button;
+    });
+
+    const updateEventConnectors = () => {
+        layoutFrame = 0;
+        if(window.innerWidth <= 900) return;
+        const galleryWidth = gallery.getBoundingClientRect().width;
+        items.forEach((item,index) => {
+            const eventLayout = desktopEventLayout[index] || {x:index % 2 ? 70 : 30,size:88};
+            const centerDistance = Math.abs(eventLayout.x - 50) / 100 * galleryWidth;
+            const connectorWidth = Math.max(28,centerDistance - eventLayout.size / 2 - 22);
+            item.style.setProperty("--connector-width",`${connectorWidth}px`);
+        });
+    };
+
+    const requestConnectorLayout = () => {
+        if(layoutFrame) return;
+        layoutFrame = requestAnimationFrame(updateEventConnectors);
+    };
+
+    requestConnectorLayout();
+    window.addEventListener("resize",requestConnectorLayout,{passive:true});
+
+    if(total) total.textContent = String(items.length).padStart(2,"0");
+
+    const setArchiveFocus = (index,{scroll = false,focus = false} = {}) => {
+        activeIndex = (index + items.length) % items.length;
+        items.forEach((item,itemIndex) => {
+            const selected = itemIndex === activeIndex;
+            item.classList.toggle("is-gallery-focus",selected);
+            item.setAttribute("aria-current",selected ? "true" : "false");
+        });
+        progressButtons.forEach((button,buttonIndex) => button.classList.toggle("is-active",buttonIndex === activeIndex));
+        if(current) current.textContent = String(activeIndex + 1).padStart(2,"0");
+        const selectedDate = items[activeIndex].querySelector(".gallery-overlay small")?.textContent?.trim();
+        if(activeDate && selectedDate) activeDate.textContent = selectedDate;
+        const selectedYear = selectedDate?.match(/(?:19|20)\d{2}/)?.[0] || "";
+        timelineNodes.forEach(node => {
+            const nodeYear = node.querySelector("small")?.textContent?.trim() || "";
+            node.classList.toggle("is-current-period",Boolean(selectedYear && nodeYear === selectedYear));
+        });
+        const chronologicalProgress = activeIndex / Math.max(1,items.length - 1);
+        const timelinePosition = 5 + chronologicalProgress * 89;
+        const verticalTimelinePosition = 7 + chronologicalProgress * 86;
+        archive.style.setProperty("--timeline-x",`${timelinePosition}%`);
+        archive.style.setProperty("--timeline-y",`${verticalTimelinePosition}%`);
+        if(scroll){
+            items[activeIndex].scrollIntoView({behavior:"smooth",block:"center",inline:"center"});
+        }
+        if(focus) items[activeIndex].focus({preventScroll:true});
+    };
+
+    items.forEach((item,index) => {
+        item.addEventListener("pointerenter",() => {
+            if(window.matchMedia("(hover:hover)").matches) setArchiveFocus(index);
+        });
+        item.addEventListener("focus",() => setArchiveFocus(index));
+        item.addEventListener("click",() => setArchiveFocus(index));
+    });
+
+    progressButtons.forEach((button,index) => button.addEventListener("click",() => setArchiveFocus(index,{scroll:true,focus:true})));
+    previous?.addEventListener("click",() => setArchiveFocus(activeIndex - 1,{scroll:true,focus:true}));
+    next?.addEventListener("click",() => setArchiveFocus(activeIndex + 1,{scroll:true,focus:true}));
+
+    gallery.addEventListener("scroll",() => {
+        if(window.innerWidth > 900 || scrollFrame) return;
+        scrollFrame = window.requestAnimationFrame(() => {
+            const center = gallery.getBoundingClientRect().left + gallery.clientWidth / 2;
+            let closestIndex = activeIndex;
+            let closestDistance = Infinity;
+            items.forEach((item,index) => {
+                const rect = item.getBoundingClientRect();
+                const distance = Math.abs(rect.left + rect.width / 2 - center);
+                if(distance < closestDistance){
+                    closestDistance = distance;
+                    closestIndex = index;
+                }
+            });
+            if(closestIndex !== activeIndex) setArchiveFocus(closestIndex);
+            scrollFrame = 0;
+        });
+    },{passive:true});
+
+    archive.addEventListener("keydown",event => {
+        if(event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+        event.preventDefault();
+        setArchiveFocus(activeIndex + (event.key === "ArrowRight" ? 1 : -1),{scroll:true,focus:true});
+    });
+
+    let driftFrame = 0;
+    const updateArchiveDrift = () => {
+        const rect = archive.getBoundingClientRect();
+        const range = window.innerHeight + rect.height;
+        const progressValue = Math.max(0,Math.min(1,(window.innerHeight - rect.top) / range));
+        const drift = (progressValue - .5) * 11;
+        archive.style.setProperty("--archive-drift",`${drift}px`);
+        archive.style.setProperty("--archive-drift-reverse",`${-drift}px`);
+        driftFrame = 0;
+    };
+    window.addEventListener("scroll",() => {
+        if(driftFrame) return;
+        driftFrame = window.requestAnimationFrame(updateArchiveDrift);
+    },{passive:true});
+    window.addEventListener("resize",() => {
+        updateArchiveDrift();
+        setArchiveFocus(activeIndex);
+    });
+
+    setArchiveFocus(activeIndex);
+    updateArchiveDrift();
+})();
+
+
 // 닫기 버튼
 
 if(modalClose){
@@ -1266,3 +1415,26 @@ window.addEventListener(
 );
 
 updateMobileHeaderSpacing();
+
+// 일반 설명 섹션: 질문을 먼저 읽고, 다음 화면에서 답변이 나타납니다.
+(() => {
+    const answers = document.querySelectorAll(".narrative-question, .narrative-answer");
+    if (!answers.length) return;
+
+    document.documentElement.classList.add("narrative-ready");
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        answers.forEach(answer => answer.classList.add("is-narrative-visible"));
+        return;
+    }
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("is-narrative-visible");
+            observer.unobserve(entry.target);
+        });
+    }, { threshold: 0.16, rootMargin: "0px 0px -8% 0px" });
+
+    answers.forEach(answer => observer.observe(answer));
+})();

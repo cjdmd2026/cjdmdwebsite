@@ -21,6 +21,74 @@ body.impact-modal-open{overflow:hidden}.impact-card summary{cursor:zoom-in}
 @keyframes bodyPulse{0%{opacity:.8;transform:translate(-50%,-50%) scale(.45)}75%,100%{opacity:0;transform:translate(-50%,-50%) scale(1.45)}}
 @media(max-width:900px){.body-explorer{grid-template-columns:1fr;min-height:0}.body-stage{height:520px}.body-guide{max-width:600px;margin:auto;text-align:center}.body-legend{justify-content:center}}
 @media(max-width:600px){.body-explorer{gap:16px;padding:6px 0 28px;background:radial-gradient(circle at 50% 34%,#00bcc214,transparent 44%)}.body-stage{width:100%;height:470px}.body-stage-profile{height:430px}.body-hotspot{padding:5px}.body-hotspot small{display:none}.body-hotspot span{min-width:32px;height:32px}.body-stage-profile .hotspot-face{left:77%;top:27%}.body-stage-profile .hotspot-airway{left:60%;top:47%}.body-stage-profile .hotspot-lung-a{left:39%;top:70%}.body-stage-profile .hotspot-lung-b{left:73%;top:70%}.body-stage-profile .hotspot-heart{left:57%;top:82%}.body-guide{padding:0 12px}.body-guide>strong{font-size:26px}.body-guide>p{font-size:12px}.body-legend{margin-top:22px}}
+
+/* Question → guide → interaction scroll sequence. */
+.impact-atlas.narrative-section{
+    width:100vw;
+    max-width:none;
+    margin:70px 0 70px calc(50% - 50vw);
+    padding:0 0 74px;
+    border:0!important;
+    border-radius:0;
+    background:
+        radial-gradient(circle at 50% 22%,#00bcc20d,transparent 34%),
+        #020708!important;
+}
+.impact-atlas .impact-intro.narrative-question{
+    min-height:76svh;
+    margin:0;
+    padding:80px 6vw;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+}
+.impact-atlas .impact-intro h3{
+    max-width:1080px;
+    margin:0 auto;
+    font-size:clamp(48px,5.3vw,88px);
+    line-height:1.14;
+    letter-spacing:-.065em;
+    word-break:keep-all;
+}
+.impact-scroll-cue{
+    display:block;
+    margin-top:44px;
+    color:#4d7678;
+    font-size:9px;
+    letter-spacing:.2em;
+}
+.impact-atlas .impact-prompt{
+    width:min(88%,1040px);
+    min-height:62svh;
+    margin:0 auto;
+}
+.impact-atlas .impact-prompt h4{
+    color:#f0f7f6;
+}
+.impact-atlas .body-explorer{
+    box-sizing:border-box;
+    width:min(88%,1320px);
+    max-width:1320px;
+    margin:0 auto;
+    padding:34px clamp(28px,4vw,62px) 42px;
+    border:1px solid #00bcc24a;
+    border-radius:28px;
+    background:radial-gradient(circle at 35% 48%,#00bcc214,transparent 40%),#03090a;
+}
+.impact-atlas .impact-note{
+    width:min(88%,1320px);
+    margin:18px auto 0;
+}
+@media(max-width:700px){
+    .impact-atlas.narrative-section{margin-top:42px;padding-bottom:44px}
+    .impact-atlas .impact-intro.narrative-question{min-height:62svh;padding:62px 7vw}
+    .impact-atlas .impact-intro h3{font-size:clamp(38px,10.5vw,52px)}
+    .impact-atlas .impact-prompt{min-height:52svh}
+    .impact-atlas .body-explorer{width:92%;padding:18px 14px 30px;border-radius:20px}
+    .impact-atlas .impact-note{width:92%}
+}
 @media(prefers-reduced-motion:reduce){.body-hotspot::before{animation:none}.body-hotspot{transition:none}}
 
 /* Five synchronized anatomy states. Neutral state keeps every line white. */

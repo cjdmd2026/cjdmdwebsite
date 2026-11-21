@@ -51,16 +51,17 @@ img{display:block;max-width:100%}
 .intro-foot>span{display:flex;align-items:center;gap:8px}.intro-foot i{width:6px;height:6px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 5px rgba(72,219,198,.12),0 0 14px rgba(72,219,198,.7)}
 .intro-foot small{font-size:7px;letter-spacing:.12em;text-align:right;color:#4f6a65}
 
-.map-explorer{min-width:0;position:relative;background:radial-gradient(circle at 53% 48%,#0b2a28 0,#071819 35%,#050e10 76%);isolation:isolate}
+.map-explorer{min-width:0;position:relative;background:radial-gradient(ellipse at 54% 48%,#0b3030 0,#071d20 38%,#040d10 76%,#020708 100%);isolation:isolate}
 .map-toolbar{height:70px;position:absolute;top:0;left:0;right:0;z-index:12;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(22px,3.2vw,52px);border-bottom:1px solid rgba(157,222,210,.09);background:linear-gradient(#061011dd,transparent)}
 .map-route{display:flex;align-items:center;gap:13px}.map-route span{font-size:8px;letter-spacing:.17em;color:var(--mint)}.map-route b{font-size:11px;font-weight:400;color:#9eb8b2}
 .map-actions{display:flex;align-items:center;gap:18px}.map-actions>span{font-size:8px;letter-spacing:.15em;color:#66827c}.map-actions button{border:1px solid #315750;background:#0b211f;color:#b9d0ca;border-radius:30px;padding:9px 13px;font-size:9px}.map-actions button:hover{border-color:var(--mint);color:white}
 .map-viewport{position:absolute;inset:0;overflow:hidden}
 .map-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(104,192,178,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(104,192,178,.045) 1px,transparent 1px);background-size:70px 70px;mask-image:radial-gradient(ellipse at center,#000 20%,transparent 74%)}
-.map-picture{position:absolute;left:7%;right:7%;top:12%;bottom:9%;display:flex;align-items:center;justify-content:center;transition:opacity .23s ease,transform .55s cubic-bezier(.2,.8,.2,1)}
+.map-picture{position:absolute;left:7%;right:7%;top:12%;bottom:9%;display:flex;align-items:center;justify-content:center;transition:opacity .23s ease,transform .55s cubic-bezier(.2,.8,.2,1);background:radial-gradient(ellipse at center,#0a282b 0,#06191c 46%,#030b0d 78%,transparent 100%)}
+.map-picture::before{content:"";position:absolute;inset:-15%;pointer-events:none;background:radial-gradient(ellipse at center,transparent 42%,#04101266 68%,#020708 100%);z-index:1}
 .map-picture.changing{opacity:0;transform:scale(.96)}
-.map-picture>img{width:100%;height:100%;object-fit:contain;filter:saturate(.7) contrast(1.06) brightness(.78);opacity:.88;user-select:none}
-.map-markers{position:absolute;inset:0}
+.map-picture>img{width:100%;height:100%;object-fit:contain;filter:saturate(.7) contrast(1.06) brightness(.78);opacity:.88;user-select:none;position:relative;z-index:0;mask-image:linear-gradient(to right,transparent 0,#000 7%,#000 93%,transparent 100%);-webkit-mask-image:linear-gradient(to right,transparent 0,#000 7%,#000 93%,transparent 100%)}
+.map-markers{position:absolute;inset:0;z-index:2}
 .map-marker{position:absolute;left:var(--x);top:var(--y);transform:translate(-50%,-50%);border:0;background:none;padding:0;z-index:3}
 .map-marker:hover,.map-marker:focus-visible,.map-marker.active{z-index:8}
 .marker-core{width:15px;height:15px;display:block;border-radius:50%;background:var(--mint);border:3px solid #d2fff5;box-shadow:0 0 0 8px rgba(54,216,194,.14),0 0 28px rgba(56,220,198,.85);transition:transform .25s,background .25s}
@@ -162,7 +163,7 @@ img{display:block;max-width:100%}
 .marker-core{animation:spot-breathe 3s ease-in-out infinite}.map-marker:nth-of-type(even) .marker-core{animation-delay:1s}.marker-label{background:#12352cde;backdrop-filter:blur(18px)}
 @keyframes spot-breathe{50%{box-shadow:0 0 0 12px #72e4ce10,0 0 22px #72e4ce44}}
 @media(min-width:761px) and (max-width:1200px){.map-intro{flex-direction:column;gap:16px}.intro-top{max-width:90%}.map-picture{top:61%}.case-panel{top:210px}}
-@media(min-width:1700px){.map-picture{width:min(100%,calc((100svh - 100px)*1.7768));top:57%}}
+@media(min-width:1700px){.map-picture{width:100%;top:57%}}
 @media(max-width:760px){
  .map-page{min-height:720px;height:calc(100svh - 70px)}.map-intro{top:25px;left:22px;right:22px;min-height:0;padding:0;flex-direction:column;gap:18px}.intro-top{max-width:100%}.map-intro h1{font-size:clamp(27px,7.5vw,37px);line-height:1.2}.intro-copy{font-size:12px;max-width:360px}.region-index{margin:0;width:100%}.region-index>div{padding:4px;gap:1px;border-radius:24px;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));width:100%}.region-button{min-width:0;font-size:10px;padding:10px 5px;text-align:center}
  .map-explorer{position:absolute;inset:0;height:100%;min-height:0;border-radius:0}.map-picture{width:100%;top:59%;height:auto}.map-picture>img{mask-image:linear-gradient(transparent,#000 12%,#000 88%,transparent)}
@@ -177,4 +178,9 @@ img{display:block;max-width:100%}
 .location-anchor{width:6px;height:6px;background:#95efd1;box-shadow:0 0 0 4px #72dfb91c,0 0 12px #5eddb978}
 .pin-connections line{stroke:#8bd6c0;opacity:.48;stroke-width:1}
 @media(max-width:760px){.map-marker.case-marker{padding:5px 7px;gap:4px;min-height:34px;border-radius:10px}.case-pin-name{display:none}.case-pin-arrow{font-size:12px;margin:0}.case-marker .marker-number{width:21px;height:22px;font-size:9px}}
+/* Blend unused image space into the map stage instead of exposing a hard blank edge. */
+.map-explorer{background:radial-gradient(ellipse at 55% 55%,#0b3033 0,#071b1e 42%,#030b0d 78%,#010506 100%)!important}
+.map-picture{width:100%!important;right:auto!important;background:radial-gradient(ellipse at center,#0b2d31 0,#06191c 55%,#020708 100%)!important}
+.map-picture::before{inset:-18%!important;background:radial-gradient(ellipse at center,transparent 48%,#0410127d 72%,#010506 100%)!important}
+.map-picture>img{-webkit-mask-image:radial-gradient(ellipse 94% 86% at center,#000 58%,#000d 74%,transparent 100%)!important;mask-image:radial-gradient(ellipse 94% 86% at center,#000 58%,#000d 74%,transparent 100%)!important}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}

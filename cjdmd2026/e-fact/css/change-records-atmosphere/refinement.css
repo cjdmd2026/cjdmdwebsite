@@ -77,3 +77,36 @@
 .world-shade{background:linear-gradient(0deg,#061012d9 0%,transparent 25%),linear-gradient(90deg,#070c10ba 0%,#070c1040 43%,transparent 70%)}
 .hero-world .world-mist-back{opacity:.055}.hero-world .world-mist-front{opacity:.07}
 @media(max-width:850px){.world-sky{object-position:70% center;opacity:.8}.hero-world .world-factory{width:135%;height:44%;right:-35%;bottom:3%;opacity:.6;filter:brightness(.45) saturate(.7)}.world-word{font-size:23vw;top:19%;opacity:.16}.world-shade{background:linear-gradient(0deg,#061012e8 0%,#06101260 45%,#06101210 75%),linear-gradient(90deg,#070c10b0,#070c1020)}.hero-heading{bottom:18%}}
+
+/* Archive typography: restrained Korean display type with technical record labels. */
+body,body *{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif}
+.fa,.fa-solid,.fa-regular,.fa-brands,[class^="fa-"],[class*=" fa-"]{font-family:"Font Awesome 6 Free"!important}
+:is(.hero-heading h1,.section-heading h2,.record-left h2,.gallery-heading h2,.archive-image-band strong){font-family:"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;font-weight:650!important;letter-spacing:-.055em!important;word-break:keep-all}
+.hero-heading h1{line-height:.98!important;text-wrap:balance}
+.hero-heading h1 em{font-weight:300!important;letter-spacing:-.07em!important}
+:is(.section-heading h2,.record-left h2,.gallery-heading h2){line-height:1.2!important}
+:is(.hero-description strong,.story-person h3,.record-title,.gallery-overlay strong){font-weight:600;letter-spacing:-.035em}
+:is(.hero-description p,.story-content>p,.record-left>p,.record-description,.gallery-heading>p){font-weight:400;letter-spacing:-.018em;line-height:1.85}
+:is(.hero-label,.section-label,.archive-ribbon-code,.archive-toolbar,.record-badge,.record-date,.chip-code,.story-keyword,.gallery-overlay small){font-family:ui-monospace,"SFMono-Regular",Menlo,Monaco,Consolas,monospace;letter-spacing:.14em}
+
+/* Keep the resident-story card optically sharp throughout its scroll reveal.
+   The global narrative motion may scrub opacity/position, but never blur this
+   image-and-text panel because the intermediate blur harms legibility. */
+html.narrative-ready .resident-story .story-slider.narrative-answer,
+html.narrative-ready .resident-story .story-slider.narrative-answer.is-narrative-visible{
+    filter:none!important;
+}
+@supports (animation-timeline:view()){
+    html.narrative-ready .resident-story .story-slider.narrative-answer{
+        animation-name:resident-story-sharp-rise;
+        animation-duration:1ms;
+        animation-timing-function:linear;
+        animation-fill-mode:both;
+        animation-timeline:view(block);
+        animation-range:entry 0% cover 30%;
+    }
+}
+@keyframes resident-story-sharp-rise{
+    0%{opacity:.22;transform:translate3d(0,58px,0) scale(.992);filter:none}
+    100%{opacity:1;transform:translate3d(0,0,0) scale(1);filter:none}
+}

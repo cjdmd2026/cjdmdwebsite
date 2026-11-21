@@ -3,7 +3,7 @@ const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&
 const grades={1:{label:'좋음',className:'good'},2:{label:'보통',className:'normal'},3:{label:'나쁨',className:'bad'},4:{label:'매우 나쁨',className:'very-bad'}};
 let state={status:'loading',stations:[]},retryTimer=null;
 let selected='복대동',inflight=null;
-const endpoint='/e-fact/api/air';
+const endpoint=new URL('api/air',new URL('.',document.currentScript.src));
 const value=(number,digits=0)=>number===null||number===undefined?'—':Number(number).toFixed(digits);
 function grade(station){return grades[station?.grade]||{label:'판단 보류',className:'unknown'}}
 function renderBand(){

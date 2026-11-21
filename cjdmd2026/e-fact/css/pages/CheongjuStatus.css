@@ -128,3 +128,262 @@ header{background:#061011f2;border-bottom:1px solid #1a3836;box-shadow:0 8px 28p
 .detail-panel:focus{outline:0}.detail-panel.map-selected{animation:facilityReveal .6s ease}@keyframes facilityReveal{0%{opacity:.45;transform:translateY(10px)}100%{opacity:1;transform:none}}
 @media(max-width:1100px){.facility-map-explorer{grid-template-columns:1fr;min-height:0}.facility-map-copy{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);grid-template-rows:auto auto auto 1fr;column-gap:42px;padding:42px;border-right:0;border-bottom:1px solid #00bcc229}.facility-map-copy>.eyebrow,.facility-map-copy>h3,.facility-map-intro,.facility-map-legend{grid-column:1}.facility-map-copy>.eyebrow{grid-row:1}.facility-map-copy>h3{grid-row:2}.facility-map-intro{grid-row:3}.facility-map-legend{grid-row:4;align-self:start}.facility-map-selection{grid-column:2;grid-row:1/5;align-self:center;margin-top:0}.cheongju-facility-map{min-height:690px}}
 @media(max-width:700px){.facility-map-explorer{margin:26px -10px 40px;border-radius:22px}.facility-map-copy{display:flex;padding:30px 24px}.facility-map-copy h3{font-size:38px}.facility-map-intro{font-size:14px}.facility-map-selection{margin-top:28px}.cheongju-facility-map{min-height:540px}.facility-map-pin span{display:none}.facility-map-pin i{width:36px;height:36px}.map-density-label{left:44%;top:12%;width:31%}.facility-map-disclaimer{right:14px;bottom:12px;max-width:210px;text-align:right}}
+
+/* 2026-11-17: keep the facility-map heading on intentional, semantic lines. */
+@media(min-width:1101px){
+  .facility-map-explorer{grid-template-columns:minmax(500px,.95fr) minmax(560px,1.05fr)}
+  .facility-map-copy h3{
+    font-size:clamp(36px,2.4vw,46px);
+    line-height:1.22;
+    letter-spacing:-.035em;
+    white-space:nowrap;
+    word-break:keep-all;
+    overflow-wrap:normal;
+  }
+}
+@media(max-width:1100px){
+  .facility-map-copy h3{font-size:clamp(38px,5.3vw,56px);word-break:keep-all;overflow-wrap:normal}
+}
+@media(max-width:700px){
+  .facility-map-copy h3{font-size:clamp(34px,9.5vw,42px);white-space:normal;word-break:keep-all}
+}
+
+/* Subtle airborne-dust field behind the impact question. */
+.impact-atlas .impact-intro.narrative-question{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+}
+.impact-atlas .impact-intro.narrative-question>*{position:relative;z-index:2}
+.impact-atlas .impact-intro.narrative-question::before,
+.impact-atlas .impact-intro.narrative-question::after{
+  content:'';
+  position:absolute;
+  z-index:0;
+  inset:-12% -35%;
+  pointer-events:none;
+  background-repeat:repeat;
+  opacity:.32;
+  filter:blur(.25px);
+  animation:impactDustDrift 24s linear infinite;
+  will-change:transform;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 16%,#000 84%,transparent 100%);
+  mask-image:linear-gradient(90deg,transparent 0,#000 16%,#000 84%,transparent 100%);
+}
+.impact-atlas .impact-intro.narrative-question::before{
+  background-image:
+    radial-gradient(circle,#93b8b4 0 1px,transparent 1.8px),
+    radial-gradient(circle,#6e9692 0 1.4px,transparent 2.2px),
+    radial-gradient(circle,#9abfba 0 .7px,transparent 1.5px),
+    radial-gradient(circle,#597d7a 0 1px,transparent 2px);
+  background-size:173px 131px,257px 193px,119px 167px,311px 227px;
+  background-position:17px 29px,91px 73px,46px 108px,151px 16px;
+}
+.impact-atlas .impact-intro.narrative-question::after{
+  opacity:.18;
+  filter:blur(1.2px);
+  background-image:
+    radial-gradient(circle,#b5cfca 0 2px,transparent 4px),
+    radial-gradient(circle,#638d88 0 1.6px,transparent 3.5px),
+    radial-gradient(circle,#91aaa6 0 2.5px,transparent 5px);
+  background-size:389px 281px,467px 337px,521px 403px;
+  background-position:210px 34px,37px 183px,318px 239px;
+  animation-duration:38s;
+  animation-delay:-14s;
+}
+@keyframes impactDustDrift{
+  from{transform:translate3d(16%,0,0)}
+  50%{transform:translate3d(-12%,1.4%,0)}
+  to{transform:translate3d(-40%,-.8%,0)}
+}
+@media(prefers-reduced-motion:reduce){
+  .impact-atlas .impact-intro.narrative-question::before,
+  .impact-atlas .impact-intro.narrative-question::after{animation:none;opacity:.1}
+}
+
+/* C motion: airborne particles gather into the question, then disperse. */
+html.narrative-ready .impact-atlas .impact-intro.narrative-question{
+  min-height:145svh!important;
+  padding-block:22svh!important;
+  opacity:1!important;
+  transform:none!important;
+  filter:none!important;
+  animation:none!important;
+}
+.impact-atlas .impact-intro.impact-particle-ready::before,
+.impact-atlas .impact-intro.impact-particle-ready::after{
+  opacity:.08;
+  transition:opacity 1.1s ease;
+}
+.impact-atlas .impact-intro.impact-particle-ready.is-impact-complete::before{opacity:.25}
+.impact-atlas .impact-intro.impact-particle-ready.is-impact-complete::after{opacity:.13}
+.impact-atlas .impact-particle-canvas{
+  position:absolute!important;
+  z-index:1!important;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+.impact-atlas .impact-intro.impact-particle-ready h3{
+  opacity:0;
+  filter:blur(16px);
+  transform:translateY(16px) scale(.985);
+  transform-origin:50% 50%;
+  will-change:opacity,filter,transform;
+}
+.impact-atlas .impact-intro.impact-particle-ready .impact-kicker,
+.impact-atlas .impact-intro.impact-particle-ready .impact-scroll-cue{
+  opacity:0;
+  transform:translateY(12px);
+  will-change:opacity,transform;
+}
+.impact-atlas .impact-intro.impact-particle-ready.is-impact-complete h3,
+.impact-atlas .impact-intro.impact-particle-ready.is-impact-complete .impact-kicker,
+.impact-atlas .impact-intro.impact-particle-ready.is-impact-complete .impact-scroll-cue{
+  opacity:1;
+  filter:none;
+  transform:none;
+}
+@media(max-width:700px){
+  html.narrative-ready .impact-atlas .impact-intro.narrative-question{
+    min-height:122svh!important;
+    padding-block:16svh!important;
+  }
+  .impact-atlas .impact-intro.impact-particle-ready h3{filter:blur(10px);transform:translateY(10px) scale(.99)}
+}
+@media(prefers-reduced-motion:reduce){
+  .impact-atlas .impact-intro.impact-particle-ready h3,
+  .impact-atlas .impact-intro.impact-particle-ready .impact-kicker,
+  .impact-atlas .impact-intro.impact-particle-ready .impact-scroll-cue{
+    opacity:1;
+    filter:none;
+    transform:none;
+  }
+  .impact-atlas .impact-particle-canvas{display:none}
+}
+
+/* Centre-triggered click cue: a droplet lands and sends quiet waves outward. */
+.impact-atlas .impact-prompt{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+}
+.impact-atlas .impact-prompt > :not(.impact-ripple-stage){position:relative;z-index:2}
+.impact-atlas .impact-click-word{
+  appearance:none;
+  display:inline-block;
+  margin:0 .05em;
+  padding:0 .04em .03em;
+  border:0;
+  border-bottom:2px solid rgba(37,215,205,.32);
+  background:transparent;
+  color:#39d8cf;
+  font:inherit;
+  font-weight:inherit;
+  line-height:inherit;
+  letter-spacing:inherit;
+  cursor:pointer;
+  transform-origin:50% 85%;
+  text-shadow:0 0 22px rgba(24,205,196,.12);
+}
+.impact-atlas .impact-click-word:hover,
+.impact-atlas .impact-click-word:focus-visible{
+  color:#8df5ee;
+  border-color:#53e5dc;
+  outline:none;
+}
+.impact-atlas .impact-ripple-stage{
+  position:absolute;
+  z-index:1;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+}
+.impact-atlas .impact-drop{
+  position:absolute;
+  left:50%;
+  top:15%;
+  width:10px;
+  height:14px;
+  margin-left:-5px;
+  border-radius:55% 55% 60% 60% / 48% 48% 70% 70%;
+  background:linear-gradient(155deg,#bafff9 0,#29d8cf 42%,#087f82 100%);
+  box-shadow:0 0 20px rgba(40,222,212,.55);
+  opacity:0;
+  transform:translate3d(0,-22px,0) scale(.45) rotate(45deg);
+}
+.impact-atlas .impact-ripple{
+  position:absolute;
+  left:50%;
+  top:58%;
+  width:70px;
+  height:22px;
+  margin:-11px 0 0 -35px;
+  border:1px solid rgba(64,226,216,.72);
+  border-radius:50%;
+  opacity:0;
+  transform:scale(.18);
+  box-shadow:0 0 18px rgba(34,203,194,.13),inset 0 0 12px rgba(34,203,194,.08);
+}
+.impact-atlas .impact-prompt.is-ripple-active .impact-click-word{
+  animation:impactClickPress .42s cubic-bezier(.2,.8,.2,1) .08s both;
+}
+.impact-atlas .impact-prompt.is-ripple-active .impact-drop{
+  animation:impactDropFall .72s cubic-bezier(.35,.02,.7,.52) .26s both;
+}
+.impact-atlas .impact-prompt.is-ripple-active .impact-ripple-one{
+  animation:impactRippleSpread 1.8s cubic-bezier(.12,.58,.22,1) .88s both;
+}
+.impact-atlas .impact-prompt.is-ripple-active .impact-ripple-two{
+  animation:impactRippleSpread 2s cubic-bezier(.12,.58,.22,1) 1.08s both;
+}
+.impact-atlas .impact-prompt.is-ripple-active .impact-ripple-three{
+  animation:impactRippleSpread 2.2s cubic-bezier(.12,.58,.22,1) 1.3s both;
+}
+@keyframes impactClickPress{
+  0%,100%{transform:translateY(0) scale(1);filter:none}
+  38%{transform:translateY(3px) scale(.94);filter:brightness(1.42)}
+  65%{transform:translateY(-1px) scale(1.025)}
+}
+@keyframes impactDropFall{
+  0%{opacity:0;transform:translate3d(0,-26px,0) scale(.42) rotate(45deg)}
+  16%{opacity:1}
+  84%{opacity:1;transform:translate3d(0,clamp(170px,23svh,270px),0) scale(1) rotate(45deg)}
+  100%{opacity:0;transform:translate3d(0,clamp(176px,calc(23svh + 6px),276px),0) scale(1.8,.35) rotate(45deg)}
+}
+@keyframes impactRippleSpread{
+  0%{opacity:.82;transform:scale(.14)}
+  68%{opacity:.25}
+  100%{opacity:0;transform:scale(10,4.4)}
+}
+@media(max-width:700px){
+  .impact-atlas .impact-ripple{top:56%}
+  @keyframes impactDropFall{
+    0%{opacity:0;transform:translate3d(0,-20px,0) scale(.42) rotate(45deg)}
+    16%{opacity:1}
+    84%{opacity:1;transform:translate3d(0,20svh,0) scale(1) rotate(45deg)}
+    100%{opacity:0;transform:translate3d(0,calc(20svh + 6px),0) scale(1.8,.35) rotate(45deg)}
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .impact-atlas .impact-drop,
+  .impact-atlas .impact-ripple{display:none}
+  .impact-atlas .impact-prompt.is-ripple-active .impact-click-word{animation:none}
+}
+
+/* Keep the large anatomy interaction sharp while it enters the viewport. */
+html.narrative-ready .impact-atlas .body-explorer.narrative-answer,
+html.narrative-ready .impact-atlas .body-explorer.narrative-answer.is-narrative-visible{
+  filter:none!important;
+}
+@keyframes impact-body-sharp-rise{
+  from{opacity:.18;transform:translate3d(0,54px,0) scale(.994);filter:none}
+  to{opacity:1;transform:none;filter:none}
+}
+@supports (animation-timeline:view()){
+  html.narrative-ready .impact-atlas .body-explorer.narrative-answer{
+    animation-name:impact-body-sharp-rise!important;
+    animation-range:entry 0% cover 18%!important;
+  }
+}
