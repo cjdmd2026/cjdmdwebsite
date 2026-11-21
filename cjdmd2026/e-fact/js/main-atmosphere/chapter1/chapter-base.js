@@ -164,7 +164,7 @@ const decodeData = {
             "또한 연소 과정에서 발생한 열을 회수하면 전기나 지역난방 등의 에너지원으로 활용할 수 있습니다."
         ],
 
-        image:"../../images/main-atmosphere/chapter1/img/detail-image3.jpg",
+        image:"../../images/main-atmosphere/chapter1/img/detail-image3.jpg?v=20261117-frame43-v2",
 
         imageAlt:"소각 장점 이미지",
 
@@ -210,7 +210,7 @@ const decodeData = {
             "시설 건설과 운영에 많은 비용이 필요하며, 소각 후에도 바닥재와 비산재 등의 잔재물이 발생하므로 별도의 안전한 처리가 필요합니다."
         ],
 
-        image:"../../images/main-atmosphere/chapter1/img/detail-image4.jpg",
+        image:"../../images/main-atmosphere/chapter1/img/detail-image4.jpg?v=20261117-frame43-v2",
 
         imageAlt:"소각 단점 이미지",
 
@@ -257,7 +257,7 @@ const decodeData = {
             "오염물질 배출을 최소화하기 위해서는 지속적인 측정과 설비 관리, 투명한 정보 공개가 필요합니다. 시설이 특정 지역에 집중되지 않도록 지역 간 형평성도 함께 고려해야 합니다."
         ],
 
-        image:"../../images/main-atmosphere/chapter1/img/detail-image5.jpg",
+        image:"../../images/main-atmosphere/chapter1/img/detail-image5.jpg?v=20261117-frame43-v2",
 
         imageAlt:"소각 환경 영향 이미지",
 
@@ -461,8 +461,18 @@ function changeDecodeContent(topic){
         showProcessVideo
     );
 
-    if(!showProcessVideo){
+    if(showProcessVideo && detailProcessVideo){
+        detailProcessVideo.pause();
+        detailProcessVideo.currentTime = 0;
+        detailProcessVideo.muted = false;
+        detailProcessVideo.volume = 1;
+        detailProcessVideo.controls = false;
+        detailImageFrame?.classList.remove("is-playing");
+        detailProcessVideo.dispatchEvent(new Event("processvideoreset"));
+    }else{
         detailProcessVideo?.pause();
+        detailImageFrame?.classList.remove("is-playing");
+        detailProcessVideo?.dispatchEvent(new Event("processvideoreset"));
     }
 
     if(detailImage){
@@ -684,6 +694,11 @@ function updateMobileHeaderSpacing(){
         return;
     }
 
+    if(hero.classList.contains("incinerator-motion")){
+        hero.style.marginTop = "0";
+        return;
+    }
+
     if(window.innerWidth <= 768){
 
         const headerHeight =
@@ -712,6 +727,157 @@ window.addEventListener(
 );
 
 updateMobileHeaderSpacing();
+
+// Fact archive: keep the selected index and card in sync.
+(() => {
+    const links = [...document.querySelectorAll(".fact-archive-index a")];
+    const cards = [...document.querySelectorAll(".fact-archive .decode-card")];
+    if (!links.length || !cards.length) return;
+
+    const selectCard = id => {
+        links.forEach(link => {
+            const selected = link.getAttribute("href") === `#${id}`;
+            link.classList.toggle("active", selected);
+            if (selected) link.setAttribute("aria-current", "true");
+            else link.removeAttribute("aria-current");
+        });
+        cards.forEach(card => card.classList.toggle("active", card.id === id));
+    };
+
+    links.forEach(link => link.addEventListener("click", () => {
+        selectCard(link.getAttribute("href").slice(1));
+    }));
+
+    const initialId = location.hash.startsWith("#fact-card-")
+        ? location.hash.slice(1)
+        : "fact-card-01";
+    selectCard(initialId);
+})();
+
+// 일반 설명 섹션: 질문 다음에 답변과 자료를 순차적으로 공개합니다.
+(() => {
+    const answers = document.querySelectorAll(".narrative-question, .narrative-answer");
+    if (!answers.length) return;
+
+    document.documentElement.classList.add("narrative-ready");
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        answers.forEach(answer => answer.classList.add("is-narrative-visible"));
+        return;
+    }
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("is-narrative-visible");
+            observer.unobserve(entry.target);
+        });
+    }, { threshold: 0.16, rootMargin: "0px 0px -8% 0px" });
+
+    answers.forEach(answer => observer.observe(answer));
+})();
+
+// 소각장이란 히어로: 질문에서 본문으로 이어지는 스크롤 서사를 구성합니다.
+(() => {
+    const root = document.querySelector(".incinerator-motion");
+    const stage = root?.querySelector(".incinerator-stage");
+    const image = root?.querySelector(".hero-panorama img");
+    const prelude = root?.querySelector(".incinerator-prelude");
+    const question = root?.querySelector(".incinerator-question");
+    const invitation = root?.querySelector(".incinerator-invitation");
+    const heading = root?.querySelector(".hero-heading");
+    const eyebrow = root?.querySelector(".hero-eyebrow");
+    const title = root?.querySelector("h1");
+    const summary = root?.querySelector(".hero-summary");
+    const cue = root?.querySelector(".incinerator-scroll-cue");
+    const ribbon = root?.querySelector(".topic-ribbon");
+    if(!root || !stage || !image || !heading) return;
+
+    document.documentElement.classList.add("incinerator-motion-ready");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let frame = 0;
+    let pointerX = 0;
+    let pointerY = 0;
+    const clamp = value => Math.max(0,Math.min(1,value));
+    const ease = value => 1 - Math.pow(1 - clamp(value),3);
+    const phase = (progress,startIn,endIn,startOut,endOut) =>
+        ease((progress - startIn) / (endIn - startIn)) *
+        (1 - ease((progress - startOut) / (endOut - startOut)));
+
+    const draw = () => {
+        frame = 0;
+        if(reducedMotion.matches){
+            [eyebrow,title,summary,cue,ribbon].forEach(element => {
+                if(!element) return;
+                element.style.opacity = "1";
+                element.style.transform = "none";
+            });
+            if(prelude) prelude.style.display = "none";
+            heading.style.transform = "translate(-50%,-50%)";
+            return;
+        }
+
+        const travel = Math.max(1,root.offsetHeight - stage.offsetHeight);
+        const progress = clamp(-root.getBoundingClientRect().top / travel);
+        const questionReveal = phase(progress,.015,.10,.20,.29);
+        const invitationReveal = phase(progress,.11,.19,.28,.37);
+        const titleReveal = ease((progress - .34) / .14);
+        const summaryReveal = ease((progress - .50) / .15);
+        const cueReveal = ease((progress - .62) / .12);
+        const ribbonReveal = ease((progress - .70) / .13);
+
+        root.style.setProperty("--incinerator-dim",String(.30 + questionReveal * .34 + titleReveal * .12));
+        image.style.transform = `translate3d(${pointerX * -7}px,${pointerY * -5 - progress * 24}px,0) scale(${1.045 + progress * .15})`;
+        heading.style.transform = `translate(-50%,-50%) translate3d(${pointerX * 2}px,${pointerY * 2}px,0)`;
+        if(prelude) prelude.style.transform = "translate(-50%,-50%)";
+
+        if(question){
+            question.style.opacity = String(questionReveal);
+            question.style.transform = `translateY(${(1 - questionReveal) * 34}px)`;
+        }
+        if(invitation){
+            invitation.style.opacity = String(invitationReveal);
+            invitation.style.transform = `translateY(${(1 - invitationReveal) * 28}px)`;
+        }
+        [eyebrow,title].forEach(element => {
+            if(!element) return;
+            element.style.opacity = String(titleReveal);
+            element.style.transform = `translateY(${(1 - titleReveal) * 38}px)`;
+        });
+        if(summary){
+            summary.style.opacity = String(summaryReveal);
+            summary.style.transform = `translateY(${(1 - summaryReveal) * 42}px)`;
+        }
+        if(cue){
+            cue.style.opacity = String(cueReveal);
+            cue.style.transform = `translateY(${(1 - cueReveal) * 18}px)`;
+        }
+        if(ribbon){
+            ribbon.style.opacity = String(ribbonReveal);
+            ribbon.style.transform = `translateY(${(1 - ribbonReveal) * 100}%)`;
+        }
+    };
+
+    const schedule = () => {
+        if(!frame) frame = requestAnimationFrame(draw);
+    };
+
+    stage.addEventListener("pointermove",event => {
+        if(event.pointerType !== "mouse") return;
+        pointerX = (event.clientX / window.innerWidth - .5) * 2;
+        pointerY = (event.clientY / window.innerHeight - .5) * 2;
+        schedule();
+    });
+    stage.addEventListener("pointerleave",() => {
+        pointerX = 0;
+        pointerY = 0;
+        schedule();
+    });
+    window.addEventListener("scroll",schedule,{passive:true});
+    window.addEventListener("resize",schedule);
+    reducedMotion.addEventListener("change",schedule);
+    draw();
+})();
 
 
 // =========================

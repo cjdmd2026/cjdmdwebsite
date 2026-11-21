@@ -13,7 +13,7 @@ function render(){
  host.querySelector('#recovery-year').onchange=e=>{year=e.target.value;render()};
 }
 host.innerHTML='<h2>소각열 회수 기록을 불러오고 있어요.</h2>';
-const endpoint='/e-fact/api/incinerators';
+const endpoint=new URL('api/incinerators',new URL('.',document.currentScript.src));
 let retryTimer=null,inflight=null;
 function load(){if(inflight)return inflight;clearTimeout(retryTimer);inflight=fetch(endpoint,{cache:'no-store',signal:AbortSignal.timeout(60000)}).then(r=>{if(!r.ok)throw Error();return r.json()}).then(d=>{if(!['ok','stale'].includes(d.status)||!d.records.length)throw Error();records=d.records;year=String(Math.max(...records.map(r=>Number(r.year))));render();if(d.status==='stale'){const note=document.createElement('p');note.textContent='연결 재시도 중 · 이전에 수신한 공식 자료입니다.';host.prepend(note);retryTimer=setTimeout(load,30000)}}).catch(()=>{host.replaceChildren();const h=document.createElement('h2');h.textContent='소각열 회수 기록';const p=document.createElement('p');p.textContent=location.protocol==='file:'?'실시간 실행 파일로 웹사이트를 열어주세요. HTML 파일만으로는 서버 자료에 연결할 수 없습니다.':'공식 자료 응답이 지연되고 있습니다. 30초 뒤 자동으로 재시도합니다.';const b=document.createElement('button');b.textContent='지금 다시 연결';b.onclick=load;host.append(h,p,b);retryTimer=setTimeout(load,30000)}).finally(()=>{inflight=null});return inflight}
 load();

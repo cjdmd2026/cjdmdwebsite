@@ -433,3 +433,415 @@
     .record-chip-dialog .record-chip-description{padding:20px 18px}
     .record-chip-content-foot{padding:17px 18px}
 }
+
+/* Record terminal alignment audit.
+   Every category uses the same dialog, so these frame-relative coordinates
+   keep all record windows aligned regardless of title length. */
+@media(min-width:701px){
+    .record-chip-dialog .record-chip-panel{
+        width:min(1180px,92vw,calc(88vh * 1.7758));
+        min-height:0;
+        aspect-ratio:1671 / 941;
+        overflow:hidden;
+    }
+    .record-chip-dialog .record-chip-panel::before{
+        clip-path:none;
+    }
+    .record-chip-panel-bar{
+        position:absolute;
+        top:3.8%;
+        left:3.7%;
+        right:3.7%;
+        min-height:0;
+        height:10.8%;
+        padding:0 6.2% 0 3.1%;
+    }
+    .record-chip-dialog .record-chip-close{
+        top:4.6%;
+        right:4.4%;
+        width:4.1%;
+        height:6.8%;
+        min-width:42px;
+        min-height:38px;
+        display:grid;
+        place-items:center;
+        padding:0;
+        font-size:clamp(22px,2vw,30px);
+    }
+    .record-chip-dialog .record-chip-panel-grid{
+        position:absolute;
+        inset:19% 5.8% 16.2% 6.05%;
+        min-height:0;
+        padding:0;
+        grid-template-columns:22.7% 1fr;
+        gap:2.8%;
+        align-items:stretch;
+    }
+    .record-chip-dialog .record-chip-id{
+        display:flex;
+        flex-direction:column;
+        justify-content:flex-start;
+        min-height:0;
+        padding:8.5% 10% 7.5%;
+    }
+    .record-chip-dialog .record-chip-id-number{
+        margin:3.5% 0 8%;
+        padding-bottom:7%;
+        font-size:clamp(17px,1.55vw,25px);
+    }
+    .record-chip-dialog .record-chip-id-type{
+        margin:4% 0 8%;
+        padding-bottom:7%;
+        font-size:clamp(18px,1.65vw,27px);
+    }
+    .record-chip-dialog .record-chip-id-date{
+        margin:4% 0 8%;
+        font-size:clamp(14px,1.2vw,18px);
+    }
+    .record-chip-verified{
+        gap:8px;
+        padding:7px 11px;
+        font-size:clamp(8px,.72vw,10px);
+    }
+    .record-chip-verified>span{
+        width:19px;
+        height:19px;
+    }
+    .record-chip-checksum{
+        padding-top:8%;
+    }
+    .record-chip-dialog .record-chip-content{
+        min-height:0;
+        padding:5.1% 3.4% 4.5%;
+    }
+    .record-chip-content-head{
+        min-height:7%;
+    }
+    .record-chip-dialog .record-chip-kicker{
+        padding:6px 12px;
+        font-size:clamp(8px,.68vw,10px);
+    }
+    .record-chip-dialog .record-chip-content h3{
+        width:calc(100% - clamp(92px,9vw,135px));
+        max-width:620px;
+        min-height:2.45em;
+        margin:5.2% 0 3.5%;
+        padding-left:3.2%;
+        display:flex;
+        align-items:center;
+        font-size:clamp(27px,2.15vw,38px);
+        line-height:1.22;
+    }
+    .record-chip-dialog .record-chip-description{
+        min-height:20%;
+        padding:3.2% 3.8%;
+        display:flex;
+        align-items:center;
+        font-size:clamp(12px,.95vw,15px);
+        line-height:1.7;
+    }
+    .record-chip-dialog .record-chip-content-foot{
+        position:absolute;
+        left:3.4%;
+        right:3.4%;
+        bottom:5.2%;
+        min-height:12%;
+        padding:0 3.2%;
+    }
+    .record-chip-dialog .record-chip-source{
+        min-width:0;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        white-space:nowrap;
+    }
+}
+
+@media(max-width:700px){
+    .record-chip-dialog{
+        padding:10px;
+    }
+    .record-chip-dialog .record-chip-panel{
+        width:min(94vw,calc(92vh * .75));
+        min-height:0;
+        max-height:none;
+        aspect-ratio:1086 / 1448;
+        overflow:hidden;
+    }
+    .record-chip-dialog .record-chip-panel::before{
+        clip-path:none;
+        background-image:url("../../images/change-records-atmosphere/assets/archive-record-panel-mobile-texture.jpg");
+    }
+    .record-chip-panel-bar{
+        position:absolute;
+        top:2.8%;
+        left:4.2%;
+        right:4.2%;
+        min-height:0;
+        height:8%;
+        padding:0 14% 0 6%;
+    }
+    .record-chip-panel-code{
+        gap:8px;
+        font-size:clamp(6px,1.8vw,9px);
+    }
+    .record-chip-panel-code>i{
+        width:20px;
+        height:6px;
+    }
+    .record-chip-dialog .record-chip-close{
+        top:4.2%;
+        right:8.2%;
+        width:9%;
+        height:5.1%;
+        min-width:34px;
+        min-height:32px;
+        display:grid;
+        place-items:center;
+        padding:0;
+        font-size:22px;
+    }
+    .record-chip-dialog .record-chip-panel-grid{
+        position:absolute;
+        inset:13.2% 8.7% 8.6%;
+        min-height:0;
+        padding:0;
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        grid-template-rows:14.1% 46.2% 14.4% 8.1%;
+        column-gap:4.8%;
+        row-gap:3.6%;
+        align-items:stretch;
+    }
+    .record-chip-dialog .record-chip-id{
+        grid-area:1 / 1;
+        display:grid;
+        grid-template-columns:1fr;
+        grid-template-rows:auto auto auto;
+        align-content:center;
+        gap:2px;
+        min-height:0;
+        padding:9% 8%;
+        overflow:hidden;
+    }
+    .record-chip-id>small,
+    .record-chip-checksum,
+    .record-chip-verified{
+        display:none;
+    }
+    .record-chip-dialog .record-chip-id-number,
+    .record-chip-dialog .record-chip-id-type,
+    .record-chip-dialog .record-chip-id-date{
+        grid-column:auto;
+        grid-row:auto;
+        margin:0;
+        padding:0;
+        border:0;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+    }
+    .record-chip-dialog .record-chip-id-number{
+        font-size:clamp(11px,3.2vw,16px);
+    }
+    .record-chip-dialog .record-chip-id-type{
+        font-size:clamp(12px,3.5vw,18px);
+    }
+    .record-chip-dialog .record-chip-id-date{
+        font-size:clamp(9px,2.6vw,13px);
+    }
+    .record-chip-dialog .record-chip-content{
+        display:contents;
+    }
+    .record-chip-content-head{
+        grid-area:1 / 2;
+        min-width:0;
+        padding:8% 7%;
+        display:flex;
+        flex-direction:column;
+        align-items:flex-start;
+        justify-content:center;
+        gap:7px;
+        overflow:hidden;
+    }
+    .record-chip-dialog .record-chip-kicker{
+        max-width:100%;
+        padding:0;
+        font-size:clamp(7px,1.9vw,9px);
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+    }
+    .record-chip-integrity{
+        max-width:100%;
+        gap:5px;
+    }
+    .record-chip-integrity>span,
+    .record-chip-integrity>i{
+        display:none;
+    }
+    .record-chip-dialog .record-chip-content h3{
+        grid-area:2 / 1 / 3 / 3;
+        width:auto;
+        max-width:none;
+        min-height:0;
+        margin:0;
+        padding:8% 7%;
+        border:0;
+        display:flex;
+        align-items:center;
+        color:#f5ffff;
+        font-size:clamp(22px,6.4vw,32px);
+        line-height:1.28;
+        overflow:hidden;
+    }
+    .record-chip-dialog .record-chip-description{
+        grid-area:3 / 1 / 4 / 3;
+        min-height:0;
+        margin:0;
+        padding:5% 6%;
+        border:0;
+        display:flex;
+        align-items:center;
+        overflow:hidden;
+        font-size:clamp(10px,2.8vw,13px);
+        line-height:1.55;
+    }
+    .record-chip-dialog .record-chip-content-foot{
+        position:static;
+        grid-area:4 / 1 / 5 / 3;
+        min-height:0;
+        margin:0;
+        padding:3% 5%;
+        display:flex;
+        flex-direction:row;
+        align-items:center;
+        gap:10px;
+        overflow:hidden;
+    }
+    .record-chip-dialog .record-chip-source{
+        min-width:0;
+        flex:1;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        white-space:nowrap;
+        font-size:clamp(7px,2vw,9px);
+    }
+    .record-chip-dialog .record-chip-link{
+        font-size:clamp(8px,2.2vw,10px);
+        white-space:nowrap;
+    }
+}
+
+/* Desktop terminal: lock labels and copy to the actual cells drawn in the JPG. */
+@media(min-width:701px){
+    .record-chip-dialog .record-chip-id,
+    .record-chip-dialog .record-chip-content{
+        position:relative;
+        overflow:hidden;
+    }
+    .record-chip-dialog .record-chip-id{
+        padding:8.5% 10% 7.5%;
+    }
+    .record-chip-verified{
+        position:absolute;
+        left:12%;
+        top:64%;
+        width:76%;
+        height:10.5%;
+        box-sizing:border-box;
+        padding:0 8%;
+        justify-content:center;
+        gap:7px;
+        border:0;
+        background:transparent;
+        box-shadow:none;
+    }
+    .record-chip-verified>span{
+        width:16px;
+        height:16px;
+        border:0;
+        clip-path:none;
+    }
+    .record-chip-checksum{
+        position:absolute;
+        left:9%;
+        right:9%;
+        bottom:4.5%;
+        margin:0;
+        padding:0;
+    }
+    .record-chip-dialog .record-chip-content{
+        padding:0;
+    }
+    .record-chip-content-head{
+        display:contents;
+    }
+    .record-chip-dialog .record-chip-kicker{
+        position:absolute;
+        z-index:3;
+        left:6.2%;
+        top:6.1%;
+        width:24.5%;
+        height:9.2%;
+        box-sizing:border-box;
+        margin:0;
+        padding:0 5%;
+        display:flex;
+        align-items:center;
+        justify-content:flex-start;
+        overflow:hidden;
+        white-space:nowrap;
+    }
+    .record-chip-integrity{
+        position:absolute;
+        z-index:3;
+        top:6.1%;
+        right:2.1%;
+        width:41.7%;
+        height:9.2%;
+        box-sizing:border-box;
+        justify-content:flex-end;
+        padding:0 2.2%;
+        gap:7px;
+        overflow:hidden;
+    }
+    .record-chip-integrity>i{
+        width:43%;
+        min-width:58px;
+    }
+    .record-chip-dialog .record-chip-content h3{
+        position:absolute;
+        z-index:2;
+        left:3.2%;
+        top:21.5%;
+        width:76.5%;
+        max-width:none;
+        height:24.5%;
+        min-height:0;
+        box-sizing:border-box;
+        margin:0;
+        padding:0 0 0 3.2%;
+        align-items:center;
+        overflow:hidden;
+    }
+    .record-chip-dialog .record-chip-description{
+        position:absolute;
+        z-index:2;
+        left:3.1%;
+        right:2.2%;
+        top:49.2%;
+        height:21.6%;
+        min-height:0;
+        box-sizing:border-box;
+        margin:0;
+        padding:2.4% 3.2%;
+        overflow:hidden;
+    }
+    .record-chip-dialog .record-chip-content-foot{
+        top:79.2%;
+        bottom:auto;
+        height:12.1%;
+        min-height:0;
+        box-sizing:border-box;
+    }
+}

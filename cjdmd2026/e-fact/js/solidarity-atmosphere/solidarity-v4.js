@@ -61,3 +61,13 @@
  const cert=$('#certificate');cert.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse'||reduced.matches)return;const r=cert.getBoundingClientRect();cert.style.setProperty('--rx',`${-(e.clientY-r.top-r.height/2)/r.height*3}deg`);cert.style.setProperty('--ry',`${(e.clientX-r.left-r.width/2)/r.width*4}deg`)});cert.addEventListener('pointerleave',()=>{cert.style.setProperty('--rx','0deg');cert.style.setProperty('--ry','0deg')});$('#print-cert').addEventListener('click',()=>{if(currentCertificate)window.print()});
  renderRecords();animateGauge();
 })();
+
+// 설명형 섹션은 질문을 먼저 보여준 뒤 답변 목록을 다음 화면에서 공개합니다.
+(() => {
+ const answers=[...document.querySelectorAll('.narrative-question, .narrative-answer')];
+ if(!answers.length)return;
+ document.documentElement.classList.add('narrative-ready');
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches){answers.forEach(answer=>answer.classList.add('is-narrative-visible'));return;}
+ const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(!entry.isIntersecting)return;entry.target.classList.add('is-narrative-visible');observer.unobserve(entry.target)}),{threshold:.16,rootMargin:'0px 0px -8% 0px'});
+ answers.forEach(answer=>observer.observe(answer));
+})();

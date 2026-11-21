@@ -14,6 +14,68 @@
   plate.onload=plume.onload=()=>schedule();
   const stage=root.querySelector('.history-stage'),intro=root.querySelector('.history-intro');
   stage.prepend(intro);root.classList.add('integrated-intro');
+  const introKicker=intro.querySelector('.history-kicker');
+  const introTitle=intro.querySelector('h2');
+  const introCopy=intro.querySelector('.intro-copy');
+  const introEnter=intro.querySelector('.history-enter');
+  const introMeta=intro.querySelector('.history-meta');
+  const introRange=document.createElement('div');
+  introRange.className='history-time-range';
+  introRange.setAttribute('aria-label','1999년부터 2023년까지');
+  introRange.innerHTML='<span class="history-time-from">1999</span><i class="history-time-line" aria-hidden="true"></i><span class="history-time-to">2023</span>';
+  introTitle.className='history-intro-title';
+  introTitle.setAttribute('aria-label','청주 소각시설을 둘러싼 변화의 기록');
+  const titleLead=document.createElement('span');
+  titleLead.className='history-title-lead';
+  titleLead.textContent='청주 소각시설을 둘러싼';
+  const titleAccent=document.createElement('span');
+  titleAccent.className='history-title-accent';
+  titleAccent.textContent='변화의 기록';
+  introTitle.replaceChildren(titleLead,titleAccent);
+  introTitle.before(introRange);
+  const timeFrom=introRange.querySelector('.history-time-from');
+  const timeTo=introRange.querySelector('.history-time-to');
+  const timeLine=introRange.querySelector('.history-time-line');
+  root.classList.add('has-intro-motion');
+
+  function setIntroElement(node,progress,{x=0,y=20,scale=1}={}){
+    node.style.opacity=String(progress);
+    node.style.transform=`translate3d(${x*(1-progress)}px,${y*(1-progress)}px,0) scale(${1+(scale-1)*(1-progress)})`;
+  }
+
+  function renderIntroMotion(progress,forceVisible=false){
+    if(forceVisible){
+      [introKicker,introRange,timeFrom,timeTo,introTitle,titleLead,titleAccent,introCopy,introEnter,introMeta].forEach(node=>{
+        node.style.opacity='1';node.style.transform='none';node.style.clipPath='none';
+      });
+      timeLine.style.transform='scaleX(1)';
+      intro.style.setProperty('--history-bg-scale','1');
+      intro.style.setProperty('--history-scan-progress','1');
+      return;
+    }
+    const phase=(a,b)=>smooth((progress-a)/(b-a));
+    const kickerP=phase(.01,.13);
+    const yearP=phase(.10,.34);
+    const leadP=phase(.30,.49);
+    const accentP=phase(.42,.61);
+    const copyP=phase(.56,.73);
+    const actionP=phase(.68,.84);
+    setIntroElement(introKicker,kickerP,{y:14});
+    setIntroElement(introRange,yearP,{y:18,scale:1.018});
+    setIntroElement(timeFrom,yearP,{x:-52,y:0});
+    setIntroElement(timeTo,yearP,{x:52,y:0});
+    timeLine.style.transform=`scaleX(${yearP})`;
+    setIntroElement(introTitle,Math.max(leadP,accentP),{y:0});
+    setIntroElement(titleLead,leadP,{y:34});
+    setIntroElement(titleAccent,accentP,{y:38});
+    titleLead.style.clipPath=`inset(${(1-leadP)*100}% 0 0)`;
+    titleAccent.style.clipPath=`inset(${(1-accentP)*100}% 0 0)`;
+    setIntroElement(introCopy,copyP,{y:24});
+    setIntroElement(introEnter,actionP,{y:18});
+    setIntroElement(introMeta,actionP,{y:14});
+    intro.style.setProperty('--history-bg-scale',String(1.06-progress*.06));
+    intro.style.setProperty('--history-scan-progress',String(phase(.52,.68)));
+  }
   let width=1,height=1;
   function drawSmoke(reveal,direction,progress){
     layers.forEach((layer,index)=>{
@@ -49,18 +111,20 @@
   function setup(){
     const header=document.querySelector('#header'); top=header?header.getBoundingClientRect().height:0;
     root.style.setProperty('--history-top',`${top}px`); root.classList.toggle('is-quiet',quiet);
+    if(quiet)renderIntroMotion(1,true);
     // Keep visible reveal/closing distances; halve only the fully covered holds.
-    step=Math.max(3000,innerHeight*4.8)*.92;entryDistance=innerHeight*2.2;
+    step=Math.max(3000,innerHeight*4.8)*.92;entryDistance=innerWidth<=760?innerHeight*.75:innerHeight*2.2;
     width=run.clientWidth;height=innerHeight-top;const dpr=Math.min(devicePixelRatio||1,1.25);layers.forEach(({canvas,ctx})=>{canvas.width=width*dpr;canvas.height=height*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}); run.style.setProperty('--run-height',quiet?'auto':`${step*scenes.length+entryDistance+innerHeight-top}px`);
     start=run.getBoundingClientRect().top+scrollY-top+entryDistance; toggle.textContent=quiet?'연기 전환 켜기':'모션 줄이기 ↘'; toggle.setAttribute('aria-pressed',String(quiet));
     scenes.forEach(s=>{s.style.cssText='';s.inert=false;s.removeAttribute('aria-hidden')}); schedule();
   }
   function render(){
-    frame=0;if(quiet){stage.style.maskImage='none';stage.style.webkitMaskImage='none';intro.style.cssText='';intro.inert=false;root.classList.remove('is-entering');return;}
+    frame=0;if(quiet){stage.style.maskImage='none';stage.style.webkitMaskImage='none';intro.style.cssText='';intro.inert=false;root.classList.remove('is-entering');renderIntroMotion(1,true);return;}
     const entry=clamp((scrollY-(start-entryDistance))/entryDistance);
     const inIntro=scrollY<start;
-    intro.style.opacity=String(1-smooth((entry-.28)/.68));
-    intro.style.transform=`scale(${1+entry*.045}) translateY(${-entry*24}px)`;
+    renderIntroMotion(entry);
+    intro.style.opacity=String(1-smooth((entry-.86)/.14));
+    intro.style.transform=`scale(${1+smooth((entry-.80)/.20)*.025}) translateY(${-smooth((entry-.80)/.20)*18}px)`;
     intro.style.visibility=inIntro?'visible':'hidden';intro.inert=!inIntro||entry>.7;
     root.classList.toggle('is-entering',inIntro);
     stage.style.maskImage=stage.style.webkitMaskImage='none';
