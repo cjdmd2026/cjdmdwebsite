@@ -44,6 +44,7 @@
         if(!window.YEARON_RADIO?.getState().powered){record.reset();return}
         if(window.YEARON_RADIO?.getState().powered&&record.radioPhase===0){
           record.radioPhase=1;
+          dismiss();
           cue.querySelector('b').textContent=window.YEARON_LANG==='en'?'TUNE THE CHANNEL':'채널을 바꿔보세요';
           cue.querySelector('small').textContent=window.YEARON_LANG==='en'?'Drag the frequency ruler left or right':'상단 두 번째 다이얼을 좌우로 드래그하세요. 아래 주파수 눈금에서도 바꿀 수 있어요.';
           requestGuides();
@@ -113,26 +114,28 @@
       const target=panel.querySelector(item.era==='2002'&&panel.querySelector('.pc-screen-ui.is-on')?'.pc-desktop-icon[data-pc-open=internet]':item.era==='1955'&&radioPhase===1?'.radio-frequency':item.era==='1988'&&panel.querySelector('#television.tv-is-off')?'.tv-power-control':anchors[item.era]);if(!target)return;
       const t=target.getBoundingClientRect(),host=cue.parentElement,h=host.getBoundingClientRect();
       if(!t.width||!h.width)return;
-      const scale=h.height/host.offsetHeight||1;
+      const scale=h.width/host.offsetWidth||1;
       const paper=item.era==='1920';
-      const edge=paper?t.left+t.width*.75:t.right;
-      if(paper&&!compact.matches)cue.style.setProperty('left',((edge-h.left)/scale+32)+'px','important');
-      cue.style.setProperty('top',((t.top+t.height/2-h.top)/scale-5)+'px','important');
-      if(paper){
-        const edgeX=Math.min(innerWidth-175,t.right+22);
-        cue.style.setProperty('position','fixed','important');
-        // The host can be transformed: keep positioning in its local coordinates.
-        cue.style.setProperty('position','absolute','important');
-        cue.style.setProperty('left',((edgeX-h.left)/scale)+'px','important');
-        cue.style.setProperty('top',((t.top+t.height*.45-h.top)/scale)+'px','important');
+      const edge=t.right;
+      cue.style.setProperty('position','absolute','important');
+      cue.style.setProperty('transform','none','important');
+      cue.style.setProperty('text-align','left','important');
+      const cueWidth=cue.getBoundingClientRect().width||150;
+      // Anchor the copy outside the object, in the same coordinate space as its control.
+      let left=paper?t.right+22:['1780','2002'].includes(item.era)?t.right+32:Math.max(t.right+28,h.right+22);
+      let top=t.top+t.height/2-5;
+      if(left+cueWidth>innerWidth-20){
+        if(innerWidth>800)left=Math.max(t.right+18,innerWidth-cueWidth-20);
+        else {left=Math.max(20,Math.min(innerWidth-cueWidth-20,t.left));top=Math.max(150,h.top-48);}
       }
-      if(compact.matches){cue.style.setProperty('transform','none','important');cue.style.setProperty('left',((item.era==='1780'?t.left+t.width/2-h.left:innerWidth/2-h.left)/scale-75)+'px','important');cue.style.setProperty('top',((paper?t.top-h.top:0)/scale-57)+'px','important');}
+      cue.style.setProperty('left',((left-h.left)/scale)+'px','important');
+      cue.style.setProperty('top',((top-h.top)/scale)+'px','important');
       let light=host.querySelector(':scope > .cue-target-light');if(!light){light=document.createElement('i');light.className='cue-target-light';light.setAttribute('aria-hidden','true');host.append(light)}light.style.left=((edge-h.left)/scale)+'px';light.style.top=((t.top+t.height/2-h.top)/scale)+'px';light.classList.toggle('is-visible',cue.classList.contains('is-visible')&&!cue.classList.contains('is-hidden'));
       const c=cue.getBoundingClientRect();
       let svg=cue.querySelector('svg.cue-guide');
       if(!svg){svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.classList.add('cue-guide');svg.innerHTML='<path/><circle r="2"/>';cue.append(svg);}
-      const x=(edge-c.left)/scale,y=5;
-      svg.querySelector('path').setAttribute('d',`M${x} 5H-8`);
+      const x=(edge-c.left)/scale,y=(t.top+t.height/2-c.top)/scale;
+      svg.querySelector('path').setAttribute('d',`M${x} ${y}H-8`);
       svg.querySelector('circle').setAttribute('cx',x);svg.querySelector('circle').setAttribute('cy',y);
     });
     const tv=document.querySelector('#television'),hint=tv?.querySelector('.tv-power-hint'),button=tv?.querySelector('.tv-power-control');

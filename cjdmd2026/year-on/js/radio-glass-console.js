@@ -10,6 +10,9 @@
  let programmes=[{title:'밤의 음악다방',english:'Night Music Café'},{title:'가요 산책',english:'A Walk Through Pop'},{title:'이어온소식',english:'YEAR:ON News'},{title:'오후의 다이얼',english:'Afternoon Dial'}],last='',dragging=false;
  fetch('assets/audio/radio-production/manifest-five.json?v=dial-music-order-20261116').then(r=>r.json()).then(data=>{programmes=data;last='';paint()}).catch(()=>{});
  programmes.forEach((p,i)=>{const item=document.createElement('div');item.dataset.rgChannel=i;item.innerHTML=`<span>CH ${String(i+1).padStart(2,'0')}</span><span class="rg-channel-title"></span>`;channelRoot.append(item)});
+ const tuningHelp=document.createElement('p');tuningHelp.className='rg-tuning-help';tuningHelp.setAttribute('role','status');q('.rg-tuning').prepend(tuningHelp);
+ let tuningUsed=false,wasPowered=false;
+ radio.addEventListener('yearon-radio-channel-used',()=>{tuningUsed=true;last='';paint()});
  const dial=q('.rg-dial');let pointer=null;
  function dragTune(e,commit=false){const r=dial.getBoundingClientRect(),am=api()?.getState().band==='AM',min=am?540:88,max=am?1600:108,low=am?621:89.1,high=am?1377:101.1,hz=min+Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*(max-min),value=Math.max(0,Math.min(2,(hz-low)/(high-low)*2));tuner.value=value;api()?.tune(value,commit);last='';paint()}
  tuner.addEventListener('pointerdown',e=>{if(e.button!==0)return;e.preventDefault();pointer=e.pointerId;dragging=true;tuner.setPointerCapture(pointer);dragTune(e)});
@@ -17,7 +20,7 @@
  const end=e=>{if(pointer!==e.pointerId)return;pointer=null;dragging=false;dragTune(e,true);radio.dispatchEvent(new Event('yearon-radio-channel-used'))};
  tuner.addEventListener('pointerup',end);tuner.addEventListener('pointercancel',()=>{pointer=null;dragging=false;last='';paint()});
  tuner.addEventListener('input',()=>{dragging=true;api()?.tune(Number(tuner.value),false);paint()});
- tuner.addEventListener('change',()=>{dragging=false;api()?.tune(Number(tuner.value),true);last='';paint()});
+ tuner.addEventListener('change',()=>{radio.dispatchEvent(new Event('yearon-radio-channel-used'));dragging=false;api()?.tune(Number(tuner.value),true);last='';paint()});
  const photos=[
  {src:'assets/images/radio-studio-1964.jpg',alt:'1964년 라디오 녹음 현장',source:'https://archives.kdemo.or.kr/isad/view/00731619',credit:'경향신문 · 민주화운동기념사업회'},
  {src:'assets/images/archive-v2/bts-wembley-fans-2019.jpg',alt:'공연을 함께 즐기는 관객들',source:'https://commons.wikimedia.org/wiki/File:Fans_during_BTS_Love_Yourself_concert_at_Wembley_Stadium,_1_June_2019.jpg',credit:'NenehTrainer · CC BY 3.0 · 2019'},
@@ -27,6 +30,9 @@
  photos.forEach(p=>{const image=new Image();image.src=p.src});
  function paint(){
   const state=api()?.getState();if(!state)return;
+  if(!state.powered)tuningUsed=false;
+  tuningHelp.hidden=!state.powered||tuningUsed;
+  tuningHelp.textContent=window.YEARON_LANG==='en'?'Drag the frequency scale left or right to tune in.':'주파수 눈금을 좌우로 움직여 채널을 맞춰보세요.';
   const en=window.YEARON_LANG==='en',p=programmes[state.selected],failed=!!state.errorMessage;
   const audio=document.getElementById('radioAudio'+state.selected),cue=state.playing&&p.cues?.find(c=>audio&&audio.currentTime>=c.start&&audio.currentTime<c.end);
   const subtitle=cue?(en?cue.en:cue.label):state.playing?(en?p.summary_en:p.summary)||'':state.loading?(en?'Tuning in…':'방송을 맞추고 있어요…'):state.powered?(en?'Turn the dial to find a station.':'다이얼을 돌려 방송을 맞춰보세요.'):(en?'Turn on the top power knob, then tune in.':'상단 전원을 켜고, 다이얼로 방송을 맞춰보세요.'),key=JSON.stringify([state,en,programmes,failed,subtitle]);

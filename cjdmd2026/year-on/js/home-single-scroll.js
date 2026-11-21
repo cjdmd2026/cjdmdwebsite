@@ -3,8 +3,8 @@
  const entry=document.getElementById('entry'),journey=document.querySelector('.home-film-journey');
  if(!entry||!journey)return;
  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
- let phase=location.hash?'done':'opening',timer=0,frame=0,readyAt=0,touchY=null;
- const gate=()=>entry.offsetTop+Math.max(1,entry.offsetHeight-innerHeight)*.52;
+ let phase=location.hash?'done':'opening',timer=0,frame=0,readyAt=0,readingSince=0,touchY=null;
+ const gate=()=>entry.offsetTop+Math.max(1,entry.offsetHeight-innerHeight)*.58;
  const destination=()=>scrollY+journey.getBoundingClientRect().top+Math.max(1,journey.offsetHeight-innerHeight)*.40;
  const blocked=t=>t.closest?.('.global-header,button,a,input,textarea,select,[role="dialog"]');
  const ease=t=>t*t*(3-2*t);
@@ -18,11 +18,11 @@
  }
  function wait(){
   if(phase!=='reading')return;
-  if(entry.dataset.openingCopyReady==='true'){if(!readyAt)readyAt=performance.now();if(performance.now()-readyAt>=350){begin();return}}
+  if(entry.dataset.openingCopyReady==='true'){if(!readyAt)readyAt=performance.now();if(performance.now()-readyAt>=1200){begin();return}}
   else readyAt=0;
   timer=setTimeout(wait,80);
  }
- function hold(){if(phase==='opening'){phase='reading';readyAt=0;wait()}if(phase==='reading'&&Math.abs(scrollY-gate())>1)jump(gate())}
+ function hold(){if(phase==='opening'){phase='reading';readyAt=0;readingSince=performance.now();wait()}if(phase==='reading'&&Math.abs(scrollY-gate())>1)jump(gate())}
  function down(event,amount){
   if(phase==='done')return;
   if(phase==='moving'||phase==='arrival'){event.preventDefault();return}
@@ -37,3 +37,5 @@
  addEventListener('resize',()=>{if(phase==='reading')jump(gate())});
  addEventListener('pagehide',()=>{clearTimeout(timer);cancelAnimationFrame(frame)});
 })();
+
+(()=>{if(!document.body.classList.contains('home-film-body'))return;const thumb=document.createElement('i');thumb.className='home-transparent-scroll-thumb';thumb.setAttribute('aria-hidden','true');document.body.append(thumb);let frame=0;function paint(){frame=0;const h=innerHeight,full=document.documentElement.scrollHeight,size=Math.max(36,h*h/full),range=full-h;thumb.style.height=size+'px';thumb.style.transform='translateY('+(range>0?scrollY/range*(h-size):0)+'px)';thumb.hidden=range<=0}function schedule(){if(!frame)frame=requestAnimationFrame(paint)}addEventListener('scroll',schedule,{passive:true});addEventListener('resize',schedule);new ResizeObserver(schedule).observe(document.body);paint()})();

@@ -21,10 +21,10 @@
    const dx=bx-ax,dy=by-ay,distance=Math.hypot(dx,dy),inset=33;
    // Stop just outside both glass rims; hide the segment as the nodes overlap.
    if(distance<=inset*2){path.setAttribute('d','M0 0');path.style.opacity='0';}
-   else{const ux=dx/distance,uy=dy/distance;path.setAttribute('d',`M${ax+ux*inset} ${ay+uy*inset}L${bx-ux*inset} ${by-uy*inset}`);path.style.opacity='1';}
+   else{const ux=dx/distance,uy=dy/distance,startX=ax+ux*inset,startY=ay+uy*inset,endX=bx-ux*inset,endY=by-uy*inset;const draw=range(progress,.20+i*.012,.36+i*.012);path.setAttribute('d',`M${startX} ${startY}L${startX+(endX-startX)*draw} ${startY+(endY-startY)*draw}`);path.style.opacity=draw>0?'1':'0';path.dataset.drawProgress=draw.toFixed(3);}
    path.removeAttribute('pathLength');path.removeAttribute('stroke-dasharray');path.removeAttribute('stroke-dashoffset');path.style.strokeDasharray='none';path.style.strokeDashoffset='0';
   });
-  people.style.opacity=String(exit);links.style.opacity=String(range(progress,.20,.28)*(1-range(progress,.68,.75))*exit);result.style.opacity=String(range(progress,.70,.76)*exit);result.setAttribute('r',String(104*range(progress,.67,.75)));const morph=range(overall,.495,.555),reveal=range(overall,.55,.62),handoff=range(overall,.70,.77);
+  people.style.opacity=String(exit);links.style.opacity=String((1-range(progress,.68,.75))*exit);result.style.opacity=String(range(progress,.70,.76)*exit);result.setAttribute('r',String(104*range(progress,.67,.75)));const morph=range(overall,.495,.555),reveal=range(overall,.55,.62),handoff=range(overall,.70,.77);
   name.style.opacity=String(range(progress,.74,.78)*(1-morph)*(1-handoff));
   root.querySelector('.wn-definition-name').textContent='OURNESS';
   root.querySelector('.wn-definition-name').style.opacity=String(morph*(1-handoff));

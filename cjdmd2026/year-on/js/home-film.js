@@ -32,6 +32,6 @@
   video.addEventListener('volumechange',()=>{if(!video.muted)video.muted=true;});
   document.addEventListener('visibilitychange',sync);window.addEventListener('pagehide',()=>video.pause());
   reduced.addEventListener('change',()=>{userPaused=reduced.matches;sync();paint();});
-  window.addEventListener('scroll',scroll,{passive:true});window.addEventListener('resize',scroll);
+  window.addEventListener('scroll',scroll,{passive:true});window.addEventListener('pageshow',()=>{pending=false;lastPaint=0;scroll()});window.addEventListener('load',scroll);new ResizeObserver(scroll).observe(journey);window.addEventListener('resize',scroll);
   paint();render();sync();
 })();

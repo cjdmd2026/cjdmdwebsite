@@ -190,7 +190,7 @@ const curveCenter=(rulerBounds.bottom+filterBounds.top)/2-stageBounds.top-h*.03;
 const glassCards=[];const points=[];nodes.forEach((node,i)=>{const order=list.indexOf(i),hidden=order<0;node.setAttribute('aria-hidden',String(hidden));if(hidden){node.style.opacity='0';node.style.pointerEvents='none';node.tabIndex=-1;return}
 const d=order-position,a=order*Math.PI*2/n-position*Math.PI*2/n-Math.PI/2,depth=Math.cos(a);let width=Math.min(mobile?58:76,w*.065),height=width*1.3,x,y,rotation=0,tilt=0,z=0,scale=1,alpha=.85;
 if(view==='curve'){
- width=Math.min(mobile?w*.34:157,h*.56/2.55);height=width*370/145;
+ width=mobile?Math.min(w*.54,h*.52*145/370):Math.min(157,h*.56/2.55);height=width*370/145;
  const radius=width*860/145,angle=d*(width+width*10/145)/radius;
  x=w*.5+Math.sin(angle)*radius;y=curveCenter;rotation=angle*180/Math.PI;z=-radius*(1-Math.cos(angle));scale=1-.38*(1-Math.cos(angle));
  const focusWeight=Math.exp(-d*d*5);alpha=.10+.90*Math.exp(-Math.abs(d)*1.05);scale*=1+.14*focusWeight;if(Math.abs(d)>8)alpha=0;

@@ -1,6 +1,17 @@
 (()=>{
  const root=document.getElementById('aboutEntryStory'),gate=document.getElementById('yaiGate'),stage=root.querySelector('.yai-stage'),scenes=[...root.querySelectorAll('.yai-scene')],arts=[...root.querySelectorAll('.yai-painting')],album=document.getElementById('abrArchive'),works=[...album.querySelectorAll('.abr-work')],relations=document.getElementById('aboutRelations');
  const clamp=x=>Math.max(0,Math.min(1,x)),ease=x=>{x=clamp(x);return x*x*(3-2*x)},progress=e=>clamp(-e.getBoundingClientRect().top/Math.max(1,e.offsetHeight-innerHeight));let frame=0;
+ let uriRunning=false,uriDone=false,uriStart=0,uriBase=0,uriTravel=0;
+ const uriBlock=e=>{if(uriRunning&&!e.target.closest('a,button,input'))e.preventDefault()};
+ addEventListener('wheel',uriBlock,{passive:false});addEventListener('touchmove',uriBlock,{passive:false});addEventListener('keydown',e=>{if(['ArrowDown','ArrowUp','PageDown','PageUp',' ','Home','End'].includes(e.key))uriBlock(e)});
+ function advanceUri(now){
+  const rect=relations.getBoundingClientRect(),travel=Math.max(1,relations.offsetHeight-innerHeight),p=-rect.top/travel;
+  if(!uriRunning&&!uriDone&&p>=.32&&p<.60){uriRunning=true;uriStart=now;uriBase=scrollY+rect.top;uriTravel=travel;}
+  if(uriRunning&&!document.hidden){const t=Math.min(1,(now-uriStart)/12000);scrollTo({top:uriBase+uriTravel*(.32+.26*t),behavior:'instant'});request();if(t===1){uriRunning=false;uriDone=true}}
+  if(p<.1)uriDone=false;
+  requestAnimationFrame(advanceUri);
+ }
+ requestAnimationFrame(advanceUri);
  history.scrollRestoration='manual';if(!location.hash)scrollTo(0,0);
  function render(){frame=0;const p=progress(root),gateP=clamp(p/.10);gate.style.opacity=String(1-ease((p-.084)/.020));const gateTime=Number.isFinite(gate.duration)?Math.min(gate.duration-.03,gateP*gate.duration):0;if(!entering&&!gate.seeking&&Math.abs(gate.currentTime-gateTime)>.04)gate.currentTime=gateTime;gate.style.transform=`scale(${1+ease(gateP)*.65+Math.pow(clamp((gateP-.32)/.68),1.7)*1.55})`;gate.style.transformOrigin="50% 68%";const poster=root.querySelector('.yai-gate-poster');poster.style.opacity=String(1-ease(p/.008));poster.style.transform=gate.style.transform;poster.style.transformOrigin=gate.style.transformOrigin;root.querySelector('.yai-entry-heading').style.opacity=String(1-ease(p/.025));root.querySelector('.yai-white').style.opacity=String(ease((p-.075)/.025)*(1-ease((p-.12)/.025)));
  const ranges=[[.12,.23],[.23,.34],[.34,.60],[.60,.86],[.86,1.01]];
