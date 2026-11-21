@@ -149,8 +149,8 @@ html body.media-time-body #television .tv-reflection-wrap{display:none!important
 @media(min-width:1100px){
  html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console{top:calc(var(--header-h) + var(--display-room)*.71 + 40px)!important}
  html body.media-time-body .tv-time-panel #television#television{width:min(58vw,calc(var(--display-room)*.87))!important}
- html body.about-body .story-subtitle p[lang=ko]{font-size:clamp(15px,1.7svh,23px)!important}
- html body.about-body .story-subtitle p[lang=en]{font-size:clamp(11px,1.25svh,16px)!important}
+ html body.about-body .story-subtitle p[lang=ko]{font-size:clamp(17px,2svh,27px)!important}
+ html body.about-body .story-subtitle p[lang=en]{font-size:clamp(13px,1.5svh,20px)!important}
  html body.about-body .story-subtitle>.about-fixed-scene{padding:var(--header-h) 6vw 0!important;place-content:center!important;text-align:center!important}
 }
 html body.karchive-body :is(.ka-film-caption,.ka-sequence-caption) {width:max-content!important;max-width:96vw!important}
@@ -176,8 +176,8 @@ html body.about-body #artistSequence{height:300svh!important}
 html body.about-body #ypInfographic .wn-connections path{stroke-dasharray:none!important;stroke-dashoffset:0!important;stroke-linecap:round!important;stroke-opacity:1!important;transition:none!important;animation:none!important}
 html body.about-body #ypInfographic .wn-individuals>g{transition:none!important;animation:none!important}
 html body.about-body #aboutEntryStory :is(.yai-question,.yai-artist-intro,.yai-bridge){text-align:center!important}
-html body.about-body #aboutEntryStory :is(.yai-question,.yai-artist-intro,.yai-bridge)>:is(h1,h2,p[lang=ko]){font-size:clamp(15px,1.7svh,23px)!important;font-weight:400!important;line-height:1.6!important}
-html body.about-body #aboutEntryStory :is(.yai-question,.yai-artist-intro,.yai-bridge)>p[lang=en]{font-size:clamp(11px,1.25svh,16px)!important;line-height:1.6!important}
+html body.about-body #aboutEntryStory :is(.yai-question,.yai-artist-intro,.yai-bridge)>:is(h1,h2,p[lang=ko]){font-size:clamp(17px,2svh,27px)!important;font-weight:400!important;line-height:1.6!important}
+html body.about-body #aboutEntryStory :is(.yai-question,.yai-artist-intro,.yai-bridge)>p[lang=en]{font-size:clamp(13px,1.5svh,20px)!important;line-height:1.6!important}
 html:has(body.home-film-body){background:#08090b!important;color-scheme:dark;scrollbar-color:#a6b1bc80 transparent!important}
 @media(min-width:1100px){
 html body .global-header.global-header.global-header.global-header.global-header.global-header.global-header .header-right>nav>a{font-size:clamp(11.5px,1.18svh,14px)!important}
@@ -198,7 +198,7 @@ html body.media-time-body #television .tv-live-surface{position:absolute;inset:0
 html body.media-time-body .tv-time-panel #channelNav .tv-station b{font-size:10px!important}
 html body.media-time-body .tv-time-panel #channelNav .tv-station span{font-size:9px!important}
 html body.about-body #artworksPrelude p[lang=ko]{font-size:clamp(16px,1.85svh,25px)!important}
-html body.about-body #abrArchive .album-closing-line p[lang=ko]{font-size:clamp(15px,1.7svh,23px)!important}
+html body.about-body #abrArchive .album-closing-line p[lang=ko]{font-size:clamp(17px,2svh,27px)!important}
 @media(max-width:800px){html body.media-time-body .time-panel .interaction-cue{width:150px!important;max-width:150px!important;text-align:center!important}html body.media-time-body .interaction-cue .cue-guide{display:none!important}html body.media-time-body .tv-time-panel .channel-footer.channel-footer{translate:0 -12px!important}html body.media-time-body #television .tv-power-hint{font-size:10px!important}}
 
 html body.media-time-body #scrollMedia#scrollMedia#scrollMedia>.interaction-cue{display:block!important}
@@ -223,3 +223,138 @@ html body.media-time-body .interaction-cue svg.cue-guide circle{animation:instru
 html body.media-time-body .cue-target-light.is-visible{animation:instruction-target-blink 1.8s ease-in-out infinite!important}
 @keyframes instruction-target-blink{0%,100%{opacity:.2}50%{opacity:1}}
 html body.media-time-body #television#television.tv-is-off>.interaction-cue{display:block!important}
+
+/* Keep the current page identifiable above the white artwork navigation. */
+html body.about-body .global-header.global-header.global-header.global-header.global-header.global-header.global-header nav a.active,html body.about-body .global-header.global-header.global-header.global-header.global-header.global-header.global-header nav a[aria-current=page]{color:#8ab4cf!important}
+
+/* Final optical hierarchy across notebook and desktop viewports. */
+html body.media-time-body>.era-now.era-now a{font-size:clamp(16px,1.55svh,21px)!important;line-height:1.4!important;font-family:"Helvetica Neue",Arial,sans-serif!important;font-weight:300!important}
+html body.media-time-body .era-bridge #timeNav button[data-neighbour=true]>b,html body.media-time-body .era-bridge #timeNav button[data-neighbour=true] .era-odometer{font-size:clamp(24px,2.9svh,37px)!important;color:#aeb7bf!important;-webkit-text-fill-color:#aeb7bf!important;text-shadow:none!important}
+html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console :is(.rg-title,.rg-title *,.rg-channel-title,.rg-channel-title *){font-family:Arial,'Apple SD Gothic Neo',sans-serif!important;font-weight:400!important;text-shadow:none!important;filter:none!important;-webkit-text-stroke:0!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important}
+html body.media-time-body .radio-console.radio-glass-console .rg-info{min-width:0!important;flex:1!important}
+html body.media-time-body .radio-console.radio-glass-console .rg-description{height:auto!important;min-height:2.8em!important;max-height:none!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;display:block!important;line-height:1.5!important}
+@media(min-width:851px){html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console{width:min(860px,80vw)!important;top:calc(var(--header-h) + (100svh - var(--header-h))*.76)!important;bottom:auto!important;translate:0 0!important;transform:translateX(-50%)!important}html body.media-time-body .radio-console.radio-glass-console .rg-layout{height:auto!important;min-height:0!important;max-height:none!important}}
+html body.about-body #aboutEntryStory :is(.yai-question,.yai-artist-intro,.yai-bridge){display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;padding:var(--header-h) 6vw 0!important;box-sizing:border-box!important;gap:18px!important}
+html body.about-body #aboutEntryStory :is(.yai-question,.yai-artist-intro,.yai-bridge)>:is(h1,h2,p){margin:0!important;max-width:88vw!important;text-align:center!important}
+html body.about-body .story-subtitle>.about-fixed-scene{display:grid!important;place-content:center!important;padding:var(--header-h) 6vw 0!important;text-align:center!important}
+html body.about-body :is(.story-subtitle,#aboutEntryStory .yai-question,#aboutEntryStory .yai-artist-intro,#aboutEntryStory .yai-bridge) :is(h1[lang=ko],h2[lang=ko],p[lang=ko]){font-size:clamp(17px,2svh,27px)!important;font-weight:400!important;line-height:1.6!important}
+html body header.global-header.global-header.global-header.global-header.global-header.global-header.global-header{border-bottom:1px solid #ffffff22!important}
+html body.karchive-body .ka-film-caption{width:max-content!important;max-width:96vw!important;right:auto!important}
+html body.karchive-body .ka-film-caption :is(p,span){white-space:nowrap!important;text-wrap:nowrap!important;word-break:normal!important;overflow-wrap:normal!important}
+html:has(body.home-film-body),html body.home-film-body{scrollbar-width:none!important}
+html:has(body.home-film-body)::-webkit-scrollbar,html body.home-film-body::-webkit-scrollbar{display:none!important;width:0!important}
+.home-transparent-scroll-thumb{position:fixed;right:2px;top:0;width:4px;border-radius:4px;background:#c8d2db88;z-index:10010;pointer-events:none;will-change:transform}
+
+/* One logo geometry and one active-page color from the first paint. */
+html body .global-header.global-header.global-header.global-header.global-header.global-header.global-header :is(nav a.active,nav a[aria-current=page]){color:#8ab4cf!important;-webkit-text-fill-color:#8ab4cf!important}
+html body .global-header.global-header.global-header.global-header.global-header.global-header.global-header .brand.brand-image{animation:none!important;transition:none!important;scale:1!important;flex-shrink:0!important}
+html body .global-header.global-header.global-header.global-header.global-header.global-header.global-header .brand-mark{content:url('../assets/images/yearon-symbol-white-final.webp')!important;filter:none!important}
+html body .global-header.global-header.global-header.global-header.global-header.global-header.global-header .brand-word{background:transparent url('../assets/images/yearon-wordmark-20261018-white.webp') center/contain no-repeat!important;filter:none!important}
+@media(max-width:1099px){html body .global-header.global-header.global-header.global-header.global-header.global-header.global-header .brand.brand-image{width:143px!important;height:42px!important;gap:4px!important}html body .global-header.global-header.global-header.global-header.global-header.global-header.global-header .brand-mark{width:42px!important;height:29px!important;flex:0 0 42px!important}html body .global-header.global-header.global-header.global-header.global-header.global-header.global-header .brand-word{width:93px!important;height:22px!important;flex:0 0 93px!important}}
+html body.about-body #ypMediaAnchor .timeline-phone>img{filter:grayscale(1) brightness(1.35)!important}
+html body.about-body #ypMediaAnchor .timeline-phone{border-color:#fff!important}
+html body.home-film-body .film-destination :is(small,p,a,span){color:#fff!important;-webkit-text-fill-color:#fff!important}
+html body.home-film-body .film-destination.is-ready{opacity:1!important}
+html body.home-film-body .film-destination.is-ready .film-enter{opacity:1!important;visibility:visible!important;pointer-events:auto!important}
+
+html body.home-film-body #entry#entry .entry-subtitle strong{color:#fff!important;-webkit-text-fill-color:#fff!important;filter:none!important;text-shadow:none!important;opacity:1!important}
+
+/* Compact bilingual text blocks and a mobile opening composed as one unit. */
+html body.about-body #aboutEntryStory#aboutEntryStory :is(.yai-question,.yai-artist-intro,.yai-bridge){gap:10px!important;row-gap:10px!important}
+html body.about-body #aboutEntryStory#aboutEntryStory :is(.yai-question,.yai-artist-intro,.yai-bridge)>:is(h1,h2,p){margin:0!important;padding:0!important;min-height:0!important;height:auto!important;flex:0 0 auto!important;line-height:1.45!important}
+html body.about-body .story-subtitle>.about-fixed-scene>div{display:flex!important;flex-direction:column!important;align-items:center!important;gap:10px!important}
+html body.about-body .story-subtitle p{margin:0!important;padding:0!important;line-height:1.5!important}
+@media(max-width:800px){
+html body.home-film-body #entry#entry#entry .entry-logo-en{top:43%!important;left:50%!important;font-size:clamp(44px,11.6vw,81px)!important;transform:translate(-50%,-50%)!important;--o-shift:calc(var(--opening,0)*1.1em)!important;--year-spread:calc(var(--opening,0)*1.1em)!important;--n-spread:calc(var(--opening,0)*1.1em)!important}
+html body.home-film-body #entry#entry#entry .entry-subtitle{top:var(--subtitle-center-y,43%)!important;left:var(--subtitle-x,50%)!important;width:var(--subtitle-width,44vw)!important;max-width:52vw!important;transform:translate(-50%,-50%)!important;text-align:center!important}
+html body.home-film-body #entry#entry#entry .entry-subtitle strong{font-size:clamp(11px,2.9vw,17px)!important;line-height:1.5!important;margin:0!important;min-height:0!important;white-space:normal!important}
+html body.home-film-body #entry#entry#entry .entry-subtitle .entry-subtitle-en{font-size:11px!important;line-height:1.4!important;margin:8px 0 0!important}
+}
+@media(max-width:800px) and (max-height:550px){html body.home-film-body #entry#entry#entry .entry-logo-en{top:44%!important;font-size:36px!important}html body.home-film-body #entry#entry#entry .entry-subtitle{top:var(--subtitle-center-y,44%)!important}}
+
+html body.about-body #artistSequence#artistSequence{height:440svh!important}
+
+@media(max-width:850px){
+html body.about-body #artistSequence#artistSequence .abr-artist{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(95px,30%)!important;grid-template-rows:auto auto!important;align-content:center!important;align-items:center!important;gap:24px 20px!important;padding:calc(var(--header-h,64px) + 28px) 7vw 72px!important;overflow:auto!important}
+html body.about-body #artistSequence#artistSequence .artist-spread-group{display:contents!important;transform:none!important}
+html body.about-body #artistSequence#artistSequence .abr-artist-copy{display:contents!important;position:static!important;transform:none!important}
+html body.about-body #artistSequence#artistSequence #abrArtistTitle{grid-column:1!important;grid-row:1!important;font-size:clamp(35px,9vw,58px)!important;line-height:1.2!important;margin:0!important;white-space:normal!important}
+html body.about-body #artistSequence#artistSequence #abrArtistTitle .artist-hanja{display:block!important;font-size:18px!important;margin:8px 0 0!important}
+html body.about-body #artistSequence#artistSequence #abrArtistTitle small{font-size:8px!important;line-height:1.6!important;letter-spacing:.05em!important;margin-top:12px!important}
+html body.about-body #artistSequence#artistSequence .abr-artist-image{position:static!important;grid-column:2!important;grid-row:1!important;width:100%!important;height:min(28svh,205px)!important;max-height:none!important;margin:0!important;transform:none!important}
+html body.about-body #artistSequence#artistSequence .abr-artist-image>img{width:100%!important;height:100%!important;object-fit:contain!important;object-position:center!important}
+html body.about-body #artistSequence#artistSequence .artist-reading{grid-column:1/-1!important;grid-row:2!important;width:100%!important;max-width:none!important;margin:0!important;font-size:12px!important}
+html body.about-body #artistSequence#artistSequence .artist-reading>p{font-size:12px!important;line-height:1.75!important;margin:0 0 15px!important;word-break:keep-all!important;text-wrap:pretty!important}
+}
+
+/* All standalone bilingual statements share the same content-area centre. */
+html body.about-body #aboutEntryStory#aboutEntryStory :is(.yai-question,.yai-artist-intro,.yai-bridge),
+html body.about-body .about-pair.story-subtitle>.about-fixed-scene,
+html body.about-body #abrArchive .album-closing-line{display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;gap:10px!important;padding:var(--header-h) 5vw 0!important;box-sizing:border-box!important;text-align:center!important}
+html body.about-body .about-pair.story-subtitle>.about-fixed-scene>div{position:static!important;inset:auto!important;transform:none!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;gap:10px!important;width:90vw!important;max-width:1200px!important;margin:0!important;padding:0!important}
+html body.about-body :is(#aboutEntryStory .yai-question,#aboutEntryStory .yai-artist-intro,#aboutEntryStory .yai-bridge,.about-pair.story-subtitle,#abrArchive .album-closing-line) :is(h1,h2,p){margin:0!important;padding:0!important;min-height:0!important;height:auto!important;position:static!important;transform:none!important;text-align:center!important;max-width:90vw!important;line-height:1.5!important;font-weight:400!important}
+html body.about-body :is(#aboutEntryStory .yai-question,#aboutEntryStory .yai-artist-intro,#aboutEntryStory .yai-bridge,.about-pair.story-subtitle,#abrArchive .album-closing-line) :is(h1[lang=ko],h2[lang=ko],p[lang=ko]){font-size:clamp(17px,2svh,27px)!important}
+html body.about-body :is(#aboutEntryStory .yai-question,#aboutEntryStory .yai-artist-intro,#aboutEntryStory .yai-bridge,.about-pair.story-subtitle,#abrArchive .album-closing-line) :is(p[lang=en],.album-subtitle-en){font-size:clamp(13px,1.5svh,20px)!important}
+
+@media(max-width:850px){html body.about-body #artistSequence#artistSequence .artist-reading{position:static!important;inset:auto!important;transform:none!important;translate:none!important;align-self:start!important}html body.about-body #artistSequence#artistSequence #abrArtistTitle{position:static!important;inset:auto!important;transform:none!important;translate:none!important}}
+
+/* Balanced bilingual spacing, centred on the viewport as one text group. */
+html body.about-body #aboutEntryStory#aboutEntryStory :is(.yai-question,.yai-artist-intro,.yai-bridge),html body.about-body .about-pair.story-subtitle>.about-fixed-scene,html body.about-body #abrArchive .album-closing-line{padding:0 5vw!important;gap:18px!important}
+html body.about-body .about-pair.story-subtitle>.about-fixed-scene>div{gap:18px!important}
+@media(max-width:760px){html body.about-body #aboutEntryStory#aboutEntryStory :is(.yai-question,.yai-artist-intro,.yai-bridge),html body.about-body .about-pair.story-subtitle>.about-fixed-scene,html body.about-body #abrArchive .album-closing-line,html body.about-body .about-pair.story-subtitle>.about-fixed-scene>div{gap:14px!important}}
+
+html body.about-body #aboutEntryStory#aboutEntryStory#aboutEntryStory :is(.yai-question,.yai-artist-intro,.yai-bridge)>:is(h1[lang=ko],h2[lang=ko],p[lang=ko]),html body.about-body .about-pair.story-subtitle p[lang=ko]{font-size:clamp(17px,2svh,27px)!important;line-height:1.5!important}
+html body.about-body #aboutEntryStory#aboutEntryStory#aboutEntryStory :is(.yai-question,.yai-artist-intro,.yai-bridge)>p[lang=en],html body.about-body .about-pair.story-subtitle p[lang=en]{font-size:clamp(13px,1.5svh,20px)!important;line-height:1.5!important}
+@media(max-width:850px){html body.about-body #artistSequence#artistSequence#artistSequence#artistSequence .abr-artist{padding:calc(var(--header-h,64px) + 28px) 7vw 72px!important;grid-template-columns:minmax(0,1fr) minmax(95px,30%)!important;box-sizing:border-box!important}}
+
+/* Let radio copy determine its row height instead of overlapping fixed tracks. */
+html body.media-time-body .radio-console.radio-glass-console .rg-info{display:flex!important;flex-direction:column!important;justify-content:center!important;gap:5px!important;height:auto!important;grid-template-rows:none!important}
+html body.media-time-body .radio-console.radio-glass-console .rg-meta{display:flex!important;align-items:center!important;gap:10px!important;flex-wrap:wrap!important}
+html body.media-time-body .radio-console.radio-glass-console .rg-title{margin:0!important;height:auto!important;line-height:1.4!important}
+@media(max-width:850px){
+html body.media-time-body .time-panel[data-era="1955"] .radio-console.radio-glass-console{left:50%!important;width:calc(100% - 32px)!important;transform:translateX(-50%)!important;translate:none!important}
+html body.media-time-body .radio-console.radio-glass-console .rg-layout{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:12px!important;padding:14px!important;height:auto!important;min-height:0!important;max-height:none!important}
+html body.media-time-body .radio-console.radio-glass-console .rg-tuning{grid-column:1!important;width:100%!important}
+html body.media-time-body .radio-console.radio-glass-console .rg-channels{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;width:100%!important}
+html body.media-time-body .radio-console.radio-glass-console .rg-description{min-height:0!important;margin:0!important}
+}
+
+/* Balanced padding around the radio programme and tuning scale. */
+@media(min-width:851px){html body.media-time-body .radio-console.radio-glass-console .rg-layout{height:auto!important;min-height:0!important;max-height:none!important;grid-template-columns:minmax(0,1fr) minmax(0,1.8fr)!important;align-items:center!important;padding:16px!important;gap:16px!important}}
+html body.media-time-body .radio-console.radio-glass-console .rg-tuning-help{margin:0 0 8px!important;padding:0!important;color:#324e65!important;font:400 10px/1.5 Arial,'Apple SD Gothic Neo',sans-serif!important;text-align:left!important}
+html body.media-time-body .radio-console.radio-glass-console .rg-tuning-help[hidden]{display:none!important}
+html body.media-time-body #scrollMedia#scrollMedia#scrollMedia>.interaction-cue>b{white-space:nowrap!important;width:max-content!important;max-width:none!important}
+
+html body.about-body #artistSequence#artistSequence #abrArtistTitle .artist-hanja{display:block!important;font-size:clamp(18px,1.6vw,26px)!important;line-height:1.3!important;margin:12px 0 0!important;letter-spacing:.12em!important}
+html body.about-body #artistSequence#artistSequence #abrArtistTitle small{margin-top:18px!important}
+html body.visit-v7 #visitOpening#visitOpening .visit-particle-symbol{opacity:var(--particle-solid,0)!important}
+html body.visit-v7 #visitOpening#visitOpening .visit-particle-wordmark{opacity:var(--particle-wordmark,0)!important}
+html body.visit-v7 #visitOpening#visitOpening :is(.visit-particle-symbol-finish,.visit-particle-wordmark-finish){display:none!important}
+html body.visit-v7 .visit-footer-brand img.footer-wordmark{width:140px!important;height:auto!important;object-fit:contain!important;filter:none!important}
+
+@media(max-width:800px){
+html body.home-film-body #entry#entry#entry .entry-logo-en{top:50%!important;font-size:11vw!important;--o-shift:calc(var(--opening,0)*1.45em)!important;--year-spread:calc(var(--opening,0)*1.45em)!important;--n-spread:calc(var(--opening,0)*1.45em)!important}
+html body.home-film-body #entry#entry#entry .entry-subtitle strong{font-size:2.45vw!important;white-space:nowrap!important;line-height:1.35!important}
+html body.home-film-body #entry#entry#entry .entry-subtitle .entry-subtitle-en{font-size:2vw!important;white-space:nowrap!important;line-height:1.3!important;margin-top:5px!important}
+html body.about-body #aboutEntryStory#aboutEntryStory#aboutEntryStory :is(.yai-question,.yai-artist-intro,.yai-bridge)>:is(h1[lang=ko],h2[lang=ko],p[lang=ko]),html body.about-body .about-pair.story-subtitle p[lang=ko]{font-size:14px!important;line-height:1.65!important;max-width:84vw!important}
+html body.about-body #aboutEntryStory#aboutEntryStory#aboutEntryStory :is(.yai-question,.yai-artist-intro,.yai-bridge)>p[lang=en],html body.about-body .about-pair.story-subtitle p[lang=en]{font-size:10px!important;line-height:1.6!important;max-width:84vw!important}
+html body.media-time-body .time-panel .interaction-cue{max-width:180px!important;width:180px!important}
+html body.media-time-body .radio-console.radio-glass-console .rg-layout{gap:9px!important;padding:12px!important}
+html body.media-time-body .radio-console.radio-glass-console .rg-title{font-size:14px!important}
+html body.media-time-body .radio-console.radio-glass-console .rg-description{font-size:10px!important}
+html body.media-time-body .radio-console.radio-glass-console .rg-photo{flex-basis:38px!important;height:48px!important}
+html body.media-time-body .radio-console.radio-glass-console .rg-channels [data-rg-channel]{min-height:30px!important;padding:3px 1px 6px!important}
+}
+.phone-album-caption{display:none!important}
+
+html body.media-time-body .pc-media:has(.pc-screen-ui.is-on)>.interaction-cue,html body.media-time-body .pc-media:has(.pc-screen-ui.is-on)>.cue-target-light{display:none!important}
+html body.media-time-body .pc-media:has(.pc-screen-ui.is-on):not(:has(.pc-window[data-app=internet])) .pc-desktop-icon[data-pc-open=internet]{animation:internet-icon-hint 1.8s ease-in-out infinite!important}
+@keyframes internet-icon-hint{0%,100%{filter:brightness(1);box-shadow:none}50%{filter:brightness(1.3);box-shadow:0 0 7px #d5eeff99}}
+
+@media(max-width:800px){
+html body.about-body #aboutEntryStory .yai-painting[data-painting=mudong] .yai-art-video{top:45%!important;transform:translateY(-50%)!important;width:100%!important;max-height:54svh!important;mask-image:linear-gradient(to right,transparent,#000 12%,#000 88%,transparent),linear-gradient(to bottom,transparent,#000 16%,#000 84%,transparent)!important;-webkit-mask-image:linear-gradient(to right,transparent,#000 12%,#000 88%,transparent),linear-gradient(to bottom,transparent,#000 16%,#000 84%,transparent)!important}
+html body.about-body #aboutEntryStory .yai-painting[data-painting=mudong] .yai-caption{bottom:115px!important;gap:10px!important}
+html body.about-body #aboutEntryStory .yai-painting[data-painting=mudong] .yai-caption p[lang=ko]{font-size:12px!important;line-height:1.65!important}
+html body.about-body #aboutEntryStory .yai-painting[data-painting=mudong] .yai-caption p[lang=en]{font-size:10px!important;line-height:1.6!important}
+html body.about-body #aboutEntryStory .yai-painting[data-painting=mudong] .yai-credit{bottom:88px!important;left:6vw!important;right:6vw!important;text-align:center!important;font-size:8px!important}
+}

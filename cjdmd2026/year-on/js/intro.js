@@ -26,13 +26,13 @@ function paintIntro(raw){
  set('--handoff',handoff.toFixed(3));set('--morph','1');set('--opening',opening.toFixed(3));
  set('--full-o-opacity',(1-clamp(opening/.08)).toFixed(3));set('--paren-opacity',opening<.025?'0':'1');set('--en-opacity','1');
  set('--o-shift',(opening*.92).toFixed(3)+'em');set('--year-spread',(opening*1.1).toFixed(3)+'em');set('--n-spread',(opening*1.1).toFixed(3)+'em');
- set('--slot-scale','0');set('--slot-opacity','0');set('--subtitle-opacity',subtitle.toFixed(3));set('--subtitle-y',((1-subtitle)*18).toFixed(1)+'px');set('--logo-opacity',(1-handoff).toFixed(3));
+ set('--slot-scale','0');set('--slot-opacity','0');set('--subtitle-opacity',subtitle>.05?'1':'0');set('--subtitle-y',((1-subtitle)*18).toFixed(1)+'px');set('--logo-opacity',(1-handoff).toFixed(3));
  const openingCopy=Math.max(1-smoothstep(clamp((p-.15)/.08)),smoothstep(clamp((p-.955)/.025)));
  document.documentElement.style.setProperty('--opening-copy-opacity',openingCopy.toFixed(3));
  stableGeometry=null;
  const geometry=stableGeometry||[entry.querySelector('.o-top')?.getBoundingClientRect(),entry.querySelector('.o-bottom')?.getBoundingClientRect(),entry.querySelector('.entry-sticky')?.getBoundingClientRect()];
  const [left,right,sticky]=geometry;if(opening===1)stableGeometry=geometry;
- if(left&&right&&sticky){const width=Math.max(180,right.left-left.right);set('--subtitle-center-y',((left.top+right.top)/2-sticky.top+left.height*.374).toFixed(1)+'px');set('--subtitle-x',((left.right+right.left)/2-sticky.left).toFixed(1)+'px');set('--subtitle-width',Math.min(420,width*.84).toFixed(1)+'px')}
+ if(left&&right&&sticky){const width=Math.max(40,right.left-left.right);set('--subtitle-center-y',((left.top+right.top)/2-sticky.top+left.height*.374).toFixed(1)+'px');set('--subtitle-x',((left.right+right.left)/2-sticky.left).toFixed(1)+'px');set('--subtitle-width',Math.min(420,width*.84).toFixed(1)+'px')}
  typeOpeningCopy(subtitle>.05&&handoff<1);
  entry.dataset.openingCopyReady=String(subtitle>.95 && (!introLine.classList.contains("is-typing") || matchMedia("(prefers-reduced-motion: reduce)").matches));
  entry.classList.toggle('is-open',opening>.04);entry.classList.toggle('is-second-open',opening>.58);

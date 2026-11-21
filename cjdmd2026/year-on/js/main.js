@@ -399,7 +399,7 @@ new ResizeObserver(()=>{fitCanvas();syncSignalNoise()}).observe(screen);
 window.addEventListener('yearon-crt-power',event=>{
   if(event.detail?.reset){
     signalAttempt++;video.oncanplay=null;video.onerror=null;video.pause();
-    hasTuned=false;isChanging=false;screen.classList.remove('phase-static','phase-roll','phase-bars','phase-acquire','is-switching');
+    hasTuned=false;activeChannel=0;isChanging=false;screen.classList.remove('phase-static','phase-roll','phase-bars','phase-acquire','is-switching');
     showChannel(activeChannel);
   }
   fitCanvas();syncSignalNoise();

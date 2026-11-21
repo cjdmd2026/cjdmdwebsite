@@ -32,13 +32,13 @@ new ResizeObserver(()=>{
 function render(){raf=0;const vh=innerHeight;let active;
 for(const ch of chapters){const r=ch.root.getBoundingClientRect();let alpha=ease((vh*.28-r.top)/(vh*.18))*ease((r.bottom-vh*.10)/(vh*.18));
  if(ch.root.id==='aboutRelations')alpha=ease((vh*.85-r.top)/(vh*.85))*ease((r.bottom-vh*.02)/(vh*.65));
- if(ch.root.id==='artistSequence')alpha=ease((vh*.28-r.top)/(vh*.18))*ease((r.bottom-vh*.10)/(vh*.48));
+ if(ch.root.id==='artistSequence')alpha=ease((vh*.45-r.top)/(vh*.35))*ease((r.bottom-vh*.02)/(vh*.38));
  if(ch.root.id==='abrArchive')alpha=ease((vh*.58-r.top)/(vh*.48))*ease((r.bottom-vh*.10)/(vh*.18));
  if(ch.root.classList.contains('about-pair'))alpha=ease((vh*.10-r.top)/(vh*.18))*ease((r.bottom-vh*.10)/(vh*.18));
  if(ch.root.id==='aboutDestination'){alpha=ease((vh*.15-r.top)/(vh*.70))*ease((r.bottom-vh*.10)/(vh*.18));ch.layer.style.setProperty('--destination-reveal',alpha);const a=ch.layer.querySelector('a');if(a)a.tabIndex=alpha>.9?0:-1;}
  const on=alpha>.001;ch.layer.style.opacity=String(alpha);ch.layer.classList.toggle('is-current',on);ch.layer.style.visibility=on?'visible':'hidden';ch.layer.setAttribute('aria-hidden',String(!on));if(on)active=ch.root;
 if(ch.root.id==='artistSequence'){
- const local=clamp((vh*.28-r.top)/(vh*2.1));
+ const local=clamp((vh*.45-r.top)/(vh*1.4));
  const image=ch.root.querySelector('.abr-artist-image');
  image.style.maskImage=image.style.webkitMaskImage='none';
  const now=performance.now();if(!on){ch.inkProgress=0;ch.inkAt=now;}const dt=Math.min(64,now-(ch.inkAt||now-16));ch.inkAt=now;ch.inkProgress=Math.min(local,(ch.inkProgress||0)+dt/2400);if(on&&ch.inkProgress<local)schedule();
