@@ -13,7 +13,7 @@
  }
  requestAnimationFrame(advanceUri);
  history.scrollRestoration='manual';if(!location.hash)scrollTo(0,0);
- function render(){frame=0;const p=progress(root),gateP=clamp(p/.10);gate.style.opacity=String(1-ease((p-.084)/.020));const gateTime=Number.isFinite(gate.duration)?Math.min(gate.duration-.03,gateP*gate.duration):0;if(!entering&&!gate.seeking&&Math.abs(gate.currentTime-gateTime)>.04)gate.currentTime=gateTime;gate.style.transform=`scale(${1+ease(gateP)*.65+Math.pow(clamp((gateP-.32)/.68),1.7)*1.55})`;gate.style.transformOrigin="50% 68%";const poster=root.querySelector('.yai-gate-poster');poster.style.opacity=String(1-ease(p/.008));poster.style.transform=gate.style.transform;poster.style.transformOrigin=gate.style.transformOrigin;root.querySelector('.yai-entry-heading').style.opacity=String(1-ease(p/.025));root.querySelector('.yai-white').style.opacity=String(ease((p-.075)/.025)*(1-ease((p-.12)/.025)));
+ function render(){frame=0;const p=root.dataset.entryComplete==='true'?Math.max(.16,progress(root)):progress(root),gateP=clamp(p/.10);gate.style.opacity=String(1-ease((p-.084)/.020));const gateTime=Number.isFinite(gate.duration)?Math.min(gate.duration-.03,gateP*gate.duration):0;if(!entering&&!gate.seeking&&Math.abs(gate.currentTime-gateTime)>.04)gate.currentTime=gateTime;gate.style.transform=`scale(${1+ease(gateP)*.65+Math.pow(clamp((gateP-.32)/.68),1.7)*1.55})`;gate.style.transformOrigin="50% 68%";const poster=root.querySelector('.yai-gate-poster');poster.style.opacity=String(1-ease(p/.008));poster.style.transform=gate.style.transform;poster.style.transformOrigin=gate.style.transformOrigin;root.querySelector('.yai-entry-heading').style.opacity=String(1-ease(p/.025));root.querySelector('.yai-white').style.opacity=String(ease((p-.075)/.025)*(1-ease((p-.12)/.025)));
  const ranges=[[.12,.23],[.23,.34],[.34,.60],[.60,.86],[.86,1.01]];
  const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
  scenes.forEach((scene,i)=>{
@@ -53,15 +53,19 @@
 
  }
  function request(){if(!frame)frame=requestAnimationFrame(render)}
- let entering=false,entered=location.hash.length>0;
+ let entering=false,entered=location.hash.length>0,entryAttempt=0,entrySafeguard=0,entryBoot=0;
  // During entry, let the decoder play continuously instead of repeatedly seeking.
  async function enter(){
-  if(entering||entered)return;entering=true;
+  if(entering||entered)return;entering=true;const attempt=++entryAttempt;delete root.dataset.entryComplete;
+  const entryTop=scrollY+root.getBoundingClientRect().top;
+  const finishEntry=()=>{if(!entering||attempt!==entryAttempt)return;clearTimeout(entrySafeguard);entering=false;entered=true;root.dataset.entryComplete='true';gate.pause();scrollTo({top:entryTop+Math.max(1,root.offsetHeight-innerHeight)*.16,behavior:'instant'});request()};
+  entrySafeguard=setTimeout(finishEntry,6800);
   gate.muted=true;gate.playbackRate=1.5;
   let playback=true;
   gate.play().catch(()=>{playback=false});
   const started=performance.now();let handoffStart=null;
   function tick(now){
+   if(!entering||attempt!==entryAttempt)return;
    const duration=Number.isFinite(gate.duration)&&gate.duration>0?gate.duration:6.04;
    const elapsed=now-started;
    const t=playback?Math.max(clamp(gate.currentTime/duration),clamp((elapsed-1200)/5000)):clamp(elapsed/2800);
@@ -70,13 +74,14 @@
    if(t>=.995||gate.ended){
     if(handoffStart===null){handoffStart=now;gate.pause()}
     const finish=clamp((now-handoffStart)/380);p=.105+.045*ease(finish);
-    if(finish>=1){entering=false;entered=true}
+    if(finish>=1){finishEntry();return}
    }
-   scrollTo(0,root.offsetTop+(root.offsetHeight-innerHeight)*p);request();
+   scrollTo({top:entryTop+(root.offsetHeight-innerHeight)*p,behavior:'instant'});request();
    if(entering)requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
  }
  addEventListener('wheel',e=>{if(entering){e.preventDefault();return}if(!entered&&scrollY<innerHeight*.3&&e.deltaY>0){e.preventDefault();enter()}},{passive:false});
- root.querySelector('.yai-start').addEventListener('click',enter);gate.addEventListener('loadedmetadata',request);gate.addEventListener('seeked',request);addEventListener('scroll',request,{passive:true});addEventListener('resize',request);addEventListener('pageshow',()=>{if(!location.hash){scrollTo(0,0);entered=false;setTimeout(enter,500)}request()});render();
+ root.querySelector('.yai-start').addEventListener('click',enter);gate.addEventListener('loadedmetadata',request);gate.addEventListener('seeked',request);addEventListener('scroll',request,{passive:true});addEventListener('resize',request);function bootEntry(){if(location.hash)return;clearTimeout(entryBoot);clearTimeout(entrySafeguard);entryAttempt++;entering=false;entered=false;delete root.dataset.entryComplete;scrollTo(0,0);entryBoot=setTimeout(enter,500);request()}
+ addEventListener('pageshow',bootEntry);entryBoot=setTimeout(()=>{if(!location.hash&&!entered&&!entering)enter()},700);render();
 })();
