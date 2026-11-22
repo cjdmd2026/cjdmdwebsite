@@ -358,3 +358,9 @@ html body.about-body #aboutEntryStory .yai-painting[data-painting=mudong] .yai-c
 html body.about-body #aboutEntryStory .yai-painting[data-painting=mudong] .yai-caption p[lang=en]{font-size:10px!important;line-height:1.6!important}
 html body.about-body #aboutEntryStory .yai-painting[data-painting=mudong] .yai-credit{bottom:88px!important;left:6vw!important;right:6vw!important;text-align:center!important;font-size:8px!important}
 }
+
+html body.about-body #aboutEntryStory[data-entry-complete="true"] :is(.yai-white,.yai-gate,.yai-gate-poster){display:none!important}
+
+/* Sequential home handoff: the opening disappears before the destination exists visually. */
+html body.home-film-body:not([data-home-handoff="ready"]) .film-destination{visibility:hidden!important;pointer-events:none!important}
+html body.home-film-body:is([data-home-handoff="leaving"],[data-home-handoff="ready"]) #entry :is(.entry-logo-en,.entry-logo-ko,.entry-subtitle){visibility:hidden!important;opacity:0!important;pointer-events:none!important}
