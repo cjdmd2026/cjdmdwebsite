@@ -215,12 +215,12 @@
         const selectedBreed =
           localStorage.getItem(
             "selectedBreed"
-          );
+          ) || "coco";
 
         const selectedBreedName =
           localStorage.getItem(
             "selectedBreedName"
-          ) || "";
+          ) || "코코";
 
 
         const resultCode =
@@ -244,7 +244,6 @@
 
 
         if (
-          !selectedBreed ||
           !resultCode ||
           !resultType
         ) {
@@ -254,7 +253,7 @@
           );
 
           window.location.href =
-            "select.html";
+            "test-index.html";
 
           return;
 
@@ -489,7 +488,7 @@
             );
 
             window.location.href =
-              "select.html";
+              "test-index.html";
 
             return;
 

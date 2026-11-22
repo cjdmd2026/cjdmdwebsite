@@ -298,16 +298,10 @@
            실제 테스트 결과
         ====================================== */
 
-        const selectedBreed =
-          localStorage.getItem(
-            "selectedBreed"
-          );
-
-
         const selectedBreedName =
           localStorage.getItem(
             "selectedBreedName"
-          ) || "우리 강아지";
+          ) || "코코";
 
 
         const resultType =
@@ -330,17 +324,14 @@
           );
 
 
-        if (
-          !selectedBreed ||
-          !resultType
-        ) {
+        if (!resultType) {
 
           alert(
             "결과 정보가 없습니다.\n테스트를 먼저 진행해주세요."
           );
 
           window.location.href =
-            "select.html";
+            "test-index.html";
 
           return;
 

@@ -7356,8 +7356,8 @@ body{
     height:100%;
 
     background:
-        url("img/dot-line.webp")
-        center top / 100% auto repeat-y;
+        radial-gradient(circle, var(--brown) 2px, transparent 2.5px)
+        center top / 6px 16px repeat-y;
 
     opacity:.55;
 

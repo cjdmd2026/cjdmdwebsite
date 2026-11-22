@@ -202,35 +202,11 @@
   <script>
     document.addEventListener("DOMContentLoaded", function () {
 
-      /* =====================================
-         select.html에서 선택한 견종 불러오기
-      ====================================== */
-
       const selectedBreed =
-        localStorage.getItem("selectedBreed");
+        localStorage.getItem("selectedBreed") || "coco";
 
       const selectedBreedName =
-        localStorage.getItem("selectedBreedName")
-        || "";
-
-
-      /*
-       * 선택한 견종 정보가 없으면
-       * select.html로 돌아감
-       */
-
-      if (!selectedBreed) {
-
-        alert(
-          "선택한 견종 정보가 없습니다.\n견종을 먼저 선택해주세요."
-        );
-
-        window.location.href =
-          "select.html";
-
-        return;
-
-      }
+        localStorage.getItem("selectedBreedName") || "코코";
 
 
       /* =====================================
@@ -239,6 +215,7 @@
 
 
 const questionDogImages = {
+  coco: "img/question-dog-coco.webp",
   welly: "img/question-dog-coco.webp",
   daks: "img/question-dog-coco.webp",
   mari: "img/question-dog-coco.webp",
@@ -1086,7 +1063,7 @@ const questionDogImages = {
           );
 
           window.location.href =
-            "select.html";
+            "test-index.html";
 
           return;
 
