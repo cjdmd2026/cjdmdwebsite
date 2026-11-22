@@ -877,6 +877,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 <!-- MY PAGE WISHLIST -->
+<script src="shop-catalog.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -890,39 +891,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!wishContainer) return;
 
-    // SHOP에 등록된 상품 정보
-    const products = [
-        {
-            id: "img/shop-product-1.webp",
-            name: "코코랑 캐릭터 스티커",
-            price: 4500
-        },
-        {
-            id: "img/shop-product-2.webp",
-            name: "코코랑 데일리 하네스",
-            price: 29000
-        },
-        {
-            id: "img/shop-product-3.webp",
-            name: "코코랑 컬러 하네스",
-            price: 32000
-        },
-        {
-            id: "img/shop-product-4.webp",
-            name: "산책 스티커팩",
-            price: 6000
-        },
-        {
-            id: "img/shop-product-5.webp",
-            name: "코코랑 노즈워크 토이",
-            price: 18000
-        },
-        {
-            id: "img/shop-product-6.webp",
-            name: "코코랑 패브릭 토이",
-            price: 14000
-        }
-    ];
+    const products = Object.values(shopCatalog);
 
     function getWishlist() {
         try {
@@ -977,7 +946,7 @@ document.addEventListener("DOMContentLoaded", function () {
             imageWrap.className = "mp-wish-image";
 
             const image = document.createElement("img");
-            image.src = product.id;
+            image.src = product.image;
             image.alt = product.name;
 
             imageWrap.appendChild(image);

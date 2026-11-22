@@ -875,7 +875,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (!scrollTopBtn) return;
 
-  // TOP 버튼 클릭 시 맨 위로 이동
   scrollTopBtn.addEventListener("click", function () {
     window.scrollTo({
       top: 0,
@@ -883,7 +882,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // 스크롤 200px 이상에서 버튼 표시
   function updateScrollTopBtn() {
     if (window.scrollY > 200) {
       scrollTopBtn.classList.remove("is-hidden");
