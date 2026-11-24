@@ -364,3 +364,11 @@ html body.about-body #aboutEntryStory[data-entry-complete="true"] :is(.yai-white
 /* Sequential home handoff: the opening disappears before the destination exists visually. */
 html body.home-film-body:not([data-home-handoff="ready"]) .film-destination{visibility:hidden!important;pointer-events:none!important}
 html body.home-film-body:is([data-home-handoff="leaving"],[data-home-handoff="ready"]) #entry :is(.entry-logo-en,.entry-logo-ko,.entry-subtitle){visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+
+/* The last statement uses the same bilingual reading layout as the other black scenes. */
+html body.about-body #aboutClosing.about-pair.story-subtitle>.about-fixed-scene{display:flex!important;align-items:center!important;justify-content:center!important;padding:0 5vw!important;background:#08090b!important}
+html body.about-body #aboutClosing.about-pair.story-subtitle>.about-fixed-scene>div{display:flex!important;flex-direction:column!important;align-items:center!important;gap:18px!important;width:90vw!important;max-width:1200px!important}
+html body.about-body #aboutClosing.about-pair.story-subtitle h2[lang=ko]{font:400 clamp(17px,2svh,27px)/1.5 Arial,'Apple SD Gothic Neo',sans-serif!important;letter-spacing:-.02em!important;color:#eee!important;margin:0!important;padding:0!important;text-align:center!important}
+html body.about-body #aboutClosing.about-pair.story-subtitle p[lang=en]{font:400 clamp(13px,1.5svh,20px)/1.5 Arial,'Apple SD Gothic Neo',sans-serif!important;letter-spacing:0!important;color:#a3abb1!important;margin:0!important;padding:0!important;text-align:center!important}
+html body.about-body #aboutEntryStory .yai-white{display:none!important}
+@media(max-width:800px){html body.about-body #aboutClosing.about-pair.story-subtitle h2[lang=ko]{font-size:14px!important;line-height:1.65!important;max-width:84vw!important}html body.about-body #aboutClosing.about-pair.story-subtitle p[lang=en]{font-size:10px!important;line-height:1.6!important;max-width:84vw!important}html body.about-body #aboutClosing.about-pair.story-subtitle>.about-fixed-scene>div{gap:14px!important}}

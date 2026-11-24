@@ -256,4 +256,4 @@ html body.about-body #aboutDestination.about-destination a.film-enter:hover{bord
 
 
 /* Complete the gate journey in white before revealing the first text scene. */
-html body.about-body #aboutEntryStory .yai-white{background:#fff!important;z-index:2;pointer-events:none}
+html body.about-body #aboutEntryStory .yai-white{display:none!important;background:#08090b!important;pointer-events:none}
