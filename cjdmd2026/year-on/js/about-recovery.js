@@ -13,7 +13,7 @@
  }
  requestAnimationFrame(advanceUri);
  history.scrollRestoration='manual';if(!location.hash)scrollTo(0,0);
- function render(){frame=0;const p=root.dataset.entryComplete==='true'?Math.max(.16,progress(root)):progress(root),gateP=clamp(p/.10);gate.style.opacity=String(1-ease((p-.084)/.020));const gateTime=Number.isFinite(gate.duration)?Math.min(gate.duration-.03,gateP*gate.duration):0;if(!entering&&!gate.seeking&&Math.abs(gate.currentTime-gateTime)>.04)gate.currentTime=gateTime;gate.style.transform=`scale(${1+ease(gateP)*.65+Math.pow(clamp((gateP-.32)/.68),1.7)*1.55})`;gate.style.transformOrigin="50% 68%";const poster=root.querySelector('.yai-gate-poster');poster.style.opacity=String(1-ease(p/.008));poster.style.transform=gate.style.transform;poster.style.transformOrigin=gate.style.transformOrigin;root.querySelector('.yai-entry-heading').style.opacity=String(1-ease(p/.025));root.querySelector('.yai-white').style.opacity=String(ease((p-.075)/.025)*(1-ease((p-.12)/.025)));
+ function render(){frame=0;const p=root.dataset.entryComplete==='true'?Math.max(.16,progress(root)):progress(root),gateP=clamp(p/.10);gate.style.opacity=String(1-ease((p-.084)/.020));const gateTime=Number.isFinite(gate.duration)?Math.min(gate.duration-.03,gateP*gate.duration):0;if(!entering&&!gate.seeking&&Math.abs(gate.currentTime-gateTime)>.04)gate.currentTime=gateTime;gate.style.transform=`scale(${1+ease(gateP)*.65+Math.pow(clamp((gateP-.32)/.68),1.7)*1.55})`;gate.style.transformOrigin="50% 68%";const poster=root.querySelector('.yai-gate-poster');poster.style.opacity=String(1-ease(p/.008));poster.style.transform=gate.style.transform;poster.style.transformOrigin=gate.style.transformOrigin;root.querySelector('.yai-entry-heading').style.opacity=String(1-ease(p/.025));root.querySelector('.yai-white').style.opacity='0';
  const ranges=[[.12,.23],[.23,.34],[.34,.60],[.60,.86],[.86,1.01]];
  const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
  scenes.forEach((scene,i)=>{
@@ -71,7 +71,7 @@
    const t=playback?Math.max(clamp(gate.currentTime/duration),clamp((elapsed-1200)/5000)):clamp(elapsed/2800);
    if(playback&&handoffStart===null)gate.playbackRate=1.5+1.4*ease(t)+4.3*ease(clamp((t-.30)/.40));
    let p=.10*t;
-   if(t>=.995||gate.ended){
+   if(t>=.88||gate.ended){
     if(handoffStart===null){handoffStart=now;gate.pause()}
     const finish=clamp((now-handoffStart)/380);p=.105+.045*ease(finish);
     if(finish>=1){finishEntry();return}
@@ -82,6 +82,14 @@
   requestAnimationFrame(tick);
  }
  addEventListener('wheel',e=>{if(entering){e.preventDefault();return}if(!entered&&scrollY<innerHeight*.3&&e.deltaY>0){e.preventDefault();enter()}},{passive:false});
+
+ // Bound large wheel/trackpad bursts only while standalone copy is being read.
+ let readingFrame=0,readingQueue=0,readingLast=0,readingTouch=null;
+ function readingZone(){const p=progress(root);if(p>=.115&&p<.34||p>=.855&&p<=1&&root.getBoundingClientRect().bottom>innerHeight*.4)return true;return [...document.querySelectorAll('.about-pair.story-subtitle')].some(e=>{const b=e.getBoundingClientRect();return b.top<innerHeight*.7&&b.bottom>innerHeight*.3})}
+ function readingTick(now){readingFrame=0;const dt=Math.min(40,now-(readingLast||now-16));readingLast=now;const step=Math.sign(readingQueue)*Math.min(Math.abs(readingQueue),innerHeight*.85*dt/1000);scrollBy({top:step,behavior:'instant'});readingQueue-=step;if(Math.abs(readingQueue)>1&&readingZone())readingFrame=requestAnimationFrame(readingTick);else{readingQueue=0;readingLast=0}}
+ function paceReading(e,delta){if(e.defaultPrevented||entering||uriRunning||!readingZone()||e.target.closest('a,button,input,textarea,select')||!delta)return;e.preventDefault();readingQueue=Math.max(-innerHeight*.6,Math.min(innerHeight*.6,readingQueue+delta));if(!readingFrame)readingFrame=requestAnimationFrame(readingTick)}
+ addEventListener('wheel',e=>{if(!e.ctrlKey&&Math.abs(e.deltaY)>=Math.abs(e.deltaX))paceReading(e,e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?innerHeight:1))},{passive:false});
+ addEventListener('touchstart',e=>readingTouch=e.touches[0]?.clientY,{passive:true});addEventListener('touchmove',e=>{const y=e.touches[0]?.clientY;if(readingTouch!=null&&y!=null)paceReading(e,readingTouch-y);readingTouch=y},{passive:false});addEventListener('touchend',()=>readingTouch=null,{passive:true});
  root.querySelector('.yai-start').addEventListener('click',enter);gate.addEventListener('loadedmetadata',request);gate.addEventListener('seeked',request);addEventListener('scroll',request,{passive:true});addEventListener('resize',request);function bootEntry(){if(location.hash)return;clearTimeout(entryBoot);clearTimeout(entrySafeguard);entryAttempt++;entering=false;entered=false;delete root.dataset.entryComplete;scrollTo(0,0);entryBoot=setTimeout(enter,500);request()}
  addEventListener('pageshow',bootEntry);entryBoot=setTimeout(()=>{if(!location.hash&&!entered&&!entering)enter()},700);render();
 })();
